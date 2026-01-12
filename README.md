@@ -1,7 +1,7 @@
 ![LX/UI](https://raw.githubusercontent.com/dativa-lv/lx-ui/main/public/imgs/cover.png)
 
 
-<h1 align="center">LX/UI</h1>
+# LX/UI
 
 Powerful and flexible **Vue.js 3** components and **vanilla CSS** styles library, originally developed for various enterpise apps.
 
