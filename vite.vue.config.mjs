@@ -17,7 +17,7 @@ const vueConfig = defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/lib.js'),
       name: 'VueCarbonComponents',
-      fileName: (format) => `wntr-lx-ui.${format}.js`,
+      fileName: (format) => `dativa-lv-lx-ui.${format}.js`,
       formats: ['esm', 'umd'],
     },
     rollupOptions: {

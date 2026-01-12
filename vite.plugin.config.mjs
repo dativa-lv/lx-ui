@@ -14,8 +14,8 @@ const pluginConfig = defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/vite/index.js'),
-      name: 'WntrLxUiVite',
-      fileName: (format) => `wntr-lx-ui-vite.${format}.js`,
+      name: 'DativaLxUiVite',
+      fileName: (format) => `dativa-lv-lx-ui-vite.${format}.js`,
       formats: ['es'],
     },
     rollupOptions: {

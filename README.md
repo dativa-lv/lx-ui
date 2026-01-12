@@ -1,4 +1,4 @@
-![LX/UI](https://raw.githubusercontent.com/wntrtech/lx-ui/main/public/imgs/cover.png)
+![LX/UI](https://raw.githubusercontent.com/dativa-lv/lx-ui/main/public/imgs/cover.png)
 
 # LX/UI
 
@@ -30,27 +30,27 @@ Focus on business logic, not boilerplate.
 ## Play around
 
 Check out our [🌐 Demo](https://lx-ui.dev/) and 
-[ℹ️ List of Components](https://github.com/wntrtech/lx-ui/blob/main/docs/Components.md) for live demo sandbox.
+[ℹ️ List of Components](https://github.com/dativa-lv/lx-ui/blob/main/docs/Components.md) for live demo sandbox.
 
 ## Read the docs
-- [ℹ️ Design Tokens](https://github.com/wntrtech/lx-ui/blob/main/docs/DesignTokens.md)
-- [ℹ️ Progressive Web App Guide](https://github.com/wntrtech/lx-ui/blob/main/docs/PWA.md)
+- [ℹ️ Design Tokens](https://github.com/dativa-lv/lx-ui/blob/main/docs/DesignTokens.md)
+- [ℹ️ Progressive Web App Guide](https://github.com/dativa-lv/lx-ui/blob/main/docs/PWA.md)
 - [🌐 Forms](https://lx.zzdats.lv/resources/forms)
 - [🌐 Colors](https://lx.zzdats.lv/resources/colors)
 - [🌐 Icons](https://lx.zzdats.lv/resources/icons)
 - [🌐 Utils](https://lx.zzdats.lv/resources/utility/stringUtils)
 ### Declarative Tools
-- [🏗️ LxFormBuilder](https://github.com/wntrtech/lx-ui/blob/main/docs/FormBuilder.md)
-- [🏗️ LxViewBuilder](https://github.com/wntrtech/lx-ui/blob/main/docs/ViewBuilder.md)
+- [🏗️ LxFormBuilder](https://github.com/dativa-lv/lx-ui/blob/main/docs/FormBuilder.md)
+- [🏗️ LxViewBuilder](https://github.com/dativa-lv/lx-ui/blob/main/docs/ViewBuilder.md)
 - 🛠️ LxFilterBuilder
 
 ## Get
 
 ```bash
-pnpm i -w '@wntr/lx-ui@latest'
+pnpm i -w '@dativa-lv/lx-ui@latest'
 ```
 
-For migration tips refer to [ℹ️ Migration Guide](https://github.com/wntrtech/lx-ui/blob/main/MIGRATION.md)
+For migration tips refer to [ℹ️ Migration Guide](https://github.com/dativa-lv/lx-ui/blob/main/MIGRATION.md)
 
 ## Use
 
@@ -58,7 +58,7 @@ install with pinia store:
 
 ```js
 import { createPinia } from 'pinia';
-import { createLx } from '@wntr/lx-ui';
+import { createLx } from '@dativa-lv/lx-ui';
 import App from '@/App.vue';
 …
 const myApp = createApp(App);
@@ -74,10 +74,10 @@ pnpm
 pnpm dev
 ```
 
-Read more about development in [ℹ️ Development manual](https://github.com/wntrtech/lx-ui/blob/main/DEVELOPMENT.md)
+Read more about development in [ℹ️ Development manual](https://github.com/dativa-lv/lx-ui/blob/main/DEVELOPMENT.md)
 
 ### Vite Plugins
 
 LX/UI now includes several Vite plugins to enhance your development experience and application security. These plugins are designed to seamlessly integrate with your Vite-based projects.
 
-For detailed information on available plugins and their usage, please refer to our [ℹ️ Vite Plugins Documentation](https://github.com/wntrtech/lx-ui/blob/main/docs/VITE_PLUGINS.md).
+For detailed information on available plugins and their usage, please refer to our [ℹ️ Vite Plugins Documentation](https://github.com/dativa-lv/lx-ui/blob/main/docs/VITE_PLUGINS.md).

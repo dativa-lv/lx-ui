@@ -1692,7 +1692,7 @@ schema:
 modelValue: 
 ```js
 {
-  qr: 'https://github.com/wntrtech/lx-ui',
+  qr: 'https://github.com/dativa-lv/lx-ui',
 }
 ```
 
@@ -1714,7 +1714,7 @@ modelValue:
 ```js
 {
   qr: { 
-    value: 'https://github.com/wntrtech/lx-ui', size: 's', ignoreTheme: false 
+    value: 'https://github.com/dativa-lv/lx-ui', size: 's', ignoreTheme: false 
   }
 }
 ```
@@ -1796,7 +1796,7 @@ modelValue:
 ```js
 {
   richTextDisplay: { 
-    value: 'https://github.com/wntrtech/lx-ui', loading: false 
+    value: 'https://github.com/dativa-lv/lx-ui', loading: false 
   }
 }
 ```

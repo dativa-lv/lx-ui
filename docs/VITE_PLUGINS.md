@@ -10,7 +10,7 @@ module.exports = {
     'import/resolver': {
       alias: {
         map: [
-          ['@wntr/lx-ui/vite', './node_modules/@wntr/lx-ui/dist/vite/wntr-lx-ui-vite.es.js'],
+          ['@dativa-lv/lx-ui/vite', './node_modules/@dativa-lv/lx-ui/dist/vite/dativa-lv-lx-ui-vite.es.js'],
         ],
       },
     },
@@ -29,7 +29,7 @@ In `vite.config.js`:
 
 ```js
 import { defineConfig } from 'vite';
-import { lxViteSecureHeadersPlugin } from '@wntr/lx-ui/vite';
+import { lxViteSecureHeadersPlugin } from '@dativa-lv/lx-ui/vite';
 
 export default defineConfig((command) => ({
   plugins: [
@@ -117,7 +117,7 @@ In `vite.config.js`:
 
 ```js
 import { defineConfig } from 'vite';
-import { lxVitePortalVersionPlugin } from '@wntr/lx-ui/vite';
+import { lxVitePortalVersionPlugin } from '@dativa-lv/lx-ui/vite';
 
 export default defineConfig((command) => ({
   plugins: [
@@ -135,7 +135,7 @@ In `MainLayout.vue`:
 ```js
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { lxVersionCheckUtils } from '@wntr/lx-ui';
+import { lxVersionCheckUtils } from '@dativa-lv/lx-ui';
 import useNotifyStore from '@/stores/useNotifyStore';
 
 const notify = useNotifyStore();

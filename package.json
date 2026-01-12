@@ -1,5 +1,5 @@
 {
-  "name": "@wntr/lx-ui",
+  "name": "@dativa-lv/lx-ui",
   "description": "LX/UI",
   "prettier": "@zzdats/prettier-config",
   "files": [
@@ -12,20 +12,20 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wntrtech/lx-ui/issues"
+    "url": "https://github.com/dativa-lv/lx-ui/issues"
   },
-  "main": "./dist/wntr-lx-ui.umd.js",
-  "typings": "./dist/wntr-lx-ui.d.ts",
-  "module": "./dist/wntr-lx-ui.esm.js",
+  "main": "./dist/dativa-lv-lx-ui.umd.js",
+  "typings": "./dist/dativa-lv-lx-ui.d.ts",
+  "module": "./dist/dativa-lv-lx-ui.esm.js",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/wntr-lx-ui.esm.js",
-      "require": "./dist/wntr-lx-ui.umd.js",
-      "types": "./dist/wntr-lx-ui.d.ts"
+      "import": "./dist/dativa-lv-lx-ui.esm.js",
+      "require": "./dist/dativa-lv-lx-ui.umd.js",
+      "types": "./dist/dativa-lv-lx-ui.d.ts"
     },
     "./vite": {
-      "import": "./dist/vite/wntr-lx-ui-vite.es.js",
+      "import": "./dist/vite/dativa-lv-lx-ui-vite.es.js",
       "types": "./dist/vite/types/index.d.ts"
     },
     "./dist/styles/*": "./dist/styles/*",
