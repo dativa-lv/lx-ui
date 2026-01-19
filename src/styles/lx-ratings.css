@@ -2,8 +2,10 @@
     display: flex;
     height: var(--row-size);
     width: auto;
+    border: 2px solid transparent;
     align-items: center;
     padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 .lx-ratings > div {
     height: 2rem;
@@ -20,6 +22,34 @@
 .lx-ratings.lx-disabled > div:not(.lx-selected) svg {
     fill: var(--color-disabled-foreground);
 }
+
+.lx-info-wrapper-content:has(> .lx-ratings) {
+  outline-offset: -2px;
+}
+
+.lx-ratings-wrapper {
+  display: flex;
+}
+
+.lx-ratings-wrapper .lx-invalidation-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.75rem;
+}
+
+.lx-ratings-wrapper .lx-invalidation-icon {
+  position: absolute;
+  height: var(--input-invalid-icon-height);
+  width: var(--input-invalid-icon-width);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lx-ratings.lx-invalid {
+  border-color: var(--color-bad);
+}
+
 .lx-ratings.lx-read-only svg {
     fill: var(--color-data);
     cursor: help;

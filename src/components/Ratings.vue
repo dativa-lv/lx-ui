@@ -13,6 +13,8 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // 'default' or 'colorful'
   disabled: { type: Boolean, default: false },
   focusable: { type: Boolean, default: true },
+  invalid: { type: Boolean, default: false },
+  invalidationMessage: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -109,6 +111,8 @@ function reset() {
   }
 }
 
+const showInvalid = computed(() => props.invalid && props.mode !== 'read');
+
 function focus() {
   if (props.focusable) {
     infoWrapperRef.value?.focus();
@@ -118,97 +122,108 @@ function focus() {
 defineExpose({ focus });
 </script>
 <template>
-  <LxInfoWrapper
-    ref="infoWrapperRef"
-    :disabled="disabled && mode === 'edit'"
-    :focusable="focusable"
-  >
-    <div
-      v-if="!(mode === 'read' && !model)"
-      class="lx-ratings"
-      :class="[
-        { 'lx-disabled': disabled },
-        { 'lx-read-only': mode === 'read' },
-        { 'lx-select-1': hoveredValue === 1 },
-        { 'lx-select-2': hoveredValue === 2 },
-        { 'lx-select-3': hoveredValue === 3 },
-        { 'lx-select-4': hoveredValue === 4 },
-        { 'lx-select-5': hoveredValue === 5 },
-        { 'lx-colorful': variant === 'colorful' },
-      ]"
-    >
-      <div class="lx-star-1" :class="[{ 'lx-selected': valueDecomposition[0] !== 'star' }]">
-        <!-- focus is handled by info wrapper -->
-        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-        <LxIcon
-          :value="valueDecomposition[0]"
-          :customClass="valueClass"
-          @click="setValue(1)"
-          @mouseover="hover(1)"
-          @mouseleave="reset()"
-        />
-      </div>
+  <div class="lx-field-wrapper">
+    <div class="lx-ratings-wrapper">
+      <LxInfoWrapper
+        ref="infoWrapperRef"
+        :disabled="disabled && mode === 'edit'"
+        :focusable="focusable"
+      >
+        <div
+          v-if="!(mode === 'read' && !model)"
+          class="lx-ratings"
+          :class="[
+            { 'lx-disabled': disabled },
+            { 'lx-read-only': mode === 'read' },
+            { 'lx-select-1': hoveredValue === 1 },
+            { 'lx-select-2': hoveredValue === 2 },
+            { 'lx-select-3': hoveredValue === 3 },
+            { 'lx-select-4': hoveredValue === 4 },
+            { 'lx-select-5': hoveredValue === 5 },
+            { 'lx-colorful': variant === 'colorful' },
+            { 'lx-invalid': showInvalid },
+          ]"
+        >
+          <div class="lx-star-1" :class="[{ 'lx-selected': valueDecomposition[0] !== 'star' }]">
+            <!-- focus is handled by info wrapper -->
+            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+            <LxIcon
+              :value="valueDecomposition[0]"
+              :customClass="valueClass"
+              @click="setValue(1)"
+              @mouseover="hover(1)"
+              @mouseleave="reset()"
+            />
+          </div>
 
-      <div class="lx-star-2" :class="[{ 'lx-selected': valueDecomposition[1] !== 'star' }]">
-        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-        <LxIcon
-          :value="valueDecomposition[1]"
-          :customClass="valueClass"
-          @click="setValue(2)"
-          @mouseover="hover(2)"
-          @mouseleave="reset()"
-        />
-      </div>
+          <div class="lx-star-2" :class="[{ 'lx-selected': valueDecomposition[1] !== 'star' }]">
+            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+            <LxIcon
+              :value="valueDecomposition[1]"
+              :customClass="valueClass"
+              @click="setValue(2)"
+              @mouseover="hover(2)"
+              @mouseleave="reset()"
+            />
+          </div>
 
-      <div class="lx-star-3" :class="[{ 'lx-selected': valueDecomposition[2] !== 'star' }]">
-        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-        <LxIcon
-          :value="valueDecomposition[2]"
-          :customClass="valueClass"
-          @click="setValue(3)"
-          @mouseover="hover(3)"
-          @mouseleave="reset()"
-        />
-      </div>
+          <div class="lx-star-3" :class="[{ 'lx-selected': valueDecomposition[2] !== 'star' }]">
+            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+            <LxIcon
+              :value="valueDecomposition[2]"
+              :customClass="valueClass"
+              @click="setValue(3)"
+              @mouseover="hover(3)"
+              @mouseleave="reset()"
+            />
+          </div>
 
-      <div class="lx-star-4" :class="[{ 'lx-selected': valueDecomposition[3] !== 'star' }]">
-        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-        <LxIcon
-          :value="valueDecomposition[3]"
-          :customClass="valueClass"
-          @click="setValue(4)"
-          @mouseover="hover(4)"
-          @mouseleave="reset()"
-        />
-      </div>
+          <div class="lx-star-4" :class="[{ 'lx-selected': valueDecomposition[3] !== 'star' }]">
+            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+            <LxIcon
+              :value="valueDecomposition[3]"
+              :customClass="valueClass"
+              @click="setValue(4)"
+              @mouseover="hover(4)"
+              @mouseleave="reset()"
+            />
+          </div>
 
-      <div class="lx-star-5" :class="[{ 'lx-selected': valueDecomposition[4] !== 'star' }]">
-        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-        <LxIcon
-          :value="valueDecomposition[4]"
-          :customClass="valueClass"
-          @click="setValue(5)"
-          @mouseover="hover(5)"
-          @mouseleave="reset()"
-        />
+          <div class="lx-star-5" :class="[{ 'lx-selected': valueDecomposition[4] !== 'star' }]">
+            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+            <LxIcon
+              :value="valueDecomposition[4]"
+              :customClass="valueClass"
+              @click="setValue(5)"
+              @mouseover="hover(5)"
+              @mouseleave="reset()"
+            />
+          </div>
+        </div>
+
+        <div v-else class="lx-ratings">
+          <p class="lx-data">—</p>
+        </div>
+
+        <template #panel>
+          <div class="lx-row">
+            <label>{{ displayTexts.label }}</label>
+
+            <p v-if="model" class="lx-data">
+              <strong>{{ model.toString() }}</strong
+              ><span class="lx-primary">&nbsp;/ 5:&nbsp;</span> {{ valueDescription }}
+            </p>
+
+            <p v-else class="lx-data">—</p>
+          </div>
+        </template>
+      </LxInfoWrapper>
+      <div v-if="showInvalid" class="lx-invalidation-icon-wrapper">
+        <LxIcon customClass="lx-invalidation-icon" value="invalid" />
       </div>
     </div>
-
-    <div v-else class="lx-ratings">
-      <p class="lx-data">—</p>
+    <div class="lx-invalidation-message" v-if="showInvalid">
+      {{ invalidationMessage }}
     </div>
-
-    <template #panel>
-      <div class="lx-row">
-        <label>{{ displayTexts.label }}</label>
-
-        <p v-if="model" class="lx-data">
-          <strong>{{ model.toString() }}</strong
-          ><span class="lx-primary">&nbsp;/ 5:&nbsp;</span> {{ valueDescription }}
-        </p>
-
-        <p v-else class="lx-data">—</p>
-      </div>
-    </template>
-  </LxInfoWrapper>
+  </div>
 </template>
