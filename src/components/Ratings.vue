@@ -11,10 +11,7 @@ const props = defineProps({
   modelValue: { type: Number, default: 0 },
   kind: { type: String, default: '5stars' },
   variant: { type: String, default: 'default' }, // 'default' or 'colorful'
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
+  disabled: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -83,7 +80,7 @@ const valueClass = computed(() => {
 });
 
 function setValue(value) {
-  if (props.mode === 'edit') {
+  if (props.mode === 'edit' && !props.disabled) {
     if (model.value !== value) {
       model.value = value;
     } else {
@@ -94,22 +91,27 @@ function setValue(value) {
 
 const hoveredValue = ref(null);
 function hover(value) {
-  if (props.mode === 'edit') {
+  if (props.disabled) {
+    hoveredValue.value = null;
+  } else if (props.mode === 'edit') {
     hoveredValue.value = value;
   }
 }
 
 function reset() {
-  if (props.mode === 'edit') {
+  if (props.disabled) {
+    hoveredValue.value = null;
+  } else if (props.mode === 'edit') {
     hoveredValue.value = null;
   }
 }
 </script>
 <template>
-  <lx-info-wrapper :disabled="props.disabled">
+  <lx-info-wrapper :disabled="disabled && mode === 'edit'">
     <div
       class="lx-ratings"
       :class="[
+        { 'lx-disabled': disabled },
         { 'lx-read-only': mode === 'read' },
         { 'lx-select-1': hoveredValue === 1 },
         { 'lx-select-2': hoveredValue === 2 },

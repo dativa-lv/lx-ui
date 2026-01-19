@@ -14,6 +14,12 @@
     fill: var(--color-interactive-background);
     cursor: pointer;
 }
+.lx-ratings.lx-disabled svg {
+    cursor: not-allowed
+}
+.lx-ratings.lx-disabled > div:not(.lx-selected) svg {
+    fill: var(--color-disabled-foreground);
+}
 .lx-ratings.lx-read-only svg {
     fill: var(--color-data);
     cursor: help;

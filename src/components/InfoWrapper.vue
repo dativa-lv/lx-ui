@@ -156,7 +156,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
       :class="[{ 'lx-disabled': disabled || !isPanelAvailable }]"
       :aria-label="ariaLabel"
       :aria-describedby="`${id}-description`"
-      :tabindex="$slots.panel && focusable && !disabled ? '0' : '-1'"
+      :tabindex="$slots.panel && focusable && !disabled ? '0' : null"
       :role="customRole"
       @focusin="handleFocusIn"
       @focusout="handleMouseLeave"
