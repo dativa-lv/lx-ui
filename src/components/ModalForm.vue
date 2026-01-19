@@ -196,6 +196,7 @@ defineExpose({ open, close });
         >
           <div class="lx-main" ref="modalContent">
             <LxForm
+              :id="id"
               :showFooter="false"
               :actionDefinitions="additionalButtons"
               :columnCount="columnCount"
@@ -209,11 +210,11 @@ defineExpose({ open, close });
               :kind="formKind"
               @buttonClick="buttonClicked"
             >
-              <template #pre-header>
+              <template v-if="$slots['pre-header']" #pre-header>
                 <slot name="pre-header" />
               </template>
 
-              <template #pre-header-info>
+              <template v-if="$slots['pre-header-info']" #pre-header-info>
                 <slot name="pre-header-info" />
               </template>
 
@@ -222,11 +223,11 @@ defineExpose({ open, close });
                 <span v-else>{{ label }}</span>
               </template>
 
-              <template #post-header>
+              <template v-if="$slots['post-header']" #post-header>
                 <slot name="post-header" />
               </template>
 
-              <template #post-header-info>
+              <template v-if="$slots['post-header-info']" #post-header-info>
                 <slot name="post-header-info" />
               </template>
 
