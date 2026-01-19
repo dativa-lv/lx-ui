@@ -2225,13 +2225,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   outline: none;
 }
 
-.lx .lx-layout input[type='range']:hover::-webkit-slider-thumb {
+.lx .lx-layout input[type='range']:hover:not(:disabled)::-webkit-slider-thumb {
   border: 0.6rem solid var(--color-data);
   outline: 0rem solid var(--color-data);
   outline-offset: 0rem;
 }
 
-.lx .lx-layout input[type='range']:hover::-moz-range-thumb {
+.lx .lx-layout input[type='range']:hover:not(:disabled)::-moz-range-thumb {
   border: 2px solid var(--color-data);
   outline: 0rem solid var(--color-data);
   outline-offset: 0rem;
@@ -2499,6 +2499,30 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: 4.5rem;
 }
 
+.input-slider:focus-within .input-slider-filled {
+  background-color: var(--color-brand);
+}
+
+.input-slider-container-wrapper.lx-disabled input.lx-number-slider:disabled,
+.lx.lx-theme-contrast .lx-override .input-slider-container-wrapper.lx-disabled input.lx-number-slider:disabled {
+  border: none; /* removes the default Lx input :disabled underline */
+}
+
+.input-slider-container-wrapper.lx-disabled input.lx-number-slider::-webkit-slider-thumb {
+  background-color: var(--color-input-disabled);
+}
+.input-slider-container-wrapper.lx-disabled input.lx-number-slider::-moz-range-thumb {
+  background-color: var(--color-input-disabled);
+}
+
+.input-slider-container-wrapper.lx-disabled .input-slider-filled {
+  background-color: var(--color-input-disabled);
+}
+
+.input-slider-container-wrapper.lx-disabled .input-slider-range-label > p {
+  color: var(--color-input-disabled);
+  cursor: not-allowed;
+}
 /*** LxDrawPad styles***/
 
 .lx .lx-drawpad-wrapper .lx-input-wrapper {

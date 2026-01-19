@@ -10,6 +10,7 @@ const props = defineProps({
   step: { type: Number, default: 1 },
   stepMultiplier: { type: Number, default: 5 },
   hasInput: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
   readOnly: { type: Boolean, default: false },
   labelId: { type: String, default: null },
 });
@@ -57,21 +58,17 @@ const onDecreaseStep = () => {
 };
 const fillingUp = computed(() => ((model.value - props.min) / (props.max - props.min)) * 100);
 
-const color = ref('--color-data');
-function onFocus() {
-  color.value = '--color-brand';
-}
-function deFocus() {
-  color.value = '--color-data';
-}
-
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 <template>
   <div class="lx-field-wrapper">
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">{{ model }}</p>
-    <div class="input-slider-container-wrapper" v-if="!readOnly">
+    <div
+      v-if="!readOnly"
+      class="input-slider-container-wrapper"
+      :class="{ 'lx-disabled': disabled }"
+    >
       <div class="input-slider-range-label">
         <p>{{ props.min }}</p>
       </div>
@@ -79,8 +76,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       <div class="input-slider">
         <input
           v-model="model"
-          @focusin="onFocus"
-          @focusout="deFocus"
           :title="tooltip"
           type="range"
           class="lx-number-slider"
@@ -88,6 +83,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :min="props.min"
           :max="props.max"
           :aria-labelledby="labelledBy"
+          :disabled
           @keydown.up="onIncreaseStep"
           @keydown.right="onIncreaseStep"
           @keydown.down="onDecreaseStep"
@@ -97,10 +93,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           @keydown.shift.down.exact="onDecreaseMultiplier"
           @keydown.shift.left.exact="onDecreaseMultiplier"
         />
-        <div
-          class="input-slider-filled"
-          :style="`width: ${fillingUp}%; background-color: var(${color})`"
-        />
+        <div class="input-slider-filled" :style="`width: ${fillingUp}%`" />
         <div class="input-slider-full" />
       </div>
 
@@ -108,7 +101,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         <p>{{ props.max }}</p>
       </div>
       <div class="input-slider-range-text" v-show="hasInput">
-        <LxTextInput type="text" v-model="model" mask="integer" :labelId="labelledBy" />
+        <LxTextInput type="text" v-model="model" mask="integer" :labelId="labelledBy" :disabled />
       </div>
     </div>
   </div>
