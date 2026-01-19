@@ -201,6 +201,9 @@ dialog {
 }
 
 /* LxModalForm */
+.lx-modal-form {
+  grid-template-rows: 1fr auto;
+}
 
 .lx-modal-form > .lx-main {
   padding: 0;
