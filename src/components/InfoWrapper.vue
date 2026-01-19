@@ -119,6 +119,12 @@ function togglePopperOnMobile() {
   }
 }
 
+function focus() {
+  if (props.focusable) {
+    triggerRef.value?.focus();
+  }
+}
+
 onMounted(() => {
   const el = triggerRef.value?.firstElementChild;
   if (el && el instanceof HTMLElement) {
@@ -131,7 +137,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleGlobalKeydown);
 });
 
-defineExpose({ handleOpen, handleClose, showPopper });
+defineExpose({ handleOpen, handleClose, showPopper, focus });
 </script>
 <template>
   <LxPopper

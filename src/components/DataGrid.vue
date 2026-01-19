@@ -30,6 +30,7 @@ import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
 import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import { formatValueArray } from '@/utils/formatUtils';
+import { useGridKeyboardNavigation } from '@/utils/useGridKeyboardNavigation';
 
 const emits = defineEmits([
   'actionClick',
@@ -199,6 +200,7 @@ const header = ref(null);
 const container = ref(null);
 const showLoadingAlert = ref(false);
 const autoScrollable = ref(false);
+const dropDownMenuRef = ref();
 
 const { width, height } = useWindowSize();
 const bounding = useElementBounding(container);
@@ -206,13 +208,15 @@ const headerSize = useElementSize(header);
 const lxElement = document.querySelector('.lx');
 const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-function isValueEmpty(value) {
-  return value === null || value === undefined || value === '';
-}
-
-function isObject(value) {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
+const {
+  registerCell,
+  getTabIndex,
+  getFocusable,
+  onKeydown,
+  isCellDelegated,
+  setActiveFromClick,
+  activeRow,
+} = useGridKeyboardNavigation();
 
 const isDisabled = computed(() => props.loading || props.busy);
 
@@ -239,6 +243,14 @@ const columnsComputed = computed(() => {
 const gridColumnsDisplay = computed(() =>
   columnsComputed.value.filter((col) => col.kind !== 'extra' || props.showAllColumns)
 );
+
+function isValueEmpty(value) {
+  return value === null || value === undefined || value === '';
+}
+
+function isObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
 
 function formatBoolean(value) {
   if (value === null || value === undefined || value === '') {
@@ -955,6 +967,7 @@ const rows = computed(() => {
 });
 
 const pagesTotal = computed(() => Math.ceil(props.itemsTotal / props.itemsPerPage));
+
 const itemsLabel = computed(() => {
   const num = rows.value.length;
   let numDisplay = num.toString();
@@ -977,6 +990,7 @@ const itemsLabel = computed(() => {
   }
   return `${numDisplay} ${label}`;
 });
+
 const selectedLabel = computed(() => {
   const num = selectedRows.value.length;
   const numDisplay = num.toString();
@@ -1008,6 +1022,9 @@ const hasActionButtons = computed(() => {
 });
 
 const itemsCountSelector = computed(() => [10, 20, 30, 40, 50]);
+
+const rowCount = computed(() => rows.value.length);
+const colCount = computed(() => gridColumnsDisplay.value.length);
 
 function changeItemsPerPage(value) {
   emits('itemsPerPageChanged', value);
@@ -1316,43 +1333,11 @@ onMounted(() => {
   );
 });
 
-const focusableElementsCount = computed(() => {
-  const mainElement = container.value;
-  const focusableSelectors = [
-    'a:not([disabled])',
-    'button:not([disabled])',
-    'input:not([disabled])',
-    '[tabindex="0"]',
-  ];
-  if (mainElement) {
-    return Array.from(mainElement.querySelectorAll(focusableSelectors.join(', '))).filter(
-      (el) => el.offsetParent !== null
-    ).length;
-  }
-  return 0;
+const isMenuOpen = computed(() => {
+  const offset = props.hasSorting ? 1 : 0;
+  const index = activeRow.value - offset;
+  return dropDownMenuRef.value?.[index]?.menuOpen ?? false;
 });
-
-function skipHeader() {
-  const mainElement = container.value;
-
-  const focusableSelectors = [
-    'a:not([disabled])',
-    'button:not([disabled])',
-    'input:not([disabled])',
-    '[tabindex="0"]',
-  ];
-
-  if (mainElement) {
-    const focusableElements = Array.from(
-      mainElement.querySelectorAll(focusableSelectors.join(', '))
-    );
-    const firstVisibleElement = focusableElements.find((element) => element.offsetParent !== null);
-
-    if (firstVisibleElement) {
-      firstVisibleElement.focus();
-    }
-  }
-}
 
 const manyRowsSelected = computed(
   () => Object.values(selectedRowsRaw.value).filter(Boolean).length > 1
@@ -1374,6 +1359,22 @@ const handleKey = (col, row) => {
     defaultActionClicked(row[props.idAttribute], row);
   }
 };
+
+function handleHeaderClick(colId, colIndex) {
+  sortColumn(colId);
+  setActiveFromClick(0, props.hasSelecting ? colIndex + 1 : colIndex);
+}
+
+function handleMenuClick(rowIndex) {
+  setActiveFromClick(
+    props.hasSorting ? rowIndex + 1 : rowIndex,
+    props.hasSelecting ? colCount.value + 2 : colCount.value + 1
+  );
+
+  const offset = props.hasSorting ? 1 : 0;
+  const index = activeRow.value - offset;
+  dropDownMenuRef.value?.[index]?.openMenu();
+}
 
 watch(
   () => props.selectingKind,
@@ -1397,19 +1398,32 @@ const isToolbarVisible = computed(() => {
   );
 });
 
+const computedGridHeaderColumnCount = computed(() => {
+  const selectingColumn = props.hasSelecting ? 0 : 1;
+  const actionButtonsColumn = hasActionButtons.value ? 1 : 0;
+  return colCount.value + actionButtonsColumn - selectingColumn;
+});
+
+const computedGridColumnCount = computed(() => {
+  const actionColumns = hasActionButtons.value ? Math.min(props.actionDefinitions.length, 2) : 0;
+  const selectingColumn = props.hasSelecting ? 0 : 1;
+  return colCount.value + actionColumns - selectingColumn;
+});
+
 defineExpose({ cancelSelection, selectRows, sortBy });
 </script>
 <template>
   <div
+    ref="dataGridWrapperRef"
     class="lx-data-grid-wrapper"
     :style="`${topOutOfBounds} ${fullBleedMargin}`"
     :class="[{ 'lx-grid-sticky': stickyHeader }]"
-    ref="dataGridWrapperRef"
   >
     <header v-if="showHeader">
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
       <p :id="`${id}-description`" class="lx-description">{{ description }}</p>
     </header>
+
     <div
       v-if="isToolbarVisible"
       :class="[{ 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length }]"
@@ -1622,25 +1636,29 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       </LxToolbar>
     </div>
 
-    <div class="lx-grid-header-wrapper" aria-hidden="false">
-      <div
-        class="lx-skip-link-wrapper"
-        v-if="columnsComputed.length > 0 && rows.length > 0 && focusableElementsCount > 0"
-      >
-        <LxButton :label="displayTexts.skipHeader" @click="skipHeader" />
-      </div>
+    <div
+      class="lx-grid-header-wrapper"
+      aria-hidden="false"
+      @keydown="(e) => onKeydown(e, rowCount, computedGridHeaderColumnCount)"
+    >
       <div
         ref="header"
         class="lx-grid-row"
         role="toolbar"
         :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
+        :tabindex="-1"
         @scroll="syncContainerScroll"
       >
-        <div v-if="hasSelecting" class="lx-cell-header lx-cell-selector" />
+        <div
+          v-if="hasSelecting"
+          class="lx-cell-header lx-cell-selector"
+          :tabindex="hasSorting ? getTabIndex(0, 0) : null"
+          :ref="(el) => (hasSorting ? registerCell(el, 0, 0) : null)"
+        />
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
         <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus-->
         <div
-          v-for="col in gridColumnsDisplay"
+          v-for="(col, colIndex) in gridColumnsDisplay"
           :key="col.id"
           :title="formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)"
           class="lx-cell-header"
@@ -1648,8 +1666,12 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           :aria-label="
             formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
           "
-          :tabindex="hasSorting ? '0' : null"
           role="button"
+          :tabindex="hasSorting ? getTabIndex(0, hasSelecting ? colIndex + 1 : colIndex) : null"
+          :ref="
+            (el) =>
+              hasSorting ? registerCell(el, 0, hasSelecting ? colIndex + 1 : colIndex) : null
+          "
           :class="[
             {
               'lx-cell-number':
@@ -1683,7 +1705,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               'lx-cell-stretch': col.size === '*',
             },
           ]"
-          @click="sortColumn(col.id)"
+          @click="handleHeaderClick(col.id, colIndex)"
           @keyup.space.prevent="sortColumn(col.id)"
           @keyup.enter="sortColumn(col.id)"
         >
@@ -1712,13 +1734,20 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             />
           </div>
         </div>
+
         <div
           v-if="hasActionButtons"
           class="lx-cell-header lx-cell-action"
           :title="displayTexts.actions"
+          :tabindex="hasSorting ? getTabIndex(0, hasSelecting ? colCount + 1 : colCount) : null"
+          :ref="
+            (el) =>
+              hasSorting ? registerCell(el, 0, hasSelecting ? colCount + 1 : colCount) : null
+          "
         />
       </div>
     </div>
+
     <article
       ref="container"
       :id="id"
@@ -1728,7 +1757,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         { 'lx-data-grid-full': showAllColumns },
         { 'lx-loading': loading },
       ]"
+      :tabindex="-1"
       @scroll="syncHeaderScroll()"
+      @keydown="(e) => onKeydown(e, rowCount, computedGridColumnCount, isMenuOpen)"
     >
       <div
         class="lx-grid-table"
@@ -1754,24 +1785,32 @@ defineExpose({ cancelSelection, selectRows, sortBy });
 
         <div class="lx-grid-content">
           <TransitionGroupWrapper
+            v-for="(row, rowIndex) in rows"
             tag="div"
             name="data-grid"
             class="lx-grid-row"
             :class="[{ 'lx-selected': selectedRowsRaw[row[idAttribute]] && hasSelecting }]"
             :id="`row-${row[idAttribute]}`"
-            v-for="row in rows"
-            tabindex="0"
+            :tabindex="-1"
             role="row"
             :key="row[idAttribute]"
             @dblclick="defaultActionClicked(row[idAttribute], row)"
           >
-            <div v-if="hasSelecting" class="lx-cell lx-cell-selector" role="cell">
+            <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+            <div
+              v-if="hasSelecting"
+              class="lx-cell lx-cell-selector"
+              role="cell"
+              @click="setActiveFromClick(hasSorting ? rowIndex + 1 : rowIndex, 0)"
+            >
               <LxCheckbox
                 v-if="selectingKind === 'multiple'"
                 :id="`select-${id}-${row[idAttribute]}`"
                 v-model="selectedRowsRaw[row[idAttribute]]"
                 :value="row[idAttribute]?.toString()"
                 :disabled="isDisabled"
+                :tabindex="getTabIndex(hasSorting ? rowIndex + 1 : rowIndex, 0).toString()"
+                :ref="(el) => registerCell(el, hasSorting ? rowIndex + 1 : rowIndex, 0)"
               />
               <LxRadioButton
                 v-if="selectingKind === 'single'"
@@ -1779,16 +1818,54 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 v-model="selectedRowsRaw[row[idAttribute]]"
                 :value="row[idAttribute]?.toString()"
                 :disabled="isDisabled"
+                :tabindex="getTabIndex(hasSorting ? rowIndex + 1 : rowIndex, 0)"
+                :ref="(el) => registerCell(el, hasSorting ? rowIndex + 1 : rowIndex, 0)"
                 @click="selectRow(row[idAttribute])"
               />
             </div>
             <!-- Since key events are assigned to the whole <div> (lx-grid-row) already -->
             <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
             <div
-              v-for="col in gridColumnsDisplay"
+              v-for="(col, colIndex) in gridColumnsDisplay"
               :key="col.id"
               class="lx-cell"
               role="cell"
+              :tabindex="
+                !isCellDelegated(
+                  col,
+                  (isObject(row?.[col?.attributeName]) &&
+                    !isValueEmpty(row?.[col?.attributeName]) &&
+                    col.type === 'icon') ||
+                    (row[col.attributeName] &&
+                      row[col.attributeName].length >
+                        (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
+                      col.type === 'array')
+                )
+                  ? getTabIndex(
+                      hasSorting ? rowIndex + 1 : rowIndex,
+                      hasSelecting ? colIndex + 1 : colIndex
+                    )
+                  : -1
+              "
+              :ref="
+                !isCellDelegated(
+                  col,
+                  (isObject(row?.[col?.attributeName]) &&
+                    !isValueEmpty(row?.[col?.attributeName]) &&
+                    col.type === 'icon') ||
+                    (row[col.attributeName] &&
+                      row[col.attributeName].length >
+                        (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
+                      col.type === 'array')
+                )
+                  ? (el) =>
+                      registerCell(
+                        el,
+                        hasSorting ? rowIndex + 1 : rowIndex,
+                        hasSelecting ? colIndex + 1 : colIndex
+                      )
+                  : null
+              "
               :class="[
                 {
                   'lx-cell-number':
@@ -1831,11 +1908,29 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   'lx-cell-link-disabled':
                     (col.kind === 'clickable' && !checkEnableByAttributeName(row)) || isDisabled,
                 },
+                {
+                  'lx-cell-not-delegated': !isCellDelegated(
+                    col,
+                    (isObject(row?.[col?.attributeName]) &&
+                      !isValueEmpty(row?.[col?.attributeName]) &&
+                      col.type === 'icon') ||
+                      (row[col.attributeName] &&
+                        row[col.attributeName].length >
+                          (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
+                        col.type === 'array')
+                  ),
+                },
               ]"
+              @click="
+                setActiveFromClick(
+                  hasSorting ? rowIndex + 1 : rowIndex,
+                  hasSelecting ? colIndex + 1 : colIndex
+                )
+              "
             >
               <component
-                :is="isDateType(col.type) ? 'time' : 'span'"
                 v-if="isRenderableTextType(col.type)"
+                :is="isDateType(col.type) ? 'time' : 'span'"
                 :aria-label="getAriaLabel(col, row)"
                 :title="getTextTooltip(col, row)"
                 :class="{
@@ -1843,10 +1938,21 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     col.type === 'tooltip-text' || ['xs', 's', 'm'].includes(col.size),
                   'lx-cell-clickable-button':
                     props.clickableRole === 'button' && col.kind === 'clickable',
+                  'lx-cell-clickable': col.kind === 'clickable',
                 }"
+                :tabindex="-1"
                 :role="col.kind === 'clickable' ? props.clickableRole : null"
-                :tabindex="col.kind === 'clickable' ? 0 : null"
                 :datetime="isDateType(col.type) ? row[col.attributeName] : null"
+                :ref="
+                  isCellDelegated(col)
+                    ? (el) =>
+                        registerCell(
+                          el ?? null,
+                          hasSorting ? rowIndex + 1 : rowIndex,
+                          hasSelecting ? colIndex + 1 : colIndex
+                        )
+                    : null
+                "
                 @click="handleClick(col, row)"
                 @keyup.space="handleKey(col, row)"
                 @keyup.enter="handleKey(col, row)"
@@ -1859,12 +1965,32 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :value="row[col?.attributeName]"
                 :dictionary="col?.dictionary ? col?.dictionary : col?.options"
               />
+
               <LxRatings
                 v-if="col.type === 'rating'"
-                :disabled="props.busy"
-                mode="read"
                 v-model="row[col.attributeName]"
+                mode="read"
+                :disabled="props.busy"
+                :focusable="
+                  isCellDelegated(col)
+                    ? getFocusable(
+                        hasSorting ? rowIndex + 1 : rowIndex,
+                        hasSelecting ? colIndex + 1 : colIndex
+                      )
+                    : false
+                "
+                :ref="
+                  isCellDelegated(col)
+                    ? (el) =>
+                        registerCell(
+                          el ?? null,
+                          hasSorting ? rowIndex + 1 : rowIndex,
+                          hasSelecting ? colIndex + 1 : colIndex
+                        )
+                    : null
+                "
               />
+
               <template v-if="col.type === 'icon'">
                 <template
                   v-if="
@@ -1886,6 +2012,32 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       "
                     >
                       <LxInfoWrapper
+                        :focusable="
+                          isCellDelegated(
+                            col,
+                            isObject(row?.[col?.attributeName]) &&
+                              !isValueEmpty(row?.[col?.attributeName])
+                          )
+                            ? getFocusable(
+                                hasSorting ? rowIndex + 1 : rowIndex,
+                                hasSelecting ? colIndex + 1 : colIndex
+                              )
+                            : false
+                        "
+                        :ref="
+                          isCellDelegated(
+                            col,
+                            isObject(row?.[col?.attributeName]) &&
+                              !isValueEmpty(row?.[col?.attributeName])
+                          )
+                            ? (el) =>
+                                registerCell(
+                                  el ?? null,
+                                  hasSorting ? rowIndex + 1 : rowIndex,
+                                  hasSelecting ? colIndex + 1 : colIndex
+                                )
+                            : null
+                        "
                         :disabled="
                           !isValidString(row?.[col?.attributeName]?.title) &&
                           !isValidString(row?.[col?.attributeName]?.label)
@@ -1926,6 +2078,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     <span class="empty-icon-value" v-else>—</span>
                   </div>
                 </template>
+
                 <template
                   v-else-if="
                     !isObject(row?.[col?.attributeName]) && !isValueEmpty(row?.[col?.attributeName])
@@ -1953,6 +2106,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     :meaningful="row[col.attributeName]?.meaningful || true"
                   />
                 </div>
+
                 <div class="flag-column" v-else-if="typeof row[col.attributeName] === 'object'">
                   <LxFlagItemDisplay
                     :value="row[col.attributeName]"
@@ -1972,6 +2126,24 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :texts="row[col.attributeName]?.texts || displayTexts.personDisplay"
                 size="s"
                 :customRole="col.kind === 'clickable' ? clickableRole : null"
+                :focusable="
+                  isCellDelegated(col)
+                    ? getFocusable(
+                        hasSorting ? rowIndex + 1 : rowIndex,
+                        hasSelecting ? colIndex + 1 : colIndex
+                      )
+                    : false
+                "
+                :ref="
+                  isCellDelegated(col)
+                    ? (el) =>
+                        registerCell(
+                          el ?? null,
+                          hasSorting ? rowIndex + 1 : rowIndex,
+                          hasSelecting ? colIndex + 1 : colIndex
+                        )
+                    : null
+                "
                 @click="
                   defaultActionName && col.kind === 'clickable'
                     ? defaultActionClicked(row[idAttribute], row)
@@ -1983,12 +2155,41 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     : null
                 "
               />
+
               <template v-if="col.type === 'array'">
                 <LxInfoWrapper
                   v-if="
                     row[col.attributeName] &&
                     row[col.attributeName].length >
                       (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
+                  "
+                  :focusable="
+                    isCellDelegated(
+                      col,
+                      row[col.attributeName] &&
+                        row[col.attributeName].length >
+                          (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
+                    )
+                      ? getFocusable(
+                          hasSorting ? rowIndex + 1 : rowIndex,
+                          hasSelecting ? colIndex + 1 : colIndex
+                        )
+                      : false
+                  "
+                  :ref="
+                    isCellDelegated(
+                      col,
+                      row[col.attributeName] &&
+                        row[col.attributeName].length >
+                          (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
+                    )
+                      ? (el) =>
+                          registerCell(
+                            el ?? null,
+                            hasSorting ? rowIndex + 1 : rowIndex,
+                            hasSelecting ? colIndex + 1 : colIndex
+                          )
+                      : null
                   "
                 >
                   <div class="lx-indicator">
@@ -2007,6 +2208,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     </ul>
                   </template>
                 </LxInfoWrapper>
+
                 <template
                   v-else
                   v-for="i in formatValue(
@@ -2021,12 +2223,23 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             </div>
 
             <div
-              class="lx-cell-action"
-              role="cell"
-              :class="[{ 'show-cell-borders': scrollable === true || autoScrollable === true }]"
               v-if="hasActionButtons"
+              class="lx-cell-action"
+              :class="[{ 'show-cell-borders': scrollable === true || autoScrollable === true }]"
+              role="cell"
             >
-              <div class="lx-toolbar" v-if="actionDefinitions.length <= 2" role="toolbar">
+              <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+              <div
+                class="lx-toolbar"
+                v-if="actionDefinitions.length <= 2"
+                role="toolbar"
+                @click="
+                  setActiveFromClick(
+                    hasSorting ? rowIndex + 1 : rowIndex,
+                    hasSelecting ? colCount + 1 : colCount
+                  )
+                "
+              >
                 <LxButton
                   v-for="action in actionDefinitions"
                   :key="action.id"
@@ -2048,10 +2261,36 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :badge-type="action.badgeType"
                   :badgeIcon="action.badgeIcon"
                   :badgeTitle="action.badgeTitle"
+                  :tabindex="
+                    getTabIndex(
+                      hasSorting ? rowIndex + 1 : rowIndex,
+                      hasSelecting ? colCount + 1 : colCount
+                    )
+                  "
+                  :ref="
+                    (el) =>
+                      registerCell(
+                        el ?? null,
+                        hasSorting ? rowIndex + 1 : rowIndex,
+                        hasSelecting ? colCount + 1 : colCount
+                      )
+                  "
                   @click="actionClicked(action.id, row[idAttribute], actionAdditionalParameter)"
                 />
               </div>
-              <div class="lx-toolbar" v-if="actionDefinitions.length > 2" role="toolbar">
+
+              <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+              <div
+                v-if="actionDefinitions.length > 2"
+                class="lx-toolbar"
+                role="toolbar"
+                @click="
+                  setActiveFromClick(
+                    hasSorting ? rowIndex + 1 : rowIndex,
+                    hasSelecting ? colCount + 1 : colCount
+                  )
+                "
+              >
                 <LxButton
                   :id="`${id}-${row[idAttribute]}-action-${actionDefinitions?.[0]?.id}`"
                   :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
@@ -2073,6 +2312,20 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :badge-type="actionDefinitions?.[0]?.badgeType"
                   :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
                   :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
+                  :tabindex="
+                    getTabIndex(
+                      hasSorting ? rowIndex + 1 : rowIndex,
+                      hasSelecting ? colCount + 1 : colCount
+                    )
+                  "
+                  :ref="
+                    (el) =>
+                      registerCell(
+                        el ?? null,
+                        hasSorting ? rowIndex + 1 : rowIndex,
+                        hasSelecting ? colCount + 1 : colCount
+                      )
+                  "
                   @click="
                     actionClicked(
                       actionDefinitions?.[0]?.id,
@@ -2082,8 +2335,31 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   "
                 />
 
-                <LxDropDownMenu placement="left-start" :disabled="isDisabled">
-                  <div class="lx-toolbar">
+                <LxDropDownMenu
+                  ref="dropDownMenuRef"
+                  placement="left-start"
+                  :disabled="isDisabled"
+                  :tabindex="-1"
+                >
+                  <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+                  <div
+                    class="lx-toolbar grid-actions-menu"
+                    :tabindex="
+                      getTabIndex(
+                        hasSorting ? rowIndex + 1 : rowIndex,
+                        hasSelecting ? colCount + 2 : colCount + 1
+                      )
+                    "
+                    :ref="
+                      (el) =>
+                        registerCell(
+                          el ?? null,
+                          hasSorting ? rowIndex + 1 : rowIndex,
+                          hasSelecting ? colCount + 2 : colCount + 1
+                        )
+                    "
+                    @click.stop.prevent="handleMenuClick(rowIndex)"
+                  >
                     <LxButton
                       :id="`${id}-${row[idAttribute]}-action`"
                       icon="overflow-menu"
@@ -2091,7 +2367,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       :disabled="isDisabled"
                       :label="displayTexts.moreActions"
                       variant="icon-only"
-                      tabindex="-1"
+                      :tabindex="-1"
                     />
                   </div>
 

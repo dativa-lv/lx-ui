@@ -12,6 +12,7 @@ const props = defineProps({
   kind: { type: String, default: '5stars' },
   variant: { type: String, default: 'default' }, // 'default' or 'colorful'
   disabled: { type: Boolean, default: false },
+  focusable: { type: Boolean, default: true },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -25,6 +26,8 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
+const infoWrapperRef = ref(null);
 
 const model = computed({
   get() {
@@ -105,10 +108,23 @@ function reset() {
     hoveredValue.value = null;
   }
 }
+
+function focus() {
+  if (props.focusable) {
+    infoWrapperRef.value?.focus();
+  }
+}
+
+defineExpose({ focus });
 </script>
 <template>
-  <lx-info-wrapper :disabled="disabled && mode === 'edit'">
+  <LxInfoWrapper
+    ref="infoWrapperRef"
+    :disabled="disabled && mode === 'edit'"
+    :focusable="focusable"
+  >
     <div
+      v-if="!(mode === 'read' && !model)"
       class="lx-ratings"
       :class="[
         { 'lx-disabled': disabled },
@@ -120,10 +136,11 @@ function reset() {
         { 'lx-select-5': hoveredValue === 5 },
         { 'lx-colorful': variant === 'colorful' },
       ]"
-      v-if="!(mode === 'read' && !model)"
     >
       <div class="lx-star-1" :class="[{ 'lx-selected': valueDecomposition[0] !== 'star' }]">
-        <lx-icon
+        <!-- focus is handled by info wrapper -->
+        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+        <LxIcon
           :value="valueDecomposition[0]"
           :customClass="valueClass"
           @click="setValue(1)"
@@ -131,8 +148,10 @@ function reset() {
           @mouseleave="reset()"
         />
       </div>
+
       <div class="lx-star-2" :class="[{ 'lx-selected': valueDecomposition[1] !== 'star' }]">
-        <lx-icon
+        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+        <LxIcon
           :value="valueDecomposition[1]"
           :customClass="valueClass"
           @click="setValue(2)"
@@ -140,8 +159,10 @@ function reset() {
           @mouseleave="reset()"
         />
       </div>
+
       <div class="lx-star-3" :class="[{ 'lx-selected': valueDecomposition[2] !== 'star' }]">
-        <lx-icon
+        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+        <LxIcon
           :value="valueDecomposition[2]"
           :customClass="valueClass"
           @click="setValue(3)"
@@ -149,8 +170,10 @@ function reset() {
           @mouseleave="reset()"
         />
       </div>
+
       <div class="lx-star-4" :class="[{ 'lx-selected': valueDecomposition[3] !== 'star' }]">
-        <lx-icon
+        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+        <LxIcon
           :value="valueDecomposition[3]"
           :customClass="valueClass"
           @click="setValue(4)"
@@ -158,8 +181,10 @@ function reset() {
           @mouseleave="reset()"
         />
       </div>
+
       <div class="lx-star-5" :class="[{ 'lx-selected': valueDecomposition[4] !== 'star' }]">
-        <lx-icon
+        <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+        <LxIcon
           :value="valueDecomposition[4]"
           :customClass="valueClass"
           @click="setValue(5)"
@@ -168,18 +193,22 @@ function reset() {
         />
       </div>
     </div>
-    <div class="lx-ratings" v-else>
+
+    <div v-else class="lx-ratings">
       <p class="lx-data">—</p>
     </div>
+
     <template #panel>
       <div class="lx-row">
         <label>{{ displayTexts.label }}</label>
+
         <p v-if="model" class="lx-data">
           <strong>{{ model.toString() }}</strong
           ><span class="lx-primary">&nbsp;/ 5:&nbsp;</span> {{ valueDescription }}
         </p>
+
         <p v-else class="lx-data">—</p>
       </div>
     </template>
-  </lx-info-wrapper>
+  </LxInfoWrapper>
 </template>

@@ -26,6 +26,18 @@ const model = computed({
 });
 
 const idValue = ref('');
+const inputRef = ref(null);
+
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
+const click = (e) => {
+  emits('click', e);
+};
+
+function focus() {
+  inputRef.value?.focus();
+}
 
 onMounted(() => {
   if (props.id) {
@@ -35,17 +47,13 @@ onMounted(() => {
   }
 });
 
-const click = (e) => {
-  emits('click', e);
-};
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
+defineExpose({ focus });
 </script>
 
 <template>
   <div class="lx-checkbox-wrapper">
     <input
+      ref="inputRef"
       type="checkbox"
       class="lx-checkbox"
       :id="idValue"

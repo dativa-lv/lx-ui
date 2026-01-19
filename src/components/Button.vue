@@ -160,6 +160,12 @@ const ariaLabelWithBadge = computed(() => {
   return `${props.label} (${badgeTypeText})`;
 });
 
+const buttonRef = ref(null);
+
+function focus() {
+  buttonRef.value?.focus();
+}
+
 watch([() => props.label, () => props.variant], checkOverflow, { flush: 'post' });
 
 onMounted(() => {
@@ -170,11 +176,14 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', checkOverflow);
 });
+
+defineExpose({ focus });
 </script>
 <template>
   <button
     v-if="!href"
     :id="id"
+    ref="buttonRef"
     type="button"
     class="lx-button"
     :class="[

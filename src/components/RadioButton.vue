@@ -24,14 +24,19 @@ const model = computed({
   },
 });
 
+const idValue = ref('');
+const inputRef = ref(null);
+
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 const click = (e) => {
   emits('click', e);
 };
 
-const idValue = ref('');
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
+function focus() {
+  inputRef.value?.focus();
+}
 
 onMounted(() => {
   if (props.id) {
@@ -40,11 +45,14 @@ onMounted(() => {
     idValue.value = generateUUID();
   }
 });
+
+defineExpose({ focus });
 </script>
 
 <template>
   <div class="lx-radio-button-wrapper">
     <input
+      ref="inputRef"
       type="radio"
       class="lx-radio-button"
       :id="idValue"

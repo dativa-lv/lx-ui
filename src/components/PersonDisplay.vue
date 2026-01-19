@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { safeString } from '@/utils/stringUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxAvatar from '@/components/Avatar.vue';
@@ -92,6 +92,7 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  focusable: { type: Boolean, default: true },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -109,6 +110,8 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
+const infoWrapperRef = ref(null);
 
 function formatName(val) {
   if (Array.isArray(val) && val.length > 0) {
@@ -253,6 +256,12 @@ const ariaLabel = computed(() => {
   }
   return `${numDisplay} ${label}`;
 });
+
+function focus() {
+  infoWrapperRef.value?.focus();
+}
+
+defineExpose({ focus });
 </script>
 <template>
   <div class="lx-person-display-wrapper">
@@ -260,6 +269,7 @@ const ariaLabel = computed(() => {
       :label="ariaLabel"
       :customRole
       :class="showMultiple ? 'lx-aligned-row lx-aligned-row-4 lx-aligned-row-inverse' : ''"
+      :focusable="focusable"
     >
       <div
         v-if="!showMultiple"
