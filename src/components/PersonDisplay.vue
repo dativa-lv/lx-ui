@@ -215,6 +215,8 @@ const tooltipItems = computed(() => {
   return filteredValues.value;
 });
 
+const isEmpty = computed(() => !name.value && !description.value);
+
 function getAvatarKey(value) {
   if (typeof value === 'string') {
     if (value) return safeString(value);
@@ -222,6 +224,9 @@ function getAvatarKey(value) {
     if (props.name) {
       return safeString(props.name);
     }
+  }
+  if (Array.isArray(value)) {
+    return getAvatarKey(value[0]);
   }
   if (typeof value === 'object') {
     if (value[props.idAttribute]) {
@@ -265,7 +270,11 @@ defineExpose({ focus });
 </script>
 <template>
   <div class="lx-person-display-wrapper">
+    <div v-if="isEmpty" class="lx-person-display">
+      <span class="lx-empty-person-value">—</span>
+    </div>
     <LxInfoWrapper
+      v-else
       :label="ariaLabel"
       :customRole
       :class="showMultiple ? 'lx-aligned-row lx-aligned-row-4 lx-aligned-row-inverse' : ''"
@@ -316,9 +325,6 @@ defineExpose({ focus });
             {{ name }}
           </p>
           <p class="lx-description" v-if="showDescription">{{ description }}</p>
-        </template>
-        <template v-if="!name && !description">
-          <span class="lx-empty-person-value">—</span>
         </template>
       </div>
 
