@@ -54,6 +54,7 @@ const { y: scrollYPos } = useScroll(modalContent);
 const { activate, deactivate } = useFocusTrap(modalRef, {
   allowOutsideClick: true,
   initialFocus: false,
+  escapeDeactivates: false, // handled manually
 });
 
 function open() {
@@ -70,15 +71,12 @@ function open() {
 }
 
 function close(source = null) {
-  if (source === 'esc') {
-    if (props.escEnabled) {
-      isOpen.value = false;
-      emits('closed');
-    }
-  } else {
-    isOpen.value = false;
-    emits('closed');
+  if (source === 'esc' && !props.escEnabled) {
+    return;
   }
+
+  isOpen.value = false;
+  emits('closed');
 
   deactivate();
 }
