@@ -142,16 +142,18 @@ const cameraModal = ref();
 
 const maxLength = computed(() => {
   if (props.kind !== 'multiple') return 1;
-  return Number(props.maxlength);
+  return props.maxlength;
 });
 
 const isAtMaxLength = computed(() => {
+  if (maxLength.value == null) return false;
   const current = advancedFilesData.value?.length || 0;
   return props.kind === 'multiple' && current >= maxLength.value;
 });
 
 const remainingSlots = computed(() => {
   if (props.kind !== 'multiple') return 0;
+  if (maxLength.value == null) return Infinity;
   return Math.max(0, maxLength.value - (advancedFilesData.value?.length || 0));
 });
 
