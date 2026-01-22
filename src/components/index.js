@@ -10,6 +10,7 @@ export { default as LxForm } from '@/components/forms/Form.vue';
 
 /* components */
 export { default as LxAppendableList } from '@/components/forms/AppendableList.vue';
+export { default as LxAppendableListSimple } from '@/components/forms/AppendableListSimple.vue';
 export { default as LxAutoComplete } from '@/components/AutoComplete.vue';
 export { default as LxButton } from '@/components/Button.vue';
 export { default as LxCamera } from '@/components/Camera.vue';

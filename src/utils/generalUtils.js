@@ -7,7 +7,7 @@ const focusableSelectors = [
   '[tabindex]:not([tabindex="-1"])',
 ];
 
-function findFocusableElements(element) {
+export function findFocusableElements(element) {
   if (!element) return [];
 
   const candidates = [
@@ -22,7 +22,7 @@ function findFocusableElements(element) {
   return candidates.filter((el) => !el.disabled && el.offsetParent !== null);
 }
 
-function findNextFocusableElement(startElement, forward) {
+export function findNextFocusableElement(startElement, forward) {
   let currentElement = forward
     ? startElement.nextElementSibling
     : startElement.previousElementSibling;
@@ -40,7 +40,7 @@ function findNextFocusableElement(startElement, forward) {
   return null;
 }
 
-function findFocusableInSiblingsAndParents(startElement, forward) {
+export function findFocusableInSiblingsAndParents(startElement, forward) {
   let currentElement = startElement.parentElement;
 
   while (currentElement && currentElement !== document.body) {
