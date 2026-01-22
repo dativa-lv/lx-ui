@@ -928,9 +928,12 @@
 .lx-info-wrapper-content:not(.lx-disabled) {
   cursor: help;
 }
+.lx-info-wrapper-content.lx-tooltip-kind:not(.lx-disabled) {
+  cursor: default;
+}
 
-.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):hover,
-.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):focus {
+.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
+.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
   background-color: var(--color-grid-hover-background);
 }
 
@@ -942,7 +945,7 @@
   width: 100%;
 }
 
-.lx .popper-wrapper > .lx-info-wrapper-content:focus {
+.lx .popper-wrapper > .lx-info-wrapper-content.lx-rich-kind:focus {
   outline: 2px solid var(--color-focus-background);     
 }
 
@@ -958,8 +961,6 @@
 .lx-info-wrapper .lx-form-grid>.lx-main .lx-row>div.lx-vertical>p.lx-data,
 .lx .lx-form-grid>.lx-main .lx-row>div.lx-vertical .lx-field-wrapper .popper p.lx-data,
 .lx .popper .lx-info-wrapper-panel p.lx-data {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
   font-weight: var(--data-weight);
   color: var(--color-tooltip-foreground);
   min-height: auto;
@@ -973,10 +974,6 @@
   line-height: 1.1em;
 }
 
-.lx-info-wrapper-panel .lx-row {
-  padding: 0 2px;
-}
-
 .lx-info-wrapper-panel .lx-row-header {
   display: flex;
   justify-content: space-between;
@@ -985,9 +982,6 @@
 
 .lx .popper .lx-info-wrapper-panel label:not(.lx-state>.lx-primary) {
   font-size: var(--label-font-size);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .lx .lx-form-grid .lx-row .lx-info-wrapper-panel>.lx-row>.lx-vertical>p.lx-data {
@@ -1001,6 +995,20 @@
 
 .lx-form-grid>.lx-main .lx-info-wrapper .lx-row>div.lx-vertical {
   min-height: auto;
+}
+
+.lx .lx-layout .popper .lx-info-wrapper.lx-tooltip-kind {
+  padding: 0.25rem 0.5rem;
+  min-width: 2.5rem;
+  max-width: 16rem;
+}
+
+.lx .lx-layout .popper .lx-info-wrapper.lx-tooltip-kind .lx-info-wrapper-panel::before {
+  display: none;
+}
+
+.lx .lx-layout .popper .lx-info-wrapper.lx-tooltip-kind > div {
+  align-items: center;
 }
 
 .lx .lx-layout .popper .lx-dropdown-panel {

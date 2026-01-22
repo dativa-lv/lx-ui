@@ -15,9 +15,11 @@ const props = defineProps({
   content: { default: null },
   show: { type: Boolean, default: null },
   locked: { type: Boolean, default: false },
+  clientPosition: { type: Object, default: null },
+  fullScreenPanel: { type: Boolean, default: false },
 });
 
-const emits = defineEmits(['update:placement']);
+const emits = defineEmits(['update:placement', 'curtainTouched']);
 
 const reference = ref(null);
 const floating = ref(null);
@@ -73,26 +75,30 @@ const fallbackPlacements = computed(() => {
   }
 });
 
-const middleware = computed(() => [
-  flip({
-    mainAxis: !props.locked,
-    crossAxis: !props.locked,
-    // @ts-ignore
-    fallbackPlacements: fallbackPlacements.value,
-  }),
-  shift({ padding: 16 }),
-  arrow({
-    element: floatingArrow,
-    padding: Number(props.arrowPadding),
-  }),
-  offset({
-    mainAxis: Number(props.offsetDistance),
-    crossAxis: Number(props.offsetSkid),
-  }),
-]);
+const middleware = computed(() => {
+  const middlewares = [
+    flip({
+      mainAxis: !props.locked,
+      crossAxis: !props.locked,
+      // @ts-ignore
+      fallbackPlacements: fallbackPlacements.value,
+    }),
+    shift({ padding: 16 }),
+    arrow({
+      element: floatingArrow,
+      padding: Number(props.arrowPadding),
+    }),
+    offset({
+      mainAxis: Number(props.offsetDistance),
+      crossAxis: Number(props.offsetSkid),
+    }),
+  ];
+
+  return middlewares;
+});
 
 const {
-  floatingStyles,
+  floatingStyles: defaultFloatingStyles,
   middlewareData,
   placement: plc,
   update,
@@ -102,6 +108,34 @@ const {
   placement: basePlacement,
   middleware,
   whileElementsMounted: autoUpdate,
+});
+
+// Manually calculate floating styles if clientPosition is provided
+const floatingStyles = computed(() => {
+  if (props.clientPosition) {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const popperWidth = floating.value?.offsetWidth || 0;
+    const popperHeight = floating.value?.offsetHeight || 0;
+
+    const adjustedX = Math.min(Math.max(props.clientPosition.x, 0), viewportWidth - popperWidth);
+    const adjustedY = Math.min(Math.max(props.clientPosition.y, 0), viewportHeight - popperHeight);
+
+    return {
+      position: 'fixed',
+      left: `${adjustedX}px`,
+      top: `${adjustedY}px`,
+    };
+  }
+  if (props.fullScreenPanel) {
+    return {
+      position: 'fixed',
+      left: '0px',
+      bottom: '0px',
+    };
+  }
+  return defaultFloatingStyles.value;
 });
 
 watch(
@@ -128,6 +162,10 @@ const needsHighZ = computed(
 onMounted(() => {
   emits('update:placement', basePlacement.value);
 });
+
+function emitCurtainTouched() {
+  emits('curtainTouched');
+}
 </script>
 
 <template>
@@ -140,7 +178,13 @@ onMounted(() => {
         ref="floating"
         :style="floatingStyles"
         class="popper"
-        :class="[panelClass, { 'higher-z-index': needsHighZ }]"
+        :class="[
+          panelClass,
+          { 'higher-z-index': needsHighZ },
+          {
+            'fullscreen-popper': props.fullScreenPanel,
+          },
+        ]"
       >
         <slot v-if="$slots.content" name="content" />
         <p v-else-if="content" class="lx-simple-popper-content">{{ content }}</p>
@@ -170,6 +214,11 @@ onMounted(() => {
           }"
         />
       </div>
+      <div
+        v-if="props.fullScreenPanel && !needsHighZ"
+        class="lx-curtain popper-curtain"
+        @touchstart.prevent="emitCurtainTouched"
+      ></div>
     </Teleport>
   </div>
 </template>

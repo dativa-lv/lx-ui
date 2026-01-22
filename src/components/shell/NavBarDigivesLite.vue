@@ -7,8 +7,6 @@ import LxEmptyState from '@/components/EmptyState.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxBadge from '@/components/Badge.vue';
-import LxInfoWrapper from '@/components/InfoWrapper.vue';
-import LxRow from '@/components/forms/Row.vue';
 import {
   getDisplayTexts,
   sessionEndsInText,
@@ -682,58 +680,37 @@ onClickOutside(navPanel, toggleNavBar);
     <ul class="lx-nav-group">
       <div class="lx-user-menu" :class="[{ opened: dropDownMenu?.menuOpen }]" v-if="userInfo">
         <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
-          <LxInfoWrapper
-            ref="userInfoWrapper"
-            :disabled="dropDownMenu?.menuOpen"
-            :focusable="false"
+          <div
+            class="lx-user-button"
+            tabindex="-1"
+            @keydown.space.prevent="triggerUserMenu"
+            @keydown.enter.prevent="triggerUserMenu"
           >
-            <div
-              class="lx-user-button"
-              tabindex="-1"
-              @keydown.space.prevent="triggerUserMenu"
-              @keydown.enter.prevent="triggerUserMenu"
-            >
-              <div class="lx-avatar" v-if="!hasAvatar">
-                <LxIcon value="doctor" customClass="lx-icon" />
-              </div>
-
-              <div class="lx-user-info">
-                <div class="lx-primary">
-                  <span>{{ fullName }}</span>
-                </div>
-                <div class="lx-secondary">
-                  <span>{{ userInfo?.description }}</span>
-                </div>
-                <div class="lx-secondary">
-                  <span>{{ userInfo.institution }}</span>
-                </div>
-              </div>
-              <div class="lx-chevron">
-                <LxIcon :value="dropDownMenu?.menuOpen ? 'chevron-up' : 'chevron-down'" />
-              </div>
-              <LxBadge
-                v-if="hasSessionTimeoutBadge"
-                :value="timeoutIn"
-                :tooltip="sessionTimeoutLabel"
-                class="lx-timeout-badge"
-              />
+            <div class="lx-avatar" v-if="!hasAvatar">
+              <LxIcon value="doctor" customClass="lx-icon" />
             </div>
-            <template #panel v-if="!dropDownMenu?.menuOpen">
-              <LxRow :label="displayTexts.userMenuTitle">
+
+            <div class="lx-user-info">
+              <div class="lx-primary">
                 <span>{{ fullName }}</span>
-                <span v-if="userInfo?.description">{{ userInfo?.description }}</span>
-
-                <span v-if="userInfo?.role">{{ userInfo?.role }}</span>
-                <span v-if="userInfo?.institution">
-                  {{ userInfo?.institution }}
-                </span>
-              </LxRow>
-              <LxRow :label="displayTexts.idleBadge.timeCountdown" v-if="hasSessionTimeoutBadge">
-                <span>{{ sessionTimeoutLabel }}</span>
-              </LxRow>
-            </template>
-          </LxInfoWrapper>
-
+              </div>
+              <div class="lx-secondary">
+                <span>{{ userInfo?.description }}</span>
+              </div>
+              <div class="lx-secondary">
+                <span>{{ userInfo.institution }}</span>
+              </div>
+            </div>
+            <div class="lx-chevron">
+              <LxIcon :value="dropDownMenu?.menuOpen ? 'chevron-up' : 'chevron-down'" />
+            </div>
+            <LxBadge
+              v-if="hasSessionTimeoutBadge"
+              :value="timeoutIn"
+              :tooltip="sessionTimeoutLabel"
+              class="lx-timeout-badge"
+            />
+          </div>
           <template #panel>
             <div class="user-menu-panel">
               <div

@@ -809,3 +809,34 @@
 .slide-leave-from {
   transform: translateY(0);
 } 
+
+/* LxInfoWrapper kind rich */
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%); 
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0); 
+    opacity: 1;
+  }
+}
+@keyframes slideDown {
+  from {
+    transform: translateY(var(--start-position, 0px));
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.lx:not(.lx-no-animations) .slide-up-animation {
+  animation: slideUp 0.3s ease-out;
+}
+.lx:not(.lx-no-animations) .slide-down-animation {
+  animation: slideDown 0.33s ease-in;
+}
+

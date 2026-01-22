@@ -771,14 +771,18 @@
 
 .lx .lx-layout .popper .lx-info-wrapper {
   background-color: var(--color-tooltip-background);
-  padding: 0.5rem 1rem;
-  color: var(--color-tooltip-foreground);
+  padding: 0.5rem;
+  color: var(--color-tooltip-foreground-data)
 }
 
 .lx .lx-layout .lx-info-wrapper-panel {
   max-width: var(--aside-size);
   display: grid;
-  gap: 1rem;
+}
+
+.lx-info-wrapper.lx-tooltip-kind>.lx-info-wrapper-panel {
+  font-size: var(--label-font-size);
+  color: var(--color-tooltip-foreground-label)
 }
 
 .lx-info-wrapper-panel::before {
@@ -815,19 +819,18 @@
   transform: translateX(100%);
 }
 
-.lx-info-wrapper .lx-info-wrapper-panel .lx-secondary,
-.lx .popper .lx-info-wrapper-panel label:not(.lx-state > .lx-primary) {
-  opacity: 0.75;
-}
-
 .lx .lx-form .lx-row .popper .lx-info-wrapper-panel .lx-data,
 .lx .popper .lx-info-wrapper-panel .lx-data,
-.lx .popper .lx-info-wrapper-panel label:not(.lx-state > .lx-primary),
-.lx .popper .lx-info-wrapper-panel .lx-secondary,
 .lx .popper .lx-info-wrapper-panel p.lx-data,
 .lx .popper p.lx-simple-popper-content,
 .lx .lx-form-grid>.lx-main .lx-row>div.lx-vertical .lx-field-wrapper .popper p.lx-data {
-  color: var(--color-tooltip-foreground);
+  color: var(--color-tooltip-foreground-data);
+}
+
+.lx-info-wrapper .lx-info-wrapper-panel .lx-secondary,
+.lx .popper .lx-info-wrapper-panel .lx-secondary,
+.lx .popper .lx-info-wrapper-panel label:not(.lx-state > .lx-primary) {
+  color: var(--color-tooltip-foreground-label)
 }
 
 .lx .lx-info-wrapper .popper:hover {
@@ -862,8 +865,128 @@
 }
 
 .lx .lx-layout .popper.higher-z-index,
-.lx .lx-layout .popper.higher-z-index .popper-floating-arrow {
+.lx .lx-layout .popper.higher-z-index .popper-floating-arrow,
+.lx .lx-layout .popper.higher-z-index.fullscreen-popper {
   z-index: 9000;
+}
+
+.lx .lx-layout .popper .lx-info-wrapper.lx-rich-kind.lx-responsive-view .lx-info-wrapper-panel::before {
+  display: none;
+}
+
+.lx .lx-layout .lx-info-wrapper .lx-info-wrapper-panel {
+  min-width: 2.5rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.lx .lx-layout .lx-info-wrapper.lx-responsive-view .lx-info-wrapper-panel {
+   max-width: unset;
+}
+
+.lx-info-wrapper-responsive-toolbar {
+  background-color: var(--color-tooltip-background);
+  height: var(--row-size);
+  display: grid;
+  grid-template-columns: 1fr 3rem;
+}
+
+.lx-info-wrapper-responsive-toolbar .handle-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.lx-info-wrapper-responsive-toolbar .handle-wrapper svg{
+  margin-left: 3rem;
+}
+
+.lx-info-wrapper-responsive-toolbar svg {
+  fill: var(--color-nav-foreground);
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.lx-info-wrapper-responsive-toolbar .lx-button.lx-button-ghost svg {
+  fill: var(--color-nav-foreground);
+}
+
+.lx.lx-theme-contrast .lx-info-wrapper-responsive-toolbar .lx-button.lx-button-ghost svg,
+.lx.lx-theme-contrast .lx-info-wrapper-responsive-toolbar .handle-wrapper svg{
+   fill: var(--color-nav-background);
+}
+
+.lx-info-wrapper .lx-tooltip-text {
+  color: var(--color-tooltip-foreground-label);
+  font-size: var(--label-font-size);
+}
+
+.lx .lx-layout .lx-info-wrapper.lx-responsive-view .lx-info-wrapper-panel-area {
+  overflow: auto;
+  max-height: calc(75dvh - var(--row-size));
+}
+
+.lx-info-wrapper-responsive-toolbar .lx-button.lx-button-ghost:hover {
+  background-color: var(--color-info-wrapper-close-hover-background);
+  border-color: var(--color-info-wrapper-close-hover-background);
+}
+
+.lx .lx-layout .lx-info-wrapper.lx-responsive-view {
+  width: 100vw;
+  padding: 0;
+}
+
+.lx .lx-layout .popper.fullscreen-popper {
+  z-index: 8101;
+}
+
+.lx-curtain.popper-curtain {
+  z-index: 8100;
+}
+
+
+.lx-info-wrapper .lx-info-wrapper-panel .scrollable-container  {
+  display: grid;
+  gap: 0.5rem;
+}
+.lx-info-wrapper.lx-responsive-view .scrollable-container {
+  padding: 0.5rem 1rem 1rem 1rem;
+}
+
+.lx-info-wrapper .lx-info-wrapper-panel .lx-info-wrapper-panel-area {
+	display: grid;
+}
+
+.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .popper.fullscreen-popper .lx-info-wrapper-panel-area::after {
+  background: linear-gradient(0deg, transparent 0%, var(--color-tooltip-background) 100%);
+  content: "";
+  height: 3rem;
+  position: absolute;
+  top: var(--row-size);
+  left: 0;
+  right: 0;
+  opacity: var(--info-wrapper-top-shadow-opacity);
+  pointer-events: none;
+}
+
+.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .popper.fullscreen-popper .lx-info-wrapper-panel-area::before {
+  background: linear-gradient(180deg, transparent 0%, var(--color-tooltip-background) 100%);
+  content: "";
+  height: 3rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: var(--info-wrapper-bottom-shadow-opacity);
+  pointer-events: none;
+}
+
+.lx .lx-layout .popper.fullscreen-popper .scrollable-container {
+  overflow: auto;
+}
+
+.lx.no-scroll {
+  overflow: hidden;
 }
 
 .lx-toolbar.lx-sticky {

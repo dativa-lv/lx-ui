@@ -301,7 +301,7 @@ provide('rowId', idComputed);
       class="lx-row-header"
       v-if="(rowOrientation === 'horizontal' && $slots.info) || (!hideLabel && $slots.info)"
     >
-      <LxInfoWrapper class="lx-info-slot-wrapper" v-if="!hideLabel">
+      <LxInfoWrapper class="lx-info-slot-wrapper" placement="right" v-if="!hideLabel">
         <label :title="!$slots.info ? tooltip : ''" :for="inputId" :id="id">
           {{ label ? label : '&nbsp;' }}
           <span class="lx-required" v-if="rowRequiredMode === 'required' && required && !hideLabel">

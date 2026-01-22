@@ -30,6 +30,8 @@
   --color-nav-hover-foreground: #fff;
   --color-tooltip-background: #000;
   --color-tooltip-foreground: #fff;
+  --color-tooltip-foreground-label: #cccccc;
+  --color-tooltip-foreground-data: #fff;
   --color-latvijalv-alert-background: #2d313b;
   --color-latvijalv-alert-foreground: #fff;
   --color-latvijalv-alert-hover-foreground: var(--color-latvijalv-alert-foreground);
@@ -305,6 +307,7 @@
   --color-button-nav-public: var(--color-nav-foreground);
   --color-button-nav-public-hover: var(--color-nav-foreground);
   --color-button-nav-public-hover-background: var(--color-nav-hover-background);
+  --color-info-wrapper-close-hover-background: var(--color-nav-hover-background);
   --color-button-nav-public-hover-border: transparent;
   --color-button-nav-public-background: transparent;
   --color-button-nav-public-icon: var(--color-button-nav-public);

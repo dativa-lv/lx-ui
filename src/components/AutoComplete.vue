@@ -3,6 +3,7 @@ import { ref, computed, onMounted, nextTick, watch, inject } from 'vue';
 import { onClickOutside, useDebounceFn } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
+import { useWindowSize } from '@vueuse/core';
 import {
   focusNextFocusableElement,
   getDisplayTexts,
@@ -76,6 +77,10 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emit = defineEmits(['update:modelValue', 'openDetails']);
+
+const windowSize = useWindowSize();
+
+const responsiveView = computed(() => windowSize.width.value <= 500);
 
 const menuOpen = ref(false);
 const refContainer = ref();
@@ -1263,7 +1268,7 @@ defineExpose({ autoCompleteState });
                       <div class="lx-tag-button">
                         <LxInfoWrapper
                           ref="infoWrapperRef"
-                          :disabled="disabled || (selectingKind === 'multiple' && menuOpen)"
+                          :disabled="disabled || (selectingKind === 'multiple' && menuOpen) || responsiveView"
                           :focusable="false"
                         >
                           <LxButton

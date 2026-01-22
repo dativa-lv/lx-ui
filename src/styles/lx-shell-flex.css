@@ -866,8 +866,8 @@ code {
   position: inherit;
 }
 
-.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):hover,
-.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):focus {
+.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
+.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
   background-color: var(--color-grid-hover-background);
 }
 
@@ -899,10 +899,7 @@ code {
   color: var(--color-tooltip-foreground) !important;
 }
 
-.lx-info-wrapper .lx-tooltip label,
-.lx-info-wrapper .lx-tooltip .lx-secondary {
-  opacity: 0.75;
-}
+
 
 .lx .lx-info-wrapper .lx-tooltip .lx-row {
   width: var(--aside-size);
@@ -1182,10 +1179,7 @@ code {
   width: var(--aside-size);
 }
 
-.lx .lx-layout .lx-info-wrapper-panel .lx-secondary,
-.lx .lx-layout .popper .lx-info-wrapper-panel label {
-  opacity: 0.75;
-}
+
 
 .lx .lx-form .lx-row .popper .lx-info-wrapper-panel .lx-data,
 .lx .popper .lx-info-wrapper-panel .lx-data,

@@ -275,6 +275,7 @@ defineExpose({ focus });
     </div>
     <LxInfoWrapper
       v-else
+      ref="infoWrapperRef"
       :label="ariaLabel"
       :customRole
       :class="showMultiple ? 'lx-aligned-row lx-aligned-row-4 lx-aligned-row-inverse' : ''"

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, provide, onMounted, onUnmounted } from 'vue';
+import { computed, ref, watch, provide } from 'vue';
 
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';

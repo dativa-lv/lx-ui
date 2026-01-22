@@ -6,7 +6,6 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxIcon from '@/components/Icon.vue';
-import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxBadge from '@/components/Badge.vue';
 
 const props = defineProps({
@@ -256,127 +255,111 @@ const additionalInfoTitle = computed(() => {
   </div>
 
   <div v-if="props.mode === 'compact'" class="compact-wrapper">
-    <LxInfoWrapper :disabled="!props.imagePreview" :focusable="false">
-      <div
-        class="lx-file-wrapper"
-        :class="{
-          'lx-invalid': props.customItem.state === 'invalid',
-          'lx-disabled': props.disabled || props.loading || props.busy,
-        }"
-        ref="wrapperContainer"
-      >
-        <div class="lx-file-main-part">
-          <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview"></div>
-          <div
-            v-else
-            :tabindex="
-              props.hasDownloadButton && !props.disabled && !props.loading && !props.busy ? 0 : -1
-            "
-            class="lx-list-item"
-            :class="{
-              'lx-list-item-interactive':
-                props.hasDownloadButton && !props.disabled && !props.loading && !props.busy,
-            }"
-            :title="props.hasDownloadButton ? displayTexts.download : ''"
-            @keyup.space="downloadFile(props.customItem.id)"
-            @keyup.enter="downloadFile(props.customItem.id)"
-            @click="downloadFile(props.customItem.id)"
-          >
-            <div class="lx-file-name-main-data-wrapper">
-              <div class="lx-file-name-wrapper">
-                <p class="lx-file-name">{{ props.customItem.name }}</p>
+    <div
+      class="lx-file-wrapper"
+      :class="{
+        'lx-invalid': props.customItem.state === 'invalid',
+        'lx-disabled': props.disabled || props.loading || props.busy,
+      }"
+      ref="wrapperContainer"
+    >
+      <div class="lx-file-main-part">
+        <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview"></div>
+        <div
+          v-else
+          :tabindex="
+            props.hasDownloadButton && !props.disabled && !props.loading && !props.busy ? 0 : -1
+          "
+          class="lx-list-item"
+          :class="{
+            'lx-list-item-interactive':
+              props.hasDownloadButton && !props.disabled && !props.loading && !props.busy,
+          }"
+          :title="props.hasDownloadButton ? displayTexts.download : ''"
+          @keyup.space="downloadFile(props.customItem.id)"
+          @keyup.enter="downloadFile(props.customItem.id)"
+          @click="downloadFile(props.customItem.id)"
+        >
+          <div class="lx-file-name-main-data-wrapper">
+            <div class="lx-file-name-wrapper">
+              <p class="lx-file-name">{{ props.customItem.name }}</p>
 
-                <template
-                  v-if="props.additionalIconAndType && props.additionalIconAndType.length > 0"
-                >
-                  <LxBadge
-                    v-for="(item, index) in additionalIconAndType"
-                    :key="item.id"
-                    :icon="item.icon"
-                    :tooltip="item.title"
-                    class="lx-compact-badge"
-                    :class="[
-                      { 'lx-second-badge': index === 1 },
-                      { 'lx-third-badge': index === 2 },
-                      { 'lx-pass-protected-badge': item.type === 'pass-protected' },
-                      { 'lx-esign-badge': item.type === 'esign' },
-                      { 'lx-c2pa-sign-badge': item.type === 'c2pa-sign' },
-                      { 'lx-created-using-ai-badge': item.type === 'created-using-ai' },
-                    ]"
-                  />
-                </template>
-              </div>
-
-              <p class="lx-file-main-additional-info lx-secondary">
-                {{
-                  [
-                    fileUploaderUtils.convertBytesToFormattedString(props.customItem.meta?.size),
-                    fileUploaderUtils.getFileExtension(props.customItem.meta.name),
-                    fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts),
-                  ]
-                    .filter(Boolean)
-                    .join('; ')
-                }}
-              </p>
+              <template
+                v-if="props.additionalIconAndType && props.additionalIconAndType.length > 0"
+              >
+                <LxBadge
+                  v-for="(item, index) in additionalIconAndType"
+                  :key="item.id"
+                  :icon="item.icon"
+                  :tooltip="item.title"
+                  class="lx-compact-badge"
+                  :class="[
+                    { 'lx-second-badge': index === 1 },
+                    { 'lx-third-badge': index === 2 },
+                    { 'lx-pass-protected-badge': item.type === 'pass-protected' },
+                    { 'lx-esign-badge': item.type === 'esign' },
+                    { 'lx-c2pa-sign-badge': item.type === 'c2pa-sign' },
+                    { 'lx-created-using-ai-badge': item.type === 'created-using-ai' },
+                  ]"
+                />
+              </template>
             </div>
 
-            <div class="lx-download-icon" v-if="props.hasDownloadButton">
-              <LxIcon v-if="props.hasDownloadButton" value="download" />
-            </div>
+            <p class="lx-file-main-additional-info lx-secondary">
+              {{
+                [
+                  fileUploaderUtils.convertBytesToFormattedString(props.customItem.meta?.size),
+                  fileUploaderUtils.getFileExtension(props.customItem.meta.name),
+                  fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts),
+                ]
+                  .filter(Boolean)
+                  .join('; ')
+              }}
+            </p>
           </div>
 
-          <div class="lx-file-indicators" v-if="props.customItem.state">
-            <LxLoader
-              v-if="props.customItem.state === 'loading' || props.customItem.state === 'busy'"
-              :loading="true"
-              size="s"
-            ></LxLoader>
-            <LxIcon
-              v-if="props.customItem.state === 'invalid'"
-              customClass="lx-invalidation-icon"
-              value="invalid"
-            />
-            <div v-if="props.customItem.state === 'draft'" class="lx-draft-indicator"></div>
-          </div>
-          <div class="lx-upload-buttons">
-            <LxButton
-              v-if="props.showMeta && !props.readOnly && props.mode === 'compact'"
-              kind="ghost"
-              variant="icon-only"
-              :disabled="props.disabled || props.busy"
-              :loading="props.loading"
-              icon="info"
-              :title="displayTexts.infoButton"
-              @click="openModal(props.customItem.id)"
-            />
-            <LxButton
-              v-if="!props.readOnly"
-              kind="ghost"
-              variant="icon-only"
-              icon="remove"
-              :title="displayTexts.clear"
-              :destructive="true"
-              :disabled="props.disabled || props.busy"
-              :loading="props.loading"
-              @click="removeFile(props.customItem.id)"
-            />
+          <div class="lx-download-icon" v-if="props.hasDownloadButton">
+            <LxIcon v-if="props.hasDownloadButton" value="download" />
           </div>
         </div>
-      </div>
-      <template #panel>
-        <div class="lx-file-preview">
-          <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview" />
-          <img
-            v-else
-            :src="props.imagePreview"
-            :alt="
-              customItem?.name
-                ? `${customItem?.name} ${displayTexts.metaPreviewDescription}`
-                : displayTexts.metaPreviewLabel
-            "
+
+        <div class="lx-file-indicators" v-if="props.customItem.state">
+          <LxLoader
+            v-if="props.customItem.state === 'loading' || props.customItem.state === 'busy'"
+            :loading="true"
+            size="s"
+          ></LxLoader>
+          <LxIcon
+            v-if="props.customItem.state === 'invalid'"
+            customClass="lx-invalidation-icon"
+            value="invalid"
+          />
+          <div v-if="props.customItem.state === 'draft'" class="lx-draft-indicator"></div>
+        </div>
+        <div class="lx-upload-buttons">
+          <LxButton
+            v-if="props.showMeta && !props.readOnly && props.mode === 'compact'"
+            kind="ghost"
+            variant="icon-only"
+            :disabled="props.disabled || props.busy"
+            :loading="props.loading"
+            icon="info"
+            :title="displayTexts.infoButton"
+            @click="openModal(props.customItem.id)"
+          />
+          <LxButton
+            v-if="!props.readOnly"
+            kind="ghost"
+            variant="icon-only"
+            icon="remove"
+            :title="displayTexts.clear"
+            :destructive="true"
+            :disabled="props.disabled || props.busy"
+            :loading="props.loading"
+            @click="removeFile(props.customItem.id)"
           />
         </div>
-      </template>
-    </LxInfoWrapper>
+      </div>
+    </div>
   </div>
 </template>

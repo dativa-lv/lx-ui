@@ -90,6 +90,7 @@ export const LxTile = defineAsyncComponent(() => import('@/components/Tile.vue')
 export const LxToggle = defineAsyncComponent(() => import('@/components/Toggle.vue'));
 export const LxToolbar = defineAsyncComponent(() => import('@/components/Toolbar.vue'));
 export const LxToolbarGroup = defineAsyncComponent(() => import('@/components/ToolbarGroup.vue'));
+export const LxTooltip = defineAsyncComponent(() => import('@/components/Tooltip.vue'));
 export const LxValuePicker = defineAsyncComponent(() => import('@/components/ValuePicker.vue'));
 export const LxViewBuilder = defineAsyncComponent(() =>
   import('@/components/forms/ViewBuilder.vue')

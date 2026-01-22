@@ -1,6 +1,5 @@
 <script setup>
 import { computed, watch, ref, onMounted, inject } from 'vue';
-
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -9,8 +8,6 @@ import LxAvatar from '@/components/Avatar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxBadge from '@/components/Badge.vue';
-import LxInfoWrapper from '@/components/InfoWrapper.vue';
-
 import { shortenUserName, safeString } from '@/utils/stringUtils';
 import {
   getDisplayTexts,
@@ -18,7 +15,6 @@ import {
   secondsToMinutesAndSeconds,
 } from '@/utils/generalUtils';
 import { useWindowSize } from '@vueuse/core';
-import LxRow from '@/components/forms/Row.vue';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
@@ -840,50 +836,35 @@ const loginButtonKind = computed(() => {
     </div>
     <div class="lx-user-menu" v-if="userInfo">
       <LxDropDownMenu ref="dropDownMenu" :disabled="headerNavDisable">
-        <LxInfoWrapper ref="userInfoWrapper" :disabled="dropDownMenu?.menuOpen" :focusable="false">
-          <div
-            id="lx-shell-user-button"
-            :aria-label="displayTexts.userMenuTitle"
-            class="lx-user-button"
-            role="button"
-            tabindex="-1"
-          >
-            <div class="lx-avatar" v-if="!hasAvatar">
-              <LxIcon
-                :value="!selectedContextPersonModel ? 'user' : 'context-person'"
-                customClass="lx-icon"
-              />
-            </div>
-
-            <LxAvatar v-if="hasAvatar" :value="safeString(fullName)" />
-
-            <div class="lx-user-info">
-              <div class="lx-primary">
-                <template v-if="!selectedContextPersonModel">{{ fullName }}</template>
-                <template v-else>{{ contextPersonFullName }}</template>
-              </div>
-              <div class="lx-secondary">
-                <template v-if="!selectedContextPersonModel">{{ userInfo?.description }}</template>
-                <template v-else>{{ selectedContextPersonModel?.description }}</template>
-              </div>
-            </div>
-
-            <LxBadge v-if="hasSessionTimeoutBadge" :value="timeoutIn" class="lx-timeout-badge" />
+        <div
+          id="lx-shell-user-button"
+          :aria-label="displayTexts.userMenuTitle"
+          class="lx-user-button"
+          role="button"
+          tabindex="-1"
+        >
+          <div class="lx-avatar" v-if="!hasAvatar">
+            <LxIcon
+              :value="!selectedContextPersonModel ? 'user' : 'context-person'"
+              customClass="lx-icon"
+            />
           </div>
-          <template #panel v-if="!dropDownMenu?.menuOpen">
-            <LxRow :label="displayTexts.userMenuTitle">
-              <span v-if="!selectedContextPersonModel">{{ fullName }}</span>
-              <span v-else>{{ contextPersonFullName }}</span>
 
-              <span v-if="!selectedContextPersonModel">{{ userInfo?.description }}</span>
-              <span v-else>{{ selectedContextPersonModel?.description }}</span>
-            </LxRow>
-            <LxRow :label="displayTexts.idleBadge.timeCountdown" v-if="hasSessionTimeoutBadge">
-              <span>{{ sessionTimeoutLabel }}</span>
-            </LxRow>
-          </template>
-        </LxInfoWrapper>
+          <LxAvatar v-if="hasAvatar" :value="safeString(fullName)" />
 
+          <div class="lx-user-info">
+            <div class="lx-primary">
+              <template v-if="!selectedContextPersonModel">{{ fullName }}</template>
+              <template v-else>{{ contextPersonFullName }}</template>
+            </div>
+            <div class="lx-secondary">
+              <template v-if="!selectedContextPersonModel">{{ userInfo?.description }}</template>
+              <template v-else>{{ selectedContextPersonModel?.description }}</template>
+            </div>
+          </div>
+
+          <LxBadge v-if="hasSessionTimeoutBadge" :value="timeoutIn" class="lx-timeout-badge" />
+        </div>
         <template #panel>
           <div class="user-menu-panel" :class="[{ 'has-timeout': hasSessionTimeoutBadge }]">
             <div class="lx-region user-menu-context">
