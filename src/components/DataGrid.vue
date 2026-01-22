@@ -419,6 +419,18 @@ function selectFirstPage() {
   selectPageClicked(0);
 }
 
+function syncHeaderScroll() {
+  if (header.value && container.value) {
+    header.value.scrollLeft = container.value.scrollLeft;
+  }
+}
+
+function syncContainerScroll() {
+  if (header.value && container.value) {
+    container.value.scrollLeft = header.value.scrollLeft;
+  }
+}
+
 function setSorting(columnCode, direction) {
   sortedColumns.value[columnCode] = direction;
   emits('sortingChanged', { columnCode, direction });
@@ -1146,18 +1158,6 @@ function updateGridTemplateColumns() {
   gridTemplateColumns.value = templateColumns.join(' ');
 }
 
-function syncHeaderScroll() {
-  if (header.value && container.value) {
-    header.value.scrollLeft = container.value.scrollLeft;
-  }
-}
-
-function syncContainerScroll() {
-  if (header.value && container.value) {
-    container.value.scrollLeft = header.value.scrollLeft;
-  }
-}
-
 function syncColumnWidths() {
   if (!header.value || !container.value) return;
 
@@ -1327,6 +1327,11 @@ onMounted(() => {
     (newValue, oldValue) => {
       if (oldValue !== undefined) {
         showLoadingAlert.value = true;
+      }
+      if (!newValue) {
+        nextTick(() => {
+          syncContainerScroll();
+        });
       }
     },
     { immediate: false }
