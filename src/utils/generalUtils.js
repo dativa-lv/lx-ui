@@ -80,6 +80,84 @@ export function focusNextFocusableElement(startElement, forward = true) {
   }
 }
 
+export function focusFirstElementInContainer(container) {
+  if (!container) {
+    return;
+  }
+
+  const focusableElements = findFocusableElements(container);
+
+  if (focusableElements.length === 0) {
+    return;
+  }
+
+  focusableElements[0]?.focus();
+}
+
+export function focusLastElementInContainer(container) {
+  if (!container) {
+    return;
+  }
+
+  const focusableElements = findFocusableElements(container);
+
+  if (focusableElements.length === 0) {
+    return;
+  }
+
+  focusableElements[focusableElements.length - 1]?.focus();
+}
+
+export function focusNextElementInContainer(container) {
+  if (!container) {
+    return;
+  }
+
+  const focusableElements = findFocusableElements(container);
+
+  if (focusableElements.length === 0) {
+    return;
+  }
+
+  const currentIndex = focusableElements.findIndex((el) => el === document.activeElement);
+
+  if (currentIndex === -1) {
+    // Nothing focused, focus first element.
+    focusableElements[0]?.focus();
+  } else if (currentIndex < focusableElements.length - 1) {
+    // Focus next element.
+    focusableElements[currentIndex + 1]?.focus();
+  } else {
+    // At the end, wrap to first.
+    focusableElements[0]?.focus();
+  }
+}
+
+export function focusPreviousElementInContainer(container) {
+  if (!container) {
+    return;
+  }
+
+  const focusableElements = findFocusableElements(container);
+
+  if (focusableElements.length === 0) {
+    return;
+  }
+
+  const currentIndex = focusableElements.findIndex((el) => el === document.activeElement);
+
+  if (currentIndex === -1) {
+    // Nothing focused, focus last element.
+    focusableElements[focusableElements.length - 1]?.focus();
+  } else if (currentIndex > 0) {
+    // Focus previous element.
+    focusableElements[currentIndex - 1]?.focus();
+  } else {
+    // At the beginning, wrap to last.
+    focusableElements[focusableElements.length - 1]?.focus();
+  }
+}
+
 // Calculates a dictionary of texts to be displayed in a component, replacing default texts with any passed by property
 export function getDisplayTexts(textsPassed, textsDefault, noCopy) {
   let ret = textsPassed ?? {};

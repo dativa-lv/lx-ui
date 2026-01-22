@@ -1,12 +1,20 @@
 <script setup>
 import { ref, computed, nextTick, inject } from 'vue';
+import { onClickOutside } from '@vueuse/core';
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxToggle from '@/components/Toggle.vue';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
-import { onClickOutside } from '@vueuse/core';
-import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
+import {
+  focusNextFocusableElement,
+  focusFirstElementInContainer,
+  focusLastElementInContainer,
+  focusNextElementInContainer,
+  focusPreviousElementInContainer,
+} from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
   placement: { type: String, default: 'bottom' },
@@ -20,37 +28,55 @@ const props = defineProps({
 
 const emits = defineEmits(['actionClick']);
 
+const togglerRef = ref(null);
+const togglerId = generateUUID();
+const panelRef = ref(null);
+const panelId = generateUUID();
 const menuOpen = ref(false);
-const panelRef = ref();
-const dropDownWrapper = ref();
-
 const isTouchSensitive = inject('isTouchMode', false);
+const parentFocusTrap = inject('parentFocusTrap', null);
 
-const { activate, deactivate } = useFocusTrap(panelRef, {
-  allowOutsideClick: true,
+const { activate: activateFocusTrap, deactivate: deactivateFocusTrap } = useFocusTrap(panelRef, {
   initialFocus: false,
+  escapeDeactivates: false,
+  returnFocusOnDeactivate: false,
+  clickOutsideDeactivates: true,
 });
 
-function closeMenu(source = 'keyboard') {
-  if (menuOpen.value) {
-    menuOpen.value = false;
+function openMenu({ focus = 'first' } = {}) {
+  if (props.disabled) {
+    return;
   }
 
-  deactivate({
-    returnFocus: (source && source === 'keyboard') || false,
+  menuOpen.value = true;
+
+  nextTick(() => {
+    parentFocusTrap?.pause();
+
+    activateFocusTrap();
+
+    switch (focus) {
+      case 'first':
+        focusFirstElementInContainer(panelRef.value);
+        break;
+      case 'last':
+        focusLastElementInContainer(panelRef.value);
+        break;
+      default:
+        break;
+    }
   });
 }
 
-function openMenu(source = 'keyboard') {
-  if (!props.disabled && !menuOpen.value) {
-    menuOpen.value = true;
+function closeMenu({ source = 'default' } = {}) {
+  menuOpen.value = false;
 
-    nextTick(() => {
-      activate();
-      panelRef.value?.focus();
-    });
-  } else if (menuOpen.value) {
-    closeMenu(source);
+  deactivateFocusTrap();
+
+  parentFocusTrap?.unpause();
+
+  if (source === 'keyboard') {
+    togglerRef.value?.focus();
   }
 }
 
@@ -92,33 +118,64 @@ const mainButton = computed(() => {
   return mainButtons?.[0] || null;
 });
 
-function handleClick() {
-  if (props.triggerClick === 'left') {
-    openMenu('click');
+function handleTogglerClick(e) {
+  switch (props.triggerClick) {
+    case 'left':
+      if (e.type === 'click') {
+        if (!menuOpen.value) {
+          openMenu();
+        } else {
+          closeMenu();
+        }
+      }
+      break;
+    case 'right':
+      if (e.type === 'contextmenu') {
+        e.preventDefault();
+
+        if (!menuOpen.value) {
+          openMenu();
+        } else {
+          closeMenu();
+        }
+      }
+      break;
+    default:
+      break;
   }
 }
+
+const handlePanelTab = (e) => {
+  closeMenu();
+
+  if (e.shiftKey) {
+    togglerRef.value.focus();
+  } else {
+    focusNextFocusableElement(togglerRef.value);
+  }
+};
 
 function actionClicked(id, value = undefined) {
   emits('actionClick', id, value);
 }
 
 function onClickOutsideHandler() {
-  closeMenu('click');
+  if (!menuOpen.value) {
+    return;
+  }
+
+  closeMenu();
 }
 
-onClickOutside(dropDownWrapper, onClickOutsideHandler, {
-  ignore: ['#poppers'],
+onClickOutside(togglerRef, onClickOutsideHandler, {
+  ignore: [panelRef],
 });
 
 defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
 </script>
 
 <template>
-  <div
-    ref="dropDownWrapper"
-    class="lx-context-container"
-    :class="[{ 'lx-selected': menuOpen }, customClass]"
-  >
+  <div class="lx-context-container" :class="[{ 'lx-selected': menuOpen }, customClass]">
     <LxPopper
       :placement="placement"
       :offset-skid="offsetSkid"
@@ -126,49 +183,24 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       offset-distance="0"
       :show="menuOpen"
     >
-      <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+      <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
       <div
-        v-if="props.triggerClick === 'right'"
+        ref="togglerRef"
+        :id="togglerId"
         class="lx-dropdown-toggler"
+        role="button"
+        aria-haspopup="menu"
+        :aria-expanded="menuOpen"
+        :aria-controls="panelId"
+        :aria-disabled="disabled"
         :tabindex="disabled ? null : tabindex || 0"
-        @keyup.enter="openMenu('keyboard')"
-        @keyup.space="openMenu('keyboard')"
-        @keydown.esc="closeMenu('keyboard')"
+        @keyup.enter="openMenu"
+        @keyup.space="openMenu"
         @keydown.space.prevent
-        @contextmenu.prevent="openMenu"
-      >
-        <LxButton
-          v-if="!$slots.default && mainButton"
-          :id="mainButton?.id"
-          :label="mainButton?.name || mainButton?.label"
-          :title="mainButton?.title || mainButton?.tooltip"
-          :icon="mainButton?.icon"
-          :iconSet="mainButton?.iconSet"
-          :disabled="disabled || mainButton?.disabled"
-          :loading="mainButton?.loading"
-          :busy="mainButton?.busy"
-          :destructive="mainButton?.destructive"
-          :badge="mainButton?.badge"
-          :badgeType="mainButton?.badgeType"
-          :active="mainButton?.active"
-          :badgeIcon="mainButton?.badgeIcon"
-          :badgeTitle="mainButton?.badgeTitle"
-          kind="ghost"
-          variant="icon-only"
-          tabindex="-1"
-        />
-        <slot v-else />
-      </div>
-      <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
-      <div
-        v-else
-        class="lx-dropdown-toggler"
-        :tabindex="disabled ? null : tabindex || 0"
-        @keyup.enter="openMenu('keyboard')"
-        @keyup.space="openMenu('keyboard')"
-        @keydown.esc="closeMenu('keyboard')"
-        @keydown.space.prevent
-        @click="handleClick"
+        @keydown.down.prevent="openMenu"
+        @keydown.up.prevent="openMenu({ focus: 'last' })"
+        @click="handleTogglerClick"
+        @contextmenu="handleTogglerClick"
       >
         <LxButton
           v-if="!$slots.default && mainButton"
@@ -194,7 +226,20 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       </div>
 
       <template #content>
-        <div ref="panelRef" class="lx-dropdown-panel-wrapper" @keydown.esc="closeMenu('keyboard')">
+        <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
+        <div
+          :id="panelId"
+          ref="panelRef"
+          class="lx-dropdown-panel-wrapper"
+          role="menu"
+          :aria-labelledby="togglerId"
+          @keydown.esc="closeMenu({ source: 'keyboard' })"
+          @keydown.down.prevent="focusNextElementInContainer(panelRef)"
+          @keydown.up.prevent="focusPreviousElementInContainer(panelRef)"
+          @keydown.home.prevent="focusFirstElementInContainer(panelRef)"
+          @keydown.end.prevent="focusLastElementInContainer(panelRef)"
+          @keydown.tab.prevent="handlePanelTab"
+        >
           <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel" role="group">
             <div
               v-for="(group, groupName) in groupedItems"
@@ -207,12 +252,14 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     class="lx-dropdown-toggle-label"
                     :id="`${action.id}-label`"
                     :for="action?.id"
+                    aria-hidden="true"
                   >
                     {{ action?.name || action?.label }}
                   </label>
                   <LxToggle
+                    role="menuitem"
                     :id="action?.id"
-                    :labelId="`${action.id}-label`"
+                    :label="action?.name || action?.label"
                     :disabled="action?.disabled"
                     v-model="action.value"
                     :texts="action?.texts"
@@ -232,7 +279,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :id="action?.id"
                   :label="action?.name || action?.label"
                   :title="action?.title || action?.tooltip"
-                  kind="ghost"
+                  kind="menuitem"
                   :icon="action?.icon"
                   :iconSet="action?.iconSet"
                   :disabled="action?.disabled"
@@ -273,12 +320,14 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     class="lx-dropdown-toggle-label"
                     :id="`${action.id}-label`"
                     :for="action?.id"
+                    aria-hidden="true"
                   >
                     {{ action?.name || action?.label }}
                   </label>
                   <LxToggle
+                    role="menuitem"
                     :id="action?.id"
-                    :labelId="`${action.id}-label`"
+                    :label="action?.name || action?.label"
                     :disabled="action?.disabled"
                     v-model="action.value"
                     :texts="action?.texts"
@@ -298,7 +347,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :id="action?.id"
                   :label="action?.name || action?.label"
                   :title="action?.title || action?.tooltip"
-                  kind="ghost"
+                  kind="menuitem"
                   :icon="action?.icon"
                   :iconSet="action?.iconSet"
                   :disabled="action?.disabled"
@@ -311,7 +360,12 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :badgeIcon="action?.badgeIcon"
                   :badgeTitle="action?.badgeTitle"
                   :href="action?.href"
-                  @click="actionClicked(action?.id)"
+                  @click="
+                    (e) => {
+                      closeMenu({ source: e.detail === 0 ? 'keyboard' : 'mouse' });
+                      actionClicked(action?.id);
+                    }
+                  "
                 />
               </div>
             </div>

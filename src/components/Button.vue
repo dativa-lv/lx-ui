@@ -18,7 +18,7 @@ const props = defineProps({
   icon: { type: String, default: '' },
   iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet }, // cds, material, brand, phosphor
   iconVariant: { type: String, default: 'default' },
-  kind: { type: String, default: 'default' }, // primary, secondary, tertiary, ghost
+  kind: { type: String, default: 'default' }, // primary, secondary, tertiary, ghost, main, menuitem
   variant: { type: String, default: 'default' }, // default, icon-only
   destructive: { type: Boolean, default: false },
   href: { type: Object, default: () => {} },
@@ -207,6 +207,7 @@ defineExpose({ focus });
     :aria-busy="busy"
     :aria-describedby="accessibleTitle ? `${id}-description` : null"
     :tabindex="tabindex"
+    :role="kind === 'menuitem' ? 'menuitem' : null"
     @click="click"
     @keydown.enter.stop.prevent="() => null"
     @keyup.enter.stop.prevent="click"

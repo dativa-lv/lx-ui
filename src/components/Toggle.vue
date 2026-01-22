@@ -14,8 +14,10 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
   tooltip: { type: String, default: null },
+  label: { type: String, default: null },
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
+  role: { type: String, default: 'switch' },
 });
 
 const slots = useSlots();
@@ -70,6 +72,10 @@ const tooltipValue = computed(() => {
   }
   return res;
 });
+
+const accessibleLabel = computed(() =>
+  props.label ? `${props.label}: ${tooltipValue.value}` : null
+);
 
 const hasSlots = computed(() => !!(slots.on || slots.off || slots.indeterminate || slots.default));
 
@@ -142,12 +148,13 @@ onMounted(() => {
         :name="id"
         :checked="model"
         :disabled="disabled"
-        role="switch"
+        :role="role"
         :aria-checked="model"
         :aria-invalid="invalid"
-        :aria-label="!(size !== 's' && hasSlots) ? tooltipValue : null"
-        :aria-labelledby="labelledBy"
+        :aria-label="accessibleLabel || (!(size !== 's' && hasSlots) ? tooltipValue : null)"
+        :aria-labelledby="accessibleLabel ? null : labelledBy"
         tabindex="0"
+        @keyup.enter="toggleValue"
       />
       <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->

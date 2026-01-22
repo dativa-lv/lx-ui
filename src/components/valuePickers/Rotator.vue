@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts, focusNextFocusableElement } from '@/utils/generalUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -334,15 +334,6 @@ function onUp() {
   });
 }
 
-const rotatorInputRef = ref(null);
-
-function skipTab() {
-  if (dropdownMenuRef.value?.menuOpen) {
-    dropdownMenuRef.value.closeMenu('tab');
-    focusNextFocusableElement(rotatorInputRef.value);
-  }
-}
-
 // TODO: fix transition bugs with nullable
 // better refactor rotation logic for smarter solution
 </script>
@@ -373,7 +364,6 @@ function skipTab() {
         :tabindex="-1"
       >
         <div
-          ref="rotatorInputRef"
           class="lx-rotator-dropdown-wrapper lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
           :aria-invalid="invalid"
@@ -388,7 +378,6 @@ function skipTab() {
           @keyup.up.prevent="onUp"
           @keydown.down.prevent
           @keydown.up.prevent
-          @keydown.tab="skipTab"
         >
           <div class="pseudo-input" />
 
