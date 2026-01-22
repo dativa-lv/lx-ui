@@ -9,7 +9,8 @@ import { flagMap } from '@/utils/flagUtils';
 import LxFlag from '@/components/Flag.vue';
 import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { PHONE_MAX_LENGTH_BY_PREFIX } from '@/constants';
-import { sanitizeUrl } from '@braintree/sanitize-url';
+import { loadLibrary } from '@/utils/libLoader';
+import { computedAsync } from '@vueuse/core';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -336,12 +337,13 @@ const matchedFlags = computed(() => {
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
-const sanitizedEmail = computed(() => {
+const sanitizedEmail = computedAsync(async () => {
   if (isEmail(model.value)) {
+    const { sanitizeUrl } = await loadLibrary('sanitizeUrl');
     return sanitizeUrl(`mailto:${model.value}`);
   }
   return '';
-});
+}, null);
 
 const inputMode = computed(() => {
   if (props.kind === 'phone') return 'tel';

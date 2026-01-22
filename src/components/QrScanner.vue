@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted, nextTick, computed, watch, inject } from 'vue';
-import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -9,6 +8,7 @@ import LxLoader from '@/components/Loader.vue';
 import LxToggle from '@/components/Toggle.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { loadLibrary } from '@/utils/libLoader';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -47,6 +47,10 @@ const errorMessage = ref();
 const dragOver = ref(false);
 const loading = ref(true);
 const refreshError = ref(false);
+
+let QrcodeStream = null;
+let QrcodeDropZone = null;
+let QrcodeCapture = null;
 
 function onError(err) {
   error.value = true;
@@ -187,8 +191,16 @@ const showScanner = computed(() => {
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
+async function loadQrReader() {
+  const lib = await loadLibrary('vueQrcodeReader');
+  QrcodeStream = lib.QrcodeStream;
+  QrcodeDropZone = lib.QrcodeDropZone;
+  QrcodeCapture = lib.QrcodeCapture;
+}
+
 onMounted(async () => {
   await getCameraDevices();
+  await loadQrReader();
   switchCamera(camerasList.value?.[0]);
 });
 </script>
@@ -241,7 +253,7 @@ onMounted(async () => {
     </div>
     <div class="lx-qr-scanner">
       <Transition name="fade">
-        <qrcode-stream
+        <QrcodeStream
           @detect="onDetect"
           @error="onError"
           :torch="torch && !torchNotSupported"
@@ -272,13 +284,15 @@ onMounted(async () => {
               </g>
             </svg>
           </div>
-        </qrcode-stream>
+        </QrcodeStream>
       </Transition>
+
       <Transition name="fade">
         <div v-if="loading" class="lx-qr-loader">
           <LxLoader :loading="true" />
         </div>
       </Transition>
+
       <div
         v-show="accepted || error"
         class="lx-qr-placeholder"
@@ -293,6 +307,7 @@ onMounted(async () => {
             </div>
           </div>
         </Transition>
+
         <Transition name="fade">
           <div class="lx-qr-error" v-show="error">
             <div class="lx-qr-error-core">
@@ -311,6 +326,7 @@ onMounted(async () => {
           </div>
         </Transition>
       </div>
+
       <Transition name="fade">
         <div v-show="accepted || error" v-if="kind === 'multiple'">
           <div class="lx-qr-notification">
@@ -330,8 +346,9 @@ onMounted(async () => {
         </div>
       </Transition>
     </div>
+
     <Transition name="fade">
-      <qrcode-drop-zone
+      <QrcodeDropZone
         @detect="onDetect"
         @error="onError"
         :formats="formats"
@@ -342,9 +359,10 @@ onMounted(async () => {
         <div class="lx-qr-drag-zone" @dragenter="dragEnter" @dragleave="dragLeave">
           <p>{{ displayTexts.dragHere }}</p>
         </div>
-      </qrcode-drop-zone>
+      </QrcodeDropZone>
     </Transition>
-    <qrcode-capture
+
+    <QrcodeCapture
       v-if="hasFileUploader"
       :id="id"
       @detect="onDetect"

@@ -1,62 +1,11 @@
 import mime from 'mime';
 import useLx from '@/hooks/useLx';
 import { formatFull, formatDateTime } from '@/utils/dateUtils';
-import { log, logError } from '@/utils/devUtils';
+import { log } from '@/utils/devUtils';
 import { getTexts } from '@/utils/visualPickerUtils';
+import { loadLibrary } from '@/utils/libLoader';
 
 const DASH = '—';
-
-// Functions to dynamically load packages
-async function loadX509() {
-  try {
-    const dynamicModule = await import('jsrsasign');
-
-    if (dynamicModule.X509) {
-      return dynamicModule.X509;
-    }
-
-    if (dynamicModule.default && dynamicModule.default.X509) {
-      return dynamicModule.default.X509;
-    }
-
-    if (dynamicModule.jsrsasign && dynamicModule.jsrsasign.X509) {
-      return dynamicModule.jsrsasign.X509;
-    }
-  } catch (error) {
-    logError(`Failed to dynamically import jsrsasign:${error}`, useLx().getGlobals()?.environment);
-  }
-
-  throw new Error('Could not find X509 in jsrsasign module');
-}
-
-async function loadExifReader() {
-  const ExifReader = await import('exifreader');
-  return ExifReader;
-}
-
-async function loadJSZip() {
-  const JSZip = await import('jszip');
-  return JSZip;
-}
-
-async function loadPdfLib() {
-  const pdfjs = await import('pdfjs-dist');
-  const workerUrl = await import('pdfjs-dist/build/pdf.worker.mjs?url');
-  pdfjs.GlobalWorkerOptions.workerSrc = workerUrl.default;
-  return pdfjs;
-}
-
-async function loadC2paComponents() {
-  const { createC2pa } = await import('c2pa');
-  const { selectProducer } = await import('c2pa');
-
-  // eslint-disable-next-line import/no-unresolved
-  const { default: wasmSrc } = await import('c2pa/dist/assets/wasm/toolkit_bg.wasm?url');
-  // eslint-disable-next-line import/no-unresolved, import/extensions
-  const { default: workerSrc } = await import('c2pa/dist/c2pa.worker.js?url');
-
-  return { createC2pa, selectProducer, wasmSrc, workerSrc };
-}
 
 export function getFileExtension(name) {
   if (name.includes('.')) {
@@ -258,9 +207,8 @@ function extractCertData(certString) {
   return map;
 }
 
-async function extractSignerInfoFromCertificate(base64Cert, signingTimeValue, extension) {
+async function extractSignerInfoFromCertificate(base64Cert, signingTimeValue, extension, X509) {
   const pemCert = `-----BEGIN CERTIFICATE-----\n${base64Cert}\n-----END CERTIFICATE-----`;
-  const X509 = await loadX509();
   const c = new X509();
 
   c.readCertPEM(pemCert);
@@ -312,7 +260,7 @@ export async function extractC2paMetadata(arrayBuffer, fileType) {
       selectProducer: iSelectProducer,
       wasmSrc,
       workerSrc,
-    } = await loadC2paComponents();
+    } = await loadLibrary('c2pa');
     selectProducer = iSelectProducer;
 
     c2pa = await createC2pa({
@@ -379,7 +327,7 @@ export async function getMeta(file, texts) {
 
         // Handle image files with ExifReader
         const handleImageFiles = async () => {
-          const ExifReader = await loadExifReader();
+          const ExifReader = await loadLibrary('exifreader');
           const exif = ExifReader.load(arrayBuffer);
           meta.exif = exif;
 
@@ -396,7 +344,7 @@ export async function getMeta(file, texts) {
 
         // Handle zip archive files
         const handleZipFiles = async () => {
-          const JSZip = await loadJSZip();
+          const JSZip = await loadLibrary('jszip');
           const zip = await JSZip.loadAsync(arrayBuffer);
 
           const promises = [];
@@ -417,7 +365,7 @@ export async function getMeta(file, texts) {
 
         // Handle Office files (docx, pptx, xlsx)
         const handleOfficeFiles = async () => {
-          const JSZip = await loadJSZip();
+          const JSZip = await loadLibrary('jszip');
           const zip = await JSZip.loadAsync(arrayBuffer);
 
           const coreXmlFile = zip.file('docProps/core.xml');
@@ -449,7 +397,8 @@ export async function getMeta(file, texts) {
 
         // Handle eSign files (edoc, asice)
         const handleESignedFiles = async () => {
-          const JSZip = await loadJSZip();
+          const JSZip = await loadLibrary('jszip');
+          const X509 = await loadLibrary('x509');
           const zip = await JSZip.loadAsync(arrayBuffer);
           const extension = getFileExtension(file.name) || DASH;
 
@@ -484,7 +433,8 @@ export async function getMeta(file, texts) {
                   const signerInfo = await extractSignerInfoFromCertificate(
                     base64Cert,
                     signingTimeValue,
-                    extension
+                    extension,
+                    X509
                   );
 
                   allSignerInfos.push({
@@ -511,7 +461,7 @@ export async function getMeta(file, texts) {
 
         // Handle PDF files
         const handlePdfFiles = async () => {
-          const pdfjs = await loadPdfLib();
+          const pdfjs = await loadLibrary('pdfjs');
           const uint8Array = new Uint8Array(arrayBuffer);
 
           meta.eSigned = false;

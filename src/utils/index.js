@@ -14,4 +14,5 @@ export * as lxSiteMapUtils from '@/utils/siteMapUtils';
 export * as lxLogoUtils from '@/utils/logoUtils';
 export * as lxFileUploaderUtils from '@/utils/fileUploaderUtils';
 export * as lxGeneralUtils from '@/utils/generalUtils';
+export * as lxLibLoader from '@/utils/libLoader';
 // Other utils you plan to export go here

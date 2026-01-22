@@ -1,17 +1,10 @@
 <script setup>
 import { computed, ref, shallowRef, watch, nextTick, onMounted, onUnmounted, provide } from 'vue';
+
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
-import {
-  LMap,
-  LTileLayer,
-  LMarker,
-  LPolygon,
-  LPolyline,
-  LPopup,
-  LIcon,
-  LCircle,
-} from '@vue-leaflet/vue-leaflet';
+import { loadLibrary } from '@/utils/libLoader';
+
 import { useStorage } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
@@ -21,6 +14,7 @@ import LxToggle from '@/components/Toggle.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
+import LxLoaderView from '@/components/LoaderView.vue';
 
 import markerBlue from '@/assets/marker-blue.png';
 import markerRed from '@/assets/marker-red.png';
@@ -113,6 +107,16 @@ const center = computed({
     emits('update:center', value);
   },
 });
+
+const LMap = ref(null);
+const LTileLayer = ref(null);
+const LMarker = ref(null);
+const LPolygon = ref(null);
+const LPolyline = ref(null);
+const LPopup = ref(null);
+const LIcon = ref(null);
+const LCircle = ref(null);
+const loadingLib = ref(false);
 
 const markers = computed(() => props.objectDefinitions.filter((x) => x?.type === 'marker'));
 const polygons = computed(() => props.objectDefinitions.filter((x) => x?.type === 'polygon'));
@@ -318,7 +322,24 @@ function toolbarActionClick(action) {
   else if (action === 'fullscreen') toggleExpand();
 }
 
-onMounted(() => {
+async function loadLeaflet() {
+  const lib = await loadLibrary('vueLeaflet');
+
+  LMap.value = lib.LMap;
+  LTileLayer.value = lib.LTileLayer;
+  LMarker.value = lib.LMarker;
+  LPolygon.value = lib.LPolygon;
+  LPolyline.value = lib.LPolyline;
+  LPopup.value = lib.LPopup;
+  LIcon.value = lib.LIcon;
+  LCircle.value = lib.LCircle;
+
+  loadingLib.value = false;
+}
+
+onMounted(async () => {
+  loadingLib.value = true;
+  await loadLeaflet();
   if (grayscaleRef.value > 0 && grayscaleRef.value < 100) isGrayscale.value = null;
   else isGrayscale.value = grayscaleRef.value === 100;
   if (props.hasUserLocation) getLocation();
@@ -331,177 +352,179 @@ onUnmounted(() => {
 provide('insideFullscreenMap', insideFullscreenMap);
 </script>
 <template>
-  <div
-    class="lx-map"
-    :style="grayscaleStyle"
-    :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
-  >
-    <LxToolbar
-      v-if="showToolbar"
-      :action-definitions="toolbarActions"
-      class="lx-map-toolbar"
-      :texts="displayTexts"
-      @action-click="toolbarActionClick"
+  <LxLoaderView :loading="loadingLib" label="">
+    <div
+      class="lx-map"
+      :style="grayscaleStyle"
+      :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
     >
-      <template #leftArea v-if="showSearch">
-        <div class="lx-map-search">
-          <LxTextInput v-model="searchValue" @keydown.enter="emitSearch()" />
-          <LxButton
-            icon="search"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.search"
-            @click="emitSearch()"
-          />
-          <LxButton
-            v-if="searchValue"
-            icon="clear"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.clear"
-            @click="clearSearch()"
-          />
-        </div>
-      </template>
-      <template #rightArea>
-        <slot name="toolbar" />
-        <LxToolbarGroup>
-          <div class="lx-map-grayscale">
-            <LxToggle
-              v-model="isGrayscale"
-              :tooltip="isGrayscale ? displayTexts.grayscaleOff : displayTexts.grayscaleOn"
-              @update:model-value="grayscaleToggle()"
-            />
+      <LxToolbar
+        v-if="showToolbar"
+        :action-definitions="toolbarActions"
+        class="lx-map-toolbar"
+        :texts="displayTexts"
+        @action-click="toolbarActionClick"
+      >
+        <template #leftArea v-if="showSearch">
+          <div class="lx-map-search">
+            <LxTextInput v-model="searchValue" @keydown.enter="emitSearch()" />
             <LxButton
-              v-if="hasUserLocation"
-              icon="location-current"
+              icon="search"
               kind="ghost"
               variant="icon-only"
-              :label="displayTexts.currentLocation"
-              @click="centerLocation"
+              :label="displayTexts.search"
+              @click="emitSearch()"
             />
-            <LxDropDownMenu>
-              <LxButton
-                icon="overflow-menu"
-                kind="ghost"
-                :label="displayTexts.moreOptions"
-                variant="icon-only"
-                tabindex="-1"
-              />
-              <template #clickSafePanel>
-                <div class="lx-map-menu">
-                  <p class="lx-menu-label">{{ displayTexts.grayscale }}:</p>
-                  <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" />
-                  <div v-if="baseLayerDefinitions?.length > 1">
-                    <hr />
-                    <p class="lx-menu-label">{{ displayTexts.baseLayers }}:</p>
-                    <div class="lx-button-set">
-                      <LxButton
-                        v-for="layer in baseLayerDefinitions"
-                        :key="layer?.id"
-                        :label="layer?.name"
-                        kind="ghost"
-                        :active="selectedBaseLayer === layer?.id ? true : false"
-                        @click="selectBaseLayer(layer?.id)"
-                      />
-                    </div>
-                  </div>
-                  <div v-if="overlayLayerDefinitions?.length > 0">
-                    <hr />
-                    <p class="lx-menu-label">{{ displayTexts.overlayLayers }}:</p>
-                    <div class="overlay-layer" v-for="layer in allOverlayObj" :key="layer.id">
-                      <LxToggle
-                        v-model="layer.show"
-                        @update:model-value="updateSelectedOverlay()"
-                      />
-                      <p>{{ layer?.name }}</p>
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </LxDropDownMenu>
+            <LxButton
+              v-if="searchValue"
+              icon="clear"
+              kind="ghost"
+              variant="icon-only"
+              :label="displayTexts.clear"
+              @click="clearSearch()"
+            />
           </div>
-        </LxToolbarGroup>
-      </template>
-    </LxToolbar>
-    <LMap
-      v-model:zoom="zoom"
-      v-model:center="center"
-      class="map-component"
-      :options="{ zoomControl: false }"
-      v-if="showMap && baseLayerDefinitions?.length > 0"
-    >
-      <LTileLayer
-        :id="selectedBaseObj?.id"
-        :url="selectedBaseObj?.url"
-        layer-type="base"
-        :visible="selectedBaseObj?.visible"
-        :name="selectedBaseObj?.name"
-        :opacity="selectedBaseObj?.opacity"
-        :attribution="selectedBaseObj?.attribution"
-      />
-      <LTileLayer
-        v-for="layer in selectedOverlayObj"
-        :key="layer?.id"
-        :id="layer?.id"
-        :url="layer?.url"
-        layer-type="overlay"
-        :visible="layer?.visible"
-        :name="layer?.name"
-        :opacity="layer?.opacity"
-        :attribution="layer?.attribution"
-      />
-      <LMarker v-model:lat-lng="location" v-if="hasUserLocation && location">
-        <LIcon :iconUrl="markerCurrent" :iconSize="size" />
-      </LMarker>
-      <LCircle
-        :lat-lng="location"
-        :radius="locationAccuracy"
-        v-if="hasUserLocation && location"
-        :options="{ stroke: false }"
-      />
-      <LMarker
-        v-for="marker in markers"
-        :key="marker?.id"
-        v-model:lat-lng="marker.location"
-        :draggable="marker?.draggable"
-        :attribution="marker?.attribution"
+        </template>
+        <template #rightArea>
+          <slot name="toolbar" />
+          <LxToolbarGroup>
+            <div class="lx-map-grayscale">
+              <LxToggle
+                v-model="isGrayscale"
+                :tooltip="isGrayscale ? displayTexts.grayscaleOff : displayTexts.grayscaleOn"
+                @update:model-value="grayscaleToggle()"
+              />
+              <LxButton
+                v-if="hasUserLocation"
+                icon="location-current"
+                kind="ghost"
+                variant="icon-only"
+                :label="displayTexts.currentLocation"
+                @click="centerLocation"
+              />
+              <LxDropDownMenu>
+                <LxButton
+                  icon="overflow-menu"
+                  kind="ghost"
+                  :label="displayTexts.moreOptions"
+                  variant="icon-only"
+                  tabindex="-1"
+                />
+                <template #clickSafePanel>
+                  <div class="lx-map-menu">
+                    <p class="lx-menu-label">{{ displayTexts.grayscale }}:</p>
+                    <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" />
+                    <div v-if="baseLayerDefinitions?.length > 1">
+                      <hr />
+                      <p class="lx-menu-label">{{ displayTexts.baseLayers }}:</p>
+                      <div class="lx-button-set">
+                        <LxButton
+                          v-for="layer in baseLayerDefinitions"
+                          :key="layer?.id"
+                          :label="layer?.name"
+                          kind="ghost"
+                          :active="selectedBaseLayer === layer?.id ? true : false"
+                          @click="selectBaseLayer(layer?.id)"
+                        />
+                      </div>
+                    </div>
+                    <div v-if="overlayLayerDefinitions?.length > 0">
+                      <hr />
+                      <p class="lx-menu-label">{{ displayTexts.overlayLayers }}:</p>
+                      <div class="overlay-layer" v-for="layer in allOverlayObj" :key="layer.id">
+                        <LxToggle
+                          v-model="layer.show"
+                          @update:model-value="updateSelectedOverlay()"
+                        />
+                        <p>{{ layer?.name }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </LxDropDownMenu>
+            </div>
+          </LxToolbarGroup>
+        </template>
+      </LxToolbar>
+      <LMap
+        v-model:zoom="zoom"
+        v-model:center="center"
+        class="map-component"
+        :options="{ zoomControl: false }"
+        v-if="showMap && baseLayerDefinitions?.length > 0"
       >
-        <LPopup v-if="marker?.value">
-          {{ marker?.value }}
-        </LPopup>
-        <LIcon
-          :iconUrl="markerColor(marker?.color)"
-          :shadowUrl="markerShadow"
-          :icon-anchor="iconAnchor"
-          :shadow-anchor="shadowAnchor"
-          :iconSize="size"
-          :shadow-size="size"
-          :popupAnchor="popupAnchor"
+        <LTileLayer
+          :id="selectedBaseObj?.id"
+          :url="selectedBaseObj?.url"
+          layer-type="base"
+          :visible="selectedBaseObj?.visible"
+          :name="selectedBaseObj?.name"
+          :opacity="selectedBaseObj?.opacity"
+          :attribution="selectedBaseObj?.attribution"
         />
-      </LMarker>
-      <LPolygon
-        v-for="polygon in polygons"
-        :key="polygon?.id"
-        :lat-lngs="polygon.location"
-        :color="lineColor(polygon?.color)"
-      >
-        <LPopup v-if="polygon?.value">{{ polygon?.value }}</LPopup>
-      </LPolygon>
-      <LPolyline
-        v-for="line in lines"
-        :key="line?.id"
-        :lat-lngs="line?.location"
-        :color="lineColor(line?.color)"
-      >
-        <LPopup v-if="line?.value">{{ line?.value }}</LPopup>
-      </LPolyline>
-    </LMap>
-    <LxEmptyState
-      v-else-if="baseLayerDefinitions?.length === 0"
-      :label="displayTexts.errorTitle"
-      :description="displayTexts.errorDescription"
-      icon="invalid"
-    />
-  </div>
+        <LTileLayer
+          v-for="layer in selectedOverlayObj"
+          :key="layer?.id"
+          :id="layer?.id"
+          :url="layer?.url"
+          layer-type="overlay"
+          :visible="layer?.visible"
+          :name="layer?.name"
+          :opacity="layer?.opacity"
+          :attribution="layer?.attribution"
+        />
+        <LMarker v-model:lat-lng="location" v-if="hasUserLocation && location">
+          <LIcon :iconUrl="markerCurrent" :iconSize="size" />
+        </LMarker>
+        <LCircle
+          :lat-lng="location"
+          :radius="locationAccuracy"
+          v-if="hasUserLocation && location"
+          :options="{ stroke: false }"
+        />
+        <LMarker
+          v-for="marker in markers"
+          :key="marker?.id"
+          v-model:lat-lng="marker.location"
+          :draggable="marker?.draggable"
+          :attribution="marker?.attribution"
+        >
+          <LPopup v-if="marker?.value">
+            {{ marker?.value }}
+          </LPopup>
+          <LIcon
+            :iconUrl="markerColor(marker?.color)"
+            :shadowUrl="markerShadow"
+            :icon-anchor="iconAnchor"
+            :shadow-anchor="shadowAnchor"
+            :iconSize="size"
+            :shadow-size="size"
+            :popupAnchor="popupAnchor"
+          />
+        </LMarker>
+        <LPolygon
+          v-for="polygon in polygons"
+          :key="polygon?.id"
+          :lat-lngs="polygon.location"
+          :color="lineColor(polygon?.color)"
+        >
+          <LPopup v-if="polygon?.value">{{ polygon?.value }}</LPopup>
+        </LPolygon>
+        <LPolyline
+          v-for="line in lines"
+          :key="line?.id"
+          :lat-lngs="line?.location"
+          :color="lineColor(line?.color)"
+        >
+          <LPopup v-if="line?.value">{{ line?.value }}</LPopup>
+        </LPolyline>
+      </LMap>
+      <LxEmptyState
+        v-else-if="baseLayerDefinitions?.length === 0"
+        :label="displayTexts.errorTitle"
+        :description="displayTexts.errorDescription"
+        icon="invalid"
+      />
+    </div>
+  </LxLoaderView>
 </template>

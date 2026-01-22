@@ -1,22 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, inject } from 'vue';
 import { useElementSize } from '@vueuse/core';
-
-import { Editor, EditorContent } from '@tiptap/vue-3';
-import { Heading } from '@tiptap/extension-heading';
-import StarterKit from '@tiptap/starter-kit';
-import Placeholder from '@tiptap/extension-placeholder';
-import Link from '@tiptap/extension-link';
-import Underline from '@tiptap/extension-underline';
-import CharacterCount from '@tiptap/extension-character-count';
-import TextStyle from '@tiptap/extension-text-style';
-import { Color } from '@tiptap/extension-color';
-import { Markdown } from 'tiptap-markdown';
-
 import PlaceholderData from '@/components/markdownExtensions/PlaceholderData';
 import ImageComponent from '@/components/markdownExtensions/Image';
 import HiddenIdNode from '@/components/markdownExtensions/Node';
-
 import LxButton from '@/components/Button.vue';
 import LxModal from '@/components/Modal.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -30,11 +17,11 @@ import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxLoader from '@/components/Loader.vue';
-
 import { isUrl, generateUUID } from '@/utils/stringUtils';
 import { checkArrayObjectProperty } from '@/utils/arrayUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { formatValue, formatUrl } from '@/utils/formatUtils';
+import { loadLibrary } from '@/utils/libLoader';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -101,42 +88,6 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const loading = ref(true);
 
-let headingCounter = 0;
-
-const CustomHeadingWithAutoId = Heading.extend({
-  levels: [1, 2, 3, 4, 5, 6],
-
-  onCreate() {
-    headingCounter = 0;
-  },
-
-  addAttributes() {
-    return {
-      ...this.parent?.(),
-      id: {
-        default: null,
-        parseHTML: (element) => {
-          // When parsing existing content, maintain the counter
-          const currentId = element.getAttribute('id');
-          if (currentId && currentId.startsWith('markdown-section-')) {
-            const num = parseInt(currentId.split('-').pop(), 10);
-            headingCounter = Math.max(headingCounter, num);
-          }
-          return currentId;
-        },
-
-        renderHTML: (attributes) => {
-          if (!attributes.id) {
-            headingCounter += 1;
-            return { id: `markdown-section-${props.id}-${headingCounter}` };
-          }
-          return { id: attributes.id };
-        },
-      },
-    };
-  },
-});
-
 const editor = ref(null);
 const text = ref(null);
 const maxlengthExceeded = ref(false);
@@ -165,6 +116,19 @@ const markdownWrapper = ref();
 const imageModalInputType = ref('url');
 
 const rowId = inject('rowId', ref(null));
+
+let headingCounter = 0;
+let Editor = null;
+let EditorContent = null;
+let Heading = null;
+let StarterKit = null;
+let Placeholder = null;
+let Link = null;
+let Underline = null;
+let CharacterCount = null;
+let TextStyle = null;
+let Color = null;
+let Markdown = null;
 
 const model = computed({
   get() {
@@ -288,6 +252,40 @@ function concatEscapedWords(words) {
 }
 
 function createEditorExtensions() {
+  const CustomHeadingWithAutoId = Heading.extend({
+    levels: [1, 2, 3, 4, 5, 6],
+
+    onCreate() {
+      headingCounter = 0;
+    },
+
+    addAttributes() {
+      return {
+        ...this.parent?.(),
+        id: {
+          default: null,
+          parseHTML: (element) => {
+            // When parsing existing content, maintain the counter
+            const currentId = element.getAttribute('id');
+            if (currentId && currentId.startsWith('markdown-section-')) {
+              const num = parseInt(currentId.split('-').pop(), 10);
+              headingCounter = Math.max(headingCounter, num);
+            }
+            return currentId;
+          },
+
+          renderHTML: (attributes) => {
+            if (!attributes.id) {
+              headingCounter += 1;
+              return { id: `markdown-section-${props.id}-${headingCounter}` };
+            }
+            return { id: attributes.id };
+          },
+        },
+      };
+    },
+  });
+
   const ext = [
     Markdown,
     StarterKit.configure({
@@ -509,7 +507,25 @@ function setImage() {
   repleaceImageLoader(formattedUrl, loaderId, updatedAlt, updatedTitle);
   closeImageModal();
 }
-function updateEditorExtensions() {
+
+async function loadTiptap() {
+  const lib = await loadLibrary('tiptap');
+
+  Editor = lib.Editor;
+  EditorContent = lib.EditorContent;
+  Heading = lib.Heading;
+  StarterKit = lib.StarterKit;
+  Placeholder = lib.Placeholder;
+  Link = lib.Link;
+  Underline = lib.Underline;
+  CharacterCount = lib.CharacterCount;
+  TextStyle = lib.TextStyle;
+  Color = lib.Color;
+  Markdown = lib.Markdown;
+}
+
+async function updateEditorExtensions() {
+  await loadTiptap();
   editor.value.destroy();
   createEditorExtensions();
 }
@@ -596,17 +612,20 @@ watch(inputImage, (n) => {
   imageLink.value = isUrl(fn) ? fn : null;
 });
 
-watch(model, (newText) => {
-  const textInEditor = editor.value.storage.markdown.getMarkdown();
-  if (newText !== textInEditor) {
-    editor.value.commands.setContent(newText, false);
+watch(
+  () => model,
+  (newText) => {
+    const textInEditor = editor.value.storage.markdown.getMarkdown();
+    if (newText !== textInEditor) {
+      editor.value.commands.setContent(newText, false);
+    }
+    loading.value = false;
+    if (props.maxlength) {
+      const remainingCount = props.maxlength - (characterCount.value || 0);
+      maxlengthExceeded.value = remainingCount < 0;
+    }
   }
-  loading.value = false;
-  if (props.maxlength) {
-    const remainingCount = props.maxlength - (characterCount.value || 0);
-    maxlengthExceeded.value = remainingCount < 0;
-  }
-});
+);
 
 watch(isDisabled, (disabled) => {
   editor.value.setEditable(!disabled);
@@ -614,7 +633,8 @@ watch(isDisabled, (disabled) => {
 
 watch(
   [
-    () => [props.dictionary, props.maxlength],
+    () => props.dictionary,
+    () => props.maxlength,
     () => props.imageAllowBase64,
     () => props.imageAllowInline,
     () => props.imageResizable,
@@ -624,7 +644,8 @@ watch(
   }
 );
 
-onMounted(() => {
+onMounted(async () => {
+  await loadTiptap();
   createEditorExtensions();
 });
 
@@ -896,7 +917,9 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
         :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
       >
         <div class="pseudo-input" />
-        <editor-content
+
+        <EditorContent
+          v-if="EditorContent && editor"
           class="lx-markdown-text-area lx-input-area"
           :style="{ 'min-height': rows * 2.2 + 'rem' }"
           :editor="editor"

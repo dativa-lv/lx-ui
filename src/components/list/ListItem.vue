@@ -3,12 +3,13 @@ import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxButton from '@/components/Button.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
-import { sanitizeUrl } from '@braintree/sanitize-url';
 import useLx from '@/hooks/useLx';
 import LxLoader from '@/components/Loader.vue';
 import { ref, computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { loadLibrary } from '@/utils/libLoader';
+import { computedAsync } from '@vueuse/core';
 
 const emits = defineEmits(['click', 'actionClick']);
 
@@ -75,16 +76,6 @@ function openDropDownMenu(event, href = false) {
   }
 }
 
-function secureURL(url) {
-  if (url && typeof url === 'string') {
-    return sanitizeUrl(url);
-  }
-  if (url instanceof Object) {
-    return url;
-  }
-  return null;
-}
-
 function getItemId(id, parentId) {
   return `${parentId}-item-${id}`;
 }
@@ -97,6 +88,14 @@ const tabIndex = computed(() => {
     return 0;
   }
   return -1;
+});
+
+const sanitizeHref = computedAsync(async () => {
+  if (!props.href) return null;
+  if (typeof props.href === 'object') return props.href;
+
+  const { sanitizeUrl } = await loadLibrary('sanitizeUrl');
+  return sanitizeUrl(props.href);
 });
 </script>
 <template>
@@ -264,7 +263,7 @@ const tabIndex = computed(() => {
       :aria-labelledby="label && clickable ? `${id}-label` : null"
       :aria-describedby="description && clickable ? `${id}-desc` : null"
       :aria-invalid="invalid"
-      :to="secureURL(href)"
+      :to="sanitizeHref"
       v-on:keydown.space.prevent
       :title="tooltip"
       :class="[

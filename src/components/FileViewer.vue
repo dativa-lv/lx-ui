@@ -14,6 +14,7 @@ import LxEmptyState from '@/components/EmptyState.vue';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 import { MIME_TYPES } from '@/constants';
+import { loadLibrary } from '@/utils/libLoader';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -124,11 +125,7 @@ const emits = defineEmits(['download']);
 async function loadPdfLib() {
   if (!pdfjsLib.value) {
     loadingPdfjs.value = true;
-    // @ts-ignore
-    const pdfjs = await import('pdfjs-dist');
-    // @ts-ignore
-    const workerUrl = await import('pdfjs-dist/build/pdf.worker.mjs?url');
-    pdfjs.GlobalWorkerOptions.workerSrc = workerUrl.default;
+    const pdfjs = await loadLibrary('pdfjs');
     pdfjsLib.value = pdfjs;
   }
   loadingPdfjs.value = false;

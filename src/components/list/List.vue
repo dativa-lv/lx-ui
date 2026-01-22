@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick, inject } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
-import draggable from 'vuedraggable/src/vuedraggable';
-
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
-import { sanitizeUrl } from '@braintree/sanitize-url';
-
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxExpander from '@/components/Expander.vue';
@@ -15,6 +11,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxListItem from '@/components/list/ListItem.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxLoader from '@/components/Loader.vue';
+import LxLoaderView from '@/components/LoaderView.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -23,6 +20,7 @@ import LxSkipLink from '@/components/SkipLink.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
+import { loadLibrary } from '@/utils/libLoader';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -30,10 +28,7 @@ const props = defineProps({
   hasSearch: { type: Boolean, default: false },
   groupDefinitions: { type: Array, default: null },
   icon: { type: String, default: 'open' },
-  iconSet: {
-    type: String,
-    default: () => useLx().getGlobals()?.iconSet,
-  },
+  iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet },
   kind: { type: String, default: 'default' }, // default, draggable, treelist
   idAttribute: { type: String, default: 'id' },
   primaryAttribute: { type: String, default: 'name' },
@@ -146,6 +141,8 @@ const searchField = ref(false);
 
 const showInvisibleBlock = ref(false);
 let invisibleBlockTimeout;
+const draggable = ref(null);
+const loadingLib = ref(false);
 
 const modelSearchString = computed({
   get() {
@@ -544,6 +541,7 @@ async function moveUngroupedItem(element, direction) {
 
   focusHandle(element);
 }
+
 async function moveGroupedItem(element, direction) {
   if (props.loading || props.busy || draggableIsDisabledByQuery.value) {
     return;
@@ -749,6 +747,7 @@ function selectRows(arr = null, shouldFocus = true) {
     });
   }
 }
+
 const isItemSelected = (itemId) => !!selectedItemsRaw.value[itemId];
 
 function cancelSelection(shouldFocus = true) {
@@ -1004,6 +1003,12 @@ function moveDraggableItem(direction, element, groupType) {
   }
 }
 
+async function loadDraggable() {
+  const lib = await loadLibrary('draggable');
+  draggable.value = lib;
+  loadingLib.value = false;
+}
+
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
@@ -1035,6 +1040,17 @@ watch(
   }
 );
 
+watch(
+  () => props.kind,
+  async () => {
+    if (props.kind === 'draggable') {
+      loadingLib.value = true;
+      await loadDraggable();
+    }
+  },
+  { immediate: true }
+);
+
 onMounted(() => {
   const val = validate();
   if (val) {
@@ -1051,16 +1067,6 @@ function isExpandable(item) {
 }
 
 const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpandable(item)));
-
-function sanitizeHref(href) {
-  if (href && typeof href === 'string') {
-    return sanitizeUrl(href);
-  }
-  if (href instanceof Object) {
-    return href;
-  }
-  return null;
-}
 
 const listWrapper = ref(null);
 
@@ -1202,189 +1208,41 @@ const toolbarActions = computed(() => {
 </script>
 
 <template>
-  <div ref="listWrapper" class="lx-list-wrapper">
-    <LxSkipLink
-      v-if="props.hasSkipLink"
-      :label="displayTexts.skipLinkLabel"
-      :title="displayTexts.skipLinkTitle"
-      :tabindex="0"
-      @click="focusFirstFocusableElementAfter"
-    />
-    <div :class="[{ 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 }]">
-      <LxToolbar
-        :id="`${props.id}-toolbar`"
-        :actionDefinitions="toolbarActions"
-        :disabled="busy"
-        :loading="loading"
-        :texts="displayTexts"
-        @actionClick="toolbarActionClicked"
-      >
-        <template #leftArea>
-          <slot
-            v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
-            name="leftToolbar"
-          />
-          <template v-if="hasSearch && !hasSelecting && autoSearchMode === 'default'">
-            <LxTextInput
-              v-if="hasSearch"
-              ref="queryInputDefault"
-              v-model="queryRaw"
-              :kind="searchSide === 'server' ? 'default' : 'search'"
-              :disabled="loading || busy"
-              :placeholder="displayTexts.placeholder"
-              role="search"
-              @keydown.enter="serverSideSearch()"
+  <LxLoaderView :loading="loadingLib" label="">
+    <div ref="listWrapper" class="lx-list-wrapper">
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
+        :tabindex="0"
+        @click="focusFirstFocusableElementAfter"
+      />
+
+      <div :class="[{ 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 }]">
+        <LxToolbar
+          :id="`${props.id}-toolbar`"
+          :actionDefinitions="toolbarActions"
+          :disabled="busy"
+          :loading="loading"
+          :texts="displayTexts"
+          @actionClick="toolbarActionClicked"
+        >
+          <template #leftArea>
+            <slot
+              v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
+              name="leftToolbar"
             />
-            <LxButton
-              v-if="searchSide === 'server' && hasSearch"
-              icon="search"
-              kind="ghost"
-              :busy="busy"
-              :disabled="loading"
-              variant="icon-only"
-              :label="displayTexts.search"
-              @click="serverSideSearch()"
-            />
-            <LxButton
-              v-if="query || queryRaw"
-              icon="clear"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.clear"
-              :disabled="loading || busy"
-              @click="clear()"
-            />
-          </template>
-          <p v-if="hasSelecting && selectedItems?.length > 0">
-            {{ selectedLabel }}
-          </p>
-        </template>
-        <template #rightArea>
-          <slot
-            v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
-            name="toolbar"
-          />
-          <template v-if="props.toolbarActionDefinitions?.length === 0">
-            <template v-if="selectedItems?.length === 0">
-              <div
-                class="toolbar-search-button"
-                :class="[{ 'is-expanded': searchField }]"
-                v-if="autoSearchMode === 'compact' && hasSearch"
-              >
-                <LxButton
-                  kind="ghost"
-                  :icon="searchField ? 'close' : 'search'"
-                  variant="icon-only"
-                  :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
-                  :disabled="loading || busy"
-                  @click="toggleSearch"
-                />
-              </div>
-              <LxButton
-                :id="`${id}-select-all`"
-                icon="checkbox"
-                kind="ghost"
-                v-if="
-                  selectableItems?.length !== 0 &&
-                  hasSelecting &&
-                  selectingKind === 'multiple' &&
-                  kind !== 'draggable'
-                "
-                :disabled="loading || busy"
-                variant="icon-only"
-                :label="displayTexts.selectAllRows"
-                @click="selectRows()"
-              />
-            </template>
-          </template>
-          <template v-if="selectedItems?.length > 0">
-            <div class="selection-action-button-toolbar" v-if="hasSelecting">
-              <div class="selection-action-buttons">
-                <LxButton
-                  v-for="selectAction in selectionActionDefinitions"
-                  :key="selectAction.id"
-                  :id="selectAction.id"
-                  :label="selectAction.name || selectAction.label"
-                  :title="selectAction.title || selectAction.tooltip"
-                  :loading="selectAction.loading"
-                  :busy="selectAction.busy"
-                  :icon="selectAction.icon"
-                  :iconSet="selectAction.iconSet"
-                  :destructive="selectAction.destructive"
-                  :disabled="selectAction.disabled || busy || loading"
-                  kind="ghost"
-                  :active="selectAction.active"
-                  :badge="selectAction.badge"
-                  :badge-type="selectAction.badgeType"
-                  :badgeIcon="selectAction.badgeIcon"
-                  :badgeTitle="selectAction.badgeTitle"
-                  @click="selectionActionClick(selectAction.id, selectedItems)"
-                />
-              </div>
-              <div
-                class="selection-action-buttons-small"
-                v-if="selectionActionDefinitions?.length > 0"
-              >
-                <LxDropDownMenu
-                  :actionDefinitions="selectionActionDefinitions"
-                  @actionClick="(id) => selectionActionClick(id, selectedItems)"
-                >
-                  <LxButton
-                    icon="menu"
-                    kind="ghost"
-                    :label="displayTexts.overflowMenu"
-                    variant="icon-only"
-                    tabindex="-1"
-                  />
-                </LxDropDownMenu>
-              </div>
-            </div>
-            <div
-              class="toolbar-search-button"
-              :class="[{ 'is-expanded': searchField }]"
-              v-if="autoSearchMode === 'compact'"
-            >
-              <LxButton
+            <template v-if="hasSearch && !hasSelecting && autoSearchMode === 'default'">
+              <LxTextInput
                 v-if="hasSearch"
-                class="toolbar-search-button"
-                :class="[{ 'is-expanded': searchField }]"
-                kind="ghost"
-                :icon="searchField ? 'close' : 'search'"
-                :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
-                variant="icon-only"
+                ref="queryInputDefault"
+                v-model="queryRaw"
+                :kind="searchSide === 'server' ? 'default' : 'search'"
                 :disabled="loading || busy"
-                @click="toggleSearch"
+                :placeholder="displayTexts.placeholder"
+                role="search"
+                @keydown.enter="serverSideSearch()"
               />
-            </div>
-            <LxButton
-              :id="`${id}-cancel-select-all`"
-              v-if="hasSelecting && kind !== 'draggable'"
-              :icon="selectIcon"
-              variant="icon-only"
-              :label="displayTexts.clearSelected"
-              kind="ghost"
-              :disabled="loading || busy"
-              @click="cancelSelection()"
-            />
-          </template>
-        </template>
-        <template #secondRow>
-          <div
-            class="second-row"
-            v-if="hasSearch && searchField && autoSearchMode === 'compact'"
-            :class="[{ 'second-row-selecting': hasSelecting }]"
-          >
-            <LxTextInput
-              v-if="hasSearch"
-              ref="queryInputCompact"
-              v-model="queryRaw"
-              :kind="'default'"
-              :disabled="loading || busy"
-              :placeholder="displayTexts.placeholder"
-              role="search"
-              @keydown.enter="serverSideSearch()"
-            />
-            <div class="lx-group lx-slot-wrapper">
               <LxButton
                 v-if="searchSide === 'server' && hasSearch"
                 icon="search"
@@ -1399,338 +1257,180 @@ const toolbarActions = computed(() => {
                 v-if="query || queryRaw"
                 icon="clear"
                 kind="ghost"
-                :loading="loading"
                 variant="icon-only"
                 :label="displayTexts.clear"
                 :disabled="loading || busy"
                 @click="clear()"
               />
-            </div>
-          </div>
-        </template>
-      </LxToolbar>
-    </div>
-    <div v-if="groupDefinitions && filteredUngroupedItems && filteredUngroupedItems.length > 0">
-      <ul
-        :id="id"
-        class="lx-list"
-        :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
-        :aria-labelledby="labelledBy"
-        v-if="kind === 'default'"
-      >
-        <li
-          v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
-          :key="item[idAttribute]"
-          class="lx-list-item-container"
-        >
-          <LxListItem
-            :id="item[idAttribute]"
-            :parentId="props.id"
-            :label="item[primaryAttribute]"
-            :description="item[secondaryAttribute]"
-            :value="item"
-            :href="sanitizeHref(item[hrefAttribute])"
-            :actionDefinitions="actionDefinitions"
-            :actionsLayout="actionsLayout"
-            :icon="item[iconAttribute] ? item[iconAttribute] : icon"
-            :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
-            :tooltip="item[tooltipAttribute]"
-            :searchString="query"
-            :clickable="item[clickableAttribute]"
-            :category="item[categoryAttribute]"
-            :disabled="loading || busy"
-            :selected="isItemSelected(item[idAttribute])"
-            :texts="displayTexts"
-            @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-            @action-click="actionClicked"
-          >
-            <template #customItem="item" v-if="$slots.customItem">
-              <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
             </template>
-          </LxListItem>
-          <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
-            <template v-if="isSelectable(item)">
-              <LxRadioButton
-                v-if="selectingKind === 'single'"
-                :id="`select-${id}-${item[idAttribute]}`"
-                v-model="selectedItemsRaw[item[idAttribute]]"
-                :value="item[idAttribute]"
-                @click="selectRow(item[idAttribute])"
-                :disabled="loading || busy"
-                :label="item[primaryAttribute]"
-                :group-id="`selection-${id}`"
-                :tabindex="getGroupedTabIndex(item[idAttribute], null)"
-              />
-              <LxCheckbox
-                v-else
-                :id="`select-${id}-${item[idAttribute]}`"
-                v-model="selectedItemsRaw[item[idAttribute]]"
-                :value="item[idAttribute]"
-                :disabled="loading || busy"
-                :label="item[primaryAttribute]"
-                :group-id="`selection-${id}`"
-              />
+            <p v-if="hasSelecting && selectedItems?.length > 0">
+              {{ selectedLabel }}
+            </p>
+          </template>
+          <template #rightArea>
+            <slot
+              v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
+              name="toolbar"
+            />
+            <template v-if="props.toolbarActionDefinitions?.length === 0">
+              <template v-if="selectedItems?.length === 0">
+                <div
+                  class="toolbar-search-button"
+                  :class="[{ 'is-expanded': searchField }]"
+                  v-if="autoSearchMode === 'compact' && hasSearch"
+                >
+                  <LxButton
+                    kind="ghost"
+                    :icon="searchField ? 'close' : 'search'"
+                    variant="icon-only"
+                    :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
+                    :disabled="loading || busy"
+                    @click="toggleSearch"
+                  />
+                </div>
+                <LxButton
+                  :id="`${id}-select-all`"
+                  icon="checkbox"
+                  kind="ghost"
+                  v-if="
+                    selectableItems?.length !== 0 &&
+                    hasSelecting &&
+                    selectingKind === 'multiple' &&
+                    kind !== 'draggable'
+                  "
+                  :disabled="loading || busy"
+                  variant="icon-only"
+                  :label="displayTexts.selectAllRows"
+                  @click="selectRows()"
+                />
+              </template>
             </template>
-            <p v-else class="lx-checkbox-placeholder"></p>
-          </div>
-        </li>
-      </ul>
-      <div
-        :id="id"
-        class="lx-list"
-        :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
-        v-if="kind === 'draggable'"
-      >
-        <draggable
-          v-if="kind === 'draggable'"
-          :id="`draggable-list-${id}`"
-          class="list-draggable-area"
-          v-model="itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
-          handle=".lx-handle"
-          drag-class="drag"
-          v-bind="dragOptions"
-          :item-key="idAttribute"
-          group="list"
-          tag="ul"
-          @start="changeDragging"
-          @end="changeDragging"
-          @change="onMoveItem"
-          :disabled="loading || busy || draggableIsDisabledByQuery"
-          :aria-labelledby="labelledBy"
-        >
-          <template #item="{ element }">
-            <TransitionGroupWrapper
-              class="draggable-list-item-wrapper"
-              type="transition"
-              :name="!dragging ? 'flip-list' : null"
-              tag="li"
-            >
-              <div class="lx-transition-layer" :key="element[idAttribute]">
-                <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                  <div class="lx-list-item-container">
-                    <LxDropDownMenu
-                      triggerClick="right"
-                      :disabled="loading || busy || draggableIsDisabledByQuery"
-                      :tabindex="-1"
-                    >
-                      <div
-                        class="lx-handle"
-                        :id="`handleId-${element[props.idAttribute]}`"
-                        :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
-                        :aria-label="displayTexts.draggableItem"
-                        @keydown.up.prevent="moveGroupedItem(element, 'forward')"
-                        @keydown.down.prevent="moveGroupedItem(element, 'backward')"
-                        @keydown.right.prevent="moveGroupedItem(element, 'backward')"
-                        @keydown.left.prevent="moveGroupedItem(element, 'forward')"
-                        :class="[
-                          {
-                            'handle-disabled': draggableIsDisabledByQuery || loading || busy,
-                          },
-                        ]"
-                      >
-                        <LxIcon class="lx-icon" value="drag"></LxIcon>
-                      </div>
-                      <template #panel>
-                        <div class="lx-button-set">
-                          <LxButton
-                            v-for="button in draggableButtons"
-                            :key="button.id"
-                            :icon="button.icon"
-                            :label="button.title"
-                            :disabled="button.disabled"
-                            @click="moveDraggableItem(button.id, element, 'grouped')"
-                          />
-                        </div>
-                      </template>
-                    </LxDropDownMenu>
-                    <LxListItem
-                      :id="element[idAttribute]"
-                      :parentId="props.id"
-                      :label="element[primaryAttribute]"
-                      :description="element[secondaryAttribute]"
-                      :value="element"
-                      :href="element[hrefAttribute]"
-                      :actionDefinitions="actionDefinitions"
-                      :actionsLayout="actionsLayout"
-                      :icon="element[iconAttribute] ? element[iconAttribute] : icon"
-                      :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
-                      :tooltip="element[tooltipAttribute]"
-                      :searchString="query"
-                      :clickable="element[clickableAttribute]"
-                      :category="element[categoryAttribute]"
-                      :disabled="loading || busy"
-                      :texts="displayTexts"
-                      @click="
-                        element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
-                      "
-                      @action-click="actionClicked"
-                    >
-                      <template #customItem="item" v-if="$slots.customItem">
-                        <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-                      </template>
-                    </LxListItem>
-                  </div>
+            <template v-if="selectedItems?.length > 0">
+              <div class="selection-action-button-toolbar" v-if="hasSelecting">
+                <div class="selection-action-buttons">
+                  <LxButton
+                    v-for="selectAction in selectionActionDefinitions"
+                    :key="selectAction.id"
+                    :id="selectAction.id"
+                    :label="selectAction.name || selectAction.label"
+                    :title="selectAction.title || selectAction.tooltip"
+                    :loading="selectAction.loading"
+                    :busy="selectAction.busy"
+                    :icon="selectAction.icon"
+                    :iconSet="selectAction.iconSet"
+                    :destructive="selectAction.destructive"
+                    :disabled="selectAction.disabled || busy || loading"
+                    kind="ghost"
+                    :active="selectAction.active"
+                    :badge="selectAction.badge"
+                    :badge-type="selectAction.badgeType"
+                    :badgeIcon="selectAction.badgeIcon"
+                    :badgeTitle="selectAction.badgeTitle"
+                    @click="selectionActionClick(selectAction.id, selectedItems)"
+                  />
+                </div>
+                <div
+                  class="selection-action-buttons-small"
+                  v-if="selectionActionDefinitions?.length > 0"
+                >
+                  <LxDropDownMenu
+                    :actionDefinitions="selectionActionDefinitions"
+                    @actionClick="(id) => selectionActionClick(id, selectedItems)"
+                  >
+                    <LxButton
+                      icon="menu"
+                      kind="ghost"
+                      :label="displayTexts.overflowMenu"
+                      variant="icon-only"
+                      tabindex="-1"
+                    />
+                  </LxDropDownMenu>
                 </div>
               </div>
-            </TransitionGroupWrapper>
-          </template>
-        </draggable>
-      </div>
-    </div>
-    <div v-if="groupDefinitions && kind === 'default'">
-      <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
-        <LxExpander
-          v-if="
-            (hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
-            !hideFilteredItems
-          "
-          v-model="group.expanded"
-          :disabled="loading || busy"
-          :badge="
-            group?.badge ? group?.badge : `${filteredGroupedItems[prepareCode(group.id)].length}`
-          "
-          :badge-icon="group?.badgeIcon"
-          :badge-type="group?.badgeType"
-          :badge-title="group?.badgeTitle"
-          :label="group.name"
-          :id="group.id"
-          :has-select-button="
-            hasSelecting &&
-            hasSelectableItemsInGroup[prepareCode(group.id)] &&
-            selectingKind === 'multiple'
-          "
-          :select-status="groupSelectionStatuses?.[group.id]"
-          :texts="{
-            selectWholeGroup: displayTexts.selectWholeGroup,
-            clearSelected: displayTexts.clearSelected,
-          }"
-          @select-all="selectSection(group)"
-        >
-          <template #customHeader v-if="$slots.customExpanderHeader">
-            <slot name="customExpanderHeader" v-bind="{ item: group, expanded: group.expanded }" />
-          </template>
-
-          <ul
-            :id="`${id}-${prepareCode(group.id)}`"
-            class="lx-list"
-            :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
-            :aria-labelledby="labelledBy"
-            v-if="
-              filteredGroupedItems[prepareCode(group.id)] &&
-              filteredGroupedItems[prepareCode(group.id)].length > 0
-            "
-          >
-            <li
-              v-for="item in filteredGroupedItems[prepareCode(group.id)]"
-              :key="item[idAttribute]"
-              class="lx-list-item-container"
-            >
-              <LxListItem
-                :id="item[idAttribute]"
-                :parentId="props.id"
-                :label="item[primaryAttribute]"
-                :description="item[secondaryAttribute]"
-                :value="item"
-                :href="sanitizeHref(item[hrefAttribute])"
-                :actionDefinitions="actionDefinitions"
-                :actionsLayout="actionsLayout"
-                :icon="item[iconAttribute] ? item[iconAttribute] : icon"
-                :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
-                :tooltip="item[tooltipAttribute]"
-                :searchString="query"
-                :clickable="item[clickableAttribute]"
-                :category="item[categoryAttribute]"
-                :disabled="loading || busy"
-                :selected="isItemSelected(item[idAttribute])"
-                :texts="displayTexts"
-                @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-                @action-click="actionClicked"
+              <div
+                class="toolbar-search-button"
+                :class="[{ 'is-expanded': searchField }]"
+                v-if="autoSearchMode === 'compact'"
               >
-                <template #customItem="item" v-if="$slots.customItem">
-                  <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-                </template>
-              </LxListItem>
-              <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
-                <template v-if="isSelectable(item)">
-                  <LxRadioButton
-                    v-if="selectingKind === 'single'"
-                    :id="`select-${id}-${item[idAttribute]}`"
-                    v-model="selectedItemsRaw[item[idAttribute]]"
-                    :value="item[idAttribute]"
-                    @click="selectRow(item[idAttribute])"
-                    :disabled="loading || busy"
-                    :label="item[primaryAttribute]"
-                    :group-id="`selection-${id}`"
-                    :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
-                  />
-                  <LxCheckbox
-                    v-else
-                    :id="`select-${id}-${item[idAttribute]}`"
-                    v-model="selectedItemsRaw[item[idAttribute]]"
-                    :value="item[idAttribute]"
-                    :disabled="loading || busy"
-                    :label="item[primaryAttribute]"
-                    :group-id="`selection-${id}`"
-                  />
-                </template>
-                <p v-else class="lx-checkbox-placeholder"></p>
+                <LxButton
+                  v-if="hasSearch"
+                  class="toolbar-search-button"
+                  :class="[{ 'is-expanded': searchField }]"
+                  kind="ghost"
+                  :icon="searchField ? 'close' : 'search'"
+                  :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
+                  variant="icon-only"
+                  :disabled="loading || busy"
+                  @click="toggleSearch"
+                />
               </div>
-            </li>
-          </ul>
-        </LxExpander>
-      </template>
-    </div>
-    <div
-      v-if="
-        kind === 'treelist' &&
-        itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)] &&
-        filteredUngroupedItems &&
-        filteredUngroupedItems.length > 0
-      "
-    >
-      <LxTreeList
-        v-if="queryRaw?.length === 0"
-        :items="itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
-        :idAttribute="idAttribute"
-        :primaryAttribute="primaryAttribute"
-        :secondaryAttribute="secondaryAttribute"
-        :childrenAttribute="childrenAttribute"
-        :hasChildrenAttribute="hasChildrenAttribute"
-        :hrefAttribute="hrefAttribute"
-        :clickableAttribute="clickableAttribute"
-        :iconAttribute="iconAttribute"
-        :iconSetAttribute="iconSetAttribute"
-        :tooltipAttribute="tooltipAttribute"
-        :categoryAttribute="categoryAttribute"
-        :selectable-attribute="selectableAttribute"
-        :action-definitions="actionDefinitions"
-        :actionsLayout="actionsLayout"
-        :groupDefinitions="groupDefinitions"
-        :icon="icon"
-        :iconSet="iconSet"
-        :hasSelecting="hasSelecting"
-        :selectingKind="selectingKind"
-        :query="searchString"
-        :areSomeExpandable="areSomeExpandable"
-        :disabled="busy || loading"
-        v-model:selectedItems="selectedItemsRaw"
-        v-model:itemsStates="states"
-        :mode="mode"
-        :texts="displayTexts"
-        @action-click="actionClicked"
-        @loadChildren="loadChildren"
-      >
-        <template #customItem="items" v-if="$slots.customItem">
-          <slot name="customItem" v-bind="items" />
-        </template>
-      </LxTreeList>
-      <div class="tree-list-wrapper" v-else-if="queryRaw?.length > 0">
-        <div class="tree-list-search" role="list">
-          <div
+              <LxButton
+                :id="`${id}-cancel-select-all`"
+                v-if="hasSelecting && kind !== 'draggable'"
+                :icon="selectIcon"
+                variant="icon-only"
+                :label="displayTexts.clearSelected"
+                kind="ghost"
+                :disabled="loading || busy"
+                @click="cancelSelection()"
+              />
+            </template>
+          </template>
+          <template #secondRow>
+            <div
+              class="second-row"
+              v-if="hasSearch && searchField && autoSearchMode === 'compact'"
+              :class="[{ 'second-row-selecting': hasSelecting }]"
+            >
+              <LxTextInput
+                v-if="hasSearch"
+                ref="queryInputCompact"
+                v-model="queryRaw"
+                :kind="'default'"
+                :disabled="loading || busy"
+                :placeholder="displayTexts.placeholder"
+                role="search"
+                @keydown.enter="serverSideSearch()"
+              />
+              <div class="lx-group lx-slot-wrapper">
+                <LxButton
+                  v-if="searchSide === 'server' && hasSearch"
+                  icon="search"
+                  kind="ghost"
+                  :busy="busy"
+                  :disabled="loading"
+                  variant="icon-only"
+                  :label="displayTexts.search"
+                  @click="serverSideSearch()"
+                />
+                <LxButton
+                  v-if="query || queryRaw"
+                  icon="clear"
+                  kind="ghost"
+                  :loading="loading"
+                  variant="icon-only"
+                  :label="displayTexts.clear"
+                  :disabled="loading || busy"
+                  @click="clear()"
+                />
+              </div>
+            </div>
+          </template>
+        </LxToolbar>
+      </div>
+
+      <div v-if="groupDefinitions && filteredUngroupedItems && filteredUngroupedItems.length > 0">
+        <ul
+          :id="id"
+          class="lx-list"
+          :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+          :aria-labelledby="labelledBy"
+          v-if="kind === 'default'"
+        >
+          <li
             v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
             :key="item[idAttribute]"
-            class="tree-list-search-item lx-list-item-container"
-            role="listitem"
+            class="lx-list-item-container"
           >
             <LxListItem
               :id="item[idAttribute]"
@@ -1738,7 +1438,7 @@ const toolbarActions = computed(() => {
               :label="item[primaryAttribute]"
               :description="item[secondaryAttribute]"
               :value="item"
-              :href="sanitizeHref(item[hrefAttribute])"
+              :href="item[hrefAttribute]"
               :actionDefinitions="actionDefinitions"
               :actionsLayout="actionsLayout"
               :icon="item[iconAttribute] ? item[iconAttribute] : icon"
@@ -1757,7 +1457,7 @@ const toolbarActions = computed(() => {
                 <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
               </template>
             </LxListItem>
-            <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
+            <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
               <template v-if="isSelectable(item)">
                 <LxRadioButton
                   v-if="selectingKind === 'single'"
@@ -1782,365 +1482,18 @@ const toolbarActions = computed(() => {
               </template>
               <p v-else class="lx-checkbox-placeholder"></p>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div v-if="kind === 'treelist' && groupDefinitions && queryRaw?.length === 0">
-      <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
-        <LxExpander
-          v-if="
-            (hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
-            !hideFilteredItems
-          "
-          v-model="group.expanded"
-          :disabled="loading || busy"
-          :badge="group?.badge"
-          :badge-icon="group?.badgeIcon"
-          :badge-type="group?.badgeType"
-          :badge-title="group?.badgeTitle"
-          :label="group.name"
-          :id="group.id"
-          :has-select-button="
-            hasSelecting &&
-            hasSelectableItemsInGroup[prepareCode(group.id)] &&
-            selectingKind === 'multiple'
-          "
-          :select-status="groupSelectionStatuses?.[group.id]"
-          :texts="{
-            selectWholeGroup: displayTexts.selectWholeGroup,
-            clearSelected: displayTexts.clearSelected,
-          }"
-          @select-all="selectSection(group)"
-        >
-          <LxTreeList
-            :items="filteredGroupedItems[prepareCode(group.id)]"
-            :idAttribute="idAttribute"
-            :primaryAttribute="primaryAttribute"
-            :secondaryAttribute="secondaryAttribute"
-            :childrenAttribute="childrenAttribute"
-            :hasChildrenAttribute="hasChildrenAttribute"
-            :hrefAttribute="hrefAttribute"
-            :clickableAttribute="clickableAttribute"
-            :iconAttribute="iconAttribute"
-            :iconSetAttribute="iconSetAttribute"
-            :tooltipAttribute="tooltipAttribute"
-            :categoryAttribute="categoryAttribute"
-            :selectable-attribute="selectableAttribute"
-            :action-definitions="actionDefinitions"
-            :actionsLayout="actionsLayout"
-            :groupDefinitions="groupDefinitions"
-            :icon="icon"
-            :iconSet="iconSet"
-            :hasSelecting="hasSelecting"
-            :selectingKind="selectingKind"
-            :query="searchString"
-            :areSomeExpandable="areSomeExpandable"
-            :disabled="busy || loading"
-            v-model:selectedItems="selectedItemsRaw"
-            v-model:itemsStates="states"
-            :mode="mode"
-            :texts="displayTexts"
-            @action-click="actionClicked"
-            @loadChildren="loadChildren"
-          >
-            <template #customItem="items" v-if="$slots.customItem">
-              <slot name="customItem" v-bind="items" />
-            </template>
-          </LxTreeList>
-        </LxExpander>
-      </template>
-    </div>
-    <div v-if="kind === 'treelist' && groupDefinitions && queryRaw?.length > 0">
-      <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
-        <LxExpander
-          v-if="
-            (hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
-            !hideFilteredItems
-          "
-          v-model="group.expanded"
-          :disabled="loading || busy"
-          :badge="group?.badge"
-          :badge-icon="group?.badgeIcon"
-          :badge-type="group?.badgeType"
-          :badge-title="group?.badgeTitle"
-          :label="group.name"
-          :id="group.id"
-          :has-select-button="
-            hasSelecting &&
-            hasSelectableItemsInGroup[prepareCode(group.id)] &&
-            selectingKind === 'multiple'
-          "
-          :select-status="groupSelectionStatuses?.[group.id]"
-          :texts="{
-            selectWholeGroup: displayTexts.selectWholeGroup,
-            clearSelected: displayTexts.clearSelected,
-          }"
-          @select-all="selectSection(group)"
-        >
-          <div class="tree-list-wrapper">
-            <div class="tree-list-search" role="list">
-              <div
-                v-for="item in filteredGroupedItems[prepareCode(group.id)]"
-                :key="item[idAttribute]"
-                class="tree-list-search-item lx-list-item-container"
-                role="listitem"
-              >
-                <LxListItem
-                  :id="item[idAttribute]"
-                  :parentId="props.id"
-                  :label="item[primaryAttribute]"
-                  :description="item[secondaryAttribute]"
-                  :value="item"
-                  :href="sanitizeHref(item[hrefAttribute])"
-                  :actionDefinitions="actionDefinitions"
-                  :actionsLayout="actionsLayout"
-                  :icon="item[iconAttribute] ? item[iconAttribute] : icon"
-                  :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
-                  :tooltip="item[tooltipAttribute]"
-                  :searchString="query"
-                  :clickable="item[clickableAttribute]"
-                  :category="item[categoryAttribute]"
-                  :disabled="loading || busy"
-                  :selected="isItemSelected(item[idAttribute])"
-                  :texts="displayTexts"
-                  @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-                  @action-click="actionClicked"
-                >
-                  <template #customItem="item" v-if="$slots.customItem">
-                    <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-                  </template>
-                </LxListItem>
-                <div
-                  class="selecting-block"
-                  v-if="hasSelecting && selectableTreeItems?.length !== 0"
-                >
-                  <template v-if="isSelectable(item)">
-                    <LxRadioButton
-                      v-if="selectingKind === 'single'"
-                      :id="`select-${id}-${item[idAttribute]}`"
-                      v-model="selectedItemsRaw[item[idAttribute]]"
-                      :value="item[idAttribute]"
-                      @click="selectRow(item[idAttribute])"
-                      :disabled="loading || busy"
-                      :label="item[primaryAttribute]"
-                      :group-id="`selection-${id}`"
-                      :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
-                    />
-                    <LxCheckbox
-                      v-else
-                      :id="`select-${id}-${item[idAttribute]}`"
-                      v-model="selectedItemsRaw[item[idAttribute]]"
-                      :value="item[idAttribute]"
-                      :disabled="loading || busy"
-                      :label="item[primaryAttribute]"
-                      :group-id="`selection-${id}`"
-                    />
-                  </template>
-                  <p v-else class="lx-checkbox-placeholder"></p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </LxExpander>
-      </template>
-    </div>
-    <template v-if="!groupDefinitions && filteredItems && filteredItems.length > 0">
-      <ul
-        v-if="kind === 'default'"
-        :id="id"
-        class="lx-list"
-        :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
-        :aria-labelledby="labelledBy"
-      >
-        <li v-for="item in filteredItems" :key="item[idAttribute]" class="lx-list-item-container">
-          <LxListItem
-            :id="item[idAttribute]"
-            :parentId="props.id"
-            :label="item[primaryAttribute]"
-            :description="item[secondaryAttribute]"
-            :value="item"
-            :href="sanitizeHref(item[hrefAttribute])"
-            :actionDefinitions="actionDefinitions"
-            :actionsLayout="actionsLayout"
-            :icon="item[iconAttribute] ? item[iconAttribute] : icon"
-            :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
-            :tooltip="item[tooltipAttribute]"
-            :searchString="query"
-            :clickable="item[clickableAttribute]"
-            :category="item[categoryAttribute]"
-            :disabled="loading || busy"
-            :selected="isItemSelected(item[idAttribute])"
-            :texts="displayTexts"
-            @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-            @action-click="actionClicked"
-          >
-            <template #customItem="item" v-if="$slots.customItem">
-              <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-            </template>
-          </LxListItem>
-          <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
-            <template v-if="isSelectable(item)">
-              <LxRadioButton
-                v-if="selectingKind === 'single'"
-                :id="`select-${id}-${item[idAttribute]}`"
-                v-model="selectedItemsRaw[item[idAttribute]]"
-                :value="item[idAttribute]"
-                @click="selectRow(item[idAttribute])"
-                :disabled="loading || busy"
-                :label="item[primaryAttribute]"
-                :group-id="`selection-${id}`"
-                :tabindex="getTabIndex(item[idAttribute])"
-              />
-              <LxCheckbox
-                v-else
-                :id="`select-${id}-${item[idAttribute]}`"
-                v-model="selectedItemsRaw[item[idAttribute]]"
-                :value="item[idAttribute]"
-                :disabled="loading || busy"
-                :label="item[primaryAttribute]"
-                :group-id="`selection-${id}`"
-              />
-            </template>
-            <p v-else class="lx-checkbox-placeholder"></p>
-          </div>
-        </li>
-      </ul>
-      <div
-        v-if="kind === 'draggable'"
-        :id="id"
-        class="lx-list"
-        :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
-      >
-        <draggable
-          :id="`draggable-list-${id}`"
-          class="list-draggable-area"
-          v-model="ungroupedItemsArray"
-          handle=".lx-handle"
-          tag="ul"
-          drag-class="drag"
-          v-bind="dragOptions"
-          :item-key="idAttribute"
-          group="list"
-          @start="changeDragging"
-          @end="changeDragging"
-          @change="onMoveItem"
-          :disabled="loading || busy || draggableIsDisabledByQuery"
-          :aria-labelledby="labelledBy"
-        >
-          <template #item="{ element }">
-            <TransitionGroupWrapper
-              class="draggable-list-item-wrapper"
-              type="transition"
-              :name="!dragging ? 'flip-list' : null"
-              tag="li"
-            >
-              <div class="lx-transition-layer" :key="element[idAttribute]">
-                <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                  <div class="lx-list-item-container">
-                    <LxDropDownMenu
-                      triggerClick="right"
-                      :disabled="loading || busy || draggableIsDisabledByQuery"
-                      :tabindex="-1"
-                    >
-                      <div
-                        class="lx-handle"
-                        :id="`handleId-${element[props.idAttribute]}`"
-                        :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
-                        :aria-label="displayTexts.draggableItem"
-                        @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
-                        @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
-                        @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
-                        @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
-                        :class="[
-                          {
-                            'handle-disabled': draggableIsDisabledByQuery || loading || busy,
-                          },
-                        ]"
-                      >
-                        <LxIcon class="lx-icon" value="drag"></LxIcon>
-                      </div>
-                      <template #panel>
-                        <div class="lx-button-set">
-                          <LxButton
-                            v-for="button in draggableButtons"
-                            :key="button.id"
-                            :icon="button.icon"
-                            :label="button.title"
-                            :disabled="button.disabled"
-                            @click="moveDraggableItem(button.id, element, 'ungrouped')"
-                          />
-                        </div>
-                      </template>
-                    </LxDropDownMenu>
-
-                    <LxListItem
-                      :id="element[idAttribute]"
-                      :parentId="props.id"
-                      :label="element[primaryAttribute]"
-                      :description="element[secondaryAttribute]"
-                      :value="element"
-                      :href="element[hrefAttribute]"
-                      :actionDefinitions="actionDefinitions"
-                      :actionsLayout="actionsLayout"
-                      :icon="element[iconAttribute] ? element[iconAttribute] : icon"
-                      :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
-                      :tooltip="element[tooltipAttribute]"
-                      :searchString="query"
-                      :clickable="element[clickableAttribute]"
-                      :category="element[categoryAttribute]"
-                      :disabled="loading || busy"
-                      :texts="displayTexts"
-                      @click="
-                        element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
-                      "
-                      @action-click="actionClicked"
-                    >
-                      <template #customItem="item" v-if="$slots.customItem">
-                        <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-                      </template>
-                    </LxListItem>
-                  </div>
-                </div>
-              </div>
-            </TransitionGroupWrapper>
-          </template>
-        </draggable>
-      </div>
-    </template>
-    <template v-for="group in responsiveGroupDefinitions" :key="prepareCode(group.id)">
-      <LxExpander
-        v-if="
-          kind === 'draggable' &&
-          ((hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
-            !hideFilteredItems)
-        "
-        v-model="group.expanded"
-        :disabled="loading || busy"
-        :badge="
-          group?.badge ? group?.badge : `${filteredGroupedItems[prepareCode(group.id)]?.length}`
-        "
-        :badge-icon="group?.badgeIcon"
-        :badge-type="group?.badgeType"
-        :badge-title="group?.badgeTitle"
-        :label="group.name"
-      >
-        <template #customHeader v-if="$slots.customExpanderHeader">
-          <slot
-            name="customExpanderHeader"
-            v-bind="{ item: group, expanded: group.expanded }"
-          ></slot>
-        </template>
-
+          </li>
+        </ul>
         <div
-          :id="`${id}-${prepareCode(group.id)}`"
+          v-if="kind === 'draggable' && draggable"
+          :id="id"
           class="lx-list"
           :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
         >
           <draggable
-            class="list-draggable-area"
             :id="`draggable-list-${id}`"
-            v-model="itemsArray[prepareCode(group.id)]"
+            class="list-draggable-area"
+            v-model="itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
             handle=".lx-handle"
             drag-class="drag"
             v-bind="dragOptions"
@@ -2198,7 +1551,6 @@ const toolbarActions = computed(() => {
                           </div>
                         </template>
                       </LxDropDownMenu>
-
                       <LxListItem
                         :id="element[idAttribute]"
                         :parentId="props.id"
@@ -2215,7 +1567,6 @@ const toolbarActions = computed(() => {
                         :clickable="element[clickableAttribute]"
                         :category="element[categoryAttribute]"
                         :disabled="loading || busy"
-                        :selected="isItemSelected(element[idAttribute])"
                         :texts="displayTexts"
                         @click="
                           element[hrefAttribute]
@@ -2235,148 +1586,829 @@ const toolbarActions = computed(() => {
             </template>
           </draggable>
         </div>
-      </LxExpander>
-    </template>
-    <div
-      v-if="
-        kind === 'treelist' &&
-        (queryRaw?.length === 0 || searchSide === 'server') &&
-        !groupDefinitions
-      "
-    >
-      <LxTreeList
-        :items="items"
-        :idAttribute="idAttribute"
-        :primaryAttribute="primaryAttribute"
-        :secondaryAttribute="secondaryAttribute"
-        :childrenAttribute="childrenAttribute"
-        :hasChildrenAttribute="hasChildrenAttribute"
-        :hrefAttribute="hrefAttribute"
-        :clickableAttribute="clickableAttribute"
-        :iconAttribute="iconAttribute"
-        :iconSetAttribute="iconSetAttribute"
-        :tooltipAttribute="tooltipAttribute"
-        :categoryAttribute="categoryAttribute"
-        :selectable-attribute="selectableAttribute"
-        :action-definitions="actionDefinitions"
-        :actionsLayout="actionsLayout"
-        :icon="icon"
-        :iconSet="iconSet"
-        :hasSelecting="hasSelecting"
-        :selectingKind="selectingKind"
-        :disabled="busy || loading"
-        v-model:selected-items="selectedItemsRaw"
-        v-model:itemsStates="states"
-        :mode="mode"
-        :texts="displayTexts"
-        @actionClick="actionClicked"
-        @loadChildren="loadChildren"
-      >
-        <template #customItem="items" v-if="$slots.customItem">
-          <slot name="customItem" v-bind="items" />
+      </div>
+
+      <div v-if="groupDefinitions && kind === 'default'">
+        <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
+          <LxExpander
+            v-if="
+              (hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
+              !hideFilteredItems
+            "
+            v-model="group.expanded"
+            :disabled="loading || busy"
+            :badge="
+              group?.badge ? group?.badge : `${filteredGroupedItems[prepareCode(group.id)].length}`
+            "
+            :badge-icon="group?.badgeIcon"
+            :badge-type="group?.badgeType"
+            :badge-title="group?.badgeTitle"
+            :label="group.name"
+            :id="group.id"
+            :has-select-button="
+              hasSelecting &&
+              hasSelectableItemsInGroup[prepareCode(group.id)] &&
+              selectingKind === 'multiple'
+            "
+            :select-status="groupSelectionStatuses?.[group.id]"
+            :texts="{
+              selectWholeGroup: displayTexts.selectWholeGroup,
+              clearSelected: displayTexts.clearSelected,
+            }"
+            @select-all="selectSection(group)"
+          >
+            <template #customHeader v-if="$slots.customExpanderHeader">
+              <slot
+                name="customExpanderHeader"
+                v-bind="{ item: group, expanded: group.expanded }"
+              />
+            </template>
+
+            <ul
+              :id="`${id}-${prepareCode(group.id)}`"
+              class="lx-list"
+              :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+              :aria-labelledby="labelledBy"
+              v-if="
+                filteredGroupedItems[prepareCode(group.id)] &&
+                filteredGroupedItems[prepareCode(group.id)].length > 0
+              "
+            >
+              <li
+                v-for="item in filteredGroupedItems[prepareCode(group.id)]"
+                :key="item[idAttribute]"
+                class="lx-list-item-container"
+              >
+                <LxListItem
+                  :id="item[idAttribute]"
+                  :parentId="props.id"
+                  :label="item[primaryAttribute]"
+                  :description="item[secondaryAttribute]"
+                  :value="item"
+                  :href="item[hrefAttribute]"
+                  :actionDefinitions="actionDefinitions"
+                  :actionsLayout="actionsLayout"
+                  :icon="item[iconAttribute] ? item[iconAttribute] : icon"
+                  :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
+                  :tooltip="item[tooltipAttribute]"
+                  :searchString="query"
+                  :clickable="item[clickableAttribute]"
+                  :category="item[categoryAttribute]"
+                  :disabled="loading || busy"
+                  :selected="isItemSelected(item[idAttribute])"
+                  :texts="displayTexts"
+                  @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+                  @action-click="actionClicked"
+                >
+                  <template #customItem="item" v-if="$slots.customItem">
+                    <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                  </template>
+                </LxListItem>
+                <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+                  <template v-if="isSelectable(item)">
+                    <LxRadioButton
+                      v-if="selectingKind === 'single'"
+                      :id="`select-${id}-${item[idAttribute]}`"
+                      v-model="selectedItemsRaw[item[idAttribute]]"
+                      :value="item[idAttribute]"
+                      @click="selectRow(item[idAttribute])"
+                      :disabled="loading || busy"
+                      :label="item[primaryAttribute]"
+                      :group-id="`selection-${id}`"
+                      :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
+                    />
+                    <LxCheckbox
+                      v-else
+                      :id="`select-${id}-${item[idAttribute]}`"
+                      v-model="selectedItemsRaw[item[idAttribute]]"
+                      :value="item[idAttribute]"
+                      :disabled="loading || busy"
+                      :label="item[primaryAttribute]"
+                      :group-id="`selection-${id}`"
+                    />
+                  </template>
+                  <p v-else class="lx-checkbox-placeholder"></p>
+                </div>
+              </li>
+            </ul>
+          </LxExpander>
         </template>
-      </LxTreeList>
-    </div>
-    <div
-      v-else-if="
-        kind === 'treelist' && queryRaw?.length > 0 && searchSide === 'client' && !groupDefinitions
-      "
-      class="tree-list-search"
-      role="list"
-    >
+      </div>
+
       <div
-        v-for="element in filteredTreeItems"
-        :key="element?.[idAttribute]"
-        class="tree-list-search-item lx-list-item-container"
-        role="listitem"
+        v-if="
+          kind === 'treelist' &&
+          itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)] &&
+          filteredUngroupedItems &&
+          filteredUngroupedItems.length > 0
+        "
       >
-        <LxListItem
-          :id="element[idAttribute]"
-          :parentId="props.id"
-          :label="element[primaryAttribute]"
-          :description="element[secondaryAttribute]"
-          :value="element"
-          :href="element[hrefAttribute]"
-          :actionDefinitions="actionDefinitions"
+        <LxTreeList
+          v-if="queryRaw?.length === 0"
+          :items="itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
+          :idAttribute="idAttribute"
+          :primaryAttribute="primaryAttribute"
+          :secondaryAttribute="secondaryAttribute"
+          :childrenAttribute="childrenAttribute"
+          :hasChildrenAttribute="hasChildrenAttribute"
+          :hrefAttribute="hrefAttribute"
+          :clickableAttribute="clickableAttribute"
+          :iconAttribute="iconAttribute"
+          :iconSetAttribute="iconSetAttribute"
+          :tooltipAttribute="tooltipAttribute"
+          :categoryAttribute="categoryAttribute"
+          :selectable-attribute="selectableAttribute"
+          :action-definitions="actionDefinitions"
           :actionsLayout="actionsLayout"
-          :icon="element[iconAttribute] ? element[iconAttribute] : icon"
-          :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
-          :tooltip="element[tooltipAttribute]"
-          :searchString="query"
-          :clickable="element[clickableAttribute]"
-          :category="element[categoryAttribute]"
-          :disabled="loading || busy"
-          :selected="isItemSelected(element[idAttribute])"
+          :groupDefinitions="groupDefinitions"
+          :icon="icon"
+          :iconSet="iconSet"
+          :hasSelecting="hasSelecting"
+          :selectingKind="selectingKind"
+          :query="searchString"
+          :areSomeExpandable="areSomeExpandable"
+          :disabled="busy || loading"
+          v-model:selectedItems="selectedItemsRaw"
+          v-model:itemsStates="states"
+          :mode="mode"
           :texts="displayTexts"
-          @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
           @action-click="actionClicked"
+          @loadChildren="loadChildren"
         >
-          <template #customItem="item" v-if="$slots.customItem">
-            <slot name="customItem" v-bind="item" />
+          <template #customItem="items" v-if="$slots.customItem">
+            <slot name="customItem" v-bind="items" />
           </template>
-        </LxListItem>
-        <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
-          <template v-if="isSelectable(element)">
-            <LxRadioButton
-              v-if="selectingKind === 'single'"
-              :id="`select-${id}-${element[idAttribute]}`"
-              v-model="selectedItemsRaw[element[idAttribute]]"
-              :value="element[idAttribute]"
-              @click="selectRow(element[idAttribute])"
-              :disabled="loading || busy"
-              :label="element[primaryAttribute]"
-              :group-id="`selection-${id}`"
-              :tabindex="getTabIndex(element[idAttribute])"
-            />
-            <LxCheckbox
-              v-else
-              :id="`select-${id}-${element[idAttribute]}`"
-              v-model="selectedItemsRaw[element[idAttribute]]"
-              :value="element[idAttribute]"
-              :disabled="loading || busy"
-              :label="element[primaryAttribute]"
-              :group-id="`selection-${id}`"
-            />
-          </template>
-          <p v-else class="lx-checkbox-placeholder"></p>
+        </LxTreeList>
+        <div class="tree-list-wrapper" v-else-if="queryRaw?.length > 0">
+          <div class="tree-list-search" role="list">
+            <div
+              v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
+              :key="item[idAttribute]"
+              class="tree-list-search-item lx-list-item-container"
+              role="listitem"
+            >
+              <LxListItem
+                :id="item[idAttribute]"
+                :parentId="props.id"
+                :label="item[primaryAttribute]"
+                :description="item[secondaryAttribute]"
+                :value="item"
+                :href="item[hrefAttribute]"
+                :actionDefinitions="actionDefinitions"
+                :actionsLayout="actionsLayout"
+                :icon="item[iconAttribute] ? item[iconAttribute] : icon"
+                :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
+                :tooltip="item[tooltipAttribute]"
+                :searchString="query"
+                :clickable="item[clickableAttribute]"
+                :category="item[categoryAttribute]"
+                :disabled="loading || busy"
+                :selected="isItemSelected(item[idAttribute])"
+                :texts="displayTexts"
+                @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+                @action-click="actionClicked"
+              >
+                <template #customItem="item" v-if="$slots.customItem">
+                  <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                </template>
+              </LxListItem>
+              <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
+                <template v-if="isSelectable(item)">
+                  <LxRadioButton
+                    v-if="selectingKind === 'single'"
+                    :id="`select-${id}-${item[idAttribute]}`"
+                    v-model="selectedItemsRaw[item[idAttribute]]"
+                    :value="item[idAttribute]"
+                    @click="selectRow(item[idAttribute])"
+                    :disabled="loading || busy"
+                    :label="item[primaryAttribute]"
+                    :group-id="`selection-${id}`"
+                    :tabindex="getGroupedTabIndex(item[idAttribute], null)"
+                  />
+                  <LxCheckbox
+                    v-else
+                    :id="`select-${id}-${item[idAttribute]}`"
+                    v-model="selectedItemsRaw[item[idAttribute]]"
+                    :value="item[idAttribute]"
+                    :disabled="loading || busy"
+                    :label="item[primaryAttribute]"
+                    :group-id="`selection-${id}`"
+                  />
+                </template>
+                <p v-else class="lx-checkbox-placeholder"></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <LxEmptyState
-      v-if="items?.length === 0 && !(loading || busy) && !query"
-      :label="displayTexts?.noItems"
-      :description="displayTexts?.noItemsDescription"
-      :icon="emptyStateIcon"
-      :actionDefinitions="emptyStateActionDefinitions"
-      @empty-state-action-click="emptyStateActionClicked"
-    />
-    <div
-      class="lx-empty-state"
-      v-if="
-        query &&
-        filteredItems &&
-        ((props.kind !== 'treelist' && filteredItems.length === 0) ||
-          (props.kind === 'treelist' && filteredTreeItems?.length === 0))
-      "
-    >
-      <div aria-live="polite" role="status" class="lx-invisible" v-if="showInvisibleBlock">
-        {{ displayTexts.notFoundSearch }} {{ JSON.stringify(query) }}
+
+      <div v-if="kind === 'treelist' && groupDefinitions && queryRaw?.length === 0">
+        <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
+          <LxExpander
+            v-if="
+              (hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
+              !hideFilteredItems
+            "
+            v-model="group.expanded"
+            :disabled="loading || busy"
+            :badge="group?.badge"
+            :badge-icon="group?.badgeIcon"
+            :badge-type="group?.badgeType"
+            :badge-title="group?.badgeTitle"
+            :label="group.name"
+            :id="group.id"
+            :has-select-button="
+              hasSelecting &&
+              hasSelectableItemsInGroup[prepareCode(group.id)] &&
+              selectingKind === 'multiple'
+            "
+            :select-status="groupSelectionStatuses?.[group.id]"
+            :texts="{
+              selectWholeGroup: displayTexts.selectWholeGroup,
+              clearSelected: displayTexts.clearSelected,
+            }"
+            @select-all="selectSection(group)"
+          >
+            <LxTreeList
+              :items="filteredGroupedItems[prepareCode(group.id)]"
+              :idAttribute="idAttribute"
+              :primaryAttribute="primaryAttribute"
+              :secondaryAttribute="secondaryAttribute"
+              :childrenAttribute="childrenAttribute"
+              :hasChildrenAttribute="hasChildrenAttribute"
+              :hrefAttribute="hrefAttribute"
+              :clickableAttribute="clickableAttribute"
+              :iconAttribute="iconAttribute"
+              :iconSetAttribute="iconSetAttribute"
+              :tooltipAttribute="tooltipAttribute"
+              :categoryAttribute="categoryAttribute"
+              :selectable-attribute="selectableAttribute"
+              :action-definitions="actionDefinitions"
+              :actionsLayout="actionsLayout"
+              :groupDefinitions="groupDefinitions"
+              :icon="icon"
+              :iconSet="iconSet"
+              :hasSelecting="hasSelecting"
+              :selectingKind="selectingKind"
+              :query="searchString"
+              :areSomeExpandable="areSomeExpandable"
+              :disabled="busy || loading"
+              v-model:selectedItems="selectedItemsRaw"
+              v-model:itemsStates="states"
+              :mode="mode"
+              :texts="displayTexts"
+              @action-click="actionClicked"
+              @loadChildren="loadChildren"
+            >
+              <template #customItem="items" v-if="$slots.customItem">
+                <slot name="customItem" v-bind="items" />
+              </template>
+            </LxTreeList>
+          </LxExpander>
+        </template>
       </div>
-      <p>{{ displayTexts.notFoundSearch }} {{ JSON.stringify(query) }}</p>
-    </div>
-    <div class="lx-load-more-button" v-if="showLoadMore">
-      <LxButton
-        :label="displayTexts.loadMore"
-        icon="add-item"
-        kind="tertiary"
-        :busy="loading"
-        :loading="loading"
-        :disabled="busy || items?.length === 0"
-        @click="loadMore()"
+
+      <div v-if="kind === 'treelist' && groupDefinitions && queryRaw?.length > 0">
+        <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
+          <LxExpander
+            v-if="
+              (hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
+              !hideFilteredItems
+            "
+            v-model="group.expanded"
+            :disabled="loading || busy"
+            :badge="group?.badge"
+            :badge-icon="group?.badgeIcon"
+            :badge-type="group?.badgeType"
+            :badge-title="group?.badgeTitle"
+            :label="group.name"
+            :id="group.id"
+            :has-select-button="
+              hasSelecting &&
+              hasSelectableItemsInGroup[prepareCode(group.id)] &&
+              selectingKind === 'multiple'
+            "
+            :select-status="groupSelectionStatuses?.[group.id]"
+            :texts="{
+              selectWholeGroup: displayTexts.selectWholeGroup,
+              clearSelected: displayTexts.clearSelected,
+            }"
+            @select-all="selectSection(group)"
+          >
+            <div class="tree-list-wrapper">
+              <div class="tree-list-search" role="list">
+                <div
+                  v-for="item in filteredGroupedItems[prepareCode(group.id)]"
+                  :key="item[idAttribute]"
+                  class="tree-list-search-item lx-list-item-container"
+                  role="listitem"
+                >
+                  <LxListItem
+                    :id="item[idAttribute]"
+                    :parentId="props.id"
+                    :label="item[primaryAttribute]"
+                    :description="item[secondaryAttribute]"
+                    :value="item"
+                    :href="item[hrefAttribute]"
+                    :actionDefinitions="actionDefinitions"
+                    :actionsLayout="actionsLayout"
+                    :icon="item[iconAttribute] ? item[iconAttribute] : icon"
+                    :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
+                    :tooltip="item[tooltipAttribute]"
+                    :searchString="query"
+                    :clickable="item[clickableAttribute]"
+                    :category="item[categoryAttribute]"
+                    :disabled="loading || busy"
+                    :selected="isItemSelected(item[idAttribute])"
+                    :texts="displayTexts"
+                    @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+                    @action-click="actionClicked"
+                  >
+                    <template #customItem="item" v-if="$slots.customItem">
+                      <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                    </template>
+                  </LxListItem>
+                  <div
+                    class="selecting-block"
+                    v-if="hasSelecting && selectableTreeItems?.length !== 0"
+                  >
+                    <template v-if="isSelectable(item)">
+                      <LxRadioButton
+                        v-if="selectingKind === 'single'"
+                        :id="`select-${id}-${item[idAttribute]}`"
+                        v-model="selectedItemsRaw[item[idAttribute]]"
+                        :value="item[idAttribute]"
+                        @click="selectRow(item[idAttribute])"
+                        :disabled="loading || busy"
+                        :label="item[primaryAttribute]"
+                        :group-id="`selection-${id}`"
+                        :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
+                      />
+                      <LxCheckbox
+                        v-else
+                        :id="`select-${id}-${item[idAttribute]}`"
+                        v-model="selectedItemsRaw[item[idAttribute]]"
+                        :value="item[idAttribute]"
+                        :disabled="loading || busy"
+                        :label="item[primaryAttribute]"
+                        :group-id="`selection-${id}`"
+                      />
+                    </template>
+                    <p v-else class="lx-checkbox-placeholder"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </LxExpander>
+        </template>
+      </div>
+
+      <template v-if="!groupDefinitions && filteredItems && filteredItems.length > 0">
+        <ul
+          v-if="kind === 'default'"
+          :id="id"
+          class="lx-list"
+          :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+          :aria-labelledby="labelledBy"
+        >
+          <li v-for="item in filteredItems" :key="item[idAttribute]" class="lx-list-item-container">
+            <LxListItem
+              :id="item[idAttribute]"
+              :parentId="props.id"
+              :label="item[primaryAttribute]"
+              :description="item[secondaryAttribute]"
+              :value="item"
+              :href="item[hrefAttribute]"
+              :actionDefinitions="actionDefinitions"
+              :actionsLayout="actionsLayout"
+              :icon="item[iconAttribute] ? item[iconAttribute] : icon"
+              :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
+              :tooltip="item[tooltipAttribute]"
+              :searchString="query"
+              :clickable="item[clickableAttribute]"
+              :category="item[categoryAttribute]"
+              :disabled="loading || busy"
+              :selected="isItemSelected(item[idAttribute])"
+              :texts="displayTexts"
+              @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+              @action-click="actionClicked"
+            >
+              <template #customItem="item" v-if="$slots.customItem">
+                <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+              </template>
+            </LxListItem>
+            <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+              <template v-if="isSelectable(item)">
+                <LxRadioButton
+                  v-if="selectingKind === 'single'"
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  @click="selectRow(item[idAttribute])"
+                  :disabled="loading || busy"
+                  :label="item[primaryAttribute]"
+                  :group-id="`selection-${id}`"
+                  :tabindex="getTabIndex(item[idAttribute])"
+                />
+                <LxCheckbox
+                  v-else
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  :disabled="loading || busy"
+                  :label="item[primaryAttribute]"
+                  :group-id="`selection-${id}`"
+                />
+              </template>
+              <p v-else class="lx-checkbox-placeholder"></p>
+            </div>
+          </li>
+        </ul>
+        <div
+          v-if="kind === 'draggable' && draggable"
+          :id="id"
+          class="lx-list"
+          :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+        >
+          <draggable
+            :id="`draggable-list-${id}`"
+            class="list-draggable-area"
+            v-model="ungroupedItemsArray"
+            handle=".lx-handle"
+            tag="ul"
+            drag-class="drag"
+            v-bind="dragOptions"
+            :item-key="idAttribute"
+            group="list"
+            @start="changeDragging"
+            @end="changeDragging"
+            @change="onMoveItem"
+            :disabled="loading || busy || draggableIsDisabledByQuery"
+            :aria-labelledby="labelledBy"
+          >
+            <template #item="{ element }">
+              <TransitionGroupWrapper
+                class="draggable-list-item-wrapper"
+                type="transition"
+                :name="!dragging ? 'flip-list' : null"
+                tag="li"
+              >
+                <div class="lx-transition-layer" :key="element[idAttribute]">
+                  <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
+                    <div class="lx-list-item-container">
+                      <LxDropDownMenu
+                        triggerClick="right"
+                        :disabled="loading || busy || draggableIsDisabledByQuery"
+                        :tabindex="-1"
+                      >
+                        <div
+                          class="lx-handle"
+                          :id="`handleId-${element[props.idAttribute]}`"
+                          :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
+                          :aria-label="displayTexts.draggableItem"
+                          @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
+                          @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
+                          @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
+                          @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
+                          :class="[
+                            {
+                              'handle-disabled': draggableIsDisabledByQuery || loading || busy,
+                            },
+                          ]"
+                        >
+                          <LxIcon class="lx-icon" value="drag"></LxIcon>
+                        </div>
+                        <template #panel>
+                          <div class="lx-button-set">
+                            <LxButton
+                              v-for="button in draggableButtons"
+                              :key="button.id"
+                              :icon="button.icon"
+                              :label="button.title"
+                              :disabled="button.disabled"
+                              @click="moveDraggableItem(button.id, element, 'ungrouped')"
+                            />
+                          </div>
+                        </template>
+                      </LxDropDownMenu>
+
+                      <LxListItem
+                        :id="element[idAttribute]"
+                        :parentId="props.id"
+                        :label="element[primaryAttribute]"
+                        :description="element[secondaryAttribute]"
+                        :value="element"
+                        :href="element[hrefAttribute]"
+                        :actionDefinitions="actionDefinitions"
+                        :actionsLayout="actionsLayout"
+                        :icon="element[iconAttribute] ? element[iconAttribute] : icon"
+                        :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
+                        :tooltip="element[tooltipAttribute]"
+                        :searchString="query"
+                        :clickable="element[clickableAttribute]"
+                        :category="element[categoryAttribute]"
+                        :disabled="loading || busy"
+                        :texts="displayTexts"
+                        @click="
+                          element[hrefAttribute]
+                            ? null
+                            : actionClicked('click', element[idAttribute])
+                        "
+                        @action-click="actionClicked"
+                      >
+                        <template #customItem="item" v-if="$slots.customItem">
+                          <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                        </template>
+                      </LxListItem>
+                    </div>
+                  </div>
+                </div>
+              </TransitionGroupWrapper>
+            </template>
+          </draggable>
+        </div>
+      </template>
+
+      <template v-for="group in responsiveGroupDefinitions" :key="prepareCode(group.id)">
+        <LxExpander
+          v-if="
+            kind === 'draggable' &&
+            ((hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
+              !hideFilteredItems)
+          "
+          v-model="group.expanded"
+          :disabled="loading || busy"
+          :badge="
+            group?.badge ? group?.badge : `${filteredGroupedItems[prepareCode(group.id)]?.length}`
+          "
+          :badge-icon="group?.badgeIcon"
+          :badge-type="group?.badgeType"
+          :badge-title="group?.badgeTitle"
+          :label="group.name"
+        >
+          <template #customHeader v-if="$slots.customExpanderHeader">
+            <slot
+              name="customExpanderHeader"
+              v-bind="{ item: group, expanded: group.expanded }"
+            ></slot>
+          </template>
+
+          <div
+            v-if="kind === 'draggable' && draggable"
+            :id="`${id}-${prepareCode(group.id)}`"
+            class="lx-list"
+            :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+          >
+            <draggable
+              class="list-draggable-area"
+              :id="`draggable-list-${id}`"
+              v-model="itemsArray[prepareCode(group.id)]"
+              handle=".lx-handle"
+              drag-class="drag"
+              v-bind="dragOptions"
+              :item-key="idAttribute"
+              group="list"
+              tag="ul"
+              @start="changeDragging"
+              @end="changeDragging"
+              @change="onMoveItem"
+              :disabled="loading || busy || draggableIsDisabledByQuery"
+              :aria-labelledby="labelledBy"
+            >
+              <template #item="{ element }">
+                <TransitionGroupWrapper
+                  class="draggable-list-item-wrapper"
+                  type="transition"
+                  :name="!dragging ? 'flip-list' : null"
+                  tag="li"
+                >
+                  <div class="lx-transition-layer" :key="element[idAttribute]">
+                    <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
+                      <div class="lx-list-item-container">
+                        <LxDropDownMenu
+                          triggerClick="right"
+                          :disabled="loading || busy || draggableIsDisabledByQuery"
+                          :tabindex="-1"
+                        >
+                          <div
+                            class="lx-handle"
+                            :id="`handleId-${element[props.idAttribute]}`"
+                            :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
+                            :aria-label="displayTexts.draggableItem"
+                            @keydown.up.prevent="moveGroupedItem(element, 'forward')"
+                            @keydown.down.prevent="moveGroupedItem(element, 'backward')"
+                            @keydown.right.prevent="moveGroupedItem(element, 'backward')"
+                            @keydown.left.prevent="moveGroupedItem(element, 'forward')"
+                            :class="[
+                              {
+                                'handle-disabled': draggableIsDisabledByQuery || loading || busy,
+                              },
+                            ]"
+                          >
+                            <LxIcon class="lx-icon" value="drag"></LxIcon>
+                          </div>
+                          <template #panel>
+                            <div class="lx-button-set">
+                              <LxButton
+                                v-for="button in draggableButtons"
+                                :key="button.id"
+                                :icon="button.icon"
+                                :label="button.title"
+                                :disabled="button.disabled"
+                                @click="moveDraggableItem(button.id, element, 'grouped')"
+                              />
+                            </div>
+                          </template>
+                        </LxDropDownMenu>
+
+                        <LxListItem
+                          :id="element[idAttribute]"
+                          :parentId="props.id"
+                          :label="element[primaryAttribute]"
+                          :description="element[secondaryAttribute]"
+                          :value="element"
+                          :href="element[hrefAttribute]"
+                          :actionDefinitions="actionDefinitions"
+                          :actionsLayout="actionsLayout"
+                          :icon="element[iconAttribute] ? element[iconAttribute] : icon"
+                          :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
+                          :tooltip="element[tooltipAttribute]"
+                          :searchString="query"
+                          :clickable="element[clickableAttribute]"
+                          :category="element[categoryAttribute]"
+                          :disabled="loading || busy"
+                          :selected="isItemSelected(element[idAttribute])"
+                          :texts="displayTexts"
+                          @click="
+                            element[hrefAttribute]
+                              ? null
+                              : actionClicked('click', element[idAttribute])
+                          "
+                          @action-click="actionClicked"
+                        >
+                          <template #customItem="item" v-if="$slots.customItem">
+                            <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                          </template>
+                        </LxListItem>
+                      </div>
+                    </div>
+                  </div>
+                </TransitionGroupWrapper>
+              </template>
+            </draggable>
+          </div>
+        </LxExpander>
+      </template>
+
+      <div
+        v-if="
+          kind === 'treelist' &&
+          (queryRaw?.length === 0 || searchSide === 'server') &&
+          !groupDefinitions
+        "
+      >
+        <LxTreeList
+          :items="items"
+          :idAttribute="idAttribute"
+          :primaryAttribute="primaryAttribute"
+          :secondaryAttribute="secondaryAttribute"
+          :childrenAttribute="childrenAttribute"
+          :hasChildrenAttribute="hasChildrenAttribute"
+          :hrefAttribute="hrefAttribute"
+          :clickableAttribute="clickableAttribute"
+          :iconAttribute="iconAttribute"
+          :iconSetAttribute="iconSetAttribute"
+          :tooltipAttribute="tooltipAttribute"
+          :categoryAttribute="categoryAttribute"
+          :selectable-attribute="selectableAttribute"
+          :action-definitions="actionDefinitions"
+          :actionsLayout="actionsLayout"
+          :icon="icon"
+          :iconSet="iconSet"
+          :hasSelecting="hasSelecting"
+          :selectingKind="selectingKind"
+          :disabled="busy || loading"
+          v-model:selected-items="selectedItemsRaw"
+          v-model:itemsStates="states"
+          :mode="mode"
+          :texts="displayTexts"
+          @actionClick="actionClicked"
+          @loadChildren="loadChildren"
+        >
+          <template #customItem="items" v-if="$slots.customItem">
+            <slot name="customItem" v-bind="items" />
+          </template>
+        </LxTreeList>
+      </div>
+
+      <div
+        v-else-if="
+          kind === 'treelist' &&
+          queryRaw?.length > 0 &&
+          searchSide === 'client' &&
+          !groupDefinitions
+        "
+        class="tree-list-search"
+        role="list"
+      >
+        <div
+          v-for="element in filteredTreeItems"
+          :key="element?.[idAttribute]"
+          class="tree-list-search-item lx-list-item-container"
+          role="listitem"
+        >
+          <LxListItem
+            :id="element[idAttribute]"
+            :parentId="props.id"
+            :label="element[primaryAttribute]"
+            :description="element[secondaryAttribute]"
+            :value="element"
+            :href="element[hrefAttribute]"
+            :actionDefinitions="actionDefinitions"
+            :actionsLayout="actionsLayout"
+            :icon="element[iconAttribute] ? element[iconAttribute] : icon"
+            :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
+            :tooltip="element[tooltipAttribute]"
+            :searchString="query"
+            :clickable="element[clickableAttribute]"
+            :category="element[categoryAttribute]"
+            :disabled="loading || busy"
+            :selected="isItemSelected(element[idAttribute])"
+            :texts="displayTexts"
+            @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
+            @action-click="actionClicked"
+          >
+            <template #customItem="item" v-if="$slots.customItem">
+              <slot name="customItem" v-bind="item" />
+            </template>
+          </LxListItem>
+          <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
+            <template v-if="isSelectable(element)">
+              <LxRadioButton
+                v-if="selectingKind === 'single'"
+                :id="`select-${id}-${element[idAttribute]}`"
+                v-model="selectedItemsRaw[element[idAttribute]]"
+                :value="element[idAttribute]"
+                @click="selectRow(element[idAttribute])"
+                :disabled="loading || busy"
+                :label="element[primaryAttribute]"
+                :group-id="`selection-${id}`"
+                :tabindex="getTabIndex(element[idAttribute])"
+              />
+              <LxCheckbox
+                v-else
+                :id="`select-${id}-${element[idAttribute]}`"
+                v-model="selectedItemsRaw[element[idAttribute]]"
+                :value="element[idAttribute]"
+                :disabled="loading || busy"
+                :label="element[primaryAttribute]"
+                :group-id="`selection-${id}`"
+              />
+            </template>
+            <p v-else class="lx-checkbox-placeholder"></p>
+          </div>
+        </div>
+      </div>
+
+      <LxEmptyState
+        v-if="items?.length === 0 && !(loading || busy) && !query"
+        :label="displayTexts?.noItems"
+        :description="displayTexts?.noItemsDescription"
+        :icon="emptyStateIcon"
+        :actionDefinitions="emptyStateActionDefinitions"
+        @empty-state-action-click="emptyStateActionClicked"
       />
+
+      <div
+        class="lx-empty-state"
+        v-if="
+          query &&
+          filteredItems &&
+          ((props.kind !== 'treelist' && filteredItems.length === 0) ||
+            (props.kind === 'treelist' && filteredTreeItems?.length === 0))
+        "
+      >
+        <div aria-live="polite" role="status" class="lx-invisible" v-if="showInvisibleBlock">
+          {{ displayTexts.notFoundSearch }} {{ JSON.stringify(query) }}
+        </div>
+        <p>{{ displayTexts.notFoundSearch }} {{ JSON.stringify(query) }}</p>
+      </div>
+
+      <div class="lx-load-more-button" v-if="showLoadMore">
+        <LxButton
+          :label="displayTexts.loadMore"
+          icon="add-item"
+          kind="tertiary"
+          :busy="loading"
+          :loading="loading"
+          :disabled="busy || items?.length === 0"
+          @click="loadMore()"
+        />
+      </div>
+
+      <div class="lx-list-loader" v-if="!showLoadMore && loading">
+        <LxLoader :loading="loading" size="s" />
+      </div>
     </div>
-    <div class="lx-list-loader" v-if="!showLoadMore && loading">
-      <LxLoader :loading="loading" size="s" />
-    </div>
-  </div>
+  </LxLoaderView>
 </template>

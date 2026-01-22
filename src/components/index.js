@@ -1,82 +1,105 @@
-/* eslint-disable import/no-unresolved */
+import { defineAsyncComponent } from 'vue';
 
 /* shell */
-export { default as LxShell } from '@/components/shell/Shell.vue';
+export const LxShell = defineAsyncComponent(() => import('@/components/shell/Shell.vue'));
 
 /* forms */
-export { default as LxRow } from '@/components/forms/Row.vue';
-export { default as LxSection } from '@/components/forms/Section.vue';
-export { default as LxForm } from '@/components/forms/Form.vue';
+export const LxRow = defineAsyncComponent(() => import('@/components/forms/Row.vue'));
+export const LxSection = defineAsyncComponent(() => import('@/components/forms/Section.vue'));
+export const LxForm = defineAsyncComponent(() => import('@/components/forms/Form.vue'));
 
 /* components */
-export { default as LxAppendableList } from '@/components/forms/AppendableList.vue';
-export { default as LxAppendableListSimple } from '@/components/forms/AppendableListSimple.vue';
-export { default as LxAutoComplete } from '@/components/AutoComplete.vue';
-export { default as LxButton } from '@/components/Button.vue';
-export { default as LxCamera } from '@/components/Camera.vue';
-export { default as LxCard } from '@/components/Card.vue';
-export { default as LxCheckbox } from '@/components/Checkbox.vue';
-export { default as LxContentSwitcher } from '@/components/ContentSwitcher.vue';
-export { default as LxDataBlock } from '@/components/DataBlock.vue';
-export { default as LxDataGrid } from '@/components/DataGrid.vue';
-export { default as LxDataVisualizer } from '@/components/DataVisualizer.vue';
-export { default as LxDateTimePicker } from '@/components/datePicker/DateTimePicker.vue';
-export { default as LxDateTimeRange } from '@/components/datePicker/DateTimeRange.vue';
-export { default as LxDialog } from '@/components/Dialog.vue';
-export { default as LxDropDown } from '@/components/Dropdown.vue';
-export { default as LxDropDownMenu } from '@/components/DropDownMenu.vue';
-export { default as LxEmptyState } from '@/components/EmptyState.vue';
-export { default as LxErrorPage } from '@/components/ErrorPage.vue';
-export { default as LxExpander } from '@/components/Expander.vue';
-export { default as LxFileUploader } from '@/components/fileUploader/FileUploader.vue';
-export { default as LxFileViewer } from '@/components/FileViewer.vue';
-export { default as LxFilterBuilder } from '@/components/FilterBuilder.vue';
-export { default as LxFilters } from '@/components/Filters.vue';
-export { default as LxFlag } from '@/components/Flag.vue';
-export { default as LxFormBuilder } from '@/components/forms/FormBuilder.vue';
-export { default as LxIcon } from '@/components/Icon.vue';
-export { default as LxIllustration } from '@/components/Illustration.vue';
-export { default as LxInfoBox } from '@/components/InfoBox.vue';
-export { default as LxInfoWrapper } from '@/components/InfoWrapper.vue';
-export { default as LxLink } from '@/components/Link.vue';
-export { default as LxList } from '@/components/list/List.vue';
-export { default as LxListItem } from '@/components/list/ListItem.vue';
-export { default as LxLoader } from '@/components/Loader.vue';
-export { default as LxLoaderView } from '@/components/LoaderView.vue';
-export { default as LxMap } from '@/components/Map.vue';
-export { default as LxMarkdownTextArea } from '@/components/MarkdownTextArea.vue';
-export { default as LxMasterDetail } from '@/components/MasterDetail.vue';
-export { default as LxModal } from '@/components/Modal.vue';
-export { default as LxModalForm } from '@/components/ModalForm.vue';
-export { default as LxNotification } from '@/components/Notification.vue';
-export { default as LxNumberSlider } from '@/components/NumberSlider.vue';
-export { default as LxPlaceholder } from '@/components/forms/Placeholder.vue';
-export { default as LxPersonDisplay } from '@/components/PersonDisplay.vue';
-export { default as LxQr } from '@/components/Qr.vue';
-export { default as LxQrScanner } from '@/components/QrScanner.vue';
-export { default as LxRatings } from '@/components/Ratings.vue';
-export { default as LxRadioButton } from '@/components/RadioButton.vue';
-export { default as LxRichTextDisplay } from '@/components/RichTextDisplay.vue';
-export { default as LxSearchableText } from '@/components/SearchableText.vue';
-export { default as LxSiteMap } from '@/components/SiteMap.vue';
-export { default as LxStack } from '@/components/Stack.vue';
-export { default as LxStateDisplay } from '@/components/StateDisplay.vue';
-export { default as LxSteps } from '@/components/Steps.vue';
-export { default as LxTabControl } from '@/components/TabControl.vue';
-export { default as LxTextArea } from '@/components/TextArea.vue';
-export { default as LxTextInput } from '@/components/TextInput.vue';
-export { default as LxTile } from '@/components/Tile.vue';
-export { default as LxToggle } from '@/components/Toggle.vue';
-export { default as LxToolbar } from '@/components/Toolbar.vue';
-export { default as LxToolbarGroup } from '@/components/ToolbarGroup.vue';
-export { default as LxValuePicker } from '@/components/ValuePicker.vue';
-export { default as LxViewBuilder } from '@/components/forms/ViewBuilder.vue';
-export { default as LxViewLayout } from '@/components/ViewLayout.vue';
-export { default as LxVisualPicker } from '@/components/VisualPicker.vue';
-export { default as LxWidget } from '@/components/Widget.vue';
-export { default as LxDayInput } from '@/components/DayInput.vue';
-export { default as LxDrawPad } from '@/components/DrawPad.vue';
-export { default as LxLogoDisplay } from '@/components/LogoDisplay.vue';
-export { default as LxBadge } from '@/components/Badge.vue';
+export const LxAppendableList = defineAsyncComponent(() =>
+  import('@/components/forms/AppendableList.vue')
+);
+export const LxAutoComplete = defineAsyncComponent(() => import('@/components/AutoComplete.vue'));
+export const LxButton = defineAsyncComponent(() => import('@/components/Button.vue'));
+export const LxCamera = defineAsyncComponent(() => import('@/components/Camera.vue'));
+export const LxCard = defineAsyncComponent(() => import('@/components/Card.vue'));
+export const LxCheckbox = defineAsyncComponent(() => import('@/components/Checkbox.vue'));
+export const LxContentSwitcher = defineAsyncComponent(() =>
+  import('@/components/ContentSwitcher.vue')
+);
+export const LxDataBlock = defineAsyncComponent(() => import('@/components/DataBlock.vue'));
+export const LxDataGrid = defineAsyncComponent(() => import('@/components/DataGrid.vue'));
+export const LxDataVisualizer = defineAsyncComponent(() =>
+  import('@/components/DataVisualizer.vue')
+);
+export const LxDateTimePicker = defineAsyncComponent(() =>
+  import('@/components/datePicker/DateTimePicker.vue')
+);
+export const LxDateTimeRange = defineAsyncComponent(() =>
+  import('@/components/datePicker/DateTimeRange.vue')
+);
+export const LxDialog = defineAsyncComponent(() => import('@/components/Dialog.vue'));
+export const LxDropDown = defineAsyncComponent(() => import('@/components/Dropdown.vue'));
+export const LxDropDownMenu = defineAsyncComponent(() => import('@/components/DropDownMenu.vue'));
+export const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
+export const LxErrorPage = defineAsyncComponent(() => import('@/components/ErrorPage.vue'));
+export const LxExpander = defineAsyncComponent(() => import('@/components/Expander.vue'));
+export const LxFileUploader = defineAsyncComponent(() =>
+  import('@/components/fileUploader/FileUploader.vue')
+);
+export const LxFileViewer = defineAsyncComponent(() => import('@/components/FileViewer.vue'));
+export const LxFilterBuilder = defineAsyncComponent(() => import('@/components/FilterBuilder.vue'));
+export const LxFilters = defineAsyncComponent(() => import('@/components/Filters.vue'));
+export const LxFlag = defineAsyncComponent(() => import('@/components/Flag.vue'));
+export const LxFormBuilder = defineAsyncComponent(() =>
+  import('@/components/forms/FormBuilder.vue')
+);
+export const LxIcon = defineAsyncComponent(() => import('@/components/Icon.vue'));
+export const LxIllustration = defineAsyncComponent(() => import('@/components/Illustration.vue'));
+export const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
+export const LxInfoWrapper = defineAsyncComponent(() => import('@/components/InfoWrapper.vue'));
+export const LxLink = defineAsyncComponent(() => import('@/components/Link.vue'));
+export const LxList = defineAsyncComponent(() => import('@/components/list/List.vue'));
+export const LxListItem = defineAsyncComponent(() => import('@/components/list/ListItem.vue'));
+export const LxLoader = defineAsyncComponent(() => import('@/components/Loader.vue'));
+export const LxLoaderView = defineAsyncComponent(() => import('@/components/LoaderView.vue'));
+export const LxMap = defineAsyncComponent(() => import('@/components/Map.vue'));
+export const LxMarkdownTextArea = defineAsyncComponent(() =>
+  import('@/components/MarkdownTextArea.vue')
+);
+export const LxMasterDetail = defineAsyncComponent(() => import('@/components/MasterDetail.vue'));
+export const LxModal = defineAsyncComponent(() => import('@/components/Modal.vue'));
+export const LxModalForm = defineAsyncComponent(() => import('@/components/ModalForm.vue'));
+export const LxNotification = defineAsyncComponent(() => import('@/components/Notification.vue'));
+export const LxNumberSlider = defineAsyncComponent(() => import('@/components/NumberSlider.vue'));
+export const LxPlaceholder = defineAsyncComponent(() =>
+  import('@/components/forms/Placeholder.vue')
+);
+export const LxPersonDisplay = defineAsyncComponent(() => import('@/components/PersonDisplay.vue'));
+export const LxQr = defineAsyncComponent(() => import('@/components/Qr.vue'));
+export const LxQrScanner = defineAsyncComponent(() => import('@/components/QrScanner.vue'));
+export const LxRatings = defineAsyncComponent(() => import('@/components/Ratings.vue'));
+export const LxRadioButton = defineAsyncComponent(() => import('@/components/RadioButton.vue'));
+export const LxRichTextDisplay = defineAsyncComponent(() =>
+  import('@/components/RichTextDisplay.vue')
+);
+export const LxSearchableText = defineAsyncComponent(() =>
+  import('@/components/SearchableText.vue')
+);
+export const LxSiteMap = defineAsyncComponent(() => import('@/components/SiteMap.vue'));
+export const LxStack = defineAsyncComponent(() => import('@/components/Stack.vue'));
+export const LxStateDisplay = defineAsyncComponent(() => import('@/components/StateDisplay.vue'));
+export const LxSteps = defineAsyncComponent(() => import('@/components/Steps.vue'));
+export const LxTabControl = defineAsyncComponent(() => import('@/components/TabControl.vue'));
+export const LxTextArea = defineAsyncComponent(() => import('@/components/TextArea.vue'));
+export const LxTextInput = defineAsyncComponent(() => import('@/components/TextInput.vue'));
+export const LxTile = defineAsyncComponent(() => import('@/components/Tile.vue'));
+export const LxToggle = defineAsyncComponent(() => import('@/components/Toggle.vue'));
+export const LxToolbar = defineAsyncComponent(() => import('@/components/Toolbar.vue'));
+export const LxToolbarGroup = defineAsyncComponent(() => import('@/components/ToolbarGroup.vue'));
+export const LxValuePicker = defineAsyncComponent(() => import('@/components/ValuePicker.vue'));
+export const LxViewBuilder = defineAsyncComponent(() =>
+  import('@/components/forms/ViewBuilder.vue')
+);
+export const LxViewLayout = defineAsyncComponent(() => import('@/components/ViewLayout.vue'));
+export const LxVisualPicker = defineAsyncComponent(() => import('@/components/VisualPicker.vue'));
+export const LxWidget = defineAsyncComponent(() => import('@/components/Widget.vue'));
+export const LxDayInput = defineAsyncComponent(() => import('@/components/DayInput.vue'));
+export const LxDrawPad = defineAsyncComponent(() => import('@/components/DrawPad.vue'));
+export const LxLogoDisplay = defineAsyncComponent(() => import('@/components/LogoDisplay.vue'));
+export const LxBadge = defineAsyncComponent(() => import('@/components/Badge.vue'));
 
 // Other components you plan to publish go here
