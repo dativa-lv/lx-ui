@@ -28,7 +28,7 @@ const props = defineProps({
   modelValue: { type: [Array, String], default: () => [] },
   readOnly: { type: Boolean, default: false },
   mode: { type: String, default: 'default' }, // default, compact
-  selectingKind: { type: String, default: 'multiple' }, // single, multiple
+  selectionKind: { type: String, default: 'multiple' }, // single, multiple
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
 });
@@ -171,7 +171,7 @@ function mapClick(event) {
 
   if (!countryId) return;
 
-  if (props.selectingKind === 'multiple') {
+  if (props.selectionKind === 'multiple') {
     const res = [...model.value];
 
     const index = res.findIndex((selectedItem) => selectedItem === countryId);
@@ -185,7 +185,7 @@ function mapClick(event) {
 }
 
 function spineClick(bone) {
-  if (props.selectingKind === 'multiple') {
+  if (props.selectionKind === 'multiple') {
     const boneId = bone?.split('-')[0];
 
     const res = [...model.value];
@@ -203,7 +203,7 @@ function spineClick(bone) {
 }
 
 function nonSpineClick(boneId) {
-  if (props.selectingKind === 'multiple') {
+  if (props.selectionKind === 'multiple') {
     const res = [...model.value];
     const index = res.findIndex((selectedItem) => selectedItem === boneId);
     if (boneId !== 'skeleton' && boneId !== 'LV') {
@@ -262,7 +262,7 @@ watch(
       nextTick(() => {
         if (!errorState.value) {
           let tempModel;
-          if (props.selectingKind === 'single') {
+          if (props.selectionKind === 'single') {
             if (model.value?.length === 0) {
               tempModel = null;
             } else tempModel = model.value;
@@ -295,7 +295,7 @@ function removeItem(id) {
   model.value = res;
 }
 
-function selectionChanged(selectedValue) {
+function handleSelectionChange(selectedValue) {
   const elem = document.getElementById(props.id);
   if (elem) {
     const elements = Array.from(elem.querySelectorAll('.selected-visual'));
@@ -309,7 +309,7 @@ function selectionChanged(selectedValue) {
       } else elem.querySelector(`#lx-${element}`)?.classList.add('selected-visual');
     });
     if (JSON.stringify(model.value) !== JSON.stringify(selectedValue)) {
-      if (props.selectingKind === 'single') {
+      if (props.selectionKind === 'single') {
         [model.value] = selectedValue;
       } else model.value = selectedValue;
     }
@@ -376,7 +376,7 @@ defineExpose({ addTitles });
         >
           <div v-for="item in selectedItems" :key="item?.id" class="lx-tag">
             <div class="tag-text">
-              <LxFlag v-if="kind === 'europe'" :value="item?.id" size="small" :meaningful="false" />
+              <LxFlag v-if="kind === 'europe'" :value="item?.id" size="s" :meaningful="false" />
               {{ item?.name }}
             </div>
             <LxButton
@@ -398,10 +398,10 @@ defineExpose({ addTitles });
           ref="listRef"
           :items="!readOnly ? items : selectedItems"
           :hasSelecting="!readOnly"
-          :selectingKind="selectingKind"
+          :selectionKind="selectionKind"
           listType="1"
           :has-search="true"
-          @selectionChanged="selectionChanged"
+          @selectionChange="handleSelectionChange"
         >
           <template #customItem="{ id, name }" v-if="kind === 'europe'">
             <div class="list-country-item lx-aligned-row">

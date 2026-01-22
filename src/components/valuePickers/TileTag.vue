@@ -18,8 +18,8 @@ const props = defineProps({
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
   variant: { type: String, default: 'tile' },
-  kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
-  nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  selectionKind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
+  nullable: { type: Boolean, default: false }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
   alwaysAsArray: { type: Boolean, default: false },
@@ -57,7 +57,7 @@ const model = computed({
 });
 
 onMounted(() => {
-  if (!model.value && props.kind === 'multiple') {
+  if (!model.value && props.selectionKind === 'multiple') {
     model.value = [];
   }
   nextTick(() => updateDescriptionTabIndexes(props.items));
@@ -66,7 +66,7 @@ onMounted(() => {
 const itemsModel = ref({});
 const itemsDisplay = computed(() => {
   const res = [...props.items];
-  if (props.kind === 'single' && props.nullable)
+  if (props.selectionKind === 'single' && props.nullable)
     res.unshift({
       [props.idAttribute]: 'notSelected',
       [props.nameAttribute]: displayTexts.value.notSelected,
@@ -168,7 +168,7 @@ function selectSingle(id) {
 }
 
 watch(
-  () => props.kind,
+  () => props.selectionKind,
   (newKind) => {
     activate();
     itemsModel.value = {};
@@ -362,9 +362,9 @@ function updateDescriptionTabIndexes(items) {
     </template>
 
     <template v-else>
-      <LxToolbar v-if="hasSearch || (hasSelectAll && kind === 'multiple')">
+      <LxToolbar v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')">
         <LxButton
-          v-if="hasSelectAll && kind === 'multiple'"
+          v-if="hasSelectAll && selectionKind === 'multiple'"
           kind="ghost"
           :icon="
             areSomeSelected
@@ -412,7 +412,7 @@ function updateDescriptionTabIndexes(items) {
       >
         <div v-for="item in itemsDisplay" :key="item[idAttribute]">
           <div
-            v-if="kind === 'single' && !isElementHidden(item)"
+            v-if="selectionKind === 'single' && !isElementHidden(item)"
             class="lx-value-picker-tile"
             :class="{
               'lx-value-picker-tile-selected':
@@ -474,7 +474,7 @@ function updateDescriptionTabIndexes(items) {
           </div>
 
           <div
-            v-if="kind === 'multiple' && !isElementHidden(item)"
+            v-if="selectionKind === 'multiple' && !isElementHidden(item)"
             class="lx-value-picker-tile"
             :id="getItemId(item[idAttribute])"
             :group-id="groupId"
@@ -527,7 +527,7 @@ function updateDescriptionTabIndexes(items) {
       >
         <ul
           class="lx-tag-set"
-          v-if="kind === 'single'"
+          v-if="selectionKind === 'single'"
           :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
         >
           <li
@@ -565,7 +565,7 @@ function updateDescriptionTabIndexes(items) {
         </ul>
         <ul
           class="lx-tag-set"
-          v-if="kind === 'multiple'"
+          v-if="selectionKind === 'multiple'"
           :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
         >
           <li

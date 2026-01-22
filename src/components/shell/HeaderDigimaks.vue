@@ -28,7 +28,7 @@ const props = defineProps({
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
-  hasAnimations: { type: Boolean, default: true },
+  hasReducedAnimations: { type: Boolean, default: false },
   hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: true },
@@ -98,18 +98,18 @@ const emits = defineEmits([
   'go-home',
   'log-out',
   'go-back',
-  'language-changed',
+  'languageChange',
   'alert-item-click',
   'alerts-click',
   'help-click',
   'megaMenuShowAllClick',
-  'contextPersonChanged',
+  'contextPersonChange',
   'update:selected-context-person',
-  'alternativeProfileChanged',
+  'alternativeProfileChange',
   'update:selected-language',
   'update:selected-alternative-profile',
   'update:theme',
-  'update:hasAnimations',
+  'update:hasReducedAnimations',
   'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
@@ -119,6 +119,14 @@ const emits = defineEmits([
 const alternativeProfilesModal = ref();
 const contextPersonModal = ref();
 const insideHeader = ref(true);
+
+const modalActionDefinitions = ref([
+  {
+    id: 'close',
+    name: displayTexts.value.close,
+    kind: 'secondary',
+  },
+]);
 
 const navToggle = () => {
   emits('nav-toggle', !props.navBarSwitch);
@@ -153,10 +161,10 @@ const themeModel = computed({
 
 const animationsModel = computed({
   get() {
-    return props.hasAnimations;
+    return props.hasReducedAnimations;
   },
   set(value) {
-    emits('update:hasAnimations', value);
+    emits('update:hasReducedAnimations', value);
   },
 });
 
@@ -206,7 +214,7 @@ function openContextPersonModal() {
 
 function languageChange(id) {
   const language = props.languages.find((lang) => lang?.id === id);
-  emits('language-changed', language);
+  emits('languageChange', language);
   selectedLanguageModel.value = language;
 }
 
@@ -267,11 +275,11 @@ const selectedAlternativeProfileModel = computed({
 });
 
 watch(selectedContextPersonModel, (newValue) => {
-  emits('contextPersonChanged', newValue);
+  emits('contextPersonChange', newValue);
 });
 
 watch(selectedAlternativeProfileModel, (newValue) => {
-  emits('alternativeProfileChanged', newValue);
+  emits('alternativeProfileChange', newValue);
 });
 
 function triggerShowAllClick() {
@@ -825,10 +833,7 @@ provide('insideHeader', insideHeader);
     ref="alternativeProfilesModal"
     :label="displayTexts.alternativeProfilesLabel"
     size="m"
-    :button-secondary-visible="true"
-    :button-primary-visible="false"
-    :button-secondary-label="displayTexts.close"
-    :button-secondary-is-cancel="true"
+    :action-definitions="modalActionDefinitions"
   >
     <LxList
       id="listAlternativeProfiles"
@@ -836,8 +841,8 @@ provide('insideHeader', insideHeader);
       :has-search="false"
       idAttribute="id"
       clickableAttribute="clickable"
-      primaryAttribute="firstName"
-      secondaryAttribute="lastName"
+      nameAttribute="firstName"
+      descriptionAttribute="lastName"
       categoryAttribute="category"
       icon="switch"
       listType="1"
@@ -857,10 +862,7 @@ provide('insideHeader', insideHeader);
     ref="contextPersonModal"
     :label="displayTexts.contextPersonsLabel"
     size="m"
-    :button-secondary-visible="true"
-    :button-primary-visible="false"
-    :button-secondary-label="displayTexts.close"
-    :button-secondary-is-cancel="true"
+    :action-definitions="modalActionDefinitions"
   >
     <LxList
       id="listContextPersons"
@@ -868,8 +870,8 @@ provide('insideHeader', insideHeader);
       :has-search="false"
       idAttribute="id"
       clickableAttribute="clickable"
-      primaryAttribute="firstName"
-      secondaryAttribute="lastName"
+      nameAttribute="firstName"
+      descriptionAttribute="lastName"
       icon="context-person"
       listType="1"
       @action-click="switchContextPerson"

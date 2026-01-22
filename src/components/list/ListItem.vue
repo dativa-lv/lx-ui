@@ -61,7 +61,7 @@ function performClick() {
 
 const dropDownMenu = ref();
 
-function actionClicked(actionName, rowCode, event = null, href = false, close = false) {
+function handleActionClick(actionName, rowCode, event = null, href = false, close = false) {
   event?.stopPropagation();
   if (href) event?.preventDefault();
   emits('actionClick', actionName, rowCode);
@@ -69,8 +69,9 @@ function actionClicked(actionName, rowCode, event = null, href = false, close = 
 }
 
 function openDropDownMenu(event, href = false) {
-  if (href) event.preventDefault();
-  else {
+  if (href) {
+    event.preventDefault();
+  } else {
     event.stopPropagation();
     dropDownMenu.value.openMenu();
   }
@@ -202,7 +203,7 @@ const sanitizeHref = computedAsync(async () => {
             :badge-type="action.badgeType"
             :badgeIcon="action.badgeIcon"
             :badgeTitle="action.badgeTitle"
-            @click="actionClicked(action.id, id, $event)"
+            @click="handleActionClick(action.id, id, $event)"
           />
         </div>
         <div
@@ -248,7 +249,7 @@ const sanitizeHref = computedAsync(async () => {
                   :badge-type="action.badgeType"
                   :badgeIcon="action.badgeIcon"
                   :badgeTitle="action.badgeTitle"
-                  @click="actionClicked(action.id, id, $event, false, true)"
+                  @click="handleActionClick(action.id, id, $event, false, true)"
                 />
               </div>
             </template>
@@ -355,7 +356,7 @@ const sanitizeHref = computedAsync(async () => {
             :badgeTitle="action.badgeTitle"
             kind="ghost"
             variant="icon-only"
-            @click="actionClicked(action.id, id, $event, true)"
+            @click="handleActionClick(action.id, id, $event, true)"
           />
         </div>
         <div
@@ -401,7 +402,7 @@ const sanitizeHref = computedAsync(async () => {
                   :badge-type="action.badgeType"
                   :badgeIcon="action.badgeIcon"
                   :badgeTitle="action.badgeTitle"
-                  @click="actionClicked(action.id, id, $event, true, true)"
+                  @click="handleActionClick(action.id, id, $event, true, true)"
                 />
               </div>
             </template>
@@ -445,7 +446,7 @@ const sanitizeHref = computedAsync(async () => {
         :badge-type="action.badgeType"
         :badgeIcon="action.badgeIcon"
         :badgeTitle="action.badgeTitle"
-        @click="actionClicked(action.id, id, $event)"
+        @click="handleActionClick(action.id, id, $event)"
       />
     </div>
     <div
@@ -490,7 +491,7 @@ const sanitizeHref = computedAsync(async () => {
               :badge-type="action.badgeType"
               :badgeIcon="action.badgeIcon"
               :badgeTitle="action.badgeTitle"
-              @click="actionClicked(action.id, id)"
+              @click="handleActionClick(action.id, id)"
             />
           </div>
         </template>

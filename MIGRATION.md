@@ -1,5 +1,318 @@
 # LX/UI Migration Guide
 
+## 1.11 → 2.0
+
+### Breaking changes
+
+#### LxTabControl
+
+The component API has changed to clearly separate data input from selection state.
+
+Before:
+   - `value` was used to pass the full tab `items` list
+   - selection could be triggered imperatively via `setActiveTab` exposed function
+
+Now:
+   - `items` is passed via a dedicated prop
+   - `modelValue` represents the selected item id
+   - selection is controlled declaratively via `v-model`
+
+
+#### LxMasterDetail, LxRating
+
+The component API has been simplified by replacing the mode prop with a more explicit boolean.
+
+**Prop changes**
+- `mode` (removed) — previously accepted `'edit' | 'read'`
+- `readOnly` (added) — `Boolean`, defaults to `false`
+
+Before:
+```js
+<LxMasterDetail mode="read" />
+<LxRating mode="read" />
+```
+
+Now:
+```js
+<LxMasterDetail :readOnly="true" />
+<LxRating :readOnly="true" />
+```
+
+
+#### LxDataBlock, LxAppendableList
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Prop renames**
+- `forceUppercase` -> `uppercase`
+
+#### LxDropDown, LxAutoComplete
+
+The `variant` prop has been removed.
+
+Custom rendering should now be used to represent different item types such as state, country, or other visual variants.
+
+```js
+<LxDropDown v-model="dropdownModel" :items="items">
+ <!-- State -->
+  <template #customItem="{ id, name, displayType, displayShape }">
+    <LxStateDisplay
+      :value="id"
+      :dictionary="[
+        {
+          value: id,
+          displayName: name,
+          displayType: displayType,
+          displayShape: displayShape,
+        },
+      ]"
+    />
+  </template>
+
+
+<!-- Country -->
+ <template #customItem="{ name, country }">
+   <div class="lx-item-display lx-aligned-row">
+     <LxFlag :value="country" size="s" locale="lv" />
+     <span class="lx-data">{{ name }}</span>
+   </div>
+ </template>
+</LxDropDown>
+```
+
+
+#### LxShell
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Event renames**
+- `confirmModalClosed` → `confirmModalClose`
+- `languageChanged` → `languageChange`
+- `contextPersonChanged` → `contextPersonChange`
+- `alternativeProfileChanged` → `alternativeProfileChange`
+
+The `v-model` prop controlling animation preferences has been renamed and its semantics updated to reflect reduced-motion behavior.
+
+- `v-model:hasAnimations` → `v-model:hasReducedAnimations`
+
+Before:
+```js
+<LxShell v-model:hasAnimations="animationsEnabled" />
+```
+After:
+```js
+<LxShell v-model:hasReducedAnimations="prefersReducedMotion" />
+```
+
+
+#### LxButton, LxExpander, LxFilterBuilder, LxFilter, LxSection, LxTile
+
+The `badgeType` prop values have been updated to use standardized identifiers.
+
+- `good` → `success`
+- `important` → `error`
+
+
+#### LxDialog, LxModalForm
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Event renames**
+- `closed` → `close`
+
+
+#### LxModal
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Event renames**
+- `closed` → `close`
+
+**Event removed**
+- `primaryAction`
+- `secondaryAction`
+
+**Props removed**
+- `buttonPrimaryVisible`
+- `buttonPrimaryLoading`
+- `buttonPrimaryBusy`
+- `buttonPrimaryLabel`
+- `buttonPrimaryDisabled`
+- `buttonPrimaryIsDestructive`
+- `buttonSecondaryVisible`
+- `buttonSecondaryLoading`
+- `buttonSecondaryBusy`
+- `buttonSecondaryLabel`
+- `buttonCloseLabel`
+
+**Props added**
+- `texts`
+
+**Replacement**
+- Action buttons must now be defined using the unified `actionDefinitions`.
+To edit the close button label text change `texts` prop `close` attribute.
+
+#### LxMap
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Event renames**
+- `searched` → `search`
+
+
+#### LxDataGrid
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Event renames**
+- `selectionActionClicked` → `selectionActionClick`
+- `toolbarActionClicked` → `toolbarActionClick`
+- `sortingChanged` → `sortingChange`
+- `itemsPerPageChanged` → `itemsPerPageChange`
+- `selectionChanged` → `selectionChange`
+- `searched` → `search`
+
+
+#### LxCamera
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Event renames**
+- `actionClicked` → `actionClick`
+
+
+#### LxAutoComplete, LxList, LxDataBlock, LxDataGrid, LxAppendableList, LxVisualPicker, LxFormBuilder schema
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Prop renames**
+- `selectingKind` → `selectionKind`
+
+
+#### LxValuePicker, LxQrScanner, LxFileUploader
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Prop renames**
+- `kind` → `selectionKind`
+
+
+#### LxMasterDetail
+
+The component API has changed to clearly separate data input from selection state.
+
+Before:
+   - `modelValue` was used to pass the full `items` list
+   - selection could be triggered imperatively via `selectItem` exposed function
+   - selection was tracked via a `selectionChanged` event
+
+```js
+<LxMasterDetail
+  ref="masterDetails" // selectItem(id);
+  v-model="items"
+  @selectionChanged="handleSelectionChange"
+/>
+```
+
+Now:
+   - `items` is passed via a dedicated prop
+   - `modelValue` represents the selected item id
+   - selection is controlled declaratively via `v-model`
+
+```js
+<LxMasterDetail
+  v-model="selectedItem"
+  :items="items"
+/>
+```
+
+
+#### LxFilters
+
+LxFilter default `kind` is no longer supported. Therefore, `kind` prop have been removed.
+
+The form `kind`, that uses LxForm, should be used from now on.
+
+If your LxFilters components has div elements with _lx-column_ or _lx-row_ classes in default slots, they must be remade to use LxRow components.
+
+
+#### LxAppendableList
+
+LxAppendableList `addButtonLabel` prop have been removed. To edit the text change `texts` prop `addButtonLabel` attribute.
+
+```js
+{
+  addButtonLabel: "Add item" 
+}
+```
+
+#### LxList 
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Event renames**
+- `selectionChanged` → `selectionChange`
+- `searched` → `search`
+
+**Prop renames**
+- `primaryAttribute` → `nameAttribute`
+- `secondaryAttribute` → `descriptionAttribute`
+
+
+#### LxModalForm
+
+The component `slots` has been renamed to follow camelCase convention:
+
+**Slot renames**
+- `pre-header` → `preHeader`
+- `pre-header-info` → `preHeaderInfo`
+- `post-header` → `postHeader`
+- `post-header-info` → `postHeaderInfo`
+
+
+#### LxForm
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Slot renames**
+- `pre-header` → `preHeader`
+- `pre-header-info` → `preHeaderInfo`
+- `post-header` → `postHeader`
+- `post-header-info` → `postHeaderInfo`
+- `header-additional` → `headerAdditional`
+
+**Event renames**
+- `buttonClick` → `actionClick`
+
+
+#### LxRatings
+
+The `LxRatings` component has been renamed to **LxRating**.
+
+
+#### LxFlag
+
+The `size` prop values have been updated to use short, standardized identifiers.
+
+- `small` → `s`
+- `normal` → `m`
+- `big` → `l`
+
+
+#### Builders
+
+All previous listed changes affects builders aswell.
+Update the schemas accordingly to this migration guide and updated FormBuilder documentation.
+
+
+### Other changes
+
+#### lx-form styles
+
+_lx-form_ css styles are no longer supported.
+LxForm component must be used for form creation.
+
+
 ## 1.10 → 1.11
 
 ### Breaking changes

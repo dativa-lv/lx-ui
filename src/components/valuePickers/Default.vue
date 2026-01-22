@@ -20,8 +20,8 @@ const props = defineProps({
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
-  kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
-  nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  selectionKind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
+  nullable: { type: Boolean, default: false }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   variant: { type: String, default: 'default' },
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
@@ -60,7 +60,7 @@ const model = computed({
 });
 
 onMounted(() => {
-  if (!model.value && props.kind === 'multiple') {
+  if (!model.value && props.selectionKind === 'multiple') {
     model.value = [];
   }
 
@@ -81,7 +81,7 @@ onMounted(() => {
 const itemsModel = ref({});
 const itemsDisplay = computed(() => {
   const res = [...props.items];
-  if (props.kind === 'single' && props.nullable)
+  if (props.selectionKind === 'single' && props.nullable)
     res.unshift({
       [props.idAttribute]: 'notSelected',
       [props.nameAttribute]: displayTexts.value.notSelected,
@@ -111,7 +111,7 @@ function updateSelectionFromModel() {
 }
 
 function handleNoModel() {
-  if (props.kind === 'single') {
+  if (props.selectionKind === 'single') {
     const selectedId = props.nullable ? notSelectedId : itemsDisplay.value[0][props.idAttribute];
     itemsModel.value[selectedId] = true;
     selectSingle(selectedId);
@@ -209,7 +209,7 @@ function selectSingle(id) {
 }
 
 watch(
-  () => props.kind,
+  () => props.selectionKind,
   (newValue) => {
     activate();
     itemsModel.value = {};
@@ -372,7 +372,7 @@ function getTabIndex(id) {
 <template>
   <div
     class="lx-value-picker-default-wrapper"
-    :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && kind === 'multiple' }]"
+    :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && selectionKind === 'multiple' }]"
     :aria-invalid="invalid"
     role="radiogroup"
     :title="tooltip"
@@ -389,9 +389,9 @@ function getTabIndex(id) {
     </template>
 
     <template v-else>
-      <LxToolbar v-if="hasSearch || (hasSelectAll && kind === 'multiple')">
+      <LxToolbar v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')">
         <LxButton
-          v-if="hasSelectAll && kind === 'multiple'"
+          v-if="hasSelectAll && selectionKind === 'multiple'"
           kind="ghost"
           :icon="
             areSomeSelected
@@ -438,7 +438,7 @@ function getTabIndex(id) {
         ]"
       >
         <LxRadioButton
-          v-if="kind === 'single'"
+          v-if="selectionKind === 'single'"
           v-model="itemsModel[item[idAttribute]]"
           :id="getItemId(item[idAttribute])"
           :group-id="groupId"
@@ -472,7 +472,7 @@ function getTabIndex(id) {
         </LxRadioButton>
 
         <LxCheckbox
-          v-if="kind === 'multiple'"
+          v-if="selectionKind === 'multiple'"
           :id="getItemId(item[idAttribute])"
           :group-id="groupId"
           v-model="itemsModel[item[idAttribute]]"

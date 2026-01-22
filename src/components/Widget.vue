@@ -53,7 +53,7 @@ const emits = defineEmits(['actionClick']);
 
 const size = computed(() => `lx-widget-${props.width}-${props.height}`);
 
-function actionClicked(id) {
+function handleActionClick(id) {
   emits('actionClick', id);
 }
 </script>
@@ -87,13 +87,13 @@ function actionClicked(id) {
           :badge-type="actionDefinitions?.[0]?.badgeType"
           :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
           :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
-          @click="actionClicked(actionDefinitions?.[0]?.id)"
+          @click="handleActionClick(actionDefinitions?.[0]?.id)"
         />
       </div>
       <LxDropDownMenu
         v-if="actionDefinitions && actionDefinitions?.length > 1"
         :actionDefinitions="actionDefinitions"
-        @actionClick="(id) => actionClicked(id)"
+        @actionClick="(id) => handleActionClick(id)"
       >
         <div class="lx-widget-toolbar-button">
           <LxButton

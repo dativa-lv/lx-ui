@@ -1609,7 +1609,7 @@
   background: var(--color-region-2);
 }
 
-.lx-expander .lx-badge.lx-badge-good {
+.lx-expander .lx-badge.lx-badge-success {
   background: var(--color-green);
 }
 
@@ -1617,7 +1617,7 @@
   background: var(--color-orange);
 }
 
-.lx-expander .lx-badge.lx-badge-important {
+.lx-expander .lx-badge.lx-badge-error {
   background: var(--color-red);
 }
 

@@ -108,8 +108,8 @@ For more LX features, use custom schema attribute `lx` with these parameters:
 - `displayType` -  determines the way how array is displayed ('default' || 'list' || 'listModal' || 'table' || 'tableModal')
   - if `displayType = 'list'` || `displayType = 'listModal'`
     - `idAttribute` - LxList `idAttribute` prop
-    - `primaryAttribute` - LxList `primaryAttribute` prop
-    - `secondaryAttribute` - LxList `secondaryAttribute` prop
+    - `nameAttribute` - LxList `nameAttribute` prop
+    - `descriptionAttribute` - LxList `descriptionAttribute` prop
     - `hrefAttribute` - LxList `hrefAttribute` prop
     - `groupAttribute` - LxList `groupAttribute` prop
     - `clickableAttribute` - LxList `clickableAttribute` prop                  
@@ -166,8 +166,8 @@ For more LX features, use custom schema attribute `lx` with these parameters:
  - `busy` - LxDataBlock `busy` prop
  - `displayType` -  determines the way how object is displayed ('default' || 'modal')
     - if `displayType = 'modal'`:
-      - `primaryAttribute` - LxListItem `label` prop
-      - `secondaryAttribute` - LxListItem `description` prop
+      - `nameAttribute` - LxListItem `label` prop
+      - `descriptionAttribute` - LxListItem `description` prop
       - `formColumnCount` - LxForm `columnCount` prop
 
 ## LxAppendableList
@@ -184,13 +184,13 @@ The only exception is that LxAppendableList cannot be used inside another LxAppe
   - `readOnly` - LxAppendableList readOnly prop
   - `expandable` - LxAppendableList expandable prop
   - `nameAttribute` - LxAppendableList nameAttribute prop
-  - `addButtonLabel` - LxAppendableList addButtonLabel prop
   - `columnCount` - LxAppendableList columnCount prop
   - `kind` - LxAppendableList kind prop
   - `requiredMode` - LxAppendableList required prop
   - `forceUppercase` - LxAppendableList forceUppercase prop
   - `defaultExpanded` - LxAppendableList defaultExpanded prop
   - `expandedAttribute` - LxAppendableList expandedAttribute prop
+  - `texts` - LxAppendableList texts prop
 
 ## LxAppendableListSimle
 
@@ -416,8 +416,8 @@ const schema = {
       },
       lx: {
         displayType: 'modal',
-        primaryAttribute: 'nickname',
-        secondaryAttribute: 'level',
+        nameAttribute: 'nickname',
+        descriptionAttribute: 'level',
       },
     },
     drivingGames: {
@@ -681,7 +681,7 @@ List of added components their types and main props:
 | LxPersonDisplay | 'personDisplay' | 'string', 'array', 'object' | `value` |
 | LxQr | 'qr' | 'string', 'object' | `value` |
 | LxQrScanner | 'qrScanner' | 'object' | - |
-| LxRatings | 'ratings' | 'integer', 'number' | - |
+| LxRating | 'ratings' | 'integer', 'number' | - |
 | LxRichTextDisplay | 'richTextDisplay' | 'string', 'object' | `value` |
 | LxStateDisplay | 'stateDisplay' | 'string', 'object' | `value` |
 | LxSteps | 'steps' | 'string' | - |
@@ -1738,7 +1738,7 @@ modelValue:
 }
 ```
 
-### LxRatings 
+### LxRating 
 `type` can be `integer` or `number`
 ```js
 {

@@ -144,7 +144,7 @@ const props = defineProps({
    * @default 'default'
    * @since 1.9.0-beta.3
    */
-  badgeType: { type: String, default: 'default' }, // default, good, info, warning, important
+  badgeType: { type: String, default: 'default' }, // default, info, success, warning, error
   /**
    * Badge title to be displayed on the filter badge when badge is provided.
    * @type {String}

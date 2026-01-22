@@ -8,8 +8,9 @@ import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
-  modelValue: { type: Array, default: () => [] },
-  mode: { type: String, default: 'edit' }, // 'read' or 'edit'
+  modelValue: { type: String, default: null },
+  items: { type: Array, default: () => [] },
+  readOnly: { type: Boolean, default: false },
   id: { type: String, default: () => generateUUID() },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
@@ -28,9 +29,8 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue', 'newItemAdded', 'selectionChanged']);
+const emits = defineEmits(['update:modelValue', 'newItemAdded']);
 
-const activeItemCode = ref('');
 const navRef = ref();
 const detailRef = ref();
 const isNavBigger = ref(false);
@@ -43,13 +43,7 @@ const windowWidth = computed(() => windowSize.width.value);
 
 const model = computed({
   get() {
-    return props.modelValue?.map((item) => {
-      const newItem = { ...item };
-      if (item?.[props.idAttribute] === activeItemCode.value) {
-        newItem.active = true;
-      }
-      return newItem;
-    });
+    return props.modelValue;
   },
   set(value) {
     emits('update:modelValue', value);
@@ -57,8 +51,7 @@ const model = computed({
 });
 
 function selectItem(id) {
-  activeItemCode.value = id;
-  emits('selectionChanged', id);
+  model.value = id;
 }
 
 function addItem() {
@@ -72,24 +65,23 @@ watch([navSize.height, detailSize.height], ([navHeight, detailHeight]) => {
     });
   }
 });
-
-defineExpose({ selectItem });
 </script>
 <template>
   <div class="lx-master-detail" :class="[{ 'nav-border': isNavBigger }]">
     <Transition :name="windowWidth < 1200 ? 'master-detail-slide-right' : ''">
-      <nav class="lx-master" v-if="windowWidth >= 1200 || !activeItemCode" ref="navRef">
+      <nav class="lx-master" v-if="windowWidth >= 1200 || !model" ref="navRef">
         <LxButton
+          v-if="!readOnly"
           :id="`${id}-action-add-item`"
-          v-if="mode === 'edit'"
           customClass="lx-master-detail-button"
           icon="add-item"
           kind="tertiary"
           :label="displayTexts.add"
           @click="addItem"
         />
+
         <ul class="lx-master-detail-list">
-          <li v-for="item in model" :key="item?.[idAttribute]">
+          <li v-for="item in items" :key="item?.[idAttribute]">
             <LxListItem
               :id="item?.[idAttribute]"
               :label="item?.[nameAttribute]"
@@ -97,10 +89,10 @@ defineExpose({ selectItem });
               :category="item[categoryAttribute]"
               :invalid="item?.[invalidAttribute]"
               :tooltip="item?.[nameAttribute]"
-              :selected="activeItemCode === item?.[idAttribute]"
+              :selected="model === item?.[idAttribute]"
               icon="next"
               :clickable="true"
-              :active="activeItemCode === item?.[idAttribute]"
+              :active="model === item?.[idAttribute]"
               @click="selectItem(item?.[idAttribute])"
             />
           </li>
@@ -109,18 +101,19 @@ defineExpose({ selectItem });
     </Transition>
 
     <LxButton
-      v-if="windowWidth < 1200 && activeItemCode"
+      v-if="windowWidth < 1200 && model"
       :id="`${id}-action-back`"
       icon="back"
       variant="icon-only"
       :label="displayTexts.back"
       kind="ghost"
-      @click="activeItemCode = null"
+      @click="model = null"
     />
+
     <Transition :name="windowWidth < 1200 ? 'master-detail-slide-left' : ''">
-      <div class="lx-detail" v-if="windowWidth >= 1200 || activeItemCode" ref="detailRef">
+      <div class="lx-detail" v-if="windowWidth >= 1200 || model" ref="detailRef">
         <LxEmptyState
-          v-if="!activeItemCode"
+          v-if="!model"
           :label="displayTexts.noData"
           :description="displayTexts.noDataDescription"
         />

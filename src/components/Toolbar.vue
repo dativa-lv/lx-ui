@@ -4,7 +4,9 @@ import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
+import useLx from '@/hooks/useLx';
+import { logWarn } from '@/utils/devUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -23,6 +25,9 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['actionClick']);
 
+const DEFAULT_GROUP_ID = '__ungrouped__';
+const globalEnvironment = useLx().getGlobals()?.environment;
+
 const leftActions = computed(() =>
   props.actionDefinitions?.filter((x) => x?.area === 'left' || !x?.area)
 );
@@ -36,9 +41,11 @@ const nonResponsiveLeftActions = computed(() =>
 );
 
 const rightActions = computed(() => props.actionDefinitions?.filter((x) => x?.area === 'right'));
+
 const rightActionsSmall = computed(() =>
   props.actionDefinitions?.filter((x) => x?.area === 'right' && !x?.nonResponsive)
 );
+
 const nonResponsiveRightActions = computed(() =>
   props.actionDefinitions?.filter((x) => x?.area === 'right' && x?.nonResponsive)
 );
@@ -46,7 +53,7 @@ const nonResponsiveRightActions = computed(() =>
 const leftNestedGroups = computed(() => {
   const nestedGroups = new Set();
   leftActions.value.forEach((obj) => {
-    if (obj.nestedGroupId !== undefined) {
+    if (isDefined(obj.nestedGroupId)) {
       nestedGroups.add(obj.nestedGroupId);
     }
   });
@@ -56,7 +63,7 @@ const leftNestedGroups = computed(() => {
 const rightNestedGroups = computed(() => {
   const nestedGroups = new Set();
   rightActions.value.forEach((obj) => {
-    if (obj.nestedGroupId !== undefined) {
+    if (isDefined(obj.nestedGroupId)) {
       nestedGroups.add(obj.nestedGroupId);
     }
   });
@@ -66,8 +73,18 @@ const rightNestedGroups = computed(() => {
 const leftGroups = computed(() => {
   const uniqueGroups = new Set();
   leftActions.value.forEach((obj) => {
-    if (obj.groupId !== undefined) {
+    if (isDefined(obj.groupId)) {
+      if (obj.groupId === DEFAULT_GROUP_ID) {
+        logWarn(
+          `groupId "${DEFAULT_GROUP_ID}" is reserved and should not be set explicitly.`,
+          globalEnvironment
+        );
+        return;
+      }
+
       uniqueGroups.add(obj.groupId);
+    } else {
+      uniqueGroups.add(DEFAULT_GROUP_ID);
     }
   });
   const res = [];
@@ -82,8 +99,18 @@ const leftGroups = computed(() => {
 const rightGroups = computed(() => {
   const uniqueGroups = new Set();
   rightActions.value.forEach((obj) => {
-    if (obj.groupId !== undefined) {
+    if (isDefined(obj.groupId)) {
+      if (obj.groupId === DEFAULT_GROUP_ID) {
+        logWarn(
+          `groupId "${DEFAULT_GROUP_ID}" is reserved and should not be set explicitly.`,
+          globalEnvironment
+        );
+        return;
+      }
+
       uniqueGroups.add(obj.groupId);
+    } else {
+      uniqueGroups.add(DEFAULT_GROUP_ID);
     }
   });
   const res = [];
@@ -105,9 +132,15 @@ function isNested(groupId, side) {
   return res;
 }
 
-function actionClicked(id) {
+function handleActionClick(id) {
   emits('actionClick', id);
 }
+
+const isActionVisibleInGroup = (action, group, side) => {
+  if (isNested(action.groupId, side)) return false;
+  if (action?.groupId) return action.groupId === group.id && !action.nestedGroupId;
+  return group.id === DEFAULT_GROUP_ID;
+};
 </script>
 
 <template>
@@ -128,11 +161,7 @@ function actionClicked(id) {
         >
           <template v-for="action in leftActions" :key="action.id">
             <LxButton
-              v-if="
-                action?.groupId === group.id &&
-                !action.nestedGroupId &&
-                !isNested(action.groupId, 'left')
-              "
+              v-if="isActionVisibleInGroup(action, group, 'left')"
               :id="`${id}-action-${action.id}`"
               :kind="action?.kind || 'ghost'"
               :icon="action?.icon"
@@ -149,8 +178,9 @@ function actionClicked(id) {
               :badgeType="action?.badgeType"
               :badgeIcon="action?.badgeIcon"
               :badgeTitle="action?.badgeTitle"
-              @click="actionClicked(action.id)"
+              @click="handleActionClick(action.id)"
             />
+
             <LxDropDownMenu
               v-if="action?.groupId === group.id && action.nestedGroupId"
               :disabled="action?.disabled || props.disabled || props.loading"
@@ -175,6 +205,7 @@ function actionClicked(id) {
                 :badgeTitle="action?.badgeTitle"
                 variant="icon-only"
               />
+
               <template #panel>
                 <template v-for="button in leftActions" :key="button.id">
                   <LxButton
@@ -194,13 +225,14 @@ function actionClicked(id) {
                     :badgeType="button?.badgeType"
                     :badgeIcon="button?.badgeIcon"
                     :badgeTitle="button?.badgeTitle"
-                    @click="actionClicked(button.id)"
+                    @click="handleActionClick(button.id)"
                   />
                 </template>
               </template>
             </LxDropDownMenu>
           </template>
         </LxToolbarGroup>
+
         <LxToolbarGroup class="action-definitions-small" v-if="leftActions?.length > 0">
           <template v-if="nonResponsiveLeftActions?.length > 0">
             <LxButton
@@ -223,9 +255,10 @@ function actionClicked(id) {
               :badgeType="item?.badgeType"
               :badgeIcon="item?.badgeIcon"
               :badgeTitle="item?.badgeTitle"
-              @click="actionClicked(item.id)"
+              @click="handleActionClick(item.id)"
             />
           </template>
+
           <LxDropDownMenu
             v-if="leftActionsSmall?.length > 1"
             :disabled="props.disabled || props.loading"
@@ -238,6 +271,7 @@ function actionClicked(id) {
               variant="icon-only"
               :disabled="props.disabled || props.loading"
             />
+
             <template #panel>
               <template v-for="button in leftActionsSmall" :key="button.id">
                 <LxButton
@@ -257,11 +291,12 @@ function actionClicked(id) {
                   :badgeType="button?.badgeType"
                   :badgeIcon="button?.badgeIcon"
                   :badgeTitle="button?.badgeTitle"
-                  @click="actionClicked(button.id)"
+                  @click="handleActionClick(button.id)"
                 />
               </template>
             </template>
           </LxDropDownMenu>
+
           <LxButton
             v-else-if="leftActionsSmall?.length === 1 && !leftActionsSmall?.[0]?.nestedGroupId"
             :id="`${id}-action-${leftActions?.[0].id}`"
@@ -280,14 +315,17 @@ function actionClicked(id) {
             :badgeType="leftActions?.[0]?.badgeType"
             :badgeIcon="leftActions?.[0]?.badgeIcon"
             :badgeTitle="leftActions?.[0]?.badgeTitle"
-            @click="actionClicked(leftActions?.[0].id)"
+            @click="handleActionClick(leftActions?.[0].id)"
           />
         </LxToolbarGroup>
 
         <LxToolbarGroup v-if="$slots.leftArea">
           <slot name="leftArea" />
         </LxToolbarGroup>
-        <LxToolbarGroup v-if="$slots.default"><slot /></LxToolbarGroup>
+
+        <LxToolbarGroup v-if="$slots.default">
+          <slot />
+        </LxToolbarGroup>
       </div>
 
       <div class="right-area">
@@ -302,11 +340,7 @@ function actionClicked(id) {
         >
           <template v-for="action in rightActions" :key="action.id">
             <LxButton
-              v-if="
-                action?.groupId === group.id &&
-                !action.nestedGroupId &&
-                !isNested(action.groupId, 'right')
-              "
+              v-if="isActionVisibleInGroup(action, group, 'right')"
               :id="`${id}-action-${action.id}`"
               :label="action?.name || action?.label"
               :title="action?.title || action?.tooltip"
@@ -324,8 +358,9 @@ function actionClicked(id) {
               :badgeType="action?.badgeType"
               :badgeIcon="action?.badgeIcon"
               :badgeTitle="action?.badgeTitle"
-              @click="actionClicked(action.id)"
+              @click="handleActionClick(action.id)"
             />
+
             <LxDropDownMenu
               v-if="action?.groupId === group.id && action.nestedGroupId"
               :disabled="action?.disabled || props.disabled || props.loading"
@@ -350,6 +385,7 @@ function actionClicked(id) {
                 :badgeIcon="action?.badgeIcon"
                 :badgeTitle="action?.badgeTitle"
               />
+
               <template #panel>
                 <template v-for="button in rightActions" :key="button.id">
                   <LxButton
@@ -369,13 +405,14 @@ function actionClicked(id) {
                     :badgeType="action?.badgeType"
                     :badgeIcon="button?.badgeIcon"
                     :badgeTitle="button?.badgeTitle"
-                    @click="actionClicked(button.id)"
+                    @click="handleActionClick(button.id)"
                   />
                 </template>
               </template>
             </LxDropDownMenu>
           </template>
         </LxToolbarGroup>
+
         <LxToolbarGroup
           class="action-definitions-small"
           v-if="rightActionsSmall?.length > 0 || nonResponsiveRightActions?.length > 0"
@@ -392,6 +429,7 @@ function actionClicked(id) {
               variant="icon-only"
               :disabled="props.disabled || props.loading"
             />
+
             <template #panel>
               <template v-for="button in rightActionsSmall" :key="button.id">
                 <LxButton
@@ -411,11 +449,12 @@ function actionClicked(id) {
                   :badgeType="action?.badgeType"
                   :badgeIcon="action?.badgeIcon"
                   :badgeTitle="action?.badgeTitle"
-                  @click="actionClicked(button.id)"
+                  @click="handleActionClick(button.id)"
                 />
               </template>
             </template>
           </LxDropDownMenu>
+
           <template
             v-if="
               (rightActionsSmall?.length === 1 && !rightActions?.[0]?.nestedGroupId) ||
@@ -443,9 +482,10 @@ function actionClicked(id) {
               :badgeIcon="item?.badgeIcon"
               :badgeTitle="item?.badgeTitle"
               :custom-class="item?.customClass"
-              @click="actionClicked(item.id)"
+              @click="handleActionClick(item.id)"
             />
           </template>
+
           <LxButton
             v-if="rightActionsSmall?.length === 1 && !rightActionsSmall?.[0]?.nestedGroupId"
             :key="rightActionsSmall?.[0]?.id"
@@ -466,11 +506,12 @@ function actionClicked(id) {
             :badgeIcon="rightActionsSmall?.[0]?.badgeIcon"
             :badgeTitle="rightActionsSmall?.[0]?.badgeTitle"
             :custom-class="rightActionsSmall?.[0]?.customClass"
-            @click="actionClicked(rightActionsSmall?.[0]?.id)"
+            @click="handleActionClick(rightActionsSmall?.[0]?.id)"
           />
         </LxToolbarGroup>
       </div>
     </div>
+
     <slot name="secondRow" />
   </div>
 </template>

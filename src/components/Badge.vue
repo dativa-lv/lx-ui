@@ -50,7 +50,8 @@ const isValueNumber = computed(() => {
       :title="tooltip"
       :aria-hidden="true"
     />
-    <div v-if="icon || value" class="lx-badge-text-wrapper">
+
+    <template v-if="icon || value">
       <div
         v-if="tooltip && (icon || value)"
         :id="`${id}-tooltip`"
@@ -59,6 +60,7 @@ const isValueNumber = computed(() => {
       >
         ({{ tooltip }}):
       </div>
+
       <div
         v-if="value"
         class="lx-data lx-badge-text"
@@ -66,6 +68,6 @@ const isValueNumber = computed(() => {
       >
         {{ value }}
       </div>
-    </div>
+    </template>
   </div>
 </template>

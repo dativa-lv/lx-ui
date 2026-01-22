@@ -21,9 +21,9 @@ const props = defineProps({
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
-  kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
-  nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
-  variant: { type: String, default: 'dropdown' },
+  selectionKind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
+  nullable: { type: Boolean, default: false }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  variant: { type: String, default: 'dropdown' }, // 'dropdown', 'dropdown-custom'
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
   alwaysAsArray: { type: Boolean, default: false },
@@ -110,7 +110,7 @@ const getIdAttributeString = (item) => {
 
 const itemsDisplay = computed(() => {
   const res = [...props.items];
-  if (props.kind === 'single' && props.nullable)
+  if (props.selectionKind === 'single' && props.nullable)
     res.unshift({
       [props.idAttribute]: 'notSelected',
       [props.nameAttribute]: displayTexts.value.notSelected,
@@ -163,7 +163,7 @@ watch(
   ({ value, length }) => {
     if (!value) return;
     activateItems();
-    // TODO need normal solution to avoid v-model = [[]] (v-model = null, variant = dropdown, kind = multiple, alwaysAsArray = true), maybe rework emits
+    // TODO need normal solution to avoid v-model = [[]] (v-model = null, variant = dropdown, selectionKind = multiple, alwaysAsArray = true), maybe rework emits
     if (Array.isArray(value) && Array.isArray(value[0])) {
       clear();
     }
@@ -227,7 +227,7 @@ function selectSingle(id) {
 }
 
 watch(
-  () => props.kind,
+  () => props.selectionKind,
   (newKind) => {
     activateItems();
     itemsModel.value = {};
@@ -336,7 +336,7 @@ const filteredItems = computed(() => {
     }
   }
 
-  if (props.hasSelectAll && props.kind === 'multiple') {
+  if (props.hasSelectAll && props.selectionKind === 'multiple') {
     return [{ id: 'select-all', name: 'Select all', value: false }, ...items];
   }
 
@@ -346,7 +346,7 @@ const filteredItems = computed(() => {
 
 const isItemsEmpty = computed(() => {
   if (!Array.isArray(filteredItems.value)) return true;
-  if (props.hasSelectAll && props.kind === 'multiple') {
+  if (props.hasSelectAll && props.selectionKind === 'multiple') {
     return filteredItems.value.length <= 1;
   }
   return filteredItems.value.length === 0;
@@ -475,18 +475,6 @@ function onUp() {
   }
 }
 
-const variantDropdown = computed(() => {
-  let res = 'dropdown';
-  if (props.variant === 'dropdown-custom') res = 'custom';
-  return res;
-});
-
-const variantAutoComplete = computed(() => {
-  let res = 'default';
-  if (props.variant === 'dropdown-custom') res = 'custom';
-  return res;
-});
-
 const handleKeydown = (e) => {
   if (e.key === 'Tab' && menuOpen.value) {
     const tabPressed = e.shiftKey ? 'backward' : 'forward';
@@ -523,7 +511,7 @@ const areAllSelected = computed(() => {
 });
 
 function isItemSelected(item) {
-  if (props.kind === 'multiple' && Array.isArray(model.value)) {
+  if (props.selectionKind === 'multiple' && Array.isArray(model.value)) {
     return model.value.includes(getIdAttributeString(item));
   }
   return false;
@@ -547,7 +535,7 @@ function selectAll() {
 }
 
 onMounted(() => {
-  if (!model.value && props.kind === 'multiple') {
+  if (!model.value && props.selectionKind === 'multiple') {
     model.value = [];
   }
 });
@@ -557,7 +545,7 @@ const columnReadOnly = computed(() => {
 });
 
 const firstFocusableIndex = computed(() =>
-  props.hasSelectAll && props.kind === 'multiple' ? 1 : 0
+  props.hasSelectAll && props.selectionKind === 'multiple' ? 1 : 0
 );
 
 const displayTooltipItems = computed(() => {
@@ -616,7 +604,7 @@ function countDigits(number) {
       v-if="hasSearch"
       :id="id"
       v-model="model"
-      :selectingKind="kind"
+      :selectionKind="selectionKind"
       :items="itemsDisplay"
       :id-attribute="idAttribute"
       :name-attribute="nameAttribute"
@@ -624,7 +612,6 @@ function countDigits(number) {
       :tooltip="tooltip"
       :readOnly="readOnly"
       :disabled="disabled"
-      :variant="variantAutoComplete"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
       :texts="displayTexts"
@@ -632,13 +619,13 @@ function countDigits(number) {
       :labelId="labelId"
       :hasSelectAll="hasSelectAll"
     >
-      <template v-slot:customItem="slotData">
+      <template v-if="variant === 'dropdown-custom'" v-slot:customItem="slotData">
         <slot name="customItemDropdown" v-bind="slotData" />
       </template>
     </LxAutoComplete>
 
     <LxDropDown
-      v-if="kind === 'single' && !hasSearch"
+      v-if="selectionKind === 'single' && !hasSearch"
       :id="id"
       v-model="model"
       :items="itemsDisplay"
@@ -652,16 +639,15 @@ function countDigits(number) {
       :texts="displayTexts"
       kind="default"
       :placeholder="placeholder"
-      :variant="variantDropdown"
       :labelId="labelId"
     >
-      <template v-slot:customItem="slotData">
+      <template v-if="variant === 'dropdown-custom'" v-slot:customItem="slotData">
         <slot name="customItemDropdown" v-bind="slotData" />
       </template>
     </LxDropDown>
 
     <div
-      v-if="kind === 'multiple' && !hasSearch"
+      v-if="selectionKind === 'multiple' && !hasSearch"
       class="lx-value-picker-dropdown-wrapper lx-dropdown-multiple"
       ref="refRoot"
     >
@@ -784,7 +770,7 @@ function countDigits(number) {
                       v-if="
                         index === 0 &&
                         hasSelectAll &&
-                        kind === 'multiple' &&
+                        selectionKind === 'multiple' &&
                         !isItemsEmpty
                       "
                       id="select-all"
@@ -838,14 +824,14 @@ function countDigits(number) {
                           'lx-selected': isItemSelected(item),
                         },
                         {
-                          'dropdown-multiple lx-aligned-row-inverse lx-aligned-row-3': kind === 'multiple',
+                          'dropdown-multiple lx-aligned-row-inverse lx-aligned-row-3': selectionKind === 'multiple',
                         },
                       ]"
                       :id="getItemId(item[idAttribute])"
                       @click="selectMultiple(item[idAttribute])"
                     >
                       <LxCheckbox
-                        v-if="kind === 'multiple'"
+                        v-if="selectionKind === 'multiple'"
                         tabindex="-1"
                         :id="getItemId(item[idAttribute])"
                         :group-id="groupId"

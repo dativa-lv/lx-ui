@@ -548,7 +548,7 @@ defineExpose({ focus });
 
       <div v-if="kind === 'phone'" class="lx-input-flag-wrapper">
         <div
-          v-if="matchedFlags?.length > 0"
+          v-if="matchedFlags?.length > 1"
           :class="[{ 'multiple-flags': matchedFlags?.length > 1 }]"
         >
           <LxFlag
@@ -558,6 +558,7 @@ defineExpose({ focus });
             :locale="options?.locale"
           />
         </div>
+
         <div v-else>
           <LxFlag :value="options?.phone" :locale="options?.locale" />
         </div>

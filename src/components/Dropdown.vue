@@ -3,8 +3,6 @@ import { computed, ref, onMounted, watch, nextTick, inject } from 'vue';
 import { onClickOutside } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxIcon from '@/components/Icon.vue';
-import LxStateDisplay from '@/components/StateDisplay.vue';
-import LxFlag from '@/components/Flag.vue';
 import LxPopper from '@/components/Popper.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
@@ -16,7 +14,6 @@ const props = defineProps({
   idAttribute: { type: String, default: 'id' },
   idAttributeArray: { type: [Array, String], default: 'id' },
   kind: { type: String, default: 'default' }, // default or native
-  variant: { type: String, default: 'default' }, // default, country, state, custom
   placeholder: { type: String, default: null },
   nameAttribute: { type: String, default: 'name' },
   tooltip: { type: String, default: null },
@@ -334,13 +331,12 @@ const selectedItem = ref(null);
 
 function isPlaceholderVisible() {
   return (
-    (props.modelValue === '' ||
-      !props.modelValue ||
-      props.modelValue.length === 0 ||
-      !props.items.some(
-        (item) => item[props.idAttribute]?.toString() === props.modelValue?.toString()
-      )) &&
-    props.variant !== 'state'
+    props.modelValue === '' ||
+    !props.modelValue ||
+    props.modelValue.length === 0 ||
+    !props.items.some(
+      (item) => item[props.idAttribute]?.toString() === props.modelValue?.toString()
+    )
   );
 }
 
@@ -387,6 +383,10 @@ onMounted(() => {
   }
 });
 const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.value));
+
+const getSelectedItem = computed(() =>
+  filteredItems.value.find((item) => item.id === selectedIdValue.value)
+);
 </script>
 
 <template>
@@ -479,57 +479,37 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
               :aria-invalid="invalid"
             >
               <div class="pseudo-input" />
-              <div
-                class="lx-dropdown-default-data lx-input-area"
-                :title="tooltip"
-                v-if="variant === 'state'"
-              >
-                <span class="lx-input-text">
-                  <LxStateDisplay
-                    :value="selectedItem?.id ? selectedItem?.id : props.placeholder"
-                    :dictionary="[
-                      {
-                        value: selectedItem?.id ? selectedItem?.id : props.placeholder,
-                        displayName: selectedItem?.name ? selectedItem?.name : props.placeholder,
-                        displayType: selectedItem?.displayType,
-                        displayShape: selectedItem?.displayShape,
-                      },
-                    ]"
-                  />
-                </span>
-              </div>
-              <div
-                class="lx-dropdown-default-data lx-dropdown-flag lx-input-area"
-                :title="tooltip"
-                v-else-if="variant === 'country'"
-              >
-                <div class="lx-aligned-row lx-aligned-row-3">
-                  <LxFlag
-                    :value="selectedItem?.country ? selectedItem?.country : 'lv'"
-                    size="small"
-                    :locale="locale"
-                    :meaningful="meaningful"
-                  />
-                  <span class="lx-input-text">{{ name }}</span>
+
+              <template v-if="$slots.customItem">
+                <div class="lx-dropdown-default-data lx-input-area">
+                  <span class="lx-input-text">
+                    <slot name="customItem" v-bind="getSelectedItem"></slot>
+                  </span>
                 </div>
-              </div>
-              <div class="lx-dropdown-default-data lx-input-area" :title="tooltip" v-else>
+              </template>
+
+              <div v-else class="lx-dropdown-default-data lx-input-area" :title="tooltip">
                 <span class="lx-input-text">{{ name }}</span>
               </div>
+
               <div v-if="isPlaceholderVisible()" class="lx-placeholder lx-input-area">
                 <span>{{ placeholder }}</span>
               </div>
+
               <div v-if="invalid" class="lx-invalidation-icon-wrapper">
                 <LxIcon customClass="lx-invalidation-icon" value="invalid" />
               </div>
+
               <div class="lx-input-icon-wrapper">
                 <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
               </div>
             </div>
+
             <div v-if="invalid" class="lx-invalidation-message" @click.stop @mousedown.prevent>
               {{ invalidationMessage }}
             </div>
           </div>
+
           <template #content>
             <div
               ref="panelRef"
@@ -543,6 +523,8 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
               @keydown.up.prevent="focusPreviousInputElement"
               @keydown="handleKeydown"
             >
+              <!-- Since key events are assigned to the whole <div> (lx-dropdown-default-content) already -->
+              <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
               <slot name="panel" @click="closeDropDownDefault()">
                 <div class="lx-dropdown-panel" tabindex="-1" role="listbox">
                   <template v-if="isItemsEmpty">
@@ -552,8 +534,11 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                       <p>{{ noItemsMessage }}</p>
                     </div>
                   </template>
+
                   <template v-if="filteredItems?.length">
                     <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
+                      <!-- Since key events are assigned to the whole <div> (lx-dropdown-default-content) already -->
+                      <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events, eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
                       <div
                         :id="getItemId(getIdAttributeString(item))"
                         role="option"
@@ -577,30 +562,7 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                         ]"
                         @click="selectSingle(item)"
                       >
-                        <LxStateDisplay
-                          v-if="variant === 'state'"
-                          :value="item[idAttribute]"
-                          :dictionary="[
-                            {
-                              value: item[idAttribute],
-                              displayName: item[nameAttribute],
-                              displayType: item.displayType,
-                              displayShape: item.displayShape,
-                            },
-                          ]"
-                        />
-                        <template v-else-if="variant === 'country'">
-                          <div class="lx-aligned-row">
-                            <LxFlag
-                              :value="item?.country ? item?.country : 'lv'"
-                              size="small"
-                              :locale="locale"
-                              :meaningful="meaningful"
-                            />
-                            <span>{{ item[nameAttribute] }}</span>
-                          </div>
-                        </template>
-                        <template v-else-if="variant === 'custom'">
+                        <template v-if="$slots.customItem">
                           <slot name="customItem" v-bind="item"></slot>
                         </template>
 

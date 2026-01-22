@@ -7,7 +7,6 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 const props = defineProps({
   modelValue: { type: Array, default: null },
   readOnly: { type: Boolean, default: false },
-  addButtonLabel: { type: String, default: 'Pievienot ierakstu' },
   columnCount: { type: Number, default: 1 },
   kind: { type: String, default: 'default' }, // default || compact
   requiredMode: { type: String, default: 'optional' }, // required || required-asterisk || optional
@@ -28,6 +27,7 @@ const model = computed({
 
 const textsDefault = {
   removeItem: 'Dzēst ierakstu',
+  addButtonLabel: 'Pievienot ierakstu',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -76,7 +76,7 @@ onMounted(() => {
       <LxButton
         v-if="!readOnly && canAddItems"
         kind="tertiary"
-        :label="addButtonLabel"
+        :label="displayTexts.addButtonLabel"
         icon="add-item"
         @click="addItem"
       />

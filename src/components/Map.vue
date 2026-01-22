@@ -31,7 +31,7 @@ import markerCurrent from '@/assets/marker-current.png';
 const emits = defineEmits([
   'update:zoom',
   'update:center',
-  'searched',
+  'search',
   'update:selected-base-layer',
   'update:selected-overlay-layers',
 ]);
@@ -155,7 +155,7 @@ function markerColor(color) {
 const searchValue = ref('');
 
 function emitSearch() {
-  emits('searched', searchValue.value);
+  emits('search', searchValue.value);
 }
 
 function clearSearch() {

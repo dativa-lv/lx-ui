@@ -20,14 +20,14 @@ const props = defineProps({
   },
   name: { type: String, default: null },
   description: { type: String, default: null },
-  forceUppercase: { type: Boolean, default: true },
+  uppercase: { type: Boolean, default: true },
   expandable: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: () => [] },
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
   hasSelecting: { type: Boolean, default: false },
-  selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
+  selectionKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   selected: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
@@ -48,7 +48,8 @@ const emits = defineEmits([
   'selectingClick',
   'update:selected',
 ]);
-function actionClicked(actionName, selectedItemId = 'default') {
+
+function handleActionClick(actionName, selectedItemId = 'default') {
   emits('actionClick', actionName, selectedItemId);
 }
 
@@ -160,14 +161,14 @@ const expandIconTitle = computed(() => {
         <template v-else>
           <div class="lx-icons" v-if="hasSelecting" @click.stop>
             <LxRadioButton
-              v-if="selectingKind === 'single'"
+              v-if="selectionKind === 'single'"
               v-model="selected"
               :disabled="disabled || loading || busy"
               @keyup.space.stop="emits('selectingClick', id)"
               @click="emits('selectingClick', id)"
             />
             <LxCheckbox
-              v-else-if="selectingKind === 'multiple'"
+              v-else-if="selectionKind === 'multiple'"
               v-model="selected"
               :disabled="disabled || loading || busy"
               @keyup.space.stop="emits('selectingClick', id)"
@@ -182,7 +183,7 @@ const expandIconTitle = computed(() => {
           </div>
           <div class="lx-content">
             <div
-              :class="[{ 'lx-primary-uppercase': forceUppercase }]"
+              :class="[{ 'lx-primary-uppercase': uppercase }]"
               class="lx-primary lx-title"
               :title="name"
             >
@@ -228,13 +229,13 @@ const expandIconTitle = computed(() => {
             :badgeType="action.badgeType"
             :badgeIcon="action.badgeIcon"
             :badgeTitle="action.badgeTitle"
-            @click="actionClicked(action.id, props.id)"
+            @click="handleActionClick(action.id, props.id)"
           />
         </template>
         <LxDropDownMenu
           :actionDefinitions="actionDefinitions"
           :disabled="isDisabled"
-          @actionClick="(id) => actionClicked(id, props.id)"
+          @actionClick="(id) => handleActionClick(id, props.id)"
         >
           <LxButton
             v-if="actionDefinitions.length > 1"

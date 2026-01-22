@@ -218,7 +218,7 @@ test('LxValuePicker kind "single"', () => {
 
   wrapper = mount(LxValuePicker, {
     props: {
-      kind: 'single',
+      selectionKind: 'single',
       items: [
         { id: 'one', name: 'One' },
         { id: 'two', name: 'Two' },
@@ -238,7 +238,7 @@ test('LxValuePicker kind "multiple"', () => {
 
   wrapper = mount(LxValuePicker, {
     props: {
-      kind: 'multiple',
+      selectionKind: 'multiple',
       items: [
         { id: 'one', name: 'One' },
         { id: 'two', name: 'Two' },
@@ -667,7 +667,7 @@ test('LxValuePicker default modelValue 2', async () => {
       ],
       modelValue: ['one'],
       alwaysAsArray: true,
-      kind: 'multiple',
+      selectionKind: 'multiple',
       'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
     },
   });
@@ -692,7 +692,7 @@ test('LxValuePicker default modelValue 3', async () => {
         { id: 'two', name: 'Two' },
       ],
       modelValue: ['one'],
-      kind: 'multiple',
+      selectionKind: 'multiple',
       'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
     },
   });
@@ -719,7 +719,7 @@ test('LxValuePicker dropdown modelValue', async () => {
       ],
       modelValue: 'one',
       'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
-      kind: 'single',
+      selectionKind: 'single',
     },
   });
 
@@ -755,7 +755,7 @@ test('LxValuePicker dropdown modelValue 2', async () => {
       ],
       modelValue: ['one'],
       'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
-      kind: 'multiple',
+      selectionKind: 'multiple',
     },
     global: {
       stubs: ['router-link'],
@@ -798,7 +798,7 @@ test('LxValuePicker tags modelValue', async () => {
       ],
       modelValue: 'one',
       'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
-      kind: 'single',
+      selectionKind: 'single',
     },
   });
   const items = wrapper.findAll('.lx-tag');
@@ -821,7 +821,7 @@ test('LxValuePicker tags modelValue 2', async () => {
       ],
       modelValue: ['one'],
       'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
-      kind: 'multiple',
+      selectionKind: 'multiple',
     },
   });
 
@@ -867,7 +867,7 @@ test('LxValuePicker tiles modelValue 2', async () => {
         { id: 'one', name: 'One' },
         { id: 'two', name: 'Two' },
       ],
-      kind: 'multiple',
+      selectionKind: 'multiple',
       modelValue: ['one'],
       'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
     },
@@ -1142,7 +1142,7 @@ test('LxValuePicker default hasSelectAll', async () => {
         { id: 'two', name: 'Two', description: 'TwoDescription', value: 'TwoValue' },
         { id: 'three', name: 'Three', description: 'ThreeDescription', value: 'ThreeValue' },
       ],
-      kind: 'multiple',
+      selectionKind: 'multiple',
       hasSearch: true,
       hasSelectAll: true,
       modelValue: [],
@@ -1172,7 +1172,7 @@ test('LxValuePicker dropdown hasSelectAll', async () => {
         { id: 'two', name: 'Two', description: 'TwoDescription', value: 'TwoValue' },
         { id: 'three', name: 'Three', description: 'ThreeDescription', value: 'ThreeValue' },
       ],
-      kind: 'multiple',
+      selectionKind: 'multiple',
       hasSearch: true,
       hasSelectAll: true,
       modelValue: [],

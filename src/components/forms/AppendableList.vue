@@ -17,16 +17,15 @@ const props = defineProps({
   iconAttribute: { type: String, default: null },
   hideRemoveAttribute: { type: String, default: null },
   removeEnableByAttribute: { type: String, default: null },
-  addButtonLabel: { type: String, default: 'Pievienot ierakstu' },
   columnCount: { type: Number, default: 1 },
-  kind: { type: String, default: 'default' }, // default || compact
-  requiredMode: { type: String, default: 'optional' }, // required || required-asterisk || optional //
+  kind: { type: String, default: 'default' }, // default, compact
+  requiredMode: { type: String, default: 'optional' }, // required, required-asterisk, optional
   canAddItems: { type: Boolean, default: true },
   actionDefinitions: { type: Array, default: () => [] }, //
-  forceUppercase: { type: Boolean, default: true },
+  uppercase: { type: Boolean, default: true },
   hasSelecting: { type: Boolean, default: false },
-  selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
-  defaultExpanded: { type: Boolean, default: true }, //
+  selectionKind: { type: String, default: 'single' }, // single, multiple
+  defaultExpanded: { type: Boolean, default: true },
   expandedAttribute: { type: String, default: 'extended' },
   invalidAttribute: { type: String, default: 'invalid' },
   selectedValues: { type: Object, default: () => {} },
@@ -37,6 +36,7 @@ const props = defineProps({
 const defaultTexts = {
   removeItem: 'Dzēst ierakstu',
   addItemButtonTooltip: 'Pievienot ierakstu',
+  addButtonLabel: 'Pievienot ierakstu',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
@@ -199,7 +199,7 @@ function deselectAll() {
 }
 
 function changeSelecting(value) {
-  if (props.selectingKind === 'single') {
+  if (props.selectionKind === 'single') {
     deselectAll();
     selectedValues.value = { [value]: true };
   }
@@ -239,9 +239,9 @@ defineExpose({ clearModel });
           :icon="item[iconAttribute]"
           :expandable="true"
           :actionDefinitions="changeActions([...allActions], item)"
-          :forceUppercase="forceUppercase"
+          :uppercase="uppercase"
           :hasSelecting="hasSelecting"
-          :selectingKind="selectingKind"
+          :selectionKind="selectionKind"
           :invalid="item[invalidAttribute]"
           @actionClick="(val) => actionClick(val, item[idAttribute], item._lx_appendableKey)"
           @selectingClick="changeSelecting"
@@ -298,7 +298,7 @@ defineExpose({ clearModel });
         v-if="!readOnly && canAddItems"
         :id="`${id}-action-add-item`"
         kind="tertiary"
-        :label="addButtonLabel"
+        :label="displayTexts.addButtonLabel"
         :title="displayTexts.addItemButtonTooltip"
         icon="add-item"
         @click="addItem"

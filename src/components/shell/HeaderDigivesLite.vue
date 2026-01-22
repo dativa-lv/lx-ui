@@ -47,7 +47,7 @@ const props = defineProps({
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
-  hasAnimations: { type: Boolean, default: true },
+  hasReducedAnimations: { type: Boolean, default: false },
   hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
@@ -170,9 +170,9 @@ const navItemsUserMenu = computed(() =>
 
 const emits = defineEmits([
   'nav-toggle',
-  'contextPersonChanged',
+  'contextPersonChange',
   'update:selected-context-person',
-  'alternativeProfileChanged',
+  'alternativeProfileChange',
   'update:selected-alternative-profile',
   'log-out',
   'update:nav-bar-switch',
@@ -180,14 +180,14 @@ const emits = defineEmits([
   'alerts-click',
   'alert-item-click',
   'update:theme',
-  'update:hasAnimations',
+  'update:hasReducedAnimations',
   'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'update:selected-language',
   'go-home',
   'help-click',
-  'language-changed',
+  'languageChange',
   'update:customButtonOpened',
   'customButtonClick',
   'toggleSpotlight',
@@ -225,10 +225,10 @@ const themeModel = computed({
 
 const animationsModel = computed({
   get() {
-    return props.hasAnimations;
+    return props.hasReducedAnimations;
   },
   set(value) {
-    emits('update:hasAnimations', value);
+    emits('update:hasReducedAnimations', value);
   },
 });
 
@@ -337,7 +337,7 @@ watch(dropDownModelAlternatives, (newValue) => {
 watch(
   () => props.selectedAlternativeProfile,
   (newValue) => {
-    if (newValue !== props.selectedAlternativeProfile) emits('alternativeProfileChanged', newValue);
+    if (newValue !== props.selectedAlternativeProfile) emits('alternativeProfileChange', newValue);
     if (dropDownModelAlternatives.value !== newValue)
       dropDownModelAlternatives.value = newValue?.name;
   }
@@ -416,7 +416,7 @@ const menuIcon = computed(() => {
 watch(
   () => props.selectedLanguage,
   (newValue) => {
-    emits('language-changed', newValue);
+    emits('languageChange', newValue);
   }
 );
 

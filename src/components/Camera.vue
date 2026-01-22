@@ -193,7 +193,7 @@ function changeCamera(actionId) {
   }
 }
 
-function actionClicked(actionId) {
+function handleActionClick(actionId) {
   if (actionId === 'refresh') {
     localStorage.removeItem(`${system}-${props.preferencesId}`);
     window.location.reload();
@@ -336,7 +336,7 @@ onUnmounted(() => {
         icon="invalid"
         :description="displayTexts.errorDescription"
         :actionDefinitions="[{ id: 'refresh', name: displayTexts.reloadPage, icon: 'refresh' }]"
-        @emptyStateActionClick="actionClicked"
+        @emptyStateActionClick="handleActionClick"
       />
     </div>
     <div class="lx-camera-frame" v-show="!error && !loading">

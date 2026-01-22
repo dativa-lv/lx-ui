@@ -6,30 +6,27 @@ import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { useElementSize, useScroll } from '@vueuse/core';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   label: { type: String, default: '' },
-  size: { type: String, default: 'default' },
-  buttonPrimaryVisible: { default: false, type: Boolean },
-  buttonPrimaryLoading: { default: false, type: Boolean },
-  buttonPrimaryBusy: { default: false, type: Boolean },
-  buttonPrimaryLabel: { default: null, type: String },
-  buttonPrimaryDisabled: { default: false, type: Boolean },
-  buttonSecondaryVisible: { default: false, type: Boolean },
-  buttonSecondaryLoading: { default: false, type: Boolean },
-  buttonSecondaryBusy: { default: false, type: Boolean },
-  buttonSecondaryLabel: { default: null, type: String },
-  buttonSecondaryIsCancel: { default: true, type: Boolean },
-  buttonPrimaryIsDestructive: { default: false, type: Boolean },
-  disableClosing: { default: false, type: Boolean },
-  kind: { default: 'default', type: String }, // default or native
-  escEnabled: { default: true, type: Boolean },
-  buttonCloseLabel: { default: 'Aizvērt', type: String },
+  size: { type: String, default: 'default' }, // default, s, m, l, xl
+  disableClosing: { type: Boolean, default: false },
+  kind: { type: String, default: 'default' }, // default, native
+  escEnabled: { type: Boolean, default: true },
+  buttonSecondaryIsCancel: { type: Boolean, default: true },
   actionDefinitions: { type: Array, default: () => [] },
+  texts: { type: Object, default: () => ({}) },
 });
 
-const emits = defineEmits(['closed', 'primaryAction', 'secondaryAction', 'actionClick']);
+const defaultTexts = {
+  close: 'Aizvērt',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
+
+const emits = defineEmits(['close', 'actionClick']);
 
 const nativeModal = ref();
 const isOpen = ref(false);
@@ -83,11 +80,11 @@ function close(source = null) {
       return;
     }
     isOpen.value = false;
-    emits('closed');
+    emits('close');
   } else {
     nativeModal.value?.close();
     isOpenModal.value = false;
-    emits('closed');
+    emits('close');
   }
   deactivate();
 }
@@ -103,19 +100,7 @@ function handleKeyDown(event) {
   }
 }
 
-function clickPrimary() {
-  if (!props.buttonPrimaryDisabled) emits('primaryAction');
-}
-
-function clickSecondary() {
-  if (props.buttonSecondaryIsCancel) {
-    close();
-    return;
-  }
-  emits('secondaryAction');
-}
-
-function actionClicked(action) {
+function handleActionClick(action) {
   if (action?.kind === 'secondary' && props.buttonSecondaryIsCancel) {
     close();
     return;
@@ -233,7 +218,7 @@ defineExpose({ open, close });
               v-if="!disableClosing"
               icon="close"
               kind="ghost"
-              :label="buttonCloseLabel"
+              :label="displayTexts.closeButtonLabel"
               variant="icon-only"
               @click="close()"
             />
@@ -248,51 +233,24 @@ defineExpose({ open, close });
             class="lx-button-set"
             :class="[
               {
-                'lx-two-buttons':
-                  (actionDefinitionsDisplay?.length === 0 &&
-                    buttonPrimaryVisible &&
-                    buttonSecondaryVisible) ||
-                  actionDefinitionsDisplay?.length === 2,
+                'lx-two-buttons': actionDefinitionsDisplay?.length === 2,
               },
             ]"
           >
-            <template v-if="actionDefinitionsDisplay?.length > 0">
-              <LxButton
-                v-for="action in actionDefinitionsDisplay"
-                :key="action?.id"
-                :id="`${id}-action-${action?.id}`"
-                :label="action?.name || action?.label"
-                :title="action?.title || action?.tooltip"
-                :kind="action?.kind"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
-                :active="action?.active"
-                :disabled="action?.disabled"
-                @click="actionClicked(action)"
-              />
-            </template>
-            <template v-else>
-              <LxButton
-                v-if="buttonPrimaryVisible"
-                :id="`${id}-action-primary`"
-                :label="buttonPrimaryLabel"
-                :loading="buttonPrimaryLoading"
-                :busy="buttonPrimaryBusy"
-                :destructive="buttonPrimaryIsDestructive"
-                :disabled="buttonPrimaryDisabled"
-                @click="clickPrimary()"
-              />
-              <LxButton
-                v-if="buttonSecondaryVisible"
-                :id="`${id}-action-secondary`"
-                kind="secondary"
-                :label="buttonSecondaryLabel"
-                :loading="buttonSecondaryLoading"
-                :busy="buttonSecondaryBusy"
-                @click="clickSecondary()"
-              />
-            </template>
+            <LxButton
+              v-for="action in actionDefinitionsDisplay"
+              :key="action?.id"
+              :id="`${id}-action-${action?.id}`"
+              :label="action?.name || action?.label"
+              :title="action?.title || action?.tooltip"
+              :kind="action?.kind"
+              :loading="action?.loading"
+              :busy="action?.busy"
+              :destructive="action?.destructive"
+              :active="action?.active"
+              :disabled="action?.disabled"
+              @click="handleActionClick(action)"
+            />
           </footer>
 
           <!-- Fallback focus anchor for focus trapping -->
@@ -323,12 +281,11 @@ defineExpose({ open, close });
         >
           <header ref="modalHeader">
             <p class="lx-primary">{{ label }}</p>
-
             <LxButton
               v-if="!disableClosing"
               icon="close"
               kind="ghost"
-              :label="buttonCloseLabel"
+              :label="displayTexts.buttonCloseLabel"
               variant="icon-only"
               @click="close()"
             />
@@ -343,50 +300,23 @@ defineExpose({ open, close });
             class="lx-button-set"
             :class="[
               {
-                'lx-two-buttons':
-                  (actionDefinitionsDisplay?.length === 0 &&
-                    buttonPrimaryVisible &&
-                    buttonSecondaryVisible) ||
-                  actionDefinitionsDisplay?.length === 2,
+                'lx-two-buttons': actionDefinitionsDisplay?.length === 2,
               },
             ]"
           >
-            <template v-if="actionDefinitionsDisplay?.length > 0">
-              <LxButton
-                v-for="action in actionDefinitionsDisplay"
-                :key="action?.id"
-                :id="`${id}-action-${action?.id}`"
-                :kind="action?.kind"
-                :label="action?.name || action?.label"
-                :title="action?.title"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
-                :disabled="action?.disabled"
-                @click="actionClicked(action)"
-              />
-            </template>
-            <template v-else>
-              <LxButton
-                v-if="buttonPrimaryVisible"
-                :id="`${id}-action-primary`"
-                :label="buttonPrimaryLabel"
-                :loading="buttonPrimaryLoading"
-                :busy="buttonPrimaryBusy"
-                :destructive="buttonPrimaryIsDestructive"
-                :disabled="buttonPrimaryDisabled"
-                @click="clickPrimary()"
-              />
-              <LxButton
-                v-if="buttonSecondaryVisible"
-                :id="`${id}-action-secondary`"
-                kind="secondary"
-                :label="buttonSecondaryLabel"
-                :loading="buttonSecondaryLoading"
-                :busy="buttonSecondaryBusy"
-                @click="clickSecondary()"
-              />
-            </template>
+            <LxButton
+              v-for="action in actionDefinitionsDisplay"
+              :key="action?.id"
+              :id="`${id}-action-${action?.id}`"
+              :kind="action?.kind"
+              :label="action?.name || action?.label"
+              :title="action?.title"
+              :loading="action?.loading"
+              :busy="action?.busy"
+              :destructive="action?.destructive"
+              :disabled="action?.disabled"
+              @click="handleActionClick(action)"
+            />
           </footer>
 
           <!-- Fallback focus anchor for focus trapping -->

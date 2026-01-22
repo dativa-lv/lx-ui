@@ -38,7 +38,7 @@ test('LxList default elements', () => {
       listType: '1',
       kind: 'default',
       idAttribute: 'id',
-      primaryAttribute: 'name',
+      nameAttribute: 'name',
       groupAttribute: 'group',
     },
     global: {
@@ -60,6 +60,8 @@ test('LxList default elements', () => {
   expect(labels[2].text()).toBe('Test 3');
 
   // Check the descriptions of the items
+  process.stdout.write(`${wrapper.html()}\n`);
+
   const descriptions = wrapper.findAll('.lx-secondary');
   expect(descriptions.length).toBe(3);
   expect(descriptions[0].text()).toBe('Test description 1');

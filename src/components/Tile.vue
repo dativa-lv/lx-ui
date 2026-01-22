@@ -34,7 +34,7 @@ const props = defineProps({
   },
   kind: {
     type: String,
-    default: 'default', // default || mini
+    default: 'default', // default, mini
   },
   to: {
     type: Object,
@@ -58,7 +58,7 @@ const props = defineProps({
   },
   badge: { type: String, default: '' },
   badgeIcon: { type: String, default: null },
-  badgeType: { type: String, default: 'default' }, // default, good, info, warning, important,
+  badgeType: { type: String, default: 'default' }, // default, success, info, warning, error,
   badgeTitle: {
     type: String,
     default: null,
@@ -101,6 +101,7 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
         <p :id="`${id}-label`" class="lx-primary">{{ label }}</p>
         <p :id="`${id}-desc`" class="lx-description lx-secondary">{{ description }}</p>
       </header>
+
       <div class="lx-tile-icon-wrapper" v-if="!busy">
         <LxIcon
           :value="icon"
@@ -109,6 +110,7 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
           :title="label"
           :desc="description"
         />
+
         <div class="badge-wrapper">
           <LxBadge
             :icon="badgeIcon"
@@ -118,15 +120,17 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
             :class="[
               { 'lx-badge-empty': badge === ' ' && !badgeIcon },
               { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
-              { 'lx-badge-good': badgeType === 'good' },
+              { 'lx-badge-success': badgeType === 'success' },
               { 'lx-badge-warning': badgeType === 'warning' },
-              { 'lx-badge-important': badgeType === 'important' },
+              { 'lx-badge-error': badgeType === 'error' },
             ]"
           />
         </div>
       </div>
+
       <div class="lx-tile-item-loader" v-else>
         <LxLoader :loading="true" size="s" @click.stop />
+
         <div class="badge-wrapper">
           <LxBadge
             :icon="badgeIcon"
@@ -136,9 +140,9 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
             :class="[
               { 'lx-badge-empty': badge === ' ' && !badgeIcon },
               { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
-              { 'lx-badge-good': badgeType === 'good' },
+              { 'lx-badge-success': badgeType === 'success' },
               { 'lx-badge-warning': badgeType === 'warning' },
-              { 'lx-badge-important': badgeType === 'important' },
+              { 'lx-badge-error': badgeType === 'error' },
             ]"
           />
         </div>

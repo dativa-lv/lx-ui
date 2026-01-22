@@ -74,7 +74,7 @@ const containerClasses = computed(() => {
 
 const emits = defineEmits(['actionClick']);
 
-function actionClicked(actionName, selectedItemId = 'default') {
+function handleActionClick(actionName, selectedItemId = 'default') {
   emits('actionClick', actionName, selectedItemId);
 }
 
@@ -137,12 +137,12 @@ function handleClick(event) {
           :badgeType="actionDefinitions[0].badgeType"
           :badgeIcon="actionDefinitions[0].badgeIcon"
           :badgeTitle="actionDefinitions[0].badgeTitle"
-          @click="actionClicked(actionDefinitions[0].id, props.id)"
+          @click="handleActionClick(actionDefinitions[0].id, props.id)"
         />
       </template>
       <LxDropDownMenu
         :actionDefinitions="actionDefinitions"
-        @actionClick="(id) => actionClicked(id, props.id)"
+        @actionClick="(id) => handleActionClick(id, props.id)"
       >
         <div class="lx-toolbar" v-if="actionDefinitions.length >= 2">
           <LxButton

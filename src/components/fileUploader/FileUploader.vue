@@ -17,7 +17,7 @@ import LxLoader from '@/components/Loader.vue';
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: Array, default: null },
-  kind: { type: String, default: 'single' }, // multiple, single
+  selectionKind: { type: String, default: 'single' }, //  single, multiple
   mode: { type: String, default: 'default' }, // default, compact
   maxlength: { type: Number, default: null },
   draggable: { type: Boolean, default: false },
@@ -139,6 +139,29 @@ const storedBase64Strings = ref([]);
 const fileInput = ref(null);
 const infoModal = ref();
 const cameraModal = ref();
+const cameraPhoto = ref();
+
+const infoModalActionDefinitions = ref([
+  {
+    id: 'close',
+    name: displayTexts.value.close,
+    kind: 'secondary',
+  },
+]);
+
+const cameraModalActionDefinitions = computed(() => [
+  {
+    id: 'save',
+    name: displayTexts.value.savePicture,
+    kind: 'primary',
+    disabled: !cameraPhoto.value,
+  },
+  {
+    id: 'close',
+    name: displayTexts.value.cancelAndClose,
+    kind: 'secondary',
+  },
+]);
 
 const maxLength = computed(() => {
   if (props.kind !== 'multiple') return 1;
@@ -444,7 +467,7 @@ async function handleDrop(event) {
     const incoming = Array.from(event.dataTransfer.files);
     let files = incoming;
 
-    if (props.kind === 'single') {
+    if (props.selectionKind === 'single') {
       files = [files[0]];
     } else {
       files = limitFilesToRemainingSlots(incoming);
@@ -479,8 +502,6 @@ function openModal(id) {
   infoModal.value.open();
 }
 
-const cameraPhoto = ref();
-
 const base64ToBlob = (base64) => {
   const byteString = atob(base64?.split(',')[1]);
   const mimeString = base64?.split(',')[0]?.split(':')[1]?.split(';')[0];
@@ -512,6 +533,21 @@ function cancelPhoto() {
   cameraPhoto.value = null;
   cameraModal.value.close();
 }
+
+function handleCameraActionClick(action) {
+  switch (action) {
+    case 'save':
+      savePhoto();
+      break;
+    case 'close':
+      cancelPhoto();
+      break;
+
+    default:
+      break;
+  }
+}
+
 const showCameraButton = computed(() => {
   const lowerCaseExtensions = props.allowedFileExtensions?.map((ext) => ext.toLowerCase()) || [];
   return (
@@ -529,18 +565,18 @@ const labelledBy = computed(() => props.labelId || rowId.value);
   <div
     class="lx-file-upload-wrapper"
     :class="[
-      { single: props.kind === 'single' },
-      { multiple: props.kind === 'multiple' },
-      { default: props.mode === 'default' },
-      { compact: props.mode === 'compact' },
-      { 'lx-disabled': props.disabled },
+      { single: selectionKind === 'single' },
+      { multiple: selectionKind === 'multiple' },
+      { default: mode === 'default' },
+      { compact: mode === 'compact' },
+      { 'lx-disabled': disabled },
     ]"
     :aria-labelledBy="labelledBy"
     role="group"
   >
-    <template v-if="props.kind === 'single' && !props.readOnly">
+    <template v-if="selectionKind === 'single' && !readOnly">
       <input
-        :id="props.id"
+        :id="id"
         class="lx-visually-hidden"
         type="file"
         ref="fileInput"
@@ -550,17 +586,19 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         aria-hidden="true"
         role="presentation"
       />
-      <div class="lx-draggable-wrapper" v-if="!props.draggable && advancedFilesData.length < 1">
+
+      <div class="lx-draggable-wrapper" v-if="!draggable && advancedFilesData.length < 1">
         <LxButton
           :id="`${id}-action-file-upload`"
           :label="displayTexts.buttonLabel"
           kind="tertiary"
           icon="upload"
-          :disabled="props.disabled || isAtMaxLength"
-          :loading="props.loading"
-          :busy="props.busy"
+          :disabled="disabled || isAtMaxLength"
+          :loading="loading"
+          :busy="busy"
           @click="triggerFileUpload"
         />
+
         <LxButton
           v-if="showCameraButton"
           customClass="camera-button"
@@ -572,13 +610,14 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           @click="cameraModal.open()"
         />
       </div>
-      <div class="lx-draggable-wrapper" v-if="props.draggable && advancedFilesData.length < 1">
+
+      <div class="lx-draggable-wrapper" v-if="draggable && advancedFilesData.length < 1">
         <div
           :id="`${id}-action-file-upload`"
           class="lx-draggable-upload-wrapper"
           :class="[
             { 'lx-dragging': isDragging },
-            { 'lx-disabled': props.disabled || props.loading || props.busy || isAtMaxLength },
+            { 'lx-disabled': disabled || loading || busy || isAtMaxLength },
           ]"
           @dragover.prevent="handleDragOver"
           @dragleave="handleDragLeave"
@@ -591,9 +630,11 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :aria-label="displayTexts.draggablePlaceholder"
         >
           <p>{{ displayTexts.draggablePlaceholder }}</p>
+
           <LxLoader :loading="true" size="s" v-if="busy" />
           <LxIcon value="upload" v-else />
         </div>
+
         <LxButton
           v-if="showCameraButton"
           customClass="camera-button"
@@ -606,9 +647,10 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         />
       </div>
     </template>
-    <template v-if="props.kind === 'multiple' && !props.readOnly">
+
+    <template v-if="selectionKind === 'multiple' && !readOnly">
       <input
-        :id="props.id"
+        :id="id"
         class="lx-visually-hidden"
         type="file"
         ref="fileInput"
@@ -619,16 +661,17 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         aria-hidden="true"
         role="presentation"
       />
-      <div class="lx-draggable-wrapper" v-if="!props.draggable">
+
+      <div class="lx-draggable-wrapper" v-if="!draggable">
         <LxButton
           :id="`${id}-action-file-upload`"
           :label="displayTexts.buttonLabel"
           kind="tertiary"
           icon="upload"
           @click="triggerFileUpload"
-          :disabled="props.disabled || isAtMaxLength"
-          :loading="props.loading"
-          :busy="props.busy"
+          :disabled="disabled || isAtMaxLength"
+          :loading="loading"
+          :busy="busy"
         />
         <LxButton
           v-if="showCameraButton"
@@ -641,13 +684,14 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           @click="cameraModal.open()"
         />
       </div>
+
       <div class="lx-draggable-wrapper" v-else>
         <div
           :id="`${id}-action-file-upload`"
           class="lx-draggable-upload-wrapper"
           :class="[
             { 'lx-dragging': isDragging },
-            { 'lx-disabled': props.disabled || props.loading || props.busy || isAtMaxLength },
+            { 'lx-disabled': disabled || loading || busy || isAtMaxLength },
           ]"
           @dragover.prevent="handleDragOver"
           @dragleave="handleDragLeave"
@@ -660,9 +704,11 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :aria-label="displayTexts.draggablePlaceholder"
         >
           <p>{{ displayTexts.draggablePlaceholder }}</p>
+
           <LxLoader :loading="true" size="s" v-if="busy" />
           <LxIcon value="upload" v-else />
         </div>
+
         <LxButton
           v-if="showCameraButton"
           customClass="camera-button"
@@ -675,25 +721,26 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         />
       </div>
     </template>
+
     <div class="lx-uploaded-file-list-wrapper">
       <LxList
-        v-if="readOnly || !(advancedFilesData.length === 0 && props.kind === 'single')"
+        v-if="readOnly || !(advancedFilesData.length === 0 && selectionKind === 'single')"
         id="FilesList"
         :items="advancedFilesData"
-        :has-search="props.hasSearch && props.kind === 'multiple'"
+        :has-search="hasSearch && selectionKind === 'multiple'"
         listType="1"
         :texts="displayTexts"
       >
         <template #customItem="{ id, name, meta, state, description, invalidDescription }">
           <FileUploaderItem
             :customItem="{ id, name, meta, state, description, invalidDescription }"
-            :mode="props.mode"
-            :hasDownloadButton="props.hasDownloadButton"
-            :disabled="props.disabled"
-            :loading="props.loading"
-            :busy="props.busy"
-            :showMeta="props.showMeta"
-            :read-only="props.readOnly"
+            :mode="mode"
+            :hasDownloadButton="hasDownloadButton"
+            :disabled="disabled"
+            :loading="loading"
+            :busy="busy"
+            :showMeta="showMeta"
+            :read-only="readOnly"
             :texts="displayTexts"
             :isUploading="isUploading"
             :defaultIcon="
@@ -710,7 +757,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
     </div>
   </div>
 
-  <div v-if="props.mode === 'default' && displayTexts.uploaderDescription" class="lx-description">
+  <div v-if="mode === 'default' && displayTexts.uploaderDescription" class="lx-description">
     {{ displayTexts.uploaderDescription }}
   </div>
 
@@ -718,9 +765,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
     ref="infoModal"
     :label="openedItem?.name"
     size="m"
-    :button-secondary-label="displayTexts.close"
-    :button-secondary-visible="true"
-    @primary-action="infoModal.close()"
+    :action-definitions="infoModalActionDefinitions"
   >
     <FileUploaderDetails
       :texts="displayTexts"
@@ -735,17 +780,13 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       "
     />
   </LxModal>
+
   <LxModal
     ref="cameraModal"
     :label="displayTexts.addPhoto"
-    :button-secondary-label="displayTexts.cancelAndClose"
-    :button-secondary-visible="true"
-    :button-primary-visible="true"
-    :button-primary-disabled="!cameraPhoto"
-    :button-primary-label="displayTexts.savePicture"
-    :buttonSecondaryIsCancel="false"
-    @primary-action="savePhoto"
-    @secondary-action="cancelPhoto"
+    :button-secondary-is-cancel="false"
+    :action-definitions="cameraModalActionDefinitions"
+    @action-click="handleCameraActionClick"
   >
     <LxCamera
       v-model="cameraPhoto"

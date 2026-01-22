@@ -57,7 +57,7 @@ LX/UI provides over 50 components for different needs. Check these live demos fr
 - [🌐 LxStateDisplay](https://lx.zzdats.lv/sandbox/state-display)
 - [🌐 LxPersonDisplay](https://lx.zzdats.lv/sandbox/person-display)
 - [🌐 LxIcon](https://lx.zzdats.lv/sandbox/icon)
-- [🌐 LxRatings](https://lx.zzdats.lv/sandbox/ratings)
+- [🌐 LxRating](https://lx.zzdats.lv/sandbox/ratings)
 - [🌐 LxDataBlock](https://lx.zzdats.lv/sandbox/data-block)
 
 - [🌐 LxErrorPage](https://lx.zzdats.lv/sandbox/error-page)

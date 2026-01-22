@@ -1975,11 +1975,11 @@ a.lx-button.lx-button-ghost svg {
   background: var(--color-orange);
 }
 
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-good {
+.lx-button:not(#userMenuButton) .lx-badge.lx-badge-success {
   background: var(--color-green);
 }
 
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-important {
+.lx-button:not(#userMenuButton) .lx-badge.lx-badge-error {
   background: var(--color-red);
 }
 

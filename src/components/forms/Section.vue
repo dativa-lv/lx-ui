@@ -122,7 +122,7 @@ const props = defineProps({
    * @default
    * @since 1.9.0-beta.8
    */
-  badgeType: { type: String, default: 'default' }, // default, good, info, warning, important,
+  badgeType: { type: String, default: 'default' }, // default, info, success, warning, error
   /**
    * The badge title for header section if badge is provided.
    * @type {String}

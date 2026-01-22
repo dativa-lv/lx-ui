@@ -31,8 +31,8 @@ const props = defineProps({
   iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet },
   kind: { type: String, default: 'default' }, // default, draggable, treelist
   idAttribute: { type: String, default: 'id' },
-  primaryAttribute: { type: String, default: 'name' },
-  secondaryAttribute: { type: String, default: 'description' },
+  nameAttribute: { type: String, default: 'name' },
+  descriptionAttribute: { type: String, default: 'description' },
   hrefAttribute: { type: String, default: 'href' },
   groupAttribute: { type: String, default: 'group' },
   clickableAttribute: { type: String, default: 'clickable' },
@@ -57,7 +57,7 @@ const props = defineProps({
   busy: { type: Boolean, default: false },
   hideFilteredItems: { type: Boolean, default: false },
   hasSelecting: { type: Boolean, default: false },
-  selectingKind: { type: String, default: 'single' }, // single, multiple
+  selectionKind: { type: String, default: 'single' }, // single, multiple
   selectionActionDefinitions: { type: Array, default: () => [] },
   includeUnspecifiedGroups: { type: Boolean, default: false },
   itemsStates: { type: Object, default: () => {} },
@@ -113,17 +113,17 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits([
-  'actionClick',
   'update:searchString',
-  'searched',
-  'loadMore',
-  'emptyStateActionClick',
+  'update:itemsStates',
   'update:items',
-  'selectionChanged',
+  'search',
+  'loadMore',
+  'loadChildren',
+  'selectionChange',
+  'actionClick',
   'selectionActionClick',
   'toolbarActionClick',
-  'update:itemsStates',
-  'loadChildren',
+  'emptyStateActionClick',
 ]);
 
 const responsiveGroupDefinitions = ref(props.groupDefinitions);
@@ -182,7 +182,7 @@ const debouncedSearchReq = useDebounceFn(async () => {
 }, 200);
 
 function serverSideSearch() {
-  if (props.searchSide === 'server') emits('searched', foldToAscii(queryRaw.value));
+  if (props.searchSide === 'server') emits('search', foldToAscii(queryRaw.value));
 }
 
 watch(modelSearchString, (newValue, oldValue) => {
@@ -210,14 +210,14 @@ function isFiltered(value) {
   return true;
 }
 
-function actionClicked(actionName, rowCode) {
+function handleActionClick(actionName, rowCode) {
   emits('actionClick', actionName, rowCode);
 }
 
 const filteredItems = computed(() => {
   if (itemsWithStringIds.value) {
     return itemsWithStringIds.value.filter(
-      (o) => isFiltered(o[props.primaryAttribute]) || isFiltered(o[props.secondaryAttribute])
+      (o) => isFiltered(o[props.nameAttribute]) || isFiltered(o[props.nameAttribute])
     );
   }
   return [];
@@ -228,7 +228,7 @@ function findObjectById(array) {
   const queue = [...array];
   while (queue.length > 0) {
     const obj = queue.shift();
-    if (isFiltered(obj[props.primaryAttribute]) || isFiltered(obj[props.secondaryAttribute])) {
+    if (isFiltered(obj[props.nameAttribute]) || isFiltered(obj[props.nameAttribute])) {
       res.push(obj);
     }
     if (obj?.[props.childrenAttribute]) {
@@ -295,7 +295,7 @@ const filteredGroupedItems = computed(() => {
       ret[prepareCode(group.id)] = listItems?.filter(
         (o) =>
           prepareCode(o[props.groupAttribute]) === prepareCode(group.id) &&
-          (isFiltered(o[props.primaryAttribute]) || isFiltered(o[props.secondaryAttribute]))
+          (isFiltered(o[props.nameAttribute]) || isFiltered(o[props.nameAttribute]))
       );
     });
     return ret;
@@ -435,7 +435,7 @@ watch(
   { immediate: true }
 );
 
-function emptyStateActionClicked(actionName) {
+function handleEmptyStateActionClick(actionName) {
   emits('emptyStateActionClick', actionName);
 }
 
@@ -657,15 +657,15 @@ const selectedItems = computed(() => {
       }
 
       if (isKeyValid) {
-        if (props.selectingKind === 'multiple' && key !== 'undefined') {
+        if (props.selectionKind === 'multiple' && key !== 'undefined') {
           ret.push(key);
-        } else if (props.selectingKind === 'single') {
+        } else if (props.selectionKind === 'single') {
           ret[0] = key;
         }
       }
     }
   });
-  emits('selectionChanged', ret);
+  emits('selectionChange', ret);
   return ret;
 });
 
@@ -712,10 +712,10 @@ const hasSelectableItemsInGroup = computed(() => {
 
 const selectIcon = computed(() => {
   const items = props.kind === 'treelist' ? selectableTreeItems?.value : selectableItems?.value;
-  if (selectedItems.value.length === items.length && props.selectingKind === 'multiple') {
+  if (selectedItems.value.length === items.length && props.selectionKind === 'multiple') {
     return 'checkbox-filled';
   }
-  if (props.selectingKind === 'multiple') {
+  if (props.selectionKind === 'multiple') {
     return 'checkbox-indeterminate';
   }
   return 'radiobutton-filled';
@@ -1024,7 +1024,7 @@ watch(
 );
 
 watch(
-  () => props.selectingKind,
+  () => props.selectionKind,
   (newVal) => {
     if (newVal === 'single') {
       const selectedCount = Object.values(selectedItemsRaw.value).filter(
@@ -1084,7 +1084,7 @@ const processedToolbarActions = computed(() => {
     hasSearch,
     searchMode,
     hasSelecting,
-    selectingKind,
+    selectionKind,
   } = props;
 
   if (!toolbarActionDefinitions.length) return [];
@@ -1172,7 +1172,7 @@ const processedToolbarActions = computed(() => {
     });
   }
 
-  if (hasSelecting && selectingKind === 'multiple') {
+  if (hasSelecting && selectionKind === 'multiple') {
     result.push({
       id: `select-all`,
       name: displayTexts.value.selectAllRows,
@@ -1189,7 +1189,7 @@ const processedToolbarActions = computed(() => {
   return result;
 });
 
-function toolbarActionClicked(id) {
+function handleToolbarActionClick(id) {
   if (id === 'search') {
     toggleSearch();
   } else if (id === 'select-all') {
@@ -1225,7 +1225,7 @@ const toolbarActions = computed(() => {
           :disabled="busy"
           :loading="loading"
           :texts="displayTexts"
-          @actionClick="toolbarActionClicked"
+          @actionClick="handleToolbarActionClick"
         >
           <template #leftArea>
             <slot
@@ -1295,7 +1295,7 @@ const toolbarActions = computed(() => {
                   v-if="
                     selectableItems?.length !== 0 &&
                     hasSelecting &&
-                    selectingKind === 'multiple' &&
+                    selectionKind === 'multiple' &&
                     kind !== 'draggable'
                   "
                   :disabled="loading || busy"
@@ -1435,8 +1435,8 @@ const toolbarActions = computed(() => {
             <LxListItem
               :id="item[idAttribute]"
               :parentId="props.id"
-              :label="item[primaryAttribute]"
-              :description="item[secondaryAttribute]"
+              :label="item[nameAttribute]"
+              :description="item[descriptionAttribute]"
               :value="item"
               :href="item[hrefAttribute]"
               :actionDefinitions="actionDefinitions"
@@ -1450,8 +1450,8 @@ const toolbarActions = computed(() => {
               :disabled="loading || busy"
               :selected="isItemSelected(item[idAttribute])"
               :texts="displayTexts"
-              @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-              @action-click="actionClicked"
+              @click="item[hrefAttribute] ? null : handleActionClick('click', item[idAttribute])"
+              @action-click="handleActionClick"
             >
               <template #customItem="item" v-if="$slots.customItem">
                 <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
@@ -1460,13 +1460,13 @@ const toolbarActions = computed(() => {
             <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
               <template v-if="isSelectable(item)">
                 <LxRadioButton
-                  v-if="selectingKind === 'single'"
+                  v-if="selectionKind === 'single'"
                   :id="`select-${id}-${item[idAttribute]}`"
                   v-model="selectedItemsRaw[item[idAttribute]]"
                   :value="item[idAttribute]"
                   @click="selectRow(item[idAttribute])"
                   :disabled="loading || busy"
-                  :label="item[primaryAttribute]"
+                  :label="item[nameAttribute]"
                   :group-id="`selection-${id}`"
                   :tabindex="getGroupedTabIndex(item[idAttribute], null)"
                 />
@@ -1476,7 +1476,7 @@ const toolbarActions = computed(() => {
                   v-model="selectedItemsRaw[item[idAttribute]]"
                   :value="item[idAttribute]"
                   :disabled="loading || busy"
-                  :label="item[primaryAttribute]"
+                  :label="item[nameAttribute]"
                   :group-id="`selection-${id}`"
                 />
               </template>
@@ -1554,8 +1554,8 @@ const toolbarActions = computed(() => {
                       <LxListItem
                         :id="element[idAttribute]"
                         :parentId="props.id"
-                        :label="element[primaryAttribute]"
-                        :description="element[secondaryAttribute]"
+                        :label="element[nameAttribute]"
+                        :description="element[descriptionAttribute]"
                         :value="element"
                         :href="element[hrefAttribute]"
                         :actionDefinitions="actionDefinitions"
@@ -1571,9 +1571,9 @@ const toolbarActions = computed(() => {
                         @click="
                           element[hrefAttribute]
                             ? null
-                            : actionClicked('click', element[idAttribute])
+                            : handleActionClick('click', element[idAttribute])
                         "
-                        @action-click="actionClicked"
+                        @action-click="handleActionClick"
                       >
                         <template #customItem="item" v-if="$slots.customItem">
                           <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
@@ -1608,7 +1608,7 @@ const toolbarActions = computed(() => {
             :has-select-button="
               hasSelecting &&
               hasSelectableItemsInGroup[prepareCode(group.id)] &&
-              selectingKind === 'multiple'
+              selectionKind === 'multiple'
             "
             :select-status="groupSelectionStatuses?.[group.id]"
             :texts="{
@@ -1642,8 +1642,8 @@ const toolbarActions = computed(() => {
                 <LxListItem
                   :id="item[idAttribute]"
                   :parentId="props.id"
-                  :label="item[primaryAttribute]"
-                  :description="item[secondaryAttribute]"
+                  :label="item[nameAttribute]"
+                  :description="item[descriptionAttribute]"
                   :value="item"
                   :href="item[hrefAttribute]"
                   :actionDefinitions="actionDefinitions"
@@ -1657,8 +1657,10 @@ const toolbarActions = computed(() => {
                   :disabled="loading || busy"
                   :selected="isItemSelected(item[idAttribute])"
                   :texts="displayTexts"
-                  @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-                  @action-click="actionClicked"
+                  @click="
+                    item[hrefAttribute] ? null : handleActionClick('click', item[idAttribute])
+                  "
+                  @action-click="handleActionClick"
                 >
                   <template #customItem="item" v-if="$slots.customItem">
                     <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
@@ -1667,13 +1669,13 @@ const toolbarActions = computed(() => {
                 <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
                   <template v-if="isSelectable(item)">
                     <LxRadioButton
-                      v-if="selectingKind === 'single'"
+                      v-if="selectionKind === 'single'"
                       :id="`select-${id}-${item[idAttribute]}`"
                       v-model="selectedItemsRaw[item[idAttribute]]"
                       :value="item[idAttribute]"
                       @click="selectRow(item[idAttribute])"
                       :disabled="loading || busy"
-                      :label="item[primaryAttribute]"
+                      :label="item[nameAttribute]"
                       :group-id="`selection-${id}`"
                       :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
                     />
@@ -1683,7 +1685,7 @@ const toolbarActions = computed(() => {
                       v-model="selectedItemsRaw[item[idAttribute]]"
                       :value="item[idAttribute]"
                       :disabled="loading || busy"
-                      :label="item[primaryAttribute]"
+                      :label="item[nameAttribute]"
                       :group-id="`selection-${id}`"
                     />
                   </template>
@@ -1707,8 +1709,8 @@ const toolbarActions = computed(() => {
           v-if="queryRaw?.length === 0"
           :items="itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
           :idAttribute="idAttribute"
-          :primaryAttribute="primaryAttribute"
-          :secondaryAttribute="secondaryAttribute"
+          :nameAttribute="nameAttribute"
+          :descriptionAttribute="descriptionAttribute"
           :childrenAttribute="childrenAttribute"
           :hasChildrenAttribute="hasChildrenAttribute"
           :hrefAttribute="hrefAttribute"
@@ -1724,7 +1726,7 @@ const toolbarActions = computed(() => {
           :icon="icon"
           :iconSet="iconSet"
           :hasSelecting="hasSelecting"
-          :selectingKind="selectingKind"
+          :selectionKind="selectionKind"
           :query="searchString"
           :areSomeExpandable="areSomeExpandable"
           :disabled="busy || loading"
@@ -1732,7 +1734,7 @@ const toolbarActions = computed(() => {
           v-model:itemsStates="states"
           :mode="mode"
           :texts="displayTexts"
-          @action-click="actionClicked"
+          @action-click="handleActionClick"
           @loadChildren="loadChildren"
         >
           <template #customItem="items" v-if="$slots.customItem">
@@ -1750,8 +1752,8 @@ const toolbarActions = computed(() => {
               <LxListItem
                 :id="item[idAttribute]"
                 :parentId="props.id"
-                :label="item[primaryAttribute]"
-                :description="item[secondaryAttribute]"
+                :label="item[nameAttribute]"
+                :description="item[descriptionAttribute]"
                 :value="item"
                 :href="item[hrefAttribute]"
                 :actionDefinitions="actionDefinitions"
@@ -1765,8 +1767,8 @@ const toolbarActions = computed(() => {
                 :disabled="loading || busy"
                 :selected="isItemSelected(item[idAttribute])"
                 :texts="displayTexts"
-                @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-                @action-click="actionClicked"
+                @click="item[hrefAttribute] ? null : handleActionClick('click', item[idAttribute])"
+                @action-click="handleActionClick"
               >
                 <template #customItem="item" v-if="$slots.customItem">
                   <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
@@ -1775,13 +1777,13 @@ const toolbarActions = computed(() => {
               <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
                 <template v-if="isSelectable(item)">
                   <LxRadioButton
-                    v-if="selectingKind === 'single'"
+                    v-if="selectionKind === 'single'"
                     :id="`select-${id}-${item[idAttribute]}`"
                     v-model="selectedItemsRaw[item[idAttribute]]"
                     :value="item[idAttribute]"
                     @click="selectRow(item[idAttribute])"
                     :disabled="loading || busy"
-                    :label="item[primaryAttribute]"
+                    :label="item[nameAttribute]"
                     :group-id="`selection-${id}`"
                     :tabindex="getGroupedTabIndex(item[idAttribute], null)"
                   />
@@ -1791,7 +1793,7 @@ const toolbarActions = computed(() => {
                     v-model="selectedItemsRaw[item[idAttribute]]"
                     :value="item[idAttribute]"
                     :disabled="loading || busy"
-                    :label="item[primaryAttribute]"
+                    :label="item[nameAttribute]"
                     :group-id="`selection-${id}`"
                   />
                 </template>
@@ -1820,7 +1822,7 @@ const toolbarActions = computed(() => {
             :has-select-button="
               hasSelecting &&
               hasSelectableItemsInGroup[prepareCode(group.id)] &&
-              selectingKind === 'multiple'
+              selectionKind === 'multiple'
             "
             :select-status="groupSelectionStatuses?.[group.id]"
             :texts="{
@@ -1832,8 +1834,8 @@ const toolbarActions = computed(() => {
             <LxTreeList
               :items="filteredGroupedItems[prepareCode(group.id)]"
               :idAttribute="idAttribute"
-              :primaryAttribute="primaryAttribute"
-              :secondaryAttribute="secondaryAttribute"
+              :nameAttribute="nameAttribute"
+              :descriptionAttribute="descriptionAttribute"
               :childrenAttribute="childrenAttribute"
               :hasChildrenAttribute="hasChildrenAttribute"
               :hrefAttribute="hrefAttribute"
@@ -1849,7 +1851,7 @@ const toolbarActions = computed(() => {
               :icon="icon"
               :iconSet="iconSet"
               :hasSelecting="hasSelecting"
-              :selectingKind="selectingKind"
+              :selectionKind="selectionKind"
               :query="searchString"
               :areSomeExpandable="areSomeExpandable"
               :disabled="busy || loading"
@@ -1857,7 +1859,7 @@ const toolbarActions = computed(() => {
               v-model:itemsStates="states"
               :mode="mode"
               :texts="displayTexts"
-              @action-click="actionClicked"
+              @action-click="handleActionClick"
               @loadChildren="loadChildren"
             >
               <template #customItem="items" v-if="$slots.customItem">
@@ -1886,7 +1888,7 @@ const toolbarActions = computed(() => {
             :has-select-button="
               hasSelecting &&
               hasSelectableItemsInGroup[prepareCode(group.id)] &&
-              selectingKind === 'multiple'
+              selectionKind === 'multiple'
             "
             :select-status="groupSelectionStatuses?.[group.id]"
             :texts="{
@@ -1906,8 +1908,8 @@ const toolbarActions = computed(() => {
                   <LxListItem
                     :id="item[idAttribute]"
                     :parentId="props.id"
-                    :label="item[primaryAttribute]"
-                    :description="item[secondaryAttribute]"
+                    :label="item[nameAttribute]"
+                    :description="item[descriptionAttribute]"
                     :value="item"
                     :href="item[hrefAttribute]"
                     :actionDefinitions="actionDefinitions"
@@ -1921,8 +1923,10 @@ const toolbarActions = computed(() => {
                     :disabled="loading || busy"
                     :selected="isItemSelected(item[idAttribute])"
                     :texts="displayTexts"
-                    @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-                    @action-click="actionClicked"
+                    @click="
+                      item[hrefAttribute] ? null : handleActionClick('click', item[idAttribute])
+                    "
+                    @action-click="handleActionClick"
                   >
                     <template #customItem="item" v-if="$slots.customItem">
                       <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
@@ -1934,13 +1938,13 @@ const toolbarActions = computed(() => {
                   >
                     <template v-if="isSelectable(item)">
                       <LxRadioButton
-                        v-if="selectingKind === 'single'"
+                        v-if="selectionKind === 'single'"
                         :id="`select-${id}-${item[idAttribute]}`"
                         v-model="selectedItemsRaw[item[idAttribute]]"
                         :value="item[idAttribute]"
                         @click="selectRow(item[idAttribute])"
                         :disabled="loading || busy"
-                        :label="item[primaryAttribute]"
+                        :label="item[nameAttribute]"
                         :group-id="`selection-${id}`"
                         :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
                       />
@@ -1950,7 +1954,7 @@ const toolbarActions = computed(() => {
                         v-model="selectedItemsRaw[item[idAttribute]]"
                         :value="item[idAttribute]"
                         :disabled="loading || busy"
-                        :label="item[primaryAttribute]"
+                        :label="item[nameAttribute]"
                         :group-id="`selection-${id}`"
                       />
                     </template>
@@ -1975,8 +1979,8 @@ const toolbarActions = computed(() => {
             <LxListItem
               :id="item[idAttribute]"
               :parentId="props.id"
-              :label="item[primaryAttribute]"
-              :description="item[secondaryAttribute]"
+              :label="item[nameAttribute]"
+              :description="item[descriptionAttribute]"
               :value="item"
               :href="item[hrefAttribute]"
               :actionDefinitions="actionDefinitions"
@@ -1990,8 +1994,8 @@ const toolbarActions = computed(() => {
               :disabled="loading || busy"
               :selected="isItemSelected(item[idAttribute])"
               :texts="displayTexts"
-              @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-              @action-click="actionClicked"
+              @click="item[hrefAttribute] ? null : handleActionClick('click', item[idAttribute])"
+              @action-click="handleActionClick"
             >
               <template #customItem="item" v-if="$slots.customItem">
                 <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
@@ -2000,13 +2004,13 @@ const toolbarActions = computed(() => {
             <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
               <template v-if="isSelectable(item)">
                 <LxRadioButton
-                  v-if="selectingKind === 'single'"
+                  v-if="selectionKind === 'single'"
                   :id="`select-${id}-${item[idAttribute]}`"
                   v-model="selectedItemsRaw[item[idAttribute]]"
                   :value="item[idAttribute]"
                   @click="selectRow(item[idAttribute])"
                   :disabled="loading || busy"
-                  :label="item[primaryAttribute]"
+                  :label="item[nameAttribute]"
                   :group-id="`selection-${id}`"
                   :tabindex="getTabIndex(item[idAttribute])"
                 />
@@ -2016,7 +2020,7 @@ const toolbarActions = computed(() => {
                   v-model="selectedItemsRaw[item[idAttribute]]"
                   :value="item[idAttribute]"
                   :disabled="loading || busy"
-                  :label="item[primaryAttribute]"
+                  :label="item[nameAttribute]"
                   :group-id="`selection-${id}`"
                 />
               </template>
@@ -2095,8 +2099,8 @@ const toolbarActions = computed(() => {
                       <LxListItem
                         :id="element[idAttribute]"
                         :parentId="props.id"
-                        :label="element[primaryAttribute]"
-                        :description="element[secondaryAttribute]"
+                        :label="element[nameAttribute]"
+                        :description="element[descriptionAttribute]"
                         :value="element"
                         :href="element[hrefAttribute]"
                         :actionDefinitions="actionDefinitions"
@@ -2112,9 +2116,9 @@ const toolbarActions = computed(() => {
                         @click="
                           element[hrefAttribute]
                             ? null
-                            : actionClicked('click', element[idAttribute])
+                            : handleActionClick('click', element[idAttribute])
                         "
-                        @action-click="actionClicked"
+                        @action-click="handleActionClick"
                       >
                         <template #customItem="item" v-if="$slots.customItem">
                           <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
@@ -2224,8 +2228,8 @@ const toolbarActions = computed(() => {
                         <LxListItem
                           :id="element[idAttribute]"
                           :parentId="props.id"
-                          :label="element[primaryAttribute]"
-                          :description="element[secondaryAttribute]"
+                          :label="element[nameAttribute]"
+                          :description="element[descriptionAttribute]"
                           :value="element"
                           :href="element[hrefAttribute]"
                           :actionDefinitions="actionDefinitions"
@@ -2242,9 +2246,9 @@ const toolbarActions = computed(() => {
                           @click="
                             element[hrefAttribute]
                               ? null
-                              : actionClicked('click', element[idAttribute])
+                              : handleActionClick('click', element[idAttribute])
                           "
-                          @action-click="actionClicked"
+                          @action-click="handleActionClick"
                         >
                           <template #customItem="item" v-if="$slots.customItem">
                             <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
@@ -2270,8 +2274,8 @@ const toolbarActions = computed(() => {
         <LxTreeList
           :items="items"
           :idAttribute="idAttribute"
-          :primaryAttribute="primaryAttribute"
-          :secondaryAttribute="secondaryAttribute"
+          :nameAttribute="nameAttribute"
+          :descriptionAttribute="descriptionAttribute"
           :childrenAttribute="childrenAttribute"
           :hasChildrenAttribute="hasChildrenAttribute"
           :hrefAttribute="hrefAttribute"
@@ -2286,13 +2290,13 @@ const toolbarActions = computed(() => {
           :icon="icon"
           :iconSet="iconSet"
           :hasSelecting="hasSelecting"
-          :selectingKind="selectingKind"
+          :selectionKind="selectionKind"
           :disabled="busy || loading"
           v-model:selected-items="selectedItemsRaw"
           v-model:itemsStates="states"
           :mode="mode"
           :texts="displayTexts"
-          @actionClick="actionClicked"
+          @actionClick="handleActionClick"
           @loadChildren="loadChildren"
         >
           <template #customItem="items" v-if="$slots.customItem">
@@ -2320,8 +2324,8 @@ const toolbarActions = computed(() => {
           <LxListItem
             :id="element[idAttribute]"
             :parentId="props.id"
-            :label="element[primaryAttribute]"
-            :description="element[secondaryAttribute]"
+            :label="element[nameAttribute]"
+            :description="element[descriptionAttribute]"
             :value="element"
             :href="element[hrefAttribute]"
             :actionDefinitions="actionDefinitions"
@@ -2335,8 +2339,10 @@ const toolbarActions = computed(() => {
             :disabled="loading || busy"
             :selected="isItemSelected(element[idAttribute])"
             :texts="displayTexts"
-            @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
-            @action-click="actionClicked"
+            @click="
+              element[hrefAttribute] ? null : handleActionClick('click', element[idAttribute])
+            "
+            @action-click="handleActionClick"
           >
             <template #customItem="item" v-if="$slots.customItem">
               <slot name="customItem" v-bind="item" />
@@ -2345,13 +2351,13 @@ const toolbarActions = computed(() => {
           <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
             <template v-if="isSelectable(element)">
               <LxRadioButton
-                v-if="selectingKind === 'single'"
+                v-if="selectionKind === 'single'"
                 :id="`select-${id}-${element[idAttribute]}`"
                 v-model="selectedItemsRaw[element[idAttribute]]"
                 :value="element[idAttribute]"
                 @click="selectRow(element[idAttribute])"
                 :disabled="loading || busy"
-                :label="element[primaryAttribute]"
+                :label="element[nameAttribute]"
                 :group-id="`selection-${id}`"
                 :tabindex="getTabIndex(element[idAttribute])"
               />
@@ -2361,7 +2367,7 @@ const toolbarActions = computed(() => {
                 v-model="selectedItemsRaw[element[idAttribute]]"
                 :value="element[idAttribute]"
                 :disabled="loading || busy"
-                :label="element[primaryAttribute]"
+                :label="element[nameAttribute]"
                 :group-id="`selection-${id}`"
               />
             </template>
@@ -2376,7 +2382,7 @@ const toolbarActions = computed(() => {
         :description="displayTexts?.noItemsDescription"
         :icon="emptyStateIcon"
         :actionDefinitions="emptyStateActionDefinitions"
-        @empty-state-action-click="emptyStateActionClicked"
+        @emptyStateActionClick="handleEmptyStateActionClick"
       />
 
       <div

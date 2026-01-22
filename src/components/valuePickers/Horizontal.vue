@@ -19,8 +19,8 @@ const props = defineProps({
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
-  kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
-  nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  selectionKind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
+  nullable: { type: Boolean, default: false }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   variant: { type: String, default: 'default' },
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
@@ -60,7 +60,7 @@ const model = computed({
 const itemsModel = ref({});
 const itemsDisplay = computed( () => { 
     const res = [... props.items];
-    if(props.kind === 'single' && props.nullable)  
+    if(props.selectionKind === 'single' && props.nullable)  
       res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: displayTexts.value.notSelected});
   
     return res
@@ -71,7 +71,7 @@ let currentIndex = 0;
 
 
 onMounted(() => {
-  if (!model.value && props.kind === 'multiple') {
+  if (!model.value && props.selectionKind === 'multiple') {
     model.value = [];
   }
   if (
@@ -187,7 +187,7 @@ function selectSingle(id) {
 }
 
 watch(
-  () => props.kind,
+  () => props.selectionKind,
   (newValue) => {
     activate();
     itemsModel.value = {};
@@ -406,9 +406,9 @@ function focusNext() {
 </script>
 <template>
   <div class="lx-value-picker-horizontal-container" :id="id">
-    <LxToolbar v-if="hasSearch || (hasSelectAll && kind === 'multiple')">
+    <LxToolbar v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')">
       <LxButton
-        v-if="hasSelectAll && kind === 'multiple'"
+        v-if="hasSelectAll && selectionKind === 'multiple'"
         kind="ghost"
         :icon="
           areSomeSelected
@@ -445,8 +445,8 @@ function focusNext() {
 
     <div
       class="lx-value-picker-horizontal-wrapper"
-      :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && kind === 'multiple' }]"
-      :role="props.kind === 'single' ? 'radiogroup' : 'group'"
+      :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && selectionKind === 'multiple' }]"
+      :role="props.selectionKind === 'single' ? 'radiogroup' : 'group'"
       tabindex='-1'
     >
       <template v-if="readOnly">
@@ -471,7 +471,7 @@ function focusNext() {
             { 'lx-value-picker-item-disabled': disabled },
           ]"
         >
-          <div v-if="kind === 'single'" 
+          <div v-if="selectionKind === 'single'" 
             class="lx-label-wrapper" 
             :group-id="groupId" 
           >
@@ -512,7 +512,7 @@ function focusNext() {
               />
             </div>
           </div>
-          <div v-if="kind === 'multiple'"
+          <div v-if="selectionKind === 'multiple'"
             class="lx-label-wrapper" 
             :group-id="groupId" 
           >

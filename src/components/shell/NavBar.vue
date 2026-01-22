@@ -26,7 +26,7 @@ const props = defineProps({
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
-  hasAnimations: { type: Boolean, default: true },
+  hasReducedAnimations: { type: Boolean, default: false },
   hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
@@ -132,7 +132,7 @@ const emits = defineEmits([
   'nav-toggle',
   'update:selected-language',
   'update:theme',
-  'update:hasAnimations',
+  'update:hasReducedAnimations',
   'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
@@ -175,10 +175,10 @@ const themeModel = computed({
 
 const animationsModel = computed({
   get() {
-    return props.hasAnimations;
+    return props.hasReducedAnimations;
   },
   set(value) {
-    emits('update:hasAnimations', value);
+    emits('update:hasReducedAnimations', value);
   },
 });
 
@@ -323,7 +323,7 @@ provide('insideNavBar', insideNavBar);
         :spotlight-has-badge="spotlightHasBadge"
         v-model:selectedLanguage="selectedLanguageModel"
         v-model:theme="themeModel"
-        v-model:hasAnimations="animationsModel"
+        v-model:hasReducedAnimations="animationsModel"
         v-model:hasReducedTransparency="transparencyModel"
         v-model:hasDeviceFonts="deviceFontsModel"
         v-model:isTouchSensitive="touchModeModel"

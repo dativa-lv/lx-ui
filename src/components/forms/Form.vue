@@ -14,7 +14,7 @@ import LxSkipLink from '@/components/SkipLink.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 
 const slots = useSlots();
-const emits = defineEmits(['buttonClick', 'update:index']);
+const emits = defineEmits(['actionClick', 'update:index']);
 
 /**
  * The Form component represents a form with various sections and rows.
@@ -25,8 +25,8 @@ const emits = defineEmits(['buttonClick', 'update:index']);
  * @property {Boolean} stickyHeader - Determines whether the form header should be sticky. Defaults to true.
  * @property {Boolean} showFooter - Determines whether to show the form footer. Defaults to true.
  * @property {Boolean} stickyFooter - Determines whether the form footer should be sticky. Defaults to true.
- * @property {Boolean} showPreHeaderInfo - Determines whether to show the pre-header information slot. Defaults to true.
- * @property {Boolean} showPostHeaderInfo - Determines whether to show the post-header information slot. Defaults to true.
+ * @property {Boolean} showPreHeaderInfo - Determines whether to show the preHeader information slot. Defaults to true.
+ * @property {Boolean} showPostHeaderInfo - Determines whether to show the postHeader information slot. Defaults to true.
  * @property {Array} index - The array of sections in the form. Defaults to an empty array.
  * @property {String} indexType - The type of index for the form. Can be 'default', 'tabs', or 'expanders'. Defaults to 'default'.
  * @property {Array} actionDefinitions - The array of buttons for the form. Defaults to an empty array.
@@ -34,7 +34,8 @@ const emits = defineEmits(['buttonClick', 'update:index']);
  * @property {String} kind - The kind of form. Can be 'default', 'compact', or 'stripped'. Defaults to 'default'.
  * @property {Object} texts - The object containing text translations for the form.
  *
- * @fires buttonClick - Emitted when a button in the form is clicked.
+ * @fires actionClick - Emitted when a button in the form is clicked.
+ * @fires update:index - Emitted when index is updated.
  *
  * @function highlightRow - Highlights a row in the form.
  * @function clearHighlights - Clears all highlights in the form.
@@ -55,23 +56,27 @@ const emits = defineEmits(['buttonClick', 'update:index']);
  *   requiredMode="optional"
  *   kind="default"
  *   :texts="{ otherActions: 'Other Actions' }"
- *   @buttonClick="handleButtonClick"
+ *   @actionClick="handleActionClick"
  *   @highlightRow="handleHighlightRow"
  *   @clearHighlights="handleClearHighlights"
  * >
- *   <template #pre-header>
+ *   <template #preHeader>
  *     <h2>Pre-Header Content</h2>
  *   </template>
- *   <template #pre-header-info>
+ *
+ *   <template #postHeaderInfo>
  *     <p>Pre-Header Information Content</p>
  *   </template>
+ *
  *   <template #header>
  *     <h1>Form Header</h1>
  *   </template>
- *   <template #post-header>
+ *
+ *   <template #postHeader>
  *     <h2>Post-Header Content</h2>
  *   </template>
- *   <template #post-header-info>
+ *
+ *   <template #postHeaderInfo>
  *     <p>Post-Header Information Content</p>
  *   </template>
  * </Form>
@@ -139,7 +144,7 @@ const props = defineProps({
     default: true,
   },
   /**
-   * Determines whether to show pre-header information slot.
+   * Determines whether to show preHeader information slot.
    * @type {Boolean}
    * @default true
    * @since 0.1.63
@@ -149,7 +154,7 @@ const props = defineProps({
     default: true,
   },
   /**
-   * Determines whether to show post-header information slot.
+   * Determines whether to show postHeader information slot.
    * @type {Boolean}
    * @default true
    * @since 0.1.63
@@ -410,6 +415,7 @@ provide('formOrientation', formOrientation);
 provide('sectionPrefix', props.id);
 
 const wizardModel = ref(null);
+const tabModel = ref(null);
 const itemsCopy = ref([...props.index]);
 
 const currentStepIndex = computed(() => itemsCopy.value.findIndex((item) => item.isCurrentStep));
@@ -494,11 +500,11 @@ const additionalButtons = computed(() =>
 );
 
 const hasPreHeaderInfoSlot = computed(
-  () => props.showPreHeaderInfo && slots['pre-header-info'] !== undefined
+  () => props.showPreHeaderInfo && slots.preHeaderInfo !== undefined
 );
 
 const hasPostHeaderInfoSlot = computed(
-  () => props.showPostHeaderInfo && slots['post-header-info'] !== undefined
+  () => props.showPostHeaderInfo && slots.postHeaderInfo !== undefined
 );
 // TODO: computed for all button tooltips
 
@@ -513,7 +519,7 @@ const clickHandler = (actionName) => {
     if (actionName === '_lx_next_step') nextStep();
     else if (actionName === '_lx_prev_step') prevStep();
   }
-  emits('buttonClick', actionName);
+  emits('actionClick', actionName);
 };
 
 const tabControl = ref();
@@ -536,14 +542,11 @@ function findIfSectionSelected(id) {
 
 const selectedTabValue = computed(() => {
   let res = props.index[0]?.id;
-  props.index?.forEach((o) => {
-    if (
-      (tabControl.value?.isActiveTab(o.id) && props.indexType === 'tabs') ||
-      (wizardModel.value === o.id && props.indexType === 'wizard')
-    ) {
-      res = o.id;
-    }
-  });
+  if (props.indexType === 'wizard' && wizardModel.value) {
+    res = wizardModel.value;
+  } else if (props.indexType === 'tabs' && tabModel.value) {
+    res = tabModel.value;
+  }
   return res;
 });
 // Hides all sections in the form. Necessary for indexType 'tabs' & 'wizard'
@@ -733,13 +736,12 @@ watch(
  * Sets the selected index for the forms based on the provided index ID.
  * @param {string} indexId - The identifier(id) of the index to select.
  */
-function setSelectedIndex(indexId, skipAnnouncement = false) {
+function setSelectedIndex(indexId) {
   const indexExists = props.index.some((o) => o?.id === indexId);
   if (!indexExists) return;
 
   if (props.indexType === 'tabs') {
-    tabControl.value?.setActiveTab(indexId);
-    tabControl.value?.setAnnouncementMessage(skipAnnouncement);
+    tabModel.value = indexId;
     hideAll();
   } else if (props.indexType === 'wizard') {
     wizardModel.value = indexId;
@@ -910,7 +912,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
       ref="formHeader"
       :class="[
         { 'lx-sticky': stickyHeader },
-        { 'lx-simple': slots['pre-header'] === undefined },
+        { 'lx-simple': slots['preHeader'] === undefined },
         { 'lx-form-with-tabs': props.indexType === 'tabs' },
         { 'lx-form-with-steps': props.indexType === 'wizard' },
         { 'lx-form-with-aside': props.indexType === 'default' && index?.length > 0 },
@@ -920,15 +922,15 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
       <div class="lx-group pre-header-group">
         <LxInfoWrapper v-if="hasPreHeaderInfoSlot" placement="bottom-start">
           <div class="lx-toolbar-chip">
-            <slot name="pre-header" />
+            <slot name="preHeader" />
           </div>
           <template #panel>
-            <slot name="pre-header-info" />
+            <slot name="preHeaderInfo" />
           </template>
         </LxInfoWrapper>
 
         <div class="lx-toolbar-chip" v-else>
-          <slot name="pre-header" />
+          <slot name="preHeader" />
         </div>
       </div>
 
@@ -941,34 +943,34 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
       <div class="lx-group post-header-group">
         <LxInfoWrapper v-if="hasPostHeaderInfoSlot" placement="bottom-end">
           <div class="lx-toolbar-chip">
-            <slot name="post-header" />
+            <slot name="postHeader" />
           </div>
           <template #panel>
-            <slot name="post-header-info" />
+            <slot name="postHeaderInfo" />
           </template>
         </LxInfoWrapper>
 
         <div class="lx-toolbar-chip" v-else>
-          <slot name="post-header" />
+          <slot name="postHeader" />
         </div>
       </div>
 
       <div class="responsive-overflow-header">
         <div class="overflow-icon-container">
-          <LxInfoWrapper v-if="slots['pre-header'] || slots['post-header']">
+          <LxInfoWrapper v-if="slots['preHeader'] || slots['postHeader']">
             <LxIcon value="info" />
             <template #panel>
-              <div class="responsive-slot pre-header" v-if="slots['pre-header']">
-                <slot name="pre-header" />
+              <div class="responsive-slot pre-header" v-if="slots['preHeader']">
+                <slot name="preHeader" />
               </div>
-              <div class="responsive-slot pre-header-info" v-if="slots['pre-header-info']">
-                <slot name="pre-header-info" />
+              <div class="responsive-slot pre-header-info" v-if="slots['preHeaderInfo']">
+                <slot name="preHeaderInfo" />
               </div>
-              <div class="responsive-slot post-header" v-if="slots['post-header']">
-                <slot name="post-header" />
+              <div class="responsive-slot post-header" v-if="slots['postHeader']">
+                <slot name="postHeader" />
               </div>
-              <div class="responsive-slot post-header-info" v-if="slots['post-header-info']">
-                <slot name="post-header-info" />
+              <div class="responsive-slot post-header-info" v-if="slots['postHeaderInfo']">
+                <slot name="postHeaderInfo" />
               </div>
             </template>
           </LxInfoWrapper>
@@ -1096,7 +1098,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
       </div>
 
       <div class="lx-group lx-single-header-button">
-        <slot name="header-additional" />
+        <slot name="headerAdditional" />
       </div>
 
       <div
@@ -1144,7 +1146,8 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
     <LxTabControl
       v-if="props.indexType === 'tabs' && index?.length > 0"
       ref="tabControl"
-      :value="itemsCopy"
+      v-model="tabModel"
+      :items="itemsCopy"
       :kind="indexHasIcons ? 'combo' : 'default'"
       :texts="displayTexts"
     >

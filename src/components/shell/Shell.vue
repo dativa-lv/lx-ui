@@ -51,35 +51,35 @@ const themeModel = useColorMode({
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 
 const emits = defineEmits([
-  'goBack',
-  'goHome',
-  'logOut',
-  'languageChanged',
-  'alertItemClick',
-  'logInClick',
-  'alertsClick',
-  'helpClick',
-  'contextPersonChanged',
-  'alternativeProfileChanged',
-  'megaMenuShowAllClick',
   'update:notifications',
   'update:selected-language',
   'update:selected-context-person',
   'update:selected-alternative-profile',
-  'update:hasAnimations',
+  'update:hasReducedAnimations',
   'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
-  'idleModalPrimary',
-  'idleModalSecondary',
-  'confirmModalClosed',
   'update:nav-bar-switch',
   'update:selectedMegaMenuItem',
-  'navClick',
   'update:customButtonOpened',
   'update:customButtonBlink',
-  'customButtonClick',
   'update:spotlightItemCurrent',
+  'goBack',
+  'goHome',
+  'logOut',
+  'languageChange',
+  'alertItemClick',
+  'logInClick',
+  'alertsClick',
+  'helpClick',
+  'contextPersonChange',
+  'alternativeProfileChange',
+  'megaMenuShowAllClick',
+  'idleModalPrimary',
+  'idleModalSecondary',
+  'confirmModalClose',
+  'navClick',
+  'customButtonClick',
   'spotlightShowMore',
 ]);
 
@@ -116,7 +116,7 @@ const props = defineProps({
 
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
-  hasAnimations: { type: Boolean, default: null },
+  hasReducedAnimations: { type: Boolean, default: null },
   hasReducedTransparency: { type: Boolean, default: null },
   hasDeviceFonts: { type: Boolean, default: null },
   isTouchSensitive: { type: Boolean, default: null },
@@ -301,7 +301,7 @@ const selectedLanguageModel = computed({
   },
   set(value) {
     if (!props.selectedLanguage) {
-      emits('languageChanged', value);
+      emits('languageChange', value);
     }
     if (props.languages.find((item) => item.id === value.id)) {
       emits('update:selected-language', value);
@@ -356,26 +356,26 @@ watch(
   }
 );
 
-const defaultAnimations = ref(true);
+const defaultReducedAnimations = ref(false);
 
 const animationsModel = computed({
   get() {
-    if (props.hasAnimations === null) {
-      return defaultAnimations.value;
+    if (props.hasReducedAnimations === null) {
+      return defaultReducedAnimations.value;
     }
-    return props.hasAnimations;
+    return props.hasReducedAnimations;
   },
   set(value) {
     if (props.hasThemePicker) {
-      emits('update:hasAnimations', value);
+      emits('update:hasReducedAnimations', value);
     }
-    defaultAnimations.value = value;
+    defaultReducedAnimations.value = value;
   },
 });
-provide('hasAnimations', animationsModel);
+provide('hasReducedAnimations', animationsModel);
 
 const transparencyStorageKey = ref(
-  `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-transparency`
+  `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-reduced-transparency`
 );
 
 const transparencyToggle = ref(false);
@@ -397,7 +397,7 @@ const transparencyModel = computed({
 });
 
 const animationsStorageKey = ref(
-  `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-animations`
+  `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-reduced-animations`
 );
 
 function animationModeChange(newValue, providedStorageKey) {
@@ -531,7 +531,7 @@ const selectedAlternativeProfileModel = computed({
   },
   set(value) {
     if (!props.selectedAlternativeProfile) {
-      emits('alternativeProfileChanged', value);
+      emits('alternativeProfileChange', value);
     }
     if (props.alternativeProfilesInfo.find((item) => item.id === value.id)) {
       emits('update:selected-alternative-profile', value);
@@ -625,14 +625,14 @@ function goHome(route) {
 function logOut() {
   emits('logOut');
 }
-function languageChanged(locale) {
-  emits('languageChanged', locale);
+function languageChange(locale) {
+  emits('languageChange', locale);
 }
-function contextPersonChanged(contextPerson) {
-  emits('contextPersonChanged', contextPerson);
+function contextPersonChange(contextPerson) {
+  emits('contextPersonChange', contextPerson);
 }
-function alternativeProfileChanged(alternativeProfile) {
-  emits('alternativeProfileChanged', alternativeProfile);
+function alternativeProfileChange(alternativeProfile) {
+  emits('alternativeProfileChange', alternativeProfile);
 }
 function alertItemClicked(alert) {
   if (alert.clickable) emits('alertItemClick', alert);
@@ -678,10 +678,10 @@ async function onClosedConfirmModal() {
     }
   }
   try {
-    emits?.('confirmModalClosed');
+    emits?.('confirmModalClose');
   } catch (e) {
     lxDevUtils.logError(
-      `Failed to emit confirmModalClosed: ${String(e)}`,
+      `Failed to emit confirmModalClose: ${String(e)}`,
       useLx().getGlobals()?.environment
     );
   }
@@ -740,12 +740,12 @@ function initializeTheme() {
 function initializeAnimations() {
   const storageKey = `${
     useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'
-  }-animations`;
+  }-reduced-animations`;
 
   const storedAnimations = JSON.parse(localStorage.getItem(storageKey));
   if (storedAnimations === null) {
-    defaultAnimations.value = usePreferredReducedMotion().value !== 'no-preference';
-  } else if (props.hasAnimations === null) {
+    defaultReducedAnimations.value = usePreferredReducedMotion().value !== 'no-preference';
+  } else if (props.hasReducedAnimations === null) {
     animationsModel.value = storedAnimations;
   }
   animationModeChange(animationsModel.value, storageKey);
@@ -753,7 +753,7 @@ function initializeAnimations() {
 
 function initializeTransparency() {
   const transparencyKey = ref(
-    `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-transparency`
+    `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-reduced-transparency`
   );
 
   const storedTransparency = JSON.parse(localStorage.getItem(transparencyKey.value));
@@ -1177,16 +1177,16 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
-          @language-changed="languageChanged"
+          @language-change="languageChange"
           @help-click="helpClicked"
           @log-out="logOut"
           @nav-toggle="navToggle"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
           :texts="displayTexts"
@@ -1312,16 +1312,16 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
-          @language-changed="languageChanged"
+          @language-change="languageChange"
           @help-click="helpClicked"
           @log-out="logOut"
           @nav-toggle="navToggle"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
           :texts="displayTexts"
@@ -1462,7 +1462,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
@@ -1475,9 +1475,9 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :secondsToLive="secondsToLive"
           :showIdleBadge="showIdleBadge"
           @log-in-click="loginClicked"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
-          @language-changed="languageChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
+          @language-change="languageChange"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
           @help-click="helpClicked"
@@ -1512,7 +1512,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :languages="languages"
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
@@ -1632,7 +1632,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
@@ -1641,9 +1641,9 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           @log-in-click="loginClicked"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
-          @language-changed="languageChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
+          @language-change="languageChange"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
           @help-click="helpClicked"
@@ -1684,7 +1684,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
@@ -1828,7 +1828,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
-          @language-changed="languageChanged"
+          @language-change="languageChange"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
           @help-click="helpClicked"
@@ -1836,8 +1836,8 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @go-back="goBack"
           @log-out="logOut"
           @nav-toggle="navToggle"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
           @navClick="navClick"
           :texts="displayTexts"
         />
@@ -1870,8 +1870,8 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :texts="displayTexts"
           :headerNavDisable="headerNavDisable"
           :headerNavReadOnly="headerNavReadOnly"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
           @log-out="logOut"
           @navClick="navClick"
           @nav-toggle="navToggle"
@@ -2005,11 +2005,11 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
-          @language-changed="languageChanged"
+          @language-change="languageChange"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
           @help-click="helpClicked"
@@ -2017,8 +2017,8 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @go-back="goBack"
           @log-out="logOut"
           @nav-toggle="navToggle"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
           @navClick="navClick"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
@@ -2110,14 +2110,14 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:customButtonOpened="customButtonOpenedModal"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           @customButtonClick="emits('customButtonClick')"
-          @language-changed="languageChanged"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
+          @language-change="languageChange"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
           @help-click="helpClicked"
@@ -2257,7 +2257,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           :selectedNavItems="navItemsSelected"
           v-model:theme="themeModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
@@ -2267,7 +2267,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :megaMenuHasShowAll="megaMenuHasShowAll"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           @mega-menu-show-all-click="triggerShowAllClick"
-          @language-changed="languageChanged"
+          @language-change="languageChange"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
           @help-click="helpClicked"
@@ -2275,8 +2275,8 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @go-back="goBack"
           @log-out="logOut"
           @nav-toggle="navToggle"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
           :texts="displayTexts"
         />
       </header>
@@ -2349,14 +2349,14 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           v-model:theme="themeModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:navBarSwitch="navBarSwitchModel"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           @customButtonClick="emits('customButtonClick')"
           @megaMenuShowAllClick="triggerShowAllClick"
-          @languageChanged="languageChanged"
+          @languageChange="languageChange"
           @alertItemClick="alertItemClicked"
           @alertsClick="alertsClicked"
           @helpClick="helpClicked"
@@ -2364,8 +2364,8 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @goBack="goBack"
           @logOut="logOut"
           @navToggle="navToggle"
-          @contextPersonChanged="contextPersonChanged"
-          @alternativeProfileChanged="alternativeProfileChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
           :texts="displayTexts"
         />
       </header>
@@ -2442,7 +2442,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:customButtonOpened="customButtonOpenedModal"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
@@ -2451,7 +2451,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :secondsToLive="secondsToLive"
           :showIdleBadge="showIdleBadge"
           @log-in-click="loginClicked"
-          @language-changed="languageChanged"
+          @language-change="languageChange"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
           @help-click="helpClicked"
@@ -2459,8 +2459,8 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @go-back="goBack"
           @log-out="logOut"
           @nav-toggle="navToggle"
-          @context-person-changed="contextPersonChanged"
-          @alternative-profile-changed="alternativeProfileChanged"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
           :texts="displayTexts"
@@ -2481,7 +2481,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         <LxNavBar
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
-          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
@@ -2541,6 +2541,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
       <div ref="poppers" id="poppers"></div>
     </div>
   </transition>
+
   <LxDialog
     ref="idleModalRef"
     kind="warning"
@@ -2562,7 +2563,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
     :escEnabled="confirmDialogData?.$state.confirmDialogState.escEnabled"
     :actionDefinitions="confirmModalActions"
     @actionClick="confirmModalClicked"
-    @closed="onClosedConfirmModal"
+    @close="onClosedConfirmModal"
   />
 
   <LxSpotlight

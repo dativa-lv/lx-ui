@@ -8,7 +8,7 @@ defineProps({
 
 defineOptions({ inheritAttrs: false });
 
-const hasReducedAnimations = inject('hasAnimations', false);
+const hasReducedAnimations = inject('hasReducedAnimations', false);
 </script>
 <template>
   <template v-if="!hasReducedAnimations">

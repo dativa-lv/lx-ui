@@ -37,8 +37,9 @@ describe('LxMasterDetail', () => {
 
       const props = wrapper.props();
 
-      expect(props.modelValue).toEqual([]);
-      expect(props.mode).toBe('edit');
+      expect(props.modelValue).toEqual(null);
+      expect(props.items).toEqual([]);
+      expect(props.readOnly).toBe(false);
       expect(props.idAttribute).toBe('id');
       expect(props.nameAttribute).toBe('name');
       expect(props.descriptionAttribute).toBe(null);
@@ -49,7 +50,8 @@ describe('LxMasterDetail', () => {
     test('should accept provided values', () => {
       wrapper = mount(LxMasterDetail, {
         props: {
-          modelValue: [
+          modelValue: '1',
+          items: [
             {
               id: '1',
               name: 'League of Legends',
@@ -70,7 +72,7 @@ describe('LxMasterDetail', () => {
               },
             },
           ],
-          mode: 'read',
+          readOnly: false,
           idAttribute: 'group',
           nameAttribute: 'name',
           descriptionAttribute: 'customDescription',
@@ -88,7 +90,7 @@ describe('LxMasterDetail', () => {
 
       const props = wrapper.props();
 
-      expect(props.modelValue).toEqual([
+      expect(props.items).toEqual([
         {
           id: '1',
           name: 'League of Legends',
@@ -109,8 +111,8 @@ describe('LxMasterDetail', () => {
           },
         },
       ]);
-      expect(Array.isArray(props.modelValue)).toBe(true);
-      expect(props.mode).toBe('read').toBeTypeOf('string');
+      expect(Array.isArray(props.items)).toBe(true);
+      expect(props.readOnly).toBe(false).toBeTypeOf('boolean');
       expect(props.idAttribute).toBe('group').toBeTypeOf('string');
       expect(props.nameAttribute).toBe('name').toBeTypeOf('string');
       expect(props.descriptionAttribute).toBe('customDescription').toBeTypeOf('string');
@@ -122,7 +124,12 @@ describe('LxMasterDetail', () => {
     test('model computed property should get and set modelValue correctly', async () => {
       wrapper = mount(LxMasterDetail, {
         props: {
-          modelValue: [{ id: '1', name: 'Item 1' }],
+          modelValue: '1',
+          items: [
+            { id: '1', name: 'Item 1' },
+            { id: '2', name: 'Item 2' },
+            { id: '3', name: 'Item 3' },
+          ],
         },
         global: {
           stubs: ['router-link'],
@@ -133,37 +140,21 @@ describe('LxMasterDetail', () => {
       });
 
       const { model } = wrapper.vm;
-      expect(model).toEqual([{ id: '1', name: 'Item 1' }]);
+      expect(model).toEqual('1');
 
-      await wrapper.setProps({ modelValue: [{ id: '2', name: 'Item 2' }] });
-      expect(wrapper.vm.model).toEqual([{ id: '2', name: 'Item 2' }]);
+      await wrapper.setProps({ modelValue: '2' });
+      expect(wrapper.vm.model).toEqual('2');
 
-      wrapper.vm.model = [{ id: '3', name: 'Item 3' }];
-      expect(wrapper.emitted()['update:modelValue'][0]).toEqual([[{ id: '3', name: 'Item 3' }]]);
-    });
-
-    test('selectItem method should update activeItemCode and emit selectionChanged', () => {
-      wrapper = mount(LxMasterDetail, {
-        props: {
-          modelValue: [{ id: '1', name: 'Item 1' }],
-        },
-        global: {
-          stubs: ['router-link'],
-          directives: {
-            ClickAway: dummyClickAway,
-          },
-        },
-      });
-
-      wrapper.vm.selectItem(1);
-      expect(wrapper.vm.activeItemCode).toBe(1);
-      expect(wrapper.emitted().selectionChanged[0]).toEqual([1]);
+      wrapper.vm.model = '3';
+      const emits = wrapper.emitted()['update:modelValue'];
+      expect(emits).toBeTruthy();
+      expect(emits.at(-1)).toEqual(['3']);
     });
 
     test('addItem method should emit newItemAdded', () => {
       wrapper = mount(LxMasterDetail, {
         props: {
-          modelValue: [],
+          modelValue: null,
         },
         global: {
           stubs: ['router-link'],
@@ -180,7 +171,7 @@ describe('LxMasterDetail', () => {
     test('invalid items test', () => {
       wrapper = mount(LxMasterDetail, {
         props: {
-          modelValue: [
+          items: [
             { id: '1', name: 'Item 1', invalid: true },
             { id: '2', name: 'Item 2' },
           ],
@@ -202,7 +193,7 @@ describe('LxMasterDetail', () => {
       wrapper = mount(LxMasterDetail, {
         props: {
           categoryAttribute: 'type',
-          modelValue: [
+          items: [
             { id: '1', name: 'Item 1', type: 'red' },
             { id: '2', name: 'Item 2', type: 'deleted' },
             { id: '3', name: 'Item 3' },
@@ -225,8 +216,8 @@ describe('LxMasterDetail', () => {
     test('mode prop test', async () => {
       wrapper = mount(LxMasterDetail, {
         props: {
-          modelValue: [{ id: '1', name: 'Item 1' }],
-          mode: 'edit',
+          items: [{ id: '1', name: 'Item 1' }],
+          readOnly: false,
         },
         global: {
           stubs: ['router-link'],
@@ -238,7 +229,7 @@ describe('LxMasterDetail', () => {
 
       const master = wrapper.find('.lx-master');
       expect(master.html()).toContain('lx-master-detail-button');
-      await wrapper.setProps({ mode: 'read' });
+      await wrapper.setProps({ readOnly: true });
       expect(master.html()).not.toContain('lx-master-detail-button');
     });
   });

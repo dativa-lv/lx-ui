@@ -10,7 +10,7 @@ defineProps({
   },
   size: {
     type: String,
-    default: 'normal',
+    default: 'm', // s, m, l
   },
   title: {
     type: String,
@@ -25,14 +25,20 @@ defineProps({
     default: true,
   },
 });
+
+const sizeMap = {
+  s: 'small',
+  m: 'normal',
+  l: 'big',
+};
 </script>
 <template>
   <div
     class="lx-flag"
     :class="[
-      { 'lx-small': size === 'small' },
-      { 'lx-normal': size === 'normal' },
-      { 'lx-large': size === 'big' },
+      { 'lx-small': size === 's' },
+      { 'lx-normal': size === 'm' },
+      { 'lx-large': size === 'l' },
     ]"
     :aria-label="title || formatCountryCode(value, locale)"
     role="img"
@@ -40,7 +46,7 @@ defineProps({
   >
     <country-flag
       :country="value"
-      :size="size"
+      :size="sizeMap[size] || 'normal'"
       :title="title || formatCountryCode(value, locale)"
     />
   </div>

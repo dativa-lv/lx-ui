@@ -155,7 +155,7 @@ const handlePanelTab = (e) => {
   }
 };
 
-function actionClicked(id, value = undefined) {
+function handleActionClick(id, value = undefined) {
   emits('actionClick', id, value);
 }
 
@@ -267,7 +267,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     :size="isTouchSensitive ? 'm' : 's'"
                     @update:modelValue="
                       (newValue) => {
-                        actionClicked(action?.id, newValue);
+                        handleActionClick(action?.id, newValue);
                       }
                     "
                     @click="preventClose"
@@ -292,7 +292,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :badgeIcon="action?.badgeIcon"
                   :badgeTitle="action?.badgeTitle"
                   :href="action?.href"
-                  @click="actionClicked(action?.id)"
+                  @click="handleActionClick(action?.id)"
                 />
               </div>
             </div>
@@ -335,7 +335,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     :size="isTouchSensitive ? 'm' : 's'"
                     @update:modelValue="
                       (newValue) => {
-                        actionClicked(action?.id, newValue);
+                        handleActionClick(action?.id, newValue);
                       }
                     "
                     @click="preventClose"
@@ -360,12 +360,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :badgeIcon="action?.badgeIcon"
                   :badgeTitle="action?.badgeTitle"
                   :href="action?.href"
-                  @click="
-                    (e) => {
-                      closeMenu({ source: e.detail === 0 ? 'keyboard' : 'mouse' });
-                      actionClicked(action?.id);
-                    }
-                  "
+                  @click="handleActionClick(action?.id)"
                 />
               </div>
             </div>

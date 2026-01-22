@@ -50,7 +50,7 @@ const flagTitle = computed(() => {
         v-if="attributeExists(value, idAttribute)"
         :value="value[idAttribute]"
         :title="flagTitle"
-        size="small"
+        size="s"
         :locale="locale"
         :meaningful="meaningful"
       />

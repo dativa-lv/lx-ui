@@ -509,7 +509,7 @@ defineExpose({ validateModel, clearValidations });
           :orientation="row?.lx?.orientation"
           :hasSkipLink="row?.lx?.hasSkipLink"
           :texts="row?.lx?.texts"
-          @buttonClick="(a) => componentEmit('buttonClick', name, a)"
+          @actionClick="(a) => componentEmit('actionClick', name, a)"
         >
           <template #header>{{ row?.title }}</template>
           <template #pre-header v-if="row?.lx?.preHeader">

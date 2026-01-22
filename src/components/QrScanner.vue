@@ -14,8 +14,8 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   formats: { type: Array, default: () => ['qr_code'] },
   hasFileUploader: { type: Boolean, default: true },
-  kind: { type: String, default: 'single' }, // single || multiple
-  cameraSwitcherMode: { type: String, default: 'list' }, // list || toggle
+  selectionKind: { type: String, default: 'single' }, // single, multiple
+  cameraSwitcherMode: { type: String, default: 'list' }, // list, toggle
   hasFlashlightToggle: { type: Boolean, default: false },
   showAlerts: { type: Boolean, default: true },
   labelId: { type: String, default: null },
@@ -81,7 +81,7 @@ function onDetect(detectedCodes) {
     errorMessage.value = displayTexts.value.error;
   } else if (props.showAlerts) accepted.value = true;
 
-  if (props.kind === 'multiple' && props.showAlerts) {
+  if (props.selectionKind === 'multiple' && props.showAlerts) {
     if (timer.value) {
       clearTimeout(timer.value);
     }
@@ -182,7 +182,7 @@ function cameraOn(capabilities) {
 }
 
 const showScanner = computed(() => {
-  if (props.kind === 'single') {
+  if (props.selectionKind === 'single') {
     return !accepted.value && !error.value && !loading.value;
   }
   return !loading.value && !refreshError.value;
@@ -260,7 +260,7 @@ onMounted(async () => {
           :formats="formats"
           v-show="showScanner"
           :constraints="selectedCamera"
-          :paused="kind === 'single' ? error || accepted : false"
+          :paused="selectionKind === 'single' ? error || accepted : false"
           @camera-on="cameraOn"
           v-if="showPreview"
         >
@@ -296,7 +296,7 @@ onMounted(async () => {
       <div
         v-show="accepted || error"
         class="lx-qr-placeholder"
-        v-if="kind === 'single' || (kind === 'multiple' && refreshError)"
+        v-if="selectionKind === 'single' || (selectionKind === 'multiple' && refreshError)"
       >
         <Transition name="fade">
           <div class="lx-qr-success" v-if="accepted">
@@ -328,7 +328,7 @@ onMounted(async () => {
       </div>
 
       <Transition name="fade">
-        <div v-show="accepted || error" v-if="kind === 'multiple'">
+        <div v-show="accepted || error" v-if="selectionKind === 'multiple'">
           <div class="lx-qr-notification">
             <Transition name="fade">
               <div class="lx-qr-success" v-if="accepted">
@@ -354,7 +354,7 @@ onMounted(async () => {
         :formats="formats"
         class="lx-qr-drag-wrapper"
         v-if="hasFileUploader"
-        v-show="(!accepted && !error) || kind === 'multiple'"
+        v-show="(!accepted && !error) || selectionKind === 'multiple'"
       >
         <div class="lx-qr-drag-zone" @dragenter="dragEnter" @dragleave="dragLeave">
           <p>{{ displayTexts.dragHere }}</p>

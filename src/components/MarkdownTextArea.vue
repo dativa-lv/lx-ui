@@ -114,6 +114,18 @@ const fileUploader = ref();
 const allowedFileExtensions = ref(['image/*']);
 const markdownWrapper = ref();
 const imageModalInputType = ref('url');
+const modalActionDefinitions = ref([
+  {
+    id: 'save',
+    name: displayTexts.value.save,
+    kind: 'primary',
+  },
+  {
+    id: 'close',
+    name: displayTexts.value.close,
+    kind: 'secondary',
+  },
+]);
 
 const rowId = inject('rowId', ref(null));
 
@@ -564,8 +576,36 @@ function checkIfOpen() {
   }
 }
 
-function onClosing() {
+function handleEditUrlModalClose() {
   isModalOpen.value = false;
+}
+
+function handleEditUrlActionClick(action) {
+  switch (action) {
+    case 'save':
+      setLink();
+      break;
+    case 'close':
+      checkIfOpen();
+      break;
+
+    default:
+      break;
+  }
+}
+
+function handleMarkdownImageActionClick(action) {
+  switch (action) {
+    case 'save':
+      setImage();
+      break;
+    case 'close':
+      closeImageModal();
+      break;
+
+    default:
+      break;
+  }
 }
 
 function chooseColor(color) {
@@ -787,19 +827,16 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
               :active="editor.isActive('link')"
               @click="checkIfOpen()"
             />
+
             <LxModal
               ref="editUrlModal"
               :label="displayTexts.modalLabel"
               size="s"
               kind="native"
-              :button-secondary-visible="true"
-              :button-primary-visible="true"
-              :button-secondary-label="displayTexts.close"
-              :button-primary-label="displayTexts.save"
               :button-secondary-is-cancel="false"
-              @secondary-action="checkIfOpen()"
-              @primary-action="setLink()"
-              @closed="onClosing"
+              :action-definitions="modalActionDefinitions"
+              @close="handleEditUrlModalClose"
+              @action-click="handleEditUrlActionClick"
             >
               <p class="lx-description">{{ displayTexts.modalDescription }}</p>
               <LxTextInput
@@ -820,19 +857,16 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
                 :active="editor.isActive('image')"
                 @click="openImage()"
               />
+
               <LxModal
-                id="imageModal"
                 ref="markdownImageModal"
+                id="imageModal"
                 :label="displayTexts.imageModalLabel"
                 size="s"
-                :button-primary-visible="true"
-                :button-primary-label="displayTexts.save"
-                @primary-action="setImage()"
-                :button-secondary-visible="true"
-                :button-secondary-label="displayTexts.close"
                 :button-secondary-is-cancel="false"
-                @secondary-action="closeImageModal()"
-                @closed="clearModalVariables()"
+                :action-definitions="modalActionDefinitions"
+                @close="clearModalVariables()"
+                @action-click="handleMarkdownImageActionClick"
               >
                 <LxContentSwitcher :items="imageInputTypes" v-model="imageModalInputType" />
                 <LxForm :show-header="false" :show-footer="false">

@@ -37,7 +37,7 @@ const props = defineProps({
   headerNavReadOnly: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
-  hasAnimations: { type: Boolean, default: true },
+  hasReducedAnimations: { type: Boolean, default: false },
   hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
@@ -129,21 +129,21 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits([
   'nav-toggle',
-  'contextPersonChanged',
+  'contextPersonChange',
   'update:selected-context-person',
-  'alternativeProfileChanged',
+  'alternativeProfileChange',
   'update:selected-alternative-profile',
   'log-out',
   'navClick',
   'update:theme',
-  'update:hasAnimations',
+  'update:hasReducedAnimations',
   'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'alerts-click',
   'alert-item-click',
   'update:selected-language',
-  'language-changed',
+  'languageChange',
   'help-click',
   'update:customButtonOpened',
   'customButtonClick',
@@ -181,10 +181,10 @@ function helpClicked() {
 
 const animationsModel = computed({
   get() {
-    return props.hasAnimations;
+    return props.hasReducedAnimations;
   },
   set(value) {
-    emits('update:hasAnimations', value);
+    emits('update:hasReducedAnimations', value);
   },
 });
 
@@ -306,7 +306,7 @@ watch(dropDownModelAlternatives, (newValue) => {
 watch(
   () => props.selectedAlternativeProfile,
   (newValue) => {
-    if (newValue !== props.selectedAlternativeProfile) emits('alternativeProfileChanged', newValue);
+    if (newValue !== props.selectedAlternativeProfile) emits('alternativeProfileChange', newValue);
     if (dropDownModelAlternatives.value !== newValue)
       dropDownModelAlternatives.value = newValue?.name;
   }
@@ -384,7 +384,7 @@ const alertsCount = computed(() => {
 watch(
   () => props.selectedLanguage,
   (newValue) => {
-    emits('language-changed', newValue);
+    emits('languageChange', newValue);
   }
 );
 

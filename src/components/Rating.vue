@@ -7,10 +7,10 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 const emits = defineEmits(['update:modelValue']);
 
 const props = defineProps({
-  mode: { type: String, default: 'edit' },
   modelValue: { type: Number, default: 0 },
   kind: { type: String, default: '5stars' },
   variant: { type: String, default: 'default' }, // 'default' or 'colorful'
+  readOnly: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   focusable: { type: Boolean, default: true },
   invalid: { type: Boolean, default: false },
@@ -49,7 +49,7 @@ const valueDecomposition = computed(() => {
     for (let i = 0; i < count; i += 1) {
       res.push('star-filled');
     }
-    if (props.mode === 'read') {
+    if (props.readOnly) {
       if (decimal >= 0.5) {
         res.push('star-half');
         notFilled -= 1;
@@ -85,7 +85,7 @@ const valueClass = computed(() => {
 });
 
 function setValue(value) {
-  if (props.mode === 'edit' && !props.disabled) {
+  if (!props.readOnly && !props.disabled) {
     if (model.value !== value) {
       model.value = value;
     } else {
@@ -98,7 +98,7 @@ const hoveredValue = ref(null);
 function hover(value) {
   if (props.disabled) {
     hoveredValue.value = null;
-  } else if (props.mode === 'edit') {
+  } else if (props.readOnly) {
     hoveredValue.value = value;
   }
 }
@@ -106,7 +106,7 @@ function hover(value) {
 function reset() {
   if (props.disabled) {
     hoveredValue.value = null;
-  } else if (props.mode === 'edit') {
+  } else if (props.readOnly) {
     hoveredValue.value = null;
   }
 }
@@ -124,17 +124,13 @@ defineExpose({ focus });
 <template>
   <div class="lx-field-wrapper">
     <div class="lx-ratings-wrapper">
-      <LxInfoWrapper
-        ref="infoWrapperRef"
-        :disabled="disabled && mode === 'edit'"
-        :focusable="focusable"
-      >
+      <LxInfoWrapper ref="infoWrapperRef" :disabled="disabled && !readOnly" :focusable="focusable">
         <div
-          v-if="!(mode === 'read' && !model)"
+          v-if="!(readOnly && !model)"
           class="lx-ratings"
           :class="[
             { 'lx-disabled': disabled },
-            { 'lx-read-only': mode === 'read' },
+            { 'lx-read-only': readOnly },
             { 'lx-select-1': hoveredValue === 1 },
             { 'lx-select-2': hoveredValue === 2 },
             { 'lx-select-3': hoveredValue === 3 },
@@ -145,7 +141,7 @@ defineExpose({ focus });
           ]"
         >
           <div class="lx-star-1" :class="[{ 'lx-selected': valueDecomposition[0] !== 'star' }]">
-            <!-- focus is handled by info wrapper -->
+            <!-- Temporary: mouse-only interaction until keyboard value selection is implemented -->
             <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
             <LxIcon
               :value="valueDecomposition[0]"

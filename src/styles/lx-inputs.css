@@ -4528,7 +4528,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-text-input-wrapper > .lx-input-flag-wrapper{
   grid-area: tag;
   padding-left: 0.5rem;
-  height: var(--input-container-height);
+  height: 1.45rem;
 }
 
 .lx-text-input-wrapper .lx-input-flag-wrapper .lx-flag{

@@ -21,7 +21,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-function actionClicked(actionName) {
+function handleActionClick(actionName) {
   emits('emptyStateActionClick', actionName);
 }
 </script>
@@ -54,7 +54,7 @@ function actionClicked(actionName) {
           :badgeType="action?.badgeType"
           :badgeIcon="action?.badgeIcon"
           :badgeTitle="action?.badgeTitle"
-          @click="actionClicked(action?.id)"
+          @click="handleActionClick(action?.id)"
         />
       </div>
       <div
@@ -63,7 +63,7 @@ function actionClicked(actionName) {
       >
         <LxDropDownMenu
           :actionDefinitions="actionDefinitions"
-          @actionClick="(id) => actionClicked(id)"
+          @actionClick="(id) => handleActionClick(id)"
         >
           <LxButton
             icon="overflow-menu"

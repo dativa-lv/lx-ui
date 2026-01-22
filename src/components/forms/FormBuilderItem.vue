@@ -35,7 +35,7 @@ import LxNumberSlider from '@/components/NumberSlider.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxQr from '@/components/Qr.vue';
 import LxQrScanner from '@/components/QrScanner.vue';
-import LxRatings from '@/components/Ratings.vue';
+import LxRating from '@/components/Rating.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxStateDisplay from '@/components/StateDisplay.vue';
 import LxSteps from '@/components/Steps.vue';
@@ -534,7 +534,7 @@ function getCustomVariant(row) {
   <LxValuePicker
     v-else-if="selectedComponent === 'valuePicker'"
     :id="id + '-' + name"
-    :kind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
+    :selectionKind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
     :items="
       displaySchema?.properties[name]?.lx?.items || enumToObject(displaySchema?.properties[name])
     "
@@ -679,7 +679,7 @@ function getCustomVariant(row) {
           :rowSpan="item?.lx?.rowSpan"
           :columnSpan="item?.lx?.columnSpan"
           :action-definitions="item?.lx?.actionDefinitions"
-          @action-click="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
+          @actionClick="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
         >
           <LxTextInput
             v-if="componentSelect(item, itemName) === 'textInputDefault'"
@@ -863,9 +863,9 @@ function getCustomVariant(row) {
     <LxListItem
       v-if="selectedComponent === 'objectList'"
       :value="model[name]"
-      :label="model[name][displaySchema?.properties[name].lx.primaryAttribute] || model[name]?.name"
+      :label="model[name][displaySchema?.properties[name].lx.nameAttribute] || model[name]?.name"
       :description="
-        model[name][displaySchema?.properties[name].lx.secondaryAttribute] ||
+        model[name][displaySchema?.properties[name].lx.descriptionAttribute] ||
         model[name]?.description
       "
       icon="edit"
@@ -901,8 +901,8 @@ function getCustomVariant(row) {
             :label="item?.title ? item?.title : itemName"
             :rowSpan="item?.lx?.rowSpan"
             :columnSpan="item?.lx?.columnSpan"
-            :action-definitions="item?.lx?.actionDefinitions"
-            @action-click="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
+            :actionDefinitions="item?.lx?.actionDefinitions"
+            @actionClick="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
           >
             <LxTextInput
               v-if="componentSelect(item, itemName) === 'textInputDefault'"
@@ -1093,8 +1093,8 @@ function getCustomVariant(row) {
       ]
     "
     :idAttribute="displaySchema?.properties[name]?.lx?.idAttribute"
-    :primaryAttribute="displaySchema?.properties[name]?.lx?.primaryAttribute"
-    :secondaryAttribute="displaySchema?.properties[name]?.lx?.secondaryAttribute"
+    :nameAttribute="displaySchema?.properties[name]?.lx?.nameAttribute"
+    :descriptionAttribute="displaySchema?.properties[name]?.lx?.descriptionAttribute"
     :hrefAttribute="displaySchema?.properties[name]?.lx?.hrefAttribute"
     :groupAttribute="displaySchema?.properties[name]?.lx?.groupAttribute"
     :clickableAttribute="displaySchema?.properties[name]?.lx?.clickableAttribute"
@@ -1212,11 +1212,11 @@ function getCustomVariant(row) {
         ]
       "
       :idAttribute="displaySchema?.properties[name]?.lx?.idAttribute"
-      :primaryAttribute="displaySchema?.properties[name]?.lx?.primaryAttribute"
-      :secondaryAttribute="displaySchema?.properties[name]?.lx?.secondaryAttribute"
+      :nameAttribute="displaySchema?.properties[name]?.lx?.nameAttribute"
+      :descriptionAttribute="displaySchema?.properties[name]?.lx?.descriptionAttribute"
       :hrefAttribute="displaySchema?.properties[name]?.lx?.hrefAttribute"
       :groupAttribute="displaySchema?.properties[name]?.lx?.groupAttribute"
-      :clickableAttribute="displaySchema?.properties[name]?.lx?.primaryAttribute || 'name'"
+      :clickableAttribute="displaySchema?.properties[name]?.lx?.nameAttribute || 'name'"
       :iconAttribute="displaySchema?.properties[name]?.lx?.iconAttribute"
       :iconSetAttribute="displaySchema?.properties[name]?.lx?.iconSetAttribute"
       :tooltipAttribute="displaySchema?.properties[name]?.lx?.tooltipAttribute"
@@ -1354,8 +1354,8 @@ function getCustomVariant(row) {
             :label="itemValue?.title ? itemValue?.title : itemName"
             :rowSpan="itemValue?.lx?.rowSpan"
             :columnSpan="itemValue?.lx?.columnSpan"
-            :action-definitions="itemValue?.lx?.actionDefinitions"
-            @action-click="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
+            :actionDefinitions="itemValue?.lx?.actionDefinitions"
+            @actionClick="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
           >
             <LxTextInput
               v-if="componentSelect(itemValue, itemName) === 'textInputDefault'"
@@ -1799,7 +1799,7 @@ function getCustomVariant(row) {
     :toolbarActionDefinitions="displaySchema?.properties[name]?.lx?.toolbarActionDefinitions"
     :texts="displaySchema?.properties[name]?.lx?.texts"
     @actionClick="(val, item, _) => componentEmit('actionClick', name, val, item)"
-    @toolbarActionClicked="(val) => componentEmit('toolbarActionClicked', name, val)"
+    @toolbarActionClick="(val) => componentEmit('toolbarActionClick', name, val)"
   />
   <div v-else-if="selectedComponent === 'arrayTableModal'">
     <LxDataGrid
@@ -1844,7 +1844,7 @@ function getCustomVariant(row) {
             displaySchema?.properties[name]?.lx?.actionDefinitions
           )
       "
-      @toolbarActionClicked="(val) => componentEmit('toolbarActionClicked', name, val)"
+      @toolbarActionClick="(val) => componentEmit('toolbarActionClick', name, val)"
     >
       <template #toolbar>
         <LxButton
@@ -2305,7 +2305,6 @@ function getCustomVariant(row) {
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :expandable="displaySchema?.properties[name]?.lx?.expandable"
     :nameAttribute="displaySchema?.properties[name]?.lx?.nameAttribute"
-    :addButtonLabel="displaySchema?.properties[name]?.lx?.addButtonLabel"
     :columnCount="displaySchema?.properties[name]?.lx?.columnCount"
     :kind="displaySchema?.properties[name]?.lx?.kind"
     :requiredMode="displaySchema?.properties[name]?.lx?.requiredMode"
@@ -2313,6 +2312,7 @@ function getCustomVariant(row) {
     :force-uppercase="displaySchema?.properties[name]?.lx?.forceUppercase"
     :defaultExpanded="displaySchema?.properties[name]?.lx?.defaultExpanded"
     :expandedAttribute="displaySchema?.properties[name]?.lx?.expandedAttribute"
+    :texts="displaySchema?.properties[name]?.lx?.texts"
   >
     <template #customItem="{ item, index }">
       <template
@@ -2533,7 +2533,6 @@ function getCustomVariant(row) {
     v-else-if="selectedComponent === 'smallAppendableList'"
     v-model="model[name]"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
-    :addButtonLabel="displaySchema?.properties[name]?.lx?.addButtonLabel"
     :columnCount="displaySchema?.properties[name]?.lx?.columnCount"
     :kind="
       displaySchema?.properties[name]?.lx?.kind
@@ -2542,6 +2541,7 @@ function getCustomVariant(row) {
     "
     :requiredMode="displaySchema?.properties[name]?.lx?.requiredMode"
     :canAddItems="displaySchema?.properties[name]?.lx?.canAddItems"
+    :texts="displaySchema?.properties[name]?.lx?.texts"
   >
     <template #customItem="{ index }">
       <LxPlaceholder
@@ -2553,8 +2553,8 @@ function getCustomVariant(row) {
         :hideLabel="true"
         :rowSpan="row?.items?.lx?.rowSpan"
         :columnSpan="row?.items?.lx?.columnSpan"
-        :action-definitions="row?.items?.lx?.actionDefinitions"
-        @action-click="(a, b, c) => rowActionClicked(b, c, name, index)"
+        :actionDefinitions="row?.items?.lx?.actionDefinitions"
+        @actionClick="(a, b, c) => rowActionClicked(b, c, name, index)"
       >
         <LxTextInput
           v-if="componentSelect(row?.items, name) === 'textInputDefault'"
@@ -2655,7 +2655,7 @@ function getCustomVariant(row) {
     :invalidation-message="invalidMessage"
     :loading="displaySchema?.properties[name]?.lx?.loading"
     :hasDetails="displaySchema?.properties[name]?.lx?.hasDetails"
-    :selectingKind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
+    :selectionKind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
     :detailMode="displaySchema?.properties[name]?.lx?.detailMode"
     :variant="displaySchema?.properties[name]?.lx?.variant"
     :preloadedItems="displaySchema?.properties[name]?.lx?.preloadedItems"
@@ -3166,7 +3166,7 @@ function getCustomVariant(row) {
     :ignoreThemeChange="model[name].ignoreThemeChange"
     :hasUserLocation="model[name].hasUserLocation"
     :texts="model[name].texts"
-    @searched="(a) => componentEmit('searched', name, a)"
+    @search="(a) => componentEmit('search', name, a)"
   />
   <LxMarkdownTextArea
     v-else-if="selectedComponent === 'markdownTextArea'"
@@ -3265,7 +3265,7 @@ function getCustomVariant(row) {
     @value="(a) => componentEmit('value', name, a)"
     @error="(a) => componentEmit('error', name, a)"
   />
-  <LxRatings
+  <LxRating
     v-else-if="selectedComponent === 'ratings'"
     :mode="displaySchema?.properties[name]?.lx?.mode"
     :kind="displaySchema?.properties[name]?.lx?.kind"
@@ -3312,7 +3312,7 @@ function getCustomVariant(row) {
     :id="id + '-' + name"
     :kind="displaySchema?.properties[name]?.lx?.type === 'string' ? 'single' : 'multiple'"
     :mode="displaySchema?.properties[name]?.lx?.mode"
-    :selectingKind="displaySchema?.properties[name]?.lx?.selectingKind"
+    :selectionKind="displaySchema?.properties[name]?.lx?.selectionKind"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"

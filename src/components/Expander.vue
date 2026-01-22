@@ -27,7 +27,7 @@ const props = defineProps({
   renderMode: { type: String, default: 'default' }, // 'default' or 'dynamic'
   badge: { type: String, default: '' },
   badgeIcon: { type: String, default: null },
-  badgeType: { type: String, default: 'default' }, // default, good, info, warning, important,
+  badgeType: { type: String, default: 'default' }, // default, info, success, warning, error
   badgeTitle: {
     type: String,
     default: null,
@@ -56,9 +56,9 @@ const textsDefault = {
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
+    success: 'sekmīgs paziņojums',
     warning: 'brīdinājums',
-    good: 'sekmīgs paziņojums',
-    important: 'svarīgs paziņojums',
+    error: 'svarīgs paziņojums',
   },
 };
 
@@ -205,9 +205,9 @@ defineExpose({ focus });
           :class="[
             { 'lx-badge-empty': badge === ' ' },
             { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
-            { 'lx-badge-good': badgeType === 'good' },
+            { 'lx-badge-success': badgeType === 'success' },
             { 'lx-badge-warning': badgeType === 'warning' },
-            { 'lx-badge-important': badgeType === 'important' },
+            { 'lx-badge-error': badgeType === 'error' },
           ]"
         />
 

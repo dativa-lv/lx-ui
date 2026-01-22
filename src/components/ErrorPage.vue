@@ -69,9 +69,11 @@ const pictogram = computed(() => {
 const kindSanitized = computed(() => `${props.kind.charAt(0).toUpperCase()}${props.kind.slice(1)}`);
 
 const emits = defineEmits(['actionClick']);
-function actionClicked(actionName) {
+
+function handleActionClick(actionName) {
   emits('actionClick', actionName);
 }
+
 const titleText = computed(() => {
   if (props.title !== null) {
     return props.title;
@@ -79,6 +81,7 @@ const titleText = computed(() => {
   const name = `defaultError${kindSanitized.value}`;
   return displayTexts.value[name]?.title;
 });
+
 const titleDescription = computed(() => {
   if (props.description !== null) {
     return props.description;
@@ -118,7 +121,7 @@ const titleDescription = computed(() => {
           :badgeIcon="action.badgeIcon"
           :badgeTitle="action.badgeTitle"
           variant="default"
-          @click="actionClicked(action.id)"
+          @click="handleActionClick(action.id)"
         />
       </div>
     </div>

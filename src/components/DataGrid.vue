@@ -16,7 +16,7 @@ import LxRadioButton from '@/components/RadioButton.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxStateDisplay from '@/components/StateDisplay.vue';
-import LxRatings from '@/components/Ratings.vue';
+import LxRating from '@/components/Rating.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxFlagItemDisplay from '@/components/itemDisplay/FlagItemDisplay.vue';
@@ -33,16 +33,16 @@ import { formatValueArray } from '@/utils/formatUtils';
 import { useGridKeyboardNavigation } from '@/utils/useGridKeyboardNavigation';
 
 const emits = defineEmits([
-  'actionClick',
   'update:searchString',
+  'search',
   'selectPage',
-  'sortingChanged',
-  'selectionChanged',
-  'itemsPerPageChanged',
-  'selectionActionClicked',
-  'toolbarActionClicked',
+  'sortingChange',
+  'selectionChange',
+  'itemsPerPageChange',
+  'actionClick',
+  'selectionActionClick',
+  'toolbarActionClick',
   'emptyStateActionClick',
-  'searched',
 ]);
 const slots = useSlots();
 const props = defineProps({
@@ -77,7 +77,7 @@ const props = defineProps({
   hasPaging: { type: Boolean, default: false },
   hasSorting: { type: Boolean, default: false },
   hasSelecting: { type: Boolean, default: false },
-  selectingKind: { type: String, default: 'multiple' }, // 'multiple' (with checkboxes; can select many rows) or 'single' (with radio buttons; can select one row)
+  selectionKind: { type: String, default: 'multiple' }, // 'multiple' (with checkboxes; can select many rows) or 'single' (with radio buttons; can select one row)
   sortingSide: { type: String, default: 'client' }, // 'client' (sorting is done on client side) or 'server' (sorting is done on server side)
   sortingIgnoreEmpty: { type: Boolean, default: true },
   pageCurrent: { type: Number, default: 0 },
@@ -374,15 +374,15 @@ function getAriaLabel(col, row) {
   return '';
 }
 
-function actionClicked(actionName, rowCode, additionalParam) {
+function handleActionClick(actionName, rowCode, additionalParam) {
   if (!props.loading && !props.busy) {
     emits('actionClick', actionName, rowCode, additionalParam);
   }
 }
 
-function selectionActionClicked(actionName, selectedRowCodes) {
+function handleSelectionActionClick(actionName, selectedRowCodes) {
   if (!props.loading && !props.busy) {
-    emits('selectionActionClicked', actionName, selectedRowCodes);
+    emits('selectionActionClick', actionName, selectedRowCodes);
   }
 }
 
@@ -403,7 +403,7 @@ function checkEnableByAttributeName(row) {
 
 function defaultActionClicked(rowCode, row) {
   if (checkEnableByAttributeName(row) && props.defaultActionName && !props.loading && !props.busy) {
-    actionClicked(props.defaultActionName, rowCode, props.actionAdditionalParameter);
+    handleActionClick(props.defaultActionName, rowCode, props.actionAdditionalParameter);
   }
 }
 
@@ -433,7 +433,7 @@ function syncContainerScroll() {
 
 function setSorting(columnCode, direction) {
   sortedColumns.value[columnCode] = direction;
-  emits('sortingChanged', { columnCode, direction });
+  emits('sortingChange', { columnCode, direction });
 }
 
 function sortColumn(columnCode) {
@@ -453,9 +453,9 @@ const selectedRows = computed(() => {
   const ret = [];
   Object.keys(selectedRowsRaw.value).forEach((key) => {
     if (selectedRowsRaw.value[key]) {
-      if (props.selectingKind === 'multiple') {
+      if (props.selectionKind === 'multiple') {
         ret.push(key);
-      } else if (props.selectingKind === 'single') {
+      } else if (props.selectionKind === 'single') {
         ret[0] = key;
       }
     }
@@ -464,7 +464,7 @@ const selectedRows = computed(() => {
 });
 
 watch(selectedRows, (newVal) => {
-  emits('selectionChanged', newVal);
+  emits('selectionChange', newVal);
 });
 
 function selectRow(id) {
@@ -492,7 +492,7 @@ const processedToolbarActions = computed(() => {
     hasSearch,
     searchMode,
     hasSelecting,
-    selectingKind,
+    selectionKind,
   } = props;
 
   if (!toolbarActionDefinitions.length) return [];
@@ -580,7 +580,7 @@ const processedToolbarActions = computed(() => {
     });
   }
 
-  if (hasSelecting && selectingKind === 'multiple') {
+  if (hasSelecting && selectionKind === 'multiple') {
     result.unshift({
       id: `select-all`,
       name: displayTexts.value.selectAllRows,
@@ -605,10 +605,10 @@ const toolbarActions = computed(() => {
 });
 
 const selectIcon = computed(() => {
-  if (selectedRows.value.length === props.items.length && props.selectingKind === 'multiple') {
+  if (selectedRows.value.length === props.items.length && props.selectionKind === 'multiple') {
     return 'checkbox-filled';
   }
-  if (props.selectingKind === 'multiple') {
+  if (props.selectionKind === 'multiple') {
     return 'checkbox-indeterminate';
   }
   return 'radiobutton-filled';
@@ -1039,7 +1039,7 @@ const rowCount = computed(() => rows.value.length);
 const colCount = computed(() => gridColumnsDisplay.value.length);
 
 function changeItemsPerPage(value) {
-  emits('itemsPerPageChanged', value);
+  emits('itemsPerPageChange', value);
 }
 
 function arrayToObject(arr) {
@@ -1104,8 +1104,8 @@ function toolbarClick(action) {
   else if (action === 'checkNone' || action === 'checkIndeterminate') cancelSelection();
   else if (action === 'search' || action === 'close') toggleSearch();
   else if (selectedRows.value.length === 0) {
-    emits('toolbarActionClicked', action);
-  } else selectionActionClicked(action, selectedRows.value);
+    emits('toolbarActionClick', action);
+  } else handleSelectionActionClick(action, selectedRows.value);
 }
 
 const actionDefinitionsGroup = computed(() => props.actionDefinitions?.slice(1));
@@ -1251,7 +1251,7 @@ const fullBleedMargin = computed(() => {
 });
 
 function serverSideSearch() {
-  if (props.searchSide === 'server') emits('searched', foldToAscii(queryRaw.value));
+  if (props.searchSide === 'server') emits('search', foldToAscii(queryRaw.value));
 }
 
 function clear() {
@@ -1382,11 +1382,11 @@ function handleMenuClick(rowIndex) {
 }
 
 watch(
-  () => props.selectingKind,
+  () => props.selectionKind,
   (newKind) => {
     if (newKind === 'single' && props.hasSelecting && manyRowsSelected.value) {
       selectedRowsRaw.value = {};
-      emits('selectionChanged', []);
+      emits('selectionChange', []);
     }
   }
 );
@@ -1452,7 +1452,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               toolbarActions.length === 0 &&
               selectedRows.length === 0 &&
               hasSelecting &&
-              selectingKind === 'multiple'
+              selectionKind === 'multiple'
             "
             :id="`${id}-select-all`"
             icon="checkbox"
@@ -1558,7 +1558,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :badgeIcon="selectAction.badgeIcon"
                 :badgeTitle="selectAction.badgeTitle"
                 kind="ghost"
-                @click="selectionActionClicked(selectAction.id, selectedRows)"
+                @click="handleSelectionActionClick(selectAction.id, selectedRows)"
               />
             </div>
             <div
@@ -1568,7 +1568,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               <LxDropDownMenu
                 :actionDefinitions="selectionActionDefinitions"
                 :disabled="isDisabled"
-                @actionClick="(id) => selectionActionClicked(id, selectedRows)"
+                @actionClick="(id) => handleSelectionActionClick(id, selectedRows)"
               >
                 <LxButton
                   icon="menu"
@@ -1809,7 +1809,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               @click="setActiveFromClick(hasSorting ? rowIndex + 1 : rowIndex, 0)"
             >
               <LxCheckbox
-                v-if="selectingKind === 'multiple'"
+                v-if="selectionKind === 'multiple'"
                 :id="`select-${id}-${row[idAttribute]}`"
                 v-model="selectedRowsRaw[row[idAttribute]]"
                 :value="row[idAttribute]?.toString()"
@@ -1818,7 +1818,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :ref="(el) => registerCell(el, hasSorting ? rowIndex + 1 : rowIndex, 0)"
               />
               <LxRadioButton
-                v-if="selectingKind === 'single'"
+                v-if="selectionKind === 'single'"
                 :id="`select-${id}-${row[idAttribute]}`"
                 v-model="selectedRowsRaw[row[idAttribute]]"
                 :value="row[idAttribute]?.toString()"
@@ -1970,8 +1970,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :value="row[col?.attributeName]"
                 :dictionary="col?.dictionary ? col?.dictionary : col?.options"
               />
-
-              <LxRatings
+              <LxRating
                 v-if="col.type === 'rating'"
                 v-model="row[col.attributeName]"
                 mode="read"
@@ -2105,7 +2104,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   "
                 >
                   <LxFlag
-                    size="small"
+                    size="s"
                     :value="row[col.attributeName]"
                     :locale="locale"
                     :meaningful="row[col.attributeName]?.meaningful || true"
@@ -2280,7 +2279,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         hasSelecting ? colCount + 1 : colCount
                       )
                   "
-                  @click="actionClicked(action.id, row[idAttribute], actionAdditionalParameter)"
+                  @click="handleActionClick(action.id, row[idAttribute], actionAdditionalParameter)"
                 />
               </div>
 
@@ -2332,7 +2331,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       )
                   "
                   @click="
-                    actionClicked(
+                    handleActionClick(
                       actionDefinitions?.[0]?.id,
                       row[idAttribute],
                       actionAdditionalParameter
@@ -2400,7 +2399,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         :badgeIcon="action.badgeIcon"
                         :badgeTitle="action.badgeTitle"
                         @click="
-                          actionClicked(action.id, row[idAttribute], actionAdditionalParameter)
+                          handleActionClick(action.id, row[idAttribute], actionAdditionalParameter)
                         "
                       />
                     </div>
@@ -2462,15 +2461,14 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       kind="compact"
       :readOnly="true"
       :hasSelecting="hasSelecting"
-      :selectingKind="selectingKind"
+      :selectionKind="selectionKind"
       :actionDefinitions="actionDefinitions"
-      :forceUppercase="false"
+      :uppercase="false"
       :columnCount="2"
       :defaultExpanded="false"
       :idAttribute="idAttribute"
       v-model:selectedValues="selectedRowsRaw"
-      @selectionChanged="selectRows"
-      @actionClick="(val, item) => actionClicked(val, item, actionAdditionalParameter)"
+      @actionClick="(val, item) => handleActionClick(val, item, actionAdditionalParameter)"
       :class="[{ 'lx-data-grid-full': showAllColumns }]"
     >
       <template #customItem="{ item }">
@@ -2555,7 +2553,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               :dictionary="col?.dictionary ? col?.dictionary : col?.options"
             />
 
-            <LxRatings
+            <LxRating
               v-else-if="col.type === 'rating'"
               :disabled="props.busy"
               mode="read"
@@ -2570,7 +2568,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   item[col.attributeName].trim() !== ''
                 "
               >
-                <LxFlag size="small" :value="item[col.attributeName]" :locale="locale" />
+                <LxFlag size="s" :value="item[col.attributeName]" :locale="locale" />
               </div>
 
               <div class="flag-column" v-else-if="typeof item[col.attributeName] === 'object'">

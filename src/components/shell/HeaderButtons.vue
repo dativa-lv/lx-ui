@@ -30,7 +30,7 @@ const props = defineProps({
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark'] },
   theme: { type: String, default: 'auto' },
-  hasAnimations: { type: Boolean, default: true },
+  hasReducedAnimations: { type: Boolean, default: false },
   hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
@@ -130,7 +130,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits([
   'log-out',
-  'language-changed',
+  'languageChange',
   'alert-item-click',
   'alerts-click',
   'logInClick',
@@ -141,7 +141,7 @@ const emits = defineEmits([
   'update:selected-context-person',
   'update:selected-language',
   'update:theme',
-  'update:hasAnimations',
+  'update:hasReducedAnimations',
   'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
@@ -188,7 +188,7 @@ function openContextPersonModal() {
 watch(
   () => props.selectedLanguage,
   (newValue) => {
-    emits('language-changed', newValue);
+    emits('languageChange', newValue);
   }
 );
 
@@ -312,7 +312,7 @@ const alertLevelToBadgeType = computed(() => {
     const tmp = {};
     tmp.value = props.alerts?.find((alert) => alert?.level === 'error');
     if (tmp.value) {
-      return 'important';
+      return 'error';
     }
     tmp.value = props.alerts?.find((alert) => alert?.level === 'warning');
     if (tmp.value) {
@@ -320,7 +320,7 @@ const alertLevelToBadgeType = computed(() => {
     }
     tmp.value = props.alerts?.find((alert) => alert?.level === 'success');
     if (tmp.value) {
-      return 'good';
+      return 'success';
     }
     tmp.value = props.alerts?.find((alert) => alert?.level === 'info');
     if (tmp.value) {
@@ -372,10 +372,10 @@ const contextPersonFullName = computed(() => {
 
 const animationsModel = computed({
   get() {
-    return props.hasAnimations;
+    return props.hasReducedAnimations;
   },
   set(value) {
-    emits('update:hasAnimations', value);
+    emits('update:hasReducedAnimations', value);
   },
 });
 

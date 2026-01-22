@@ -22,8 +22,8 @@ const props = defineProps({
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: () => generateUUID() },
   variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'rotator' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'|| 'rotator-custom' || 'indicator' || 'horizontal' || 'horizontal-custom'
-  kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
-  nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  selectionKind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
+  nullable: { type: Boolean, default: false }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
   tooltip: { type: String, default: null },
@@ -76,13 +76,13 @@ const model = computed({
       !props.alwaysAsArray &&
       !(props.variant === 'dropdown' || props.variant === 'dropdown-custom')
     ) {
-      emits('update:modelValue', props.kind === 'single' && value ? value[0] : value);
+      emits('update:modelValue', props.selectionKind === 'single' && value ? value[0] : value);
     } else if (
       props.alwaysAsArray &&
       (props.variant === 'dropdown' || props.variant === 'dropdown-custom')
     ) {
       if (value) {
-        emits('update:modelValue', props.kind === 'single' ? [value] : value);
+        emits('update:modelValue', props.selectionKind === 'single' ? [value] : value);
       } else {
         emits('update:modelValue', null);
       }
@@ -113,7 +113,7 @@ onMounted(() => {
 
   // Handle existing value
   if (model.value) {
-    const shouldBeArray = props.alwaysAsArray || props.kind === 'multiple';
+    const shouldBeArray = props.alwaysAsArray || props.selectionKind === 'multiple';
     if (!Array.isArray(model.value) && shouldBeArray) {
       updateModelValue([model.value]);
     }
@@ -121,9 +121,9 @@ onMounted(() => {
   }
 
   // Handle missing value
-  if (props.kind === 'multiple') {
+  if (props.selectionKind === 'multiple') {
     updateModelValue([]);
-  } else if (props.kind === 'single') {
+  } else if (props.selectionKind === 'single') {
     updateModelValue(null);
   }
 });
@@ -134,7 +134,7 @@ onMounted(() => {
     <div class="lx-value-picker-wrapper">
       <LxValuePickerDefault
         v-if="variant === 'default' || variant === 'default-custom'"
-        :role="kind === 'single' ? 'radiogroup' : 'group'"
+        :role="selectionKind === 'single' ? 'radiogroup' : 'group'"
         :id="id"
         v-model="model"
         :items="stringifiedItems"
@@ -142,7 +142,7 @@ onMounted(() => {
         :nameAttribute="nameAttribute"
         :descriptionAttribute="descriptionAttribute"
         :groupId="groupId"
-        :kind="kind"
+        :selectionKind="selectionKind"
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
@@ -173,7 +173,7 @@ onMounted(() => {
         :nameAttribute="nameAttribute"
         :descriptionAttribute="descriptionAttribute"
         :groupId="groupId"
-        :kind="kind"
+        :selectionKind="selectionKind"
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
@@ -210,7 +210,7 @@ onMounted(() => {
         :descriptionAttribute="descriptionAttribute"
         :groupId="groupId"
         :variant="variant"
-        :kind="kind"
+        :selectionKind="selectionKind"
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
@@ -241,7 +241,7 @@ onMounted(() => {
         :descriptionAttribute="descriptionAttribute"
         :groupId="groupId"
         :variant="variant"
-        :kind="kind"
+        :selectionKind="selectionKind"
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
@@ -274,7 +274,7 @@ onMounted(() => {
         :descriptionAttribute="descriptionAttribute"
         :groupId="groupId"
         :variant="variant"
-        :kind="kind"
+        :selectionKind="selectionKind"
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
@@ -304,7 +304,7 @@ onMounted(() => {
         :nameAttribute="nameAttribute"
         :descriptionAttribute="descriptionAttribute"
         :groupId="groupId"
-        :kind="kind"
+        :selectionKind="selectionKind"
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"

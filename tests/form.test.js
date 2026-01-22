@@ -172,7 +172,7 @@ test('LxForm button click emit', () => {
     },
   });
   wrapper.find('button').trigger('click');
-  expect(wrapper.emitted()).toHaveProperty('buttonClick');
+  expect(wrapper.emitted()).toHaveProperty('actionClick');
 });
 
 test('LxForm button click emit 3 times', () => {
@@ -192,7 +192,7 @@ test('LxForm button click emit 3 times', () => {
   wrapper.findAll('button')[0].trigger('click');
   wrapper.findAll('button')[1].trigger('click');
   wrapper.findAll('button')[0].trigger('click');
-  const emits = wrapper.emitted('buttonClick');
+  const emits = wrapper.emitted('actionClick');
   expect(emits).toHaveLength(3);
   expect(emits[0]).toEqual(['one']);
   expect(emits[1]).toEqual(['two']);
@@ -360,8 +360,8 @@ test('LxForm pre,post header slots', () => {
 
   wrapper = mount(LxForm, {
     slots: {
-      'pre-header': 'preHeader',
-      'post-header': 'postHeader',
+      preHeader: 'preHeader',
+      postHeader: 'postHeader',
     },
   });
   const preHeaderSlot = wrapper.find('header').find('.pre-header-group');

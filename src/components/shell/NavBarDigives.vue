@@ -69,9 +69,9 @@ const isResponsiveView = computed(() => windowSize.width.value <= 1000);
 
 const emits = defineEmits([
   'nav-toggle',
-  'contextPersonChanged',
+  'contextPersonChange',
   'update:selected-context-person',
-  'alternativeProfileChanged',
+  'alternativeProfileChange',
   'update:selected-alternative-profile',
   'log-out',
   'navClick',
@@ -113,7 +113,7 @@ watch(dropDownModelAlternatives, (newValue) => {
 watch(
   () => props.selectedAlternativeProfile,
   (newValue) => {
-    if (newValue !== props.selectedAlternativeProfile) emits('alternativeProfileChanged', newValue);
+    if (newValue !== props.selectedAlternativeProfile) emits('alternativeProfileChange', newValue);
     if (dropDownModelAlternatives.value !== newValue)
       dropDownModelAlternatives.value = newValue?.name;
   }
@@ -121,7 +121,7 @@ watch(
 
 function changePerson(item) {
   if (!item) {
-    emits('contextPersonChanged', null);
+    emits('contextPersonChange', null);
     return;
   }
   selectedContextPersonModel.value = {

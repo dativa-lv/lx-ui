@@ -170,13 +170,7 @@ const rowOrientation = computed(() => {
   return formOrientation.value;
 });
 
-const actionDropDown = ref();
-
-function toggleClick(event) {
-  actionDropDown.value?.preventClose(event);
-}
-
-function actionClicked(id, actionId, value = undefined) {
+function handleActionClick(id, actionId, value = undefined) {
   emits('actionClick', id, actionId, value);
 }
 
@@ -255,7 +249,7 @@ provide('rowId', idComputed);
             :disabled="actionDefinitions?.[0]?.disabled"
             @update:modelValue="
               (newValue) => {
-                actionClicked(id, actionDefinitions?.[0].id, newValue);
+                handleActionClick(id, actionDefinitions?.[0].id, newValue);
               }
             "
           />
@@ -276,15 +270,14 @@ provide('rowId', idComputed);
             :badgeType="actionDefinitions?.[0]?.badgeType"
             :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
             :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
-            @click="actionClicked(id, actionDefinitions?.[0].id)"
+            @click="handleActionClick(id, actionDefinitions?.[0].id)"
           />
         </template>
 
         <LxDropDownMenu
-          ref="actionDropDown"
           v-else-if="actionDefinitions?.length > 1"
           :actionDefinitions="actionDefinitionsDefaults"
-          @actionClick="(actionId, value) => actionClicked(id, actionId, value)"
+          @actionClick="(actionId, value) => handleActionClick(id, actionId, value)"
         >
           <LxButton
             icon="overflow-menu"
@@ -336,7 +329,7 @@ provide('rowId', idComputed);
             :disabled="actionDefinitions?.[0]?.disabled"
             @update:modelValue="
               (newValue) => {
-                actionClicked(id, actionDefinitions?.[0].id, newValue);
+                handleActionClick(id, actionDefinitions?.[0].id, newValue);
               }
             "
           />
@@ -357,15 +350,14 @@ provide('rowId', idComputed);
             :badgeType="actionDefinitions?.[0]?.badgeType"
             :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
             :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
-            @click="actionClicked(id, actionDefinitions?.[0].id)"
+            @click="handleActionClick(id, actionDefinitions?.[0].id)"
           />
         </template>
 
         <LxDropDownMenu
-          ref="actionDropDown"
           v-else-if="actionDefinitions?.length > 1"
           :actionDefinitions="actionDefinitionsDefaults"
-          @actionClick="(actionId, value) => actionClicked(id, actionId, value)"
+          @actionClick="(actionId, value) => handleActionClick(id, actionId, value)"
         >
           <LxButton
             icon="overflow-menu"

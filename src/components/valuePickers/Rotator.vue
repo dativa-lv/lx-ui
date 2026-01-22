@@ -17,7 +17,7 @@ const props = defineProps({
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
   variant: { type: String, default: 'tile' },
-  kind: { type: String, default: 'single' }, // 'single' || 'multiple'
+  selectionKind: { type: String, default: 'single' }, // 'single' || 'multiple'
   nullable: { type: Boolean, default: false },
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
@@ -94,7 +94,7 @@ function activate() {
 activate();
 
 function deactivate() {
-  if (props.kind === 'single' && !props.nullable) {
+  if (props.selectionKind === 'single' && !props.nullable) {
     if (rotatorItemsArray.value[0][props.idAttribute] === notSelectedId)
       rotatorItemsArray.value.shift();
   }
@@ -257,7 +257,7 @@ function getItemId(id) {
 function isActive(item) {
   const id = item[props.idAttribute];
 
-  if (props.kind === 'multiple') {
+  if (props.selectionKind === 'multiple') {
     if (!Array.isArray(model.value)) {
       return model.value === id;
     }

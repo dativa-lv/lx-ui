@@ -18,8 +18,6 @@ import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
-import LxStateDisplay from '@/components/StateDisplay.vue';
-import LxFlagItemDisplay from '@/components/itemDisplay/FlagItemDisplay.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxModal from '@/components/Modal.vue';
@@ -45,11 +43,9 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   loading: { type: Boolean, default: false },
   hasDetails: { type: Boolean, default: false },
-  selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
+  selectionKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   detailMode: { type: String, default: 'simple' }, // 'simple' or 'detailed'
-  variant: { type: String, default: 'default' }, // default, country, state, custom
-  // used for preloading items if items is a function and there is need to show items before user starts typing
-  preloadedItems: { type: Array, default: null },
+  preloadedItems: { type: Array, default: null },  // used for preloading items if items is a function and there is need to show items before user starts typing
   labelId: { type: String, default: null },
   hasSelectAll: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
@@ -205,7 +201,7 @@ const filteredItems = computed(() => {
   if (
     props.hasSelectAll &&
     typeof props.items !== 'function' &&
-    props.selectingKind === 'multiple' &&
+    props.selectionKind === 'multiple' &&
     items.length > 0
   ) {
     return [{ id: 'select-all', name: 'Select all', value: false }, ...items];
@@ -326,7 +322,7 @@ function getItemTooltip(item) {
 }
 
 const customTooltip = computed(() => {
-  if (props.selectingKind !== 'single') return '';
+  if (props.selectionKind !== 'single') return '';
 
   if (selectedItem.value) {
     return getItemTooltip(selectedItem.value);
@@ -411,7 +407,7 @@ function handlePrintableOrDeleteKeys(e) {
       openMenu();
     }
 
-    if (model.value && props.selectingKind === 'single') clear();
+    if (model.value && props.selectionKind === 'single') clear();
     inputReadonly.value = false;
     highlightedItemId.value = null;
     return true;
@@ -652,7 +648,7 @@ function handleEnterSelection() {
     return;
   }
 
-  if (props.selectingKind === 'multiple') {
+  if (props.selectionKind === 'multiple') {
     handleSelection(selectedValue);
   } else {
     model.value = selectedValue;
@@ -680,11 +676,11 @@ function updateModel(selectedValue, isSelected) {
 }
 
 function isItemSelected(item) {
-  if (props.selectingKind === 'single') {
+  if (props.selectionKind === 'single') {
     return (
       selectedItem.value && getIdAttributeString(item) === getIdAttributeString(selectedItem.value)
     );
-  } else if (props.selectingKind === 'multiple') {
+  } else if (props.selectionKind === 'multiple') {
     return model.value?.includes(getIdAttributeString(item));
   }
   return false;
@@ -803,7 +799,7 @@ watch(
   [model, () => allItems.value],
   ([newModelValue]) => {
     if (newModelValue && (!Array.isArray(newModelValue) || newModelValue.length > 0)) {
-      if (Array.isArray(newModelValue) && props.selectingKind === 'multiple') {
+      if (Array.isArray(newModelValue) && props.selectionKind === 'multiple') {
         handleMultipleSelection(newModelValue);
       } else {
         handleSingleSelection(newModelValue);
@@ -905,10 +901,10 @@ const displaySelectedItems = computed(() => {
 });
 
 const shouldShowIcon = computed(() => {
-  if (props.selectingKind === 'single') {
+  if (props.selectionKind === 'single') {
     return !hasValue.value && !props.hasDetails && !(loadingState.value || props.loading);
   }
-  if (props.selectingKind === 'multiple') {
+  if (props.selectionKind === 'multiple') {
     if (props.detailMode === 'simple' || props.detailMode === 'detailed') {
       return (
         !props.hasDetails &&
@@ -922,8 +918,8 @@ const shouldShowIcon = computed(() => {
 
 const shouldShowDetailsBtn = computed(() => {
   return (
-    ((props.selectingKind === 'single' && !hasValue.value) ||
-      (props.selectingKind === 'multiple' &&
+    ((props.selectionKind === 'single' && !hasValue.value) ||
+      (props.selectionKind === 'multiple' &&
         ((props.detailMode === 'simple' && (!hasValue.value || hasValue.value)) ||
           (props.detailMode === 'detailed' && (!hasValue.value || hasValue.value))))) &&
     props.hasDetails &&
@@ -948,7 +944,7 @@ const detailsSwitchTypes = computed(() => [
 
 let selectionTimeout = null;
 
-function selectionChanged(selectedValue) {
+function handleSelectionChange(selectedValue) {
   if (selectionTimeout) {
     clearTimeout(selectionTimeout);
   }
@@ -974,8 +970,8 @@ function selectionChanged(selectedValue) {
 
 const displayReadOnlyPlaceholder = computed(() => {
   if (
-    (props.selectingKind === 'single' && isNil(selectedItem.value)) ||
-    (props.selectingKind === 'multiple' &&
+    (props.selectionKind === 'single' && isNil(selectedItem.value)) ||
+    (props.selectionKind === 'multiple' &&
       (isNil(selectedItems.value) || selectedItems.value?.length === 0))
   ) {
     return true;
@@ -988,7 +984,7 @@ const showListOptions = computed(() => {
 });
 
 const firstFocusableIndex = computed(() =>
-  props.hasSelectAll && typeof props.items !== 'function' && props.selectingKind === 'multiple'
+  props.hasSelectAll && typeof props.items !== 'function' && props.selectionKind === 'multiple'
     ? 1
     : 0
 );
@@ -1018,7 +1014,7 @@ watch(
 );
 
 watch(
-  () => props.selectingKind,
+  () => props.selectionKind,
   (newValue) => {
     activateItems();
     selectedItem.value = null;
@@ -1164,46 +1160,14 @@ defineExpose({ autoCompleteState });
 <template>
   <div class="lx-field-wrapper" ref="refRoot">
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
-      <template v-if="variant === 'default'">
+      <template v-if="$slots.customItem">
+        <slot name="customItem" v-bind="selectedItem"></slot>
+      </template>
+
+      <template v-else>
         <span v-if="displayReadOnlyPlaceholder">—</span>
         <template v-else>
           <p class="lx-input-text">{{ getName(false) }}</p>
-        </template>
-      </template>
-
-      <template v-if="variant === 'country'">
-        <span v-if="displayReadOnlyPlaceholder">—</span>
-        <template v-else>
-          <LxFlagItemDisplay
-            v-if="selectingKind === 'single'"
-            :value="selectedItem"
-            :id-attribute="idAttribute"
-            :name-attribute="nameAttribute"
-          />
-          <template v-else>
-            <p class="lx-input-text">{{ getName(false) }}</p>
-          </template>
-        </template>
-      </template>
-
-      <template v-if="variant === 'state'">
-        <span v-if="displayReadOnlyPlaceholder">—</span>
-        <template v-else>
-          <LxStateDisplay
-            v-if="selectingKind === 'single'"
-            :value="selectedItem?.[idAttribute]"
-            :dictionary="[
-              {
-                value: selectedItem?.[idAttribute],
-                displayName: selectedItem?.[nameAttribute],
-                displayType: selectedItem?.displayType,
-                displayShape: selectedItem?.displayShape,
-              },
-            ]"
-          />
-          <template v-else>
-            <p class="lx-input-text">{{ getName(false) }}</p>
-          </template>
         </template>
       </template>
     </p>
@@ -1244,13 +1208,13 @@ defineExpose({ autoCompleteState });
             >
               <div
                 class="lx-autocomplete-default-panel"
-                :class="[{ multiselect: selectingKind === 'multiple' }]"
-                :title="selectingKind === 'single' ? customTooltip : props.tooltip"
+                :class="[{ multiselect: selectionKind === 'multiple' }]"
+                :title="selectionKind === 'single' ? customTooltip : props.tooltip"
               >
                 <div
                   class="lx-autocomplete-default-data"
                   :class="[
-                    { emptyModel: model?.length === 0 || !model || selectingKind === 'single' },
+                    { emptyModel: model?.length === 0 || !model || selectionKind === 'single' },
                   ]"
                 >
                   <div
@@ -1260,7 +1224,7 @@ defineExpose({ autoCompleteState });
                     :data-invalid="invalid ? '' : null"
                   >
                     <div
-                      v-if="selectingKind === 'multiple' && model?.length > 0"
+                      v-if="selectionKind === 'multiple' && model?.length > 0"
                       class="lx-tag"
                       :class="[{ ['chars-' + countDigits(model?.length)]: model?.length > 0 }]"
                     >
@@ -1268,7 +1232,7 @@ defineExpose({ autoCompleteState });
                       <div class="lx-tag-button">
                         <LxInfoWrapper
                           ref="infoWrapperRef"
-                          :disabled="disabled || (selectingKind === 'multiple' && menuOpen) || responsiveView"
+                          :disabled="disabled || (selectionKind === 'multiple' && menuOpen) || responsiveView"
                           :focusable="false"
                         >
                           <LxButton
@@ -1318,34 +1282,11 @@ defineExpose({ autoCompleteState });
                     <template v-if="shouldShowValuePlaceholder">
                       <div class="lx-value lx-input-area" :title="customTooltip">
                         <div>
-                          <template v-if="variant === 'country' && selectingKind === 'single'">
-                            <LxFlagItemDisplay
-                              :value="selectedItem"
-                              :id-attribute="idAttribute"
-                              :name-attribute="nameAttribute"
-                            />
+                          <template v-if="$slots.customItem && selectionKind === 'single'">
+                            <slot name="customItem" v-bind="selectedItem"></slot>
                           </template>
-                          <template v-if="variant === 'state' && selectingKind === 'single'">
-                            <LxStateDisplay
-                              :value="selectedItem?.[idAttribute]"
-                              :dictionary="[
-                                {
-                                  value: selectedItem?.[idAttribute],
-                                  displayName: selectedItem[nameAttribute],
-                                  displayType: selectedItem?.displayType,
-                                  displayShape: selectedItem?.displayShape,
-                                },
-                              ]"
-                            />
-                          </template>
-                          <template
-                            v-if="
-                              variant === 'default' ||
-                              variant === 'custom' ||
-                              (variant === 'country' && selectingKind === 'multiple') ||
-                              (variant === 'state' && selectingKind === 'multiple')
-                            "
-                          >
+
+                          <template v-else>
                             {{ getName(false) }}
                           </template>
                         </div>
@@ -1373,7 +1314,7 @@ defineExpose({ autoCompleteState });
 
                     <LxButton
                       v-if="
-                        selectingKind === 'single' &&
+                        selectionKind === 'single' &&
                         !invalid &&
                         hasValue &&
                         !(loadingState || loading)
@@ -1389,7 +1330,7 @@ defineExpose({ autoCompleteState });
 
                     <LxButton
                       v-if="
-                        selectingKind === 'single' &&
+                        selectionKind === 'single' &&
                         invalid &&
                         hasValue &&
                         !(loadingState || loading)
@@ -1467,6 +1408,7 @@ defineExpose({ autoCompleteState });
                         </p>
                       </div>
                     </template>
+
                     <template v-if="filteredItems?.length && !loadingState">
                       <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
                         <!-- Inject "Select All" just before the first item -->
@@ -1475,7 +1417,7 @@ defineExpose({ autoCompleteState });
                             index === 0 &&
                             hasSelectAll &&
                             typeof props.items !== 'function' &&
-                            selectingKind === 'multiple' &&
+                            selectionKind === 'multiple' &&
                             filteredItems.length > 0 &&
                             (!query || query?.length === 0)
                           "
@@ -1534,8 +1476,8 @@ defineExpose({ autoCompleteState });
                               'lx-highlighted-item':
                                 highlightedItemId &&
                                 highlightedItemId === getIdAttributeString(item),
-                              'autocomplete-multiple lx-aligned-row lx-aligned-row-inverse lx-aligned-row-3': selectingKind === 'multiple',
-                              'autocomplete-default-item': variant === 'default',
+                              'autocomplete-multiple lx-aligned-row lx-aligned-row-inverse lx-aligned-row-3': selectionKind === 'multiple',
+                              'autocomplete-default-item': !$slots.customItem,
                             },
                           ]"
                           :id="getItemId(getIdAttributeString(item))"
@@ -1544,13 +1486,13 @@ defineExpose({ autoCompleteState });
                           :disabled="loading"
                           :title="getItemTooltip(item)"
                           @click.prevent="
-                            props.selectingKind === 'single'
+                            props.selectionKind === 'single'
                               ? selectSingle(item)
                               : selectMultiple(item)
                           "
                         >
                           <LxCheckbox
-                            v-if="selectingKind === 'multiple'"
+                            v-if="selectionKind === 'multiple'"
                             :id="getItemId(item[idAttribute])"
                             :group-id="groupId"
                             v-model="itemsModel[item[idAttribute]]"
@@ -1562,29 +1504,7 @@ defineExpose({ autoCompleteState });
                           />
 
                           <label :for="item[idAttribute]" :id="getLabelId(item[idAttribute])">
-                            <template v-if="variant === 'country'">
-                              <LxFlagItemDisplay
-                                :value="item"
-                                :id-attribute="idAttribute"
-                                :name-attribute="nameAttribute"
-                              />
-                            </template>
-
-                            <template v-else-if="variant === 'state'">
-                              <LxStateDisplay
-                                :value="item[idAttribute]"
-                                :dictionary="[
-                                  {
-                                    value: item[idAttribute],
-                                    displayName: item[nameAttribute],
-                                    displayType: item?.displayType,
-                                    displayShape: item?.displayShape,
-                                  },
-                                ]"
-                              />
-                            </template>
-
-                            <template v-else-if="variant === 'custom'">
+                            <template v-if="$slots.customItem">
                               <slot name="customItem" v-bind="item"></slot>
                             </template>
 
@@ -1649,7 +1569,7 @@ defineExpose({ autoCompleteState });
       </div>
 
       <LxModal ref="detailedModeModal" :label="displayTexts.detailsModalLabel" size="m">
-        <template v-if="$slots.details && selectingKind === 'multiple'">
+        <template v-if="$slots.details && selectionKind === 'multiple'">
           <LxContentSwitcher :items="detailsSwitchTypes" v-model="detailsSwitchType" kind="combo" />
         </template>
 
@@ -1663,7 +1583,7 @@ defineExpose({ autoCompleteState });
 
         <template
           v-if="
-            (!$slots.details && selectingKind === 'multiple') ||
+            (!$slots.details && selectionKind === 'multiple') ||
             ($slots.details && detailsSwitchType === 'selected-items')
           "
         >
@@ -1671,12 +1591,12 @@ defineExpose({ autoCompleteState });
             ref="listRef"
             :items="displaySelectedItems"
             :idAttribute="props.idAttribute"
-            :primaryAttribute="props.nameAttribute"
+            :nameAttribute="props.nameAttribute"
             :hasSelecting="showListOptions"
             :has-search="showListOptions"
-            selectingKind="multiple"
+            selectionKind="multiple"
             list-type="1"
-            @selectionChanged="selectionChanged"
+            @selectionChange="handleSelectionChange"
           />
         </template>
       </LxModal>

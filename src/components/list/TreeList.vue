@@ -13,8 +13,8 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   items: { type: Array, default: null },
   idAttribute: { type: String, default: 'id' },
-  primaryAttribute: { type: String, default: 'name' },
-  secondaryAttribute: { type: String, default: 'description' },
+  nameAttribute: { type: String, default: 'name' },
+  descriptionAttribute: { type: String, default: 'description' },
   childrenAttribute: { type: String, default: 'children' },
   hasChildrenAttribute: { type: String, default: 'hasChildren' },
   hrefAttribute: { type: String, default: 'href' },
@@ -37,7 +37,7 @@ const props = defineProps({
   },
   hasSelecting: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
-  selectingKind: { type: String, default: 'single' }, // single, multiple
+  selectionKind: { type: String, default: 'single' }, // single, multiple
   selectedItems: { type: Object, default: () => {} },
   itemsStates: { type: Object, default: () => {} },
   mode: { type: String, default: 'client' }, // client, server
@@ -51,7 +51,7 @@ const emits = defineEmits([
   'loadChildren',
 ]);
 
-function actionClicked(actionName, rowCode) {
+function handleActionClick(actionName, rowCode) {
   emits('actionClick', actionName, rowCode);
 }
 
@@ -194,8 +194,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
       <LxTreeItem
         :items="items"
         :idAttribute="idAttribute"
-        :primaryAttribute="primaryAttribute"
-        :secondaryAttribute="secondaryAttribute"
+        :nameAttribute="nameAttribute"
+        :descriptionAttribute="descriptionAttribute"
         :childrenAttribute="childrenAttribute"
         :hasChildrenAttribute="hasChildrenAttribute"
         :hrefAttribute="hrefAttribute"
@@ -210,7 +210,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         :icon="icon"
         :iconSet="iconSet"
         :hasSelecting="hasSelecting"
-        :selectingKind="selectingKind"
+        :selectionKind="selectionKind"
         v-model:selectedItems="selected"
         v-model:itemsStates="states"
         :mode="mode"
@@ -219,7 +219,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         :query="query"
         :areSomeExpandable="props.areSomeExpandable || areSomeExpandable"
         :disabled="disabled"
-        @action-click="actionClicked"
+        @action-click="handleActionClick"
         @loadChildren="loadChildren"
       >
         <template #customItem="items" v-if="$slots.customItem">
@@ -245,8 +245,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         <div class="lx-list-item-container">
           <LxListItem
             :id="parent[idAttribute]"
-            :label="parent[primaryAttribute]"
-            :description="parent[secondaryAttribute]"
+            :label="parent[nameAttribute]"
+            :description="parent[descriptionAttribute]"
             :href="parent[hrefAttribute]"
             :clickable="parent[clickableAttribute]"
             :actionDefinitions="actionDefinitions"
@@ -260,8 +260,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
             :value="parent"
             :selected="isItemSelected(parent[idAttribute])"
             :search-string="query"
-            @action-click="actionClicked"
-            @click="parent[hrefAttribute] ? null : actionClicked('click', parent[idAttribute])"
+            @action-click="handleActionClick"
+            @click="parent[hrefAttribute] ? null : handleActionClick('click', parent[idAttribute])"
           >
             <template #customItem="item" v-if="$slots.customItem">
               <slot name="customItem" v-bind="item" />
@@ -270,7 +270,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           <div class="selecting-block" v-if="hasSelecting">
             <template v-if="isSelectable(parent)">
               <LxRadioButton
-                v-if="selectingKind === 'single'"
+                v-if="selectionKind === 'single'"
                 :id="`select-${id}-${parent[idAttribute]}`"
                 v-model="selected[parent[idAttribute]]"
                 :value="parent[idAttribute]"
@@ -334,8 +334,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         <div class="lx-list-item-container">
           <LxListItem
             :id="item[idAttribute]"
-            :label="item[primaryAttribute]"
-            :description="item[secondaryAttribute]"
+            :label="item[nameAttribute]"
+            :description="item[descriptionAttribute]"
             :href="item[hrefAttribute]"
             :clickable="item[clickableAttribute]"
             :actionDefinitions="actionDefinitions"
@@ -348,8 +348,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
             :busy="states?.[item[idAttribute]]?.busy"
             :value="item"
             :selected="isItemSelected(item[idAttribute])"
-            @action-click="actionClicked"
-            @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+            @action-click="handleActionClick"
+            @click="item[hrefAttribute] ? null : handleActionClick('click', item[idAttribute])"
           >
             <template #customItem="item" v-if="$slots.customItem">
               <slot name="customItem" v-bind="item" />
@@ -358,7 +358,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           <div class="selecting-block" v-if="hasSelecting">
             <template v-if="isSelectable(item)">
               <LxRadioButton
-                v-if="selectingKind === 'single'"
+                v-if="selectionKind === 'single'"
                 :id="`select-${id}-${item[idAttribute]}`"
                 v-model="selected[item[idAttribute]]"
                 :value="item[idAttribute]"

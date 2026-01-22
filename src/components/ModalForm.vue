@@ -39,7 +39,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['closed', 'actionClick']);
+const emits = defineEmits(['close', 'actionClick']);
 
 const isOpen = ref(false);
 const modalRef = ref();
@@ -76,12 +76,12 @@ function close(source = null) {
   }
 
   isOpen.value = false;
-  emits('closed');
+  emits('close');
 
   deactivate();
 }
 
-function actionClicked(action) {
+function handleActionClick(action) {
   if (action?.kind === 'secondary' && props.buttonSecondaryIsCancel) {
     close();
     return;
@@ -206,14 +206,14 @@ defineExpose({ open, close });
               :indexType="indexType === 'expanders' ? 'expanders' : 'default'"
               :texts="displayTexts"
               :kind="formKind"
-              @buttonClick="buttonClicked"
+              @actionClick="buttonClicked"
             >
-              <template v-if="$slots['pre-header']" #pre-header>
-                <slot name="pre-header" />
+              <template v-if="$slots['preHeader']" #preHeader>
+                <slot name="preHeader" />
               </template>
 
-              <template v-if="$slots['pre-header-info']" #pre-header-info>
-                <slot name="pre-header-info" />
+              <template v-if="$slots['preHeaderInfo']" #preHeaderInfo>
+                <slot name="preHeaderInfo" />
               </template>
 
               <template #header>
@@ -221,15 +221,15 @@ defineExpose({ open, close });
                 <span v-else>{{ label }}</span>
               </template>
 
-              <template v-if="$slots['post-header']" #post-header>
-                <slot name="post-header" />
+              <template v-if="$slots['postHeader']" #postHeader>
+                <slot name="postHeader" />
               </template>
 
-              <template v-if="$slots['post-header-info']" #post-header-info>
-                <slot name="post-header-info" />
+              <template v-if="$slots['postHeaderInfo']" #postHeaderInfo>
+                <slot name="postHeaderInfo" />
               </template>
 
-              <template #header-additional v-if="!disableClosing">
+              <template #headerAdditional v-if="!disableClosing">
                 <LxButton
                   kind="ghost"
                   icon="close"
@@ -273,7 +273,7 @@ defineExpose({ open, close });
                 :badgeType="action?.badgeType"
                 :badgeIcon="action?.badgeIcon"
                 :badgeTitle="action?.badgeTitle"
-                @click="actionClicked(action)"
+                @click="handleActionClick(action)"
               />
             </template>
           </footer>

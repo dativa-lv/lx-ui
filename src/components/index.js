@@ -71,7 +71,7 @@ export const LxPlaceholder = defineAsyncComponent(() =>
 export const LxPersonDisplay = defineAsyncComponent(() => import('@/components/PersonDisplay.vue'));
 export const LxQr = defineAsyncComponent(() => import('@/components/Qr.vue'));
 export const LxQrScanner = defineAsyncComponent(() => import('@/components/QrScanner.vue'));
-export const LxRatings = defineAsyncComponent(() => import('@/components/Ratings.vue'));
+export const LxRating = defineAsyncComponent(() => import('@/components/Rating.vue'));
 export const LxRadioButton = defineAsyncComponent(() => import('@/components/RadioButton.vue'));
 export const LxRichTextDisplay = defineAsyncComponent(() =>
   import('@/components/RichTextDisplay.vue')

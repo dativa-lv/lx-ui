@@ -14,8 +14,8 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   items: { type: Array, default: null },
   idAttribute: { type: String, default: 'id' },
-  primaryAttribute: { type: String, default: 'name' },
-  secondaryAttribute: { type: String, default: 'description' },
+  nameAttribute: { type: String, default: 'name' },
+  descriptionAttribute: { type: String, default: 'description' },
   childrenAttribute: { type: String, default: 'children' },
   hasChildrenAttribute: { type: String, default: 'hasChildren' },
   hrefAttribute: { type: String, default: 'href' },
@@ -36,7 +36,7 @@ const props = defineProps({
     default: () => useLx().getGlobals()?.iconSet,
   },
   hasSelecting: { type: Boolean, default: false },
-  selectingKind: { type: String, default: 'single' }, // single, multiple
+  selectionKind: { type: String, default: 'single' }, // single, multiple
   selectedItems: { type: Object, default: () => {} },
   itemsStates: { type: Object, default: () => {} },
   mode: { type: String, default: 'client' }, // client, server
@@ -54,7 +54,7 @@ const emits = defineEmits([
   'update:selectedChildren',
 ]);
 
-function actionClicked(actionName, rowCode) {
+function handleActionClick(actionName, rowCode) {
   emits('actionClick', actionName, rowCode);
 }
 
@@ -189,8 +189,8 @@ watch(
       <div class="lx-list-item-container">
         <LxListItem
           :id="item[idAttribute]"
-          :label="item[primaryAttribute]"
-          :description="item[secondaryAttribute]"
+          :label="item[nameAttribute]"
+          :description="item[descriptionAttribute]"
           :href="item[hrefAttribute]"
           :clickable="item[clickableAttribute]"
           :actionDefinitions="actionDefinitions"
@@ -204,8 +204,8 @@ watch(
           :value="item"
           :selected="isItemSelected(item[idAttribute])"
           :searchString="query"
-          @action-click="actionClicked"
-          @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+          @action-click="handleActionClick"
+          @click="item[hrefAttribute] ? null : handleActionClick('click', item[idAttribute])"
         >
           <template #customItem="item" v-if="$slots.customItem">
             <slot name="customItem" v-bind="item" />
@@ -214,7 +214,7 @@ watch(
         <div class="selecting-block" v-if="hasSelecting">
           <template v-if="isSelectable(item)">
             <LxRadioButton
-              v-if="selectingKind === 'single'"
+              v-if="selectionKind === 'single'"
               :id="`select-${id}-${item[idAttribute]}`"
               v-model="selected[item[idAttribute]]"
               :value="item[idAttribute]"
@@ -259,8 +259,8 @@ watch(
       v-if="hasChildren(item)"
       :items="item[childrenAttribute]"
       :idAttribute="idAttribute"
-      :primaryAttribute="primaryAttribute"
-      :secondaryAttribute="secondaryAttribute"
+      :nameAttribute="nameAttribute"
+      :descriptionAttribute="descriptionAttribute"
       :childrenAttribute="childrenAttribute"
       :hasChildrenAttribute="hasChildrenAttribute"
       :hrefAttribute="hrefAttribute"
@@ -275,7 +275,7 @@ watch(
       :icon="icon"
       :iconSet="iconSet"
       :hasSelecting="hasSelecting"
-      :selectingKind="selectingKind"
+      :selectionKind="selectionKind"
       v-model:selected-items="selected"
       v-model:items-states="states"
       :mode="mode"
@@ -284,7 +284,7 @@ watch(
       :children="children"
       :disabled="disabled"
       @loadChildren="loadChildren"
-      @action-click="actionClicked"
+      @action-click="handleActionClick"
     >
       <template #customItem="customItem" v-if="$slots.customItem">
         <slot name="customItem" v-bind="customItem" />

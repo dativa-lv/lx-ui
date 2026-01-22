@@ -1015,7 +1015,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   border-color: var(--color-nav-hover-background);
 }
 
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-important {
+.lx-button:not(#userMenuButton) .lx-badge.lx-badge-error {
   background: var(--color-red);
 }
 

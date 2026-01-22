@@ -33,7 +33,7 @@ const props = defineProps({
   fastNameAttribute: { type: String, default: 'name' },
   badge: { type: String, default: '' },
   badgeIcon: { type: String, default: null },
-  badgeType: { type: String, default: 'default' }, // default, good, info, warning, important},
+  badgeType: { type: String, default: 'default' }, // default, info, success, warning, error
   badgeTitle: {
     type: String,
     default: null,
@@ -49,7 +49,6 @@ const props = defineProps({
       return true;
     },
   },
-  kind: { type: String, default: 'default' }, // default, form
   shortlistColumnCount: { type: Number, default: 1 },
   texts: {
     type: Object,
@@ -70,9 +69,9 @@ const defaultTexts = {
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
+    success: 'sekmīgs paziņojums',
     warning: 'brīdinājums',
-    good: 'sekmīgs paziņojums',
-    important: 'svarīgs paziņojums',
+    error: 'svarīgs paziņojums',
   },
 };
 
@@ -203,19 +202,10 @@ defineExpose({ toggleExpander, focus });
       :ariaLabel="ariaLabel"
       :texts="badgeTexts"
     >
-      <div
-        ref="filterBody"
-        class="lx-form lx-form-region"
-        :class="[
-          { 'lx-form-2': columnCount === 2 && kind === 'default' },
-          { 'lx-form-3': columnCount === 3 && kind === 'default' },
-        ]"
-      >
-        <LxForm v-if="kind === 'form'" :columnCount="columnCount" kind="stripped">
+      <div ref="filterBody" class="lx-form lx-form-region">
+        <LxForm :columnCount="columnCount" kind="stripped">
           <slot />
         </LxForm>
-
-        <slot v-else-if="kind === 'default'" />
 
         <div class="lx-button-set">
           <LxButton

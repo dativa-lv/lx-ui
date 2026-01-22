@@ -21,8 +21,8 @@ const props = defineProps({
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
   variant: { type: String, default: 'indicator' },
-  kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
-  nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  selectionKind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
+  nullable: { type: Boolean, default: false }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
   alwaysAsArray: { type: Boolean, default: false },
@@ -60,7 +60,7 @@ const model = computed({
 });
 
 onMounted(() => {
-  if (!model.value && props.kind === 'multiple') {
+  if (!model.value && props.selectionKind === 'multiple') {
     model.value = [];
   }
 });
@@ -68,7 +68,7 @@ onMounted(() => {
 const itemsModel = ref({});
 const itemsDisplay = computed( () => { 
     const res = [... props.items];
-    if(props.kind === 'single' && props.nullable)  
+    if(props.selectionKind === 'single' && props.nullable)  
       res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: displayTexts.value.notSelected});
   
     return res
@@ -152,7 +152,7 @@ function selectSingle(id) {
 }
 
 watch(
-  () => props.kind,
+  () => props.selectionKind,
   (newKind) => {
     activate();
     itemsModel.value = {};
@@ -336,9 +336,9 @@ const indicatorTooltips = computed(() => {
       :aria-invalid="invalid"
       :aria-labelledby="labelId"
     >
-    <LxToolbar v-if="hasSearch || (hasSelectAll && kind === 'multiple')">
+    <LxToolbar v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')">
       <LxButton
-        v-if="hasSelectAll && kind === 'multiple'"
+        v-if="hasSelectAll && selectionKind === 'multiple'"
         kind="ghost"
         :icon="
           areSomeSelected
@@ -375,7 +375,7 @@ const indicatorTooltips = computed(() => {
         @click="query = ''"
       />
     </LxToolbar>
-      <ul class="lx-indicator-set" v-if="kind === 'single'">
+      <ul class="lx-indicator-set" v-if="selectionKind === 'single'">
         <li
           v-for="item in itemsDisplay"
           :key="item[idAttribute]"
@@ -413,7 +413,7 @@ const indicatorTooltips = computed(() => {
           </template>
         </li>
       </ul>
-      <ul class="lx-indicator-set" v-if="kind === 'multiple'">
+      <ul class="lx-indicator-set" v-if="selectionKind === 'multiple'">
         <li
           v-for="item in itemsDisplay"
           :key="item[idAttribute]"
