@@ -8,10 +8,7 @@ import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { useElementSize, useScroll } from '@vueuse/core';
 
 const props = defineProps({
-  id: {
-    type: String,
-    default: () => generateUUID(),
-  },
+  id: { type: String, default: () => generateUUID() },
   label: { type: String, default: '' },
   size: { type: String, default: 'default' },
   buttonPrimaryVisible: { default: false, type: Boolean },
@@ -212,9 +209,9 @@ defineExpose({ open, close });
   >
     <div>
       <div
+        v-if="isOpen && kind === 'default'"
         class="lx-curtain"
         :class="[{ 'lx-visible': isOpen }]"
-        v-if="isOpen && kind === 'default'"
         ref="modalRef"
         tabindex="-1"
         @keydown.esc="close('esc')"
@@ -240,9 +237,11 @@ defineExpose({ open, close });
               @click="close()"
             />
           </header>
+
           <article class="lx-main" ref="modalContent">
             <slot />
           </article>
+
           <footer
             ref="modalFooter"
             class="lx-button-set"
@@ -294,15 +293,22 @@ defineExpose({ open, close });
               />
             </template>
           </footer>
+
+          <!-- Fallback focus anchor for focus trapping -->
+          <div
+            v-if="disableClosing && actionDefinitionsDisplay?.length === 0"
+            class="lx-invisible"
+            aria-hidden="true"
+            tabindex="0"
+          ></div>
         </div>
       </div>
+
       <div v-if="kind === 'native'" :class="[{ 'lx-visible': isOpenModal }]">
         <dialog
           ref="nativeModal"
           :id="id"
           class="lx-modal"
-          @close="close"
-          @keydown="handleKeyDown"
           :class="[
             { 'lx-modal-s': size === 's' || size === 'default' },
             { 'lx-modal-m': size === 'm' },
@@ -311,6 +317,8 @@ defineExpose({ open, close });
           ]"
           tabindex="-1"
           :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
+          @close="close"
+          @keydown="handleKeyDown"
         >
           <header ref="modalHeader">
             <p class="lx-primary">{{ label }}</p>
@@ -324,9 +332,11 @@ defineExpose({ open, close });
               @click="close()"
             />
           </header>
+
           <article class="lx-main" ref="modalContent">
             <slot />
           </article>
+
           <footer
             ref="modalFooter"
             class="lx-button-set"
@@ -377,6 +387,14 @@ defineExpose({ open, close });
               />
             </template>
           </footer>
+
+          <!-- Fallback focus anchor for focus trapping -->
+          <div
+            v-if="disableClosing && actionDefinitionsDisplay?.length === 0"
+            class="lx-invisible"
+            aria-hidden="true"
+            tabindex="0"
+          ></div>
         </dialog>
       </div>
     </div>
