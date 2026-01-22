@@ -54,7 +54,7 @@
     "@tiptap/extension-color": "2.1.16",
     "@tiptap/extension-heading": "2.11.3",
     "@tiptap/extension-image": "2.2.2",
-    "@tiptap/extension-link": "2.1.16",
+    "@tiptap/extension-link": "2.10.4",
     "@tiptap/extension-placeholder": "2.1.16",
     "@tiptap/extension-text-style": "2.1.16",
     "@tiptap/extension-underline": "2.4.0",
