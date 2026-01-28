@@ -1962,11 +1962,6 @@ a.lx-button.lx-button-ghost svg {
   inset: var(--button-ghost-badge-inset);
 }
 
-.lx-button.lx-button-main:not(#userMenuButton) .lx-badge {
-  position: static;
-  margin-left: 0.5rem;
-}
-
 .lx-button:not(#userMenuButton) .lx-badge.lx-badge-info {
   background: var(--color-blue);
 }
@@ -2022,40 +2017,8 @@ a.lx-button.lx-button-ghost svg {
   margin: 0;
 }
 
-/*** Main button styles ***/
-
-.lx .lx-button.lx-button-main img {
-  height: 2rem;
-  margin-right: 1rem;
-}
-
-
-.lx .lx-button.lx-button-main {
-  justify-content: flex-start;
-  width: var(--aside-size);
-  background-color: var(--color-nav-background);
-  border-color: var(--color-nav-background);
-  color: var(--color-nav-foreground);
-  height: 100%;
-  flex-direction: row;
-  
-}
-
-.lx .lx-button.lx-button-main svg {
-  fill: var(--color-nav-foreground);
-}
-
-.lx .lx-button.lx-button-main:hover {
-  border-color: var(--color-nav-hover-background);
-  background: var(--color-nav-hover-background);
-  color: var(--color-nav-hover-foreground);
-}
-
-.lx .lx-button.lx-button-main:hover svg {
-  fill: var(--color-nav-hover-foreground);
-}
-
 /*** Loader styles ***/
+
 .lx-button .lx-loader-container {
   height: 1.55rem;
   justify-content: center;
@@ -2245,10 +2208,6 @@ a.lx-button.lx-button-ghost svg {
 }
 
 @media (max-width: 1900px) {
-  .lx .lx-button.lx-button-main {
-    width: calc(var(--aside-size) - var(--row-size));
-  }
-
   .lx-layout-default.lx-collapsed .lx-nav-panel {
     width: var(--row-size);
   }
@@ -2301,10 +2260,6 @@ a.lx-button.lx-button-ghost svg {
 
   .lx #userMenuButton svg {
     margin: 0;
-  }
-
-  .lx .lx-button.lx-button-main {
-    width: 100%;
   }
 
   #userMenuButton label {

@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick, inject } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
+
+import useLx from '@/hooks/useLx';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { lxDevUtils } from '@/utils';
-import useLx from '@/hooks/useLx';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import { loadLibrary } from '@/utils/libLoader';
+
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxExpander from '@/components/Expander.vue';
@@ -18,9 +22,7 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxTreeList from '@/components/list/TreeList.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
 import LxToolbar from '@/components/Toolbar.vue';
-import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
-import { loadLibrary } from '@/utils/libLoader';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -1208,8 +1210,8 @@ const toolbarActions = computed(() => {
 </script>
 
 <template>
-  <LxLoaderView :loading="loadingLib" label="">
-    <div ref="listWrapper" class="lx-list-wrapper">
+  <div ref="listWrapper" class="lx-list-wrapper">
+    <LxLoaderView :loading="loadingLib" label="">
       <LxSkipLink
         v-if="props.hasSkipLink"
         :label="displayTexts.skipLinkLabel"
@@ -2415,6 +2417,6 @@ const toolbarActions = computed(() => {
       <div class="lx-list-loader" v-if="!showLoadMore && loading">
         <LxLoader :loading="loading" size="s" />
       </div>
-    </div>
-  </LxLoaderView>
+    </LxLoaderView>
+  </div>
 </template>

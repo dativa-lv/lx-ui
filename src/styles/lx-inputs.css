@@ -4533,7 +4533,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-text-input-wrapper .lx-input-flag-wrapper .lx-flag{
   display: flex;
-  align-items: center;
+  align-items: start;
   height: 2rem;
 }
 

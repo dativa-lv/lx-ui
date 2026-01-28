@@ -45,7 +45,7 @@ const sizeMap = {
     :aria-hidden="!meaningful"
   >
     <country-flag
-      :country="value"
+      :country="value ?? ''"
       :size="sizeMap[size] || 'normal'"
       :title="title || formatCountryCode(value, locale)"
     />

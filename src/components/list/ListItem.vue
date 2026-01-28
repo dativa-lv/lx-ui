@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import { ref, computed, watch } from 'vue';
+
+import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
+import { loadLibrary } from '@/utils/libLoader';
+
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxButton from '@/components/Button.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import useLx from '@/hooks/useLx';
 import LxLoader from '@/components/Loader.vue';
-import { ref, computed } from 'vue';
-import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
-import { loadLibrary } from '@/utils/libLoader';
-import { computedAsync } from '@vueuse/core';
 
 const emits = defineEmits(['click', 'actionClick']);
 
@@ -47,11 +48,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const visibleActionDefinitions = computed(() =>
-  props.actionDefinitions?.filter((action) =>
-    action.visibleByAttribute ? props.value[action.visibleByAttribute] : true
-  )
-);
+const safeTo = ref(null);
 
 function performClick() {
   if (props.clickable && !props.disabled) {
@@ -81,6 +78,12 @@ function getItemId(id, parentId) {
   return `${parentId}-item-${id}`;
 }
 
+const visibleActionDefinitions = computed(() =>
+  props.actionDefinitions?.filter((action) =>
+    action.visibleByAttribute ? props.value[action.visibleByAttribute] : true
+  )
+);
+
 const tabIndex = computed(() => {
   if (props.disabled || props.busy || props.loading) {
     return -1;
@@ -91,18 +94,24 @@ const tabIndex = computed(() => {
   return -1;
 });
 
-const sanitizeHref = computedAsync(async () => {
-  if (!props.href) return null;
-  if (typeof props.href === 'object') return props.href;
+async function computeSafeTo() {
+  if (typeof props.href !== 'string') {
+    safeTo.value = props.href ?? null;
+    return;
+  }
 
-  const { sanitizeUrl } = await loadLibrary('sanitizeUrl');
-  return sanitizeUrl(props.href);
-});
+  const lib = await loadLibrary('sanitizeUrl');
+  const cleaned = lib.sanitizeUrl(props.href);
+
+  safeTo.value = cleaned ?? null;
+}
+
+watch(() => props.href, computeSafeTo, { immediate: true });
 </script>
 <template>
   <div class="lx-list-item-wrapper" :id="id">
     <div
-      v-if="!href"
+      v-if="!safeTo"
       :tabindex="tabIndex"
       class="lx-list-item"
       :id="getItemId(id, parentId)"
@@ -257,14 +266,15 @@ const sanitizeHref = computedAsync(async () => {
         </div>
       </div>
     </div>
+
     <router-link
-      v-if="href"
+      v-if="safeTo"
       class="lx-list-item"
       :role="clickable ? 'button' : null"
       :aria-labelledby="label && clickable ? `${id}-label` : null"
       :aria-describedby="description && clickable ? `${id}-desc` : null"
       :aria-invalid="invalid"
-      :to="sanitizeHref"
+      :to="safeTo"
       v-on:keydown.space.prevent
       :title="tooltip"
       :class="[
@@ -410,9 +420,11 @@ const sanitizeHref = computedAsync(async () => {
         </div>
       </div>
     </router-link>
+
     <div class="lx-list-item-loader" v-if="busy || loading">
       <LxLoader :loading="true" size="s" @click.stop />
     </div>
+
     <div
       class="lx-list-item-actions"
       v-if="
@@ -449,6 +461,7 @@ const sanitizeHref = computedAsync(async () => {
         @click="handleActionClick(action.id, id, $event)"
       />
     </div>
+
     <div
       v-else-if="actionDefinitions?.length && actionsLayout !== 'vertical'"
       class="lx-list-item-actions"

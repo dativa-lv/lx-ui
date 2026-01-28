@@ -4,6 +4,13 @@
 
 ### Breaking changes
 
+#### LxButton
+
+The `kind` prop has been updated to reduce redundant variants.
+
+- `main` has been removed
+
+
 #### LxTabControl
 
 The component API has changed to clearly separate data input from selection state.

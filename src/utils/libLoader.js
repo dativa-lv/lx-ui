@@ -41,8 +41,8 @@ const libraryLoaders = {
   },
 
   sanitizeUrl: async () => {
-    const { sanitizeUrl } = await import('@braintree/sanitize-url');
-    return { sanitizeUrl };
+    const module = await import('@braintree/sanitize-url');
+    return module.default || module;
   },
 
   tiptap: async () => {

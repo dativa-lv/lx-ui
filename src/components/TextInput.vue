@@ -2,15 +2,17 @@
 import { computed, onMounted, watch, ref, inject } from 'vue';
 import { IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
-import LxIcon from '@/components/Icon.vue';
-import LxButton from '@/components/Button.vue';
+import { computedAsync } from '@vueuse/core';
+
 import { generateUUID, isEmail } from '@/utils/stringUtils';
 import { flagMap } from '@/utils/flagUtils';
-import LxFlag from '@/components/Flag.vue';
 import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { PHONE_MAX_LENGTH_BY_PREFIX } from '@/constants';
 import { loadLibrary } from '@/utils/libLoader';
-import { computedAsync } from '@vueuse/core';
+
+import LxIcon from '@/components/Icon.vue';
+import LxFlag from '@/components/Flag.vue';
+import LxButton from '@/components/Button.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -339,8 +341,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 
 const sanitizedEmail = computedAsync(async () => {
   if (isEmail(model.value)) {
-    const { sanitizeUrl } = await loadLibrary('sanitizeUrl');
-    return sanitizeUrl(`mailto:${model.value}`);
+    const lib = await loadLibrary('sanitizeUrl');
+    return lib.sanitizeUrl(`mailto:${model.value}`);
   }
   return '';
 }, null);

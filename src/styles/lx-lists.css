@@ -780,7 +780,7 @@
   color: var(--color-label);
 }
 
-.lx-list-wrapper > .lx-selection-toolbar > .lx-component-toolbar p,
+.lx-list-wrapper .lx-selection-toolbar > .lx-component-toolbar p,
 .lx-list-wrapper .lx-list-toolbar.lx-selection-toolbar > .first-row > p {
   color: var(--color-interactive-foreground);
 }
@@ -1254,6 +1254,10 @@ a.lx-tile:not(.lx-disabled):hover {
 .lx-dashboard .lx-tile-wrapper:has(.lx-tile.lx-mini) {
   min-height: var(--tile-mini-min-height);
   grid-row: span 2;
+}
+
+.lx-dashboard .lx-list-wrapper {
+  grid-column: span 4;
 }
 
 .lx .lx-tile.lx-mini {

@@ -18,7 +18,7 @@ const props = defineProps({
   icon: { type: String, default: '' },
   iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet }, // cds, material, brand, phosphor
   iconVariant: { type: String, default: 'default' },
-  kind: { type: String, default: 'default' }, // primary, secondary, tertiary, ghost, main, menuitem
+  kind: { type: String, default: 'default' }, // primary, secondary, tertiary, ghost, menuitem
   variant: { type: String, default: 'default' }, // default, icon-only
   destructive: { type: Boolean, default: false },
   href: { type: Object, default: () => {} },
@@ -190,7 +190,6 @@ defineExpose({ focus });
       { 'lx-button-secondary': kind === 'secondary' },
       { 'lx-button-tertiary': kind === 'tertiary' },
       { 'lx-button-ghost': kind === 'ghost' },
-      { 'lx-button-main': kind === 'main' },
       { 'lx-busy': busy },
       { 'lx-button-icon-only': isIconOnly },
       { 'lx-button-text-only': isTextOnly },
@@ -260,7 +259,6 @@ defineExpose({ focus });
       { 'lx-button-secondary': kind === 'secondary' },
       { 'lx-button-tertiary': kind === 'tertiary' },
       { 'lx-button-ghost': kind === 'ghost' },
-      { 'lx-button-main': kind === 'main' },
       { 'lx-button-icon-only': isIconOnly },
       { 'lx-button-text-only': isTextOnly },
       { 'lx-destructive': destructive },
