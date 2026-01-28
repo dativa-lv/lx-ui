@@ -215,8 +215,9 @@ function emitCurtainTouched() {
         />
       </div>
       <div
-        v-if="props.fullScreenPanel && !needsHighZ"
+        v-if="props.fullScreenPanel"
         class="lx-curtain popper-curtain"
+        :class="[{ 'higher-z-index': needsHighZ }]"
         @touchstart.prevent="emitCurtainTouched"
       ></div>
     </Teleport>

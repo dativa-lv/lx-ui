@@ -69,6 +69,8 @@ const textsDefault = {
   clear: 'Attīrīt',
   clearButton: 'Attīrīt vērtību',
   todayButton: 'Atgriezties uz šodienu',
+  specialDatesButton: 'Atvērt notikumus',
+  closeSpecialDatesButton: 'Aizvērt notikumus',
   clearStart: 'Notīrīt sākuma vērtību',
   clearEnd: 'Notīrīt beigu vērtību',
   next: 'Nākamais',
@@ -87,6 +89,7 @@ const textsDefault = {
   endDateLabel: 'Beigu datums',
   dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
   selectedStartDate: 'Izvēlēts sākuma datums',
+  noSpecialDates: 'Šajā mēnesī nav ieplānotu notikumu',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -1403,6 +1406,7 @@ onMounted(async () => {
       ref="dropDownMenuRef"
       :placement="computedPlacement"
       :disabled="disabled"
+      :datePickerType="true"
       tabindex="-1"
     >
       <div

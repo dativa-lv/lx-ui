@@ -2305,6 +2305,19 @@
   box-shadow: none;
 }
 
+.lx.lx-no-transparency .lx-info-wrapper-responsive-toolbar {
+  border-top: 2px solid var(--color-chrome);
+}
+
+.lx .lx-info-wrapper-responsive-toolbar {
+  border-top: 1px solid var(--color-chrome);
+}
+
+.lx-info-wrapper-responsive-toolbar svg.handle-icon {
+  opacity: 50%;
+}
+
+
 .lx-layout-latvijalv .lx-spotlight .lx-spotlight-footer > .lx-button {
   height: 2.5rem;
 }

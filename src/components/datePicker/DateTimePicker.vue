@@ -65,6 +65,9 @@ const textsDefault = {
   previousDecade: 'Iepriekšējā dekāde',
   scrollUp: 'Ritināt uz augšu',
   scrollDown: 'Ritināt uz leju',
+  noSpecialDates: 'Šajā mēnesī nav ieplānotu notikumu',
+  specialDatesButton: 'Atvērt notikumus',
+  closeSpecialDatesButton: 'Aizvērt notikumus',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

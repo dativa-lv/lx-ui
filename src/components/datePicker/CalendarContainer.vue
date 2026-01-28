@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onUnmounted } from 'vue';
+import { ref, computed, watch, onUnmounted, nextTick } from 'vue';
 import { subYears, addYears, subMonths, addMonths } from 'date-fns';
 import { useWindowSize, onClickOutside, useDebounceFn } from '@vueuse/core';
 import { formatLocalizedDate } from '@/utils/dateUtils';
@@ -31,6 +31,8 @@ import {
 } from '@/components/datePicker/helpers';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import LxRow from '@/components/forms/Row.vue';
+import LxEmptyState from '@/components/EmptyState.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -64,6 +66,8 @@ const textsDefault = {
   clear: 'Attīrīt',
   clearButton: 'Attīrīt vērtību',
   todayButton: 'Atgriezties uz šodienu',
+  specialDatesButton: 'Atvērt notikumus',
+  closeSpecialDatesButton: 'Aizvērt notikumus',
   clearStart: 'Notīrīt sākuma vērtību',
   clearEnd: 'Notīrīt beigu vērtību',
   next: 'Nākamais',
@@ -78,7 +82,12 @@ const textsDefault = {
   doNotIndicateEnd: 'Nenorādīt beigas',
   scrollUp: 'Ritināt uz augšu',
   scrollDown: 'Ritināt uz leju',
+  noSpecialDates: 'Šajā mēnesī nav ieplānotu notikumu',
 };
+
+const windowSize = useWindowSize();
+
+const responsiveView = computed(() => windowSize.width.value <= 500);
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
@@ -95,6 +104,7 @@ const monthsLayout = ref(false);
 const yearsLayout = ref(false);
 const quartersLayout = ref(false);
 const mobileTimeLayout = ref(false);
+const specialDatesLayout = ref(false);
 
 // Todays date reference
 const todayDate = ref(new Date());
@@ -127,8 +137,6 @@ const startQuarterYear = ref(findDecadeStartYear(todayDate.value.getFullYear()))
 const endQuarterYear = ref(findDecadeStartYear(todayDate.value.getFullYear()) + 9);
 
 const tempSelectedYear = ref(null);
-
-const windowSize = useWindowSize();
 
 // Hours, minutes and seconds arrays
 const hours = ref(
@@ -172,16 +180,17 @@ function openMonthSelect() {
   if (monthsLayout.value) {
     regularLayout.value = false;
     yearsLayout.value = false;
+    specialDatesLayout.value = false;
   } else {
     regularLayout.value = true;
   }
 }
-
 function openYearSelect() {
   yearsLayout.value = !yearsLayout.value;
   if (yearsLayout.value) {
     regularLayout.value = false;
     monthsLayout.value = false;
+    specialDatesLayout.value = false;
   } else {
     if (props.mode === 'month' || props.mode === 'month-year') {
       monthsLayout.value = true;
@@ -198,9 +207,43 @@ function openMobileTimeSelect() {
     regularLayout.value = false;
     yearsLayout.value = false;
     monthsLayout.value = false;
+    specialDatesLayout.value = false;
   } else {
     regularLayout.value = true;
   }
+}
+
+const calendarLayoutsRef = ref(null);
+
+const scrollState = ref({
+  scrollTop: 0,
+  scrollBottom: 0,
+});
+
+const panelAreaScrolled = () => {
+  if (!responsiveView.value) return;
+  const panelArea = calendarLayoutsRef.value;
+  if (panelArea) {
+    scrollState.value.scrollTop = panelArea.scrollTop;
+    scrollState.value.scrollBottom =
+      panelArea.scrollHeight - panelArea.scrollTop - panelArea.clientHeight;
+  }
+};
+
+function openSpecialDates() {
+  specialDatesLayout.value = !specialDatesLayout.value;
+
+  if (specialDatesLayout.value) {
+    regularLayout.value = false;
+    yearsLayout.value = false;
+    monthsLayout.value = false;
+    mobileTimeLayout.value = false;
+  } else {
+    regularLayout.value = true;
+  }
+  nextTick(() => {
+    panelAreaScrolled();
+  });
 }
 
 const computedPrevTransitionName = computed(() =>
@@ -216,7 +259,10 @@ function selectPreviousSlide() {
 
   const prevMonthOrYear = new Date(currentDate.value);
 
-  if (regularLayout.value && currentDate.value) {
+  if (
+    (regularLayout.value && currentDate.value) ||
+    (specialDatesLayout.value && currentDate.value)
+  ) {
     const monthOffset = props.variant === 'full' ? 2 : 1;
     prevMonthOrYear.setDate(1);
     prevMonthOrYear.setMonth(currentDate.value.getMonth() - monthOffset);
@@ -241,7 +287,10 @@ function selectNextSlide() {
 
   const nextMonthOrYear = new Date(currentDate.value);
 
-  if (regularLayout.value && currentDate.value) {
+  if (
+    (regularLayout.value && currentDate.value) ||
+    (specialDatesLayout.value && currentDate.value)
+  ) {
     const monthOffset = props.variant === 'full' ? 2 : 1;
     nextMonthOrYear.setDate(1);
     nextMonthOrYear.setMonth(currentDate.value.getMonth() + monthOffset);
@@ -1497,7 +1546,7 @@ function returnToToday() {
     props.cadenceOfSeconds
   );
   selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
-
+  specialDatesLayout.value = false;
   updateVisibleHours();
   updateVisibleMinutes();
   updateVisibleSeconds();
@@ -2650,6 +2699,62 @@ function handleRangePickerUnmount() {
   }
 }
 
+const hasSpecialDatesInSelectedMonth = computed(() => {
+  if (!props.specialDatesAttributes || props.specialDatesAttributes?.length === 0) return null;
+  const monthOffset = props.variant === 'full' ? 2 : 1;
+  const currentMonth = currentDate.value.getMonth() + monthOffset;
+  const currentYear = currentDate.value.getFullYear();
+
+  const specialDatesMap = new Map();
+
+  props.specialDatesAttributes?.forEach((attribute) => {
+    attribute.dates.forEach((date) => {
+      const dateObj = new Date(date);
+
+      if (
+        dateObj.getMonth() + monthOffset === currentMonth &&
+        dateObj.getFullYear() === currentYear
+      ) {
+        if (specialDatesMap.has(date)) {
+          specialDatesMap.get(date).push({
+            barColor: attribute.barColor,
+            popoverLabel: attribute.popoverLabel,
+          });
+        } else {
+          specialDatesMap.set(date, [
+            {
+              barColor: attribute.barColor,
+              popoverLabel: attribute.popoverLabel,
+            },
+          ]);
+        }
+      }
+    });
+  });
+
+  const specialDatesForMonth = Array.from(specialDatesMap, ([date, data]) => ({
+    date,
+    data,
+  }));
+
+  specialDatesForMonth.sort((a, b) => new Date(a.date) - new Date(b.date));
+  return specialDatesForMonth;
+});
+
+const topOutOfBounds = computed(() => {
+  const keyOpacity = '--date-picker-wrapper-top-shadow-opacity';
+  const { scrollTop } = scrollState.value;
+  const opacity = scrollTop > 0 ? Math.min(1, scrollTop / 60) : 0;
+  return `${keyOpacity}: ${opacity};`;
+});
+
+const bottomOutOfBounds = computed(() => {
+  const keyOpacity = '--date-picker-wrapper-bottom-shadow-opacity';
+  const { scrollBottom } = scrollState.value;
+  const opacity = scrollBottom > 0 ? Math.min(1, scrollBottom / 60) : 0;
+  return `${keyOpacity}: ${opacity};`;
+});
+
 onClickOutside(
   containerRef,
   () => {
@@ -3251,6 +3356,25 @@ onUnmounted(() => {
     >
       <LxButton
         v-if="
+          responsiveView && (mode === 'date' || mode === 'date-time' || mode === 'date-time-full')
+        "
+        customClass="lx-calendar-special-days-button"
+        kind="ghost"
+        icon="calendar-special"
+        variant="icon-only"
+        :label="
+          !specialDatesLayout
+            ? displayTexts.specialDatesButton
+            : displayTexts.closeSpecialDatesButton
+        "
+        :disabled="
+          disabled || specialDatesAttributes?.length === 0 || !hasSpecialDatesInSelectedMonth
+        "
+        :active="specialDatesLayout"
+        @click.stop.prevent="openSpecialDates"
+      />
+      <LxButton
+        v-if="
           mode !== 'time' &&
           mode !== 'time-full' &&
           mode !== 'month' &&
@@ -3334,8 +3458,10 @@ onUnmounted(() => {
             'years-and-month-year-only':
               (mode === 'year' || mode === 'month-year') && !isMobileScreen,
             'range-month-year': pickerType === 'range' && mode === 'month-year' && !isMobileScreen,
+            'special-dates-layout': specialDatesLayout,
           },
         ]"
+        :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
       >
         <LxButton
           v-if="(isMobileScreen && !mobileTimeLayout) || (mode !== 'month' && !isMobileScreen)"
@@ -3349,6 +3475,7 @@ onUnmounted(() => {
         />
 
         <div
+          ref="calendarLayoutsRef"
           class="lx-calendar-layouts"
           :class="[
             {
@@ -3365,6 +3492,7 @@ onUnmounted(() => {
               'range-year': pickerType === 'range' && mode === 'year' && !isMobileScreen,
             },
           ]"
+          @scroll="panelAreaScrolled"
           role="grid"
         >
           <template v-for="(monthsRows, monthsRowsIdx) in monthsList" :key="monthsRowsIdx">
@@ -3475,7 +3603,8 @@ onUnmounted(() => {
                                 !hasSpecialDates(date, specialDatesAttributes) ||
                                 (!isSameMonth(date, month) &&
                                   !canSelectDate(date, minDateRef, maxDateRef, 'date')) ||
-                                pickerType === 'range'
+                                pickerType === 'range' ||
+                                responsiveView
                               "
                               :arrow="true"
                               :focusable="false"
@@ -3620,6 +3749,36 @@ onUnmounted(() => {
                   </div>
                 </TransitionGroup>
               </div>
+            </div>
+          </template>
+          <template v-if="specialDatesLayout">
+            <div class="lx-calendar-special-dates-wrapper">
+              <LxRow
+                v-for="item in hasSpecialDatesInSelectedMonth"
+                :key="item.date"
+                :label="formatLocalizedDate(props.locale, new Date(item.date))"
+              >
+                <ul class="lx-list">
+                  <template v-for="(attr, attrIndex) in item.data" :key="attrIndex">
+                    <li>
+                      <span
+                        class="lx-day-layer-popper-bar"
+                        :class="['bar-' + attr.barColor]"
+                      ></span>
+
+                      <div class="lx-row">
+                        <p class="lx-data">{{ attr.popoverLabel }}</p>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </LxRow>
+              <LxEmptyState
+                v-if="
+                  !hasSpecialDatesInSelectedMonth || hasSpecialDatesInSelectedMonth.length === 0
+                "
+                :label="displayTexts.noSpecialDates"
+              />
             </div>
           </template>
 
@@ -4473,7 +4632,9 @@ onUnmounted(() => {
     </div>
 
     <div
-      v-if="(mode === 'date-time' || mode === 'date-time-full') && isMobileScreen"
+      v-if="
+        (mode === 'date-time' || mode === 'date-time-full') && isMobileScreen && !specialDatesLayout
+      "
       class="lx-mobile-time-selection-button-wrapper"
     >
       <LxButton
@@ -4488,6 +4649,7 @@ onUnmounted(() => {
     </div>
 
     <div
+      v-if="!specialDatesLayout"
       class="lx-calendar-footer"
       :class="[
         {

@@ -388,7 +388,9 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleGlobalKeydown);
   window.removeEventListener('click', handleClickOutside);
 
-  document.body.classList.remove('no-scroll');
+  if (!props.disabled) {
+    document.body.classList.remove('no-scroll');
+  }
 });
 
 defineExpose({ handleOpen, handleClose, showPopper, focus });

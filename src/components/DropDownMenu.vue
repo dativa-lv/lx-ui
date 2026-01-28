@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, nextTick, inject } from 'vue';
-import { onClickOutside } from '@vueuse/core';
+import { ref, computed, nextTick, inject, watch } from 'vue';
+import { onClickOutside, useWindowSize } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
@@ -25,6 +25,7 @@ const props = defineProps({
   triggerClick: { type: String, default: 'left' },
   offsetSkid: { type: String, default: null },
   tabindex: { type: [String, Number], default: null },
+  datePickerType: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: () => [] },
   groupDefinitions: { type: Array, default: null },
 });
@@ -39,6 +40,11 @@ const firstFocusableElement = ref(null);
 const menuOpen = ref(false);
 const isTouchSensitive = inject('isTouchMode', false);
 const parentFocusTrap = inject('parentFocusTrap', null);
+const dragThreshold = 50;
+
+const windowSize = useWindowSize();
+
+const responsiveView = computed(() => windowSize.width.value <= 500);
 
 const { activate: activateFocusTrap, deactivate: deactivateFocusTrap } = useFocusTrap(panelRef, {
   initialFocus: false,
@@ -53,6 +59,9 @@ function openMenu({ source = 'default', focus = 'first' } = {}) {
   }
 
   menuOpen.value = true;
+  if (props.datePickerType && responsiveView.value) {
+    document.body.classList.add('no-scroll');
+  }
 
   nextTick(() => {
     parentFocusTrap?.pause();
@@ -76,7 +85,42 @@ function openMenu({ source = 'default', focus = 'first' } = {}) {
   });
 }
 
+const popperToClose = ref(false);
+const hasReducedMotion = ref(document.body.classList.contains('lx-no-animations'));
+
+function handleClose(hasAnimation = true) {
+  popperToClose.value = true;
+
+  // without animation
+  if (hasReducedMotion.value || !hasAnimation) {
+    menuOpen.value = false;
+    popperToClose.value = false;
+  } else {
+    // with animation
+    setTimeout(() => {
+      menuOpen.value = false;
+      popperToClose.value = false;
+    }, 300);
+  }
+
+  nextTick(() => {
+    deactivateFocusTrap();
+  });
+}
+
 function closeMenu({ source = 'default' } = {}) {
+  if (props.datePickerType && responsiveView.value) {
+    handleClose();
+
+    deactivateFocusTrap();
+
+    parentFocusTrap?.unpause();
+
+    if (source === 'keyboard') {
+      togglerRef.value?.focus();
+    }
+    return;
+  }
   menuOpen.value = false;
 
   deactivateFocusTrap();
@@ -238,13 +282,109 @@ function handleActionClick(id, { value = undefined, close = false, event = undef
   emits('actionClick', id, value);
 }
 
+const isDragging = ref(false);
+const startY = ref(0);
+const currentY = ref(0);
+const maxHeightReached = ref(false);
+const wrapperPanelRef = ref(null);
+
+const handleDragging = (event) => {
+  if (!isDragging.value) return;
+
+  if (event.touches) {
+    event.preventDefault();
+  }
+
+  currentY.value = event.touches ? event.touches[0].clientY : event.clientY;
+  const deltaY = currentY.value - startY.value;
+
+  // Allowed dragging is slightly higher than the allowed position (48px)
+  const clampedDeltaY = Math.max(deltaY, -48);
+  const positiveClampedDeltaY = Math.abs(clampedDeltaY);
+  const popperEl = panelRef.value;
+  const wrapperEl = wrapperPanelRef.value;
+  if (popperEl) {
+    popperEl.style.transform = `translateY(${clampedDeltaY}px)`;
+    maxHeightReached.value = clampedDeltaY <= 0;
+  }
+  if (wrapperEl && maxHeightReached.value) {
+    popperEl.style.transform = '';
+    wrapperEl.style.marginBottom = `${positiveClampedDeltaY}px`;
+  }
+};
+
+const handleDragEnd = () => {
+  if (!isDragging.value) return;
+
+  const deltaY = currentY.value - startY.value;
+
+  isDragging.value = false;
+  startY.value = 0;
+  currentY.value = 0;
+
+  const popperEl = panelRef.value;
+  const wrapperEl = wrapperPanelRef.value;
+  if (popperEl) {
+    // Bounce back
+    if (!hasReducedMotion.value) {
+      popperEl.style.transition = 'transform 0.3s ease-out';
+      wrapperEl.style.transition = 'margin-bottom 0.3s ease-out';
+    }
+    wrapperEl.style.marginBottom = '';
+    popperEl.style.transform = '';
+    setTimeout(() => {
+      popperEl.style.transition = '';
+    }, 300);
+  }
+
+  if (deltaY > dragThreshold) {
+    handleClose(false);
+  }
+
+  window.removeEventListener('mousemove', handleDragging);
+  window.removeEventListener('mouseup', handleDragEnd);
+  window.removeEventListener('touchmove', handleDragging);
+  window.removeEventListener('touchend', handleDragEnd);
+};
+
+const handleDragStart = (event) => {
+  if (!responsiveView.value || props.disabled) return;
+
+  isDragging.value = true;
+  startY.value = event.touches ? event.touches[0].clientY : event.clientY;
+
+  window.addEventListener('mousemove', handleDragging);
+  window.addEventListener('mouseup', handleDragEnd);
+  window.addEventListener('touchmove', handleDragging, { passive: false });
+  window.addEventListener('touchend', handleDragEnd);
+};
+
 function onClickOutsideHandler() {
   if (!menuOpen.value) {
     return;
   }
-
-  closeMenu();
+  if (props.datePickerType && responsiveView.value) {
+    handleClose();
+  } else {
+    closeMenu();
+  }
 }
+
+watch(
+  () => responsiveView.value,
+  () => {
+    handleClose();
+  }
+);
+
+watch(
+  () => menuOpen.value,
+  (newVal) => {
+    if (!newVal && responsiveView.value && props.datePickerType) {
+      document.body.classList.remove('no-scroll');
+    }
+  }
+);
 
 onClickOutside(togglerRef, onClickOutsideHandler, {
   ignore: [panelRef],
@@ -261,6 +401,8 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       :disabled="disabled"
       offset-distance="0"
       :show="menuOpen"
+      :fullScreenPanel="datePickerType ? responsiveView : false"
+      @curtainTouched="handleClose()"
     >
       <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
       <div
@@ -309,13 +451,44 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           :id="panelId"
           ref="panelRef"
           class="lx-dropdown-panel-wrapper"
+          :class="[
+            {
+              'slide-up-animation': responsiveView && menuOpen && !popperToClose && datePickerType,
+            },
+            { 'slide-down-animation': responsiveView && popperToClose && datePickerType },
+            { 'date-picker-type': datePickerType },
+          ]"
           role="menu"
           tabindex="-1"
           :aria-labelledby="togglerId"
           @keydown.prevent="handlePanelKeydown"
           @keyup.prevent="handlePanelKeyup"
         >
-          <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel" role="group">
+          <div
+            v-if="responsiveView && datePickerType"
+            class="lx-info-wrapper-responsive-toolbar dropdown-handle-toolbar"
+            :class="[
+              { 'slide-up-animation': responsiveView && menuOpen && !popperToClose },
+              { 'slide-down-animation': responsiveView && popperToClose },
+            ]"
+          >
+            <div
+              class="handle-wrapper"
+              @click.stop
+              @mousedown="handleDragStart"
+              @touchstart="handleDragStart"
+            >
+              <LxIcon class="handle-icon" value="handle" />
+            </div>
+
+            <LxButton kind="ghost" icon="close" @click="handleClose()" />
+          </div>
+          <div
+            v-if="$slots.clickSafePanel"
+            ref="wrapperPanelRef"
+            class="lx-dropdown-panel"
+            role="group"
+          >
             <div
               v-for="(group, groupName) in groupedItems"
               :key="groupName"
@@ -402,13 +575,16 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                 />
               </template>
             </div>
-
-            <slot name="clickSafePanel" />
+            <div v-if="responsiveView && datePickerType">
+              <slot name="clickSafePanel" />
+            </div>
+            <slot v-else name="clickSafePanel" />
           </div>
           <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
           <div
             v-if="$slots.panel || (actionDefinitions?.length > 0 && !$slots.clickSafePanel)"
             class="lx-dropdown-panel"
+            ref="wrapperPanelRef"
             role="group"
             @click="closeMenu"
           >
