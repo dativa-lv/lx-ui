@@ -49,7 +49,7 @@
 
 .lx-layout.lx-layout-default > header {
   grid-area: header;
-  background-color: var(--color-nav-background);
+  background: linear-gradient(to right, color-mix(in srgb, var(--color-brand) 25%, transparent) 0%, transparent 50%), var(--color-nav-background);
   color: var(--color-nav-foreground);
   height: var(--nav-row-size);
   position: fixed;
@@ -57,6 +57,11 @@
   width: 100%;
   align-items: center;
   z-index: 8100;
+}
+
+.lx.lx-theme-contrast .lx-layout.lx-layout-default > header,
+.lx.lx-no-transparency .lx-layout.lx-layout-default > header {
+  background: var(--color-nav-background);
 }
 
 .lx-layout.lx-layout-default > header .lx-header {
@@ -115,8 +120,8 @@
 .lx-layout.lx-layout-default > header .lx-header #nav-toggle .lx-button-content-wrapper::after {
   content: ' ';
   height: 2rem;
-  border-right: 1px solid var(--color-nav-chrome);
-  opacity: 1;
+  border-right: 1px solid var(--color-nav-foreground);
+  opacity: 0.2;
   transition: opacity 0.1s ease-out;
 }
 
@@ -296,11 +301,9 @@
   top: var(--nav-row-size);
   height: calc(100vh - var(--nav-row-size));
   height: calc(100dvh - var(--nav-row-size));
-  transition: width 0.1s ease-out, margin-left 0.1s ease-out;
 }
 
 .lx-layout.lx-layout-default > nav .lx-nav-panel {
-  transition: width 0.1s ease-out;
   border-right: var(--region-border);
 }
 
@@ -1217,8 +1220,8 @@
   height: 2rem;
   margin-top: 0.5rem;
   margin-left: 3rem;
-  border-right: 1px solid var(--color-nav-chrome);
-  opacity: 1;
+  border-right: 1px solid var(--color-nav-foreground);
+  opacity: 0.2;
   transition: opacity 0.1s ease-out;
 }
 

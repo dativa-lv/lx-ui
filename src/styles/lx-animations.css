@@ -187,6 +187,14 @@
     border-color 0.2s ease-in, border-thickness 0.2s ease-in;
 }
 
+.lx:not(.lx-no-animations) .lx-layout-default > nav {
+  transition: width 0.1s ease-out, margin-left 0.1s ease-out;
+}
+
+.lx:not(.lx-no-animations) .lx-layout-default > nav .lx-nav-panel {
+  transition: width 0.1s ease-out;
+}
+
 .lx:not(.lx-no-animations) .lx-button,
 .lx:not(.lx-no-animations) .lx-override button,
 .lx:not(.lx-no-animations) .lx-override input[type="button"],
