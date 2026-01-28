@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref, provide } from 'vue';
+import { computed, inject, ref, provide, useSlots } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -136,6 +136,8 @@ const props = defineProps({
 
 const emits = defineEmits(['actionClick']);
 
+const slots = useSlots();
+
 const tooltip = computed(() => {
   if (props.description) {
     return `${props.label}\n${props.description}`;
@@ -190,10 +192,19 @@ const validatedColumnSpan = computed(() => {
 const actionDefinitionsDefaults = computed(() => {
   if (!props.actionDefinitions || !props.actionDefinitions.length) return [];
   return props.actionDefinitions.map((action) => ({
+    // @ts-ignore
     ...action,
     value: action?.value || false,
   }));
 });
+
+const showHeaderWithInfo = computed(
+  () => slots.info && (rowOrientation.value === 'horizontal' || !props.hideLabel)
+);
+
+const showHeaderWithoutInfo = computed(
+  () => !slots.info && (rowOrientation.value === 'horizontal' || !props.hideLabel)
+);
 
 const idComputed = computed(() => props.id);
 provide('rowId', idComputed);
@@ -216,10 +227,7 @@ provide('rowId', idComputed);
       { 'lx-row-horizontal': rowOrientation === 'horizontal' },
     ]"
   >
-    <div
-      class="lx-row-header"
-      v-if="(rowOrientation === 'horizontal' && !$slots.info) || (!hideLabel && !$slots.info)"
-    >
+    <div v-if="showHeaderWithoutInfo" class="lx-row-header">
       <label :title="!$slots.info ? tooltip : ''" :for="inputId" v-if="!hideLabel" :id="id">
         {{ label ? label : '&nbsp;' }}
         <span class="lx-required" v-if="rowRequiredMode === 'required' && required && !hideLabel">
@@ -290,10 +298,7 @@ provide('rowId', idComputed);
       </div>
     </div>
 
-    <div
-      class="lx-row-header"
-      v-if="(rowOrientation === 'horizontal' && $slots.info) || (!hideLabel && $slots.info)"
-    >
+    <div v-if="showHeaderWithInfo" class="lx-row-header">
       <LxInfoWrapper class="lx-info-slot-wrapper" placement="right" v-if="!hideLabel">
         <label :title="!$slots.info ? tooltip : ''" :for="inputId" :id="id">
           {{ label ? label : '&nbsp;' }}
@@ -373,6 +378,9 @@ provide('rowId', idComputed);
       :class="[
         { 'lx-vertical': !rowOrientation || rowOrientation === 'vertical' },
         { 'lx-horizontal': rowOrientation === 'horizontal' },
+        {
+          'lx-content-aligned': !showHeaderWithInfo || !showHeaderWithoutInfo,
+        },
       ]"
     >
       <slot />
