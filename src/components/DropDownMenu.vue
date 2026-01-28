@@ -32,6 +32,7 @@ const togglerRef = ref(null);
 const togglerId = generateUUID();
 const panelRef = ref(null);
 const panelId = generateUUID();
+const firstFocusableElement = ref(null);
 const menuOpen = ref(false);
 const isTouchSensitive = inject('isTouchMode', false);
 const parentFocusTrap = inject('parentFocusTrap', null);
@@ -43,7 +44,7 @@ const { activate: activateFocusTrap, deactivate: deactivateFocusTrap } = useFocu
   clickOutsideDeactivates: true,
 });
 
-function openMenu({ focus = 'first' } = {}) {
+function openMenu({ source = 'default', focus = 'first' } = {}) {
   if (props.disabled) {
     return;
   }
@@ -57,7 +58,11 @@ function openMenu({ focus = 'first' } = {}) {
 
     switch (focus) {
       case 'first':
-        focusFirstElementInContainer(panelRef.value);
+        firstFocusableElement.value = focusFirstElementInContainer(panelRef.value);
+
+        if (source !== 'keyboard') {
+          panelRef.value?.focus();
+        }
         break;
       case 'last':
         focusLastElementInContainer(panelRef.value);
@@ -145,17 +150,74 @@ function handleTogglerClick(e) {
   }
 }
 
-const handlePanelTab = (e) => {
-  closeMenu();
-
-  if (e.shiftKey) {
-    togglerRef.value.focus();
-  } else {
-    focusNextFocusableElement(togglerRef.value);
+function handleTogglerKeyup(e) {
+  switch (e.key) {
+    case ' ':
+    case 'Enter':
+    case 'ArrowDown':
+      openMenu({ source: 'keyboard' });
+      break;
+    case 'ArrowUp':
+      openMenu({ source: 'keyboard', focus: 'last' });
+      break;
+    default:
+      break;
   }
-};
+}
 
-function handleActionClick(id, value = undefined) {
+function handlePanelKeydown(e) {
+  switch (e.key) {
+    case 'Tab':
+      closeMenu();
+      if (e.shiftKey) {
+        togglerRef.value.focus();
+      } else {
+        focusNextFocusableElement(togglerRef.value);
+      }
+      break;
+    default:
+      break;
+  }
+}
+
+function handlePanelKeyup(e) {
+  switch (e.key) {
+    case ' ':
+    case 'Enter':
+      if (document.activeElement === panelRef.value) {
+        firstFocusableElement.value?.click();
+      } else if (panelRef.value?.contains(document.activeElement)) {
+        document.activeElement.click();
+      }
+      break;
+    case 'ArrowDown':
+      if (document.activeElement === panelRef.value) {
+        firstFocusableElement.value?.focus();
+      }
+      focusNextElementInContainer(panelRef.value);
+      break;
+    case 'ArrowUp':
+      focusPreviousElementInContainer(panelRef.value);
+      break;
+    case 'Home':
+      focusFirstElementInContainer(panelRef.value);
+      break;
+    case 'End':
+      focusLastElementInContainer(panelRef.value);
+      break;
+    case 'Escape':
+      closeMenu({ source: 'keyboard' });
+      break;
+    default:
+      break;
+  }
+}
+
+function handleActionClick(id, { value = undefined, close = false, event = undefined } = {}) {
+  if (close) {
+    closeMenu({ source: event?.detail === 0 ? 'keyboard' : 'mouse' });
+  }
+
   emits('actionClick', id, value);
 }
 
@@ -194,13 +256,12 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         :aria-controls="panelId"
         :aria-disabled="disabled"
         :tabindex="disabled ? null : tabindex || 0"
-        @keyup.enter="openMenu"
-        @keyup.space="openMenu"
-        @keydown.space.prevent
-        @keydown.down.prevent="openMenu"
-        @keydown.up.prevent="openMenu({ focus: 'last' })"
         @click="handleTogglerClick"
         @contextmenu="handleTogglerClick"
+        @keydown.space.prevent
+        @keydown.down.prevent
+        @keydown.up.prevent
+        @keyup.prevent="handleTogglerKeyup"
       >
         <LxButton
           v-if="!$slots.default && mainButton"
@@ -232,13 +293,10 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           ref="panelRef"
           class="lx-dropdown-panel-wrapper"
           role="menu"
+          tabindex="-1"
           :aria-labelledby="togglerId"
-          @keydown.esc="closeMenu({ source: 'keyboard' })"
-          @keydown.down.prevent="focusNextElementInContainer(panelRef)"
-          @keydown.up.prevent="focusPreviousElementInContainer(panelRef)"
-          @keydown.home.prevent="focusFirstElementInContainer(panelRef)"
-          @keydown.end.prevent="focusLastElementInContainer(panelRef)"
-          @keydown.tab.prevent="handlePanelTab"
+          @keydown.prevent="handlePanelKeydown"
+          @keyup.prevent="handlePanelKeyup"
         >
           <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel" role="group">
             <div
@@ -267,7 +325,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     :size="isTouchSensitive ? 'm' : 's'"
                     @update:modelValue="
                       (newValue) => {
-                        handleActionClick(action?.id, newValue);
+                        handleActionClick(action?.id, { value: newValue });
                       }
                     "
                     @click="preventClose"
@@ -335,7 +393,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     :size="isTouchSensitive ? 'm' : 's'"
                     @update:modelValue="
                       (newValue) => {
-                        handleActionClick(action?.id, newValue);
+                        handleActionClick(action?.id, { value: newValue });
                       }
                     "
                     @click="preventClose"
@@ -360,7 +418,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :badgeIcon="action?.badgeIcon"
                   :badgeTitle="action?.badgeTitle"
                   :href="action?.href"
-                  @click="handleActionClick(action?.id)"
+                  @click="handleActionClick(action?.id, { close: true, event: $event })"
                 />
               </div>
             </div>

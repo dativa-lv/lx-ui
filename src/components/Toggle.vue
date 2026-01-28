@@ -154,7 +154,6 @@ onMounted(() => {
         :aria-label="accessibleLabel || (!(size !== 's' && hasSlots) ? tooltipValue : null)"
         :aria-labelledby="accessibleLabel ? null : labelledBy"
         tabindex="0"
-        @keyup.enter="toggleValue"
       />
       <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->

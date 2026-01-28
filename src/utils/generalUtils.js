@@ -82,16 +82,18 @@ export function focusNextFocusableElement(startElement, forward = true) {
 
 export function focusFirstElementInContainer(container) {
   if (!container) {
-    return;
+    return null;
   }
 
   const focusableElements = findFocusableElements(container);
 
   if (focusableElements.length === 0) {
-    return;
+    return null;
   }
 
   focusableElements[0]?.focus();
+
+  return focusableElements[0];
 }
 
 export function focusLastElementInContainer(container) {

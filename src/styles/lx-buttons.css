@@ -2217,6 +2217,10 @@ a.lx-button.lx-button-ghost svg {
 
 /* LxDropDownMenu action definitions */
 
+.lx .lx-layout .popper > .lx-dropdown-panel-wrapper:focus-visible {
+  outline: none;
+}
+
 .lx .lx-layout .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group{
   border-bottom: 1px solid var(--color-chrome)
 }

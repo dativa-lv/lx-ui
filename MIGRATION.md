@@ -299,6 +299,50 @@ The `size` prop values have been updated to use short, standardized identifiers.
 - `big` → `l`
 
 
+#### LxDropDownMenu
+
+`openMenu` function signature change:
+
+```js
+// Before:
+openMenu(source?: string)
+// Now:
+openMenu(options?: { source?: string, focus?: string })
+```
+
+Examples:
+
+```js
+// Before:
+openMenu('mouse')
+// Now:
+openMenu({ source: 'keyboard', focus: 'last' })
+```
+
+`closeMenu` function signature change:
+
+```js
+// Before:
+closeMenu(source?: string)
+// Now:
+closeMenu(options?: { source?: string })
+```
+
+Examples:
+
+```js
+// Before:
+closeMenu('keyboard')
+// Now:
+closeMenu({ source: 'keyboard' })
+```
+
+
+#### LxButton
+
+The `kind` prop now accepts new value `menuitem`, which should be used for buttons defined inside LxDropDownMenu.
+
+
 #### Builders
 
 All previous listed changes affects builders aswell.
