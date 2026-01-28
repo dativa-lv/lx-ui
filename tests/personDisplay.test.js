@@ -350,6 +350,7 @@ describe('LxPersonDisplay', () => {
       expect(displayItems).toEqual([
         { firstName: 'John', lastName: 'Doe' },
         { firstName: 'Jane', lastName: 'Doe' },
+        { firstName: 'Jim', lastName: 'Doe' },
       ]);
     });
 

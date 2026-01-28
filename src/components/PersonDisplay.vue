@@ -192,22 +192,24 @@ const iconSet = computed(() => {
 });
 
 const filteredValues = computed(() => {
-  if (!Array.isArray(props.value) || props.value.length === 0) return '';
-  const filteredItems = props.value.filter(
+  if (!Array.isArray(props.value)) return [];
+
+  return props.value.filter(
     (item) =>
       (item[props.firstNameAttribute] && item[props.lastNameAttribute]) ||
       item[props.nameAttribute] ||
       item[props.description]
   );
-  return filteredItems;
 });
 
 const displayItems = computed(() => {
-  if (!Array.isArray(filteredValues.value) || filteredValues.value.length === 0) return '';
-  if (filteredValues.value.length <= props.maxLength) {
-    return filteredValues.value;
+  const items = filteredValues.value;
+
+  if (props.maxLength === 0 || items.length <= props.maxLength) {
+    return items;
   }
-  return filteredValues.value.slice(0, props.maxLength - 1);
+
+  return items.slice(0, props.maxLength);
 });
 
 const tooltipItems = computed(() => {
@@ -305,6 +307,7 @@ defineExpose({ focus });
             <LxIcon value="user" :size="size" />
           </div>
         </template>
+
         <div
           v-else-if="name || description"
           class="lx-person-icon-display"
@@ -325,7 +328,7 @@ defineExpose({ focus });
           <p class="lx-data lx-person-display-name">
             {{ name }}
           </p>
-          <p class="lx-description" v-if="showDescription">{{ description }}</p>
+          <p v-if="showDescription" class="lx-description">{{ description }}</p>
         </template>
       </div>
 
@@ -367,8 +370,8 @@ defineExpose({ focus });
         </template>
         <div class="overflow" v-if="displayItems.length < filteredValues.length">
           <p>
-            <span :class="[{ plus: filteredValues.length - maxLength + 1 >= 10 }]">+</span
-            >{{ filteredValues.length - maxLength + 1 }}
+            <span :class="[{ plus: filteredValues.length - maxLength >= 10 }]">+</span
+            >{{ filteredValues.length - maxLength }}
           </p>
         </div>
       </div>
