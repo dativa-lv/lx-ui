@@ -92,14 +92,14 @@ function preventClose(event) {
 const groupedItems = computed(() => {
   const res = props.actionDefinitions.reduce((acc, action) => {
     if (action?.kind === 'main') return acc; // skip 'main' items
-    if (!action?.group) {
+    if (!action?.groupId) {
       if (!acc.lx_group) {
         acc.lx_group = [];
       }
       acc.lx_group.push(action);
     } else {
-      if (!acc[action?.group]) acc[action?.group] = [];
-      acc[action?.group].push(action);
+      if (!acc[action?.groupId]) acc[action?.groupId] = [];
+      acc[action?.groupId].push(action);
     }
 
     if (action?.kind === 'toggle' && action?.value === undefined) {

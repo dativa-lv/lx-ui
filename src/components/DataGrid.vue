@@ -2451,7 +2451,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       :description="displayTexts.noItemsDescription"
       :icon="emptyStateIcon"
       :actionDefinitions="emptyStateActionDefinitions"
-      @empty-state-action-click="emptyStateActionClicked"
+      @actionClick="emptyStateActionClicked"
     />
 
     <LxAppendableList

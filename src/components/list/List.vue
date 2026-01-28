@@ -2384,7 +2384,7 @@ const toolbarActions = computed(() => {
         :description="displayTexts?.noItemsDescription"
         :icon="emptyStateIcon"
         :actionDefinitions="emptyStateActionDefinitions"
-        @emptyStateActionClick="handleEmptyStateActionClick"
+        @actionClick="handleEmptyStateActionClick"
       />
 
       <div

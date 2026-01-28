@@ -320,7 +320,7 @@ onMounted(async () => {
                     ? [{ id: 'reset', name: displayTexts.continueScanning }]
                     : [{ id: 'refresh', name: displayTexts.reloadPage, icon: 'refresh' }]
                 "
-                @emptyStateActionClick="emptyStateAction"
+                @actionClick="emptyStateAction"
               />
             </div>
           </div>

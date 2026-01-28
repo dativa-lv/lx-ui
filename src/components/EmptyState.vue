@@ -5,7 +5,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 
-const emits = defineEmits(['emptyStateActionClick']);
+const emits = defineEmits(['actionClick']);
 
 const props = defineProps({
   label: { type: String, default: '' },
@@ -22,7 +22,7 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 function handleActionClick(actionName) {
-  emits('emptyStateActionClick', actionName);
+  emits('actionClick', actionName);
 }
 </script>
 

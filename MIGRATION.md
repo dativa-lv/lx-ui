@@ -188,6 +188,19 @@ The component API has been updated to improve naming consistency and clarity.
 - `actionClicked` → `actionClick`
 
 
+#### LxEmptyState
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Event renames**
+- `emptyStateActionClick` → `actionClick`
+
+
+#### LxDropDownMenu
+
+LxDropDownMenu `actionDefinitions` `group` attribute has been renamed to `groupId`.
+
+
 #### LxAutoComplete, LxList, LxDataBlock, LxDataGrid, LxAppendableList, LxVisualPicker, LxFormBuilder schema
 
 The component API has been updated to improve naming consistency and clarity.

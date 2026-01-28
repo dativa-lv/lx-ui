@@ -336,7 +336,7 @@ onUnmounted(() => {
         icon="invalid"
         :description="displayTexts.errorDescription"
         :actionDefinitions="[{ id: 'refresh', name: displayTexts.reloadPage, icon: 'refresh' }]"
-        @emptyStateActionClick="handleActionClick"
+        @actionClick="handleActionClick"
       />
     </div>
     <div class="lx-camera-frame" v-show="!error && !loading">

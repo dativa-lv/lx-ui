@@ -471,10 +471,26 @@ function prevStep() {
   }
 }
 
+const hasNoKind = computed(() =>
+  props.actionDefinitions?.every(
+    (action) =>
+      action.kind !== 'primary' &&
+      action.kind !== 'secondary' &&
+      action.kind !== 'tertiary' &&
+      action.kind !== 'additional'
+  )
+);
+
 const primaryButtons = computed(() => {
   if (indexTypeRef.value === 'wizard') {
     return actionDefinitionsWizardSteps.value;
   }
+
+  // If no actions have kind attribute, treat first action as primary
+  if (hasNoKind.value && props.actionDefinitions?.length > 0) {
+    return [props.actionDefinitions[0]];
+  }
+
   const ret = props.actionDefinitions?.filter((x) => x.kind === 'primary');
   if (ret?.length > 2) {
     return ret.slice(0, 2);
@@ -497,6 +513,23 @@ const tertiaryButtons = computed(() =>
 
 const additionalButtons = computed(() =>
   props.actionDefinitions?.filter((x) => x.kind === 'additional')
+);
+
+const additionalButtonsGrouped = computed(() =>
+  additionalButtons.value.reduce((acc, action) => {
+    if (!action?.groupId) {
+      if (!acc.lx_group) {
+        acc.lx_group = [];
+      }
+      acc.lx_group.push(action);
+    } else {
+      if (!acc[action?.groupId]) {
+        acc[action?.groupId] = [];
+      }
+      acc[action?.groupId].push(action);
+    }
+    return acc;
+  }, {})
 );
 
 const hasPreHeaderInfoSlot = computed(
@@ -1038,27 +1071,32 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
               {{ displayTexts.additionalActions }}
             </p>
 
-            <div class="lx-button-set">
-              <LxButton
-                v-for="button in additionalButtons"
-                :id="`${id}-action-${button.id}`"
-                :key="button.id"
-                :label="button.name || button.label"
-                :title="button.title || button.tooltip"
-                :icon="button.icon"
-                :icon-set="button.iconSet"
-                :loading="button.loading"
-                :busy="button.busy"
-                :destructive="button.destructive"
-                :disabled="button.disabled"
-                :active="button.active"
-                :badge="button.badge"
-                :badge-type="button.badgeType"
-                :badge-title="button.badgeTitle"
-                :badge-icon="button.badgeIcon"
-                kind="ghost"
-                @click="clickHandler(button.id)"
-              />
+            <div
+              v-for="(group, groupName) in additionalButtonsGrouped"
+              :key="groupName"
+              class="lx-button-set lx-dropdown-menu-group lx-dropdown-menu-no-panel"
+            >
+              <div v-for="button in group" :key="button?.id">
+                <LxButton
+                  :id="`${id}-action-${button.id}`"
+                  :key="button.id"
+                  :label="button.name || button.label"
+                  :title="button.title || button.tooltip"
+                  :icon="button.icon"
+                  :iconSet="button.iconSet"
+                  :loading="button.loading"
+                  :busy="button.busy"
+                  :destructive="button.destructive"
+                  :disabled="button.disabled"
+                  :active="button.active"
+                  :badge="button.badge"
+                  :badgeType="button.badgeType"
+                  :badgeTitle="button.badgeTitle"
+                  :badgeIcon="button.badgeIcon"
+                  kind="ghost"
+                  @click="clickHandler(button.id)"
+                />
+              </div>
             </div>
 
             <div
