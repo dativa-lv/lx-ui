@@ -40,7 +40,6 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasReducedAnimations: { type: Boolean, default: false },
   hasReducedTransparency: { type: Boolean, default: false },
-  hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
@@ -66,6 +65,7 @@ const props = defineProps({
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
   megaMenuHasShowAll: { type: Boolean, default: false },
+  showPrimaryMegaMenuItems: { type: Boolean, default: true },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
 
@@ -101,15 +101,15 @@ const textsDefault = {
   alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
   contextPersonsButtonLabel: 'Konteksta personas',
   alternativeProfilesButtonLabel: 'Alternatīvie profili',
-  themeTitle: 'Noformējuma izvēle',
-  themeAuto: 'Automātiskais režīms',
-  themeLight: 'Gaišais režīms',
-  themeDark: 'Tumšais režīms',
-  themeContrast: 'Kontrastais režīms',
-  animations: 'Samazināt kustības',
-  transparency: 'Samazināt caurspīdīgumu',
+  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeAuto: 'Automātisks',
+  themeLight: 'Gaišs',
+  themeDark: 'Tumšs',
+  themeContrast: 'Kontrastains',
+  animations: 'Animācijas',
+  transparency: 'Caurspīdīgums',
   fonts: 'Iekārtas fonti',
-  touchMode: 'Skārienjūtīgs režīms',
+  touchMode: 'Skārienvadība',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   reduceTransparencyOff: 'Nē',
@@ -162,12 +162,12 @@ const emits = defineEmits([
   'update:theme',
   'update:hasReducedAnimations',
   'update:hasReducedTransparency',
-  'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
   'update:customButtonOpened',
   'customButtonClick',
   'toggleSpotlight',
+  'settingsClicked',
 ]);
 
 const alternativeProfilesModal = ref();
@@ -281,15 +281,6 @@ const transparencyModel = computed({
   },
   set(value) {
     emits('update:hasReducedTransparency', value);
-  },
-});
-
-const deviceFontsModel = computed({
-  get() {
-    return props.hasDeviceFonts;
-  },
-  set(value) {
-    emits('update:hasDeviceFonts', value);
   },
 });
 
@@ -556,6 +547,7 @@ provide('insideHeader', insideHeader);
         :hasMegaMenu="hasMegaMenu"
         :megaMenuItems="megaMenuItems"
         :megaMenuHasShowAll="megaMenuHasShowAll"
+        :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
         :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
         :hasCustomButton="hasCustomButton"
         :customButtonIcon="customButtonIcon"
@@ -568,7 +560,6 @@ provide('insideHeader', insideHeader);
         v-model:theme="themeModel"
         v-model:hasReducedAnimations="animationsModel"
         v-model:hasReducedTransparency="transparencyModel"
-        v-model:hasDeviceFonts="deviceFontsModel"
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedContextPerson="selectedContextPersonModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
@@ -587,6 +578,7 @@ provide('insideHeader', insideHeader);
         @log-out="logOut"
         @customButtonClick="emits('customButtonClick')"
         @toggleSpotlight="emits('toggleSpotlight')"
+        @settingsClicked="emits('settingsClicked')"
         :texts="displayTexts"
       >
         <template #customButtonPanel v-if="$slots.customButtonPanel">
@@ -630,6 +622,7 @@ provide('insideHeader', insideHeader);
       :hasMegaMenu="hasMegaMenu"
       :megaMenuItems="megaMenuItems"
       :megaMenuHasShowAll="megaMenuHasShowAll"
+      :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
       :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
       v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
       :hasCustomButton="hasCustomButton"
@@ -644,7 +637,6 @@ provide('insideHeader', insideHeader);
       v-model:theme="themeModel"
       v-model:hasReducedAnimations="animationsModel"
       v-model:hasReducedTransparency="transparencyModel"
-      v-model:hasDeviceFonts="deviceFontsModel"
       v-model:isTouchSensitive="touchModeModel"
       v-model:selectedContextPerson="selectedContextPersonModel"
       :hasSpotlight="hasSpotlight"
@@ -661,6 +653,7 @@ provide('insideHeader', insideHeader);
       @log-out="logOut"
       @customButtonClick="emits('customButtonClick')"
       @toggleSpotlight="emits('toggleSpotlight')"
+      @settingsClicked="emits('settingsClicked')"
       :texts="displayTexts"
     >
       <template #customButtonPanel v-if="$slots.customButtonPanel">

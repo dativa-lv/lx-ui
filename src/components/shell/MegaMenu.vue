@@ -10,6 +10,7 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   items: { type: Array, default: () => [] },
   hasShowAll: { type: Boolean, default: false },
+  showPrimaryMegaMenuItems: { type: Boolean, default: true },
   groupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
   buttonVariant: { type: String, default: 'icon-only' },
@@ -136,7 +137,7 @@ watch(closeSignal, () => {
 
     <template v-slot:panel>
       <div class="lx-mega-menu-container" :id="id">
-        <ul class="primary-menu" role="group">
+        <ul v-if="showPrimaryMegaMenuItems" class="primary-menu" role="group">
           <li
             v-for="item in primaryItems"
             :key="item.id"

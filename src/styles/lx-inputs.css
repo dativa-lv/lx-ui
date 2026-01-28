@@ -3367,12 +3367,19 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-form-grid > .lx-main .lx-toggle-appearance,
 .lx-modal .lx-file-wrapper,
 .lx .lx-region .lx-toggle-appearance,
+.lx .lx-data-block .lx-toggle-appearance,
 .lx .lx-expander .lx-toggle-appearance,
 .lx .lx-modal .lx-toggle-appearance,
 .lx .lx-dropdown-panel-wrapper .lx-dropdown-panel .lx-toggle:not(:checked)
   + .lx-toggle-label-wrapper
   .lx-toggle-appearance {
   background-color: var(--color-region-2);
+}
+
+.lx-modal .lx-data-block .lx-toggle-appearance,
+.lx-modal .lx-expander .lx-toggle-appearance,
+.lx-form-grid > .lx-main .lx-data-block .lx-toggle-appearance {
+  background-color: var(--color-toggle-background-false);
 }
 
 .lx-file-wrapper.lx-invalid {

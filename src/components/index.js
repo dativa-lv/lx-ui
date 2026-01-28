@@ -102,5 +102,8 @@ export const LxDayInput = defineAsyncComponent(() => import('@/components/DayInp
 export const LxDrawPad = defineAsyncComponent(() => import('@/components/DrawPad.vue'));
 export const LxLogoDisplay = defineAsyncComponent(() => import('@/components/LogoDisplay.vue'));
 export const LxBadge = defineAsyncComponent(() => import('@/components/Badge.vue'));
+export const LxAccessibilitySettings = defineAsyncComponent(() =>
+  import('@/components/AccessibilitySettings.vue')
+);
 
 // Other components you plan to publish go here

@@ -1962,8 +1962,12 @@
 }
 
 .lx .lx-layout .lx-mega-menu-container .secondary-menu-group {
-  padding-top: 0.5rem;
+  padding-top: 0;
   padding-bottom: 0.5rem;
+}
+
+.lx .lx-layout .lx-mega-menu-container .primary-menu + .secondary-menu .secondary-menu-group {
+  padding-top: 0.5rem;
 }
 
 .lx .lx-layout .lx-mega-menu-container .secondary-menu-group:not(:last-child) {

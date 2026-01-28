@@ -165,14 +165,14 @@ const fastFilterDisplay = computed(() => {
       id: 'saveFilter',
       label: displayTexts.value.saveFilter,
       icon: 'save',
-      group: 'savedFilters',
+      groupId: 'savedFilters',
     };
 
     const editButton = {
       id: 'editFilter',
       label: displayTexts.value.editFilter,
       icon: 'edit',
-      group: 'savedFilters',
+      groupId: 'savedFilters',
     };
 
     return [saveButton, editButton, ...fastFilters];

@@ -28,7 +28,6 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasReducedAnimations: { type: Boolean, default: false },
   hasReducedTransparency: { type: Boolean, default: false },
-  hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
   hasLanguagePicker: { type: Boolean, default: false },
   languages: { type: Array, default: () => [] },
@@ -38,6 +37,7 @@ const props = defineProps({
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
   megaMenuHasShowAll: { type: Boolean, default: false },
+  showPrimaryMegaMenuItems: { type: Boolean, default: true },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
   hasLoginButton: { type: Boolean, default: false },
@@ -56,18 +56,15 @@ const textsDefault = {
   defaultBack: 'Atpakaļ',
   languagesTitle: 'Valodu izvēle',
   close: 'Aizvērt',
-  themeTitle: 'Noformējuma izvēle',
-  themeAuto: 'Automātiskais režīms',
-  themeLight: 'Gaišais režīms',
-  themeDark: 'Tumšais režīms',
-  themeContrast: 'Kontrastais režīms',
-  animations: 'Samazināt kustības',
-  fonts: 'Iekārtas fonti',
-  touchMode: 'Skārienjūtīgs režīms',
+  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeAuto: 'Automātisks',
+  themeLight: 'Gaišs',
+  themeDark: 'Tumšs',
+  themeContrast: 'Kontrastains',
+  animations: 'Animācijas',
+  touchMode: 'Skārienvadība',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
-  systemFontsOff: 'Nē',
-  systemFontsOn: 'Jā',
   touchModeOff: 'Nē',
   touchModeOn: 'Jā',
   overflowNavItems: 'Atvērt papildu izvēlni',
@@ -134,13 +131,13 @@ const emits = defineEmits([
   'update:theme',
   'update:hasReducedAnimations',
   'update:hasReducedTransparency',
-  'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'logInClick',
   'navClick',
   'update:selectedMegaMenuItem',
   'megaMenuShowAllClick',
   'toggleSpotlight',
+  'settingsClicked',
 ]);
 
 function loginClicked() {
@@ -188,15 +185,6 @@ const transparencyModel = computed({
   },
   set(value) {
     emits('update:hasReducedTransparency', value);
-  },
-});
-
-const deviceFontsModel = computed({
-  get() {
-    return props.hasDeviceFonts;
-  },
-  set(value) {
-    emits('update:hasDeviceFonts', value);
   },
 });
 
@@ -325,10 +313,10 @@ provide('insideNavBar', insideNavBar);
         v-model:theme="themeModel"
         v-model:hasReducedAnimations="animationsModel"
         v-model:hasReducedTransparency="transparencyModel"
-        v-model:hasDeviceFonts="deviceFontsModel"
         v-model:isTouchSensitive="touchModeModel"
         :texts="displayTexts"
         @toggleSpotlight="toggleSpotlight"
+        @settingsClicked="emits('settingsClicked')"
       />
     </ul>
 
@@ -355,6 +343,7 @@ provide('insideNavBar', insideNavBar);
           :items="megaMenuItems"
           :groupDefinitions="megaMenuGroupDefinitions"
           :hasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :texts="displayTexts"
           buttonVariant="default"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"

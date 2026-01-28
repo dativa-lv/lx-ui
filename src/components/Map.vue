@@ -350,6 +350,65 @@ onUnmounted(() => {
 });
 
 provide('insideFullscreenMap', insideFullscreenMap);
+
+function handleOptionClick(id, value) {
+  const base = props.baseLayerDefinitions.find((layer) => layer.id === value);
+  if (base) {
+    selectBaseLayer(value);
+    return;
+  }
+
+  const overlay = allOverlayObj.value.find((layer) => layer.id === id);
+  if (overlay) {
+    overlay.show = value;
+    updateSelectedOverlay();
+  }
+}
+
+const additionalOptions = computed(() => {
+  const actions = [];
+
+  if (props.baseLayerDefinitions?.length > 1) {
+    props.baseLayerDefinitions.forEach((item) => {
+      actions.push({
+        id: item?.id,
+        groupId: 'baseLayers',
+        selected: item?.id === selectedBaseLayer?.value,
+        name: item?.name,
+        icon: 'map',
+      });
+    });
+  }
+
+  if (props.overlayLayerDefinitions?.length > 0) {
+    allOverlayObj.value.forEach((layer) => {
+      actions.push({
+        id: 'overlay',
+        kind: 'toggle',
+        label: layer?.name,
+        value: layer?.show,
+        groupId: 'overlayLayers',
+      });
+    });
+  }
+
+  return actions;
+});
+
+const additionalOptionsGroups = computed(() => [
+  {
+    id: 'baseLayers',
+    kind: 'tags',
+  },
+  {
+    id: 'overlayLayers',
+    label: displayTexts.value.overlayLayers,
+  },
+  {
+    id: 'grayscale',
+    label: displayTexts.value.grayscale,
+  },
+]);
 </script>
 <template>
   <LxLoaderView :loading="loadingLib" label="">
@@ -402,7 +461,11 @@ provide('insideFullscreenMap', insideFullscreenMap);
                 :label="displayTexts.currentLocation"
                 @click="centerLocation"
               />
-              <LxDropDownMenu>
+              <LxDropDownMenu
+                :actionDefinitions="additionalOptions"
+                :groupDefinitions="additionalOptionsGroups"
+                @actionClick="handleOptionClick"
+              >
                 <LxButton
                   icon="overflow-menu"
                   kind="ghost"
@@ -411,34 +474,9 @@ provide('insideFullscreenMap', insideFullscreenMap);
                   tabindex="-1"
                 />
                 <template #clickSafePanel>
-                  <div class="lx-map-menu">
-                    <p class="lx-menu-label">{{ displayTexts.grayscale }}:</p>
+                  <div class="lx-button-set lx-dropdown-menu-group lx-map-slider">
+                    <div class="lx-label">{{ displayTexts.grayscale }}</div>
                     <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" />
-                    <div v-if="baseLayerDefinitions?.length > 1">
-                      <hr />
-                      <p class="lx-menu-label">{{ displayTexts.baseLayers }}:</p>
-                      <div class="lx-button-set">
-                        <LxButton
-                          v-for="layer in baseLayerDefinitions"
-                          :key="layer?.id"
-                          :label="layer?.name"
-                          kind="ghost"
-                          :active="selectedBaseLayer === layer?.id ? true : false"
-                          @click="selectBaseLayer(layer?.id)"
-                        />
-                      </div>
-                    </div>
-                    <div v-if="overlayLayerDefinitions?.length > 0">
-                      <hr />
-                      <p class="lx-menu-label">{{ displayTexts.overlayLayers }}:</p>
-                      <div class="overlay-layer" v-for="layer in allOverlayObj" :key="layer.id">
-                        <LxToggle
-                          v-model="layer.show"
-                          @update:model-value="updateSelectedOverlay()"
-                        />
-                        <p>{{ layer?.name }}</p>
-                      </div>
-                    </div>
                   </div>
                 </template>
               </LxDropDownMenu>

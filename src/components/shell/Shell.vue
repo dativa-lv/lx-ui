@@ -48,6 +48,8 @@ const themeModel = useColorMode({
     none: '',
   },
 });
+provide('theme', themeModel);
+
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 
 const emits = defineEmits([
@@ -81,6 +83,7 @@ const emits = defineEmits([
   'navClick',
   'customButtonClick',
   'spotlightShowMore',
+  'settingsClicked',
 ]);
 
 const props = defineProps({
@@ -115,7 +118,7 @@ const props = defineProps({
   notifications: { type: Array, default: () => [] },
 
   hasThemePicker: { type: Boolean, default: false },
-  availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
+  availableThemes: { type: Array, default: () => ['auto', 'light', 'contrast', 'dark'] },
   hasReducedAnimations: { type: Boolean, default: null },
   hasReducedTransparency: { type: Boolean, default: null },
   hasDeviceFonts: { type: Boolean, default: null },
@@ -161,6 +164,7 @@ const props = defineProps({
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
   megaMenuHasShowAll: { type: Boolean, default: false },
+  showPrimaryMegaMenuItems: { type: Boolean, default: true },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
 
@@ -211,15 +215,15 @@ const textsDefault = {
   descriptionMinutes: 'Līdz sesijas beigām ir palikušas {count} minūtes',
   descriptionMinutesSmall: 'un {count} sekundes',
   idleDescription: 'Līdz sesijas beigām ir palikušas {count} sekundes',
-  themeTitle: 'Noformējuma izvēle',
-  themeAuto: 'Automātiskais režīms',
-  themeLight: 'Gaišais režīms',
-  themeDark: 'Tumšais režīms',
+  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeAuto: 'Automātisks',
+  themeLight: 'Gaišs',
+  themeDark: 'Tumšs',
   themeContrast: 'Kontrastainais režīms',
-  animations: 'Samazināt kustības',
-  transparency: 'Samazināt caurspīdīgumu',
+  animations: 'Animācijas',
+  transparency: 'Caurspīdīgums',
   fonts: 'Iekārtas fonti',
-  touchMode: 'Skārienjūtīgs režīms',
+  touchMode: 'Skārienvadība',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   reduceTransparencyOff: 'Nē',
@@ -303,7 +307,7 @@ const selectedLanguageModel = computed({
     if (!props.selectedLanguage) {
       emits('languageChange', value);
     }
-    if (props.languages.find((item) => item.id === value.id)) {
+    if (props.languages.find((item) => item?.id === value?.id)) {
       emits('update:selected-language', value);
     } else {
       lxDevUtils.log(
@@ -349,11 +353,17 @@ const deviceFontsModel = computed({
   },
 });
 
+provide('hasDeviceFonts', deviceFontsModel);
+
 watch(
   () => deviceFontsModel.value,
   (newValue) => {
     applyDeviceFonts(newValue);
   }
+);
+
+const animationsStorageKey = ref(
+  `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-reduced-animations`
 );
 
 const defaultReducedAnimations = ref(false);
@@ -372,7 +382,32 @@ const animationsModel = computed({
     defaultReducedAnimations.value = value;
   },
 });
+
 provide('hasReducedAnimations', animationsModel);
+
+function animationModeChange(newValue, providedStorageKey) {
+  const element = document.querySelector('.lx');
+
+  const storageKey = providedStorageKey || animationsStorageKey.value;
+
+  if (newValue) {
+    if (element) {
+      element.classList.add('lx-no-animations');
+    }
+  } else if (element) {
+    element.classList.remove('lx-no-animations');
+  }
+
+  localStorage.setItem(storageKey, JSON.stringify(newValue));
+  defaultReducedAnimations.value = newValue;
+}
+
+watch(
+  () => animationsModel.value,
+  (newValue) => {
+    animationModeChange(newValue);
+  }
+);
 
 const transparencyStorageKey = ref(
   `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-reduced-transparency`
@@ -396,34 +431,7 @@ const transparencyModel = computed({
   },
 });
 
-const animationsStorageKey = ref(
-  `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-reduced-animations`
-);
-
-function animationModeChange(newValue, providedStorageKey) {
-  const element = document.querySelector('.lx');
-
-  const storageKey = providedStorageKey || animationsStorageKey.value;
-
-  if (newValue) {
-    if (element) {
-      element.classList.add('lx-no-animations');
-    }
-  } else if (element) {
-    element.classList.remove('lx-no-animations');
-  }
-
-  localStorage.setItem(storageKey, JSON.stringify(newValue));
-}
-
-watch(
-  () => animationsModel.value,
-  (newValue) => {
-    animationModeChange(newValue);
-  }
-);
-
-const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
+provide('hasReducedTransparency', transparencyModel);
 
 function transparencyModeChange(newValue, providedStorageKey) {
   const element = document.querySelector('.lx');
@@ -448,6 +456,7 @@ watch(
   }
 );
 
+const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
 const touchModeToggle = ref(false);
 
 const touchModeStorageKey = ref(
@@ -1125,6 +1134,11 @@ function closeEverything() {
   closeSignal.value = !closeSignal.value;
 }
 
+function handleSettingsClick() {
+  emits('settingsClicked');
+  closeEverything();
+}
+
 defineExpose({ spotlightStart, spotlightEnd, closeEverything });
 </script>
 <template>
@@ -1159,6 +1173,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :hasCustomButton="hasCustomButton"
           :customButtonIcon="customButtonIcon"
           :customButtonBadge="customButtonBadge"
@@ -1179,7 +1194,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:theme="themeModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           @language-change="languageChange"
           @help-click="helpClicked"
@@ -1189,6 +1203,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @alternativeProfileChange="alternativeProfileChange"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="emits('settingsClicked')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1294,6 +1309,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :hasCustomButton="hasCustomButton"
           :customButtonIcon="customButtonIcon"
           :customButtonBadge="customButtonBadge"
@@ -1314,7 +1330,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:theme="themeModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           @language-change="languageChange"
           @help-click="helpClicked"
@@ -1324,6 +1339,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @alternativeProfileChange="alternativeProfileChange"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="emits('settingsClicked')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1450,6 +1466,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :hasCustomButton="hasCustomButton"
           :customButtonIcon="customButtonIcon"
           :customButtonBadge="customButtonBadge"
@@ -1464,7 +1481,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:theme="themeModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
@@ -1487,6 +1503,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="emits('settingsClicked')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1514,7 +1531,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :selectedNavItems="navItemsSelected"
           :texts="displayTexts"
@@ -1526,11 +1542,13 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           @log-in-click="loginClicked"
           @nav-toggle="navToggle"
           @navClick="navClick"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="handleSettingsClick"
         />
       </nav>
       <main ref="main" class="lx-main">
@@ -1616,6 +1634,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :hasCustomButton="hasCustomButton"
           :customButtonIcon="customButtonIcon"
           :customButtonBadge="customButtonBadge"
@@ -1634,7 +1653,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:theme="themeModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
@@ -1653,6 +1671,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="emits('settingsClicked')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1681,12 +1700,12 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :selectedNavItems="navItemsSelected"
           :texts="displayTexts"
@@ -1697,6 +1716,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @navClick="navClick"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="emits('settingsClicked')"
         />
       </nav>
       <ul class="lx-latvijalv-alert-list" v-if="alerts?.length > 0 && !hasAlerts">
@@ -1839,6 +1859,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @contextPersonChange="contextPersonChange"
           @alternativeProfileChange="alternativeProfileChange"
           @navClick="navClick"
+          @settingsClicked="emits('settingsClicked')"
           :texts="displayTexts"
         />
       </header>
@@ -1875,6 +1896,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @log-out="logOut"
           @navClick="navClick"
           @nav-toggle="navToggle"
+          @settingsClicked="emits('settingsClicked')"
         />
       </nav>
 
@@ -2007,7 +2029,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           @language-change="languageChange"
           @alert-item-click="alertItemClicked"
@@ -2022,6 +2043,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @navClick="navClick"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="emits('settingsClicked')"
           :texts="displayTexts"
         >
           <template #customButtonPanel v-if="$slots.customButtonPanel">
@@ -2112,7 +2134,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:theme="themeModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           @customButtonClick="emits('customButtonClick')"
           @language-change="languageChange"
@@ -2125,6 +2146,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @navClick="navClick"
           @nav-toggle="navToggle"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="emits('settingsClicked')"
         >
           <template #customButtonPanel v-if="$slots.customButtonPanel">
             <slot name="customButtonPanel" />
@@ -2259,12 +2281,12 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:theme="themeModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           @mega-menu-show-all-click="triggerShowAllClick"
           @language-change="languageChange"
@@ -2277,6 +2299,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @contextPersonChange="contextPersonChange"
           @alternativeProfileChange="alternativeProfileChange"
+          @settingsClicked="emits('settingsClicked')"
           :texts="displayTexts"
         />
       </header>
@@ -2330,6 +2353,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :megaMenuItems="megaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :selectedNavItems="navItemsSelected"
           :pageLabel="pageLabel"
           :pageBackLabel="pageBackLabel"
@@ -2432,6 +2456,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           :hasCustomButton="hasCustomButton"
           :customButtonIcon="customButtonIcon"
@@ -2444,7 +2469,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:theme="themeModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
@@ -2463,6 +2487,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @alternativeProfileChange="alternativeProfileChange"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="emits('settingsClicked')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -2483,7 +2508,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasReducedAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :userInfo="userInfo"
           :nav-items="navItems"
@@ -2498,6 +2522,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :has-login-button="hasLoginButton"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
@@ -2506,6 +2531,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @navClick="navClick"
           @toggleSpotlight="toggleSpotlight"
+          @settingsClicked="handleSettingsClick"
         />
       </nav>
 

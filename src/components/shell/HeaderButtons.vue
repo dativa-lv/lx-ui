@@ -32,7 +32,6 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasReducedAnimations: { type: Boolean, default: false },
   hasReducedTransparency: { type: Boolean, default: false },
-  hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
@@ -48,6 +47,7 @@ const props = defineProps({
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
   megaMenuHasShowAll: { type: Boolean, default: false },
+  showPrimaryMegaMenuItems: { type: Boolean, default: true },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
 
@@ -82,21 +82,20 @@ const textsDefault = {
   languagesTitle: 'Valodu izvēle',
   contextPersonsButtonLabel: 'Konteksta personas',
   alternativeProfilesButtonLabel: 'Alternatīvie profili',
-  themeTitle: 'Noformējuma izvēle',
-  themeAuto: 'Automātiskais režīms',
-  themeLight: 'Gaišais režīms',
-  themeDark: 'Tumšais režīms',
-  themeContrast: 'Kontrastais režīms',
-  animations: 'Samazināt kustības',
-  transparency: 'Samazināt caurspīdīgumu',
-  fonts: 'Iekārtas fonti',
-  touchMode: 'Skārienjūtīgs režīms',
+  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeAuto: 'Automātisks',
+  themeLight: 'Gaišs',
+  themeDark: 'Tumšs',
+  themeContrast: 'Kontrastains',
+  animations: 'Animācijas',
+  transparency: 'Caurspīdīgums',
+  touchMode: 'Skārienvadība',
+  customizeSettings: 'Pielāgot iestatījumus',
+  accessibilityTools: 'Piekļūstamības rīki',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   reduceTransparencyOff: 'Nē',
   reduceTransparencyOn: 'Jā',
-  systemFontsOff: 'Nē',
-  systemFontsOn: 'Jā',
   touchModeOff: 'Nē',
   touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
@@ -143,18 +142,18 @@ const emits = defineEmits([
   'update:theme',
   'update:hasReducedAnimations',
   'update:hasReducedTransparency',
-  'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
   'update:customButtonOpened',
   'customButtonClick',
   'toggleSpotlight',
+  'settingsClicked',
 ]);
 
 const windowSize = useWindowSize();
 const windowWidth = computed(() => windowSize.width.value);
 
-const themeIcon = ref('theme');
+const themeIcon = ref('accessibility');
 const themeMenu = ref(null);
 const languageMenu = ref(null);
 const alertMenu = ref(null);
@@ -173,7 +172,7 @@ onMounted(() => {
   if (props.mode === 'cover-digives-lite') {
     themeIcon.value = 'theme-alternative';
   } else {
-    themeIcon.value = 'theme';
+    themeIcon.value = 'accessibility';
   }
 });
 
@@ -233,8 +232,8 @@ function logOut() {
   emits('log-out');
 }
 
-function languageChange(id) {
-  const language = props.languages.find((lang) => lang?.id === id);
+function languageChange(_id, action) {
+  const language = props.languages.find((lang) => lang?.id === action);
   selectedLanguageModel.value = language;
 }
 
@@ -277,7 +276,7 @@ function themeChange(theme) {
     if (props.mode === 'cover-digives-lite') {
       themeIcon.value = 'theme-alternative';
     } else {
-      themeIcon.value = 'theme';
+      themeIcon.value = 'accessibility';
     }
   }, 1000);
   emits('update:theme', theme);
@@ -337,17 +336,6 @@ const alertsCount = computed(() => {
   return String(props.alertCount);
 });
 
-const iconMap = {
-  success: 'notification-success',
-  warning: 'notification-warning',
-  error: 'notification-error',
-  info: 'notification-info',
-};
-
-function pickIcon(level) {
-  return iconMap[level] || iconMap.info;
-}
-
 const contextPersonFullName = computed(() => {
   if (
     props.selectedContextPerson &&
@@ -372,19 +360,10 @@ const contextPersonFullName = computed(() => {
 
 const animationsModel = computed({
   get() {
-    return props.hasReducedAnimations;
+    return !props.hasReducedAnimations;
   },
   set(value) {
-    emits('update:hasReducedAnimations', value);
-  },
-});
-
-const deviceFontsModel = computed({
-  get() {
-    return props.hasDeviceFonts;
-  },
-  set(value) {
-    emits('update:hasDeviceFonts', value);
+    emits('update:hasReducedAnimations', !value);
   },
 });
 
@@ -399,10 +378,10 @@ const touchModeModel = computed({
 
 const transparencyModel = computed({
   get() {
-    return props.hasReducedTransparency;
+    return !props.hasReducedTransparency;
   },
   set(value) {
-    emits('update:hasReducedTransparency', value);
+    emits('update:hasReducedTransparency', !value);
   },
 });
 
@@ -412,14 +391,18 @@ function triggerShowAllClick() {
 
 const themeDisplayItems = computed(() => {
   const res = [];
-  const themes = props.availableThemes?.map((item) => ({
-    id: item,
-    icon: themeIcons[item],
-    name: themeNames.value[item],
-    group: 'theme',
-    active: item === props.theme,
-  }));
-  if (themes && themes.length > 0) themes.forEach((x) => res.push(x));
+  if (props.availableThemes?.length > 0) {
+    props.availableThemes.forEach((item) => {
+      res.push({
+        id: item,
+        groupId: 'theme',
+        selected: item === props.theme,
+        name: themeNames.value[item],
+        icon: themeIcons[item],
+        iconSet: 'cds',
+      });
+    });
+  }
 
   res.push({
     id: 'animations',
@@ -429,20 +412,8 @@ const themeDisplayItems = computed(() => {
       valueYes: displayTexts.value.reduceMotionOn,
       valueNo: displayTexts.value.reduceMotionOff,
     },
-    group: 'animations-touch',
+    groupId: 'animations-touch',
     value: animationsModel.value,
-    size: props.isTouchSensitive ? 'm' : 's',
-  });
-  res.push({
-    id: 'touchMode',
-    kind: 'toggle',
-    name: displayTexts.value.touchMode,
-    texts: {
-      valueYes: displayTexts.value.touchModeOn,
-      valueNo: displayTexts.value.touchModeOff,
-    },
-    group: 'animations-touch',
-    value: touchModeModel.value,
     size: props.isTouchSensitive ? 'm' : 's',
   });
   res.push({
@@ -453,46 +424,74 @@ const themeDisplayItems = computed(() => {
       valueYes: displayTexts.value.reduceTransparencyOn,
       valueNo: displayTexts.value.reduceTransparencyOff,
     },
-    group: 'animations-touch',
+    groupId: 'animations-touch',
     value: transparencyModel.value,
     size: props.isTouchSensitive ? 'm' : 's',
   });
   res.push({
-    id: 'fonts',
+    id: 'touchMode',
     kind: 'toggle',
-    name: displayTexts.value.fonts,
+    name: displayTexts.value.touchMode,
     texts: {
-      valueYes: displayTexts.value.systemFontsOn,
-      valueNo: displayTexts.value.systemFontsOff,
+      valueYes: displayTexts.value.touchModeOn,
+      valueNo: displayTexts.value.touchModeOff,
     },
-    group: 'fonts',
-    value: deviceFontsModel.value,
+    groupId: 'animations-touch',
+    value: touchModeModel.value,
     size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
+    id: 'customizeSettings',
+    name: displayTexts.value.customizeSettings,
+    icon: 'open',
+    groupId: 'customizeSettings',
   });
   return res;
 });
+
+const accessibilityDisplayGroups = computed(() => [
+  {
+    id: 'theme',
+    kind: 'tags',
+  },
+  {
+    id: 'language',
+    kind: 'tags',
+  },
+  {
+    id: 'animations-touch',
+    label: displayTexts.value.accessibilityTools,
+  },
+]);
 
 function themeDropdownClicked(id, value) {
   if (id === 'animations') {
     animationsModel.value = value;
   } else if (id === 'touchMode') {
     touchModeModel.value = value;
-  } else if (id === 'fonts') {
-    deviceFontsModel.value = value;
   } else if (id === 'transparency') {
     transparencyModel.value = value;
+  } else if (id === 'customizeSettings') {
+    emits('settingsClicked');
   } else {
-    themeChange(id);
+    themeChange(value);
   }
 }
 
-const languagesDisplayItems = computed(() =>
-  props.languages?.map((item) => ({
-    id: item?.id,
-    name: item?.name,
-    active: selectedLanguageModel.value?.id === item?.id,
-  }))
-);
+const languagesDisplayItems = computed(() => {
+  const res = [];
+  if (props.languages?.length > 0) {
+    props.languages.forEach((item) => {
+      res.push({
+        id: item?.id,
+        groupId: 'language',
+        selected: selectedLanguageModel.value?.id === item?.id,
+        name: item?.name,
+      });
+    });
+  }
+  return res;
+});
 
 const labelText = computed(() => displayTexts.value.alertsTitle);
 
@@ -664,6 +663,7 @@ const loginButtonKind = computed(() => {
       <LxDropDownMenu
         ref="themeMenu"
         :actionDefinitions="themeDisplayItems"
+        :groupDefinitions="accessibilityDisplayGroups"
         :disabled="headerNavDisable"
         @actionClick="themeDropdownClicked"
       >
@@ -791,6 +791,7 @@ const loginButtonKind = computed(() => {
       <LxDropDownMenu
         ref="languageMenu"
         :actionDefinitions="languagesDisplayItems"
+        :groupDefinitions="accessibilityDisplayGroups"
         :disabled="headerNavDisable"
         @actionClick="languageChange"
       >
@@ -815,6 +816,7 @@ const loginButtonKind = computed(() => {
         :items="megaMenuItems"
         :groupDefinitions="megaMenuGroupDefinitions"
         :hasShowAll="megaMenuHasShowAll"
+        :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
         :disabled="headerNavDisable"
         :texts="displayTexts"
         @mega-menu-show-all-click="triggerShowAllClick"
@@ -934,6 +936,7 @@ const loginButtonKind = computed(() => {
           <LxDropDownMenu
             ref="languageMenu"
             :actionDefinitions="languagesDisplayItems"
+            :groupDefinitions="accessibilityDisplayGroups"
             :disabled="headerNavDisable"
             @actionClick="languageChange"
           >
@@ -956,6 +959,7 @@ const loginButtonKind = computed(() => {
           <LxDropDownMenu
             ref="themeMenu"
             :action-definitions="themeDisplayItems"
+            :groupDefinitions="accessibilityDisplayGroups"
             :disabled="headerNavDisable"
             @actionClick="themeDropdownClicked"
           >

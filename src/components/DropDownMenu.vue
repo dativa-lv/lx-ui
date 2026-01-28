@@ -5,6 +5,8 @@ import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxToggle from '@/components/Toggle.vue';
+import LxValuePicker from '@/components/ValuePicker.vue';
+import LxIcon from '@/components/Icon.vue';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import {
@@ -24,6 +26,7 @@ const props = defineProps({
   offsetSkid: { type: String, default: null },
   tabindex: { type: [String, Number], default: null },
   actionDefinitions: { type: Array, default: () => [] },
+  groupDefinitions: { type: Array, default: null },
 });
 
 const emits = defineEmits(['actionClick']);
@@ -89,6 +92,13 @@ function preventClose(event) {
   event.stopPropagation();
 }
 
+const groupMap = computed(() =>
+  (props.groupDefinitions || []).reduce((acc, group) => {
+    acc[group.id] = group;
+    return acc;
+  }, {})
+);
+
 const groupedItems = computed(() => {
   const res = props.actionDefinitions.reduce((acc, action) => {
     if (action?.kind === 'main') return acc; // skip 'main' items
@@ -100,6 +110,13 @@ const groupedItems = computed(() => {
     } else {
       if (!acc[action?.groupId]) acc[action?.groupId] = [];
       acc[action?.groupId].push(action);
+
+      if (groupMap?.value[action?.groupId]?.kind === 'tags') {
+        const selectedItem = acc[action?.groupId]?.find((a) => a.selected);
+        if (selectedItem) {
+          acc[action?.groupId][0].value = selectedItem.id;
+        }
+      }
     }
 
     if (action?.kind === 'toggle' && action?.value === undefined) {
@@ -304,8 +321,39 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
               :key="groupName"
               class="lx-button-set lx-dropdown-menu-group"
             >
-              <div v-for="action in group" :key="action?.id">
-                <div v-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
+              <div v-if="groupMap[groupName]?.label" class="lx-label">
+                {{ groupMap[groupName].label }}
+              </div>
+              <template v-for="(action, index) in group" :key="action?.id">
+                <div
+                  v-if="groupMap[groupName]?.kind === 'tags' && index === 0"
+                  class="lx-dropdown-menu-tag-wrapper"
+                >
+                  <LxValuePicker
+                    role="menuitem"
+                    v-model="group[0].value"
+                    :items="group"
+                    variant="tags-custom"
+                    selectionKind="single"
+                    :id="groupName"
+                    @update:modelValue="
+                      (newValue) => {
+                        handleActionClick(groupName, { value: newValue });
+                      }
+                    "
+                    @click="preventClose"
+                  >
+                    <template #customItem="{ icon, name, label, iconSet }">
+                      <div class="lx-dropdown-menu-tag-content-wrapper">
+                        <LxIcon v-if="icon" :value="icon" :iconSet="iconSet" />
+                        <div class="lx-dropdown-menu-tag-label">
+                          {{ name || label }}
+                        </div>
+                      </div>
+                    </template>
+                  </LxValuePicker>
+                </div>
+                <div v-else-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
                   <label
                     class="lx-dropdown-toggle-label"
                     :id="`${action.id}-label`"
@@ -333,7 +381,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                 </div>
 
                 <LxButton
-                  v-else
+                  v-else-if="groupMap[groupName]?.kind !== 'tags'"
                   :id="action?.id"
                   :label="action?.name || action?.label"
                   :title="action?.title || action?.tooltip"
@@ -352,7 +400,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :href="action?.href"
                   @click="handleActionClick(action?.id)"
                 />
-              </div>
+              </template>
             </div>
 
             <slot name="clickSafePanel" />
@@ -372,8 +420,39 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                 { 'lx-dropdown-menu-no-panel': !$slots.panel && actionDefinitions?.length > 0 },
               ]"
             >
-              <div v-for="action in group" :key="action?.id">
-                <div v-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
+              <div v-if="groupMap[groupName]?.label" class="lx-label">
+                {{ groupMap[groupName].label }}
+              </div>
+              <template v-for="(action, index) in group" :key="action?.id">
+                <div
+                  v-if="groupMap[groupName]?.kind === 'tags' && index === 0"
+                  class="lx-dropdown-menu-tag-wrapper"
+                >
+                  <LxValuePicker
+                    role="menuitem"
+                    v-model="group[0].value"
+                    :items="group"
+                    variant="tags-custom"
+                    selectionKind="single"
+                    :id="groupName"
+                    @update:modelValue="
+                      (newValue) => {
+                        handleActionClick(groupName, { value: newValue });
+                      }
+                    "
+                    @click="preventClose"
+                  >
+                    <template #customItem="{ icon, name, label, iconSet }">
+                      <div class="lx-dropdown-menu-tag-content-wrapper">
+                        <LxIcon v-if="icon" :value="icon" :iconSet="iconSet" />
+                        <div class="lx-dropdown-menu-tag-label">
+                          {{ name || label }}
+                        </div>
+                      </div>
+                    </template>
+                  </LxValuePicker>
+                </div>
+                <div v-else-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
                   <label
                     class="lx-dropdown-toggle-label"
                     :id="`${action.id}-label`"
@@ -401,7 +480,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                 </div>
 
                 <LxButton
-                  v-else
+                  v-else-if="groupMap[groupName]?.kind !== 'tags'"
                   :id="action?.id"
                   :label="action?.name || action?.label"
                   :title="action?.title || action?.tooltip"
@@ -420,7 +499,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :href="action?.href"
                   @click="handleActionClick(action?.id, { close: true, event: $event })"
                 />
-              </div>
+              </template>
             </div>
 
             <slot name="panel" />

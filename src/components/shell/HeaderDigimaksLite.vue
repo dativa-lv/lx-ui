@@ -46,6 +46,7 @@ const props = defineProps({
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
   megaMenuHasShowAll: { type: Boolean, default: false },
+  showPrimaryMegaMenuItems: { type: Boolean, default: true },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
   hideHeaderText: { type: Boolean, default: false },
@@ -98,14 +99,14 @@ const textsDefault = {
   alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
   contextPersonsButtonLabel: 'Konteksta personas',
   alternativeProfilesButtonLabel: 'Alternatīvie profili',
-  themeTitle: 'Noformējuma izvēle',
-  themeAuto: 'Automātiskais režīms',
-  themeLight: 'Gaišais režīms',
-  themeDark: 'Tumšais režīms',
-  themeContrast: 'Kontrastais režīms',
-  animations: 'Samazināt kustības',
+  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeAuto: 'Automātisks',
+  themeLight: 'Gaišs',
+  themeDark: 'Tumšs',
+  themeContrast: 'Kontrastains',
+  animations: 'Animācijas',
   fonts: 'Iekārtas fonti',
-  transparency: 'Samazināt caurspīdīgumu',
+  transparency: 'Caurspīdīgums',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
@@ -190,10 +191,10 @@ const themeModel = computed({
 
 const animationsModel = computed({
   get() {
-    return props.hasReducedAnimations;
+    return !props.hasReducedAnimations;
   },
   set(value) {
-    emits('update:hasReducedAnimations', value);
+    emits('update:hasReducedAnimations', !value);
   },
 });
 
@@ -208,10 +209,10 @@ const deviceFontsModel = computed({
 
 const transparencyModel = computed({
   get() {
-    return props.hasReducedTransparency;
+    return !props.hasReducedTransparency;
   },
   set(value) {
-    emits('update:hasReducedTransparency', value);
+    emits('update:hasReducedTransparency', !value);
   },
 });
 
@@ -648,6 +649,7 @@ provide('insideHeader', insideHeader);
                 :items="megaMenuItems"
                 :groupDefinitions="megaMenuGroupDefinitions"
                 :hasShowAll="megaMenuHasShowAll"
+                :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
                 :texts="displayTexts"
                 v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
                 @mega-menu-show-all-click="triggerShowAllClick"

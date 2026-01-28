@@ -39,7 +39,6 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasReducedAnimations: { type: Boolean, default: false },
   hasReducedTransparency: { type: Boolean, default: false },
-  hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   hasLanguagePicker: { type: Boolean, default: false },
@@ -82,21 +81,18 @@ const textsDefault = {
   languagesTitle: 'Valodu izvēle',
   contextPersonsButtonLabel: 'Konteksta personas',
   alternativeProfilesButtonLabel: 'Alternatīvie profili',
-  themeTitle: 'Noformējuma izvēle',
-  themeAuto: 'Automātiskais režīms',
-  themeLight: 'Gaišais režīms',
-  themeDark: 'Tumšais režīms',
-  themeContrast: 'Kontrastais režīms',
-  animations: 'Samazināt kustības',
-  transparency: 'Samazināt caurspīdīgumu',
-  fonts: 'Iekārtas fonti',
-  touchMode: 'Skārienjūtīgs režīms',
+  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeAuto: 'Automātisks',
+  themeLight: 'Gaišs',
+  themeDark: 'Tumšs',
+  themeContrast: 'Kontrastains',
+  animations: 'Animācijas',
+  transparency: 'Caurspīdīgums',
+  touchMode: 'Skārienvadība',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   reduceTransparencyOff: 'Nē',
   reduceTransparencyOn: 'Jā',
-  systemFontsOff: 'Nē',
-  systemFontsOn: 'Jā',
   touchModeOff: 'Nē',
   touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
@@ -138,7 +134,6 @@ const emits = defineEmits([
   'update:theme',
   'update:hasReducedAnimations',
   'update:hasReducedTransparency',
-  'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'alerts-click',
   'alert-item-click',
@@ -194,15 +189,6 @@ const transparencyModel = computed({
   },
   set(value) {
     emits('update:hasReducedTransparency', value);
-  },
-});
-
-const deviceFontsModel = computed({
-  get() {
-    return props.hasDeviceFonts;
-  },
-  set(value) {
-    emits('update:hasDeviceFonts', value);
   },
 });
 
@@ -466,14 +452,18 @@ const isSelectedInNavItems = computed(() => {
 
 const themeDisplayItems = computed(() => {
   const res = [];
-  const themes = props.availableThemes?.map((item) => ({
-    id: item,
-    icon: themeIcons[item],
-    name: themeNames.value[item],
-    group: 'theme',
-    active: item === props.theme,
-  }));
-  if (themes && themes.length > 0) themes.forEach((x) => res.push(x));
+  if (props.availableThemes?.length > 0) {
+    props.availableThemes.forEach((item) => {
+      res.push({
+        id: item,
+        groupId: 'theme',
+        selected: item === props.theme,
+        name: themeNames.value[item],
+        icon: themeIcons[item],
+        iconSet: 'cds',
+      });
+    });
+  }
 
   res.push({
     id: 'animations',
@@ -483,7 +473,7 @@ const themeDisplayItems = computed(() => {
       valueYes: displayTexts.value.reduceMotionOn,
       valueNo: displayTexts.value.reduceMotionOff,
     },
-    group: 'animations-touch',
+    groupId: 'animations-touch',
     value: animationsModel.value,
     size: props.isTouchSensitive ? 'm' : 's',
   });
@@ -495,7 +485,7 @@ const themeDisplayItems = computed(() => {
       valueYes: displayTexts.value.touchModeOn,
       valueNo: displayTexts.value.touchModeOff,
     },
-    group: 'animations-touch',
+    groupId: 'animations-touch',
     value: touchModeModel.value,
     size: props.isTouchSensitive ? 'm' : 's',
   });
@@ -507,20 +497,8 @@ const themeDisplayItems = computed(() => {
       valueYes: displayTexts.value.reduceTransparencyOn,
       valueNo: displayTexts.value.reduceTransparencyOff,
     },
-    group: 'animations-touch',
+    groupId: 'animations-touch',
     value: transparencyModel.value,
-    size: props.isTouchSensitive ? 'm' : 's',
-  });
-  res.push({
-    id: 'fonts',
-    kind: 'toggle',
-    name: displayTexts.value.fonts,
-    texts: {
-      valueYes: displayTexts.value.systemFontsOn,
-      valueNo: displayTexts.value.systemFontsOff,
-    },
-    group: 'fonts',
-    value: deviceFontsModel.value,
     size: props.isTouchSensitive ? 'm' : 's',
   });
   return res;
@@ -531,8 +509,6 @@ function themeDropdownClicked(id, value) {
     animationsModel.value = value;
   } else if (id === 'touchMode') {
     touchModeModel.value = value;
-  } else if (id === 'fonts') {
-    deviceFontsModel.value = value;
   } else if (id === 'transparency') {
     transparencyModel.value = value;
   } else {
