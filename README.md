@@ -1,39 +1,24 @@
+<h1 align="center">lx/ui</h1>
+
+<p align="center">
+  Powerful and flexible <strong>Vue.js 3</strong> components and <strong>vanilla CSS</strong> styles library, originally developed for various enterprise apps.
+</p>
+<p align="center">
+  Focus on business logic, not boilerplate.
+</p>
+
+<p align="center">
+  <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/%40dativa-lv%2Flx-ui" />
+  <img alt="NPM Version" src="https://img.shields.io/npm/v/%40dativa-lv%2Flx-ui" />
+  <img alt="NPM License" src="https://img.shields.io/npm/l/%40dativa-lv%2Flx-ui" />
+</p>
+
 ![LX/UI](https://raw.githubusercontent.com/dativa-lv/lx-ui/main/public/imgs/cover.png)
-
-
-# LX/UI
-
-Powerful and flexible **Vue.js 3** components and **vanilla CSS** styles library, originally developed for various enterpise apps.
-
-Focus on business logic, not boilerplate.
-
-
-
-## Features
- 
- - 🔤 50+ input, data display and container components;
- - 🏗️ Declarative building tools;
- - 🖼️ 350+ functional icons, 3 icon sets;
- - 🖼️ 100+ branding logo icons;
- - 🛠️ Hooks, stores and utils;
- - 📘 UX guidelines;
- - 📐 Responsive layouts;
- - 🎨 Theming:
-   - ☀️ Light user theme;
-   - 🌙 Dark user theme;
-   - 🔆 High Contrast user theme;
-   - Various products branding themes;
- - ♿ Accessibility: 
-   - Standards: [WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/), [Semantic Web](https://en.wikipedia.org/wiki/Semantic_Web) and [APG](https://www.w3.org/WAI/ARIA/apg/patterns/);
-    - Regulations: [🇱🇻 Ministru kabineta noteikumi Nr. 445](https://likumi.lv/ta/id/316109-kartiba-kada-iestades-ievieto-informaciju-interneta), [🇪🇺 Directive 2019/882](https://eur-lex.europa.eu/eli/dir/2019/882/oj)
- - 🏆 Based on [Carbon Design System](https://carbondesignsystem.com/);
- - 🕵️ Updating HTML or CSS is not a requirement (but still an option) - components are declarative in nature and fit together like puzzle pieces;
-
 
 ## Play around
 
-Check out our [🌐 Demo](https://lx-ui.dev/) and 
-[ℹ️ List of Components](https://github.com/dativa-lv/lx-ui/blob/main/docs/Components.md) for live demo sandbox.
+Check out our [🌐&nbsp;Demo](https://lx-ui.dev/) and 
+[ℹ️&nbsp;List of Components](https://github.com/dativa-lv/lx-ui/blob/main/docs/Components.md) for live demo sandbox.
 
 ## Read the docs
 - [ℹ️ Design Tokens](https://github.com/dativa-lv/lx-ui/blob/main/docs/DesignTokens.md)
@@ -53,7 +38,7 @@ Check out our [🌐 Demo](https://lx-ui.dev/) and
 pnpm i -w '@dativa-lv/lx-ui@latest'
 ```
 
-For migration tips refer to [ℹ️ Migration Guide](https://github.com/dativa-lv/lx-ui/blob/main/MIGRATION.md)
+For migration tips refer to [ℹ️&nbsp;Migration Guide](https://github.com/dativa-lv/lx-ui/blob/main/MIGRATION.md)
 
 ## Use
 
@@ -77,10 +62,10 @@ pnpm
 pnpm dev
 ```
 
-Read more about development in [ℹ️ Development manual](https://github.com/dativa-lv/lx-ui/blob/main/DEVELOPMENT.md)
+Read more about development in [ℹ️&nbsp;Development manual](https://github.com/dativa-lv/lx-ui/blob/main/DEVELOPMENT.md)
 
 ### Vite Plugins
 
 LX/UI now includes several Vite plugins to enhance your development experience and application security. These plugins are designed to seamlessly integrate with your Vite-based projects.
 
-For detailed information on available plugins and their usage, please refer to our [ℹ️ Vite Plugins Documentation](https://github.com/dativa-lv/lx-ui/blob/main/docs/VITE_PLUGINS.md).
+For detailed information on available plugins and their usage, please refer to our [ℹ️&nbsp;Vite Plugins Documentation](https://github.com/dativa-lv/lx-ui/blob/main/docs/VITE_PLUGINS.md).
