@@ -417,6 +417,23 @@ function getCustomVariant(row) {
   }
   return row?.lx?.variant;
 }
+
+const getActions = computed(() => {
+  const actions = [
+    {
+      id: 'saveElement',
+      name: props.texts.saveElement,
+      kind: 'primary',
+    },
+  ];
+  return newObject.value ? actions : null;
+});
+
+function handleModalActionClick(action, name) {
+  if (action === 'saveElement') {
+    saveNewElement(name);
+  }
+}
 </script>
 <template>
   <!-- TODO: if type number / decimal / integer then conferToString - false -->
@@ -1333,10 +1350,9 @@ function getCustomVariant(row) {
     </LxList>
     <LxModal
       :ref="(el) => (modalRefs[id + '-' + name] = el)"
-      :buttonPrimaryLabel="texts.saveElement"
-      :buttonPrimaryVisible="newObject"
-      @primary-action="saveNewElement(name)"
-      @closed="newObject = false"
+      :actionDefinitions="getActions"
+      @close="newObject = false"
+      @actionClick="handleModalActionClick($event, name)"
     >
       <LxForm
         :showHeader="false"
@@ -1858,10 +1874,9 @@ function getCustomVariant(row) {
     </LxDataGrid>
     <LxModal
       :ref="(el) => (modalRefs[id + '-' + name] = el)"
-      :buttonPrimaryLabel="texts.saveElement"
-      :buttonPrimaryVisible="newObject"
-      @primary-action="saveNewElement(name)"
-      @closed="newObject = false"
+      :actionDefinitions="getActions"
+      @close="newObject = false"
+      @actionClick="handleModalActionClick($event, name)"
     >
       <LxForm
         :showHeader="false"

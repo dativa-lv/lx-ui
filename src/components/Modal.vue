@@ -218,7 +218,7 @@ defineExpose({ open, close });
               v-if="!disableClosing"
               icon="close"
               kind="ghost"
-              :label="displayTexts.closeButtonLabel"
+              :label="displayTexts.close"
               variant="icon-only"
               @click="close()"
             />
@@ -285,7 +285,7 @@ defineExpose({ open, close });
               v-if="!disableClosing"
               icon="close"
               kind="ghost"
-              :label="displayTexts.buttonCloseLabel"
+              :label="displayTexts.close"
               variant="icon-only"
               @click="close()"
             />
