@@ -189,7 +189,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
       <slot />
     </div>
 
-    <template #content>
+    <template #content v-if="props.value">
       <div
         ref="popperRef"
         class="lx-info-wrapper lx-tooltip-kind"

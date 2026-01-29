@@ -932,6 +932,10 @@
   cursor: default;
 }
 
+.lx-info-wrapper.lx-tooltip-kind .lx-info-wrapper-panel-area {
+  justify-content: center;
+}
+
 .lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
 .lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
   background-color: var(--color-grid-hover-background);
