@@ -4,6 +4,10 @@
 
 ### Breaking changes
 
+#### Namespace
+
+We'll be using **`@dativa-lv/lx-ui`** instead of ~~`@wntr/lx-ui`~~ from now on (make sure to update your component, css and font imports).
+
 #### LxButton
 
 The `kind` prop has been updated to reduce redundant variants.
