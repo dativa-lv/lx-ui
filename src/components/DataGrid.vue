@@ -1973,7 +1973,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               <LxRating
                 v-if="col.type === 'rating'"
                 v-model="row[col.attributeName]"
-                mode="read"
+                readOnly
                 :disabled="props.busy"
                 :focusable="
                   isCellDelegated(col)
@@ -2556,7 +2556,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             <LxRating
               v-else-if="col.type === 'rating'"
               :disabled="props.busy"
-              mode="read"
+              readOnly
               v-model="item[col.attributeName]"
             />
 

@@ -843,7 +843,7 @@
 
 /*** Load button styles ***/
 
-.lx-list-wrapper > .lx-load-more-button {
+.lx-list-wrapper .lx-load-more-button {
   display: flex;
   justify-content: center;
   padding-top: 0.5rem;
@@ -855,16 +855,16 @@
   padding: 2rem 0rem;
 }
 
-.lx-list-wrapper > .lx-load-more-button > .lx-button {
+.lx-list-wrapper .lx-load-more-button > .lx-button {
   width: 100%;
   flex-direction: row;
 }
 
-.lx-list-wrapper > .lx-load-more-button > .lx-button.lx-busy {
+.lx-list-wrapper .lx-load-more-button > .lx-button.lx-busy {
   flex-direction: row-reverse;
 }
 
-.lx-list-wrapper > .lx-load-more-button > .lx-button > .lx-button-content-wrapper svg {
+.lx-list-wrapper .lx-load-more-button > .lx-button > .lx-button-content-wrapper svg {
   display: none;
 }
 

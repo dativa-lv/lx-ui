@@ -710,7 +710,7 @@ svg .lx-shade {
 }
 
 .lx-form-grid .lx-main .lx-row > div > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
-.lx-form-grid .lx-main .lx-row > div > .lx-list-wrapper > .lx-load-more-button > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-list-wrapper .lx-load-more-button > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-camera > .lx-camera-buttons > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-master-detail > .lx-master > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-camera > .lx-camera-error .lx-button,
@@ -718,7 +718,7 @@ svg .lx-shade {
 .lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-button,
 .lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
-.lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-list-wrapper > .lx-load-more-button > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-list-wrapper .lx-load-more-button > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-camera > .lx-camera-buttons > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-master-detail > .lx-master > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-camera > .lx-camera-error .lx-button,
@@ -992,6 +992,11 @@ svg .lx-shade {
 .lx-data-block-wrapper .lx-form-grid .lx-main .lx-compact-sections .lx-form-section {
   padding: 0;
   gap: 0;
+}
+
+.lx-appendable-list .lx-data-block-wrapper .lx-form-grid .lx-main .lx-form-section,
+.lx-appendable-list .lx-data-block-wrapper .lx-form-grid .lx-main .lx-compact-sections .lx-form-section {
+  gap: calc(var(--gap-form) / 2) var(--gap-form);
 }
 
 .lx-region .lx-appendable-list > .lx-appendable-list-item,
