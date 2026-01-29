@@ -555,9 +555,6 @@ const clickHandler = (actionName) => {
   emits('actionClick', actionName);
 };
 
-const tabControl = ref();
-const wizard = ref();
-
 const selectedSection = computed(() => {
   const ret = [];
   Object.keys(visibilities.value).forEach((key) => {

@@ -100,14 +100,14 @@
 .lx .lx-notifications-list .lx-notification p.lx-title,
 p.lx-subtitle {
   line-height: 1.25rem;
-  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .lx .lx-notifications-list .lx-notification p.lx-title {
   font-weight: 800;
-  margin-top: 0.5rem;
+  padding-top: 0.5rem;
 }
 
 .lx .lx-notifications-list .lx-notification .lx-close-icon {
