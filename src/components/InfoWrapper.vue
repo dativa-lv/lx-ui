@@ -288,6 +288,15 @@ function handlePlacementChange(newPlacement) {
   resolvedPlacement.value = newPlacement;
 }
 
+function popperClick() {
+  if (!responsiveView.value) {
+    closeTimeout = setTimeout(() => {
+      showPopper.value = false;
+      closeTimeout = null;
+    }, TOOLTIP_CURSOR_CLOSE_DELAY);
+  }
+}
+
 function togglePopperOnMobile() {
   if (
     (window.matchMedia('(hover: none)').matches && isPanelAvailable.value) ||
@@ -446,6 +455,7 @@ defineExpose({ handleOpen, handleClose, showPopper, focus });
         ]"
         @focusout="handleMouseLeave"
         @mouseleave="handleMouseLeave"
+        @click="popperClick"
       >
         <div
           ref="panelRef"
