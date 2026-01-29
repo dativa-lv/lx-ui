@@ -205,6 +205,10 @@
   flex-shrink: 0;
 }
 
+.lx-layout.lx-layout-default > header .lx-header .lx-main-button .lx-logo {
+  height: calc(var(--nav-row-size) - 4px);
+}
+
 .lx-layout.lx-layout-default > header .lx-header .lx-main-button .lx-logo .lx-icon,
 .lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-icon {
   height: 2rem;
