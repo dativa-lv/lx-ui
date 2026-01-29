@@ -1798,7 +1798,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             :id="`row-${row[idAttribute]}`"
             :tabindex="-1"
             role="row"
-            :key="row[idAttribute]"
+            :key="rowIndex"
             @dblclick="defaultActionClicked(row[idAttribute], row)"
           >
             <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
