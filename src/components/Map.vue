@@ -369,12 +369,12 @@ const additionalOptions = computed(() => {
   const actions = [];
 
   if (props.baseLayerDefinitions?.length > 1) {
-    props.baseLayerDefinitions.forEach((item) => {
+    props.baseLayerDefinitions.forEach((layer) => {
       actions.push({
-        id: item?.id,
+        id: layer?.id,
         groupId: 'baseLayers',
-        selected: item?.id === selectedBaseLayer?.value,
-        name: item?.name,
+        selected: layer?.id === selectedBaseLayer?.value,
+        name: layer?.name,
         icon: 'map',
       });
     });
@@ -383,10 +383,10 @@ const additionalOptions = computed(() => {
   if (props.overlayLayerDefinitions?.length > 0) {
     allOverlayObj.value.forEach((layer) => {
       actions.push({
-        id: 'overlay',
+        id: layer?.id,
         kind: 'toggle',
         label: layer?.name,
-        value: layer?.show,
+        value: layer.show,
         groupId: 'overlayLayers',
       });
     });

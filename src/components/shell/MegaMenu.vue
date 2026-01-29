@@ -46,31 +46,8 @@ const primaryItems = computed(() => {
   return primary;
 });
 
-const groupedSecondaryItems = computed(() => {
-  if (!props.groupDefinitions) {
-    return [];
-  }
-
-  const groups = props.groupDefinitions.reduce((acc, group) => {
-    acc[group.id] = { ...group, items: [] };
-    return acc;
-  }, {});
-
-  props.items?.forEach((item) => {
-    if (item.kind === 'secondary' && item.group && groups[item.group]) {
-      groups[item.group].items.push(item);
-    }
-  });
-
-  return Object.values(groups).filter((group) => group.items.length > 0);
-});
-
 function triggerShowAllClick() {
   emits('megaMenuShowAllClick');
-}
-
-function updateSelectedMegaMenuItem(id) {
-  selectedMegaMenuItemModel.value = id;
 }
 
 const lxElement = document.querySelector('.lx');
@@ -119,9 +96,33 @@ const closeSignal = inject('closeSignal');
 watch(closeSignal, () => {
   menu?.value?.closeMenu();
 });
+
+const megaMenuActionsDefinitons = computed(() =>
+  props.items
+    .filter((item) => item.kind === 'secondary')
+    .map((item) => ({
+      id: item?.id,
+      groupId: item?.group,
+      name: item?.name,
+      title: item?.description,
+      icon: getIcon(item),
+      iconSet: getIconSet(item),
+      active: item?.id === props.selectedMegaMenuItem,
+    }))
+);
+
+function updateSelectedMegaMenuItem(id) {
+  selectedMegaMenuItemModel.value = id;
+}
 </script>
 <template>
-  <LxDropDownMenu ref="menu" :disabled="disabled">
+  <LxDropDownMenu
+    ref="menu"
+    :disabled="disabled"
+    :actionDefinitions="megaMenuActionsDefinitons"
+    :groupDefinitions="groupDefinitions"
+    @actionClick="updateSelectedMegaMenuItem"
+  >
     <div class="lx-toolbar">
       <LxButton
         id="lx-shell-mega-menu-button"
@@ -174,44 +175,6 @@ watch(closeSignal, () => {
             <div class="lx-data">{{ displayTexts.showAllLabel }}</div>
           </li>
         </ul>
-
-        <div class="secondary-menu" v-if="groupedSecondaryItems?.length > 0">
-          <div
-            v-for="group in groupedSecondaryItems"
-            :key="group.id"
-            class="secondary-menu-group"
-            role="group"
-            :aria-labelledby="`mm-${id}-${group.id}`"
-          >
-            <label :id="`mm-${id}-${group.id}`" :title="group.name">{{ group.name }}</label>
-            <ul>
-              <li
-                v-for="item in group.items"
-                :key="item.id"
-                class="secondary-menu-item"
-                tabindex="0"
-                :title="item?.description"
-                :class="[
-                  { selected: selectedMegaMenuItemModel === item.id },
-                  {
-                    'default-icon': !item.icon,
-                  },
-                ]"
-                role="button"
-                @click="updateSelectedMegaMenuItem(item.id)"
-                @keyup.enter.prevent="updateSelectedMegaMenuItem(item.id)"
-              >
-                <LxIcon
-                  :value="getIcon(item)"
-                  :iconSet="getIconSet(item)"
-                  :style="specialStyles(item)"
-                  :title="item?.description"
-                />
-                <div class="lx-data">{{ item?.name }}</div>
-              </li>
-            </ul>
-          </div>
-        </div>
       </div>
     </template>
   </LxDropDownMenu>

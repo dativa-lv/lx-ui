@@ -54,9 +54,10 @@ const props = defineProps({
 
 const textsDefault = {
   defaultBack: 'Atpakaļ',
-  languagesTitle: 'Valodu izvēle',
+  languagesTitle: 'Valodu izvēlne',
   close: 'Aizvērt',
-  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeLabel: 'Piekļūstamības izvēlne',
+  themeTitle: 'Piekļūstamības un noformējuma izvēlne',
   themeAuto: 'Automātisks',
   themeLight: 'Gaišs',
   themeDark: 'Tumšs',

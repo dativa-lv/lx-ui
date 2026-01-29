@@ -38,7 +38,7 @@ const defaultTexts = {
   noAlerts: 'Nav paziņojumu',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',
-  languagesTitle: 'Valodu izvēle',
+  languagesTitle: 'Valodu izvēlne',
   contextPersonTitle: 'Saistītā persona',
   userTitle: 'Lietotājs',
   contextPersonsLabel: 'Izvēlēties personu',

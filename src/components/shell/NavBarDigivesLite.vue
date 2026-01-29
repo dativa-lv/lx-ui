@@ -78,10 +78,11 @@ const textsDefault = {
   noAlerts: 'Nav paziņojumu',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',
-  languagesTitle: 'Valodu izvēle',
+  languagesTitle: 'Valodu izvēlne',
   contextPersonsButtonLabel: 'Konteksta personas',
   alternativeProfilesButtonLabel: 'Alternatīvie profili',
-  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeLabel: 'Piekļūstamības izvēlne',
+  themeTitle: 'Piekļūstamības un noformējuma izvēlne',
   themeAuto: 'Automātisks',
   themeLight: 'Gaišs',
   themeDark: 'Tumšs',
@@ -176,19 +177,19 @@ function helpClicked() {
 
 const animationsModel = computed({
   get() {
-    return props.hasReducedAnimations;
+    return !props.hasReducedAnimations;
   },
   set(value) {
-    emits('update:hasReducedAnimations', value);
+    emits('update:hasReducedAnimations', !value);
   },
 });
 
 const transparencyModel = computed({
   get() {
-    return props.hasReducedTransparency;
+    return !props.hasReducedTransparency;
   },
   set(value) {
-    emits('update:hasReducedTransparency', value);
+    emits('update:hasReducedTransparency', !value);
   },
 });
 
@@ -457,8 +458,9 @@ const themeDisplayItems = computed(() => {
       res.push({
         id: item,
         groupId: 'theme',
-        selected: item === props.theme,
+        active: item === props.theme,
         name: themeNames.value[item],
+        description: themeNames.value[item],
         icon: themeIcons[item],
         iconSet: 'cds',
       });
@@ -916,7 +918,8 @@ onClickOutside(navPanel, toggleNavBar);
             <div class="lx-toolbar">
               <LxButton
                 customClass="lx-header-button"
-                :label="displayTexts.themeTitle"
+                :label="displayTexts.themeLabel"
+                :title="displayTexts.themeTitle"
                 kind="ghost"
                 :icon="themeIcon"
                 tabindex="-1"

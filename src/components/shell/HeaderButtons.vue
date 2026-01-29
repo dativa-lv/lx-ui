@@ -79,10 +79,11 @@ const textsDefault = {
   noAlerts: 'Nav paziņojumu',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',
-  languagesTitle: 'Valodu izvēle',
+  languagesTitle: 'Valodu izvēlne',
   contextPersonsButtonLabel: 'Konteksta personas',
   alternativeProfilesButtonLabel: 'Alternatīvie profili',
-  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeLabel: 'Piekļūstamības izvēlne',
+  themeTitle: 'Piekļūstamības un noformējuma izvēlne',
   themeAuto: 'Automātisks',
   themeLight: 'Gaišs',
   themeDark: 'Tumšs',
@@ -398,6 +399,7 @@ const themeDisplayItems = computed(() => {
         groupId: 'theme',
         selected: item === props.theme,
         name: themeNames.value[item],
+        description: themeNames.value[item],
         icon: themeIcons[item],
         iconSet: 'cds',
       });
@@ -487,6 +489,7 @@ const languagesDisplayItems = computed(() => {
         groupId: 'language',
         selected: selectedLanguageModel.value?.id === item?.id,
         name: item?.name,
+        title: item?.name,
       });
     });
   }
@@ -675,7 +678,8 @@ const loginButtonKind = computed(() => {
             kind="ghost"
             :icon="themeIcon"
             :disabled="headerNavDisable"
-            :label="displayTexts.themeTitle"
+            :label="displayTexts.themeLabel"
+            :title="displayTexts.themeTitle"
             :tabindex="-1"
           />
         </div>
@@ -967,7 +971,8 @@ const loginButtonKind = computed(() => {
               <LxButton
                 id="lx-shell-theme-button"
                 customClass="lx-header-button"
-                :label="displayTexts.themeTitle"
+                :label="displayTexts.themeLabel"
+                :title="displayTexts.themeTitle"
                 kind="ghost"
                 :icon="themeIcon"
                 tabindex="-1"

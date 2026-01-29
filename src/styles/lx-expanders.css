@@ -720,7 +720,7 @@
 
 .lx-accessibility-settings-wrapper .lx-button {
   --button-tertiary-width: max-content;
-  --button-tertiary-margin: 2rem 0 0 0;
+  --button-tertiary-margin: 1rem 0 0 0;
   justify-self: start;
 }
 
@@ -733,13 +733,6 @@
   overflow: hidden;
 }
 
-.lx-accessibility-settings-block .lx-data-block-expanded .lx-primary,
-.lx-accessibility-settings-block .lx-data-block-expanded .lx-secondary {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 .lx-accessibility-settings-block .lx-data-block-custom-header .lx-data-block-header {
   grid-template-columns: auto;
 }
@@ -748,6 +741,11 @@
   column-gap: 3rem;
 }
 
+.lx-accessibility-settings-block .lx-data-block-custom-header .lx-primary {
+  padding: var(--data-block-text-primary-padding);
+}
+
+.lx-accessibility-settings-block .lx-data-block-custom-header .lx-primary,
 .lx-accessibility-settings-block .lx-data-block-custom-header .lx-secondary {
   overflow: hidden;
   white-space: nowrap;
@@ -793,27 +791,6 @@
   padding-bottom: 0.25rem;
   gap: 0.25rem;
   --tile-min-height: 100%;
-}
-
-
-@media(max-width: 900px) {
-  .lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile-wrapper {
-      grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media(max-width: 700px) {
-  .lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile-wrapper {
-      grid-template-columns: 1fr;
-  }
-
-  .lx-accessibility-settings-block .lx-dropdown-default {
-    display: none;
-  }
-
-  .lx-accessibility-settings-wrapper .lx-button {
-    --button-tertiary-width: 100%;
-  }
 }
 
 .lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile-wrapper,
@@ -871,9 +848,32 @@
   max-width: 56rem;
 }
 
-.lx-accessibility-settings-block,
+.lx-accessibility-settings-block {
+  margin-bottom: 2rem;
+}
+
 .lx-accessibility-settings-block .heading-2 {
   margin-bottom: 1rem;
+}
+
+@media(max-width: 900px) {
+  .lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile-wrapper {
+      grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media(max-width: 700px) {
+  .lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile-wrapper {
+      grid-template-columns: 1fr;
+  }
+
+  .lx-accessibility-settings-block .lx-dropdown-default {
+    display: none;
+  }
+
+  .lx-accessibility-settings-wrapper .lx-button {
+    --button-tertiary-width: 100%;
+  }
 }
 
 /*** Mystery styles ***/

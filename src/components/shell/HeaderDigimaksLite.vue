@@ -93,13 +93,13 @@ const textsDefault = {
   openNavbar: 'Atvērt izvēlni',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',
-  languagesTitle: 'Valodu izvēle',
+  languagesTitle: 'Valodu izvēlne',
   close: 'Aizvērt',
   contextPersonsLabel: 'Izvēlieties konteksta personu',
   alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
   contextPersonsButtonLabel: 'Konteksta personas',
-  alternativeProfilesButtonLabel: 'Alternatīvie profili',
-  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeLabel: 'Piekļūstamības izvēlne',
+  themeTitle: 'Piekļūstamības un noformējuma izvēlne',
   themeAuto: 'Automātisks',
   themeLight: 'Gaišs',
   themeDark: 'Tumšs',
@@ -709,7 +709,7 @@ provide('insideHeader', insideHeader);
               <LxRow :label="displayTexts.languagesTitle">
                 <LxValuePicker variant="tags" :items="languages" v-model="languagePickerModel" />
               </LxRow>
-              <LxRow v-if="hasThemePicker" :label="displayTexts.themeTitle">
+              <LxRow v-if="hasThemePicker" :label="displayTexts.themeLabel">
                 <LxValuePicker variant="tags" :items="themeItems" v-model="themeModel" />
               </LxRow>
               <LxRow :label="displayTexts.animations">

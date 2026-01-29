@@ -143,6 +143,10 @@ const groupMap = computed(() =>
   }, {})
 );
 
+function getGroupLabel(groupName) {
+  return groupMap?.value[groupName]?.name || groupMap?.value[groupName]?.label || null;
+}
+
 const groupedItems = computed(() => {
   const res = props.actionDefinitions.reduce((acc, action) => {
     if (action?.kind === 'main') return acc; // skip 'main' items
@@ -483,19 +487,21 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
 
             <LxButton kind="ghost" icon="close" @click="handleClose()" />
           </div>
-          <div
-            v-if="$slots.clickSafePanel"
-            ref="wrapperPanelRef"
-            class="lx-dropdown-panel"
-            role="group"
-          >
+          <div v-if="$slots.clickSafePanel" ref="wrapperPanelRef" class="lx-dropdown-panel">
             <div
               v-for="(group, groupName) in groupedItems"
               :key="groupName"
               class="lx-button-set lx-dropdown-menu-group"
+              role="group"
+              :aria-labelledby="`${groupName}-group`"
             >
-              <div v-if="groupMap[groupName]?.label" class="lx-label">
-                {{ groupMap[groupName].label }}
+              <div
+                v-if="getGroupLabel(groupName)"
+                :id="`${groupName}-group`"
+                :title="getGroupLabel(groupName)"
+                class="lx-label"
+              >
+                {{ getGroupLabel(groupName) }}
               </div>
               <template v-for="(action, index) in group" :key="action?.id">
                 <div
@@ -585,7 +591,6 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
             v-if="$slots.panel || (actionDefinitions?.length > 0 && !$slots.clickSafePanel)"
             class="lx-dropdown-panel"
             ref="wrapperPanelRef"
-            role="group"
             @click="closeMenu"
           >
             <div
@@ -595,9 +600,16 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
               :class="[
                 { 'lx-dropdown-menu-no-panel': !$slots.panel && actionDefinitions?.length > 0 },
               ]"
+              role="group"
+              :aria-labelledby="`${groupName}-group`"
             >
-              <div v-if="groupMap[groupName]?.label" class="lx-label">
-                {{ groupMap[groupName].label }}
+              <div
+                v-if="getGroupLabel(groupName)"
+                :id="`${groupName}-group`"
+                :title="getGroupLabel(groupName)"
+                class="lx-label"
+              >
+                {{ getGroupLabel(groupName) }}
               </div>
               <template v-for="(action, index) in group" :key="action?.id">
                 <div
@@ -605,7 +617,6 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   class="lx-dropdown-menu-tag-wrapper"
                 >
                   <LxValuePicker
-                    role="menuitem"
                     v-model="group[0].value"
                     :items="group"
                     variant="tags-custom"

@@ -93,10 +93,11 @@ const textsDefault = {
   noAlerts: 'Nav paziņojumu',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',
-  languagesTitle: 'Valodu izvēle',
+  languagesTitle: 'Valodu izvēlne',
   contextPersonsButtonLabel: 'Konteksta personas',
   alternativeProfilesButtonLabel: 'Alternatīvie profili',
-  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeLabel: 'Piekļūstamības izvēlne',
+  themeTitle: 'Piekļūstamības un noformējuma izvēlne',
   themeAuto: 'Automātisks',
   themeLight: 'Gaišs',
   themeDark: 'Tumšs',
@@ -465,7 +466,8 @@ const themeDisplayItems = computed(() => {
       res.push({
         id: item,
         groupId: 'theme',
-        selected: item === props.theme,
+        active: item === props.theme,
+        description: themeNames.value[item],
         name: themeNames.value[item],
         icon: themeIcons[item],
       });
@@ -674,7 +676,8 @@ watch(
               kind="ghost"
               :icon="themeIcon"
               :disabled="headerNavDisable"
-              :label="displayTexts.themeTitle"
+              :label="displayTexts.themeLabel"
+              :title="displayTexts.themeTitle"
             />
           </div>
         </LxDropDownMenu>

@@ -63,13 +63,14 @@ const textsDefault = {
   openNavbar: 'Atvērt izvēlni',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',
-  languagesTitle: 'Valodu izvēle',
+  languagesTitle: 'Valodu izvēlne',
   close: 'Aizvērt',
   contextPersonsLabel: 'Izvēlieties konteksta personu',
   alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
   contextPersonsButtonLabel: 'Konteksta personas',
   alternativeProfilesButtonLabel: 'Alternatīvie profili',
-  themeTitle: 'Piekļūstamības un noformējuma izvēle',
+  themeLabel: 'Piekļūstamības izvēlne',
+  themeTitle: 'Piekļūstamības un noformējuma izvēlne',
   themeAuto: 'Automātisks',
   themeLight: 'Gaišs',
   themeDark: 'Tumšs',
@@ -438,7 +439,8 @@ const themeDisplayItems = computed(() => {
       res.push({
         id: item,
         groupId: 'theme',
-        selected: item === props.theme,
+        active: item === props.theme,
+        description: themeNames.value[item],
         name: themeNames.value[item],
         icon: themeIcons[item],
         iconSet: 'cds',
@@ -781,7 +783,8 @@ provide('insideHeader', insideHeader);
               >
                 <LxButton
                   customClass="lx-header-button"
-                  :label="displayTexts.themeTitle"
+                  :label="displayTexts.themeLabel"
+                  :title="displayTexts.themeTitle"
                   kind="ghost"
                   :icon="themeIcon"
                   tabindex="-1"

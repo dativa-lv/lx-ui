@@ -15,20 +15,12 @@ function getPreferences() {
   const touchQuery = safeMatchMedia('(pointer: coarse), (pointer: none)');
   const touchMode = touchQuery?.matches === true;
 
-  const themeQuery = safeMatchMedia('(prefers-color-scheme: dark)');
-  let theme = 'auto';
-  if (themeQuery?.matches === true) {
-    theme = 'dark';
-  } else if (themeQuery?.matches === false) {
-    theme = 'light';
-  }
-
   return {
     animations,
     transparency,
     fonts: false,
     touchMode,
-    theme,
+    theme: 'auto',
   };
 }
 

@@ -12,6 +12,8 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import { getInitialProps } from '@/utils/accessibilityUtils';
 
 const props = defineProps({
+  headingTag: { type: String, default: 'div' }, // h1, h2, h3, h4, h5, h6, div
+  headingLevel: { type: Number, default: 2 }, // 1-6
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -86,17 +88,6 @@ const blocks = [
   },
 ];
 
-const sections = computed(() => {
-  const map = {};
-  blocks.forEach((item) => {
-    if (!map[item.section]) map[item.section] = [];
-    map[item.section].push(item);
-  });
-  return map;
-});
-
-const blockExpanderModels = ref(Object.fromEntries(blocks.map((item) => [item.id, false])));
-
 const themes = ref([
   {
     id: 'auto',
@@ -124,14 +115,6 @@ const themes = ref([
   },
 ]);
 
-const themeDisplayItems = computed(() =>
-  themes.value.map((theme) => ({
-    ...theme,
-    name: displayTexts.value[theme.name],
-    description: displayTexts.value[theme.description],
-  }))
-);
-
 const guidelineLinks = {
   transparency: 'https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html',
   animations: 'https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html',
@@ -145,8 +128,26 @@ const shellModels = {
   touchMode: inject('isTouchMode'),
 };
 
+const blockExpanderModels = ref(Object.fromEntries(blocks.map((item) => [item.id, false])));
 const shellKeys = Object.keys(shellModels);
 const isInverted = (id) => id === 'animations' || id === 'transparency';
+
+const sections = computed(() => {
+  const map = {};
+  blocks.forEach((item) => {
+    if (!map[item.section]) map[item.section] = [];
+    map[item.section].push(item);
+  });
+  return map;
+});
+
+const themeDisplayItems = computed(() =>
+  themes.value.map((theme) => ({
+    ...theme,
+    name: displayTexts.value[theme.name],
+    description: displayTexts.value[theme.description],
+  }))
+);
 
 const blockToggleModels = ref(
   Object.fromEntries(
@@ -183,13 +184,30 @@ function resetAccessibilitySettings() {
   blockToggleModels.value.touchMode = initial.touchMode;
   blockToggleModels.value.theme = initial.theme;
 }
+
+const headingTag = computed(() => {
+  if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(props.headingTag)) {
+    return props.headingTag;
+  }
+  return 'div';
+});
+
+const headingAttrs = computed(() => {
+  if (props.headingTag === 'div') {
+    const level = Math.min(6, Math.max(1, Math.round(props.headingLevel)));
+    return { role: 'heading', 'aria-level': level };
+  }
+  return {};
+});
 </script>
 
 <template>
   <div class="lx-accessibility-settings-wrapper">
     <template v-for="(blocksInSection, section) in sections" :key="section">
       <div class="lx-accessibility-settings-block">
-        <div class="heading-2">{{ displayTexts[section] }}</div>
+        <component :is="headingTag" v-bind="headingAttrs" class="heading-2">
+          {{ displayTexts[section] }}
+        </component>
         <template v-for="block in blocksInSection" :key="block.id">
           <LxDataBlock size="l" :expandable="true" v-model="blockExpanderModels[block.id]">
             <template #customHeader>
@@ -215,7 +233,9 @@ function resetAccessibilitySettings() {
                   >
                     <div class="lx-icons"><LxIcon :value="block.icon" /></div>
                     <LxStack verticalAlignment="center" kind="compact">
-                      <div class="lx-primary">{{ displayTexts[block.label] }}</div>
+                      <div :id="`${block.id}-label`" class="lx-primary">
+                        {{ displayTexts[block.label] }}
+                      </div>
                       <div v-if="block.id !== 'theme'" class="lx-secondary">
                         {{ displayTexts[block.description] }}
                       </div>
@@ -224,6 +244,8 @@ function resetAccessibilitySettings() {
                   <LxToggle
                     v-if="block.id !== 'theme'"
                     v-model="blockToggleModels[block.id]"
+                    :tooltip="displayTexts[block.label]"
+                    :labelId="`${block.id}-label`"
                     @click.stop
                     @keyup.space.stop
                   />
@@ -231,6 +253,7 @@ function resetAccessibilitySettings() {
                     v-else-if="block.id === 'theme' && !blockExpanderModels[block.id]"
                     v-model="blockToggleModels[block.id]"
                     :items="themeDisplayItems"
+                    :labelId="`${block.id}-label`"
                     @click.stop
                   >
                     <template #customItem="{ icon, name }">
@@ -272,6 +295,7 @@ function resetAccessibilitySettings() {
                 v-model="blockToggleModels[block.id]"
                 :items="themeDisplayItems"
                 selectionKind="single"
+                :labelId="`${block.id}-label`"
               >
                 <template #customItem="{ icon, name, iconSet, description }">
                   <div class="lx-theme-item-content">
