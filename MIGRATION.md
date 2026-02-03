@@ -1,5 +1,17 @@
 # LX/UI Migration Guide
 
+
+## 2.0 → 2.0.1
+
+### Breaking changes
+
+#### LxShell
+
+The component API has been updated to improve naming consistency and clarity.
+
+**Event renames**
+- `settingsClicked` → `settingsClick`
+
 ## 1.11 → 2.0
 
 ### Breaking changes
@@ -380,6 +392,17 @@ Update the schemas accordingly to this migration guide and updated FormBuilder d
 _lx-form_ css styles are no longer supported.
 LxForm component must be used for form creation.
 
+#### LxAccessibilitySettings
+
+There is now a setting customization button in the accessibility and theme menu. This button is **non-optional** and **must** have a dedicated view, which renders the `LxAccessibilitySettings` component and is exposed via a route (e.g. `/accessibility-settings`). 
+
+Pressing the button emits `settingsClick`, which must be handled to navigate to the view. For example:
+
+```js
+<LxShell
+  @settingsClick="router.push({ name: 'accessibilitySettings' })"
+/>
+```
 
 ## 1.10 → 1.11
 

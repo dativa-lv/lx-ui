@@ -83,7 +83,7 @@ const emits = defineEmits([
   'navClick',
   'customButtonClick',
   'spotlightShowMore',
-  'settingsClicked',
+  'settingsClick',
 ]);
 
 const props = defineProps({
@@ -1136,7 +1136,7 @@ function closeEverything() {
 }
 
 function handleSettingsClick() {
-  emits('settingsClicked');
+  emits('settingsClick');
   closeEverything();
 }
 
@@ -1204,7 +1204,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @alternativeProfileChange="alternativeProfileChange"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1340,7 +1340,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @alternativeProfileChange="alternativeProfileChange"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1504,7 +1504,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1549,7 +1549,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @navClick="navClick"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="handleSettingsClick"
+          @settingsClick="handleSettingsClick"
         />
       </nav>
       <main ref="main" class="lx-main">
@@ -1672,7 +1672,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1717,7 +1717,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @navClick="navClick"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
         />
       </nav>
       <ul class="lx-latvijalv-alert-list" v-if="alerts?.length > 0 && !hasAlerts">
@@ -1860,7 +1860,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @contextPersonChange="contextPersonChange"
           @alternativeProfileChange="alternativeProfileChange"
           @navClick="navClick"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
           :texts="displayTexts"
         />
       </header>
@@ -1897,7 +1897,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @log-out="logOut"
           @navClick="navClick"
           @nav-toggle="navToggle"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
         />
       </nav>
 
@@ -2044,7 +2044,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @navClick="navClick"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
           :texts="displayTexts"
         >
           <template #customButtonPanel v-if="$slots.customButtonPanel">
@@ -2147,7 +2147,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @navClick="navClick"
           @nav-toggle="navToggle"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
         >
           <template #customButtonPanel v-if="$slots.customButtonPanel">
             <slot name="customButtonPanel" />
@@ -2300,7 +2300,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @contextPersonChange="contextPersonChange"
           @alternativeProfileChange="alternativeProfileChange"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
           :texts="displayTexts"
         />
       </header>
@@ -2488,7 +2488,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @alternativeProfileChange="alternativeProfileChange"
           @customButtonClick="emits('customButtonClick')"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="emits('settingsClicked')"
+          @settingsClick="emits('settingsClick')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -2532,7 +2532,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @nav-toggle="navToggle"
           @navClick="navClick"
           @toggleSpotlight="toggleSpotlight"
-          @settingsClicked="handleSettingsClick"
+          @settingsClick="handleSettingsClick"
         />
       </nav>
 

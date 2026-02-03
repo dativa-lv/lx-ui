@@ -138,7 +138,7 @@ const emits = defineEmits([
   'update:selectedMegaMenuItem',
   'megaMenuShowAllClick',
   'toggleSpotlight',
-  'settingsClicked',
+  'settingsClick',
 ]);
 
 function loginClicked() {
@@ -317,7 +317,7 @@ provide('insideNavBar', insideNavBar);
         v-model:isTouchSensitive="touchModeModel"
         :texts="displayTexts"
         @toggleSpotlight="toggleSpotlight"
-        @settingsClicked="emits('settingsClicked')"
+        @settingsClick="emits('settingsClick')"
       />
     </ul>
 

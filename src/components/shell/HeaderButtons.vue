@@ -148,7 +148,7 @@ const emits = defineEmits([
   'update:customButtonOpened',
   'customButtonClick',
   'toggleSpotlight',
-  'settingsClicked',
+  'settingsClick',
 ]);
 
 const windowSize = useWindowSize();
@@ -474,7 +474,7 @@ function themeDropdownClicked(id, value) {
   } else if (id === 'transparency') {
     transparencyModel.value = value;
   } else if (id === 'customizeSettings') {
-    emits('settingsClicked');
+    emits('settingsClick');
   } else {
     themeChange(value);
   }

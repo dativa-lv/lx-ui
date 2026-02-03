@@ -168,7 +168,7 @@ const emits = defineEmits([
   'update:customButtonOpened',
   'customButtonClick',
   'toggleSpotlight',
-  'settingsClicked',
+  'settingsClick',
 ]);
 
 const alternativeProfilesModal = ref();
@@ -579,7 +579,7 @@ provide('insideHeader', insideHeader);
         @log-out="logOut"
         @customButtonClick="emits('customButtonClick')"
         @toggleSpotlight="emits('toggleSpotlight')"
-        @settingsClicked="emits('settingsClicked')"
+        @settingsClick="emits('settingsClick')"
         :texts="displayTexts"
       >
         <template #customButtonPanel v-if="$slots.customButtonPanel">
@@ -654,7 +654,7 @@ provide('insideHeader', insideHeader);
       @log-out="logOut"
       @customButtonClick="emits('customButtonClick')"
       @toggleSpotlight="emits('toggleSpotlight')"
-      @settingsClicked="emits('settingsClicked')"
+      @settingsClick="emits('settingsClick')"
       :texts="displayTexts"
     >
       <template #customButtonPanel v-if="$slots.customButtonPanel">
