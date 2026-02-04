@@ -155,6 +155,9 @@ The component API has been updated to improve naming consistency and clarity.
 - `primaryAction`
 - `secondaryAction`
 
+**Props added**
+- `texts`
+
 **Props removed**
 - `buttonPrimaryVisible`
 - `buttonPrimaryLoading`
@@ -168,12 +171,10 @@ The component API has been updated to improve naming consistency and clarity.
 - `buttonSecondaryLabel`
 - `buttonCloseLabel`
 
-**Props added**
-- `texts`
+Use `actionDefinitions` prop to [define action buttons](docs/ActionDefinitions.md) instead.
 
-**Replacement**
-- Action buttons must now be defined using the unified `actionDefinitions`.
 To edit the close button label text change `texts` prop `close` attribute.
+
 
 #### LxMap
 
