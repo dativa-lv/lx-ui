@@ -784,6 +784,10 @@
   font-weight: 400;
 }
 
+.lx .lx-layout .lx-calendar-container .lx-calendar-weeks .lx-calendar-week .lx-calendar-day.lx-disabled-date .lx-calendar-day-content {
+  color: var(--color-disabled-foreground);
+}
+
 .lx .lx-layout .lx-calendar-container
   .lx-calendar-weeks
   .lx-calendar-week

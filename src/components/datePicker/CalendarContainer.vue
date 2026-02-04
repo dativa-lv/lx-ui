@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch, onUnmounted, nextTick } from 'vue';
 import { subYears, addYears, subMonths, addMonths } from 'date-fns';
-import { useWindowSize, onClickOutside, useDebounceFn } from '@vueuse/core';
+import { useWindowSize, onClickOutside, useMediaQuery, useDebounceFn } from '@vueuse/core';
 import { formatLocalizedDate } from '@/utils/dateUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
@@ -92,8 +92,9 @@ const responsiveView = computed(() => windowSize.width.value <= 500);
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
-
 const containerRef = ref();
+
+const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
 
 const transitionName = ref('lx-next-slide');
 const showCalendar = ref(false);
@@ -3658,17 +3659,19 @@ onUnmounted(() => {
                                 "
                                 role="button"
                                 :tabindex="
-                                  getDayTabIndex(
-                                    date,
-                                    month,
-                                    weekIndex,
-                                    firstDayOfTheWeek,
-                                    monthsList,
-                                    variant,
-                                    pickerType,
-                                    minDateRef,
-                                    maxDateRef
-                                  )
+                                  isTouchMode
+                                    ? -1
+                                    : getDayTabIndex(
+                                        date,
+                                        month,
+                                        weekIndex,
+                                        firstDayOfTheWeek,
+                                        monthsList,
+                                        variant,
+                                        pickerType,
+                                        minDateRef,
+                                        maxDateRef
+                                      )
                                 "
                                 @click.stop.prevent="
                                   handleSelections(
