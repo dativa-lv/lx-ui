@@ -225,8 +225,12 @@ function getNameDateTime() {
   if (isDateValid(props.modelValue)) {
     return formatDateTime(props.modelValue);
   }
-  if (typeof props.modelValue !== 'string') {
-    return formatDateTime(props.modelValue);
+  return null;
+}
+
+function getNameDateTimeFull() {
+  if (isDateValid(props.modelValue)) {
+    return formatFull(props.modelValue);
   }
   return null;
 }
@@ -274,6 +278,9 @@ function getName() {
     case 'dateTime':
     case 'date-time':
       return getNameDateTime();
+
+    case 'date-time-full':
+      return getNameDateTimeFull();
 
     case 'month':
       return getNameMonth();
@@ -360,7 +367,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
   <div class="lx-field-wrapper">
     <template v-if="readOnly">
       <p class="lx-data" :aria-labelledby="labelledBy">
-        <time :datetime="modelValueIso">
+        <time class="date-time-readonly" :datetime="modelValueIso">
           {{ getName() }}
           <span v-if="model === null || model === undefined">—</span>
         </time>

@@ -1234,4 +1234,63 @@ describe('LxDateTimePicker', () => {
       });
     });
   });
+
+  it('kind date-time readOnly date formatting', async () => {
+    expect(LxDateTimePicker).toBeTruthy();
+
+    wrapper = mount(LxDateTimePicker, {
+      props: {
+        modelValue: '2025-04-18',
+        variant: 'picker',
+        kind: 'date',
+      },
+      global: {
+        stubs: ['router-link'],
+        directives: {
+          ClickAway: dummyClickAway,
+        },
+      },
+    });
+
+    const monthSelectButton = wrapper.find('.lx-button.lx-calendar-months-select-button');
+    expect(monthSelectButton).toBeTruthy();
+    expect(monthSelectButton.attributes('aria-label')).toBe('Aprīlis');
+  });
+
+  describe('kind', () => {
+    describe.each([
+      ['date', '2026-02-05', '05.02.2026.'],
+      ['time', '13:50', '13:50'],
+      ['time-full', '13:50:15', '13:50:15'],
+      ['date-time', '2026-02-05T13:50:15', '05.02.2026. 13:50'],
+      ['date-time-full', '2026-02-05T13:50:15', '05.02.2026. 13:50:15'],
+      ['month', '2', 'Februāris'],
+      ['year', '2026', '2026'],
+      ['month-year', '2026-02', '2026. g. februāris'],
+      ['quarters', '2026-Q1', '2026-Q1'],
+    ])('%s', (kind, modelValue, readOnlyDate) => {
+      test(`kind ${kind} readOnly date formatting`, async () => {
+        expect(LxDateTimePicker).toBeTruthy();
+
+        wrapper = mount(LxDateTimePicker, {
+          props: {
+            modelValue,
+            variant: 'default',
+            kind,
+            readOnly: true,
+          },
+          global: {
+            stubs: ['router-link'],
+            directives: {
+              ClickAway: dummyClickAway,
+            },
+          },
+        });
+
+        const pickerInput = wrapper.find('.date-time-readonly');
+        expect(pickerInput.exists()).toBe(true);
+        expect(pickerInput.text()).toBe(readOnlyDate);
+      });
+    });
+  });
 });
