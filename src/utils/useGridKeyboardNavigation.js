@@ -36,6 +36,11 @@ export function useGridKeyboardNavigation() {
 
     nextTick(() => {
       target.focus();
+      target.scrollIntoView({
+        behavior: 'instant',
+        block: 'nearest',
+        inline: 'nearest',
+      });
     });
   }
 
@@ -98,8 +103,8 @@ export function useGridKeyboardNavigation() {
   function isCellDelegated(col, customVal = false) {
     return (
       col.type === 'rating' ||
-      col.type === 'person' ||
       col.kind === 'clickable' ||
+      (col.type === 'person' && customVal) ||
       (col.type === 'icon' && customVal) ||
       (col.type === 'array' && customVal)
     );

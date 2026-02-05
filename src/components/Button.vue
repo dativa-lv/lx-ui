@@ -65,6 +65,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const labelEl = ref(null);
 const overflowCheckTrigger = ref(0);
+const buttonRef = ref(null);
 
 const slots = useSlots();
 
@@ -160,10 +161,22 @@ const ariaLabelWithBadge = computed(() => {
   return `${props.label} (${badgeTypeText})`;
 });
 
-const buttonRef = ref(null);
-
 function focus() {
   buttonRef.value?.focus();
+}
+
+function scrollIntoView({
+  behavior = 'auto',
+  block = 'start',
+  container = 'all',
+  inline = 'nearest',
+}) {
+  buttonRef.value?.scrollIntoView({
+    behavior,
+    block,
+    container,
+    inline,
+  });
 }
 
 watch([() => props.label, () => props.variant], checkOverflow, { flush: 'post' });
@@ -177,7 +190,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', checkOverflow);
 });
 
-defineExpose({ focus });
+defineExpose({ focus, scrollIntoView });
 </script>
 <template>
   <button

@@ -119,7 +119,16 @@ function focus() {
   }
 }
 
-defineExpose({ focus });
+function scrollIntoView({ behavior, block, container, inline }) {
+  infoWrapperRef.value?.scrollIntoView({
+    behavior,
+    block,
+    container,
+    inline,
+  });
+}
+
+defineExpose({ focus, scrollIntoView });
 </script>
 <template>
   <div class="lx-field-wrapper">

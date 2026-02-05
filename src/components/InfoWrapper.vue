@@ -369,6 +369,20 @@ function focus() {
   }
 }
 
+function scrollIntoView({
+  behavior = 'auto',
+  block = 'start',
+  container = 'all',
+  inline = 'nearest',
+}) {
+  triggerRef.value?.scrollIntoView({
+    behavior,
+    block,
+    container,
+    inline,
+  });
+}
+
 const tabIndex = computed(() => {
   if (props.disabled) return null;
   if (!slots.panel && !props.content) return -1;
@@ -402,7 +416,7 @@ onBeforeUnmount(() => {
   }
 });
 
-defineExpose({ handleOpen, handleClose, showPopper, focus });
+defineExpose({ handleOpen, handleClose, showPopper, focus, scrollIntoView });
 </script>
 <template>
   <LxPopper

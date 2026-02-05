@@ -1844,7 +1844,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     (row[col.attributeName] &&
                       row[col.attributeName].length >
                         (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
-                      col.type === 'array')
+                      col.type === 'array') ||
+                    (col.type === 'person' && !isValueEmpty(row?.[col?.attributeName]))
                 )
                   ? getTabIndex(
                       hasSorting ? rowIndex + 1 : rowIndex,
@@ -1861,7 +1862,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     (row[col.attributeName] &&
                       row[col.attributeName].length >
                         (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
-                      col.type === 'array')
+                      col.type === 'array') ||
+                    (col.type === 'person' && !isValueEmpty(row?.[col?.attributeName]))
                 )
                   ? (el) =>
                       registerCell(
@@ -1922,7 +1924,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       (row[col.attributeName] &&
                         row[col.attributeName].length >
                           (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
-                        col.type === 'array')
+                        col.type === 'array') ||
+                      (col.type === 'person' && !isValueEmpty(row?.[col?.attributeName]))
                   ),
                 },
               ]"
@@ -1945,7 +1948,14 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     props.clickableRole === 'button' && col.kind === 'clickable',
                   'lx-cell-clickable': col.kind === 'clickable',
                 }"
-                :tabindex="-1"
+                :tabindex="
+                  isCellDelegated(col)
+                    ? getTabIndex(
+                        hasSorting ? rowIndex + 1 : rowIndex,
+                        hasSelecting ? colIndex + 1 : colIndex
+                      )
+                    : -1
+                "
                 :role="col.kind === 'clickable' ? props.clickableRole : null"
                 :datetime="isDateType(col.type) ? row[col.attributeName] : null"
                 :ref="
@@ -1958,9 +1968,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         )
                     : null
                 "
-                @click="handleClick(col, row)"
                 @keyup.space="handleKey(col, row)"
                 @keyup.enter="handleKey(col, row)"
+                @click="handleClick(col, row)"
               >
                 {{ formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) }}
               </component>
@@ -2131,7 +2141,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 size="s"
                 :customRole="col.kind === 'clickable' ? clickableRole : null"
                 :focusable="
-                  isCellDelegated(col)
+                  isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
                     ? getFocusable(
                         hasSorting ? rowIndex + 1 : rowIndex,
                         hasSelecting ? colIndex + 1 : colIndex
@@ -2139,7 +2149,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     : false
                 "
                 :ref="
-                  isCellDelegated(col)
+                  isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
                     ? (el) =>
                         registerCell(
                           el ?? null,
@@ -2502,8 +2512,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             ]"
           >
             <component
-              :is="isDateType(col.type) ? 'time' : 'span'"
               v-if="isRenderableTextType(col.type)"
+              :is="isDateType(col.type) ? 'time' : 'span'"
               :tabindex="col.kind === 'clickable' ? 0 : -1"
               :datetime="isDateType(col.type) ? item[col.attributeName] : null"
               @click="handleClick(col, item)"

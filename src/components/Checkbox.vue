@@ -39,6 +39,20 @@ function focus() {
   inputRef.value?.focus();
 }
 
+function scrollIntoView({
+  behavior = 'auto',
+  block = 'start',
+  container = 'all',
+  inline = 'nearest',
+}) {
+  inputRef.value?.scrollIntoView({
+    behavior,
+    block,
+    container,
+    inline,
+  });
+}
+
 onMounted(() => {
   if (props.id) {
     idValue.value = props.id;
@@ -47,7 +61,7 @@ onMounted(() => {
   }
 });
 
-defineExpose({ focus });
+defineExpose({ focus, scrollIntoView });
 </script>
 
 <template>
