@@ -473,7 +473,6 @@ defineExpose({
   <LxFilters
     ref="filterElement"
     v-model:expanded="isExpanded"
-    kind="form"
     :label="label"
     :description="description || (isExpanded ? '' : filterDescription)"
     :usesFilters="

@@ -768,7 +768,7 @@ function handleModalActionClick(action, name) {
           />
           <LxValuePicker
             v-else-if="componentSelect(item, itemName) === 'valuePicker'"
-            :kind="item?.type === 'array' ? 'multiple' : 'single'"
+            :selectionKind="item?.type === 'array' ? 'multiple' : 'single'"
             :items="item?.lx?.items || enumToObject(item)"
             :id-attribute="item?.lx?.idAttribute"
             :name-attribute="item?.lx?.nameAttribute"
@@ -992,7 +992,7 @@ function handleModalActionClick(action, name) {
             />
             <LxValuePicker
               v-else-if="componentSelect(item, itemName) === 'valuePicker'"
-              :kind="item?.type === 'array' ? 'multiple' : 'single'"
+              :selectionKind="item?.type === 'array' ? 'multiple' : 'single'"
               :items="item?.lx?.items || enumToObject(item)"
               :id-attribute="item?.lx?.idAttribute"
               :name-attribute="item?.lx?.nameAttribute"
@@ -1444,7 +1444,7 @@ function handleModalActionClick(action, name) {
             />
             <LxValuePicker
               v-else-if="componentSelect(itemValue, itemName) === 'valuePicker'"
-              :kind="itemValue?.type === 'array' ? 'multiple' : 'single'"
+              :selectionKind="itemValue?.type === 'array' ? 'multiple' : 'single'"
               :items="itemValue?.lx?.items || enumToObject(itemValue)"
               :id-attribute="itemValue?.lx?.idAttribute"
               :name-attribute="itemValue?.lx?.nameAttribute"
@@ -1665,7 +1665,7 @@ function handleModalActionClick(action, name) {
                         componentSelect(appendableItem, appendableItemName) === 'valuePicker'
                       "
                       :id="name + '-' + appendableItemName + '-' + index"
-                      :kind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
+                      :selectionKind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
                       :items="appendableItem?.lx?.items || enumToObject(appendableItem)"
                       :id-attribute="appendableItem?.lx?.idAttribute"
                       :name-attribute="appendableItem?.lx?.nameAttribute"
@@ -1968,7 +1968,7 @@ function handleModalActionClick(action, name) {
             />
             <LxValuePicker
               v-else-if="componentSelect(itemValue, itemName) === 'valuePicker'"
-              :kind="itemValue?.type === 'array' ? 'multiple' : 'single'"
+              :selectionKind="itemValue?.type === 'array' ? 'multiple' : 'single'"
               :items="itemValue?.lx?.items || enumToObject(itemValue)"
               :id-attribute="itemValue?.lx?.idAttribute"
               :name-attribute="itemValue?.lx?.nameAttribute"
@@ -2191,7 +2191,7 @@ function handleModalActionClick(action, name) {
                         componentSelect(appendableItem, appendableItemName) === 'valuePicker'
                       "
                       :id="name + '-' + appendableItemName + '-' + index"
-                      :kind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
+                      :selectionKind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
                       :items="appendableItem?.lx?.items || enumToObject(appendableItem)"
                       :id-attribute="appendableItem?.lx?.idAttribute"
                       :name-attribute="appendableItem?.lx?.nameAttribute"
@@ -2428,7 +2428,7 @@ function handleModalActionClick(action, name) {
           <LxValuePicker
             v-else-if="componentSelect(appendableItem, appendableItemName) === 'valuePicker'"
             :id="name + '-' + appendableItemName + '-' + index"
-            :kind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
+            :selectionKind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
             :items="appendableItem?.lx?.items || enumToObject(appendableItem)"
             :id-attribute="appendableItem?.lx?.idAttribute"
             :name-attribute="appendableItem?.lx?.nameAttribute"
@@ -2549,11 +2549,7 @@ function handleModalActionClick(action, name) {
     v-model="model[name]"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :columnCount="displaySchema?.properties[name]?.lx?.columnCount"
-    :kind="
-      displaySchema?.properties[name]?.lx?.kind
-        ? displaySchema?.properties[name]?.lx?.kind
-        : 'compact'
-    "
+    :kind="displaySchema?.properties[name]?.lx?.kind || 'compact'"
     :requiredMode="displaySchema?.properties[name]?.lx?.requiredMode"
     :canAddItems="displaySchema?.properties[name]?.lx?.canAddItems"
     :texts="displaySchema?.properties[name]?.lx?.texts"
@@ -2672,7 +2668,6 @@ function handleModalActionClick(action, name) {
     :hasDetails="displaySchema?.properties[name]?.lx?.hasDetails"
     :selectionKind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
     :detailMode="displaySchema?.properties[name]?.lx?.detailMode"
-    :variant="displaySchema?.properties[name]?.lx?.variant"
     :preloadedItems="displaySchema?.properties[name]?.lx?.preloadedItems"
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :hasSelectAll="displaySchema?.properties[name]?.lx?.hasSelectAll"
@@ -3047,7 +3042,7 @@ function handleModalActionClick(action, name) {
   <LxFileUploader
     v-else-if="selectedComponent === 'file'"
     :id="id + '-' + name"
-    :kind="displaySchema?.properties[name]?.lx?.kind"
+    :selectionKind="displaySchema?.properties[name]?.lx?.selectionKind"
     :mode="displaySchema?.properties[name]?.lx?.mode"
     :draggable="displaySchema?.properties[name]?.lx?.draggable"
     :dataType="displaySchema?.properties[name]?.lx?.dataType"
@@ -3267,7 +3262,9 @@ function handleModalActionClick(action, name) {
     :hasFileUploader="
       model?.[name]?.hasFileUploader || displaySchema?.properties[name]?.lx?.hasFileUploader
     "
-    :kind="model?.[name]?.kind || displaySchema?.properties[name]?.lx?.kind"
+    :selectionKind="
+      model?.[name]?.selectionKind || displaySchema?.properties[name]?.lx?.selectionKind
+    "
     :cameraSwitcherMode="
       model?.[name]?.cameraSwitcherMode || displaySchema?.properties[name]?.lx?.cameraSwitcherMode
     "
@@ -3282,7 +3279,7 @@ function handleModalActionClick(action, name) {
   />
   <LxRating
     v-else-if="selectedComponent === 'ratings'"
-    :mode="displaySchema?.properties[name]?.lx?.mode"
+    :readOnly="isReadOnly(displaySchema?.properties[name])"
     :kind="displaySchema?.properties[name]?.lx?.kind"
     :variant="displaySchema?.properties[name]?.lx?.variant"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
@@ -3325,9 +3322,9 @@ function handleModalActionClick(action, name) {
   <LxVisualPicker
     v-else-if="selectedComponent === 'visualPicker'"
     :id="id + '-' + name"
-    :kind="displaySchema?.properties[name]?.lx?.type === 'string' ? 'single' : 'multiple'"
+    :kind="displaySchema?.properties[name]?.lx?.kind"
     :mode="displaySchema?.properties[name]?.lx?.mode"
-    :selectionKind="displaySchema?.properties[name]?.lx?.selectionKind"
+    :selectionKind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"
