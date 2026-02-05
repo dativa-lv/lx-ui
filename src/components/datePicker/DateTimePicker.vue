@@ -68,6 +68,7 @@ const textsDefault = {
   noSpecialDates: 'Šajā mēnesī nav ieplānotu notikumu',
   specialDatesButton: 'Atvērt notikumus',
   closeSpecialDatesButton: 'Aizvērt notikumus',
+  bottomSheetClose: 'Paslēpt paneli',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

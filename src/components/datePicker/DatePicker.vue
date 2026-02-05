@@ -90,6 +90,8 @@ const textsDefault = {
   dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
   selectedStartDate: 'Izvēlēts sākuma datums',
   noSpecialDates: 'Šajā mēnesī nav ieplānotu notikumu',
+  inputManual: 'Ievadīt manuāli',
+  bottomSheetClose: 'Paslēpt paneli',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -119,6 +121,8 @@ const liveMessage = ref('');
 const tapStage = ref(0);
 
 const windowSize = useWindowSize();
+
+const responsiveView = computed(() => windowSize.width.value <= 500);
 
 const isTouchSensitive = inject('isTouchMode', ref(false));
 const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
@@ -1118,6 +1122,35 @@ function blurActiveElement() {
   });
 }
 
+const clickedManualInput = ref(false);
+
+function inputManualClick(id) {
+  if (id === 'inputManual') {
+    setTimeout(() => {
+      clickedManualInput.value = true;
+      if (activeInput.value === 'startInput') {
+        startInputRefs.value[props.id]?.focus();
+      } else {
+        endInputRefs.value[props.id]?.focus();
+      }
+    }, 0);
+  }
+}
+
+// Touch handling in responsive mode (need to fix issue with second touch for dateTimeRange)
+function handleTouchResponsiveToggle(isOpen, type) {
+  if (modelInput.value && modelEndDateInput.value) {
+    clickedManualInput.value = false;
+  }
+
+  if (!isOpen && !clickedManualInput.value) {
+    openMenu(type);
+    return;
+  }
+  closeMenu();
+  nextTick(() => setActiveInput(type, props.id, false));
+}
+
 function handleTouchToggle(isOpen, type) {
   if (!isOpen) {
     tapStage.value = 1;
@@ -1156,14 +1189,23 @@ function handleDesktopToggle(isOpen, type) {
   }
 }
 
-function toggleMenu(type) {
+function toggleMenu(type, buttonType = null) {
   if (props.disabled) return;
+
+  if (buttonType === 'enter') {
+    return;
+  }
 
   const menu = dropDownMenuRef.value;
   const isOpen = menu?.menuOpen;
 
   if (!isTouchSensitive.value) {
     handleDesktopToggle(isOpen, type);
+    return;
+  }
+
+  if (responsiveView.value && props.pickerType === 'range') {
+    handleTouchResponsiveToggle(isOpen, type);
     return;
   }
 
@@ -1339,6 +1381,7 @@ watch(
         const formattedEnd = formatDateByMode(newValue.end);
         modelInput.value = formattedStart;
         modelEndDateInput.value = formattedEnd;
+        activeInput.value = null;
       } else if (newValue.start && !newValue.end) {
         // When only the start date is selected
         const formattedStart = formatDateByMode(newValue.start);
@@ -1406,8 +1449,10 @@ onMounted(async () => {
       ref="dropDownMenuRef"
       :placement="computedPlacement"
       :disabled="disabled"
-      :datePickerType="true"
+      :datePickerType="props.mode"
       tabindex="-1"
+      :texts="texts"
+      @action-click="inputManualClick"
     >
       <div
         class="lx-datepicker-input-container"
@@ -1453,8 +1498,8 @@ onMounted(async () => {
             @mousedown="preventDefaultFocus"
             @touchstart="onTouchStart($event, 'startInput')"
             @click="toggleMenu('startInput')"
-            @keydown.arrow-down.prevent="openMenu('startInput')"
-            @keyup.enter.stop="toggleMenu('startInput')"
+            @keyup.arrow-down.prevent="openMenu('startInput')"
+            @keyup.enter.stop="toggleMenu('startInput', 'enter')"
             @keydown.esc.prevent="closeMenu"
             @change="validateIfExact($event, 'startInput')"
             @input="sanitizeDateInput($event, mode)"
@@ -1505,8 +1550,8 @@ onMounted(async () => {
               @mousedown="preventDefaultFocus"
               @touchstart="onTouchStart($event, 'endInput')"
               @click="toggleMenu('endInput')"
-              @keydown.arrow-down.prevent="openMenu('endInput')"
-              @keyup.enter.stop="toggleMenu('endInput')"
+              @keyup.arrow-down.prevent="openMenu('endInput')"
+              @keyup.enter.stop="toggleMenu('endInput', 'enter')"
               @keydown.esc.prevent="closeMenu"
               @change="validateIfExact($event, 'endInput')"
               @input="sanitizeDateInput($event, mode)"

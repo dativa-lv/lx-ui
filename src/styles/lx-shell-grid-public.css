@@ -366,6 +366,33 @@
 }
 
 
+.handle-wrapper .handle-icon {
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  margin-top: 0.5rem;
+}
+
+.lx-info-wrapper-responsive-toolbar .handle-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+.lx-dropdown-panel-wrapper .lx-info-wrapper-responsive-toolbar {
+  height: 4rem;
+}
+
+.lx .lx-dropdown-panel-wrapper .lx-info-wrapper-responsive-toolbar>.lx-button {
+  margin-top: 1rem;
+}
+
+.lx .handle-wrapper>.lx-button {
+  margin-left: 3rem;
+  margin-top: 1rem;
+}
+
+
 .lx-layout.lx-layout-public.no-nav-items>nav{
   display: none;
 }
@@ -409,6 +436,35 @@
 .lx-layout.lx-layout-public .lx-header .lx-login-button {
   --color-header-hover-background: var(--color-button-primary-hover-background);
 }
+
+.lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-info-wrapper-responsive-toolbar>.lx-button,
+.lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month-year .lx-info-wrapper-responsive-toolbar>.lx-button,
+.lx .lx-dropdown-panel-wrapper.date-picker-type.mode-quarters .lx-info-wrapper-responsive-toolbar>.lx-button {
+  margin-top: 0rem;
+}
+
+.lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-info-wrapper-responsive-toolbar,
+.lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month-year .lx-info-wrapper-responsive-toolbar,
+.lx .lx-dropdown-panel-wrapper.date-picker-type.mode-quarters .lx-info-wrapper-responsive-toolbar{
+  height: 3rem;
+}
+
+.popper.fullscreen-popper .lx-dropdown-panel-wrapper.date-picker-type.mode-month  .lx-calendar-layouts-wrapper>button,
+.popper.fullscreen-popper .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-calendar-header>button {
+  display: none;
+}
+.popper.fullscreen-popper .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-calendar-header {
+  height: 0;
+}
+
+.lx .lx-layout .popper.fullscreen-popper .lx-dropdown-panel-wrapper.date-picker-type.mode-month  .lx-calendar-container.mode-month .lx-calendar-layouts-wrapper {
+  height: auto;
+}
+
+.lx .lx-layout .popper.fullscreen-popper .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-calendar-layouts-wrapper .lx-calendar-layouts {
+  margin: 1rem auto 0;
+}
+
 
 /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
 @media (max-height: calc(8rem * 5)) {

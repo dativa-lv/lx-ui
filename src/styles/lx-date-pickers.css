@@ -1021,7 +1021,7 @@
 }
 
 .lx .lx-layout .popper.fullscreen-popper .lx-dropdown-panel {
-  max-height: calc(77dvh - 3rem);
+  max-height: calc(75dvh - 3rem);
 }
 
 .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper {
@@ -1134,7 +1134,7 @@
   content: "";
   height: 3rem;
   position: absolute;
-  top: 9.5rem;
+  top: 10.5rem;
   width: 100%;
   align-self: center;
   opacity: var(--date-picker-wrapper-top-shadow-opacity);
@@ -1164,7 +1164,44 @@
   margin: 6rem auto 0;
 }
 
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container  {
+  height: 100%;
+}
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-date .lx-calendar-layouts-wrapper.special-dates-layout,
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper.mobile-date-time.special-dates-layout {
+  height: unset;
+}
 
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main {
+height: 100%;
+}
+
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper.mobile-date-time.special-dates-layout {
+  height: unset;
+}
+
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts {
+  height: 19.12rem;
+}
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper.mobile-date-time .lx-calendar-layouts {
+  height: 22.25rem
+}
+
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper.mobile-quarters .lx-calendar-layouts {
+  height: 24.5rem;
+}
+
+  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month .lx-calendar-layouts-wrapper,
+  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-year .lx-calendar-layouts-wrapper,
+   .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month-year .lx-calendar-layouts-wrapper {
+    height: 19rem;
+  }
+
+  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts,
+  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-year .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts,
+   .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month-year .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts {
+    height: unset;
+  } 
 
 @media (max-width: 640px) {
   .lx-calendar-container.mode-time-full .lx-calendar-time-picker.date-time-only {
@@ -1173,7 +1210,7 @@
   }
 
   .lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.mobile-quarters {
-    height: 28rem;
+    height: 30.5rem;
   }
 
   .lx .lx-layout .lx-calendar-container .lx-calendar-layouts:not(.date-time-only) {
@@ -1250,17 +1287,12 @@
   .lx-date-time-picker-wrapper.lx-date-time-range-wrapper .legacy-pickers-wrapper .lx-date-time-range-separator {
     margin-top: 0;
   }
-  .lx .lx-layout .lx-calendar-container.mode-month .lx-calendar-layouts-wrapper,
-  .lx .lx-layout .lx-calendar-container.mode-year .lx-calendar-layouts-wrapper,
-  .lx .lx-layout .lx-calendar-container.mode-month-year .lx-calendar-layouts-wrapper {
-    height: 16rem;
-  }
 
-  .lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper,
-  .lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.mobile-date-time,
-    .lx .lx-layout .lx-calendar-container.mode-date .lx-calendar-layouts-wrapper  {
+  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container .lx-calendar-layouts-wrapper.mobile-date-time,
+  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-date .lx-calendar-layouts-wrapper {
     height: 22rem;
   }
+  
   .lx .lx-layout .lx-calendar-container.mode-date .lx-calendar-layouts-wrapper.special-dates-layout {
     height: 23.5rem;
   }

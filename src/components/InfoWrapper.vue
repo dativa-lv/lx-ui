@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, computed, useSlots, nextTick, watch } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import { useWindowSize } from '@vueuse/core';
@@ -22,7 +23,14 @@ const props = defineProps({
   label: { type: String, default: null },
   description: { type: String, default: null },
   customRole: { type: String, default: null },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  bottomSheetClose: 'Paslēpt paneli',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const popperRef = ref(null);
 const panelRef = ref(null);
@@ -459,6 +467,7 @@ defineExpose({ handleOpen, handleClose, showPopper, focus, scrollIntoView });
     </div>
 
     <template #content v-if="isPanelAvailable">
+      <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
       <div
         ref="popperRef"
         class="lx-info-wrapper lx-rich-kind"
@@ -523,7 +532,13 @@ defineExpose({ handleOpen, handleClose, showPopper, focus, scrollIntoView });
               <LxIcon class="handle-icon" value="handle" />
             </div>
 
-            <LxButton kind="ghost" icon="close" @click="handleClose()" />
+            <LxButton
+              kind="ghost"
+              icon="chevron-down"
+              variant="icon-only"
+              :label="displayTexts.bottomSheetClose"
+              @click="handleClose()"
+            />
           </div>
           <div
             ref="wrapperPanelRef"

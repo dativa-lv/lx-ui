@@ -15,6 +15,7 @@ import {
   focusLastElementInContainer,
   focusNextElementInContainer,
   focusPreviousElementInContainer,
+  getDisplayTexts,
 } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
@@ -25,10 +26,18 @@ const props = defineProps({
   triggerClick: { type: String, default: 'left' },
   offsetSkid: { type: String, default: null },
   tabindex: { type: [String, Number], default: null },
-  datePickerType: { type: Boolean, default: false },
+  datePickerType: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   groupDefinitions: { type: Array, default: null },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  inputManual: 'Ievadīt manuāli',
+  bottomSheetClose: 'Paslēpt paneli',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['actionClick']);
 
@@ -67,20 +76,26 @@ function openMenu({ source = 'default', focus = 'first' } = {}) {
     parentFocusTrap?.pause();
 
     activateFocusTrap();
+    if (!props.datePickerType) {
+      switch (focus) {
+        case 'first':
+          firstFocusableElement.value = focusFirstElementInContainer(panelRef.value);
 
-    switch (focus) {
-      case 'first':
-        firstFocusableElement.value = focusFirstElementInContainer(panelRef.value);
-
-        if (source !== 'keyboard') {
-          panelRef.value?.focus();
-        }
-        break;
-      case 'last':
-        focusLastElementInContainer(panelRef.value);
-        break;
-      default:
-        break;
+          if (source !== 'keyboard') {
+            panelRef.value?.focus();
+          }
+          break;
+        case 'last':
+          focusLastElementInContainer(panelRef.value);
+          break;
+        default:
+          break;
+      }
+    }
+    if (props.datePickerType) {
+      nextTick(() => {
+        focusFirstElementInContainer(panelRef.value);
+      });
     }
   });
 }
@@ -390,6 +405,11 @@ watch(
   }
 );
 
+function inputManual() {
+  emits('actionClick', 'inputManual');
+  handleClose();
+}
+
 onClickOutside(togglerRef, onClickOutsideHandler, {
   ignore: [panelRef],
 });
@@ -461,6 +481,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
             },
             { 'slide-down-animation': responsiveView && popperToClose && datePickerType },
             { 'date-picker-type': datePickerType },
+            { [`mode-${datePickerType}`]: datePickerType },
           ]"
           role="menu"
           tabindex="-1"
@@ -483,9 +504,25 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
               @touchstart="handleDragStart"
             >
               <LxIcon class="handle-icon" value="handle" />
+              <LxButton
+                v-if="
+                  datePickerType !== 'month' &&
+                  datePickerType !== 'month-year' &&
+                  datePickerType !== 'quarters'
+                "
+                :label="displayTexts.inputManual"
+                kind="ghost"
+                @click="inputManual"
+              ></LxButton>
             </div>
 
-            <LxButton kind="ghost" icon="close" @click="handleClose()" />
+            <LxButton
+              kind="ghost"
+              icon="chevron-down"
+              variant="icon-only"
+              :label="displayTexts.bottomSheetClose"
+              @click="handleClose()"
+            />
           </div>
           <div v-if="$slots.clickSafePanel" ref="wrapperPanelRef" class="lx-dropdown-panel">
             <div

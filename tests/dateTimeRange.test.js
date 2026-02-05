@@ -51,7 +51,7 @@ describe.each([
     const pickerInput = wrapper.find('.lx-date-time-picker.lx-input-area');
     expect(pickerInput.exists()).toBe(true);
 
-    await pickerInput.trigger('keydown', { key: 'ArrowDown' });
+    await pickerInput.trigger('keyup', { key: 'ArrowDown' });
 
     const calendarContainer = document.body.querySelector(container);
     expect(calendarContainer).toBeTruthy();
