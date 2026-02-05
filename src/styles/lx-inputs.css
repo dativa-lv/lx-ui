@@ -2031,7 +2031,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   margin: 0;
 }
 
-.lx-dropdown-default-content .lx-value-picker-item.lx-selected {
+.lx .lx-dropdown-default-content .lx-value-picker-item.lx-selected {
   color: var(--color-selected);
   background-color: var(--color-selected-background);
   border-color: transparent transparent transparent var(--color-selected-border);
