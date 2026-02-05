@@ -1,10 +1,14 @@
 <script setup>
 import { computed, onMounted, ref, inject, nextTick } from 'vue';
+
+import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
+import { processToolbarActions } from '@/utils/toolbarUtils';
+
 import LxButton from '@/components/Button.vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxDataBlock from '@/components/DataBlock.vue';
-import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import LxToolbar from '@/components/Toolbar.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -42,6 +46,8 @@ const defaultTexts = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
 
 const emits = defineEmits(['update:modelValue', 'actionClick', 'update:selectedValues']);
+
+const searchField = ref(false);
 
 // Adds a unique key to each object in the model
 function addKey(object) {
@@ -205,6 +211,40 @@ function changeSelecting(value) {
   }
 }
 
+function handleToolbarActionClick(id) {
+  if (id === 'add-item') {
+    addItem();
+  }
+}
+
+const insideForm = inject('insideForm', ref(false));
+
+const defaultToolbarArea = computed(() => (insideForm.value ? 'left' : 'right'));
+
+const toolbarActionDefinitions = ref([
+  {
+    id: 'add-item',
+    name: defaultTexts.addButtonLabel,
+    icon: 'add-item',
+    kind: 'tertiary',
+  },
+]);
+
+const processedToolbarActions = computed(() =>
+  processToolbarActions({
+    actions: toolbarActionDefinitions.value,
+    loading: false,
+    busy: false,
+    hasSearch: false,
+    searchMode: 'default',
+    hasSelecting: false, // temporary disabled (props.hasSelecting)
+    selectionKind: 'single', // temporary single (props.selectionKind)
+    defaultToolbarArea,
+    searchField,
+    displayTexts,
+  })
+);
+
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
@@ -215,94 +255,107 @@ onMounted(() => {
 defineExpose({ clearModel });
 </script>
 <template>
-  <div
-    class="lx-appendable-list"
-    :class="[{ 'lx-appendable-list-compact': kind === 'compact' }]"
-    :aria-labelledby="labelledBy"
-    :id="props.id"
-    role="list"
-  >
+  <div class="lx-appendable-list-wrapper">
+    <div v-if="!readOnly && canAddItems && insideForm">
+      <LxToolbar
+        :id="`${props.id}-toolbar`"
+        :actionDefinitions="processedToolbarActions"
+        :texts="displayTexts"
+        @actionClick="handleToolbarActionClick"
+      >
+      </LxToolbar>
+    </div>
+
     <div
-      v-for="(item, index) in model"
-      :key="item._lx_appendableKey"
-      class="lx-appendable-list-item"
-      :id="item._lx_appendableKey"
-      role="listitem"
+      class="lx-appendable-list"
+      :class="[{ 'lx-appendable-list-compact': kind === 'compact' }]"
+      :aria-labelledby="labelledBy"
+      :id="props.id"
+      role="list"
     >
-      <template v-if="expandable">
-        <LxDataBlock
-          v-model="expanded[item?.[idAttribute]]"
-          v-model:selected="selectedValues[item?.[idAttribute]]"
-          :id="item[idAttribute]"
-          :name="item[nameAttribute]"
-          :description="item[descriptionAttribute]"
-          :icon="item[iconAttribute]"
-          :expandable="true"
-          :actionDefinitions="changeActions([...allActions], item)"
-          :uppercase="uppercase"
-          :hasSelecting="hasSelecting"
-          :selectionKind="selectionKind"
-          :invalid="item[invalidAttribute]"
-          @actionClick="(val) => actionClick(val, item[idAttribute], item._lx_appendableKey)"
-          @selectingClick="changeSelecting"
-        >
+      <div
+        v-for="(item, index) in model"
+        :key="item._lx_appendableKey"
+        class="lx-appendable-list-item"
+        :id="item._lx_appendableKey"
+        role="listitem"
+      >
+        <template v-if="expandable">
+          <LxDataBlock
+            v-model="expanded[item?.[idAttribute]]"
+            v-model:selected="selectedValues[item?.[idAttribute]]"
+            :id="item[idAttribute]"
+            :name="item[nameAttribute]"
+            :description="item[descriptionAttribute]"
+            :icon="item[iconAttribute]"
+            :expandable="true"
+            :actionDefinitions="changeActions([...allActions], item)"
+            :uppercase="uppercase"
+            :hasSelecting="hasSelecting"
+            :selectionKind="selectionKind"
+            :invalid="item[invalidAttribute]"
+            @actionClick="(val) => actionClick(val, item[idAttribute], item._lx_appendableKey)"
+            @selectingClick="changeSelecting"
+          >
+            <LxForm
+              kind="stripped"
+              role="group"
+              :columnCount="columnCount"
+              :required-mode="props.requiredMode"
+            >
+              <slot name="customItem" v-bind="{ item }" />
+            </LxForm>
+
+            <template #customHeader v-if="$slots.customHeader">
+              <slot
+                name="customHeader"
+                v-bind="{ item, expanded: expanded[item && item[idAttribute]] }"
+              />
+            </template>
+          </LxDataBlock>
+        </template>
+
+        <template v-else>
           <LxForm
             kind="stripped"
             role="group"
             :columnCount="columnCount"
             :required-mode="props.requiredMode"
           >
-            <slot name="customItem" v-bind="{ item }" />
+            <slot name="customItem" v-bind="{ item, index }" />
           </LxForm>
 
-          <template #customHeader v-if="$slots.customHeader">
-            <slot
-              name="customHeader"
-              v-bind="{ item, expanded: expanded[item && item[idAttribute]] }"
-            />
-          </template>
-        </LxDataBlock>
-      </template>
-
-      <template v-else>
-        <LxForm
-          kind="stripped"
-          role="group"
-          :columnCount="columnCount"
-          :required-mode="props.requiredMode"
-        >
-          <slot name="customItem" v-bind="{ item, index }" />
-        </LxForm>
-
-        <div class="appendable-list-remove-button-wrapper">
-          <div class="appendable-list-remove">
-            <LxButton
-              v-if="!readOnly && (!hideRemoveAttribute || !item[hideRemoveAttribute])"
-              icon="remove-item"
-              variant="icon-only"
-              :label="displayTexts.removeItem"
-              :destructive="true"
-              kind="ghost"
-              :disabled="!!removeEnableByAttribute && !item[removeEnableByAttribute]"
-              @click="
-                () => actionClick('appendableListDelete', item[idAttribute], item._lx_appendableKey)
-              "
-            />
+          <div class="appendable-list-remove-button-wrapper">
+            <div class="appendable-list-remove">
+              <LxButton
+                v-if="!readOnly && (!hideRemoveAttribute || !item[hideRemoveAttribute])"
+                icon="remove-item"
+                variant="icon-only"
+                :label="displayTexts.removeItem"
+                :destructive="true"
+                kind="ghost"
+                :disabled="!!removeEnableByAttribute && !item[removeEnableByAttribute]"
+                @click="
+                  () =>
+                    actionClick('appendableListDelete', item[idAttribute], item._lx_appendableKey)
+                "
+              />
+            </div>
           </div>
-        </div>
-      </template>
-    </div>
+        </template>
+      </div>
 
-    <div>
-      <LxButton
-        v-if="!readOnly && canAddItems"
-        :id="`${id}-action-add-item`"
-        kind="tertiary"
-        :label="displayTexts.addButtonLabel"
-        :title="displayTexts.addItemButtonTooltip"
-        icon="add-item"
-        @click="addItem"
-      />
+      <div>
+        <LxButton
+          v-if="!readOnly && canAddItems && !insideForm"
+          :id="`${id}-action-add-item`"
+          kind="tertiary"
+          :label="displayTexts.addButtonLabel"
+          :title="displayTexts.addItemButtonTooltip"
+          icon="add-item"
+          @click="addItem"
+        />
+      </div>
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick, inject } from 'vue';
+import { ref, computed, watch, onMounted, nextTick, inject, onBeforeUnmount } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 
 import useLx from '@/hooks/useLx';
@@ -7,6 +7,7 @@ import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { lxDevUtils } from '@/utils';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
+import { processToolbarActions } from '@/utils/toolbarUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
@@ -128,6 +129,10 @@ const emits = defineEmits([
   'emptyStateActionClick',
 ]);
 
+const UNSPECIFIED_GROUP_CODE = 'lx_list_nullable_group';
+const BASE_WIDTH = 300; // minimum space for layout
+const WIDTH_PER_ACTION = 120; // average button width
+
 const responsiveGroupDefinitions = ref(props.groupDefinitions);
 const query = ref(props.searchString);
 const queryRaw = ref(props.searchString);
@@ -142,9 +147,13 @@ const queryInputDefault = ref();
 const searchField = ref(false);
 
 const showInvisibleBlock = ref(false);
-let invisibleBlockTimeout;
 const draggable = ref(null);
 const loadingLib = ref(false);
+const listWrapper = ref(null);
+const isNarrow = ref(false);
+
+let invisibleBlockTimeout;
+let observer;
 
 const modelSearchString = computed({
   get() {
@@ -158,6 +167,7 @@ const modelSearchString = computed({
 // Convert item id's to strings
 const itemsWithStringIds = computed(() =>
   props.items?.map((item) => ({
+    // @ts-ignore
     ...item,
     [props.idAttribute]: String(item[props.idAttribute]),
   }))
@@ -173,8 +183,6 @@ watch(
     responsiveGroupDefinitions.value = newValue;
   }
 );
-
-const UNSPECIFIED_GROUP_CODE = 'lx_list_nullable_group';
 
 const debouncedSearchReq = useDebounceFn(async () => {
   if (props.searchSide === 'client') query.value = foldToAscii(queryRaw.value);
@@ -371,11 +379,13 @@ function setByOrders(array) {
 }
 
 function triggerItemsArray() {
+  // @ts-ignore
   itemsArray.value = fillItemsArray();
 }
 
 function searchInItemsArray() {
   if (query.value !== '') {
+    // @ts-ignore
     itemsArray.value = fillItemsArray();
 
     let listItems = filteredItems.value;
@@ -393,6 +403,7 @@ function searchInItemsArray() {
 
     return;
   }
+  // @ts-ignore
   itemsArray.value = fillItemsArray();
 }
 
@@ -754,6 +765,7 @@ const isItemSelected = (itemId) => !!selectedItemsRaw.value[itemId];
 
 function cancelSelection(shouldFocus = true) {
   selectedItemsRaw.value = {};
+
   if (shouldFocus) {
     nextTick(() => {
       if (selectedItems.value.length === 0) {
@@ -1053,15 +1065,6 @@ watch(
   { immediate: true }
 );
 
-onMounted(() => {
-  const val = validate();
-  if (val) {
-    lxDevUtils.log(val, useLx().getGlobals()?.environment, 'error');
-  }
-  itemsArray.value = fillItemsArray();
-  ungroupedItemsArray.value = setByOrders(filteredItems.value);
-});
-
 function isExpandable(item) {
   if (props.mode === 'client')
     return item[props.childrenAttribute] && item?.[props.childrenAttribute].length > 0;
@@ -1070,126 +1073,30 @@ function isExpandable(item) {
 
 const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpandable(item)));
 
-const listWrapper = ref(null);
-
 function focusFirstFocusableElementAfter() {
   if (listWrapper.value) {
     focusNextFocusableElement(listWrapper.value);
   }
 }
 
-const processedToolbarActions = computed(() => {
-  const {
-    toolbarActionDefinitions,
-    loading,
-    busy,
-    hasSearch,
-    searchMode,
-    hasSelecting,
-    selectionKind,
-  } = props;
+const insideForm = inject('insideForm', ref(false));
 
-  if (!toolbarActionDefinitions.length) return [];
+const defaultToolbarArea = computed(() => (insideForm.value ? 'left' : 'right'));
 
-  const withDefaults = (action, overrides = {}) => ({
-    ...action,
-    icon: action.icon ?? 'fallback-icon',
-    area: action.area ?? 'right',
-    kind: action.kind ?? 'ghost',
-    variant: action.variant ?? 'icon-only',
-    groupId: action.groupId ?? 'lx-default',
-    disabled: action.disabled || loading || busy,
-    ...overrides,
-  });
-
-  const withKindAndVariant = (action, overrides = {}) => ({
-    ...action,
-    kind: 'ghost',
-    variant: 'icon-only',
-    ...overrides,
-  });
-
-  const normalizedActions = toolbarActionDefinitions.map((action) => withDefaults(action));
-
-  let rightmostAction = null;
-  let demotedActions = [];
-
-  const processGroup = (group) => {
-    if (!group.length) return;
-
-    const firstPrimary = group.find(
-      (action) => action.area === 'right' && action.kind === 'primary'
-    );
-    const firstSecondary = group.find(
-      (action) => action.area === 'right' && action.kind === 'secondary'
-    );
-    const firstAction = firstPrimary ?? firstSecondary;
-
-    if (!firstAction) {
-      demotedActions = group.map((action) => withKindAndVariant(action));
-      return;
-    }
-
-    const restWithoutFirst = group.filter((action) => action.id !== firstAction.id);
-
-    let defaults;
-    if (firstAction?.area === 'right' && firstAction?.kind === 'secondary') {
-      defaults = {
-        kind: 'secondary',
-        variant: 'default',
-      };
-    } else if (firstAction?.area !== 'left') {
-      defaults = {
-        kind: 'primary',
-        variant: 'default',
-      };
-    } else {
-      defaults = {
-        kind: 'ghost',
-        variant: 'icon-only',
-      };
-    }
-
-    rightmostAction = withDefaults(firstAction, defaults);
-    demotedActions = restWithoutFirst.map((action) => withKindAndVariant(action));
-  };
-
-  processGroup(normalizedActions);
-
-  const result = [...demotedActions];
-  if (rightmostAction) result.push(rightmostAction);
-
-  if ((hasSearch && searchMode === 'compact') || (hasSearch && hasSelecting)) {
-    result.push({
-      id: 'search',
-      name: searchField.value ? displayTexts.value.closeSearch : displayTexts.value.openSearch,
-      icon: searchField.value ? 'close' : 'search',
-      area: 'right',
-      variant: 'icon-only',
-      kind: 'ghost',
-      groupId: 'lx-default',
-      disabled: loading || busy,
-      customClass: searchField.value ? 'toolbar-search-button is-expanded' : '',
-      nonResponsive: true,
-    });
-  }
-
-  if (hasSelecting && selectionKind === 'multiple') {
-    result.push({
-      id: `select-all`,
-      name: displayTexts.value.selectAllRows,
-      icon: 'checkbox',
-      area: 'right',
-      variant: 'icon-only',
-      kind: 'ghost',
-      groupId: 'lx-default',
-      disabled: loading || busy,
-      nonResponsive: true,
-    });
-  }
-
-  return result;
-});
+const processedToolbarActions = computed(() =>
+  processToolbarActions({
+    actions: props.toolbarActionDefinitions,
+    loading: props.loading,
+    busy: props.busy,
+    hasSearch: props.hasSearch,
+    searchMode: props.searchMode,
+    hasSelecting: props.hasSelecting,
+    selectionKind: props.selectionKind,
+    defaultToolbarArea,
+    searchField,
+    displayTexts,
+  })
+);
 
 function handleToolbarActionClick(id) {
   if (id === 'search') {
@@ -1207,10 +1114,43 @@ const toolbarActions = computed(() => {
   }
   return processedToolbarActions.value;
 });
+
+onMounted(() => {
+  const val = validate();
+  if (val) {
+    lxDevUtils.log(val, useLx().getGlobals()?.environment, 'error');
+  }
+  // @ts-ignore
+  itemsArray.value = fillItemsArray();
+  ungroupedItemsArray.value = setByOrders(filteredItems.value);
+
+  if (!listWrapper.value) return;
+
+  observer = new ResizeObserver(([entry]) => {
+    const actionCount = props.selectionActionDefinitions.length;
+    const breakpoint = BASE_WIDTH + actionCount * WIDTH_PER_ACTION;
+
+    isNarrow.value = entry.contentRect.width <= breakpoint;
+  });
+
+  observer.observe(listWrapper.value);
+});
+
+onBeforeUnmount(() => {
+  observer?.disconnect();
+});
 </script>
 
 <template>
-  <div ref="listWrapper" class="lx-list-wrapper">
+  <div
+    ref="listWrapper"
+    class="lx-list-wrapper"
+    :class="{
+      'is-narrow': isNarrow,
+      'not-selectable': !hasSelecting,
+      'list-inside-form': insideForm,
+    }"
+  >
     <LxLoaderView :loading="loadingLib" label="">
       <LxSkipLink
         v-if="props.hasSkipLink"
@@ -1245,6 +1185,7 @@ const toolbarActions = computed(() => {
                 role="search"
                 @keydown.enter="serverSideSearch()"
               />
+
               <LxButton
                 v-if="searchSide === 'server' && hasSearch"
                 icon="search"
@@ -1255,6 +1196,7 @@ const toolbarActions = computed(() => {
                 :label="displayTexts.search"
                 @click="serverSideSearch()"
               />
+
               <LxButton
                 v-if="query || queryRaw"
                 icon="clear"
@@ -1265,10 +1207,63 @@ const toolbarActions = computed(() => {
                 @click="clear()"
               />
             </template>
-            <p v-if="hasSelecting && selectedItems?.length > 0">
+
+            <div
+              v-if="hasSelecting && insideForm && selectedItems?.length > 0"
+              class="selection-action-button-toolbar"
+            >
+              <div class="selection-action-buttons">
+                <LxButton
+                  v-for="selectAction in selectionActionDefinitions"
+                  :key="selectAction.id"
+                  :id="selectAction.id"
+                  :label="selectAction.name || selectAction.label"
+                  :title="selectAction.title || selectAction.tooltip"
+                  :loading="selectAction.loading"
+                  :busy="selectAction.busy"
+                  :icon="selectAction.icon"
+                  :iconSet="selectAction.iconSet"
+                  :destructive="selectAction.destructive"
+                  :disabled="selectAction.disabled || busy || loading"
+                  kind="ghost"
+                  :active="selectAction.active"
+                  :badge="selectAction.badge"
+                  :badge-type="selectAction.badgeType"
+                  :badgeIcon="selectAction.badgeIcon"
+                  :badgeTitle="selectAction.badgeTitle"
+                  @click="selectionActionClick(selectAction.id, selectedItems)"
+                />
+              </div>
+
+              <div
+                v-if="selectionActionDefinitions?.length > 0"
+                class="selection-action-buttons-small"
+              >
+                <LxDropDownMenu
+                  :disabled="loading || busy"
+                  :actionDefinitions="selectionActionDefinitions"
+                  @actionClick="(id) => selectionActionClick(id, selectedItems)"
+                >
+                  <LxButton
+                    icon="menu"
+                    kind="ghost"
+                    :label="displayTexts.overflowMenu"
+                    variant="icon-only"
+                    tabindex="-1"
+                    :disabled="loading || busy"
+                  />
+                </LxDropDownMenu>
+              </div>
+            </div>
+
+            <p
+              v-if="hasSelecting && selectedItems?.length > 0 && !insideForm"
+              class="lx-selection-status"
+            >
               {{ selectedLabel }}
             </p>
           </template>
+
           <template #rightArea>
             <slot
               v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
@@ -1290,16 +1285,17 @@ const toolbarActions = computed(() => {
                     @click="toggleSearch"
                   />
                 </div>
+
                 <LxButton
-                  :id="`${id}-select-all`"
-                  icon="checkbox"
-                  kind="ghost"
                   v-if="
                     selectableItems?.length !== 0 &&
                     hasSelecting &&
                     selectionKind === 'multiple' &&
                     kind !== 'draggable'
                   "
+                  :id="`${id}-select-all`"
+                  icon="checkbox"
+                  kind="ghost"
                   :disabled="loading || busy"
                   variant="icon-only"
                   :label="displayTexts.selectAllRows"
@@ -1307,8 +1303,9 @@ const toolbarActions = computed(() => {
                 />
               </template>
             </template>
+
             <template v-if="selectedItems?.length > 0">
-              <div class="selection-action-button-toolbar" v-if="hasSelecting">
+              <div v-if="hasSelecting && !insideForm" class="selection-action-button-toolbar">
                 <div class="selection-action-buttons">
                   <LxButton
                     v-for="selectAction in selectionActionDefinitions"
@@ -1331,11 +1328,13 @@ const toolbarActions = computed(() => {
                     @click="selectionActionClick(selectAction.id, selectedItems)"
                   />
                 </div>
+
                 <div
-                  class="selection-action-buttons-small"
                   v-if="selectionActionDefinitions?.length > 0"
+                  class="selection-action-buttons-small"
                 >
                   <LxDropDownMenu
+                    :disabled="loading || busy"
                     :actionDefinitions="selectionActionDefinitions"
                     @actionClick="(id) => selectionActionClick(id, selectedItems)"
                   >
@@ -1345,14 +1344,23 @@ const toolbarActions = computed(() => {
                       :label="displayTexts.overflowMenu"
                       variant="icon-only"
                       tabindex="-1"
+                      :disabled="loading || busy"
                     />
                   </LxDropDownMenu>
                 </div>
               </div>
+
+              <p
+                v-if="hasSelecting && selectedItems?.length > 0 && insideForm"
+                class="lx-selection-status"
+              >
+                {{ selectedLabel }}
+              </p>
+
               <div
+                v-if="autoSearchMode === 'compact'"
                 class="toolbar-search-button"
                 :class="[{ 'is-expanded': searchField }]"
-                v-if="autoSearchMode === 'compact'"
               >
                 <LxButton
                   v-if="hasSearch"
@@ -1366,9 +1374,10 @@ const toolbarActions = computed(() => {
                   @click="toggleSearch"
                 />
               </div>
+
               <LxButton
-                :id="`${id}-cancel-select-all`"
                 v-if="hasSelecting && kind !== 'draggable'"
+                :id="`${id}-cancel-select-all`"
                 :icon="selectIcon"
                 variant="icon-only"
                 :label="displayTexts.clearSelected"
@@ -1378,10 +1387,11 @@ const toolbarActions = computed(() => {
               />
             </template>
           </template>
+
           <template #secondRow>
             <div
-              class="second-row"
               v-if="hasSearch && searchField && autoSearchMode === 'compact'"
+              class="second-row"
               :class="[{ 'second-row-selecting': hasSelecting }]"
             >
               <LxTextInput
@@ -1394,6 +1404,7 @@ const toolbarActions = computed(() => {
                 role="search"
                 @keydown.enter="serverSideSearch()"
               />
+
               <div class="lx-group lx-slot-wrapper">
                 <LxButton
                   v-if="searchSide === 'server' && hasSearch"
@@ -1405,6 +1416,7 @@ const toolbarActions = computed(() => {
                   :label="displayTexts.search"
                   @click="serverSideSearch()"
                 />
+
                 <LxButton
                   v-if="query || queryRaw"
                   icon="clear"
@@ -1459,6 +1471,7 @@ const toolbarActions = computed(() => {
                 <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
               </template>
             </LxListItem>
+
             <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
               <template v-if="isSelectable(item)">
                 <LxRadioButton
@@ -1466,11 +1479,11 @@ const toolbarActions = computed(() => {
                   :id="`select-${id}-${item[idAttribute]}`"
                   v-model="selectedItemsRaw[item[idAttribute]]"
                   :value="item[idAttribute]"
-                  @click="selectRow(item[idAttribute])"
                   :disabled="loading || busy"
                   :label="item[nameAttribute]"
                   :group-id="`selection-${id}`"
                   :tabindex="getGroupedTabIndex(item[idAttribute], null)"
+                  @click="selectRow(item[idAttribute])"
                 />
                 <LxCheckbox
                   v-else
@@ -1486,6 +1499,7 @@ const toolbarActions = computed(() => {
             </div>
           </li>
         </ul>
+
         <div
           v-if="kind === 'draggable' && draggable"
           :id="id"
@@ -1502,11 +1516,11 @@ const toolbarActions = computed(() => {
             :item-key="idAttribute"
             group="list"
             tag="ul"
+            :disabled="loading || busy || draggableIsDisabledByQuery"
+            :aria-labelledby="labelledBy"
             @start="changeDragging"
             @end="changeDragging"
             @change="onMoveItem"
-            :disabled="loading || busy || draggableIsDisabledByQuery"
-            :aria-labelledby="labelledBy"
           >
             <template #item="{ element }">
               <TransitionGroupWrapper
@@ -1528,18 +1542,19 @@ const toolbarActions = computed(() => {
                           :id="`handleId-${element[props.idAttribute]}`"
                           :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
                           :aria-label="displayTexts.draggableItem"
-                          @keydown.up.prevent="moveGroupedItem(element, 'forward')"
-                          @keydown.down.prevent="moveGroupedItem(element, 'backward')"
-                          @keydown.right.prevent="moveGroupedItem(element, 'backward')"
-                          @keydown.left.prevent="moveGroupedItem(element, 'forward')"
                           :class="[
                             {
                               'handle-disabled': draggableIsDisabledByQuery || loading || busy,
                             },
                           ]"
+                          @keydown.up.prevent="moveGroupedItem(element, 'forward')"
+                          @keydown.down.prevent="moveGroupedItem(element, 'backward')"
+                          @keydown.right.prevent="moveGroupedItem(element, 'backward')"
+                          @keydown.left.prevent="moveGroupedItem(element, 'forward')"
                         >
                           <LxIcon class="lx-icon" value="drag"></LxIcon>
                         </div>
+
                         <template #panel>
                           <div class="lx-button-set">
                             <LxButton
@@ -1553,6 +1568,7 @@ const toolbarActions = computed(() => {
                           </div>
                         </template>
                       </LxDropDownMenu>
+
                       <LxListItem
                         :id="element[idAttribute]"
                         :parentId="props.id"
@@ -1627,14 +1643,14 @@ const toolbarActions = computed(() => {
             </template>
 
             <ul
-              :id="`${id}-${prepareCode(group.id)}`"
-              class="lx-list"
-              :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
-              :aria-labelledby="labelledBy"
               v-if="
                 filteredGroupedItems[prepareCode(group.id)] &&
                 filteredGroupedItems[prepareCode(group.id)].length > 0
               "
+              :id="`${id}-${prepareCode(group.id)}`"
+              class="lx-list"
+              :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+              :aria-labelledby="labelledBy"
             >
               <li
                 v-for="item in filteredGroupedItems[prepareCode(group.id)]"
@@ -1668,6 +1684,7 @@ const toolbarActions = computed(() => {
                     <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                   </template>
                 </LxListItem>
+
                 <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
                   <template v-if="isSelectable(item)">
                     <LxRadioButton
@@ -1675,11 +1692,11 @@ const toolbarActions = computed(() => {
                       :id="`select-${id}-${item[idAttribute]}`"
                       v-model="selectedItemsRaw[item[idAttribute]]"
                       :value="item[idAttribute]"
-                      @click="selectRow(item[idAttribute])"
                       :disabled="loading || busy"
                       :label="item[nameAttribute]"
                       :group-id="`selection-${id}`"
                       :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
+                      @click="selectRow(item[idAttribute])"
                     />
                     <LxCheckbox
                       v-else
@@ -1743,6 +1760,7 @@ const toolbarActions = computed(() => {
             <slot name="customItem" v-bind="items" />
           </template>
         </LxTreeList>
+
         <div class="tree-list-wrapper" v-else-if="queryRaw?.length > 0">
           <div class="tree-list-search" role="list">
             <div
@@ -1776,6 +1794,7 @@ const toolbarActions = computed(() => {
                   <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                 </template>
               </LxListItem>
+
               <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
                 <template v-if="isSelectable(item)">
                   <LxRadioButton
@@ -1783,11 +1802,11 @@ const toolbarActions = computed(() => {
                     :id="`select-${id}-${item[idAttribute]}`"
                     v-model="selectedItemsRaw[item[idAttribute]]"
                     :value="item[idAttribute]"
-                    @click="selectRow(item[idAttribute])"
                     :disabled="loading || busy"
                     :label="item[nameAttribute]"
                     :group-id="`selection-${id}`"
                     :tabindex="getGroupedTabIndex(item[idAttribute], null)"
+                    @click="selectRow(item[idAttribute])"
                   />
                   <LxCheckbox
                     v-else
@@ -1944,11 +1963,11 @@ const toolbarActions = computed(() => {
                         :id="`select-${id}-${item[idAttribute]}`"
                         v-model="selectedItemsRaw[item[idAttribute]]"
                         :value="item[idAttribute]"
-                        @click="selectRow(item[idAttribute])"
                         :disabled="loading || busy"
                         :label="item[nameAttribute]"
                         :group-id="`selection-${id}`"
                         :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
+                        @click="selectRow(item[idAttribute])"
                       />
                       <LxCheckbox
                         v-else
@@ -2003,6 +2022,7 @@ const toolbarActions = computed(() => {
                 <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
               </template>
             </LxListItem>
+
             <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
               <template v-if="isSelectable(item)">
                 <LxRadioButton
@@ -2010,11 +2030,11 @@ const toolbarActions = computed(() => {
                   :id="`select-${id}-${item[idAttribute]}`"
                   v-model="selectedItemsRaw[item[idAttribute]]"
                   :value="item[idAttribute]"
-                  @click="selectRow(item[idAttribute])"
                   :disabled="loading || busy"
                   :label="item[nameAttribute]"
                   :group-id="`selection-${id}`"
                   :tabindex="getTabIndex(item[idAttribute])"
+                  @click="selectRow(item[idAttribute])"
                 />
                 <LxCheckbox
                   v-else
@@ -2046,11 +2066,11 @@ const toolbarActions = computed(() => {
             v-bind="dragOptions"
             :item-key="idAttribute"
             group="list"
+            :disabled="loading || busy || draggableIsDisabledByQuery"
+            :aria-labelledby="labelledBy"
             @start="changeDragging"
             @end="changeDragging"
             @change="onMoveItem"
-            :disabled="loading || busy || draggableIsDisabledByQuery"
-            :aria-labelledby="labelledBy"
           >
             <template #item="{ element }">
               <TransitionGroupWrapper
@@ -2072,15 +2092,15 @@ const toolbarActions = computed(() => {
                           :id="`handleId-${element[props.idAttribute]}`"
                           :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
                           :aria-label="displayTexts.draggableItem"
-                          @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
-                          @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
-                          @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
-                          @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
                           :class="[
                             {
                               'handle-disabled': draggableIsDisabledByQuery || loading || busy,
                             },
                           ]"
+                          @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
+                          @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
+                          @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
+                          @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
                         >
                           <LxIcon class="lx-icon" value="drag"></LxIcon>
                         </div>
@@ -2175,11 +2195,11 @@ const toolbarActions = computed(() => {
               :item-key="idAttribute"
               group="list"
               tag="ul"
+              :disabled="loading || busy || draggableIsDisabledByQuery"
+              :aria-labelledby="labelledBy"
               @start="changeDragging"
               @end="changeDragging"
               @change="onMoveItem"
-              :disabled="loading || busy || draggableIsDisabledByQuery"
-              :aria-labelledby="labelledBy"
             >
               <template #item="{ element }">
                 <TransitionGroupWrapper
@@ -2201,18 +2221,19 @@ const toolbarActions = computed(() => {
                             :id="`handleId-${element[props.idAttribute]}`"
                             :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
                             :aria-label="displayTexts.draggableItem"
-                            @keydown.up.prevent="moveGroupedItem(element, 'forward')"
-                            @keydown.down.prevent="moveGroupedItem(element, 'backward')"
-                            @keydown.right.prevent="moveGroupedItem(element, 'backward')"
-                            @keydown.left.prevent="moveGroupedItem(element, 'forward')"
                             :class="[
                               {
                                 'handle-disabled': draggableIsDisabledByQuery || loading || busy,
                               },
                             ]"
+                            @keydown.up.prevent="moveGroupedItem(element, 'forward')"
+                            @keydown.down.prevent="moveGroupedItem(element, 'backward')"
+                            @keydown.right.prevent="moveGroupedItem(element, 'backward')"
+                            @keydown.left.prevent="moveGroupedItem(element, 'forward')"
                           >
                             <LxIcon class="lx-icon" value="drag"></LxIcon>
                           </div>
+
                           <template #panel>
                             <div class="lx-button-set">
                               <LxButton
@@ -2350,6 +2371,7 @@ const toolbarActions = computed(() => {
               <slot name="customItem" v-bind="item" />
             </template>
           </LxListItem>
+
           <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
             <template v-if="isSelectable(element)">
               <LxRadioButton
@@ -2357,11 +2379,11 @@ const toolbarActions = computed(() => {
                 :id="`select-${id}-${element[idAttribute]}`"
                 v-model="selectedItemsRaw[element[idAttribute]]"
                 :value="element[idAttribute]"
-                @click="selectRow(element[idAttribute])"
                 :disabled="loading || busy"
                 :label="element[nameAttribute]"
                 :group-id="`selection-${id}`"
                 :tabindex="getTabIndex(element[idAttribute])"
+                @click="selectRow(element[idAttribute])"
               />
               <LxCheckbox
                 v-else

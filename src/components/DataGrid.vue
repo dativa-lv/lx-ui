@@ -7,9 +7,16 @@ import {
   useMutationObserver,
   useDebounceFn,
 } from '@vueuse/core';
+
+import { logError } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
+import { formatValueArray } from '@/utils/formatUtils';
+import { useGridKeyboardNavigation } from '@/utils/useGridKeyboardNavigation';
+import { processToolbarActions } from '@/utils/toolbarUtils';
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
+
 import LxButton from '@/components/Button.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
@@ -27,10 +34,6 @@ import LxToolbar from '@/components/Toolbar.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
-import { logError } from '@/utils/devUtils';
-import useLx from '@/hooks/useLx';
-import { formatValueArray } from '@/utils/formatUtils';
-import { useGridKeyboardNavigation } from '@/utils/useGridKeyboardNavigation';
 
 const emits = defineEmits([
   'update:searchString',
@@ -100,6 +103,7 @@ const props = defineProps({
 
 const query = ref(props.searchString);
 const queryRaw = ref(props.searchString);
+const defaultToolbarArea = ref('right');
 
 const modelSearchString = computed({
   get() {
@@ -484,118 +488,21 @@ function cancelSelection() {
   });
 }
 
-const processedToolbarActions = computed(() => {
-  const {
-    toolbarActionDefinitions,
-    loading,
-    busy,
-    hasSearch,
-    searchMode,
-    hasSelecting,
-    selectionKind,
-  } = props;
-
-  if (!toolbarActionDefinitions.length) return [];
-
-  const withDefaults = (action, overrides = {}) => ({
-    ...action,
-    icon: action.icon ?? 'fallback-icon',
-    area: action.area ?? 'right',
-    kind: action.kind ?? 'ghost',
-    variant: action.variant ?? 'icon-only',
-    groupId: action.groupId ?? 'lx-default',
-    disabled: loading || busy,
-    ...overrides,
-  });
-
-  const withKindAndVariant = (action, overrides = {}) => ({
-    ...action,
-    kind: 'ghost',
-    variant: 'icon-only',
-    ...overrides,
-  });
-
-  const normalizedActions = toolbarActionDefinitions.map((action) => withDefaults(action));
-
-  let rightmostAction = null;
-  let demotedActions = [];
-
-  const processGroup = (group) => {
-    if (!group.length) return;
-
-    const firstPrimary = group.find(
-      (action) => action.area === 'right' && action.kind === 'primary'
-    );
-    const firstSecondary = group.find(
-      (action) => action.area === 'right' && action.kind === 'secondary'
-    );
-    const firstAction = firstPrimary ?? firstSecondary;
-
-    if (!firstAction) {
-      demotedActions = group.map((action) => withKindAndVariant(action));
-      return;
-    }
-
-    const restWithoutFirst = group.filter((action) => action.id !== firstAction.id);
-
-    let defaults;
-    if (firstAction?.area === 'right' && firstAction?.kind === 'secondary') {
-      defaults = {
-        kind: 'secondary',
-        variant: 'default',
-      };
-    } else if (firstAction?.area !== 'left') {
-      defaults = {
-        kind: 'primary',
-        variant: 'default',
-      };
-    } else {
-      defaults = {
-        kind: 'ghost',
-        variant: 'icon-only',
-      };
-    }
-
-    rightmostAction = withDefaults(firstAction, defaults);
-    demotedActions = restWithoutFirst.map((action) => withKindAndVariant(action));
-  };
-
-  processGroup(normalizedActions);
-
-  const result = [...demotedActions];
-  if (rightmostAction) result.push(rightmostAction);
-
-  if ((hasSearch && searchMode === 'compact') || (hasSearch && hasSelecting)) {
-    result.push({
-      id: 'search',
-      name: searchField.value ? displayTexts.value.closeSearch : displayTexts.value.openSearch,
-      icon: searchField.value ? 'close' : 'search',
-      area: 'right',
-      variant: 'icon-only',
-      kind: 'ghost',
-      groupId: 'lx-default',
-      disabled: loading || busy,
-      customClass: searchField.value ? 'toolbar-search-button is-expanded' : '',
-      nonResponsive: true,
-    });
-  }
-
-  if (hasSelecting && selectionKind === 'multiple') {
-    result.unshift({
-      id: `select-all`,
-      name: displayTexts.value.selectAllRows,
-      icon: 'checkbox',
-      area: 'left',
-      variant: 'icon-only',
-      kind: 'ghost',
-      groupId: 'lx-select-all',
-      disabled: loading || busy,
-      nonResponsive: true,
-    });
-  }
-
-  return result;
-});
+const processedToolbarActions = computed(() =>
+  processToolbarActions({
+    actions: props.toolbarActionDefinitions,
+    loading: props.loading,
+    busy: props.busy,
+    hasSearch: props.hasSearch,
+    searchMode: props.searchMode,
+    hasSelecting: props.hasSelecting,
+    selectionKind: props.selectionKind,
+    defaultToolbarArea,
+    searchField,
+    displayTexts,
+    selectAllSide: 'left',
+  })
+);
 
 const toolbarActions = computed(() => {
   if (selectedRows.value.length > 0) {
@@ -1444,9 +1351,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       >
         <template #leftArea>
           <slot
-            name="leftToolbar"
             v-if="(hasSelecting && selectedRows?.length === 0) || !hasSelecting"
+            name="leftToolbar"
           />
+
           <LxButton
             v-if="
               toolbarActions.length === 0 &&
@@ -1462,6 +1370,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             :disabled="loading || busy"
             @click="selectRows()"
           />
+
           <LxButton
             v-if="hasSelecting && selectedRows.length > 0"
             :id="`${id}-cancel-select-all`"
@@ -1472,9 +1381,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             :disabled="loading || busy"
             @click="cancelSelection()"
           />
+
           <p v-if="hasSelecting && selectedRows && selectedRows.length !== 0">
             {{ selectedLabel }}
           </p>
+
           <div
             v-if="hasSearch && !hasSelecting && autoSearchMode === 'default'"
             class="lx-search-wrapper"

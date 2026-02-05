@@ -1220,7 +1220,8 @@ a.lx-button.lx-button-ghost svg {
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button).lx-disabled,
 .lx-selection-toolbar .first-row .toolbar-search-button.is-expanded .lx-button.lx-button-ghost.lx-button-icon-only.lx-disabled,
 .lx .lx-layout .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost.lx-disabled,
-.lx .lx-layout .lx-selection-toolbar .lx-component-toolbar.lx-disabled .left-area {
+.lx .lx-layout .lx-selection-toolbar .lx-component-toolbar.lx-disabled .left-area,
+.lx .lx-layout .lx-selection-toolbar .lx-component-toolbar.lx-disabled .first-row {
   background-color: var(--color-button-toolbar-selection-disabled-background);
   color: var(--color-button-toolbar-selection-disabled);
   border-color: var(--color-button-toolbar-selection-disabled-border);

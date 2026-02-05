@@ -356,6 +356,7 @@ defineExpose({ getPng });
                     },
                     color.label,
                   ]"
+                  tabindex="0"
                   @click="updateColor(color.value, color.label, color.variable)"
                   @keydown.enter.prevent="updateColor(color.value, color.label, color.variable)"
                 >

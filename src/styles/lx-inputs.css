@@ -689,6 +689,7 @@
   border: var(--input-border-disabled);
   border-bottom: var(--input-border-bottom-disabled);
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .lx.lx-theme-contrast .lx-layout div.lx-input-wrapper.lx-disabled .lx-input-area,

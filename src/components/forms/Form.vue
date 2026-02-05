@@ -251,6 +251,7 @@ const { width } = useWindowSize();
 const form = ref();
 const formHeader = ref();
 const formFooter = ref();
+const insideForm = ref(true);
 
 const bounding = useElementBounding(form);
 const windowSize = useWindowSize();
@@ -413,6 +414,7 @@ provide('formIndexType', indexTypeRef);
 provide('formIndex', modifiedIndexRef);
 provide('formOrientation', formOrientation);
 provide('sectionPrefix', props.id);
+provide('insideForm', insideForm);
 
 const wizardModel = ref(null);
 const tabModel = ref(null);
