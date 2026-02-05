@@ -5,6 +5,25 @@
 
 ### Breaking changes
 
+#### LxForm
+
+Forms using the `indexType` prop with `tabs` or `wizard` values now require the `LxSection` component to be preloaded in order to work correctly.
+
+These modes rely on `LxSection` internally for layout and structure.
+
+```js
+import { createLx, LxSection } from '@dativa-lv/lx-ui';
+
+const myApp = createApp(App);
+
+myApp.use(createLx, {
+  ...
+  preload: {
+    components: [LxSection],
+  },
+});
+```
+
 #### LxShell
 
 The component API has been updated to improve naming consistency and clarity.

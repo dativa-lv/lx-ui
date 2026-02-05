@@ -5,7 +5,7 @@ export const LxShell = defineAsyncComponent(() => import('@/components/shell/She
 
 /* forms */
 export const LxRow = defineAsyncComponent(() => import('@/components/forms/Row.vue'));
-export { default as LxSection } from '@/components/forms/Section.vue';
+export const LxSection = defineAsyncComponent(() => import('@/components/forms/Section.vue'));
 export const LxForm = defineAsyncComponent(() => import('@/components/forms/Form.vue'));
 
 /* components */
