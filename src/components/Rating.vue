@@ -111,7 +111,7 @@ function reset() {
   }
 }
 
-const showInvalid = computed(() => props.invalid && props.mode !== 'read');
+const showInvalid = computed(() => props.invalid && !props.readOnly);
 
 function focus() {
   if (props.focusable) {

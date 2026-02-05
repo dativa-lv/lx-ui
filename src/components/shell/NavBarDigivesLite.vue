@@ -104,8 +104,8 @@ const textsDefault = {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
     warning: 'brīdinājums',
-    good: 'sekmīgs paziņojums',
-    important: 'svarīgs paziņojums',
+    success: 'sekmīgs paziņojums',
+    error: 'svarīgs paziņojums',
   },
   idleBadge: {
     minutesSingular: 'minūtes',
@@ -328,9 +328,9 @@ function triggerUserMenu() {
 }
 
 const badgeLevelMap = {
-  success: 'good',
+  success: 'success',
   warning: 'warning',
-  error: 'important',
+  error: 'error',
   info: 'info',
 };
 
@@ -343,7 +343,7 @@ const alertLevelToBadgeType = computed(() => {
     const tmp = {};
     tmp.value = props.alerts?.find((alert) => alert?.level === 'error');
     if (tmp.value) {
-      return 'important';
+      return 'error';
     }
     tmp.value = props.alerts?.find((alert) => alert?.level === 'warning');
     if (tmp.value) {
@@ -351,7 +351,7 @@ const alertLevelToBadgeType = computed(() => {
     }
     tmp.value = props.alerts?.find((alert) => alert?.level === 'success');
     if (tmp.value) {
-      return 'good';
+      return 'success';
     }
     tmp.value = props.alerts?.find((alert) => alert?.level === 'info');
     if (tmp.value) {

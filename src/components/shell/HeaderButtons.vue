@@ -108,8 +108,8 @@ const textsDefault = {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
     warning: 'brīdinājums',
-    good: 'sekmīgs paziņojums',
-    important: 'svarīgs paziņojums',
+    success: 'sekmīgs paziņojums',
+    error: 'svarīgs paziņojums',
   },
   idleBadge: {
     minutesSingular: 'minūtes',
@@ -297,9 +297,9 @@ const navItemsUserMenu = computed(() =>
 );
 
 const badgeLevelMap = {
-  success: 'good',
+  success: 'success',
   warning: 'warning',
-  error: 'important',
+  error: 'error',
   info: 'info',
 };
 
@@ -770,7 +770,7 @@ const loginButtonKind = computed(() => {
               />
             </li>
           </ol>
-          <LxEmptyState v-else :label="displayTexts.noAlerts"></LxEmptyState>
+          <LxEmptyState v-else :label="displayTexts.noAlerts" />
         </template>
       </LxDropDownMenu>
 

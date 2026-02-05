@@ -127,8 +127,12 @@ After:
 <LxShell v-model:hasReducedAnimations="prefersReducedMotion" />
 ```
 
+**Texts prop changes**
+`texts` prop badgeType attribute naming updated:
+- `texts.badgeTypes.important` → `texts.badgeTypes.error`
+- `texts.badgeTypes.good` → `texts.badgeTypes.success`
 
-#### LxButton, LxExpander, LxFilterBuilder, LxFilter, LxSection, LxTile
+#### LxButton, LxExpander, LxFilterBuilder, LxFilter, LxSection, LxTile, LxShell
 
 The `badgeType` prop values have been updated to use standardized identifiers.
 

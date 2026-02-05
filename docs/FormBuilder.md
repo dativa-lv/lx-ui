@@ -157,7 +157,7 @@ For more LX features, use custom schema attribute `lx` with these parameters:
  - `icon` - LxDataBlock `icon` prop
  - `nameAttribute` - LxDataBlock `name` prop
  - `columnCount` - LxForm `columnCount` prop
- - `forceUppercase` - LxDataBlock `forceUppercase` prop
+ - `uppercase` - LxDataBlock `uppercase` prop
  - `size` - LxDataBlock `size` prop
  - `iconSet` - LxDataBlock `iconSet` prop
  - `descriptionAttribute` - LxDataBlock `description` prop
@@ -187,7 +187,7 @@ The only exception is that LxAppendableList cannot be used inside another LxAppe
   - `columnCount` - LxAppendableList columnCount prop
   - `kind` - LxAppendableList kind prop
   - `requiredMode` - LxAppendableList required prop
-  - `forceUppercase` - LxAppendableList forceUppercase prop
+  - `uppercase` - LxAppendableList uppercase prop
   - `defaultExpanded` - LxAppendableList defaultExpanded prop
   - `expandedAttribute` - LxAppendableList expandedAttribute prop
   - `texts` - LxAppendableList texts prop

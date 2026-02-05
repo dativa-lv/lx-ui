@@ -164,18 +164,18 @@ const cameraModalActionDefinitions = computed(() => [
 ]);
 
 const maxLength = computed(() => {
-  if (props.kind !== 'multiple') return 1;
+  if (props.selectionKind !== 'multiple') return 1;
   return props.maxlength;
 });
 
 const isAtMaxLength = computed(() => {
   if (maxLength.value == null) return false;
   const current = advancedFilesData.value?.length || 0;
-  return props.kind === 'multiple' && current >= maxLength.value;
+  return props.selectionKind === 'multiple' && current >= maxLength.value;
 });
 
 const remainingSlots = computed(() => {
-  if (props.kind !== 'multiple') return 0;
+  if (props.selectionKind !== 'multiple') return 0;
   if (maxLength.value == null) return Infinity;
   return Math.max(0, maxLength.value - (advancedFilesData.value?.length || 0));
 });
@@ -429,7 +429,7 @@ const handleDragLeave = () => {
 };
 
 function limitFilesToRemainingSlots(files) {
-  if (props.kind !== 'multiple') return files.slice(0, 1);
+  if (props.selectionKind !== 'multiple') return files.slice(0, 1);
 
   const slots = remainingSlots.value;
 

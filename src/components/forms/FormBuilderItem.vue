@@ -673,7 +673,7 @@ function handleModalActionClick(action, name) {
       model?.[name]?.[displaySchema?.properties?.[name]?.lx?.descriptionAttribute] ||
       model?.[name]?.description
     "
-    :force-uppercase="displaySchema?.properties[name]?.lx?.forceUppercase"
+    :uppercase="displaySchema?.properties[name]?.lx?.uppercase"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
     :loading="displaySchema?.properties[name]?.lx?.loading"
     :busy="displaySchema?.properties[name]?.lx?.busy"
@@ -2324,7 +2324,7 @@ function handleModalActionClick(action, name) {
     :kind="displaySchema?.properties[name]?.lx?.kind"
     :requiredMode="displaySchema?.properties[name]?.lx?.requiredMode"
     :canAddItems="displaySchema?.properties[name]?.lx?.canAddItems"
-    :force-uppercase="displaySchema?.properties[name]?.lx?.forceUppercase"
+    :uppercase="displaySchema?.properties[name]?.lx?.uppercase"
     :defaultExpanded="displaySchema?.properties[name]?.lx?.defaultExpanded"
     :expandedAttribute="displaySchema?.properties[name]?.lx?.expandedAttribute"
     :texts="displaySchema?.properties[name]?.lx?.texts"

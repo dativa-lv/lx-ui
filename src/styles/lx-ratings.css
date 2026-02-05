@@ -39,7 +39,6 @@
 }
 
 .lx-ratings-wrapper .lx-invalidation-icon {
-  position: absolute;
   height: var(--input-invalid-icon-height);
   width: var(--input-invalid-icon-width);
   z-index: 1;

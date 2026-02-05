@@ -261,8 +261,8 @@ const textsDefault = {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
     warning: 'brīdinājums',
-    good: 'sekmīgs paziņojums',
-    important: 'svarīgs paziņojums',
+    success: 'sekmīgs paziņojums',
+    error: 'svarīgs paziņojums',
   },
   spotlight: {
     label: 'Lietotnes ceļvedis',
