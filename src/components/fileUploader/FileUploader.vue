@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch, inject } from 'vue';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, isNil } from '@/utils/generalUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxList from '@/components/list/List.vue';
@@ -128,12 +128,6 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue', 'onError', 'downloadFile']);
 
-function downloadFile(id) {
-  if (props.hasDownloadButton && props.disabled === false && props.loading === false) {
-    emits('downloadFile', id);
-  }
-}
-
 const advancedFilesData = ref([]);
 const storedBase64Strings = ref([]);
 const fileInput = ref(null);
@@ -222,9 +216,24 @@ async function updateModel() {
     state: file.state,
     description: file.description,
     invalidDescription: file.invalidDescription,
+    enableDownload: file.enableDownload,
+    readOnly: file.readOnly,
   }));
 
   emits('update:modelValue', fileData);
+}
+
+function downloadFile(id) {
+  const advancedFile = advancedFilesData.value.find((file) => file.id === id);
+
+  if (
+    props.hasDownloadButton &&
+    props.disabled === false &&
+    props.loading === false &&
+    (isNil(advancedFile?.enableDownload) || advancedFile?.enableDownload)
+  ) {
+    emits('downloadFile', id);
+  }
 }
 
 function filladvancedFilesData() {
@@ -731,16 +740,29 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         listType="1"
         :texts="displayTexts"
       >
-        <template #customItem="{ id, name, meta, state, description, invalidDescription }">
+        <template
+          #customItem="{
+            id,
+            name,
+            meta,
+            state,
+            description,
+            invalidDescription,
+            enableDownload,
+            readOnly,
+          }"
+        >
           <FileUploaderItem
             :customItem="{ id, name, meta, state, description, invalidDescription }"
             :mode="mode"
-            :hasDownloadButton="hasDownloadButton"
+            :hasDownloadButton="
+              isNil(enableDownload) ? hasDownloadButton : enableDownload && hasDownloadButton
+            "
             :disabled="disabled"
             :loading="loading"
             :busy="busy"
             :showMeta="showMeta"
-            :read-only="readOnly"
+            :readOnly="readOnly || props.readOnly"
             :texts="displayTexts"
             :isUploading="isUploading"
             :defaultIcon="
