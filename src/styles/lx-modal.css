@@ -12,16 +12,26 @@
   align-items: center;
 }
 
-.lx-curtain .lx-modal>header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(.lx-filter header.lx-head) {
+.lx-curtain
+  .lx-modal
+  > header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(
+    .lx-filter header.lx-head
+  ) {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: auto;
+  overflow: hidden;
   --color-button-ghost-icon: var(--color-data);
   --color-button-ghost-icon-focus: var(--color-data);
 }
 
-.lx-curtain .lx-modal header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-head):not(.lx-list-item header):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky):not(.lx-data-block-header) .lx-primary {
+.lx-curtain
+  .lx-modal
+  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-head):not(
+    .lx-list-item header
+  ):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky):not(.lx-data-block-header)
+  .lx-primary {
   margin-left: 1rem;
   font-size: var(--h2-font-size);
   font-weight: var(--h2-font-weight);
@@ -32,13 +42,18 @@
   white-space: nowrap;
 }
 
-.lx-curtain .lx-modal header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(.lx-filter header.lx-head) .lx-button {
+.lx-curtain
+  .lx-modal
+  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(
+    .lx-filter header.lx-head
+  )
+  .lx-button {
   align-self: flex-start;
   min-width: var(--row-size);
 }
 
 .lx.lx-theme-light .lx-curtain {
-    --color-cover-background : rgba(0, 0, 0, 0.5);
+  --color-cover-background: rgba(0, 0, 0, 0.5);
 }
 
 .lx-modal {
@@ -47,7 +62,9 @@
   grid-template-columns: auto;
   background-color: var(--color-region);
   min-height: var(--row-size);
-  max-height: calc(100dvh - calc(var(--row-size) * 2)); /* var(--row-size) * 2, to reserve space for top & bottom margin */
+  max-height: calc(
+    100dvh - calc(var(--row-size) * 2)
+  ); /* var(--row-size) * 2, to reserve space for top & bottom margin */
   border: var(--region-border);
   min-width: var(--aside-size);
   margin: var(--row-size);
@@ -72,7 +89,9 @@
   pointer-events: none;
 }
 
-#modals:not(.lx-theme-contrast #modals):not(.lx-no-transparency #modals) .lx-modal > footer::before {
+#modals:not(.lx-theme-contrast #modals):not(.lx-no-transparency #modals)
+  .lx-modal
+  > footer::before {
   background: linear-gradient(180deg, transparent 0%, var(--color-background) 100%);
   content: '';
   height: var(--modal-footer-size);
@@ -85,8 +104,8 @@
   pointer-events: none;
 }
 
-.lx-modal>.lx-main {
-  padding: var(--padding-modal); 
+.lx-modal > .lx-main {
+  padding: var(--padding-modal);
   overflow-y: auto;
 }
 
@@ -130,7 +149,11 @@ dialog.lx-modal::backdrop {
   background-color: var(--color-cover-background);
 }
 
-dialog.lx-modal>header>.lx-primary {
+dialog.lx-modal > header {
+  overflow: hidden;
+}
+
+dialog.lx-modal > header > .lx-primary {
   margin-left: 1rem;
   font-size: var(--h2-font-size);
   font-weight: var(--h2-font-weight);
@@ -138,13 +161,16 @@ dialog.lx-modal>header>.lx-primary {
   padding-top: 0.5rem;
   display: block;
   padding-right: 3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.lx dialog.lx-modal>.lx-button-set>.lx-button {
+.lx dialog.lx-modal > .lx-button-set > .lx-button {
   font-weight: var(--font-weight-interactive);
 }
 
-.lx dialog.lx-modal>header>.lx-button {
+.lx dialog.lx-modal > header > .lx-button {
   border-color: transparent;
   margin: 0;
   position: absolute;
@@ -158,24 +184,24 @@ dialog {
   outline: none;
 }
 
-.lx-modal>header>label {
+.lx-modal > header > label {
   overflow-wrap: break-word;
   padding-right: 1rem;
 }
 
-.lx-modal.lx-modal-s>header>label {
+.lx-modal.lx-modal-s > header > label {
   max-width: calc(40rem - var(--row-size) - 2rem);
 }
 
-.lx-modal.lx-modal-m>header>label {
+.lx-modal.lx-modal-m > header > label {
   max-width: calc(60rem - var(--row-size) - 2rem);
 }
 
-.lx-modal.lx-modal-l>header>label {
+.lx-modal.lx-modal-l > header > label {
   max-width: calc(var(--body-column-size) - var(--row-size) - 2rem);
 }
 
-.lx-modal.lx-modal-xl>header>label {
+.lx-modal.lx-modal-xl > header > label {
   max-width: calc(100% - var(--row-size) - 2rem);
 }
 
@@ -200,6 +226,11 @@ dialog {
   gap: 1rem;
 }
 
+.lx-dialog > .lx-main > p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* LxModalForm */
 .lx-modal-form {
   grid-template-rows: 1fr auto;
@@ -209,12 +240,12 @@ dialog {
   padding: 0;
 }
 
-.lx-layout .lx-modal.lx-modal-form .lx-form-grid>header.lx-sticky {
+.lx-layout .lx-modal.lx-modal-form .lx-form-grid > header.lx-sticky {
   top: 0;
 }
 
 @media (max-height: 499px) {
-  .lx-modal-form .lx-form-grid > header.lx-sticky{
+  .lx-modal-form .lx-form-grid > header.lx-sticky {
     position: sticky;
   }
 }
