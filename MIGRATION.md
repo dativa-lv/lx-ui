@@ -1,5 +1,12 @@
 # LX/UI Migration Guide
 
+## 2.0.1 → 2.0.2
+
+### Breaking changes
+
+#### LxVisualPicker, LxDataVisualizer
+
+In LxVisualPicker and LxDataVisualizer components with kind `latvia`, "Varakļānu novads" has been merged into "Madonas novads" to reflect the updated administrative map.
 
 ## 2.0 → 2.0.1
 

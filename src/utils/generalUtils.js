@@ -161,19 +161,22 @@ export function focusPreviousElementInContainer(container) {
 }
 
 // Calculates a dictionary of texts to be displayed in a component, replacing default texts with any passed by property
-export function getDisplayTexts(textsPassed, textsDefault, noCopy) {
-  let ret = textsPassed ?? {};
-  if (!noCopy) {
-    ret = textsPassed ? JSON.parse(JSON.stringify(textsPassed)) : {};
-  }
+export function getDisplayTexts(textsPassed, textsDefault) {
+  const ret = {};
   Object.keys(textsDefault).forEach((key) => {
-    if (typeof textsDefault[key] === 'object') {
-      ret[key] = getDisplayTexts(ret[key], textsDefault[key], true);
-    } else if (ret[key] === undefined) {
-      ret[key] = textsDefault[key];
+    const defaultVal = textsDefault[key];
+    const passedVal =
+      textsPassed && Object.prototype.hasOwnProperty.call(textsPassed, key)
+        ? textsPassed[key]
+        : undefined;
+    if (defaultVal && typeof defaultVal === 'object') {
+      ret[key] = getDisplayTexts(passedVal, defaultVal);
+    } else if (passedVal !== undefined) {
+      ret[key] = passedVal;
+    } else {
+      ret[key] = defaultVal;
     }
   });
-
   return ret;
 }
 

@@ -198,7 +198,6 @@ const latvia = {
   '0052000': 'Tukuma novads',
   '0053000': 'Valkas novads',
   '0054000': 'Valmieras novads',
-  '0055000': 'Varakļānu novads',
   '0056000': 'Ventspils novads',
 };
 

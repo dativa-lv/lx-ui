@@ -173,8 +173,8 @@ function colorSvg() {
     const element = rootElement?.querySelector(`#lx-${key}`);
     if (element) {
       element.style.fill = 'inherit';
-      const res = element.querySelector('title');
-      res.textContent = value;
+      const res = element?.querySelector('title');
+      if (res) res.textContent = value;
     }
   });
   props.items.forEach((item) => {
@@ -185,8 +185,8 @@ function colorSvg() {
     if (country) {
       if (color) country.style.fill = color;
       if (props.showValues !== 'never') {
-        const res = country.querySelector('title');
-        res.textContent = `${item[props.nameAttribute]} \n${item[props.valueAttribute]}`;
+        const res = country?.querySelector('title');
+        if (res) res.textContent = `${item[props.nameAttribute]} \n${item[props.valueAttribute]}`;
       }
     }
   });
@@ -384,9 +384,9 @@ function loadImage() {
 }
 
 watch(
-  () => [props.items, props.thresholds, props.showValues],
+  () => [props.items, props.thresholds, props.showValues, contentModel.value],
   () => {
-    if (props.kind === 'latvia') {
+    if (props.kind === 'latvia' && contentModel.value === 'default') {
       nextTick(() => colorSvg());
     }
   },
@@ -859,10 +859,10 @@ watch(
 
     <LxDataGrid
       v-else-if="mode === 'default' && contentModel === 'table'"
-      :column-definitions="columnDef"
+      :columnDefinitions="columnDef"
       :items="dataGridItems"
-      :has-sorting="true"
-      @action-click="gridClick"
+      :hasSorting="true"
+      @actionClick="gridClick"
     />
 
     <div class="lx-legend" v-if="showLegend && contentModel === 'default'">
