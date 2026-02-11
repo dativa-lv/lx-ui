@@ -139,7 +139,7 @@
   --list-icon-width: 1.5rem;
   --list-item-min-height: var(--row-size);
   --list-item-gap: 0.5rem;
-  --list-item-header-padding: 0.35rem 0.35rem 0.2rem 0.5rem;
+  --list-item-header-padding: 0.35rem 0.35rem 0.2rem 0.25rem;
   --list-item-header-min-height: 2.75rem;
   --list-item-border: 2px solid transparent;
   --list-item-border-radius: 0;

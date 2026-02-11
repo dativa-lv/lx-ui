@@ -3309,13 +3309,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-region);
 }
 
-.lx .lx-form-grid .lx-appendable-list .lx-file-wrapper,
-.lx .lx-modal .lx-appendable-list .lx-file-wrapper,
-.lx .lx-region .lx-appendable-list .lx-file-wrapper,
-.lx-file-wrapper {
-  background-color: var(--color-region);
-}
-
 .lx.lx-theme-contrast .lx-appendable-list .lx-file-wrapper .lx-list-item {
   height: calc(var(--input-container-height) - 0.15rem);
 }
@@ -3364,9 +3357,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: calc(var(--input-container-height) - 0.15rem);
 }
 
-.lx-form-grid > .lx-main .lx-file-wrapper,
 .lx-form-grid > .lx-main .lx-toggle-appearance,
-.lx-modal .lx-file-wrapper,
 .lx .lx-region .lx-toggle-appearance,
 .lx .lx-data-block .lx-toggle-appearance,
 .lx .lx-expander .lx-toggle-appearance,
@@ -3570,11 +3561,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   margin: 0;
 }
 
-.lx-file-upload-wrapper .lx-uploaded-file-list-wrapper  li .lx-file-wrapper .lx-list-item.lx-list-item-interactive,
-.lx-file-upload-wrapper .lx-uploaded-file-list-wrapper .lx-list li {
-  background-color: var(--color-background);
-}
-
 .lx-file-upload-wrapper .lx-uploaded-file-list-wrapper li .lx-file-wrapper
 .lx-file-main-part > .lx-list-item-interactive:not(.lx-list-item-disabled):hover {
   border-color: var(--color-interactive-hover-background);
@@ -3640,10 +3626,15 @@ h2.lx-section-header + p.lx-invalidation-message,
   padding-right: 1rem;
 }
 
+.lx .lx-file-upload-wrapper .lx-file-wrapper .lx-file-name-main-data-wrapper {
+  padding-left: 1rem;
+}
+
 .lx .lx-file-upload-wrapper.compact .lx-file-wrapper .lx-file-name-main-data-wrapper {
   display: grid;
   grid-template-rows: 2fr 1fr;
   align-items: center;
+  padding-right: 0.5rem;
 }
 
 .lx .lx-file-upload-wrapper.default .lx-file-wrapper .lx-file-name-main-data-wrapper {
@@ -3653,14 +3644,14 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: 100%;
 }
 
-.lx-file-name-main-data-wrapper .lx-file-main-additional-info {
-  padding-left: 1rem;
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-file-main-additional-info {
   align-self: center;
   color: var(--color-label);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 0.5rem;
+  padding-right: 0;
+  height: auto;
 }
 
 .lx-list-item-interactive:not(.lx-list-item-disabled):hover
@@ -3816,9 +3807,9 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-file-wrapper .lx-list-item {
   border: 2px solid transparent;
-  background-color: transparent !important;
   height: 100%;
   overflow: hidden;
+  --color-list-hover-background: transparent;
 }
 
 .lx-file-wrapper.lx-disabled .lx-file-name,
@@ -3984,8 +3975,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-file-name-wrapper {
   display: flex;
   align-items: center;
-  padding-left: 1rem;
-  padding-right: 0.5rem;
   white-space: nowrap;
   overflow: hidden;
 }

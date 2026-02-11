@@ -175,13 +175,15 @@
   background-color: var(--color-list-hover-background);
 }
 
-/*** Form + region + modal + appendable list styles ***/
+/*** Form + region + modal + appendable list + datablock styles ***/
 
 .lx .lx-form-grid .lx-row > .lx-vertical > div > .lx-list-item-wrapper > .lx-list-item,
+.lx .lx-data-block-wrapper .lx-list-item-wrapper,
 .lx .lx-curtain .lx-modal .lx-list-item-wrapper,
 .lx .lx-form-region .lx-list-item-wrapper,
 .lx .lx-form-grid .lx-list-item-wrapper,
 .lx .lx-region .lx-list-item-wrapper,
+.lx .lx-data-block-wrapper .lx-list-item-container,
 .lx .lx-curtain .lx-modal .lx-list-item-container,
 .lx .lx-form-region .lx-list-item-container,
 .lx .lx-form-grid .lx-list-item-container,
@@ -189,6 +191,7 @@
 .lx .lx-region .lx-component-toolbar .second-row,
 .lx .lx-modal .lx-component-toolbar.lx-disabled .second-row,
 .lx .lx-form-grid .lx-component-toolbar.lx-disabled .second-row,
+.lx .lx-data-block-wrapper .draggable-list-item-wrapper .lx-handle,
 .lx .lx-curtain .lx-modal .draggable-list-item-wrapper .lx-handle,
 .lx .lx-form-region .draggable-list-item-wrapper .lx-handle,
 .lx .lx-form-grid .draggable-list-item-wrapper .lx-handle,
@@ -196,12 +199,24 @@
   background-color: var(--color-list-region-background);
 }
 
+.lx .lx-form-grid .lx-data-block-wrapper .draggable-list-item-wrapper .lx-handle,
+.lx .lx-region .lx-data-block-wrapper .draggable-list-item-wrapper .lx-handle,
+.lx .lx-modal .lx-data-block-wrapper .draggable-list-item-wrapper .lx-handle,
+.lx .lx-form-grid .lx-appendable-list .draggable-list-item-wrapper .lx-handle,
+.lx .lx-region .lx-appendable-list .draggable-list-item-wrapper .lx-handle,
+.lx .lx-modal .lx-appendable-list .draggable-list-item-wrapper .lx-handle,
 .lx .lx-form-grid .lx-appendable-list .lx-list-item-container,
 .lx .lx-region .lx-appendable-list .lx-list-item-container,
 .lx .lx-modal .lx-appendable-list .lx-list-item-container,
+.lx .lx-form-grid .lx-data-block-wrapper .lx-list-item-container,
+.lx .lx-region .lx-data-block-wrapper .lx-list-item-container,
+.lx .lx-modal .lx-data-block-wrapper .lx-list-item-container,
 .lx .lx-form-grid .lx-appendable-list .lx-list-item-wrapper,
 .lx .lx-region .lx-appendable-list .lx-list-item-wrapper,
-.lx .lx-modal .lx-appendable-list .lx-list-item-wrapper {
+.lx .lx-modal .lx-appendable-list .lx-list-item-wrapper,
+.lx .lx-form-grid .lx-data-block-wrapper .lx-list-item-wrapper,
+.lx .lx-region .lx-data-block-wrapper .lx-list-item-wrapper,
+.lx .lx-modal .lx-data-block-wrapper .lx-list-item-wrapper {
   background-color: var(--color-list-background);
 }
 

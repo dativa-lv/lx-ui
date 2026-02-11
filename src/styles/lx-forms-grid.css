@@ -450,7 +450,6 @@ svg .lx-shade {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  color: var(--color-label);
   transition: background-color 0.5s ease;
 }
 
