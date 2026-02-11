@@ -208,37 +208,34 @@ const expandIconTitle = computed(() => {
           </div>
         </template>
       </header>
-      <div class="additional-buttons" v-if="Number(actionDefinitionsLength) !== 0">
-        <template v-if="actionDefinitions.length === 1">
-          <LxButton
-            v-for="action in actionDefinitions"
-            :key="action.id"
-            :id="action.id"
-            :label="action.name || action.label"
-            :title="action.title || action.tooltip"
-            :icon="action.icon"
-            :iconSet="action.iconSet"
-            kind="ghost"
-            :loading="action.loading"
-            :busy="action.busy"
-            :destructive="action.destructive"
-            :disabled="isDisabled || action.disabled"
-            variant="icon-only"
-            :active="action.active"
-            :badge="action.badge"
-            :badgeType="action.badgeType"
-            :badgeIcon="action.badgeIcon"
-            :badgeTitle="action.badgeTitle"
-            @click="handleActionClick(action.id, props.id)"
-          />
-        </template>
+      <div class="additional-buttons" v-if="Number(actionDefinitionsLength) > 0">
+        <LxButton
+          v-if="actionDefinitions.length === 1"
+          :id="actionDefinitions[0].id"
+          :label="actionDefinitions[0].name || actionDefinitions[0].label"
+          :title="actionDefinitions[0].title || actionDefinitions[0].tooltip"
+          :icon="actionDefinitions[0].icon"
+          :iconSet="actionDefinitions[0].iconSet"
+          kind="ghost"
+          :loading="actionDefinitions[0].loading"
+          :busy="actionDefinitions[0].busy"
+          :destructive="actionDefinitions[0].destructive"
+          :disabled="isDisabled || actionDefinitions[0].disabled"
+          variant="icon-only"
+          :active="actionDefinitions[0].active"
+          :badge="actionDefinitions[0].badge"
+          :badgeType="actionDefinitions[0].badgeType"
+          :badgeIcon="actionDefinitions[0].badgeIcon"
+          :badgeTitle="actionDefinitions[0].badgeTitle"
+          @click="handleActionClick(actionDefinitions[0].id, props.id)"
+        />
         <LxDropDownMenu
+          v-else
           :actionDefinitions="actionDefinitions"
           :disabled="isDisabled"
           @actionClick="(id) => handleActionClick(id, props.id)"
         >
           <LxButton
-            v-if="actionDefinitions.length > 1"
             icon="overflow-menu"
             kind="ghost"
             :disabled="isDisabled"

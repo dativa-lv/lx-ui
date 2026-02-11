@@ -118,33 +118,32 @@ function handleClick(event) {
       }"
       v-if="actionDefinitions?.length > 0 && props.kind === 'button'"
     >
-      <template v-if="actionDefinitions.length === 1">
-        <LxButton
-          :key="actionDefinitions[0].id"
-          :id="actionDefinitions[0].id"
-          :label="actionDefinitions[0].name || actionDefinitions[0].label"
-          :title="actionDefinitions[0].title || actionDefinitions[0].tooltip"
-          :icon="actionDefinitions[0].icon"
-          :iconSet="actionDefinitions[0].iconSet"
-          kind="ghost"
-          :loading="actionDefinitions[0].loading"
-          :busy="actionDefinitions[0].busy"
-          :destructive="actionDefinitions[0].destructive"
-          :disabled="actionDefinitions[0].disabled"
-          variant="icon-only"
-          :active="actionDefinitions[0].active"
-          :badge="actionDefinitions[0].badge"
-          :badgeType="actionDefinitions[0].badgeType"
-          :badgeIcon="actionDefinitions[0].badgeIcon"
-          :badgeTitle="actionDefinitions[0].badgeTitle"
-          @click="handleActionClick(actionDefinitions[0].id, props.id)"
-        />
-      </template>
+      <LxButton
+        v-if="actionDefinitions.length === 1"
+        :id="actionDefinitions[0].id"
+        :label="actionDefinitions[0].name || actionDefinitions[0].label"
+        :title="actionDefinitions[0].title || actionDefinitions[0].tooltip"
+        :icon="actionDefinitions[0].icon"
+        :iconSet="actionDefinitions[0].iconSet"
+        kind="ghost"
+        :loading="actionDefinitions[0].loading"
+        :busy="actionDefinitions[0].busy"
+        :destructive="actionDefinitions[0].destructive"
+        :disabled="actionDefinitions[0].disabled"
+        variant="icon-only"
+        :active="actionDefinitions[0].active"
+        :badge="actionDefinitions[0].badge"
+        :badgeType="actionDefinitions[0].badgeType"
+        :badgeIcon="actionDefinitions[0].badgeIcon"
+        :badgeTitle="actionDefinitions[0].badgeTitle"
+        @click="handleActionClick(actionDefinitions[0].id, props.id)"
+      />
       <LxDropDownMenu
+        v-else
         :actionDefinitions="actionDefinitions"
         @actionClick="(id) => handleActionClick(id, props.id)"
       >
-        <div class="lx-toolbar" v-if="actionDefinitions.length >= 2">
+        <div class="lx-toolbar">
           <LxButton
             icon="overflow-menu"
             kind="ghost"
