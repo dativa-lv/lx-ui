@@ -1080,10 +1080,10 @@ function syncColumnWidths() {
   let totalWidth = 0;
 
   Array.from(children).forEach((child) => {
-    totalWidth += child.offsetWidth;
+    totalWidth += child.getBoundingClientRect().width;
   });
 
-  if (totalWidth > container.value.offsetWidth && props.scrollable === 'auto') {
+  if (totalWidth > container.value.getBoundingClientRect().width && props.scrollable === 'auto') {
     autoScrollable.value = true;
     container.value.style.gridTemplateColumns = 'auto';
     container.value.classList.add('lx-scrollable');
@@ -1091,9 +1091,13 @@ function syncColumnWidths() {
     autoScrollable.value = false;
   }
 
-  const headerColumns = Array.from(header.value.children).filter((col) => col.offsetWidth > 0);
+  const headerColumns = Array.from(header.value.children).filter(
+    (col) => col.getBoundingClientRect().width > 0
+  );
 
-  const columnWidths = headerColumns.map((col) => `${col.offsetWidth}px`).join(' ');
+  const columnWidths = headerColumns
+    .map((col) => `${col.getBoundingClientRect().width}px`)
+    .join(' ');
 
   container.value.style.gridTemplateColumns = columnWidths;
 }
