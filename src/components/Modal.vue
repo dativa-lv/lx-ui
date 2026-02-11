@@ -76,12 +76,15 @@ function open() {
 
 function close(source = null) {
   if (props.kind === 'default') {
-    if (source === 'esc' && !props.escEnabled) {
+    if ((source === 'esc' && !props.escEnabled) || isOpen.value === false) {
       return;
     }
     isOpen.value = false;
     emits('close');
   } else {
+    if (isOpenModal.value === false) {
+      return;
+    }
     nativeModal.value?.close();
     isOpenModal.value = false;
     emits('close');

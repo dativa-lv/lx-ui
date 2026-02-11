@@ -54,7 +54,7 @@ function open() {
 }
 
 function close(source = null) {
-  if (source === 'esc' && !props.escEnabled) {
+  if ((source === 'esc' && !props.escEnabled) || isOpen.value === false) {
     return;
   }
 
