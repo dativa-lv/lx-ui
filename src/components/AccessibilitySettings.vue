@@ -47,6 +47,14 @@ const textsDefault = {
     'Noformējums ar paaugstinātu krāsu kontrastu, kas uzlabo satura salasāmību. Īpaši piemērots lietotājiem ar redzes traucējumiem.',
   transparencyLinkLabel: 'Piekļūstamības standarti (WCAG Contrast (Minimum))',
   animationsLinkLabel: 'Piekļūstamības standarti (WCAG Animation from Interactions)',
+  reduceTransparencyOn: 'Jā',
+  reduceTransparencyOff: 'Nē',
+  reduceMotionOn: 'Jā',
+  reduceMotionOff: 'Nē',
+  systemFontsOn: 'Jā',
+  systemFontsOff: 'Nē',
+  touchModeOn: 'Jā',
+  touchModeOff: 'Nē',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -87,6 +95,13 @@ const blocks = [
     section: 'interactions',
   },
 ];
+
+const toggleTextMap = {
+  transparency: { yes: 'reduceTransparencyOn', no: 'reduceTransparencyOff' },
+  animations: { yes: 'reduceMotionOn', no: 'reduceMotionOff' },
+  fonts: { yes: 'systemFontsOn', no: 'systemFontsOff' },
+  touchMode: { yes: 'touchModeOn', no: 'touchModeOff' },
+};
 
 const themes = ref([
   {
@@ -246,6 +261,10 @@ const headingAttrs = computed(() => {
                     v-model="blockToggleModels[block.id]"
                     :tooltip="displayTexts[block.label]"
                     :labelId="`${block.id}-label`"
+                    :texts="{
+                      valueYes: displayTexts[toggleTextMap[block.id].yes],
+                      valueNo: displayTexts[toggleTextMap[block.id].no],
+                    }"
                     @click.stop
                     @keyup.space.stop
                   />
