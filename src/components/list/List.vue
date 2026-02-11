@@ -227,7 +227,7 @@ function handleActionClick(actionName, rowCode) {
 const filteredItems = computed(() => {
   if (itemsWithStringIds.value) {
     return itemsWithStringIds.value.filter(
-      (o) => isFiltered(o[props.nameAttribute]) || isFiltered(o[props.nameAttribute])
+      (o) => isFiltered(o[props.nameAttribute]) || isFiltered(o[props.descriptionAttribute])
     );
   }
   return [];
@@ -238,7 +238,7 @@ function findObjectById(array) {
   const queue = [...array];
   while (queue.length > 0) {
     const obj = queue.shift();
-    if (isFiltered(obj[props.nameAttribute]) || isFiltered(obj[props.nameAttribute])) {
+    if (isFiltered(obj[props.nameAttribute]) || isFiltered(obj[props.descriptionAttribute])) {
       res.push(obj);
     }
     if (obj?.[props.childrenAttribute]) {
@@ -305,7 +305,7 @@ const filteredGroupedItems = computed(() => {
       ret[prepareCode(group.id)] = listItems?.filter(
         (o) =>
           prepareCode(o[props.groupAttribute]) === prepareCode(group.id) &&
-          (isFiltered(o[props.nameAttribute]) || isFiltered(o[props.nameAttribute]))
+          (isFiltered(o[props.nameAttribute]) || isFiltered(o[props.descriptionAttribute]))
       );
     });
     return ret;
