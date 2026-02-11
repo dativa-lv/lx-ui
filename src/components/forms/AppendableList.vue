@@ -221,18 +221,17 @@ const insideForm = inject('insideForm', ref(false));
 
 const defaultToolbarArea = computed(() => (insideForm.value ? 'left' : 'right'));
 
-const toolbarActionDefinitions = ref([
-  {
-    id: 'add-item',
-    name: defaultTexts.addButtonLabel,
-    icon: 'add-item',
-    kind: 'tertiary',
-  },
-]);
-
-const processedToolbarActions = computed(() =>
-  processToolbarActions({
-    actions: toolbarActionDefinitions.value,
+const processedToolbarActions = computed(() => {
+  const toolbarActionDefinitions = [
+    {
+      id: 'add-item',
+      name: displayTexts.value.addButtonLabel,
+      icon: 'add-item',
+      kind: 'tertiary',
+    },
+  ];
+  return processToolbarActions({
+    actions: toolbarActionDefinitions,
     loading: false,
     busy: false,
     hasSearch: false,
@@ -242,8 +241,8 @@ const processedToolbarActions = computed(() =>
     defaultToolbarArea,
     searchField,
     displayTexts,
-  })
-);
+  });
+});
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
