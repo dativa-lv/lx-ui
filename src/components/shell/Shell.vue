@@ -762,11 +762,11 @@ function initializeAnimations() {
 }
 
 function initializeTransparency() {
-  const transparencyKey = ref(
-    `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-reduced-transparency`
-  );
+  const transparencyKey = `${
+    useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'
+  }-reduced-transparency`;
 
-  const storedTransparency = JSON.parse(localStorage.getItem(transparencyKey.value));
+  const storedTransparency = JSON.parse(localStorage.getItem(transparencyKey));
   if (storedTransparency === null) {
     transparencyToggle.value = usePreferredReducedTransparency().value !== 'no-preference';
   } else if (props.hasReducedTransparency === null) {
