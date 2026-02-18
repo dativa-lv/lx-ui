@@ -2580,6 +2580,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
     :buttonSecondaryIsCancel="false"
     :disableClosing="true"
     :actionDefinitions="idleModalActions"
+    :texts="displayTexts"
     @actionClick="idleModalClicked"
   />
 
@@ -2592,6 +2593,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
     :disableClosing="confirmDialogData?.$state.confirmDialogState?.disableClosing ?? false"
     :escEnabled="confirmDialogData?.$state.confirmDialogState.escEnabled"
     :actionDefinitions="confirmModalActions"
+    :texts="displayTexts"
     @actionClick="confirmModalClicked"
     @close="onClosedConfirmModal"
   />
