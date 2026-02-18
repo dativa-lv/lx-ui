@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, shallowRef, watch, nextTick, onMounted, onUnmounted } from 'vue';
+import { ref, computed, shallowRef, watch, nextTick, onMounted, onUnmounted, provide } from 'vue';
 import { useWindowSize, useMutationObserver } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxToolbar from '@/components/Toolbar.vue';
@@ -1288,6 +1288,8 @@ const showToolbarPrimaryDownloadButton = computed(
   () => props.primaryDownloadButton && windowWidth.value <= 800
 );
 
+const insideFullscreenOverlay = computed(() => isExpanded.value);
+
 function isValidHeight(value) {
   // Matches only valid CSS length values (e.g., 10px, 5em, 1.5rem, 50vw)
   const validHeightRegex = /^\d+(\.\d+)?(px|em|rem|vw|vh)$/;
@@ -1394,6 +1396,8 @@ watch(
   },
   { immediate: true }
 );
+
+provide('insideFullscreenOverlay', insideFullscreenOverlay);
 
 onMounted(() => {
   if (props.preloadLibs?.includes(MIME_TYPES.PDF)) {

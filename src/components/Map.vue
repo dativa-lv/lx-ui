@@ -314,7 +314,7 @@ const toolbarActions = computed(() => [
   },
 ]);
 
-const insideFullscreenMap = computed(() => isExpanded.value);
+const insideFullscreenOverlay = computed(() => isExpanded.value);
 
 function toolbarActionClick(action) {
   if (action === 'zoomIn') zoomIn();
@@ -349,7 +349,7 @@ onUnmounted(() => {
   navigator.geolocation.clearWatch(watchPositionId.value);
 });
 
-provide('insideFullscreenMap', insideFullscreenMap);
+provide('insideFullscreenOverlay', insideFullscreenOverlay);
 
 function handleOptionClick(id, value) {
   const base = props.baseLayerDefinitions.find((layer) => layer.id === value);

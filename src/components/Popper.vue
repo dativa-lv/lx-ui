@@ -153,10 +153,11 @@ watch(plc, (newPlacement) => {
 const insideHeader = inject('insideHeader', ref(false));
 const insideNavBar = inject('insideNavBar', ref(false));
 const insideModal = inject('insideModal', ref(false));
-const insideFullscreenMap = inject('insideFullscreenMap', ref(false));
+const insideFullscreenOverlay = inject('insideFullscreenOverlay', ref(false));
 
 const needsHighZ = computed(
-  () => insideModal.value || insideFullscreenMap.value || insideHeader.value || insideNavBar.value
+  () =>
+    insideModal.value || insideFullscreenOverlay.value || insideHeader.value || insideNavBar.value
 );
 
 onMounted(() => {
