@@ -313,6 +313,7 @@
 
 .lx-layout.lx-layout-default > nav .lx-nav-panel .lx-nav-group {
   width: var(--aside-size);
+  max-width: 100%;
 }
 
 .lx-layout.lx-layout-default > main {
