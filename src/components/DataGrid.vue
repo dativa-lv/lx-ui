@@ -2266,7 +2266,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
 
                 <LxDropDownMenu
                   ref="dropDownMenuRef"
-                  placement="left-start"
+                  placement="bottom-end"
                   :disabled="isDisabled"
                   :tabindex="-1"
                 >
