@@ -116,10 +116,6 @@
     border-right: solid var(--color-chrome) 0.125rem;
 }
 
-.lx-master-detail .lx-detail .lx-form-grid .lx-form-section {
-  padding: 0;
-}
-
 @media (max-width: 1200px) {
 
     .lx-master-detail .lx-detail {
