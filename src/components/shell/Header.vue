@@ -111,6 +111,8 @@ const textsDefault = {
   transparency: 'Caurspīdīgums',
   fonts: 'Iekārtas fonti',
   touchMode: 'Skārienvadība',
+  customizeSettings: 'Pielāgot iestatījumus',
+  accessibilityTools: 'Piekļūstamības rīki',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   reduceTransparencyOff: 'Nē',
@@ -121,10 +123,19 @@ const textsDefault = {
   touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
+  userMenuTitle: 'Lietotāja izvēlne',
+  customButton: 'Pielāgojamā poga',
   loginButtonLabel: 'Autorizēties',
   loginButtonTitle: 'Pieslēgties sistēmai',
   spotlight: {
     label: 'Lietotnes ceļvedis',
+  },
+  badgeTypes: {
+    default: 'informatīvs paziņojums',
+    info: 'informatīvs paziņojums',
+    warning: 'brīdinājums',
+    success: 'sekmīgs paziņojums',
+    error: 'svarīgs paziņojums',
   },
   idleBadge: {
     minutesSingular: 'minūtes',

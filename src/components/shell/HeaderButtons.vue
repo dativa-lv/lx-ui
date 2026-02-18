@@ -102,6 +102,7 @@ const textsDefault = {
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
   userMenuTitle: 'Lietotāja izvēlne',
+  customButton: 'Pielāgojamā poga',
   loginButtonLabel: 'Autorizēties',
   loginButtonTitle: 'Pieslēgties sistēmai',
   badgeTypes: {

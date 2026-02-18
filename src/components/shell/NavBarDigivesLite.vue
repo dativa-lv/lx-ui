@@ -98,6 +98,7 @@ const textsDefault = {
   touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
+  customButton: 'Pielāgojamā poga',
   contextPersonsInfoLabel: 'Pacients',
   contextPersonsInfoTitle: 'Konteksta persona',
   badgeTypes: {

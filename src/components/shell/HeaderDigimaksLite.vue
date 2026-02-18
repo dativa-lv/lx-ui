@@ -111,9 +111,10 @@ const textsDefault = {
   reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
+  userTitle: 'Lietotājs',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
-  userTitle: 'Lietotājs',
+  customButton: 'Pielāgojamā poga',
   settings: 'Iestatījumi',
 };
 
