@@ -72,6 +72,9 @@ const textsDefault = {
   scrollUp: 'Atgriezties uz augšu',
   loginButtonLabel: 'Autorizēties',
   loginButtonTitle: 'Pieslēgties sistēmai',
+  spotlight: {
+    label: 'Lietotnes ceļvedis',
+  },
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

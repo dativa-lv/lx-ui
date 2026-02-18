@@ -111,6 +111,9 @@ const textsDefault = {
     success: 'sekmīgs paziņojums',
     error: 'svarīgs paziņojums',
   },
+  spotlight: {
+    label: 'Lietotnes ceļvedis',
+  },
   idleBadge: {
     minutesSingular: 'minūtes',
     minutes11: 'minūtes',

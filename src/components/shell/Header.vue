@@ -123,6 +123,9 @@ const textsDefault = {
   megaMenuTitle: 'Lietotnes',
   loginButtonLabel: 'Autorizēties',
   loginButtonTitle: 'Pieslēgties sistēmai',
+  spotlight: {
+    label: 'Lietotnes ceļvedis',
+  },
   idleBadge: {
     minutesSingular: 'minūtes',
     minutes11: 'minūtes',
