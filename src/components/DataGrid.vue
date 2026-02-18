@@ -1140,7 +1140,7 @@ const fullBleedMargin = computed(() => {
     dataGridWrapperRef.value?.closest('.lx-form-grid') ||
     width.value <= 1920
   ) {
-    return `--grid-side-margin: 0;`;
+    return `--grid-left-margin: 0; --grid-right-margin: 0;`;
   }
 
   const bodyColWidth = parseFloat(
@@ -1156,9 +1156,12 @@ const fullBleedMargin = computed(() => {
     ? parseFloat(getComputedStyle(lxElement).getPropertyValue('--aside-size')) * rootFontSize || 0
     : 0;
 
-  const margin = `${-((width.value - bodyColWidth) / 2 - navBarWidth - gapPx)}px`;
+  const baseMargin = -((width.value - bodyColWidth) / 2 - gapPx);
 
-  return `--grid-side-margin: ${margin};`;
+  const leftMargin = isDefaultLayout ? baseMargin + navBarWidth : baseMargin;
+  const rightMargin = baseMargin;
+
+  return `--grid-left-margin: ${leftMargin}px; --grid-right-margin: ${rightMargin}px;`;
 });
 
 function serverSideSearch() {

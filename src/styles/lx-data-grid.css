@@ -2,7 +2,7 @@
   position: relative;
   background-color: var(--color-region);
   min-width: 0; /* So that scrolling works properly */
-  margin: 0 var(--grid-side-margin);
+  margin: 0 var(--grid-right-margin) 0 var(--grid-left-margin);
 }
 
 .lx .lx-data-grid-wrapper header:not(.lx-data-block header) {
