@@ -34,6 +34,7 @@ import LxToolbar from '@/components/Toolbar.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
+import LxBadge from '@/components/Badge.vue';
 
 const emits = defineEmits([
   'update:searchString',
@@ -98,6 +99,7 @@ const props = defineProps({
   searchSide: { type: String, default: 'server' }, // server, TODO add client search
   locale: { type: String, default: null }, // lv, en
   fullBleed: { type: Boolean, default: true },
+  badgeDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -1341,6 +1343,18 @@ defineExpose({ cancelSelection, selectRows, sortBy });
     <header v-if="showHeader">
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
       <p :id="`${id}-description`" class="lx-description">{{ description }}</p>
+      <div v-if="badgeDefinitions?.length > 0" class="lx-grid-badge-wrapper">
+        <LxBadge
+          v-for="badge in badgeDefinitions"
+          :key="badge?.id"
+          :id="badge?.id"
+          :icon="badge?.icon"
+          :iconSet="badge?.iconSet"
+          :value="badge?.name || badge?.label || badge?.value"
+          :tooltip="badge?.title || badge?.tooltip"
+          :type="badge?.type"
+        />
+      </div>
     </header>
 
     <div

@@ -1393,6 +1393,23 @@
   display: flex;  
 }
 
+.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper .lx-badge {
+  background-color: var(--color-badge-region-background);
+}
+
+.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper > .lx-badge > .lx-badge-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 @media (pointer: coarse) {
   .lx .lx-data-grid .lx-cell-action .lx-toolbar {
     visibility: inherit;

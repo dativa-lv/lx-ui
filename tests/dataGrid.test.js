@@ -254,3 +254,73 @@ describe('Action definitions', () => {
     checkActionDefinitionsButtonsPanel(buttonElements, { actionDefinitionsOverride: panelActions });
   });
 });
+
+describe('Badge definitions', () => {
+  const props = {
+    items: [
+      {
+        id: 'testItem',
+        name: 'Test item',
+      },
+    ],
+    showHeader: true,
+  };
+  const badgeDefinitions = [
+    {
+      id: 'actionOne',
+      name: 'Action one',
+      icon: 'bug',
+    },
+    {
+      id: 'actionTwo',
+      name: 'Action two',
+      icon: 'flash',
+    },
+  ];
+
+  test('renders two badges', () => {
+    wrapper = mountComponent({ props: { ...props, badgeDefinitions } });
+    const badges = wrapper.findAll(
+      '.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper > .lx-badge'
+    );
+
+    expect(badges.length).toBe(badgeDefinitions.length);
+  });
+
+  test('badges when showHeader is false', () => {
+    const propsOverride = { ...props, showHeader: false };
+
+    wrapper = mountComponent({ props: { ...propsOverride, badgeDefinitions } });
+    const badges = wrapper.findAll(
+      '.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper > .lx-badge'
+    );
+
+    expect(badges.length).toBe(0);
+  });
+
+  test('badge labels', () => {
+    wrapper = mountComponent({ props: { ...props, badgeDefinitions } });
+
+    const badges = wrapper.findAll(
+      '.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper > .lx-badge'
+    );
+
+    expect(badges.length).toBe(badgeDefinitions.length);
+    expect(badges[0].find('.lx-badge-text').text()).toBe(badgeDefinitions[0].name);
+    expect(badges[1].find('.lx-badge-text').text()).toBe(badgeDefinitions[1].name);
+  });
+
+  test('badge icons', () => {
+    const badgeDef = [...badgeDefinitions];
+    badgeDef[0].icon = null;
+
+    wrapper = mountComponent({ props: { ...props, badgeDefinitions: badgeDef } });
+    const badges = wrapper.findAll(
+      '.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper > .lx-badge'
+    );
+
+    expect(badges.length).toBe(badgeDefinitions.length);
+    expect(badges[0].find('desc').exists()).toBe(false);
+    expect(badges[1].find('desc').text()).toBe('Piktogramma "Flash"');
+  });
+});
