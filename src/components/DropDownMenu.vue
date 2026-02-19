@@ -235,9 +235,11 @@ function handleTogglerKeyup(e) {
     case ' ':
     case 'Enter':
     case 'ArrowDown':
+      e.preventDefault();
       openMenu({ source: 'keyboard' });
       break;
     case 'ArrowUp':
+      e.preventDefault();
       openMenu({ source: 'keyboard', focus: 'last' });
       break;
     default:
@@ -247,7 +249,17 @@ function handleTogglerKeyup(e) {
 
 function handlePanelKeydown(e) {
   switch (e.key) {
+    case ' ':
+    case 'Enter':
+    case 'ArrowDown':
+    case 'ArrowUp':
+    case 'Home':
+    case 'End':
+    case 'Escape':
+      e.preventDefault();
+      break;
     case 'Tab':
+      e.preventDefault();
       closeMenu();
       if (e.shiftKey) {
         togglerRef.value.focus();
@@ -264,6 +276,7 @@ function handlePanelKeyup(e) {
   switch (e.key) {
     case ' ':
     case 'Enter':
+      e.preventDefault();
       if (document.activeElement === panelRef.value) {
         firstFocusableElement.value?.click();
       } else if (panelRef.value?.contains(document.activeElement)) {
@@ -271,21 +284,26 @@ function handlePanelKeyup(e) {
       }
       break;
     case 'ArrowDown':
+      e.preventDefault();
       if (document.activeElement === panelRef.value) {
         firstFocusableElement.value?.focus();
       }
       focusNextElementInContainer(panelRef.value);
       break;
     case 'ArrowUp':
+      e.preventDefault();
       focusPreviousElementInContainer(panelRef.value);
       break;
     case 'Home':
+      e.preventDefault();
       focusFirstElementInContainer(panelRef.value);
       break;
     case 'End':
+      e.preventDefault();
       focusLastElementInContainer(panelRef.value);
       break;
     case 'Escape':
+      e.preventDefault();
       closeMenu({ source: 'keyboard' });
       break;
     default:
@@ -444,7 +462,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         @keydown.space.prevent
         @keydown.down.prevent
         @keydown.up.prevent
-        @keyup.prevent="handleTogglerKeyup"
+        @keyup="handleTogglerKeyup"
       >
         <LxButton
           v-if="!$slots.default && mainButton"
@@ -486,8 +504,8 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           role="menu"
           tabindex="-1"
           :aria-labelledby="togglerId"
-          @keydown.prevent="handlePanelKeydown"
-          @keyup.prevent="handlePanelKeyup"
+          @keydown="handlePanelKeydown"
+          @keyup="handlePanelKeyup"
         >
           <div
             v-if="responsiveView && datePickerType"
