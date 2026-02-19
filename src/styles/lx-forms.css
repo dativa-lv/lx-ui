@@ -811,6 +811,10 @@
   border-bottom: 2px solid var(--color-chrome);
 }
 
+.lx-info-slot-wrapper label {
+  cursor: help;
+}
+
 .lx-row>.lx-info-wrapper.lx-info-slot-wrapper label svg {
   width: 1rem;
   margin-bottom: -0.2rem;
