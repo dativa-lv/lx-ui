@@ -130,7 +130,9 @@
       "vue-dompurify-html>dompurify": "3.2.4",
       "cross-spawn": "7.0.6",
       "imask>@babel/runtime-corejs3": "7.26.10",
-      "linkifyjs": "4.3.2"
+      "linkifyjs": "4.3.2",
+      "lodash": "4.17.23",
+      "markdown-it": "14.1.1"
     }
   },
   "peerDependencies": {

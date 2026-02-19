@@ -19,6 +19,7 @@ export default {
      * @param {boolean|null} [secondaryBusy=null] - Secondary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmSecondaryButtonBusy`. Defaults to null.
      * @param {Function|null} [closeCallback=null] - Callback invoked when the modal closes (close icon, backdrop, Esc); if null, nothing runs. May be async. Defaults to null.
      * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
+     * @param {string|null} [id=null] - The ID of the confirmation dialog. Defaults to null.
      */
     push(
       title,
@@ -31,7 +32,8 @@ export default {
       primaryBusy = null,
       secondaryBusy = null,
       closeCallback = null,
-      kind = null
+      kind = null,
+      id = null
     ) {
       this.confirmDialogState = {
         title,
@@ -45,6 +47,7 @@ export default {
         secondaryBusy,
         closeCallback,
         kind,
+        id,
       };
       this.isOpen = true;
     },
@@ -67,7 +70,8 @@ export default {
         null,
         null,
         null,
-        kind
+        kind,
+        null
       );
     },
     /**
@@ -86,6 +90,7 @@ export default {
      * @param {boolean|null} [secondaryBusy=null] - Secondary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmSecondaryButtonBusy`. Defaults to null.
      * @param {Function|null} [closeCallback=null] - Callback invoked when the modal closes (close icon, backdrop, Esc); if null, nothing runs. May be async. Defaults to null.
      * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
+     * @param {string|null} [id=null] - The ID of the confirmation dialog. Defaults to null.
      */
     forcePush(
       title,
@@ -98,7 +103,8 @@ export default {
       primaryBusy = null,
       secondaryBusy = null,
       closeCallback = null,
-      kind = null
+      kind = null,
+      id = null
     ) {
       this.confirmDialogState = {
         title,
@@ -113,6 +119,7 @@ export default {
         closeCallback,
         disableClosing: true,
         kind,
+        id,
       };
       this.isOpen = true;
     },
@@ -140,7 +147,8 @@ export default {
         null,
         null,
         null,
-        kind
+        kind,
+        null
       );
     },
     async confirm(callback) {

@@ -595,6 +595,7 @@ defineExpose({ focus });
       />
 
       <LxButton
+        :id="hidePassword ? `${id}-show-password` : `${id}-hide-password`"
         variant="icon-only"
         kind="ghost"
         :icon="hidePassword ? 'visible' : 'hidden'"

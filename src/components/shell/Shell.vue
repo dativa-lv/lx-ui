@@ -34,6 +34,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxSpotlight from '@/components/Spotlight.vue';
 import LxDialog from '@/components/Dialog.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const themeModel = useColorMode({
   selector: '.lx',
@@ -2574,6 +2575,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
 
   <LxDialog
     ref="idleModalRef"
+    id="idle-modal"
     kind="warning"
     :label="displayTexts.idleModalLabel"
     :description="idleModalDescription"
@@ -2586,6 +2588,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
 
   <LxDialog
     ref="confirmModal"
+    :id="confirmDialogData?.$state.confirmDialogState?.id ?? generateUUID()"
     :kind="confirmDialogData?.$state.confirmDialogState.kind ?? 'question'"
     :label="confirmDialogData?.$state.confirmDialogState.title"
     :description="confirmDialogData?.$state.confirmDialogState.message"

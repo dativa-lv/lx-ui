@@ -302,7 +302,7 @@ defineExpose({ clearModel });
               :columnCount="columnCount"
               :required-mode="props.requiredMode"
             >
-              <slot name="customItem" v-bind="{ item }" />
+              <slot name="customItem" v-bind="{ item, index }" />
             </LxForm>
 
             <template #customHeader v-if="$slots.customHeader">
