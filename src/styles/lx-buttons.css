@@ -284,22 +284,24 @@ a.lx-button.lx-button-ghost svg {
   width: var(--button-nav-public-icon-width);
 }
 
-.lx-layout-public .lx-nav-panel ul li > .lx-button svg,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button svg,
 .lx-layout-public .lx-nav-panel ul .lx-toolbar .lx-button svg,
-.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button svg,
+.lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar .lx-button svg,
-.lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button svg,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button svg,
+.lx-layout-public .lx-nav-panel ul li > .lx-context-container .lx-dropdown-toggler .lx-button svg,
 .lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button svg,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button svg {
   fill: var(--color-button-nav-public-icon);
 }
 
-.lx-layout-public .lx-nav-panel ul li > .lx-button:hover svg,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button:hover svg,
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button:hover svg,
-.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button:hover svg,
+.lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button:hover svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button:hover svg,
-.lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button:hover svg,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button:hover svg,
+.lx-layout-public .lx-nav-panel ul li > .lx-context-container .lx-dropdown-toggler .lx-button:hover svg,
 .lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover svg,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button:hover svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button:hover svg {
@@ -739,13 +741,60 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-button-nav-hover);
 }
 
+.lx-layout-default .lx-nav-panel ul li.lx-selected .lx-nested-nav .lx-button,
+.lx-layout-default .lx-nav-panel ul li.lx-selected .lx-button-icon-only {
+  border-left-color: transparent;
+}
+
+/* Unselected nested nav btn + opened LxDDM toggler btn */
+.lx-layout-default .lx-nav-panel .lx-nested-nav li:not(.lx-selected) .lx-button {
+  --color-button-nav: var(--color-data);
+  --color-button-nav-icon: var(--color-data);
+  --color-button-nav-background: var(--color-region-2);
+  --color-button-nav-selected: var(--color-data);
+  --color-button-nav-icon-selected: var(--color-data);
+  --color-button-nav-selected-background: var(--color-region-2);
+}
+
+/* Unselected nested nav btn + opened LxDDM toggler btn */
+.lx-layout-default .lx-nav-panel .lx-nested-nav-open .lx-button-icon-only {
+  --color-button-nav: var(--color-data);
+  --color-button-nav-icon: var(--color-data);
+  --color-button-nav-background: var(--color-region-2);
+}
+
+/* Closed LxDDM toggler btn, whose child is selected */
+.lx-layout-default .lx-nav-panel ul li .lx-button.lx-child-selected {
+  --color-button-nav-background: var(--color-highlight);
+  --color-button-nav-icon: var(--color-button-nav-icon-selected);
+}
+
+.lx-layout-default .lx-nav-panel ul li .lx-nested-nav {
+  list-style: none;
+  padding: 0;
+  --button-nav-gap: 0;
+  --button-nav-padding: 0 calc(1.55rem + var(--button-nav-icon-width));
+}
+
+.lx-layout-default .lx-nested-nav {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.lx-layout-default .lx-nested-nav-open > .lx-nested-nav {
+  max-height: calc(var(--lx-nested-item-count, 0) * var(--button-nav-height));
+  opacity: 1;
+}
+
 /* Public + latvijalv nav styles */
 
-.lx-layout-public .lx-nav-panel ul li > .lx-button,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button,
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button,
-.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button,
+.lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper >.lx-button,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button,
-.lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button,
+.lx-layout-public .lx-nav-panel ul li > .lx-context-container .lx-dropdown-toggler .lx-button,
 .lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button {
@@ -766,9 +815,9 @@ a.lx-button.lx-button-ghost svg {
   outline-offset: var(--button-nav-public-outline-offset);
 }
 
-.lx-layout-public .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper,
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
-.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
+.lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper {
@@ -779,25 +828,26 @@ a.lx-button.lx-button-ghost svg {
   gap: var(--button-nav-public-gap);
 }
 
-.lx-layout-public .lx-nav-panel ul li:first-of-type > .lx-button .lx-button-content-wrapper,
-.lx-layout-latvijalv .lx-nav-panel ul li:first-of-type > .lx-button .lx-button-content-wrapper {
+.lx-layout-public .lx-nav-panel ul li:first-of-type .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper,
+.lx-layout-latvijalv .lx-nav-panel ul li:first-of-type .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper {
   --button-nav-public-grid-areas: 'icon';
   --button-nav-public-grid-template-columns: 1fr;
 }
 
-.lx-layout-public .lx-nav-panel ul li > .lx-button .lx-button-content,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button .lx-button-content,
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content,
-.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button .lx-button-content,
+.lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button .lx-button-content,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content {
   text-align: var(--button-nav-public-text-align);
 }
 
-.lx-layout-public .lx-nav-panel ul li > .lx-button:hover,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button:hover,
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button:hover,
-.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button:hover,
+.lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button:hover,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button:hover,
+.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button:hover,
 .lx-layout-public .lx-nav-panel ul li > .lx-context-container .lx-dropdown-toggler .lx-button:hover,
 .lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button:hover,
@@ -2354,7 +2404,8 @@ a.lx-button.lx-button-ghost svg {
 }
 
 @media (min-width: 801px) and (max-width: 1900px) {
-  .lx-layout-default.lx-collapsed .lx-nav-panel:hover {
+  .lx-layout-default.lx-collapsed .lx-nav-panel:hover,
+  .lx-layout-default.lx-collapsed .lx-nav-panel:has(.lx-button:focus-visible) {
     width: var(--aside-size);
     box-shadow: var(--shadow-dropdown);
   }
@@ -2370,9 +2421,9 @@ a.lx-button.lx-button-ghost svg {
     height: var(--row-size);
   }
 
-  .lx .lx-layout-public .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
+  .lx .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper,
   .lx .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
-  .lx .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
+  .lx .lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper,
   .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
   .lx .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper ,
   .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper {

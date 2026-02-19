@@ -169,6 +169,10 @@
   transition: filter 0.2s ease;
 }
 
+.lx:not(.lx-no-animations) .lx-layout-default .lx-nested-nav {
+  transition: max-height 0.2s ease, opacity 0.2s ease;
+}
+
 @keyframes bounce-in {
   0% {
     transform: scale(0.5);

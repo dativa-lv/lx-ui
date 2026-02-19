@@ -127,6 +127,8 @@ const textsDefault = {
   customButton: 'Pielāgojamā poga',
   loginButtonLabel: 'Autorizēties',
   loginButtonTitle: 'Pieslēgties sistēmai',
+  collapse: 'Sakļaut',
+  expand: 'Izvērst',
   spotlight: {
     label: 'Lietotnes ceļvedis',
   },

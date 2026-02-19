@@ -105,6 +105,8 @@ const textsDefault = {
   customButton: 'Pielāgojamā poga',
   loginButtonLabel: 'Autorizēties',
   loginButtonTitle: 'Pieslēgties sistēmai',
+  collapse: 'Sakļaut',
+  expand: 'Izvērst',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',

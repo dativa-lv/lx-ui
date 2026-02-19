@@ -278,20 +278,40 @@
 }
 
 .lx-layout.lx-layout-public .lx-nav-group li:first-of-type,
-.lx-layout.lx-layout-public .lx-nav-group li:has(.lx-context-container) {
+.lx-layout.lx-layout-public .lx-nav-group li:has(> .lx-context-container) {
   flex-grow: 0;
   overflow: visible;
 }
 
-.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected > .lx-button,
-.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected > .lx-context-container .lx-dropdown-toggler .lx-button {
+.lx-layout.lx-layout-public .lx-nav-group li .lx-nav-item-wrapper > .lx-button-icon-only {
+  --button-nav-public-width: var(--button-nav-public-height);
+}
+
+/* Selected item + unopened selected LxDDM toggler btn + LxDDM toggler, whose child is selected*/
+.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-nav-item-wrapper > .lx-button,
+.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected:not(.lx-nested-nav-open) .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button,
+.lx-layout.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button.lx-child-selected {
   color: var(--color-button-nav-selected);
   background-color: var(--color-button-nav-selected-background);
 }
 
-.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-button svg,
-.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected > .lx-context-container .lx-dropdown-toggler .lx-button svg {
+/* Selected item + unopened selected LxDDM toggler btn + LxDDM toggler, whose child is selected*/
+.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-nav-item-wrapper > .lx-button svg,
+.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected:not(.lx-nested-nav-open) .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button svg,
+.lx-layout.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button.lx-child-selected svg {
   fill: var(--color-button-nav-selected);
+}
+
+/* Opened LxDDM toggler btn */
+.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-nested-nav-open .lx-nav-item-wrapper .lx-dropdown-toggler .lx-button {
+  --color-button-nav-public-background: var(--color-region);
+  --color-button-nav-public-focus-background: var(--color-region);
+  --color-button-nav-public-hover-background: var(--color-header-hover-background);
+  --color-button-nav-public-active-background: var(--color-header-hover-background);
+  --color-button-nav-public-icon: var(--color-data);
+  --color-button-nav-public-icon-focus: var(--color-data);
+  --color-button-nav-public-icon-hover: var(--color-header-hover-foreground);
+  --color-button-nav-public-icon-active: var(--color-header-hover-foreground);
 }
 
 .lx-layout.lx-layout-public>main {
@@ -614,7 +634,7 @@
     right: calc(0px - var(--row-size));
   }
 
-  .lx-layout-public .lx-nav-panel ul li > .lx-button,
+  .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button,
   .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button,
   .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button {
     justify-content: left;

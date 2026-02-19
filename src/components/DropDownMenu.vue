@@ -631,7 +631,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :active="action?.active"
                   :badgeIcon="action?.badgeIcon"
                   :badgeTitle="action?.badgeTitle"
-                  :href="action?.href"
+                  :href="action?.href || action?.to"
                   @click="handleActionClick(action?.id)"
                 />
               </template>
@@ -738,7 +738,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :active="action?.active"
                   :badgeIcon="action?.badgeIcon"
                   :badgeTitle="action?.badgeTitle"
-                  :href="action?.href"
+                  :href="action?.href || action?.to"
                   @click="handleActionClick(action?.id, { close: true, event: $event })"
                 />
               </template>

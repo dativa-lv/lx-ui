@@ -79,6 +79,8 @@ const textsDefault = {
   scrollUp: 'Atgriezties uz augšu',
   loginButtonLabel: 'Autorizēties',
   loginButtonTitle: 'Pieslēgties sistēmai',
+  collapse: 'Sakļaut',
+  expand: 'Izvērst',
   spotlight: {
     label: 'Lietotnes ceļvedis',
   },
@@ -88,6 +90,8 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const width = ref(useWindowSize().width);
 const insideNavBar = ref(true);
+const nestedNavOpen = ref({});
+const dropdownRefs = ref([]);
 
 const { y } = useScroll(window);
 
@@ -154,6 +158,51 @@ const emits = defineEmits([
 function loginClicked() {
   emits('logInClick');
 }
+
+function toggleNestedNav(itemIndex) {
+  nestedNavOpen.value[itemIndex] = !nestedNavOpen.value[itemIndex];
+}
+
+function closeNestedNavs() {
+  Object.keys(nestedNavOpen.value).forEach((key) => {
+    nestedNavOpen.value[key] = false;
+  });
+}
+
+function closeNestedNavsOnLeave() {
+  if (width.value <= 1900 && width.value > 800 && props.layoutMode === 'default') {
+    closeNestedNavs();
+  }
+}
+
+function isChildSelected(item) {
+  return item?.children?.some((child) => props.selectedNavItems[child?.to?.name]);
+}
+
+function canShowChildren(item) {
+  return (!item?.type || item.type === 'primary') && item?.children?.length;
+}
+
+function getNavItemClasses(item, index) {
+  const isPublic = props.layoutMode === 'public';
+
+  const isSelected = props.selectedNavItems[item.to?.name];
+
+  const isNestedNavOpen = isPublic
+    ? dropdownRefs.value[index]?.menuOpen
+    : nestedNavOpen.value[index];
+
+  return {
+    'lx-selected': !!isSelected,
+    'lx-nested-nav-open': !!isNestedNavOpen,
+  };
+}
+
+watch(width, (newWidth) => {
+  if (newWidth <= 1900 && width.value > 800 && props.layoutMode === 'default') {
+    closeNestedNavs();
+  }
+});
 
 function navToggle(ev) {
   if (!props.navBarHidden && ev.target.id !== 'nav-toggle') {
@@ -223,9 +272,16 @@ const getTabIndex = computed(() => {
   return 2;
 });
 
-function navClick(id) {
+function navClick(id, parentIndex = null) {
   emits('navClick', id);
   emits('nav-toggle', true);
+
+  if (props.layoutMode === 'default') {
+    Object.keys(nestedNavOpen.value).forEach((key) => {
+      if (Number(key) !== parentIndex) nestedNavOpen.value[key] = false;
+    });
+  }
+  closeNestedNavsOnLeave();
 }
 
 function triggerShowAllClick() {
@@ -244,6 +300,17 @@ function toggleSpotlight() {
   emits('toggleSpotlight');
 }
 
+function getNestedNavToggleTooltip(index, item) {
+  if (!item || !displayTexts.value) return '';
+
+  const isOpen =
+    props.layoutMode === 'public'
+      ? dropdownRefs.value[index]?.menuOpen
+      : nestedNavOpen.value[index];
+
+  return `${isOpen ? displayTexts.value.collapse : displayTexts.value.expand} "${item.label}"`;
+}
+
 const overflowMenu = ref(null);
 
 const closeSignal = inject('closeSignal');
@@ -255,7 +322,12 @@ watch(closeSignal, () => {
 provide('insideNavBar', insideNavBar);
 </script>
 <template>
-  <div class="lx-nav-panel" v-on-click-outside="navToggle" :tabindex="-1">
+  <div
+    class="lx-nav-panel"
+    v-on-click-outside="navToggle"
+    :tabindex="-1"
+    @pointerleave="closeNestedNavsOnLeave"
+  >
     <ul class="lx-nav-group">
       <li
         v-for="(item, index) in (props.layoutMode === 'public' ||
@@ -264,29 +336,86 @@ provide('insideNavBar', insideNavBar);
           ? allNavItems
           : navItemsPrimary"
         :key="item.label"
-        :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
+        :class="getNavItemClasses(item, index)"
+        :style="canShowChildren(item) ? { '--lx-nested-item-count': item.children?.length } : {}"
       >
-        <LxButton
-          :label="item.label"
-          :href="item.to"
-          :icon="
-            (((index === 0 && width >= 900) || width < 900) &&
-              (props.layoutMode === 'public' || props.layoutMode === 'latvijalv')) ||
-            (props.layoutMode !== 'public' && props.layoutMode !== 'latvijalv')
-              ? item.icon
-              : ''
-          "
-          :iconSet="item?.iconSet"
-          :variant="
-            index === 0 &&
-            (props.layoutMode === 'public' || props.layoutMode === 'latvijalv') &&
-            width >= 900
-              ? 'icon-only'
-              : 'default'
-          "
-          :tabindex="getTabIndex"
-          @click="navClick(item?.id)"
-        />
+        <div class="lx-nav-item-wrapper">
+          <LxButton
+            :label="item.label"
+            :href="item.to"
+            :icon="
+              (((index === 0 && width >= 900) || width < 900) &&
+                (props.layoutMode === 'public' || props.layoutMode === 'latvijalv')) ||
+              (props.layoutMode !== 'public' && props.layoutMode !== 'latvijalv')
+                ? item.icon
+                : ''
+            "
+            :iconSet="item?.iconSet"
+            :variant="
+              index === 0 &&
+              (props.layoutMode === 'public' || props.layoutMode === 'latvijalv') &&
+              width >= 900
+                ? 'icon-only'
+                : 'default'
+            "
+            :tabindex="getTabIndex"
+            @click="navClick(item?.id)"
+          />
+          <LxButton
+            v-if="canShowChildren(item) && props.layoutMode === 'default'"
+            :customClass="
+              isChildSelected(item)
+                ? 'lx-child-selected lx-nested-nav-toggle'
+                : 'lx-nested-nav-toggle'
+            "
+            variant="icon-only"
+            :label="getNestedNavToggleTooltip(index, item)"
+            :icon="nestedNavOpen[index] ? 'chevron-up' : 'chevron-down'"
+            :iconSet="item?.iconSet"
+            :tabindex="getTabIndex"
+            @click="() => toggleNestedNav(index)"
+          />
+          <LxDropDownMenu
+            :ref="(el) => (dropdownRefs[index] = el)"
+            v-else-if="canShowChildren(item) && props.layoutMode === 'public'"
+            :actionDefinitions="
+              item?.children?.map((child) => ({
+                ...child,
+                active: !!selectedNavItems[child?.to?.name],
+                icon: null,
+              }))
+            "
+            @actionClick="navClick(item?.id)"
+          >
+            <LxButton
+              variant="icon-only"
+              :customClass="
+                isChildSelected(item)
+                  ? 'lx-child-selected lx-nested-nav-toggle'
+                  : 'lx-nested-nav-toggle'
+              "
+              :label="getNestedNavToggleTooltip(index, item)"
+              :icon="dropdownRefs[index]?.menuOpen ? 'chevron-up' : 'chevron-down'"
+              :iconSet="item?.iconSet"
+              :tabindex="-1"
+              @click="() => toggleNestedNav(index)"
+            />
+          </LxDropDownMenu>
+        </div>
+        <ul v-if="canShowChildren(item) && props.layoutMode === 'default'" class="lx-nested-nav">
+          <li
+            v-for="child in item?.children"
+            :key="child?.label"
+            :class="{ 'lx-selected': selectedNavItems[child?.to?.name] }"
+          >
+            <LxButton
+              :label="child?.label"
+              :href="child?.to"
+              :tabindex="nestedNavOpen[index] ? getTabIndex : -1"
+              @click="() => navClick(child?.id, index)"
+            />
+          </li>
+        </ul>
       </li>
 
       <li
@@ -340,14 +469,16 @@ provide('insideNavBar', insideNavBar);
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton
-          :label="item.label"
-          :href="item.to"
-          :icon="item.icon"
-          :iconSet="item?.iconSet"
-          :tabindex="getTabIndex"
-          @click="navClick(item?.id)"
-        />
+        <div class="lx-nav-item-wrapper">
+          <LxButton
+            :label="item.label"
+            :href="item.to"
+            :icon="item.icon"
+            :iconSet="item?.iconSet"
+            :tabindex="getTabIndex"
+            @click="navClick(item?.id)"
+          />
+        </div>
       </li>
       <li v-if="props.hasMegaMenu && width <= 500" class="lx-mega-menu-nav-item lx-mega-menu">
         <LxMegaMenu
@@ -365,15 +496,17 @@ provide('insideNavBar', insideNavBar);
         v-if="props.hasLoginButton && width <= 500 && !userInfo"
         class="lx-login-button-nav-item lx-login-button"
       >
-        <LxButton
-          id="lx-shell-login-button"
-          customClass="lx-header-button"
-          :kind="'ghost'"
-          icon="login"
-          :label="displayTexts.loginButtonLabel"
-          :title="displayTexts.loginButtonTitle"
-          @click="loginClicked"
-        />
+        <div class="lx-nav-item-wrapper">
+          <LxButton
+            id="lx-shell-login-button"
+            customClass="lx-header-button"
+            :kind="'ghost'"
+            icon="login"
+            :label="displayTexts.loginButtonLabel"
+            :title="displayTexts.loginButtonTitle"
+            @click="loginClicked"
+          />
+        </div>
       </li>
     </ul>
   </div>
