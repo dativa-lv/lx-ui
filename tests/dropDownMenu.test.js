@@ -6,7 +6,7 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxButton from '@/components/Button.vue';
 import {
   actionDefinitionsCommon,
-  checkActionDefinitionsButtonsPanel,
+  checkActionDefinitionsButtonsMultiple,
 } from './helpers/actionDefinitionsHelpers';
 
 let wrapper;
@@ -121,7 +121,7 @@ describe('Action definitions', () => {
     const panelElement = await openMenu();
     const buttonElements = panelElement.querySelectorAll('.lx-button');
 
-    checkActionDefinitionsButtonsPanel(buttonElements);
+    checkActionDefinitionsButtonsMultiple(buttonElements);
   });
 
   test('renders action toggles correctly', async () => {

@@ -5,7 +5,7 @@ import LxDataGrid from '@/components/DataGrid.vue';
 import { checkButtonState } from './helpers/buttonHelpers';
 import {
   actionDefinitionsCommon,
-  checkActionDefinitionsButtonsPanel,
+  checkActionDefinitionsButtonsMultiple,
 } from './helpers/actionDefinitionsHelpers';
 
 let wrapper;
@@ -251,7 +251,9 @@ describe('Action definitions', () => {
     const buttonElements = panelElement.querySelectorAll('.lx-button');
     const panelActions = actionDefinitions.slice(1);
 
-    checkActionDefinitionsButtonsPanel(buttonElements, { actionDefinitionsOverride: panelActions });
+    checkActionDefinitionsButtonsMultiple(buttonElements, {
+      actionDefinitionsOverride: panelActions,
+    });
   });
 });
 

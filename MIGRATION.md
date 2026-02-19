@@ -1,5 +1,13 @@
 # LX/UI Migration Guide
 
+## 2.0.2 → 2.0.3
+
+### Breaking changes
+
+#### LxToolbar
+
+By default, all actions and default slot content are placed on the right side when `area` is not specified in action definitions. This can be changed using the new `defaultArea` prop.
+
 ## 2.0.1 → 2.0.2
 
 ### Breaking changes

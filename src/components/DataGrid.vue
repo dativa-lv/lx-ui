@@ -12,7 +12,6 @@ import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import { formatValueArray } from '@/utils/formatUtils';
 import { useGridKeyboardNavigation } from '@/utils/useGridKeyboardNavigation';
-import { processToolbarActions } from '@/utils/toolbarUtils';
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -105,7 +104,6 @@ const props = defineProps({
 
 const query = ref(props.searchString);
 const queryRaw = ref(props.searchString);
-const defaultToolbarArea = ref('right');
 
 const modelSearchString = computed({
   get() {
@@ -490,27 +488,11 @@ function cancelSelection() {
   });
 }
 
-const processedToolbarActions = computed(() =>
-  processToolbarActions({
-    actions: props.toolbarActionDefinitions,
-    loading: props.loading,
-    busy: props.busy,
-    hasSearch: props.hasSearch,
-    searchMode: props.searchMode,
-    hasSelecting: props.hasSelecting,
-    selectionKind: props.selectionKind,
-    defaultToolbarArea,
-    searchField,
-    displayTexts,
-    selectAllSide: 'left',
-  })
-);
-
 const toolbarActions = computed(() => {
   if (selectedRows.value.length > 0) {
     return [];
   }
-  return processedToolbarActions.value;
+  return props.toolbarActionDefinitions;
 });
 
 const selectIcon = computed(() => {
@@ -1362,11 +1344,18 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       :class="[{ 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length }]"
     >
       <LxToolbar
-        :id="`${props.id}-toolbar`"
+        class="lx-grid-toolbar"
+        :id="`${id}-toolbar`"
         :actionDefinitions="toolbarActions"
-        :disabled="props.busy"
-        :loading="props.loading"
-        :class="[{ 'lx-grid-toolbar': true }]"
+        :disabled="busy"
+        :loading="loading"
+        :busy="busy"
+        :hasSearch="hasSearch"
+        :searchField="searchField"
+        :searchMode="autoSearchMode"
+        :hasSelecting="hasSelecting"
+        :selectionKind="selectionKind"
+        selectAllSide="left"
         :texts="displayTexts"
         @actionClick="toolbarClick"
       >

@@ -169,25 +169,33 @@ export function checkActionDefinitionsButtonsSingle(
 
 /**
  * Checks that button elements (properties and states) match the expected action definitions.
- * @param {NodeListOf<Element>} buttons - DOM button elements to validate
+ * @param {NodeListOf<Element>|Array} buttons - DOM button elements or Vue Test Utils wrappers to validate
  * @param {Object} [options={}] - Configuration options
  * @param {Array} [options.actionDefinitionsOverride=null] - Custom action definitions to validate against; if null, uses actionDefinitionsCommon
+ * @param {boolean} [options.areIconOnly=false] - When true, skips visible label text assertion for icon-only buttons
  */
-export function checkActionDefinitionsButtonsPanel(
+export function checkActionDefinitionsButtonsMultiple(
   buttons,
-  { actionDefinitionsOverride = null } = {}
+  { actionDefinitionsOverride = null, areIconOnly = false } = {}
 ) {
   const actionDefinitions = actionDefinitionsOverride ?? actionDefinitionsCommon;
 
   expect(buttons.length).toBe(actionDefinitions.length);
 
   buttons.forEach((button, i) => {
-    expect(button.getAttribute('id')).toContain(actionDefinitions[i].id);
-    expect(button.getAttribute('aria-label')).toContain(actionDefinitions[i].name);
-    expect(button.querySelector('.lx-button-label').textContent).toBe(actionDefinitions[i].name);
+    const buttonElement = button?.element ?? button;
+
+    expect(buttonElement.getAttribute('id')).toContain(actionDefinitions[i].id);
+    expect(buttonElement.getAttribute('aria-label')).toContain(actionDefinitions[i].name);
+
+    if (!areIconOnly) {
+      expect(buttonElement.querySelector('.lx-button-label').textContent).toBe(
+        actionDefinitions[i].name
+      );
+    }
 
     if (actionDefinitions[i].title) {
-      expect(button.getAttribute('title')).toBe(actionDefinitions[i].title);
+      expect(buttonElement.getAttribute('title')).toBe(actionDefinitions[i].title);
     }
 
     if (actionDefinitions[i].destructive) {
@@ -211,7 +219,7 @@ export function checkActionDefinitionsButtonsPanel(
     }
 
     if (actionDefinitions[i].badge) {
-      expect(button.querySelector('.lx-badge')).toBeTruthy();
+      expect(buttonElement.querySelector('.lx-badge')).toBeTruthy();
     }
   });
 }

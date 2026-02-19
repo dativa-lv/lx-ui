@@ -4,7 +4,7 @@ import { mount, RouterLinkStub } from '@vue/test-utils';
 import LxAppendableList from '@/components/forms/AppendableList.vue';
 import {
   actionDefinitionsCommon,
-  checkActionDefinitionsButtonsPanel,
+  checkActionDefinitionsButtonsMultiple,
 } from './helpers/actionDefinitionsHelpers';
 
 const defaultDeleteAction = {
@@ -97,7 +97,7 @@ describe('Action definitions', () => {
     const panel = document.body.querySelector('.lx-dropdown-panel-wrapper');
     const panelButtons = panel.querySelectorAll('.lx-button');
 
-    checkActionDefinitionsButtonsPanel(panelButtons, {
+    checkActionDefinitionsButtonsMultiple(panelButtons, {
       actionDefinitionsOverride: [defaultDeleteAction, ...actionDefinitionsCommon],
     });
   });

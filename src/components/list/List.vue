@@ -7,7 +7,6 @@ import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { lxDevUtils } from '@/utils';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
-import { processToolbarActions } from '@/utils/toolbarUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
@@ -1083,21 +1082,6 @@ const insideForm = inject('insideForm', ref(false));
 
 const defaultToolbarArea = computed(() => (insideForm.value ? 'left' : 'right'));
 
-const processedToolbarActions = computed(() =>
-  processToolbarActions({
-    actions: props.toolbarActionDefinitions,
-    loading: props.loading,
-    busy: props.busy,
-    hasSearch: props.hasSearch,
-    searchMode: props.searchMode,
-    hasSelecting: props.hasSelecting,
-    selectionKind: props.selectionKind,
-    defaultToolbarArea,
-    searchField,
-    displayTexts,
-  })
-);
-
 function handleToolbarActionClick(id) {
   if (id === 'search') {
     toggleSearch();
@@ -1112,7 +1096,7 @@ const toolbarActions = computed(() => {
   if (selectedItems.value?.length > 0) {
     return [];
   }
-  return processedToolbarActions.value;
+  return props.toolbarActionDefinitions;
 });
 
 onMounted(() => {
@@ -1166,6 +1150,13 @@ onBeforeUnmount(() => {
           :actionDefinitions="toolbarActions"
           :disabled="busy"
           :loading="loading"
+          :busy="busy"
+          :hasSearch="hasSearch"
+          :searchField="searchField"
+          :searchMode="autoSearchMode"
+          :hasSelecting="hasSelecting"
+          :selectionKind="selectionKind"
+          :defaultArea="defaultToolbarArea"
           :texts="displayTexts"
           @actionClick="handleToolbarActionClick"
         >

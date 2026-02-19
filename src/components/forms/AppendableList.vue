@@ -3,7 +3,6 @@ import { computed, onMounted, ref, inject, nextTick } from 'vue';
 
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
-import { processToolbarActions } from '@/utils/toolbarUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxForm from '@/components/forms/Form.vue';
@@ -46,8 +45,6 @@ const defaultTexts = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
 
 const emits = defineEmits(['update:modelValue', 'actionClick', 'update:selectedValues']);
-
-const searchField = ref(false);
 
 // Adds a unique key to each object in the model
 function addKey(object) {
@@ -221,28 +218,14 @@ const insideForm = inject('insideForm', ref(false));
 
 const defaultToolbarArea = computed(() => (insideForm.value ? 'left' : 'right'));
 
-const processedToolbarActions = computed(() => {
-  const toolbarActionDefinitions = [
-    {
-      id: 'add-item',
-      name: displayTexts.value.addButtonLabel,
-      icon: 'add-item',
-      kind: 'tertiary',
-    },
-  ];
-  return processToolbarActions({
-    actions: toolbarActionDefinitions,
-    loading: false,
-    busy: false,
-    hasSearch: false,
-    searchMode: 'default',
-    hasSelecting: false, // temporary disabled (props.hasSelecting)
-    selectionKind: 'single', // temporary single (props.selectionKind)
-    defaultToolbarArea,
-    searchField,
-    displayTexts,
-  });
-});
+const toolbarActions = computed(() => [
+  {
+    id: 'add-item',
+    name: displayTexts.value.addButtonLabel,
+    icon: 'add-item',
+    kind: 'tertiary',
+  },
+]);
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
@@ -258,7 +241,8 @@ defineExpose({ clearModel });
     <div v-if="!readOnly && canAddItems && insideForm">
       <LxToolbar
         :id="`${props.id}-toolbar`"
-        :actionDefinitions="processedToolbarActions"
+        :actionDefinitions="toolbarActions"
+        :defaultArea="defaultToolbarArea"
         :texts="displayTexts"
         @actionClick="handleToolbarActionClick"
       >
