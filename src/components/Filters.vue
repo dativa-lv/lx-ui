@@ -31,6 +31,7 @@ const props = defineProps({
   enableFilterEditing: { type: Boolean, default: false },
   fastIdAttribute: { type: String, default: 'id' },
   fastNameAttribute: { type: String, default: 'name' },
+  hasShortlistReset: { type: Boolean, default: false },
   badge: { type: String, default: '' },
   badgeIcon: { type: String, default: null },
   badgeType: { type: String, default: 'default' }, // default, info, success, warning, error
@@ -200,7 +201,9 @@ defineExpose({ toggleExpander, focus });
       icon="filter"
       :class="[{ 'has-shortlist': $slots.shortlist }]"
       :ariaLabel="ariaLabel"
+      :hasShortlistReset="hasShortlistReset"
       :texts="badgeTexts"
+      @resetFilters="filterReset"
     >
       <div ref="filterBody" class="lx-form lx-form-region">
         <LxForm :columnCount="columnCount" kind="stripped">

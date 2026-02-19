@@ -182,6 +182,13 @@ const props = defineProps({
    */
   closeOnFilter: { type: Boolean, default: true },
   /**
+   * Determines whether the reset button is shown in the collapsed state.
+   * @type {Boolean}
+   * @default false
+   * @since 2.0.3
+   */
+  hasShortlistReset: { type: Boolean, default: false },
+  /**
    * The object containing text translations.
    * @type {Object}
    * @since 1.9.0-beta.3
@@ -488,6 +495,7 @@ defineExpose({
     :badge-type="badgeType"
     :badge-title="badgeTitle"
     :columnCount="columnCount || 3"
+    :hasShortlistReset="hasShortlistReset"
     :texts="displayTexts"
     @filter="filter"
     @resetFilters="() => emits('resetFilters')"

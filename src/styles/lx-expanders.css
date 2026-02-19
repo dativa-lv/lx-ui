@@ -306,6 +306,17 @@
   fill: var(--color-label);
 }
 
+.lx-expander > .lx-head > .lx-button.lx-expander-action {
+  --color-button-ghost-icon: var(--color-button-toolbar-ghost-icon);
+  --color-button-ghost-icon-hover: var(--color-button-toolbar-ghost-icon-hover);
+  --color-button-ghost-icon-focus: var(--color-button-toolbar-ghost-icon-focus);
+  --color-button-ghost-icon-active: var(--color-button-toolbar-ghost-icon-active);
+}
+
+.lx-expander:not([data-disabled]) > .lx-head:hover > .lx-button.lx-expander-action {
+  --color-button-ghost-icon: var(--color-region-hover-foreground);
+}
+
 /*** LxDataBlock styles ***/
 
 .lx-data-block-wrapper {

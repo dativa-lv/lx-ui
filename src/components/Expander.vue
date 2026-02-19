@@ -25,6 +25,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   variant: { type: String, default: 'default' }, // 'default' or 'highlighted'
   renderMode: { type: String, default: 'default' }, // 'default' or 'dynamic'
+  hasShortlistReset: { type: Boolean, default: false },
   badge: { type: String, default: '' },
   badgeIcon: { type: String, default: null },
   badgeType: { type: String, default: 'default' }, // default, info, success, warning, error
@@ -60,11 +61,13 @@ const textsDefault = {
     warning: 'brīdinājums',
     error: 'svarīgs paziņojums',
   },
+  clear: 'Notīrīt',
+  clearTitle: '',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue', 'selectAll']);
+const emits = defineEmits(['update:modelValue', 'selectAll', 'resetFilters']);
 
 const isExpandedRaw = shallowRef(props.modelValue);
 
@@ -215,7 +218,20 @@ defineExpose({ focus });
           <LxIcon :value="selectedIcon" />
         </div>
         <LxButton
+          v-if="hasShortlistReset && !isExpandedRaw"
+          customClass="lx-expander-action"
+          kind="ghost"
+          variant="icon-only"
+          :label="displayTexts.clear"
+          :title="displayTexts.clearTitle"
+          icon="filters-reset"
+          :disabled="disabled"
+          @click.stop="emits('resetFilters')"
+        />
+
+        <LxButton
           v-if="hasSelectButton"
+          customClass="lx-expander-action"
           kind="ghost"
           :icon="
             selectStatus === 'all'
