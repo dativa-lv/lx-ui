@@ -165,6 +165,7 @@ const props = defineProps({
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
   megaMenuHasShowAll: { type: Boolean, default: false },
+  megaMenuShowAllHref: { type: Object, default: null },
   showPrimaryMegaMenuItems: { type: Boolean, default: true },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
@@ -1180,6 +1181,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :hasCustomButton="hasCustomButton"
           :customButtonIcon="customButtonIcon"
@@ -1316,6 +1318,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :hasCustomButton="hasCustomButton"
           :customButtonIcon="customButtonIcon"
@@ -1473,6 +1476,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :hasCustomButton="hasCustomButton"
           :customButtonIcon="customButtonIcon"
@@ -1549,6 +1553,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           @log-in-click="loginClicked"
@@ -1641,6 +1646,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :hasCustomButton="hasCustomButton"
           :customButtonIcon="customButtonIcon"
@@ -1707,6 +1713,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           v-model:theme="themeModel"
@@ -2293,6 +2300,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :megaMenuItems="megaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           @mega-menu-show-all-click="triggerShowAllClick"
@@ -2360,6 +2368,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :megaMenuItems="megaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :selectedNavItems="navItemsSelected"
           :pageLabel="pageLabel"
@@ -2463,6 +2472,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           :hasCustomButton="hasCustomButton"
@@ -2529,6 +2539,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :has-login-button="hasLoginButton"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           :hasSpotlight="viewSpotlightItems?.length > 0"

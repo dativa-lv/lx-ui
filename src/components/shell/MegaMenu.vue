@@ -5,11 +5,14 @@ import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { loadLibrary } from '@/utils/libLoader';
+import { computedAsync } from '@vueuse/core';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   items: { type: Array, default: () => [] },
   hasShowAll: { type: Boolean, default: false },
+  showAllHref: { type: Object, default: null },
   showPrimaryMegaMenuItems: { type: Boolean, default: true },
   groupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
@@ -27,6 +30,22 @@ const textsDefault = {
   megaMenuTitle: 'Lietotnes',
 };
 
+const sanitizeUrlLib = loadLibrary('sanitizeUrl');
+
+async function computeSafeTo(href) {
+  if (typeof href !== 'string') {
+    return href ?? null;
+  }
+
+  const lib = await sanitizeUrlLib;
+  const cleaned = lib.sanitizeUrl(href);
+  if (cleaned === 'about:blank') {
+    return null;
+  }
+
+  return cleaned ?? null;
+}
+
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['megaMenuShowAllClick', 'update:selectedMegaMenuItem']);
@@ -40,42 +59,43 @@ const selectedMegaMenuItemModel = computed({
   },
 });
 
-const primaryItems = computed(() => {
+const primaryItems = computedAsync(() => {
   const primary = props.items?.filter((o) => o.kind === 'primary') || [];
 
-  return primary;
+  return Promise.all(primary.map(async (o) => ({ ...o, href: await computeSafeTo(o.href) })));
 });
 
 function triggerShowAllClick() {
   emits('megaMenuShowAllClick');
 }
 
-const lxElement = document.querySelector('.lx');
+const theme = inject('theme', { state: { value: null } });
 
-function specialStyles(item) {
+function getSpecialColor(item) {
   if (!item?.brandColor) {
-    return {};
-  }
-
-  const { className } = lxElement;
-
-  if (className.includes('dark')) {
-    return {
-      fill: item.brandColorDark || item.brandColor,
-    };
-  }
-  if (className.includes('light')) {
-    return {
-      fill: item.brandColor,
-    };
-  }
-  if (className.includes('contrast')) {
     return null;
   }
 
-  return {
-    fill: item.brandColor,
-  };
+  const themeName = theme.state?.value;
+
+  const light = item.brandColor;
+  const dark = item.brandColorDark || item.brandColor;
+
+  switch (themeName) {
+    case 'dark':
+      return dark;
+    case 'light':
+      return light;
+    case 'contrast':
+      return null;
+    default:
+      return light;
+  }
+}
+
+function specialStyles(item) {
+  const specialColor = getSpecialColor(item);
+  return specialColor ? { fill: specialColor } : null;
 }
 
 function getIcon(item) {
@@ -97,23 +117,31 @@ watch(closeSignal, () => {
   menu?.value?.closeMenu();
 });
 
-const megaMenuActionsDefinitons = computed(() =>
-  props.items
-    .filter((item) => item.kind === 'secondary')
-    .map((item) => ({
-      id: item?.id,
-      groupId: item?.group,
-      name: item?.name,
-      title: item?.description,
-      icon: getIcon(item),
-      iconSet: getIconSet(item),
-      active: item?.id === props.selectedMegaMenuItem,
-    }))
+const megaMenuActionsDefinitons = computedAsync(
+  () =>
+    Promise.all(
+      props.items
+        .filter((item) => item.kind === 'secondary')
+        .map(async (item) => ({
+          id: item?.id,
+          groupId: item?.group,
+          name: item?.name,
+          title: item?.description,
+          icon: getIcon(item),
+          iconSet: getIconSet(item),
+          iconColor: getSpecialColor(item),
+          active: item?.id === props.selectedMegaMenuItem,
+          href: await computeSafeTo(item?.href),
+        }))
+    ),
+  []
 );
 
 function updateSelectedMegaMenuItem(id) {
   selectedMegaMenuItemModel.value = id;
 }
+
+const safeShowAllHref = computedAsync(() => computeSafeTo(props.showAllHref), null);
 </script>
 <template>
   <LxDropDownMenu
@@ -143,36 +171,57 @@ function updateSelectedMegaMenuItem(id) {
             v-for="item in primaryItems"
             :key="item.id"
             class="primary-menu-tile"
-            :title="item?.description"
-            tabindex="0"
             :class="[
               { selected: selectedMegaMenuItemModel === item.id },
-              {
-                'default-icon': !item.id,
-              },
+              { 'default-icon': !item.id },
             ]"
-            role="button"
-            @click="updateSelectedMegaMenuItem(item.id)"
-            @keyup.enter.prevent="updateSelectedMegaMenuItem(item.id)"
           >
-            <LxIcon
-              :value="getIcon(item)"
-              :iconSet="getIconSet(item)"
-              :style="specialStyles(item)"
+            <router-link v-if="item.href" :to="item.href" :title="item?.description">
+              <LxIcon
+                :value="getIcon(item)"
+                :iconSet="getIconSet(item)"
+                :style="specialStyles(item)"
+                :title="item?.description"
+              />
+              <div class="lx-data">{{ item?.name }}</div>
+            </router-link>
+            <div
+              v-else
+              role="button"
+              tabindex="0"
               :title="item?.description"
-            />
-            <div class="lx-data">{{ item?.name }}</div>
+              @click="updateSelectedMegaMenuItem(item.id)"
+              @keyup.enter.prevent="updateSelectedMegaMenuItem(item.id)"
+            >
+              <LxIcon
+                :value="getIcon(item)"
+                :iconSet="getIconSet(item)"
+                :style="specialStyles(item)"
+                :title="item?.description"
+              />
+              <div class="lx-data">{{ item?.name }}</div>
+            </div>
           </li>
-          <li
-            v-if="props.hasShowAll"
-            class="primary-menu-tile"
-            :title="displayTexts.showAllLabel"
-            @keyup.enter.prevent="triggerShowAllClick"
-            @click="triggerShowAllClick"
-            tabindex="0"
-          >
-            <LxIcon value="open" :title="displayTexts.showAllLabel" />
-            <div class="lx-data">{{ displayTexts.showAllLabel }}</div>
+          <li v-if="props.hasShowAll" class="primary-menu-tile">
+            <router-link
+              v-if="safeShowAllHref"
+              :to="safeShowAllHref"
+              :title="displayTexts.showAllLabel"
+            >
+              <LxIcon value="open" :title="displayTexts.showAllLabel" />
+              <div class="lx-data">{{ displayTexts.showAllLabel }}</div>
+            </router-link>
+            <div
+              v-else
+              role="button"
+              tabindex="0"
+              :title="displayTexts.showAllLabel"
+              @click="triggerShowAllClick"
+              @keyup.enter.prevent="triggerShowAllClick"
+            >
+              <LxIcon value="open" :title="displayTexts.showAllLabel" />
+              <div class="lx-data">{{ displayTexts.showAllLabel }}</div>
+            </div>
           </li>
         </ul>
       </div>

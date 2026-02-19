@@ -739,6 +739,8 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   :badgeIcon="action?.badgeIcon"
                   :badgeTitle="action?.badgeTitle"
                   :href="action?.href || action?.to"
+                  :customClass="action?.iconColor ? 'has-custom-color' : null"
+                  :style="{ '--dropdown-icon-fill': action?.iconColor }"
                   @click="handleActionClick(action?.id, { close: true, event: $event })"
                 />
               </template>

@@ -190,6 +190,8 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', checkOverflow);
 });
 
+defineOptions({ inheritAttrs: false });
+
 defineExpose({ focus, scrollIntoView });
 </script>
 <template>
@@ -220,6 +222,7 @@ defineExpose({ focus, scrollIntoView });
     :aria-describedby="accessibleTitle ? `${id}-description` : null"
     :tabindex="tabindex"
     :role="kind === 'menuitem' ? 'menuitem' : null"
+    v-bind="$attrs"
     @click="click"
     @keydown.enter.stop.prevent="() => null"
     @keyup.enter.stop.prevent="click"
@@ -286,6 +289,7 @@ defineExpose({ focus, scrollIntoView });
     :aria-label="ariaLabelWithBadge"
     :aria-describedby="accessibleTitle ? `${id}-description` : null"
     :target="openInNewTab ? '_blank' : null"
+    v-bind="$attrs"
   >
     <div class="lx-button-content-wrapper">
       <template v-if="showIcon">

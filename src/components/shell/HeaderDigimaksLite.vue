@@ -46,6 +46,7 @@ const props = defineProps({
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
   megaMenuHasShowAll: { type: Boolean, default: false },
+  megaMenuShowAllHref: { type: Object, default: null },
   showPrimaryMegaMenuItems: { type: Boolean, default: true },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
@@ -650,6 +651,7 @@ provide('insideHeader', insideHeader);
                 :items="megaMenuItems"
                 :groupDefinitions="megaMenuGroupDefinitions"
                 :hasShowAll="megaMenuHasShowAll"
+                :showAllHref="megaMenuShowAllHref"
                 :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
                 :texts="displayTexts"
                 v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
