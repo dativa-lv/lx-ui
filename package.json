@@ -20,9 +20,9 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/dativa-lv-lx-ui.d.ts",
       "import": "./dist/dativa-lv-lx-ui.esm.js",
-      "require": "./dist/dativa-lv-lx-ui.umd.js",
-      "types": "./dist/dativa-lv-lx-ui.d.ts"
+      "require": "./dist/dativa-lv-lx-ui.umd.js"
     },
     "./vite": {
       "import": "./dist/vite/dativa-lv-lx-ui-vite.es.js",
@@ -116,7 +116,7 @@
     "jest": "^29.7.0",
     "prettier": "^2.8.8",
     "regenerator-runtime": "^0.14.1",
-    "vite": "5.0.13",
+    "vite": "7.3.1",
     "vite-plugin-dts": "3.7.1",
     "vitest": "^2.0.4",
     "vue": "^3.5.17"
@@ -132,7 +132,8 @@
       "imask>@babel/runtime-corejs3": "7.26.10",
       "linkifyjs": "4.3.2",
       "lodash": "4.17.23",
-      "markdown-it": "14.1.1"
+      "markdown-it": "14.1.1",
+      "minimatch": "10.2.1"
     }
   },
   "peerDependencies": {
