@@ -42,20 +42,15 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const globalEnvironment = useLx().getGlobals()?.environment;
 const { width } = useWindowSize();
 
-const actionsProcessed = computed(() => {
-  if (!props.actionDefinitions.length) {
-    return [];
-  }
+function getArea(action) {
+  const parentAction = props.actionDefinitions.find(
+    (a) => action.groupId && a.nestedGroupId && a.nestedGroupId === action.groupId
+  );
+  return parentAction ? parentAction.area ?? props.defaultArea : action.area ?? props.defaultArea;
+}
 
-  const getArea = (action) => {
-    const parentAction = props.actionDefinitions.find(
-      (a) => action.groupId && a.nestedGroupId && a.nestedGroupId === action.groupId
-    );
-
-    return parentAction ? parentAction.area ?? props.defaultArea : action.area ?? props.defaultArea;
-  };
-
-  const withDefaults = (action, overrides = {}) => ({
+function applyDefaults(action, overrides = {}) {
+  return {
     ...action,
     icon: action.icon ?? 'fallback-icon',
     area: getArea(action),
@@ -64,42 +59,50 @@ const actionsProcessed = computed(() => {
     groupId: action.groupId ?? 'lx-default',
     disabled: action.disabled || props.disabled || props.loading || props.busy,
     ...overrides,
-  });
+  };
+}
 
-  const withKindAndVariant = (action, overrides = {}) => ({
+function applyKindAndVariant(action, overrides = {}) {
+  return {
     ...action,
     kind: 'ghost',
     variant: 'icon-only',
     ...overrides,
-  });
-
-  const normalizedActions = props.actionDefinitions.map((a) => withDefaults(a));
-
-  let promotedAction = null;
-  let demotedActions = [];
-
-  const processGroup = (group) => {
-    if (!group.length) {
-      return;
-    }
-
-    const firstAction =
-      group.find((a) => a.kind === 'primary') ??
-      group.find((a) => a.kind === 'secondary') ??
-      group.find((a) => a.kind === 'tertiary');
-
-    if (!firstAction) {
-      demotedActions = group.map((action) => withKindAndVariant(action));
-      return;
-    }
-
-    const rest = group.filter((a) => a.id !== firstAction.id);
-
-    promotedAction = withDefaults(firstAction, { kind: firstAction.kind, variant: 'default' });
-    demotedActions = rest.map((action) => withKindAndVariant(action));
   };
+}
 
-  processGroup(normalizedActions);
+function processGroup(group) {
+  if (!group.length) {
+    return { promotedAction: null, demotedActions: [] };
+  }
+
+  const firstAction =
+    group.find((a) => a.kind === 'primary') ??
+    group.find((a) => a.kind === 'secondary') ??
+    group.find((a) => a.kind === 'tertiary');
+
+  if (!firstAction) {
+    return {
+      promotedAction: null,
+      demotedActions: group.map((action) => applyKindAndVariant(action)),
+    };
+  }
+
+  const rest = group.filter((a) => a.id !== firstAction.id);
+  return {
+    promotedAction: applyDefaults(firstAction, { kind: firstAction.kind, variant: 'default' }),
+    demotedActions: rest.map((action) => applyKindAndVariant(action)),
+  };
+}
+
+const actionsProcessed = computed(() => {
+  if (!props.actionDefinitions.length) {
+    return [];
+  }
+
+  const normalizedActions = props.actionDefinitions.map((a) => applyDefaults(a));
+
+  const { promotedAction, demotedActions } = processGroup(normalizedActions);
 
   const result = [...demotedActions];
 

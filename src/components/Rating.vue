@@ -65,21 +65,21 @@ const valueDecomposition = computed(() => {
 
 const valueDescription = computed(() => {
   if (props.kind === '5stars') {
-    if (model.value >= 5.0) return displayTexts.value.star5;
-    if (model.value >= 4.0) return displayTexts.value.star4;
-    if (model.value >= 3.0) return displayTexts.value.star3;
-    if (model.value >= 2.0) return displayTexts.value.star2;
-    if (model.value >= 1.0) return displayTexts.value.star1;
+    if (model.value >= 5) return displayTexts.value.star5;
+    if (model.value >= 4) return displayTexts.value.star4;
+    if (model.value >= 3) return displayTexts.value.star3;
+    if (model.value >= 2) return displayTexts.value.star2;
+    if (model.value >= 1) return displayTexts.value.star1;
   }
   return '';
 });
 const valueClass = computed(() => {
   if (props.kind === '5stars') {
-    if (model.value >= 5.0) return 'lx-category-green';
-    if (model.value >= 4.0) return 'lx-category-orange';
-    if (model.value >= 3.0) return 'lx-category-orange';
-    if (model.value >= 2.0) return 'lx-category-red';
-    if (model.value >= 1.0) return 'lx-category-red';
+    if (model.value >= 5) return 'lx-category-green';
+    if (model.value >= 4) return 'lx-category-orange';
+    if (model.value >= 3) return 'lx-category-orange';
+    if (model.value >= 2) return 'lx-category-red';
+    if (model.value >= 1) return 'lx-category-red';
   }
   return '';
 });

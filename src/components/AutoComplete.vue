@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick, watch, inject } from 'vue';
-import { onClickOutside, useDebounceFn } from '@vueuse/core';
+import { onClickOutside, useDebounceFn, useWindowSize } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
-import { useWindowSize } from '@vueuse/core';
 import {
   focusNextFocusableElement,
   getDisplayTexts,

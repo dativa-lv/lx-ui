@@ -351,106 +351,32 @@ function handleDoNotIndicateStart() {
   selectedManually.value = false;
   props.setActiveInput(props.activeInput, props.id);
 
-  if (selectedStartDate.value && !selectedEndDate.value && props.activeInput === 'startInput') {
+  const hasStart = Boolean(selectedStartDate.value);
+  const hasEnd = Boolean(selectedEndDate.value);
+
+  const nullEnd = Boolean(hasStart && !hasEnd);
+  const setEnd =
+    Boolean(!hasStart && hasEnd && (props.activeInput === 'startInput' || !props.activeInput)) ||
+    (hasEnd && props.activeInput !== 'endInput');
+
+  if (nullEnd || setEnd) {
     selectedStartDate.value = null;
     selectedStartDay.value = null;
     selectedStartMonth.value = null;
     selectedStartYear.value = null;
+    hoveredDate.value = null;
+  }
 
+  if (nullEnd) {
     emits('update:modelValue', {
       start: null,
       end: null,
     });
-    hoveredDate.value = null;
-    return;
-  }
-
-  if (selectedStartDate.value && !selectedEndDate.value && props.activeInput === 'endInput') {
-    selectedStartDate.value = null;
-    selectedStartDay.value = null;
-    selectedStartMonth.value = null;
-    selectedStartYear.value = null;
-
-    emits('update:modelValue', {
-      start: null,
-      end: null,
-    });
-    hoveredDate.value = null;
-    return;
-  }
-
-  if (!selectedStartDate.value && selectedEndDate.value && props.activeInput === 'startInput') {
-    selectedStartDate.value = null;
-    selectedStartDay.value = null;
-    selectedStartMonth.value = null;
-    selectedStartYear.value = null;
-
+  } else if (setEnd) {
     emits('update:modelValue', {
       start: null,
       end: selectedEndDate.value,
     });
-    hoveredDate.value = null;
-    return;
-  }
-
-  if (selectedStartDate.value && selectedEndDate.value && props.activeInput === 'startInput') {
-    selectedStartDate.value = null;
-    selectedStartDay.value = null;
-    selectedStartMonth.value = null;
-    selectedStartYear.value = null;
-    emits('update:modelValue', {
-      start: null,
-      end: selectedEndDate.value,
-    });
-    hoveredDate.value = null;
-    return;
-  }
-
-  if (selectedStartDate.value && selectedEndDate.value && props.activeInput === 'endInput') {
-    selectedStartDate.value = null;
-    selectedStartDay.value = null;
-    selectedStartMonth.value = null;
-    selectedStartYear.value = null;
-
-    emits('update:modelValue', {
-      start: null,
-      end: selectedEndDate.value,
-    });
-    hoveredDate.value = null;
-  }
-  if (selectedStartDate.value && selectedEndDate.value && !props.activeInput) {
-    selectedStartDate.value = null;
-    selectedStartDay.value = null;
-    selectedStartMonth.value = null;
-    selectedStartYear.value = null;
-
-    emits('update:modelValue', {
-      start: null,
-      end: selectedEndDate.value,
-    });
-    hoveredDate.value = null;
-  }
-  if (!selectedStartDate.value && selectedEndDate.value && !props.activeInput) {
-    selectedStartDate.value = null;
-    selectedStartDay.value = null;
-    selectedStartMonth.value = null;
-    selectedStartYear.value = null;
-    emits('update:modelValue', {
-      start: null,
-      end: selectedEndDate.value,
-    });
-    hoveredDate.value = null;
-  }
-  if (selectedStartDate.value && !selectedEndDate.value && !props.activeInput) {
-    selectedStartDate.value = null;
-    selectedStartDay.value = null;
-    selectedStartMonth.value = null;
-    selectedStartYear.value = null;
-    emits('update:modelValue', {
-      start: null,
-      end: null,
-    });
-    hoveredDate.value = null;
   }
 }
 
@@ -458,106 +384,31 @@ function handleDoNotIndicateEnd() {
   selectedManually.value = false;
   props.setActiveInput(props.activeInput, props.id);
 
-  if (!selectedStartDate.value && selectedEndDate.value && props.activeInput === 'startInput') {
+  const hasStart = Boolean(selectedStartDate.value);
+  const hasEnd = Boolean(selectedEndDate.value);
+
+  const nullStart = Boolean(!hasStart && hasEnd);
+  const setStart = Boolean(
+    hasStart && (hasEnd || (!hasEnd && (props.activeInput === 'endInput' || !props.activeInput)))
+  );
+
+  if (nullStart || setStart) {
     selectedEndDate.value = null;
     selectedEndDay.value = null;
     selectedEndMonth.value = null;
     selectedEndYear.value = null;
+  }
 
+  if (nullStart) {
     emits('update:modelValue', {
       start: null,
       end: null,
     });
-    hoveredDate.value = null;
-    return;
-  }
-
-  if (!selectedStartDate.value && selectedEndDate.value && props.activeInput === 'endInput') {
-    selectedEndDate.value = null;
-    selectedEndDay.value = null;
-    selectedEndMonth.value = null;
-    selectedEndYear.value = null;
-
-    emits('update:modelValue', {
-      start: null,
-      end: null,
-    });
-    hoveredDate.value = null;
-    return;
-  }
-
-  if (selectedStartDate.value && !selectedEndDate.value && props.activeInput === 'endInput') {
-    selectedEndDate.value = null;
-    selectedEndDay.value = null;
-    selectedEndMonth.value = null;
-    selectedEndYear.value = null;
-
+  } else if (setStart) {
     emits('update:modelValue', {
       start: selectedStartDate.value,
       end: null,
     });
-    hoveredDate.value = null;
-    return;
-  }
-
-  if (selectedStartDate.value && selectedEndDate.value && props.activeInput === 'startInput') {
-    selectedEndDate.value = null;
-    selectedEndDay.value = null;
-    selectedEndMonth.value = null;
-    selectedEndYear.value = null;
-
-    emits('update:modelValue', {
-      start: selectedStartDate.value,
-      end: null,
-    });
-    hoveredDate.value = null;
-  }
-
-  if (selectedStartDate.value && selectedEndDate.value && props.activeInput === 'endInput') {
-    selectedEndDate.value = null;
-    selectedEndDay.value = null;
-    selectedEndMonth.value = null;
-    selectedEndYear.value = null;
-
-    emits('update:modelValue', {
-      start: selectedStartDate.value,
-      end: null,
-    });
-    hoveredDate.value = null;
-  }
-  if (selectedStartDate.value && selectedEndDate.value && !props.activeInput) {
-    selectedEndDate.value = null;
-    selectedEndDay.value = null;
-    selectedEndMonth.value = null;
-    selectedEndYear.value = null;
-    emits('update:modelValue', {
-      start: selectedStartDate.value,
-      end: null,
-    });
-    hoveredDate.value = null;
-  }
-  if (!selectedStartDate.value && selectedEndDate.value && !props.activeInput) {
-    selectedEndDate.value = null;
-    selectedEndDay.value = null;
-    selectedEndMonth.value = null;
-    selectedEndYear.value = null;
-
-    emits('update:modelValue', {
-      start: null,
-      end: null,
-    });
-    hoveredDate.value = null;
-  }
-  if (selectedStartDate.value && !selectedEndDate.value && !props.activeInput) {
-    selectedEndDate.value = null;
-    selectedEndDay.value = null;
-    selectedEndMonth.value = null;
-    selectedEndYear.value = null;
-    emits('update:modelValue', {
-      start: selectedStartDate.value,
-      end: null,
-    });
-    hoveredDate.value = null;
   }
 }
 
@@ -996,7 +847,7 @@ function applySecondBoundsIfNeeded(date) {
 }
 
 function buildAndEmitFinalDateTime(date, baseDate, fullTime = false) {
-  const { minDateRef, maxDateRef, id, closeMenu, setActiveInput } = props;
+  const { minDateRef, maxDateRef, id, setActiveInput } = props;
 
   const selected = { Hour: selectedHour, Minute: selectedMinute, Second: selectedSecond };
 

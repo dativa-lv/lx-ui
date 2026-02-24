@@ -20,7 +20,7 @@ function unauthorizedResp() {
  */
 export async function unauthorizedInterceptor(error) {
   if (!error.response && error?.code === 'ERR_NETWORK') {
-    return Promise.reject(error);
+    throw error;
   }
   const { status } = error.response;
 
@@ -38,7 +38,7 @@ export async function unauthorizedInterceptor(error) {
     }
   }
 
-  return Promise.reject(error);
+  throw error;
 }
 
 /**

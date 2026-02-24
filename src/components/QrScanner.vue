@@ -104,8 +104,8 @@ const getCameraDevices = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
     const camerasListRaw = devices.filter((device) => device.kind === 'videoinput');
     camerasList.value = camerasListRaw;
-  } catch (errorVal) {
-    emits('error', errorVal);
+  } catch (error_) {
+    emits('error', error_);
   }
 };
 

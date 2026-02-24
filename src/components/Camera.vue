@@ -75,8 +75,8 @@ async function getCameraDevices() {
     const devices = await navigator.mediaDevices.enumerateDevices();
     const camerasListRaw = devices.filter((device) => device.kind === 'videoinput');
     camerasList.value = camerasListRaw;
-  } catch (errorVal) {
-    lxDevUtils.logError('Error getting camera devices', errorVal);
+  } catch (error_) {
+    lxDevUtils.logError('Error getting camera devices', error_);
   }
 }
 
@@ -179,7 +179,7 @@ async function switchCamera(val) {
     const constraints = getCameraConstraints(val);
     await startCameraStream(constraints);
     await updateCameraSettings();
-  } catch (errorVal) {
+  } catch (error_) {
     handleCameraError();
   } finally {
     loading.value = false;
