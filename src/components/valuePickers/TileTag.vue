@@ -363,41 +363,43 @@ function updateDescriptionTabIndexes(items) {
 
     <template v-else>
       <LxToolbar v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')">
-        <LxButton
-          v-if="hasSelectAll && selectionKind === 'multiple'"
-          kind="ghost"
-          :icon="
-            areSomeSelected
-              ? areAllSelected
-                ? 'checkbox-filled'
-                : 'checkbox-indeterminate'
-              : 'checkbox'
-          "
-          :disabled="disabled"
-          :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-          :label="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-          :variant="hasSearch ? 'icon-only' : 'default'"
-          @click="selectAll"
-        />
-        <LxTextInput
-          v-if="hasSearch"
-          :disabled="disabled"
-          ref="queryInput"
-          v-model="query"
-          kind="search"
-          :placeholder="displayTexts.searchPlaceholder"
-          role="search"
-          :aria-labelledby="labelId"
-        />
-        <LxButton
-          v-if="query && hasSearch"
-          icon="clear"
-          kind="ghost"
-          variant="icon-only"
-          :label="displayTexts.clearQuery"
-          :disabled="disabled"
-          @click="query = ''"
-        />
+        <template #leftArea>
+          <LxButton
+            v-if="hasSelectAll && selectionKind === 'multiple'"
+            kind="ghost"
+            :icon="
+              areSomeSelected
+                ? areAllSelected
+                  ? 'checkbox-filled'
+                  : 'checkbox-indeterminate'
+                : 'checkbox'
+            "
+            :disabled="disabled"
+            :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+            :label="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+            :variant="hasSearch ? 'icon-only' : 'default'"
+            @click="selectAll"
+          />
+          <LxTextInput
+            v-if="hasSearch"
+            :disabled="disabled"
+            ref="queryInput"
+            v-model="query"
+            kind="search"
+            :placeholder="displayTexts.searchPlaceholder"
+            role="search"
+            :aria-labelledby="labelId"
+          />
+          <LxButton
+            v-if="query && hasSearch"
+            icon="clear"
+            kind="ghost"
+            variant="icon-only"
+            :label="displayTexts.clearQuery"
+            :disabled="disabled"
+            @click="query = ''"
+          />
+        </template>
       </LxToolbar>
       
       <div
