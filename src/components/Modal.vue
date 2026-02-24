@@ -206,6 +206,7 @@ defineExpose({ open, close });
         @keydown.esc="close('esc')"
       >
         <div
+          :id="id"
           class="lx-modal"
           :class="[
             { 'lx-modal-s': size === 's' || size === 'default' },

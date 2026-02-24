@@ -129,7 +129,7 @@ defineExpose({ open, close });
         tabindex="-1"
         @keydown.esc="close('esc')"
       >
-        <div class="lx-modal lx-dialog lx-modal-s">
+        <div :id="id" class="lx-modal lx-dialog lx-modal-s">
           <header ref="modalHeader">
             <div class="illustration-wrapper">
               <LxIllustration

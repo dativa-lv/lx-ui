@@ -183,6 +183,7 @@ defineExpose({ open, close });
         @keydown.esc="close('esc')"
       >
         <div
+          :id="id"
           class="lx-modal lx-modal-form"
           :class="[
             { 'lx-modal-s': size === 's' || size === 'default' },
@@ -194,7 +195,7 @@ defineExpose({ open, close });
         >
           <div class="lx-main" ref="modalContent">
             <LxForm
-              :id="id"
+              :id="`${id}-form`"
               :showFooter="false"
               :actionDefinitions="additionalButtons"
               :columnCount="columnCount"
