@@ -146,8 +146,10 @@ const ariaLabel = computed(() => {
   return label;
 });
 
-const badgeTexts = computed(() => ({
+const expanderTexts = computed(() => ({
   badgeTypes: displayTexts.value.badgeTypes || {},
+  clear: displayTexts.value?.clear,
+  clearTitle: displayTexts.value?.clearTitle,
 }));
 
 const expander = ref();
@@ -202,7 +204,7 @@ defineExpose({ toggleExpander, focus });
       :class="[{ 'has-shortlist': $slots.shortlist }]"
       :ariaLabel="ariaLabel"
       :hasShortlistReset="hasShortlistReset"
-      :texts="badgeTexts"
+      :texts="expanderTexts"
       @resetFilters="filterReset"
     >
       <div ref="filterBody" class="lx-form lx-form-region">
