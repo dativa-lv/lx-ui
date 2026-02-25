@@ -195,6 +195,7 @@ const props = defineProps({
 
 const textsDefault = {
   defaultBack: 'Atpakaļ',
+  defaultBackTooltip: 'Atgriezties uz',
   logOut: 'Iziet',
   openAlerts: 'Atvērt sarakstu',
   noAlerts: 'Nav paziņojumu',
@@ -1573,6 +1574,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :show-back-button="pageBackButtonVisible"
           :breadcrumbs="pageBreadcrumbs"
           :hide-header-text="hideHeaderText"
+          :texts="displayTexts"
           @go-back="goBack"
         />
         <transition name="nav">
@@ -1789,6 +1791,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :show-back-button="pageBackButtonVisible"
           :breadcrumbs="pageBreadcrumbs"
           :hide-header-text="hideHeaderText"
+          :texts="displayTexts"
           @go-back="goBack"
         />
         <transition name="nav">
@@ -1956,6 +1959,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :show-back-button="pageBackButtonVisible"
           :breadcrumbs="pageBreadcrumbs"
           :hide-header-text="hideHeaderText"
+          :texts="displayTexts"
           @go-back="goBack"
         />
         <transition name="nav">
@@ -2213,6 +2217,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :show-back-button="pageBackButtonVisible"
           :breadcrumbs="pageBreadcrumbs"
           :hide-header-text="hideHeaderText"
+          :texts="displayTexts"
           @go-back="goBack"
         />
         <transition name="nav">
@@ -2254,6 +2259,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :show-back-button="pageBackButtonVisible"
           :breadcrumbs="pageBreadcrumbs"
           :hide-header-text="hideHeaderText"
+          :texts="displayTexts"
           @go-back="goBack"
         />
         <transition name="nav">
@@ -2563,6 +2569,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :show-back-button="pageBackButtonVisible"
           :breadcrumbs="pageBreadcrumbs"
           :hide-header-text="hideHeaderText"
+          :texts="displayTexts"
           @go-back="goBack"
         />
         <transition name="nav">
