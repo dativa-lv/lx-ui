@@ -72,12 +72,20 @@ const model = computed({
     return props.modelValue;
   },
   set(value) {
+    if (value && (value === 'notSelected' || value[0] === 'notSelected')) {
+      emits('update:modelValue', props.alwaysAsArray ? [] : null);
+      return;
+    }
+
     if (
       !props.alwaysAsArray &&
       !(props.variant === 'dropdown' || props.variant === 'dropdown-custom')
     ) {
       emits('update:modelValue', props.selectionKind === 'single' && value ? value[0] : value);
-    } else if (
+      return;
+    }
+
+    if (
       props.alwaysAsArray &&
       (props.variant === 'dropdown' || props.variant === 'dropdown-custom')
     ) {
@@ -86,24 +94,12 @@ const model = computed({
       } else {
         emits('update:modelValue', null);
       }
-    } else {
-      emits('update:modelValue', value);
+      return;
     }
+
+    emits('update:modelValue', value);
   },
 });
-
-watch(
-  () => model.value,
-  (newValue) => {
-    if (newValue && (newValue === 'notSelected' || newValue[0] === 'notSelected')) {
-      if (props.alwaysAsArray) {
-        emits('update:modelValue', []);
-      } else {
-        emits('update:modelValue', null);
-      }
-    }
-  }
-);
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);

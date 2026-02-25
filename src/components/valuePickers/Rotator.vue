@@ -334,8 +334,7 @@ function onUp() {
   });
 }
 
-// TODO: fix transition bugs with nullable
-// better refactor rotation logic for smarter solution
+// TODO: better refactor rotation logic for smarter solution
 </script>
 
 <template>
