@@ -86,7 +86,7 @@ function generateRollupInput(baseDir, extension = '.css') {
 
 /** @type {import('vite').UserConfig} */
 export const cssConfig = defineConfig({
-  base: './',
+  base: '../',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -110,7 +110,7 @@ export const cssConfig = defineConfig({
 
 /** @type {import('vite').UserConfig} */
 export const cssBundlesConfig = defineConfig({
-  base: './',
+  base: '../',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
