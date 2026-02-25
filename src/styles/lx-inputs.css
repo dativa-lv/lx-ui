@@ -4803,6 +4803,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-badge-icon {
   width: var(--badge-icon-width);
+  height: auto;
 }
 
 .lx-region .lx-badge,
