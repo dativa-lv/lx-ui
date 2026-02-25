@@ -2040,11 +2040,12 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-value-picker-default-wrapper.lx-invalid
   > .lx-value-picker-default-item
+  .lx-radio-button-label-wrapper
   .lx-radio-button-appearance,
 .lx-value-picker-horizontal-wrapper.lx-invalid
   > .lx-value-picker-horizontal-item
   .lx-radio-button-appearance,
-.lx-value-picker-default-wrapper.lx-invalid > .lx-value-picker-default-item .lx-checkbox-appearance,
+.lx-value-picker-default-wrapper.lx-invalid > .lx-value-picker-default-item .lx-checkbox-label-wrapper .lx-checkbox-appearance,
 .lx-value-picker-tile-wrapper.lx-invalid .lx-value-picker-tile,
 .lx-value-picker-tags.lx-invalid > .lx-tag-set .lx-tag,
 .lx .lx-value-picker-indicators.lx-invalid > .lx-indicator-set .lx-indicator[disabled="false"][readOnly="false"] {
