@@ -5,6 +5,9 @@ export default {
   }),
   actions: {
     /**
+     * @typedef {'default' | 'question' | 'info' | 'warning' | 'error' | 'success' | 'custom'} DialogKind
+     */
+    /**
      * Used for pushing dismissible confirmation dialog.
      *
      *
@@ -18,7 +21,7 @@ export default {
      * @param {boolean|null} [primaryBusy=null] - Primary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmPrimaryButtonBusy`. Defaults to null.
      * @param {boolean|null} [secondaryBusy=null] - Secondary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmSecondaryButtonBusy`. Defaults to null.
      * @param {Function|null} [closeCallback=null] - Callback invoked when the modal closes (close icon, backdrop, Esc); if null, nothing runs. May be async. Defaults to null.
-     * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
+     * @param {DialogKind|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
      * @param {string|null} [id=null] - The ID of the confirmation dialog. Defaults to null.
      */
     push(
@@ -56,7 +59,7 @@ export default {
      * @param {string} title
      * @param {string} message
      * @param {Function} primaryCallback - may be async
-     * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
+     * @param {DialogKind|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
      */
     pushSimple(title, message, primaryCallback, kind = null) {
       this.push(
@@ -75,6 +78,38 @@ export default {
       );
     },
     /**
+     * Used for pushing dismissible confirmation dialog.
+     * @param {Object} options - Push parameters as an object
+     * @param {string} options.title
+     * @param {string} options.message
+     * @param {string} options.primaryLabel
+     * @param {string} [options.secondaryLabel]
+     * @param {Function} [options.primaryCallback]
+     * @param {Function} [options.secondaryCallback]
+     * @param {boolean} [options.escEnabled=true] - Defaults to true.
+     * @param {boolean|null} [options.primaryBusy=null] - Primary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmPrimaryButtonBusy`. Defaults to null.
+     * @param {boolean|null} [options.secondaryBusy=null] - Secondary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmSecondaryButtonBusy`. Defaults to null.
+     * @param {Function|null} [options.closeCallback=null] - Callback invoked when the modal closes (close icon, backdrop, Esc); if null, nothing runs. May be async. Defaults to null.
+     * @param {DialogKind|null} [options.kind=null] - The kind of confirmation dialog. Defaults to null.
+     * @param {string|null} [options.id=null] - The ID of the confirmation dialog. Defaults to null.
+     */
+    pushObject(options) {
+      this.push(
+        options?.title,
+        options?.message,
+        options?.primaryLabel,
+        options?.secondaryLabel,
+        options?.primaryCallback,
+        options?.secondaryCallback,
+        options?.escEnabled,
+        options?.primaryBusy,
+        options?.secondaryBusy,
+        options?.closeCallback,
+        options?.kind,
+        options?.id
+      );
+    },
+    /**
      * forcePush - For backward compatibility / edge-cases only.
      * Creates a non-dismissible confirmation dialog:
      * - disableClosing = true (no close icon)
@@ -89,7 +124,7 @@ export default {
      * @param {boolean|null} [primaryBusy=null] - Primary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmPrimaryButtonBusy`. Defaults to null.
      * @param {boolean|null} [secondaryBusy=null] - Secondary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmSecondaryButtonBusy`. Defaults to null.
      * @param {Function|null} [closeCallback=null] - Callback invoked when the modal closes (close icon, backdrop, Esc); if null, nothing runs. May be async. Defaults to null.
-     * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
+     * @param {DialogKind|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
      * @param {string|null} [id=null] - The ID of the confirmation dialog. Defaults to null.
      */
     forcePush(
@@ -133,7 +168,7 @@ export default {
      * @param {string} title
      * @param {string} message
      * @param {Function} primaryCallback - may be async
-     * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
+     * @param {DialogKind|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
      */
     pushSimpleForce(title, message, primaryCallback, kind = null) {
       this.forcePush(
