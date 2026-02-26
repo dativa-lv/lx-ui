@@ -10,7 +10,7 @@ import LxRadioButton from '@/components/RadioButton.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
-  id: { type: String, default: 'default' },
+  id: { type: [String, Number], default: 'default' },
   modelValue: { type: Boolean, default: false },
   size: { type: String, default: 'm' }, // 'm' medium or 'l' large
   icon: { type: String, default: null },
