@@ -270,7 +270,7 @@
   height: fit-content;
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.years-and-month-year-only {
+.lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.years-and-month-year-only:not(.range-month-year) {
   height: 12rem;
 }
 
