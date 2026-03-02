@@ -2039,7 +2039,7 @@
   position: absolute;
   content: " ";
   width: 100%;
-  border: 1px solid var(--color-chrome);
+  border-bottom: 2px solid var(--color-chrome);
   opacity: 1;
   transition: opacity .1s ease-out;
 }
@@ -2775,7 +2775,7 @@
     position: absolute;
     content: ' ';
     width: 100%;
-    border: 1px solid var(--color-chrome);
+    border-bottom: 2px solid var(--color-chrome);
     opacity: 1;
     transition: opacity 0.1s ease-out;
   }

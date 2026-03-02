@@ -432,8 +432,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost:focus svg,
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:focus svg,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:focus svg,
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus svg,
-.header-items .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost svg {
+.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus svg {
   fill: var(--color-button-toolbar-ghost-icon-focus);
 }
 
@@ -744,6 +743,11 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-default .lx-nav-panel ul li.lx-selected .lx-nested-nav .lx-button,
 .lx-layout-default .lx-nav-panel ul li.lx-selected .lx-button-icon-only {
   border-left-color: transparent;
+}
+
+.lx-layout-default .lx-nav-panel ul .lx-dropdown-toggler .lx-button {
+  --color-button-ghost: var(--color-button-nav);
+  --color-button-ghost-icon-focus: var(--color-button-nav-icon);
 }
 
 /* Unselected nested nav btn + opened LxDDM toggler btn */
@@ -1153,8 +1157,6 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-button-toolbar-ghost-hover);
 }
 
-.lx-mega-menu .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
-.header-items .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
 .lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus,
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost:focus,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:focus,

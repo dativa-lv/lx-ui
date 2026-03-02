@@ -133,7 +133,7 @@
       "linkifyjs": "4.3.2",
       "lodash": "4.17.23",
       "markdown-it": "14.1.1",
-      "minimatch": "10.2.1"
+      "minimatch": "10.2.3"
     }
   },
   "peerDependencies": {
