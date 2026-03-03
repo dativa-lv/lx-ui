@@ -181,7 +181,7 @@ Each attribute mentioned in properties list is an LxRow by itself, therefore all
 
 The only exception is that LxAppendableList cannot be used inside another LxAppendableList, so an array of objects inside an array of objects won't render even if defined.
 
-### LX attributes for LxAppendable List
+### LX attributes for LxAppendableList
   - `readOnly` - LxAppendableList readOnly prop
   - `expandable` - LxAppendableList expandable prop
   - `nameAttribute` - LxAppendableList nameAttribute prop
@@ -193,7 +193,7 @@ The only exception is that LxAppendableList cannot be used inside another LxAppe
   - `expandedAttribute` - LxAppendableList expandedAttribute prop
   - `texts` - LxAppendableList texts prop
 
-## LxAppendableListSimle
+## LxAppendableListSimple
 
 When schema defines an array of objects (property `type="array"` and `items` is `string`, `number`, `integer` or `boolean`), Form Builder is using LxAppendableListSimple to render that.
 

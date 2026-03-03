@@ -723,3 +723,57 @@ test('LxTextInput numeric mask 2', async () => {
   await wrapper.setProps({ mask: 'integer' });
   expect(input.value).toBe('1234');
 });
+
+test('LxTextInput phone kind', () => {
+  wrapper = mount(LxTextInput, {
+    props: {
+      kind: 'phone',
+      modelValue: '+372',
+    },
+  });
+
+  const flag = wrapper.find('.lx-input-flag-wrapper').find('.lx-flag');
+  expect(flag.exists()).toBe(true);
+  expect(flag.attributes('aria-label')).toContain('Igaunija');
+});
+
+test('LxTextInput phone kind - two flags', () => {
+  wrapper = mount(LxTextInput, {
+    props: {
+      kind: 'phone',
+      modelValue: '+1',
+    },
+  });
+
+  const flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
+  expect(flag.length).toBe(2);
+  expect(flag[0].attributes('aria-label')).toContain('Amerikas Savienotās Valstis');
+  expect(flag[1].attributes('aria-label')).toContain('Kanāda');
+});
+
+test('LxTextInput phone kind - default value', () => {
+  wrapper = mount(LxTextInput, {
+    props: {
+      kind: 'phone',
+      modelValue: '22222222',
+    },
+  });
+
+  const flag = wrapper.find('.lx-input-flag-wrapper').find('.lx-flag');
+  expect(flag.attributes('aria-label')).toContain('Latvija');
+});
+
+test('LxTextInput phone kind - changed default value', () => {
+  wrapper = mount(LxTextInput, {
+    props: {
+      kind: 'phone',
+      modelValue: '22222222',
+      options: {
+        phone: 'IT',
+      },
+    },
+  });
+
+  const flag = wrapper.find('.lx-input-flag-wrapper').find('.lx-flag');
+  expect(flag.attributes('aria-label')).toContain('Itālija');
+});
