@@ -8,10 +8,11 @@ import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
   items: { type: Array, default: () => [] },
   readOnly: { type: Boolean, default: false },
-  id: { type: String, default: () => generateUUID() },
+  busy: { type: Boolean, default: false },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: null },
@@ -77,6 +78,7 @@ watch([navSize.height, detailSize.height], ([navHeight, detailHeight]) => {
           icon="add-item"
           kind="tertiary"
           :label="displayTexts.add"
+          :disabled="busy"
           @click="addItem"
         />
 
@@ -93,6 +95,7 @@ watch([navSize.height, detailSize.height], ([navHeight, detailHeight]) => {
               icon="next"
               :clickable="true"
               :active="model === item?.[idAttribute]"
+              :disabled="busy"
               @click="selectItem(item?.[idAttribute])"
             />
           </li>
@@ -107,6 +110,7 @@ watch([navSize.height, detailSize.height], ([navHeight, detailHeight]) => {
       variant="icon-only"
       :label="displayTexts.back"
       kind="ghost"
+      :disabled="busy"
       @click="model = null"
     />
 

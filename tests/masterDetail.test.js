@@ -233,4 +233,36 @@ describe('LxMasterDetail', () => {
       expect(master.html()).not.toContain('lx-master-detail-button');
     });
   });
+
+  test('busy prop', async () => {
+    wrapper = mount(LxMasterDetail, {
+      props: {
+        items: [
+          { id: '1', name: 'Item 1' },
+          { id: '2', name: 'Item 2' },
+        ],
+        busy: true,
+      },
+      global: {
+        stubs: ['router-link'],
+        directives: {
+          ClickAway: dummyClickAway,
+        },
+      },
+    });
+
+    const master = wrapper.find('.lx-master');
+    const masterItems = master.findAll('.lx-list-item');
+    const addRecordButton = wrapper.find('.lx-master-detail-button');
+    expect(addRecordButton.exists()).toBe(true);
+    expect(addRecordButton.classes()).toContain('lx-disabled');
+    expect(masterItems.length).toBe(2);
+    masterItems.forEach((item) => {
+      expect(item.classes()).toContain('lx-list-item-disabled');
+    });
+    await wrapper.setProps({ busy: false });
+    masterItems.forEach((item) => {
+      expect(item.classes()).not.toContain('lx-list-item-disabled');
+    });
+  });
 });
