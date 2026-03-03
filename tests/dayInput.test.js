@@ -155,4 +155,28 @@ describe('LxDayInput', () => {
       });
     });
   });
+
+  describe('Behaviour', () => {
+    test('should not render NaN result when null value is passed and unit is switched', async () => {
+      wrapper = mount(LxDayInput, {
+        props: {
+          modelValue: {
+            value: null,
+            unit: 'days',
+          },
+        },
+      });
+
+      await wrapper.setProps({
+        modelValue: {
+          value: null,
+          unit: 'months',
+        },
+      });
+
+      expect(wrapper.text()).not.toContain('NaN');
+      expect(wrapper.find('.lx-day-input-tooltip-text').text()).toBe('');
+      expect(wrapper.emitted('update:modelValue')).toBeFalsy();
+    });
+  });
 });

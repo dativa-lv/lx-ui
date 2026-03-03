@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, inject } from 'vue';
 
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { capitalizeFirstLetter } from '@/utils/stringUtils';
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDown from '@/components/Dropdown.vue';
@@ -49,7 +49,7 @@ const unitOptionTypes = ref([
   { id: 'years', name: capitalizeFirstLetter(displayTexts.value.yearsPlural) },
 ]);
 
-const inputValue = ref();
+const inputValue = ref(null);
 const selectedUnit = ref('days');
 const result = ref('');
 const inputPlaceholder = ref('');
@@ -87,6 +87,16 @@ function updatePlaceholder(unit) {
 }
 
 function calculateResult() {
+  if (
+    inputValue.value === null ||
+    inputValue.value === undefined ||
+    inputValue.value === '' ||
+    Number.isNaN(Number(inputValue.value))
+  ) {
+    result.value = '';
+    return;
+  }
+
   let value = Number(inputValue.value);
 
   const daysInYear = 365;
@@ -202,7 +212,7 @@ watch(
       if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return;
     }
 
-    if (newValue) {
+    if (isDefined(newValue)) {
       if (typeof newValue === 'number' && selectedUnit.value === 'days') {
         inputValue.value = newValue;
       }
@@ -210,6 +220,8 @@ watch(
         inputValue.value = newValue.value;
         selectedUnit.value = newValue.unit;
       }
+    } else {
+      inputValue.value = null;
     }
   },
   { immediate: true }
