@@ -35,10 +35,11 @@ const vueConfig = defineConfig({
     vue(),
     dts({
       outputDir: 'dist/types',
+      include: ['src/**/*'],
       staticImport: true,
       insertTypesEntry: true,
       copyDtsFiles: true,
-      exclude: [],
+      exclude: ['tests/**', '**/*.test.*', '**/*.spec.*'],
     }),
   ],
   test: {

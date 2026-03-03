@@ -32,13 +32,16 @@ const pluginConfig = defineConfig({
     outDir: 'dist/vite',
     target: 'esnext',
     sourcemap: true,
+    copyPublicDir: false,
   },
   plugins: [
     dts({
       outputDir: 'dist/vite/types',
+      include: ['src/vite/**/*'],
       staticImport: true,
       insertTypesEntry: true,
       copyDtsFiles: true,
+      exclude: ['tests/**', '**/*.test.*', '**/*.spec.*'],
     }),
   ],
 });

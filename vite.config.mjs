@@ -1,9 +1,9 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable import/extensions */
 import { defineConfig } from 'vite';
-import pluginConfig from './vite.plugin.config.mjs';
 import vueConfig from './vite.vue.config.mjs';
-import { cssBundlesConfig, cssConfig } from './vite.css.config.mjs';
+import pluginConfig from './vite.plugin.config.mjs';
+import { cssConfig, cssBundlesConfig, fontsConfig } from './vite.assets.config.mjs';
 
 export default defineConfig(({ mode }) => {
   if (mode === 'lib') {
@@ -14,6 +14,9 @@ export default defineConfig(({ mode }) => {
   }
   if (mode === 'bundles') {
     return cssBundlesConfig;
+  }
+  if (mode === 'fonts') {
+    return fontsConfig;
   }
   if (mode === 'vite') {
     return pluginConfig;

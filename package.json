@@ -40,8 +40,10 @@
     "build:lib": "pnpm vite build --mode lib",
     "build:css": "pnpm vite build --mode css",
     "build:bundles": "pnpm vite build --mode bundles",
+    "build:fonts": "pnpm vite build --mode fonts",
+    "build:assets": "pnpm build:css && pnpm build:bundles && pnpm build:fonts",
     "build:vite": "vite build --mode vite",
-    "build": "pnpm build:lib && pnpm build:css && pnpm build:bundles && pnpm build:vite",
+    "build": "pnpm build:lib && pnpm build:assets && pnpm build:vite",
     "preview": "pnpm vite preview --mode lib",
     "lint": "eslint .",
     "test": "pnpm vitest --mode lib"

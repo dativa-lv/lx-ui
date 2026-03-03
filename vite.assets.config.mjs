@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import path from 'path';
 import fs from 'fs';
 
-function generateInput() {
+function generateStylesRollupInput() {
   const input = {};
   const stylesDir = path.resolve(__dirname, 'src/styles');
   const files = fs.readdirSync(stylesDir);
@@ -47,7 +47,7 @@ function generateInput() {
   return input;
 }
 
-function generateRollupInput(baseDir, extension = '.css') {
+function generateBundlesRollupInput(baseDir, extension = '.css') {
   const cssBundles = [
     'lx-bt-digives',
     'lx-bt-digives-lite',
@@ -84,9 +84,33 @@ function generateRollupInput(baseDir, extension = '.css') {
   }, {});
 }
 
+function generateFontsRollupInput(baseDir) {
+  const input = {};
+  const files = fs.readdirSync(baseDir);
+  const allowedExtensions = new Set(['.ttf', '.woff', '.woff2', '.otf', '.txt']);
+
+  files.forEach((file) => {
+    const filePath = path.resolve(baseDir, file);
+    const stat = fs.statSync(filePath);
+
+    if (!stat.isFile()) {
+      return;
+    }
+
+    const { name, ext } = path.parse(file);
+    if (!allowedExtensions.has(ext.toLowerCase())) {
+      return;
+    }
+
+    input[name] = filePath;
+  });
+
+  return input;
+}
+
 /** @type {import('vite').UserConfig} */
 export const cssConfig = defineConfig({
-  base: '../',
+  base: './',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -95,7 +119,7 @@ export const cssConfig = defineConfig({
   build: {
     outDir: 'dist/styles',
     rollupOptions: {
-      input: generateInput(),
+      input: generateStylesRollupInput(),
       output: {
         inlineDynamicImports: false,
         assetFileNames: '[name][extname]',
@@ -110,7 +134,7 @@ export const cssConfig = defineConfig({
 
 /** @type {import('vite').UserConfig} */
 export const cssBundlesConfig = defineConfig({
-  base: '../',
+  base: './',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -119,13 +143,34 @@ export const cssBundlesConfig = defineConfig({
   build: {
     outDir: 'dist/bundles',
     rollupOptions: {
-      input: generateRollupInput(path.resolve(__dirname, 'src/styles')),
+      input: generateBundlesRollupInput(path.resolve(__dirname, 'src/styles')),
       output: {
         inlineDynamicImports: false,
         assetFileNames: '[name][extname]',
       },
     },
     cssCodeSplit: true,
+    copyPublicDir: false,
+  },
+});
+
+/** @type {import('vite').UserConfig} */
+export const fontsConfig = defineConfig({
+  base: './',
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
+  build: {
+    outDir: 'dist/lx-fonts',
+    rollupOptions: {
+      input: generateFontsRollupInput(path.resolve(__dirname, 'src/lx-fonts')),
+      output: {
+        inlineDynamicImports: false,
+        assetFileNames: '[name][extname]',
+      },
+    },
     copyPublicDir: false,
   },
 });
