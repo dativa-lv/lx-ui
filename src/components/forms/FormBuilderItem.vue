@@ -45,6 +45,7 @@ import LxDrawPad from '@/components/DrawPad.vue';
 import LxLogoDisplay from '@/components/LogoDisplay.vue';
 import LxAutoComplete from '@/components/AutoComplete.vue';
 import LxDateTimeRange from '@/components/datePicker/DateTimeRange.vue';
+import { getOtherSelectComponent } from '@/components/forms/formBuilderOtherSelect';
 
 import LxStack from '@/components/Stack.vue';
 import LxFormBuilderListItem from '@/components/forms/FormBuilderListItem.vue';
@@ -152,64 +153,7 @@ function objectSelect(row, name) {
 }
 
 function otherSelect(row) {
-  if (
-    row?.lx?.displayType === 'autoComplete' &&
-    (row?.type === 'string' || row?.type === 'array' || row?.type === 'object')
-  )
-    return 'autoComplete';
-  if (row?.lx?.displayType === 'button' && (row?.type === 'string' || row?.type === 'object'))
-    return 'button';
-  if (row?.lx?.displayType === 'camera' && row?.type === 'string') return 'camera';
-  if (row?.lx?.displayType === 'fileViewer' && row?.type === 'string') return 'fileViewer';
-  if (row?.lx?.displayType === 'flag' && (row?.type === 'string' || row?.type === 'object'))
-    return 'flag';
-  if (row?.lx?.displayType === 'icon' && (row?.type === 'string' || row?.type === 'object'))
-    return 'icon';
-  if (row?.lx?.displayType === 'illustration' && (row?.type === 'string' || row?.type === 'object'))
-    return 'illustration';
-  if (row?.lx?.displayType === 'link' && (row?.type === 'string' || row?.type === 'object'))
-    return 'link';
-  if (row?.lx?.displayType === 'contentSwitcher' && row?.type === 'string')
-    return 'contentSwitcher';
-  if (row?.lx?.displayType === 'markdown' && row?.type === 'string') return 'markdownTextArea';
-  if (
-    row?.lx?.displayType === 'personDisplay' &&
-    (row?.type === 'string' || row?.type === 'object' || row?.type === 'array')
-  )
-    return 'personDisplay';
-  if (row?.lx?.displayType === 'qr' && (row?.type === 'string' || row?.type === 'object'))
-    return 'qr';
-  if (row?.lx?.displayType === 'qrScanner' && row?.type === 'object') return 'qrScanner';
-  if (
-    row?.lx?.displayType === 'richTextDisplay' &&
-    (row?.type === 'string' || row?.type === 'object')
-  )
-    return 'richTextDisplay';
-  if (row?.lx?.displayType === 'stateDisplay' && (row?.type === 'string' || row?.type === 'object'))
-    return 'stateDisplay';
-  if (row?.lx?.displayType === 'steps' && row?.type === 'string') return 'steps';
-  if (row?.lx?.displayType === 'visualPicker' && (row?.type === 'string' || row?.type === 'array'))
-    return 'visualPicker';
-  if (row?.lx?.displayType === 'dayInput' && (row?.type === 'integer' || row?.type === 'object'))
-    return 'dayInput';
-  if (row?.lx?.displayType === 'drawPad' && row?.type === 'string') return 'drawPad';
-  if (row?.lx?.displayType === 'logoDisplay' && (row?.type === 'string' || row?.type === 'object'))
-    return 'logoDisplay';
-  if (row?.lx?.displayType === 'dropDownMenu' && (row?.type === 'string' || row?.type === 'object'))
-    return 'dropDownMenu';
-  if (row?.lx?.displayType === 'numberSlider' && row?.type === 'integer') return 'numberSlider';
-  if (row?.lx?.displayType === 'ratings' && (row?.type === 'integer' || row?.type === 'number'))
-    return 'ratings';
-  if (row?.type === 'boolean' && row?.lx?.displayType === 'checkbox') return 'checkbox';
-  if (
-    row?.lx?.displayType === 'dataVisualizer' &&
-    (row?.type === 'array' || row?.type === 'object')
-  )
-    return 'dataVisualizer';
-  if (row?.lx?.displayType === 'file' && row?.type === 'array') return 'file';
-  if (row?.lx?.displayType === 'text' && row?.type === 'string') return 'text';
-  if (row?.lx?.displayType === 'dateTimeRange' && row?.type === 'object') return 'dateTimeRange';
-  return null;
+  return getOtherSelectComponent(row, { excludedDisplayTypes: ['stack'] });
 }
 
 function componentSelect(row, name, log = false) {
@@ -3278,7 +3222,7 @@ function handleModalActionClick(action, name) {
     @error="(a) => componentEmit('error', name, a)"
   />
   <LxRating
-    v-else-if="selectedComponent === 'ratings'"
+    v-else-if="selectedComponent === 'rating'"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :kind="displaySchema?.properties[name]?.lx?.kind"
     :variant="displaySchema?.properties[name]?.lx?.variant"

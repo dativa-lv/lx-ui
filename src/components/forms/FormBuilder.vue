@@ -11,6 +11,7 @@ import useLx from '@/hooks/useLx';
 import LxFormBuilderItem from '@/components/forms/FormBuilderItem.vue';
 import LxStack from '@/components/Stack.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { getOtherSelectComponent } from '@/components/forms/formBuilderOtherSelect';
 
 /**
  * Component for building forms.
@@ -196,91 +197,61 @@ function objectSelect(row, name) {
 }
 
 function otherSelect(row) {
-  if (row?.lx?.displayType === 'stack' && row?.type === 'object') return 'stack';
-  if (
-    row?.lx?.displayType === 'autoComplete' &&
-    (row?.type === 'string' || row?.type === 'array' || row?.type === 'object')
-  )
-    return 'autoComplete';
-  if (row?.lx?.displayType === 'button' && (row?.type === 'string' || row?.type === 'object'))
-    return 'button';
-  if (row?.lx?.displayType === 'camera' && row?.type === 'string') return 'camera';
-  if (row?.lx?.displayType === 'fileViewer' && row?.type === 'string') return 'fileViewer';
-  if (row?.lx?.displayType === 'flag' && (row?.type === 'string' || row?.type === 'object'))
-    return 'flag';
-  if (row?.lx?.displayType === 'icon' && (row?.type === 'string' || row?.type === 'object'))
-    return 'icon';
-  if (row?.lx?.displayType === 'illustration' && (row?.type === 'string' || row?.type === 'object'))
-    return 'illustration';
-  if (row?.lx?.displayType === 'link' && (row?.type === 'string' || row?.type === 'object'))
-    return 'link';
-  if (row?.lx?.displayType === 'contentSwitcher' && row?.type === 'string')
-    return 'contentSwitcher';
-  if (row?.lx?.displayType === 'markdown' && row?.type === 'string') return 'markdownTextArea';
-  if (
-    row?.lx?.displayType === 'personDisplay' &&
-    (row?.type === 'string' || row?.type === 'object' || row?.type === 'array')
-  )
-    return 'personDisplay';
-  if (row?.lx?.displayType === 'qr' && (row?.type === 'string' || row?.type === 'object'))
-    return 'qr';
-  if (row?.lx?.displayType === 'qrScanner' && row?.type === 'object') return 'qrScanner';
-  if (
-    row?.lx?.displayType === 'richTextDisplay' &&
-    (row?.type === 'string' || row?.type === 'object')
-  )
-    return 'richTextDisplay';
-  if (row?.lx?.displayType === 'stateDisplay' && (row?.type === 'string' || row?.type === 'object'))
-    return 'stateDisplay';
-  if (row?.lx?.displayType === 'steps' && row?.type === 'string') return 'steps';
-  if (row?.lx?.displayType === 'visualPicker' && (row?.type === 'string' || row?.type === 'array'))
-    return 'visualPicker';
-  if (row?.lx?.displayType === 'dayInput' && (row?.type === 'integer' || row?.type === 'object'))
-    return 'dayInput';
-  if (row?.lx?.displayType === 'drawPad' && row?.type === 'string') return 'drawPad';
-  if (row?.lx?.displayType === 'logoDisplay' && (row?.type === 'string' || row?.type === 'object'))
-    return 'logoDisplay';
-  if (row?.lx?.displayType === 'dropDownMenu' && (row?.type === 'string' || row?.type === 'object'))
-    return 'dropDownMenu';
-  if (row?.lx?.displayType === 'numberSlider' && row?.type === 'integer') return 'numberSlider';
-  if (row?.lx?.displayType === 'ratings' && (row?.type === 'integer' || row?.type === 'decimal'))
-    return 'ratings';
-  if (row?.type === 'boolean' && row?.lx?.displayType === 'checkbox') return 'checkbox';
-  if (
-    row?.lx?.displayType === 'dataVisualizer' &&
-    (row?.type === 'array' || row?.type === 'object')
-  )
-    return 'dataVisualizer';
-  if (row?.lx?.displayType === 'file' && row?.type === 'array') return 'file';
-  if (row?.lx?.displayType === 'text' && row?.type === 'string') return 'text';
-  if (row?.lx?.displayType === 'dateTimeRange' && row?.type === 'object') return 'dateTimeRange';
+  return getOtherSelectComponent(row);
+}
+
+function getStringComponent(row) {
+  const selected = stringSelect(row);
+  if (selected) return selected;
   return null;
+}
+
+function shouldUseArraySelect(row) {
+  return (row?.type === 'string' && (row?.lx?.variant || row?.enum)) || row?.type === 'array';
+}
+
+function getArrayComponent(row) {
+  const selected = arraySelect(row);
+  if (selected !== '') return selected;
+  return null;
+}
+
+function getObjectComponent(row, name) {
+  const selected = objectSelect(row, name);
+  if (selected !== '') return selected;
+  return null;
+}
+
+function logUnrenderedProperty(name) {
+  if (!name) return;
+
+  lxDevUtils.log(
+    `Property '${name}' couldn't be rendered`,
+    useLx().getGlobals()?.environment,
+    'warn'
+  );
 }
 
 function componentSelect(row, name) {
   if (row?.lx?.wrapper === 'placeholder') return 'lxPlaceholder';
-  const res = otherSelect(row);
-  if (res) return res;
+  const otherComponent = otherSelect(row);
+  if (otherComponent) return otherComponent;
 
-  if (stringSelect(row) === 'textInputDefault') return 'textInputDefault';
-  if (stringSelect(row) === 'textArea') return 'textArea';
-  if (stringSelect(row) === 'dateTimePicker') return 'dateTimePicker';
+  const stringComponent = getStringComponent(row);
+  if (stringComponent) return stringComponent;
 
   if (row?.type === 'integer') return 'textInputInteger';
 
   if (row?.type === 'boolean') return 'toggle';
 
-  if ((row?.type === 'string' && (row?.lx?.variant || row?.enum)) || row?.type === 'array') {
-    if (arraySelect(row) !== '') return arraySelect(row);
+  if (shouldUseArraySelect(row)) {
+    const arrayComponent = getArrayComponent(row);
+    if (arrayComponent) return arrayComponent;
   }
-  if (objectSelect(row, name) !== '') return objectSelect(row, name);
+  const objectComponent = getObjectComponent(row, name);
+  if (objectComponent) return objectComponent;
 
-  if (name)
-    lxDevUtils.log(
-      `Property '${name}' couldn't be rendered`,
-      useLx().getGlobals()?.environment,
-      'warn'
-    );
+  logUnrenderedProperty(name);
   return 'lxPlaceholder';
 }
 
@@ -424,152 +395,265 @@ function isNumber(type) {
   return type === 'number' || type === 'integer';
 }
 
-// Creates rule for 'modelValue' validation based on the provided schema
-const buildRules = (schema) => {
-  const req = schema?.required;
-  const res = {};
+function ensureRuleContainer(res, key) {
+  if (!res[key]) {
+    res[key] = {};
+  }
+  return res[key];
+}
 
-  req?.forEach((property) => {
-    res[property] = res[property] || {};
-    res[property].required = helpers.withMessage(() => displayTexts.value.required, required);
+function setRule(res, key, ruleName, validator) {
+  ensureRuleContainer(res, key)[ruleName] = validator;
+}
+
+function addRequiredRules(schema, res) {
+  schema?.required?.forEach((property) => {
+    setRule(
+      res,
+      property,
+      'required',
+      helpers.withMessage(() => displayTexts.value.required, required)
+    );
   });
+}
 
-  if (schema?.properties) {
-    Object.entries(schema.properties).forEach(([key, value]) => {
-      // Recursively handle nested objects
-      if (value?.type === 'object' && value?.properties) {
-        res[key] = buildRules(value);
-      } else {
-        if (isNumber(value?.type)) {
-          if (value?.minimum !== undefined) {
-            res[key] = res[key] || {};
-            res[key].minValue = helpers.withMessage(
-              ({ $params }) => replaceErrorMessage(displayTexts.value.minimum, $params.min),
-              minValue(value.minimum)
-            );
-          }
-          if (value?.exclusiveMinimum !== undefined) {
-            const exclusiveMinimum = (param) =>
-              helpers.withParams(
-                { type: 'exclusiveMinimum', value: param },
-                (targetValue) => targetValue > param
-              );
-            res[key] = res[key] || {};
-            res[key].exclusiveMinimum = helpers.withMessage(
-              () =>
-                replaceErrorMessage(displayTexts.value.exclusiveMinimum, value.exclusiveMinimum),
-              exclusiveMinimum(value.exclusiveMinimum)
-            );
-          }
-          if (value?.maximum !== undefined) {
-            res[key] = res[key] || {};
-            res[key].maxValue = helpers.withMessage(
-              ({ $params }) => replaceErrorMessage(displayTexts.value.maximum, $params.max),
-              maxValue(value.maximum)
-            );
-          }
-          if (value?.exclusiveMaximum !== undefined) {
-            const exclusiveMaximum = (param) =>
-              helpers.withParams(
-                { type: 'exclusiveMaximum', value: param },
-                (targetValue) => targetValue < param
-              );
-            res[key] = res[key] || {};
-            res[key].exclusiveMaximum = helpers.withMessage(
-              () =>
-                replaceErrorMessage(displayTexts.value.exclusiveMaximum, value.exclusiveMaximum),
-              exclusiveMaximum(value.exclusiveMaximum)
-            );
-          }
-          if (value?.multipleOf !== undefined) {
-            const multipleOf = (param) =>
-              helpers.withParams(
-                { type: 'multipleOf', value: param },
-                (targetValue) => targetValue % param === 0
-              );
-            res[key] = res[key] || {};
-            res[key].multipleOf = helpers.withMessage(
-              () => replaceErrorMessage(displayTexts.value.multipleOf, value.multipleOf),
-              multipleOf(value.multipleOf)
-            );
-          }
-        }
-        if (value?.minLength !== undefined && value?.type === 'string') {
-          res[key] = res[key] || {};
-          res[key].minLength = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.minLength, $params.min),
-            minLength(value.minLength)
-          );
-        }
-        if (value?.maxLength !== undefined && value?.type === 'string') {
-          res[key] = res[key] || {};
-          res[key].maxLength = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.maxLength, $params.max),
-            maxLength(value.maxLength)
-          );
-        }
-        if (value?.pattern && value?.type === 'string') {
-          const pattern = (param) =>
-            helpers.withParams({ type: 'pattern', value: param }, (targetValue) =>
-              new RegExp(param).test(targetValue)
-            );
-          res[key] = res[key] || {};
-          res[key].pattern = helpers.withMessage(
-            () => replaceErrorMessage(displayTexts.value.pattern, value.pattern),
-            pattern(value.pattern)
-          );
-        }
-        if (value?.minItems !== undefined && value?.type === 'array') {
-          res[key] = res[key] || {};
-          res[key].minItems = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.minItems, $params.min),
-            minLength(value.minItems)
-          );
-        }
-        if (value?.maxItems !== undefined && value?.type === 'array') {
-          res[key] = res[key] || {};
-          res[key].maxItems = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.maxItems, $params.max),
-            maxLength(value.maxItems)
-          );
-        }
-        if (value?.uniqueItems && value?.type === 'array') {
-          const uniqueItems = (targetValue) => new Set(targetValue)?.size === targetValue?.length;
-          res[key] = res[key] || {};
-          res[key].uniqueItems = helpers.withMessage(
-            () => displayTexts.value.uniqueItems,
-            uniqueItems
-          );
-        }
-      }
-    });
+function createExclusiveMinimumValidator(param) {
+  return helpers.withParams(
+    { type: 'exclusiveMinimum', value: param },
+    (targetValue) => targetValue > param
+  );
+}
+
+function createExclusiveMaximumValidator(param) {
+  return helpers.withParams(
+    { type: 'exclusiveMaximum', value: param },
+    (targetValue) => targetValue < param
+  );
+}
+
+function createMultipleOfValidator(param) {
+  return helpers.withParams(
+    { type: 'multipleOf', value: param },
+    (targetValue) => targetValue % param === 0
+  );
+}
+
+function createPatternValidator(param) {
+  return helpers.withParams({ type: 'pattern', value: param }, (targetValue) =>
+    new RegExp(param).test(targetValue)
+  );
+}
+
+function addNumberRules(res, key, value) {
+  if (!isNumber(value?.type)) {
+    return;
   }
 
+  if (value?.minimum !== undefined) {
+    setRule(
+      res,
+      key,
+      'minValue',
+      helpers.withMessage(
+        ({ $params }) => replaceErrorMessage(displayTexts.value.minimum, $params.min),
+        minValue(value.minimum)
+      )
+    );
+  }
+
+  if (value?.exclusiveMinimum !== undefined) {
+    setRule(
+      res,
+      key,
+      'exclusiveMinimum',
+      helpers.withMessage(
+        () => replaceErrorMessage(displayTexts.value.exclusiveMinimum, value.exclusiveMinimum),
+        createExclusiveMinimumValidator(value.exclusiveMinimum)
+      )
+    );
+  }
+
+  if (value?.maximum !== undefined) {
+    setRule(
+      res,
+      key,
+      'maxValue',
+      helpers.withMessage(
+        ({ $params }) => replaceErrorMessage(displayTexts.value.maximum, $params.max),
+        maxValue(value.maximum)
+      )
+    );
+  }
+
+  if (value?.exclusiveMaximum !== undefined) {
+    setRule(
+      res,
+      key,
+      'exclusiveMaximum',
+      helpers.withMessage(
+        () => replaceErrorMessage(displayTexts.value.exclusiveMaximum, value.exclusiveMaximum),
+        createExclusiveMaximumValidator(value.exclusiveMaximum)
+      )
+    );
+  }
+
+  if (value?.multipleOf !== undefined) {
+    setRule(
+      res,
+      key,
+      'multipleOf',
+      helpers.withMessage(
+        () => replaceErrorMessage(displayTexts.value.multipleOf, value.multipleOf),
+        createMultipleOfValidator(value.multipleOf)
+      )
+    );
+  }
+}
+
+function addStringRules(res, key, value) {
+  if (value?.type !== 'string') {
+    return;
+  }
+
+  if (value?.minLength !== undefined) {
+    setRule(
+      res,
+      key,
+      'minLength',
+      helpers.withMessage(
+        ({ $params }) => replaceErrorMessage(displayTexts.value.minLength, $params.min),
+        minLength(value.minLength)
+      )
+    );
+  }
+
+  if (value?.maxLength !== undefined) {
+    setRule(
+      res,
+      key,
+      'maxLength',
+      helpers.withMessage(
+        ({ $params }) => replaceErrorMessage(displayTexts.value.maxLength, $params.max),
+        maxLength(value.maxLength)
+      )
+    );
+  }
+
+  if (value?.pattern) {
+    setRule(
+      res,
+      key,
+      'pattern',
+      helpers.withMessage(
+        () => replaceErrorMessage(displayTexts.value.pattern, value.pattern),
+        createPatternValidator(value.pattern)
+      )
+    );
+  }
+}
+
+function createUniqueItemsValidator(targetValue) {
+  return new Set(targetValue)?.size === targetValue?.length;
+}
+
+function addArrayRules(res, key, value) {
+  if (value?.type !== 'array') {
+    return;
+  }
+
+  if (value?.minItems !== undefined) {
+    setRule(
+      res,
+      key,
+      'minItems',
+      helpers.withMessage(
+        ({ $params }) => replaceErrorMessage(displayTexts.value.minItems, $params.min),
+        minLength(value.minItems)
+      )
+    );
+  }
+
+  if (value?.maxItems !== undefined) {
+    setRule(
+      res,
+      key,
+      'maxItems',
+      helpers.withMessage(
+        ({ $params }) => replaceErrorMessage(displayTexts.value.maxItems, $params.max),
+        maxLength(value.maxItems)
+      )
+    );
+  }
+
+  if (value?.uniqueItems) {
+    setRule(
+      res,
+      key,
+      'uniqueItems',
+      helpers.withMessage(() => displayTexts.value.uniqueItems, createUniqueItemsValidator)
+    );
+  }
+}
+
+function addRulesForProperty(res, key, value) {
+  addNumberRules(res, key, value);
+  addStringRules(res, key, value);
+  addArrayRules(res, key, value);
+}
+
+function addPropertyRules(schema, res, buildRulesFn) {
+  if (!schema?.properties) {
+    return;
+  }
+
+  Object.entries(schema.properties).forEach(([key, value]) => {
+    if (value?.type === 'object' && value?.properties) {
+      res[key] = buildRulesFn(value);
+      return;
+    }
+
+    addRulesForProperty(res, key, value);
+  });
+}
+
+function createMinPropertiesValidator(param) {
+  return helpers.withParams(
+    { type: 'minProperties', value: param },
+    (targetValue) => Object.keys(targetValue).length >= param
+  );
+}
+
+function createMaxPropertiesValidator(param) {
+  return helpers.withParams(
+    { type: 'maxProperties', value: param },
+    (targetValue) => Object.keys(targetValue).length <= param
+  );
+}
+
+function addObjectBoundaryRules(schema, res) {
   if (schema?.minProperties !== undefined && schema?.type === 'object') {
-    const minProperties = (param) =>
-      helpers.withParams(
-        { type: 'minProperties', value: param },
-        (targetValue) => Object.keys(targetValue).length >= param
-      );
     res.minProperties = helpers.withMessage(
       () => replaceErrorMessage(displayTexts.value.minProperties, schema.minProperties),
-      minProperties(schema.minProperties)
-    );
-  }
-  if (schema?.maxProperties !== undefined && schema?.type === 'object') {
-    const maxProperties = (param) =>
-      helpers.withParams(
-        { type: 'maxProperties', value: param },
-        (targetValue) => Object.keys(targetValue).length <= param
-      );
-    res.maxProperties = helpers.withMessage(
-      () => replaceErrorMessage(displayTexts.value.maxProperties, schema.maxProperties),
-      maxProperties(schema.maxProperties)
+      createMinPropertiesValidator(schema.minProperties)
     );
   }
 
+  if (schema?.maxProperties !== undefined && schema?.type === 'object') {
+    res.maxProperties = helpers.withMessage(
+      () => replaceErrorMessage(displayTexts.value.maxProperties, schema.maxProperties),
+      createMaxPropertiesValidator(schema.maxProperties)
+    );
+  }
+}
+
+// Creates rule for 'modelValue' validation based on the provided schema
+function buildRules(schema) {
+  const res = {};
+  addRequiredRules(schema, res);
+  addPropertyRules(schema, res, buildRules);
+  addObjectBoundaryRules(schema, res);
   return res;
-};
+}
 
 const rules = computed(() => {
   if (!props.schema) return { modelClone: {} };

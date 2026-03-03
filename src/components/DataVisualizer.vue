@@ -120,47 +120,52 @@ function checkValue(item, cloneThreshold, grid) {
 
   return null;
 }
+function resolveThresholdColor(item, grid) {
+  let color = null;
+
+  props.thresholds.forEach((threshold) => {
+    const cloneThreshold = { ...threshold };
+    if (!cloneThreshold.min) cloneThreshold.min = Number.MIN_SAFE_INTEGER;
+    if (!cloneThreshold.max) cloneThreshold.max = Number.MAX_SAFE_INTEGER;
+
+    const res = checkValue(item, cloneThreshold, grid);
+    if (res) {
+      color = res;
+    }
+  });
+
+  return color;
+}
 
 function getBarColor(item, grid = false) {
-  let color = null;
   const isBarKind = props.kind === 'bars-horizontal' || props.kind === 'bars-vertical';
+  const hasThresholds = props.thresholds && props.thresholds.length > 0;
+  let color = null;
 
-  if (!props.thresholds || props.thresholds.length === 0) {
-    if (grid && item[props.colorAttribute]) {
-      color = item[props.colorAttribute];
-    }
-  } else {
-    props.thresholds.forEach((threshold) => {
-      const cloneThreshold = { ...threshold };
-      if (!cloneThreshold.min) cloneThreshold.min = Number.MIN_SAFE_INTEGER;
-      if (!cloneThreshold.max) cloneThreshold.max = Number.MAX_SAFE_INTEGER;
-
-      const res = checkValue(item, cloneThreshold, grid);
-
-      if (res) {
-        color = res;
-      }
-    });
+  if (hasThresholds) {
+    color = resolveThresholdColor(item, grid);
+  } else if (grid && item[props.colorAttribute]) {
+    color = item[props.colorAttribute];
   }
 
-  if (color && grid) {
-    return color;
-  }
-
-  if (!color && grid && isBarKind) {
-    return 'data';
+  if (grid) {
+    if (color) return color;
+    if (isBarKind) return 'data';
   }
 
   if (color) {
     return isBarKind ? `--bar-color: ${color}` : color;
   }
 
-  if (item[props.colorAttribute])
-    return isBarKind
-      ? `--bar-color: var(--color-${item[props.colorAttribute]}-background)`
-      : `var(--color-${item[props.colorAttribute]}-background)`;
+  if (!item[props.colorAttribute]) {
+    return isBarKind ? '--bar-color: var(--color-data)' : 'var(--color-data)';
+  }
 
-  return isBarKind ? '--bar-color: var(--color-data)' : 'var(--color-data)';
+  if (isBarKind) {
+    return `--bar-color: var(--color-${item[props.colorAttribute]}-background)`;
+  }
+
+  return `var(--color-${item[props.colorAttribute]}-background)`;
 }
 
 function getBackTextColor(item) {

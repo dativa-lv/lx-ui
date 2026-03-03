@@ -313,35 +313,36 @@ function formatValue(value, type, options = null) {
   }
 }
 
-function formatTooltip(displayName, title, sorting, sortingTooltips) {
-  let sortTooltips;
+function getSortingTooltipKey(sorting) {
+  if (sorting === null || sorting === undefined) return 'default';
+  if (sorting === 'asc' || sorting === 'desc') return sorting;
+  return null;
+}
 
-  if (sortingTooltips && props.hasSorting) {
-    sortTooltips = sortingTooltips;
-  } else {
-    sortTooltips = displayTexts.value.defaultSortingTooltips;
-  }
+function buildSortingText(sortTooltips, tooltipKey, trimmedDisplayName, hasCustomSortingTooltips) {
+  if (!props.hasSorting || !sortTooltips || !tooltipKey) return '';
+  const tooltipText = sortTooltips?.[tooltipKey];
+  if (!tooltipText) return '';
+  if (hasCustomSortingTooltips) return tooltipText;
+  return `${tooltipText} "${trimmedDisplayName}"`;
+}
+
+function formatTooltip(displayName, title, sorting, sortingTooltips) {
+  const hasCustomSortingTooltips = Boolean(sortingTooltips);
+  const sortTooltips =
+    hasCustomSortingTooltips && props.hasSorting
+      ? sortingTooltips
+      : displayTexts.value.defaultSortingTooltips;
 
   const trimmedDisplayName = typeof displayName === 'string' ? displayName.trim() : displayName;
   const trimmedTitle = title?.trim();
-
-  // Sorting tooltip text
-  let sortingText = '';
-  if (sortTooltips && props.hasSorting) {
-    if (sorting === null || sorting === undefined) {
-      sortingText = !sortingTooltips
-        ? `${sortTooltips?.default} "${trimmedDisplayName}"`
-        : `${sortTooltips?.default}`;
-    } else if (sorting === 'asc') {
-      sortingText = !sortingTooltips
-        ? `${sortTooltips?.asc} "${trimmedDisplayName}"`
-        : `${sortTooltips?.asc}`;
-    } else if (sorting === 'desc') {
-      sortingText = !sortingTooltips
-        ? `${sortTooltips?.desc} "${trimmedDisplayName}"`
-        : `${sortTooltips?.desc}`;
-    }
-  }
+  const tooltipKey = getSortingTooltipKey(sorting);
+  const sortingText = buildSortingText(
+    sortTooltips,
+    tooltipKey,
+    trimmedDisplayName,
+    hasCustomSortingTooltips
+  );
 
   // Compose all lines
   const tooltipLines = [];

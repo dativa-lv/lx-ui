@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, onMounted, ref, inject } from 'vue';
+import { computed, onMounted, ref, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
@@ -53,6 +53,10 @@ const emits = defineEmits(['update:modelValue']);
 
 const stringifiedItems = computed(() =>
   props.items?.map((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) {
+      return item;
+    }
+
     const id = item[props.idAttribute];
     if (typeof id === 'number') {
       return {
@@ -64,6 +68,39 @@ const stringifiedItems = computed(() =>
   })
 );
 
+function isDropdownVariant() {
+  return props.variant === 'dropdown' || props.variant === 'dropdown-custom';
+}
+
+function isNotSelectedValue(value) {
+  return Boolean(value) && (value === 'notSelected' || value[0] === 'notSelected');
+}
+
+function getClearedValue() {
+  return props.alwaysAsArray ? [] : null;
+}
+
+function getSingleSelectionValue(value) {
+  return props.selectionKind === 'single' && value ? value[0] : value;
+}
+
+function getDropdownArrayValue(value) {
+  if (!value) return null;
+  return props.selectionKind === 'single' ? [value] : value;
+}
+
+function normalizeModelValue(value) {
+  if (!props.alwaysAsArray && !isDropdownVariant()) {
+    return getSingleSelectionValue(value);
+  }
+
+  if (props.alwaysAsArray && isDropdownVariant()) {
+    return getDropdownArrayValue(value);
+  }
+
+  return value;
+}
+
 const model = computed({
   get() {
     if (typeof props.modelValue === 'number') {
@@ -72,32 +109,11 @@ const model = computed({
     return props.modelValue;
   },
   set(value) {
-    if (value && (value === 'notSelected' || value[0] === 'notSelected')) {
-      emits('update:modelValue', props.alwaysAsArray ? [] : null);
-      return;
+    if (isNotSelectedValue(value)) {
+      emits('update:modelValue', getClearedValue());
+    } else {
+      emits('update:modelValue', normalizeModelValue(value));
     }
-
-    if (
-      !props.alwaysAsArray &&
-      !(props.variant === 'dropdown' || props.variant === 'dropdown-custom')
-    ) {
-      emits('update:modelValue', props.selectionKind === 'single' && value ? value[0] : value);
-      return;
-    }
-
-    if (
-      props.alwaysAsArray &&
-      (props.variant === 'dropdown' || props.variant === 'dropdown-custom')
-    ) {
-      if (value) {
-        emits('update:modelValue', props.selectionKind === 'single' ? [value] : value);
-      } else {
-        emits('update:modelValue', null);
-      }
-      return;
-    }
-
-    emits('update:modelValue', value);
   },
 });
 

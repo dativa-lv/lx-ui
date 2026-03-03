@@ -95,64 +95,77 @@ function processGroup(group) {
   };
 }
 
-const actionsProcessed = computed(() => {
-  if (!props.actionDefinitions.length) {
-    return [];
+function placeActionByArea(result, action) {
+  if (!action) return;
+
+  if (action.area === 'left') {
+    result.unshift(action);
+  } else {
+    result.push(action);
   }
+}
 
+function addPromotedAction(result, promotedAction) {
+  placeActionByArea(result, promotedAction);
+
+  if (!promotedAction?.name) {
+    logWarn('Promoted toolbar action must have a name.', globalEnvironment);
+  }
+}
+
+function shouldAddSearchAction() {
+  return props.hasSearch && (props.searchMode === 'compact' || props.hasSelecting);
+}
+
+function createSearchAction() {
+  return {
+    id: 'search',
+    name: props.searchField ? displayTexts.value.closeSearch : displayTexts.value.openSearch,
+    icon: props.searchField ? 'close' : 'search',
+    area: 'right',
+    variant: 'icon-only',
+    kind: 'ghost',
+    groupId: 'lx-search',
+    disabled: props.disabled || props.loading || props.busy,
+    customClass: props.searchField ? 'toolbar-search-button is-expanded' : '',
+    nonResponsive: true,
+  };
+}
+
+function shouldAddSelectAllAction() {
+  return props.hasSelecting && props.selectionKind === 'multiple';
+}
+
+function createSelectAllAction() {
+  return {
+    id: 'select-all',
+    name: displayTexts.value.selectAllRows,
+    icon: 'checkbox',
+    area: props.selectAllSide,
+    variant: 'icon-only',
+    kind: 'ghost',
+    groupId: 'lx-select-all',
+    disabled: props.disabled || props.loading || props.busy,
+    nonResponsive: true,
+  };
+}
+
+const actionsProcessed = computed(() => {
+  if (!props.actionDefinitions.length) return [];
   const normalizedActions = props.actionDefinitions.map((a) => applyDefaults(a));
-
   const { promotedAction, demotedActions } = processGroup(normalizedActions);
-
   const result = [...demotedActions];
 
   if (promotedAction) {
-    if (promotedAction.area === 'left') {
-      result.unshift(promotedAction);
-    } else {
-      result.push(promotedAction);
-    }
-
-    if (!promotedAction.name) {
-      logWarn('Promoted toolbar action must have a name.', globalEnvironment);
-    }
+    addPromotedAction(result, promotedAction);
   }
 
-  // Add search button if needed
-  if (props.hasSearch && (props.searchMode === 'compact' || props.hasSelecting)) {
-    result.push({
-      id: 'search',
-      name: props.searchField ? displayTexts.value.closeSearch : displayTexts.value.openSearch,
-      icon: props.searchField ? 'close' : 'search',
-      area: 'right',
-      variant: 'icon-only',
-      kind: 'ghost',
-      groupId: 'lx-search',
-      disabled: props.disabled || props.loading || props.busy,
-      customClass: props.searchField ? 'toolbar-search-button is-expanded' : '',
-      nonResponsive: true,
-    });
+  if (shouldAddSearchAction()) {
+    result.push(createSearchAction());
   }
 
-  // Add select-all button if needed
-  if (props.hasSelecting && props.selectionKind === 'multiple') {
-    const selectAllAction = {
-      id: 'select-all',
-      name: displayTexts.value.selectAllRows,
-      icon: 'checkbox',
-      area: props.selectAllSide,
-      variant: 'icon-only',
-      kind: 'ghost',
-      groupId: 'lx-select-all',
-      disabled: props.disabled || props.loading || props.busy,
-      nonResponsive: true,
-    };
-
-    if (props.selectAllSide === 'right') {
-      result.push(selectAllAction);
-    } else {
-      result.unshift(selectAllAction);
-    }
+  if (shouldAddSelectAllAction()) {
+    placeActionByArea(result, createSelectAllAction());
   }
 
   return result;
