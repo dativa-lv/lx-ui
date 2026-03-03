@@ -24,7 +24,7 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  kind: { type: String, default: 'europe' }, // europe, skeleton, spine, arms, left-hand, right-hand, latvia
+  kind: { type: String, default: 'europe' }, // europe, skeleton, spine, arms, left-hand, right-hand, latvia, latvia2024
   modelValue: { type: [Array, String], default: () => [] },
   readOnly: { type: Boolean, default: false },
   mode: { type: String, default: 'default' }, // default, compact

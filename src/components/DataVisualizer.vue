@@ -15,7 +15,7 @@ import useLx from '@/hooks/useLx';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  kind: { type: String, default: 'bars-horizontal' }, // bars-horizontal || bars-vertical || latvia
+  kind: { type: String, default: 'bars-horizontal' }, // bars-horizontal || bars-vertical || latvia || latvia2024
   items: { type: Array, default: () => [] },
   thresholds: { type: Array, default: () => [] },
   showValues: { type: String, default: 'default' }, // default || always || never
@@ -46,7 +46,9 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['click']);
 
-const latvia = getTexts('latvia');
+const latviaTexts = computed(() =>
+  props.kind === 'latvia2024' ? getTexts('latvia2024') : getTexts('latvia')
+);
 
 const globalEnvironment = useLx().getGlobals()?.environment;
 
@@ -169,7 +171,7 @@ function getBackTextColor(item) {
 
 function colorSvg() {
   const rootElement = document.getElementById('LV_Region');
-  Object.entries(latvia)?.forEach(([key, value]) => {
+  Object.entries(latviaTexts.value)?.forEach(([key, value]) => {
     const element = rootElement?.querySelector(`#lx-${key}`);
     if (element) {
       element.style.fill = 'inherit';
@@ -313,8 +315,8 @@ const dataGridItems = computed(() =>
   props.items.flatMap((item) => {
     const itemWithSubBars = Array.isArray(item?.[props.valueAttribute]);
 
-    // If kind is 'latvia', exclude items that have sub-bars
-    if (props.kind === 'latvia' && itemWithSubBars) return [];
+    // If kind is 'latvia' or 'latvia2024', exclude items that have sub-bars
+    if ((props.kind === 'latvia' || props.kind === 'latvia2024') && itemWithSubBars) return [];
 
     if (itemWithSubBars) {
       const valueArray = item[props.valueAttribute];
@@ -367,11 +369,15 @@ const contentItems = computed(() => [
 const imagePath = ref(null);
 
 function loadImage() {
+  const images = {
+    latvia: () => import('@/components/visualPickerPictures/Latvia.vue'),
+    latvia2024: () => import('@/components/visualPickerPictures/Latvia2024.vue'),
+  };
+
   return new Promise((resolve, reject) => {
     imagePath.value = defineAsyncComponent({
       loader: () =>
-        // @ts-ignore
-        import('@/components/visualPickerPictures/Latvia.vue')
+        images[props.kind]?.()
           .then(async (component) => {
             resolve(component);
             return component;
@@ -386,7 +392,10 @@ function loadImage() {
 watch(
   () => [props.items, props.thresholds, props.showValues, contentModel.value],
   () => {
-    if (props.kind === 'latvia' && contentModel.value === 'default') {
+    if (
+      (props.kind === 'latvia' || props.kind === 'latvia2024') &&
+      contentModel.value === 'default'
+    ) {
       nextTick(() => colorSvg());
     }
   },
@@ -482,7 +491,7 @@ const hasSubBarAfter = (index) => {
 watch(
   () => props.kind,
   async (newValue) => {
-    if (newValue === 'latvia') {
+    if (newValue === 'latvia' || newValue === 'latvia2024') {
       getImage();
     }
   },
@@ -849,7 +858,7 @@ watch(
     </div>
 
     <div
-      v-else-if="kind === 'latvia' && contentModel === 'default'"
+      v-else-if="(kind === 'latvia' || kind === 'latvia2024') && contentModel === 'default'"
       class="lx-latvia-visualizer"
       :class="[{ 'show-legend': showLegend }]"
     >
