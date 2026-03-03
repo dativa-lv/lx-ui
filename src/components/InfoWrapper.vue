@@ -108,7 +108,7 @@ const handleOpen = () => {
   showPopper.value = true;
 
   if (responsiveView.value) {
-    document.body.classList.add('no-scroll');
+    document.body.classList.add('no-scroll-mobile-pickers');
     nextTick(() => {
       panelAreaScrolled();
       panelRef.value?.focus();
@@ -312,7 +312,7 @@ function togglePopperOnMobile() {
   ) {
     showPopper.value = !showPopper.value;
     if (showPopper.value && responsiveView.value) {
-      document.body.classList.add('no-scroll');
+      document.body.classList.add('no-scroll-mobile-pickers');
       nextTick(() => {
         panelAreaScrolled();
         panelRef.value?.focus();
@@ -366,7 +366,7 @@ watch(
   () => showPopper.value,
   (newVal) => {
     if (!newVal) {
-      document.body.classList.remove('no-scroll');
+      document.body.classList.remove('no-scroll-mobile-pickers');
     }
   }
 );
@@ -420,7 +420,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('click', handleClickOutside);
 
   if (!props.disabled) {
-    document.body.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll-mobile-pickers');
   }
 });
 

@@ -176,6 +176,11 @@ const bottomOutOfBounds = computed(() => {
   return `${keyOpacity}: 0; ${keySize}: ${size}px;`;
 });
 
+function ifModalsExist() {
+  const modalsContainer = document.getElementById('modals');
+  return modalsContainer && modalsContainer.children.length > 0;
+}
+
 watch([isOpen, isOpenModal], ([newIsOpen, newIsOpenModal]) => {
   if (newIsOpen || newIsOpenModal) {
     nextTick(() => {
@@ -183,7 +188,13 @@ watch([isOpen, isOpenModal], ([newIsOpen, newIsOpenModal]) => {
         scrollYPos.value = 0;
       }
     });
+    document.body.classList.add('no-scroll-modal');
   }
+  nextTick(() => {
+    if (!newIsOpen && !ifModalsExist()) {
+      document.body.classList.remove('no-scroll-modal');
+    }
+  });
 });
 
 provide('insideModal', insideModal);

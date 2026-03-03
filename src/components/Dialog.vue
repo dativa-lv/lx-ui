@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick, provide } from 'vue';
+import { ref, computed, nextTick, provide, watch } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIllustration from '@/components/Illustration.vue';
 import { generateUUID } from '@/utils/stringUtils';
@@ -113,6 +113,22 @@ const colorMap = {
   success: 'var(--color-good)',
   custom: 'var(--color-data)',
 };
+
+function ifModalsExist() {
+  const modalsContainer = document.getElementById('modals');
+  return modalsContainer && modalsContainer.children.length > 0;
+}
+
+watch(isOpen, (newIsOpen) => {
+  if (newIsOpen) {
+    document.body.classList.add('no-scroll-modal');
+  }
+  nextTick(() => {
+    if (!newIsOpen && !ifModalsExist()) {
+      document.body.classList.remove('no-scroll-modal');
+    }
+  });
+});
 
 provide('insideModal', insideModal);
 

@@ -1006,7 +1006,8 @@
   overflow: auto;
 }
 
-.lx.no-scroll {
+.lx.no-scroll-mobile-pickers,
+.lx.no-scroll-modal {
   overflow: hidden;
 }
 
