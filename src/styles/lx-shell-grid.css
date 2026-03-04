@@ -536,6 +536,10 @@
   min-height: var(--row-size);
 }
 
+.lx-page-header .lx-description {
+  max-width: 80ch;
+}
+
 .lx-header .lx-additional-nav-menu .lx-button svg {
   --color-button-ghost-icon: var(--color-nav-foreground);
   --color-button-ghost-icon-focus: var(--color-nav-foreground);
