@@ -47,7 +47,7 @@ const panelRef = ref(null);
 const panelId = generateUUID();
 const firstFocusableElement = ref(null);
 const menuOpen = ref(false);
-const isTouchSensitive = inject('isTouchMode', false);
+const isTouchSensitive = inject('isTouchMode', ref(false));
 const parentFocusTrap = inject('parentFocusTrap', null);
 const dragThreshold = 50;
 
@@ -75,7 +75,9 @@ function openMenu({ source = 'default', focus = 'first' } = {}) {
   nextTick(() => {
     parentFocusTrap?.pause();
 
-    activateFocusTrap();
+    if (!props.datePickerType && !isTouchSensitive.value) {
+      activateFocusTrap();
+    }
     if (!props.datePickerType) {
       switch (focus) {
         case 'first':
@@ -92,7 +94,7 @@ function openMenu({ source = 'default', focus = 'first' } = {}) {
           break;
       }
     }
-    if (props.datePickerType) {
+    if (props.datePickerType && (isTouchSensitive.value || source === 'keyboard')) {
       nextTick(() => {
         focusFirstElementInContainer(panelRef.value);
       });

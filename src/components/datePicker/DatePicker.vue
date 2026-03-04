@@ -1103,10 +1103,10 @@ function validateIfExact(e, type = 'startInput') {
   }
 }
 
-function openMenu(type) {
+function openMenu(type, source = null) {
   if (props.disabled) return;
   activeInput.value = type;
-  dropDownMenuRef.value?.openMenu();
+  dropDownMenuRef.value?.openMenu({ source });
 }
 
 function closeMenu() {
@@ -1144,7 +1144,7 @@ function handleTouchResponsiveToggle(isOpen, type) {
   }
 
   if (!isOpen && !clickedManualInput.value) {
-    openMenu(type);
+    openMenu(type, 'touch');
     return;
   }
   closeMenu();
@@ -1154,7 +1154,7 @@ function handleTouchResponsiveToggle(isOpen, type) {
 function handleTouchToggle(isOpen, type) {
   if (!isOpen) {
     tapStage.value = 1;
-    openMenu(type);
+    openMenu(type, 'touch');
     return;
   }
 
@@ -1183,16 +1183,16 @@ function handleTouchToggle(isOpen, type) {
 
 function handleDesktopToggle(isOpen, type) {
   if (!isOpen) {
-    openMenu(type);
+    openMenu(type, 'click');
   } else {
     closeMenu();
   }
 }
 
-function toggleMenu(type, buttonType = null) {
-  if (props.disabled) return;
+function toggleMenu(type, toggleType = null) {
+  if (props.disabled || (isTouchMode.value && toggleType === 'click')) return;
 
-  if (buttonType === 'enter') {
+  if (toggleType === 'enter') {
     return;
   }
 
@@ -1201,6 +1201,11 @@ function toggleMenu(type, buttonType = null) {
 
   if (!isTouchSensitive.value) {
     handleDesktopToggle(isOpen, type);
+
+    setTimeout(() => {
+      setActiveInput(type, props.id, false);
+    }, 0);
+
     return;
   }
 
@@ -1221,7 +1226,7 @@ function preventDefaultFocus(e) {
 function onTouchStart(e, type) {
   if (isTouchSensitive.value) {
     e.preventDefault();
-    toggleMenu(type);
+    toggleMenu(type, 'touch');
   }
 }
 
@@ -1497,8 +1502,8 @@ onMounted(async () => {
             :aria-describedby="`${id}-lx-input-description`"
             @mousedown="preventDefaultFocus"
             @touchstart="onTouchStart($event, 'startInput')"
-            @click="toggleMenu('startInput')"
-            @keyup.arrow-down.prevent="openMenu('startInput')"
+            @click="toggleMenu('startInput', 'click')"
+            @keyup.arrow-down.prevent="openMenu('startInput', 'keyboard')"
             @keyup.enter.stop="toggleMenu('startInput', 'enter')"
             @keydown.esc.prevent="closeMenu"
             @change="validateIfExact($event, 'startInput')"
@@ -1549,8 +1554,8 @@ onMounted(async () => {
               :aria-describedby="`${id}-lx-input-description`"
               @mousedown="preventDefaultFocus"
               @touchstart="onTouchStart($event, 'endInput')"
-              @click="toggleMenu('endInput')"
-              @keyup.arrow-down.prevent="openMenu('endInput')"
+              @click="toggleMenu('endInput', 'click')"
+              @keyup.arrow-down.prevent="openMenu('endInput', 'keyboard')"
               @keyup.enter.stop="toggleMenu('endInput', 'enter')"
               @keydown.esc.prevent="closeMenu"
               @change="validateIfExact($event, 'endInput')"
