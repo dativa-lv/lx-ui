@@ -177,7 +177,7 @@ watch(() => props.href, computeSafeTo, { immediate: true });
       </div>
       <div class="compact-actions">
         <div class="lx-list-icon-wrapper" v-if="clickable">
-          <lx-icon :value="icon" :iconSet="iconSet" customClass="lx-list-icon" :title="tooltip" />
+          <LxIcon :value="icon" :iconSet="iconSet" customClass="lx-list-icon" :title="tooltip" />
         </div>
         <div
           class="lx-list-item-actions"
@@ -220,7 +220,11 @@ watch(() => props.href, computeSafeTo, { immediate: true });
           class="lx-list-item-actions"
           :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
         >
-          <LxDropDownMenu ref="dropDownMenu" :disabled="loading || busy || disabled">
+          <LxDropDownMenu
+            ref="dropDownMenu"
+            :disabled="loading || busy || disabled"
+            v-if="visibleActionDefinitions.length > 1"
+          >
             <div>
               <LxButton
                 :id="`${id}-action-open-menu`"
@@ -234,7 +238,7 @@ watch(() => props.href, computeSafeTo, { immediate: true });
               />
             </div>
             <template v-slot:panel>
-              <div class="lx-button-set" v-if="visibleActionDefinitions.length > 1">
+              <div class="lx-button-set">
                 <LxButton
                   v-for="action in visibleActionDefinitions"
                   :key="action.id"
@@ -331,7 +335,7 @@ watch(() => props.href, computeSafeTo, { immediate: true });
       </div>
       <div class="compact-actions">
         <div class="lx-list-icon-wrapper" v-if="href">
-          <lx-icon :value="icon" :icon-set="iconSet" customClass="lx-list-icon" :title="tooltip" />
+          <LxIcon :value="icon" :icon-set="iconSet" customClass="lx-list-icon" :title="tooltip" />
         </div>
         <div
           class="lx-list-item-actions"
@@ -374,7 +378,11 @@ watch(() => props.href, computeSafeTo, { immediate: true });
           class="lx-list-item-actions"
           :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
         >
-          <LxDropDownMenu ref="dropDownMenu" :disabled="loading || busy || disabled">
+          <LxDropDownMenu
+            ref="dropDownMenu"
+            :disabled="loading || busy || disabled"
+            v-if="visibleActionDefinitions.length > 1"
+          >
             <div>
               <LxButton
                 :id="`${id}-action-open-menu`"
@@ -388,7 +396,7 @@ watch(() => props.href, computeSafeTo, { immediate: true });
               />
             </div>
             <template v-slot:panel>
-              <div class="lx-button-set" v-if="visibleActionDefinitions.length > 1">
+              <div class="lx-button-set">
                 <LxButton
                   v-for="action in visibleActionDefinitions"
                   :id="`${id}-action-${action.id}`"
@@ -467,7 +475,10 @@ watch(() => props.href, computeSafeTo, { immediate: true });
       class="lx-list-item-actions"
       :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
     >
-      <LxDropDownMenu :disabled="loading || busy || disabled">
+      <LxDropDownMenu
+        :disabled="loading || busy || disabled"
+        v-if="visibleActionDefinitions.length > 1"
+      >
         <div>
           <LxButton
             :id="`${id}-action-overflow-menu`"
@@ -480,7 +491,7 @@ watch(() => props.href, computeSafeTo, { immediate: true });
           />
         </div>
         <template v-slot:panel>
-          <div class="lx-button-set" v-if="visibleActionDefinitions.length > 1">
+          <div class="lx-button-set">
             <LxButton
               v-for="action in visibleActionDefinitions"
               :key="action.id"

@@ -102,6 +102,7 @@
   
 .lx-list-item-actions {
   grid-area: actions;
+  min-width: var(--list-button-width);
 }
 
 .lx-list-item-actions .lx-context-container,

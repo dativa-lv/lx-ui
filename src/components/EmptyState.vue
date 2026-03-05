@@ -57,10 +57,7 @@ function handleActionClick(actionName) {
           @click="handleActionClick(action?.id)"
         />
       </div>
-      <div
-        class="lx-list-item-actions"
-        v-if="actionDefinitions?.length && actionDefinitions?.length > 3"
-      >
+      <div v-if="actionDefinitions?.length && actionDefinitions?.length > 3">
         <LxDropDownMenu
           :actionDefinitions="actionDefinitions"
           @actionClick="(id) => handleActionClick(id)"
