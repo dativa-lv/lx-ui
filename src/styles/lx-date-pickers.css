@@ -1191,17 +1191,43 @@ height: 100%;
   height: 24.5rem;
 }
 
-  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month .lx-calendar-layouts-wrapper,
-  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-year .lx-calendar-layouts-wrapper,
-   .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month-year .lx-calendar-layouts-wrapper {
-    height: 19rem;
-  }
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month .lx-calendar-layouts-wrapper,
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-year .lx-calendar-layouts-wrapper,
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month-year .lx-calendar-layouts-wrapper {
+  height: 19rem;
+}
 
-  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts,
-  .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-year .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts,
-   .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month-year .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts {
-    height: unset;
-  } 
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts,
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-year .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts,
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container.mode-month-year .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts {
+  height: unset;
+} 
+
+
+.lx .lx-layout .fullscreen-popper .lx-calendar-container .lx-time-picker-time-list::before,
+.lx .lx-layout .lx-calendar-container.mode-time .lx-time-picker-time-list::before,
+.lx .lx-layout .lx-calendar-container.mode-time-full .lx-time-picker-time-list::before,
+.lx .lx-layout .lx-calendar-container.mode-date-time .lx-time-picker-time-list::before,
+.lx .lx-layout .lx-calendar-container.mode-date-time-full .lx-time-picker-time-list::before  {
+  top: 7.8rem;
+}
+
+.lx .lx-layout .fullscreen-popper .lx-calendar-container .lx-time-picker-time-list,
+.lx .lx-layout .lx-calendar-container.mode-time .lx-time-picker-time-list,
+.lx .lx-layout .lx-calendar-container.mode-time-full .lx-time-picker-time-list,
+.lx .lx-layout .lx-calendar-container.mode-date-time .lx-time-picker-time-list,
+.lx .lx-layout .lx-calendar-container.mode-date-time-full .lx-time-picker-time-list {
+  transform: translateY(-8.3rem);
+}
+
+.lx .lx-layout .fullscreen-popper .lx-calendar-container .lx-time-picker-time-list::after,
+.lx .lx-layout .lx-calendar-container.mode-time .lx-time-picker-time-list::after,
+.lx .lx-layout .lx-calendar-container.mode-time-full .lx-time-picker-time-list::after,
+.lx .lx-layout .lx-calendar-container.mode-date-time .lx-time-picker-time-list::after,
+.lx .lx-layout .lx-calendar-container.mode-date-time-full .lx-time-picker-time-list::after {
+  top: 19rem;
+}
+
 
 @media (max-width: 640px) {
   .lx-calendar-container.mode-time-full .lx-calendar-time-picker.date-time-only {
