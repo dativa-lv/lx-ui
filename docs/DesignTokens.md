@@ -25,7 +25,6 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 | `--list-item-header-padding`              | 0.35rem 0.35rem 0.2rem 0.25rem                                |
 | `--list-item-header-min-height`           | 2.75rem                                                       |
 | `--list-icon-height`                      | 1.5rem                                                        |
-| `--list-icon-padding`                     | 0.6rem 0.75rem 0 0.75rem                                      |
 | `--list-icon-width`                       | 1.5rem                                                        |
 | `--list-item-loader-padding`              | 0.85rem 1rem 0 1rem                                           |
 | `--list-item-selecting-block-padding`     | 0.8rem 0.95rem 0 0.95rem                                      |

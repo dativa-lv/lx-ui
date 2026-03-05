@@ -1,5 +1,13 @@
 # LX/UI Migration Guide
 
+## 2.0.4 → 2.0.5
+
+### Breaking changes
+
+#### LxList
+
+The `--list-icon-padding` token has been removed. Check for any layout shifts or visual misalignment in lists that include icons.
+
 ## 2.0.2 → 2.0.3
 
 ### Breaking changes

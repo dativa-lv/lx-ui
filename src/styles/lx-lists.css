@@ -424,7 +424,11 @@
 
 .lx .lx-list-item .lx-invalidation-icon-wrapper,
 .lx .lx-list-item .lx-list-icon-wrapper {
-  padding: var(--list-icon-padding);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--list-icon-wrapper-width);
+  max-height: var(--list-icon-wrapper-max-height);
   height: 100%;
 }
 
@@ -1384,6 +1388,15 @@ li .lx-list-item.lx-inactive {
 
 .lx-list-wrapper .lx-list-item-wrapper .compact-actions {
   grid-area: icon;
+}
+
+.lx-list-item-wrapper .compact-actions .lx-list-item-actions .lx-button,
+.lx-list-item-wrapper .compact-actions:has(.lx-list-item-actions) .lx-list-icon-wrapper {
+  height: var(--list-button-max-height);
+}
+
+.lx-list-item-wrapper .compact-actions .lx-list-item-actions .lx-button {
+  height: var(--list-button-max-height);
 }
 
 .lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions {

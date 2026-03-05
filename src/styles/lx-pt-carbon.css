@@ -135,11 +135,12 @@
   --list-category-margin: 0.25rem;
   --list-category-width: 0.25rem;
   --list-icon-height: 1.5rem;
-  --list-icon-padding: 0.6rem 0.75rem 0 0.75rem;
   --list-icon-width: 1.5rem;
+  --list-icon-wrapper-max-height: var(--list-button-max-height);
+  --list-icon-wrapper-width: var(--list-button-width);
   --list-item-min-height: var(--row-size);
   --list-item-gap: 0.5rem;
-  --list-item-header-padding: 0.35rem 0.35rem 0.2rem 0.25rem;
+  --list-item-header-padding: 0.25rem 0.35rem 0.2rem 0.25rem;
   --list-item-header-min-height: 2.75rem;
   --list-item-border: 2px solid transparent;
   --list-item-border-radius: 0;

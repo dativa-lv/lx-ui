@@ -235,6 +235,11 @@
   display: none;
 }
 
+.lx-layout.lx-layout-public .lx-header .lx-user-menu {
+  display: flex;
+  align-items: center;
+}
+
 .lx-layout.lx-layout-public .lx-page-header {
   margin-top: var(--gap);
   margin-bottom: var(--gap);
