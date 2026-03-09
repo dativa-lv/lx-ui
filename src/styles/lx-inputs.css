@@ -4414,8 +4414,14 @@ h2.lx-section-header + p.lx-invalidation-message,
   fill: var(--color-data)
 }
 
-.lx-camera img{
+.lx-camera img,
+.lx-camera:has(> .lx-component-toolbar .right-area > .lx-group:empty) video
+{
   margin-top: calc(var(--row-size) + 2px);
+}
+
+.lx-camera > .lx-component-toolbar:has(.right-area > .lx-group:empty) {
+  display: none;
 }
 
 .lx-camera > .lx-component-toolbar > .right-area > .lx-group .lx-field-wrapper:has(.lx-toggle) {

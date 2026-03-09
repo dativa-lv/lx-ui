@@ -302,9 +302,9 @@ onUnmounted(() => {
         <LxToolbarGroup v-if="hasFlashlightToggle && cameraHasFlashlight && !loading && !error">
           <LxToggle v-model="flashlight" :tooltip="displayTexts.toggleFlashlight" />
         </LxToolbarGroup>
-        <LxToolbarGroup>
+        <LxToolbarGroup v-if="camerasList?.length > 1">
           <LxButton
-            v-if="camerasList?.length > 1 && cameraSwitcherMode === 'toggle'"
+            v-if="cameraSwitcherMode === 'toggle'"
             icon="camera-switch"
             kind="ghost"
             variant="icon-only"
@@ -313,7 +313,7 @@ onUnmounted(() => {
             @click="switchCamera()"
           />
           <LxDropDownMenu
-            v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'"
+            v-if="cameraSwitcherMode === 'list'"
             :actionDefinitions="cameraListDisplay"
             @actionClick="(id) => changeCamera(id)"
           >
