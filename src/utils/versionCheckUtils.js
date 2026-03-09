@@ -67,7 +67,7 @@ export async function isAppVersionChanged(
 ) {
   const currentEnv = window.config?.environment;
 
-  if (currentEnv && currentEnv.toLowerCase() === 'local') return;
+  if (currentEnv?.toLowerCase() === 'local') return;
 
   const now = Date.now();
 

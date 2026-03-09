@@ -104,9 +104,7 @@ function hover(value) {
 }
 
 function reset() {
-  if (props.disabled) {
-    hoveredValue.value = null;
-  } else if (props.readOnly) {
+  if (props.disabled || props.readOnly) {
     hoveredValue.value = null;
   }
 }

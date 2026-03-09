@@ -40,20 +40,37 @@ export function findNextFocusableElement(startElement, forward) {
   return null;
 }
 
+function getDirectionalSibling(element, forward) {
+  return forward ? element.nextElementSibling : element.previousElementSibling;
+}
+
+function findFocusableAmongSiblings(startSibling, forward) {
+  let sibling = startSibling;
+
+  while (sibling) {
+    const focusable = findFocusableElements(sibling);
+
+    if (focusable.length > 0) {
+      return forward ? focusable[0] : focusable[focusable.length - 1];
+    }
+
+    sibling = getDirectionalSibling(sibling, forward);
+  }
+
+  return null;
+}
+
 export function findFocusableInSiblingsAndParents(startElement, forward) {
-  let currentElement = startElement.parentElement;
+  let currentElement = startElement?.parentElement;
 
   while (currentElement && currentElement !== document.body) {
-    let sibling = forward
-      ? currentElement.nextElementSibling
-      : currentElement.previousElementSibling;
+    const result = findFocusableAmongSiblings(
+      getDirectionalSibling(currentElement, forward),
+      forward
+    );
 
-    while (sibling) {
-      const focusable = findFocusableElements(sibling);
-      if (focusable.length > 0) {
-        return forward ? focusable[0] : focusable[focusable.length - 1];
-      }
-      sibling = forward ? sibling.nextElementSibling : sibling.previousElementSibling;
+    if (result) {
+      return result;
     }
 
     currentElement = currentElement.parentElement;

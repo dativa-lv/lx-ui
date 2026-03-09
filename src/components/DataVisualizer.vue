@@ -139,18 +139,20 @@ function resolveThresholdColor(item, grid) {
 
 function getBarColor(item, grid = false) {
   const isBarKind = props.kind === 'bars-horizontal' || props.kind === 'bars-vertical';
-  const hasThresholds = props.thresholds && props.thresholds.length > 0;
   let color = null;
 
-  if (hasThresholds) {
+  if (props.thresholds?.length > 0) {
     color = resolveThresholdColor(item, grid);
   } else if (grid && item[props.colorAttribute]) {
     color = item[props.colorAttribute];
   }
 
-  if (grid) {
-    if (color) return color;
-    if (isBarKind) return 'data';
+  if (grid && color) {
+    return color;
+  }
+
+  if (grid && isBarKind) {
+    return 'data';
   }
 
   if (color) {

@@ -349,14 +349,17 @@ export async function getMeta(file, texts) {
 
           const promises = [];
           meta.archive = [];
+
           zip.forEach((_, zipEntry) => {
-            if (!zipEntry.dir && !isMacOsMetaFile(zipEntry.name)) {
-              promises.push(
-                zipEntry.async('arraybuffer').then((data) => {
-                  addFileToArchive(meta.archive, zipEntry, data.byteLength);
-                })
-              );
+            if (zipEntry.dir || isMacOsMetaFile(zipEntry.name)) {
+              return;
             }
+
+            promises.push(
+              zipEntry.async('arraybuffer').then((data) => {
+                addFileToArchive(meta.archive, zipEntry, data.byteLength);
+              })
+            );
           });
 
           await Promise.all(promises);
@@ -1018,7 +1021,7 @@ export function provideDefaultIcon(advancedFile) {
 }
 
 export function getDetails(advancedFile, base64String, texts, additionalIconAndType) {
-  if (!advancedFile || !advancedFile.meta) {
+  if (!advancedFile?.meta) {
     return getDefaultMainData(advancedFile, texts);
   }
 
