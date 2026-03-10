@@ -2,7 +2,6 @@
   position: relative;
   background-color: var(--color-region);
   min-width: 0; /* So that scrolling works properly */
-  margin: 0 var(--grid-right-margin) 0 var(--grid-left-margin);
 }
 
 .lx .lx-data-grid-wrapper header:not(.lx-data-block header) {
@@ -25,6 +24,7 @@
   background-color: var(--color-region);
   padding: 0;
   overflow: hidden;
+  margin: 0 var(--grid-right-margin) 0 var(--grid-left-margin);
 }
 
 .lx .lx-data-grid.lx-scrollable {
@@ -52,6 +52,7 @@
 .lx .lx-data-grid-wrapper.lx-grid-sticky > .lx-grid-header-wrapper {
   position: sticky;
   z-index: 3;
+  margin: 0 var(--grid-right-margin) 0 var(--grid-left-margin);
 }
 
 .lx .lx-data-grid-wrapper > .lx-grid-header-wrapper .lx-grid-row {
