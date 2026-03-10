@@ -1535,6 +1535,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           layoutMode="public"
           :userInfo="userInfo"
           :nav-items="navItems"
+          :headerNavDisable="headerNavDisable"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"
           :has-language-picker="hasLanguagePicker"
@@ -1705,6 +1706,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         <LxNavBar
           layoutMode="latvijalv"
           :nav-items="navItems"
+          :headerNavDisable="headerNavDisable"
           :userInfo="userInfo"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"
@@ -2534,6 +2536,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:isTouchSensitive="touchModeModel"
           :userInfo="userInfo"
           :nav-items="navItems"
+          :headerNavDisable="headerNavDisable"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"
           :has-language-picker="hasLanguagePicker"

@@ -862,6 +862,7 @@ onClickOutside(navPanel, toggleNavBar);
           :badge="customButtonBadge"
           :badgeType="customButtonBadgeType"
           :badgeIcon="customButtonBadgeIcon"
+          :disabled="headerNavDisable"
           customClass="lx-header-button"
           @click="emits('customButtonClick')"
         />
@@ -875,6 +876,7 @@ onClickOutside(navPanel, toggleNavBar);
             :badge="customButtonBadge"
             :badgeType="customButtonBadgeType"
             :badgeIcon="customButtonBadgeIcon"
+            :disabled="headerNavDisable"
             customClass="lx-header-button"
           />
           <template #panel v-if="$slots.customButtonPanel">
@@ -896,6 +898,7 @@ onClickOutside(navPanel, toggleNavBar);
             icon="language"
             tabindex="-1"
             :label="displayTexts.languagesTitle"
+            :disabled="headerNavDisable"
           />
 
           <template v-slot:panel>
@@ -926,6 +929,7 @@ onClickOutside(navPanel, toggleNavBar);
                 :title="displayTexts.themeTitle"
                 kind="ghost"
                 :icon="themeIcon"
+                :disabled="headerNavDisable"
                 tabindex="-1"
               />
             </div>
@@ -1045,6 +1049,7 @@ onClickOutside(navPanel, toggleNavBar);
           icon="logout"
           :label="displayTexts.logOut"
           :destructive="true"
+          :disabled="headerNavDisable"
           @click="logOut"
         />
       </li>

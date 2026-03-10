@@ -534,6 +534,7 @@ provide('insideHeader', insideHeader);
             <div v-if="hasHelp">
               <LxButton
                 icon="help"
+                :disabled="headerNavDisable"
                 :label="displayTexts.helpTitle"
                 kind="ghost"
                 variant="icon-only"
@@ -644,6 +645,7 @@ provide('insideHeader', insideHeader);
                 :showAllHref="megaMenuShowAllHref"
                 :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
                 :texts="displayTexts"
+                :disabled="headerNavDisable"
                 @mega-menu-show-all-click="triggerShowAllClick"
                 :show-label="false"
                 v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
@@ -727,6 +729,7 @@ provide('insideHeader', insideHeader);
                 kind="ghost"
                 :label="displayTexts.alternativeProfilesButtonLabel"
                 icon="switch"
+                :disabled="headerNavDisable"
                 @click="openAlternativeProfilesModal"
               />
             </li>
@@ -736,6 +739,7 @@ provide('insideHeader', insideHeader);
                 kind="ghost"
                 :label="displayTexts.contextPersonsButtonLabel"
                 icon="context-person"
+                :disabled="headerNavDisable"
                 @click="openContextPersonModal"
               />
             </li>
@@ -761,6 +765,7 @@ provide('insideHeader', insideHeader);
                 <LxButton
                   customClass="lx-header-button"
                   :label="displayTexts.languagesTitle"
+                  :disabled="headerNavDisable"
                   kind="ghost"
                   icon="language"
                   tabindex="-1"
@@ -779,6 +784,7 @@ provide('insideHeader', insideHeader);
                   :title="displayTexts.themeTitle"
                   kind="ghost"
                   :icon="themeIcon"
+                  :disabled="headerNavDisable"
                   tabindex="-1"
                 />
               </LxDropDownMenu>

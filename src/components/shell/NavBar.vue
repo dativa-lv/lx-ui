@@ -22,6 +22,7 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  headerNavDisable: { type: Boolean, default: false },
   userInfo: { type: Object, default: null },
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
@@ -444,6 +445,7 @@ provide('insideNavBar', insideNavBar);
         v-if="width <= 500"
         mode="cover"
         :has-nav-bar="true"
+        :header-nav-disable="headerNavDisable"
         :has-language-picker="hasLanguagePicker"
         :languages="languages"
         :has-theme-picker="hasThemePicker"
@@ -489,6 +491,7 @@ provide('insideNavBar', insideNavBar);
           :showAllHref="megaMenuShowAllHref"
           :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
           :texts="displayTexts"
+          :disabled="headerNavDisable"
           buttonVariant="default"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           @mega-menu-show-all-click="triggerShowAllClick"
@@ -504,6 +507,7 @@ provide('insideNavBar', insideNavBar);
             customClass="lx-header-button"
             :kind="'ghost'"
             icon="login"
+            :disabled="headerNavDisable"
             :label="displayTexts.loginButtonLabel"
             :title="displayTexts.loginButtonTitle"
             @click="loginClicked"

@@ -633,6 +633,7 @@ watch(
             id="lx-shell-custom-button"
             kind="ghost"
             variant="icon-only"
+            :disabled="headerNavDisable"
             :label="displayTexts.customButton"
             :icon="customButtonIcon"
             :badge="customButtonBadge"
@@ -641,12 +642,13 @@ watch(
             customClass="lx-header-button"
             @click="emits('customButtonClick')"
           />
-          <LxDropDownMenu ref="customButton" v-else>
+          <LxDropDownMenu ref="customButton" :disabled="headerNavDisable" v-else>
             <LxButton
               id="lx-shell-custom-button"
               kind="ghost"
               variant="icon-only"
               tabindex="-1"
+              :disabled="headerNavDisable"
               :label="displayTexts.customButton"
               :icon="customButtonIcon"
               :badge="customButtonBadge"
@@ -670,6 +672,7 @@ watch(
         <LxDropDownMenu
           ref="themeMenu"
           :actionDefinitions="themeDisplayItems"
+          :disabled="headerNavDisable"
           @actionClick="themeDropdownClicked"
         >
           <div class="lx-toolbar">
@@ -687,13 +690,14 @@ watch(
         </LxDropDownMenu>
       </div>
       <div class="shell-buttons language-menu" v-if="hasLanguagePicker">
-        <LxDropDownMenu ref="languageMenu">
+        <LxDropDownMenu ref="languageMenu" :disabled="headerNavDisable">
           <LxButton
             tabindex="-1"
             customClass="lx-header-button"
             variant="icon-only"
             kind="ghost"
             icon="language"
+            :disabled="headerNavDisable"
             :label="displayTexts.languagesTitle"
           />
 
@@ -703,6 +707,7 @@ watch(
                 v-for="item in languages"
                 kind="ghost"
                 :key="item?.languages"
+                :disabled="headerNavDisable"
                 :active="selectedLanguageModel.id === item.id ? true : false"
                 :label="item?.name"
                 @click="languageChange(item)"
@@ -713,7 +718,11 @@ watch(
       </div>
       <div class="shell-buttons user-info">
         <div class="lx-alert-menu" v-if="hasAlerts">
-          <LxDropDownMenu ref="alertMenu" v-if="alertsKind === 'menu' || alertsKind === 'combo'">
+          <LxDropDownMenu
+            ref="alertMenu"
+            v-if="alertsKind === 'menu' || alertsKind === 'combo'"
+            :disabled="headerNavDisable"
+          >
             <LxButton
               customClass="lx-header-button"
               variant="icon-only"
@@ -928,6 +937,7 @@ watch(
           :label="displayTexts.logOut"
           variant="icon-only"
           :destructive="true"
+          :disabled="headerNavDisable"
           @click="logOut"
         />
       </div>

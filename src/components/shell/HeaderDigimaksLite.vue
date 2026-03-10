@@ -515,6 +515,7 @@ provide('insideHeader', insideHeader);
                 :label="displayTexts.helpTitle"
                 kind="ghost"
                 variant="icon-only"
+                :disabled="headerNavDisable"
                 @click="helpClicked"
               />
             </div>
@@ -523,6 +524,7 @@ provide('insideHeader', insideHeader);
               <LxDropDownMenu
                 v-if="alertsKind === 'menu' || alertsKind === 'combo'"
                 customClass="lx-alert-menu"
+                :disabled="headerNavDisable"
               >
                 <LxButton
                   customClass="lx-header-button"
@@ -654,6 +656,7 @@ provide('insideHeader', insideHeader);
                 :showAllHref="megaMenuShowAllHref"
                 :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
                 :texts="displayTexts"
+                :disabled="headerNavDisable"
                 v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
                 @mega-menu-show-all-click="triggerShowAllClick"
               />
@@ -683,7 +686,12 @@ provide('insideHeader', insideHeader);
               <LxButton :icon="item?.icon" :label="item?.label" :href="item?.to" />
             </li>
             <li>
-              <LxButton icon="settings" :label="displayTexts.settings" @click="settings = true" />
+              <LxButton
+                icon="settings"
+                :disabled="headerNavDisable"
+                :label="displayTexts.settings"
+                @click="settings = true"
+              />
             </li>
           </ul>
         </div>
@@ -710,19 +718,29 @@ provide('insideHeader', insideHeader);
             </div>
             <LxForm kind="stripped">
               <LxRow :label="displayTexts.languagesTitle">
-                <LxValuePicker variant="tags" :items="languages" v-model="languagePickerModel" />
+                <LxValuePicker
+                  variant="tags"
+                  :disabled="headerNavDisable"
+                  :items="languages"
+                  v-model="languagePickerModel"
+                />
               </LxRow>
               <LxRow v-if="hasThemePicker" :label="displayTexts.themeLabel">
-                <LxValuePicker variant="tags" :items="themeItems" v-model="themeModel" />
+                <LxValuePicker
+                  variant="tags"
+                  :disabled="headerNavDisable"
+                  :items="themeItems"
+                  v-model="themeModel"
+                />
               </LxRow>
               <LxRow :label="displayTexts.animations">
-                <LxToggle v-model="animationsModel" />
+                <LxToggle v-model="animationsModel" :disabled="headerNavDisable" />
               </LxRow>
               <LxRow :label="displayTexts.transparency">
-                <LxToggle v-model="transparencyModel" />
+                <LxToggle v-model="transparencyModel" :disabled="headerNavDisable" />
               </LxRow>
               <LxRow :label="displayTexts.fonts">
-                <LxToggle v-model="deviceFontsModel" />
+                <LxToggle v-model="deviceFontsModel" :disabled="headerNavDisable" />
               </LxRow>
             </LxForm>
             <div
@@ -739,10 +757,11 @@ provide('insideHeader', insideHeader);
                 :badge="customButtonBadge"
                 :badgeType="customButtonBadgeType"
                 :badgeIcon="customButtonBadgeIcon"
+                :disabled="headerNavDisable"
                 customClass="lx-header-button"
                 @click="emits('customButtonClick')"
               />
-              <LxDropDownMenu ref="customButton" v-else>
+              <LxDropDownMenu ref="customButton" :disabled="headerNavDisable" v-else>
                 <LxButton
                   id="lx-shell-custom-button"
                   kind="tertiary"
@@ -752,6 +771,7 @@ provide('insideHeader', insideHeader);
                   :badge="customButtonBadge"
                   :badgeType="customButtonBadgeType"
                   :badgeIcon="customButtonBadgeIcon"
+                  :disabled="headerNavDisable"
                   customClass="lx-header-button"
                 />
                 <template #panel v-if="$slots.customButtonPanel">
@@ -771,6 +791,7 @@ provide('insideHeader', insideHeader);
                 kind="tertiary"
                 :label="displayTexts.alternativeProfilesButtonLabel"
                 icon="switch"
+                :disabled="headerNavDisable"
                 @click="openAlternativeProfilesModal"
               />
             </div>
@@ -780,6 +801,7 @@ provide('insideHeader', insideHeader);
                 kind="tertiary"
                 :label="displayTexts.contextPersonsButtonLabel"
                 icon="context-person"
+                :disabled="headerNavDisable"
                 @click="openContextPersonModal"
               />
             </div>
