@@ -1353,7 +1353,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   font-size: var(--font-size);
   min-height: auto !important;
   height: auto !important;
-  font-weight: normal !important;
   color: var(--color-label) !important;
   cursor: pointer;
 }
@@ -1363,7 +1362,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   font-size: var(--font-size);
   min-height: auto !important;
   height: auto !important;
-  font-weight: 600 !important;
   color: var(--color-data) !important;
   padding-top: 0 !important;
   cursor: default;
