@@ -740,7 +740,6 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-button-nav-hover);
 }
 
-.lx-layout-default .lx-nav-panel ul li.lx-selected .lx-nested-nav .lx-button,
 .lx-layout-default .lx-nav-panel ul li.lx-selected .lx-button-icon-only {
   border-left-color: transparent;
 }
@@ -751,24 +750,19 @@ a.lx-button.lx-button-ghost svg {
 }
 
 /* Unselected nested nav btn + opened LxDDM toggler btn */
-.lx-layout-default .lx-nav-panel .lx-nested-nav li:not(.lx-selected) .lx-button {
+.lx-layout-default .lx-nav-panel .lx-nested-nav li:not(.lx-selected) .lx-button,
+.lx-layout-default .lx-nav-panel ul li.lx-nested-nav-open .lx-button-icon-only {
   --color-button-nav: var(--color-data);
   --color-button-nav-icon: var(--color-data);
   --color-button-nav-background: var(--color-region-2);
   --color-button-nav-selected: var(--color-data);
   --color-button-nav-icon-selected: var(--color-data);
   --color-button-nav-selected-background: var(--color-region-2);
-}
-
-/* Unselected nested nav btn + opened LxDDM toggler btn */
-.lx-layout-default .lx-nav-panel .lx-nested-nav-open .lx-button-icon-only {
-  --color-button-nav: var(--color-data);
-  --color-button-nav-icon: var(--color-data);
-  --color-button-nav-background: var(--color-region-2);
+  --color-button-nav-selected-left-border: transparent;
 }
 
 /* Closed LxDDM toggler btn, whose child is selected */
-.lx-layout-default .lx-nav-panel ul li .lx-button.lx-child-selected {
+.lx-layout-default .lx-nav-panel .lx-button.lx-child-selected {
   --color-button-nav-background: var(--color-highlight);
   --color-button-nav-icon: var(--color-button-nav-icon-selected);
 }
@@ -777,7 +771,7 @@ a.lx-button.lx-button-ghost svg {
   list-style: none;
   padding: 0;
   --button-nav-gap: 0;
-  --button-nav-padding: 0 calc(1.55rem + var(--button-nav-icon-width));
+  --button-nav-padding: 0 1rem 0 calc(1.55rem + var(--button-nav-icon-width));
 }
 
 .lx-layout-default .lx-nested-nav {
@@ -1390,13 +1384,27 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button-content-wrapper,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button-content-wrapper,
-.lx .lx-layout .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper,
-.lx .lx-layout.lx-dropdown-panel > .lx-button .lx-button-content-wrapper {
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper {
   grid-template-areas: var(--button-dropdown-grid-areas);
   grid-template-columns: var(--button-dropdown-grid-template-columns);
   grid-template-rows: var(--button-dropdown-grid-template-rows);
   align-items: var(--button-dropdown-align);
   gap: var(--button-dropdown-gap);
+}
+
+.lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-icon-only,
+.lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-text-only {
+  --button-dropdown-grid-template-columns: 1fr;
+  --button-dropdown-grid-template-rows: 1fr;
+  --button-dropdown-gap: 0;
+}
+
+.lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-icon-only {
+  --button-dropdown-grid-areas: 'icon';
+}
+
+.lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-text-only {
+  --button-dropdown-grid-areas: 'content';
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button-content,

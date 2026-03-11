@@ -195,7 +195,7 @@ function getNavItemClasses(item, index) {
     : nestedNavOpen.value[index];
 
   return {
-    'lx-selected': !!isSelected,
+    'lx-selected': !!isSelected && !isChildSelected(item),
     'lx-nested-nav-open': !!isNestedNavOpen,
   };
 }
@@ -380,6 +380,7 @@ provide('insideNavBar', insideNavBar);
           <LxDropDownMenu
             :ref="(el) => (dropdownRefs[index] = el)"
             v-else-if="canShowChildren(item) && props.layoutMode === 'public'"
+            placement="bottom-end"
             :actionDefinitions="
               item?.children?.map((child) => ({
                 ...child,

@@ -317,6 +317,8 @@
   --color-button-nav-public-icon-focus: var(--color-data);
   --color-button-nav-public-icon-hover: var(--color-header-hover-foreground);
   --color-button-nav-public-icon-active: var(--color-header-hover-foreground);
+  --color-button-nav-selected: var(--color-data);
+  --color-button-nav-selected-background: var(--color-region);
 }
 
 .lx-layout.lx-layout-public>main {
