@@ -29,7 +29,7 @@
   padding: var(--padding-form);
 }
 
-.lx .lx-form .lx-button-set:not(.lx-dropdown-panel .lx-button-set):not(.lx-modal .lx-button-set),
+.lx .lx-form .lx-button-set:not(.lx-dropdown-panel .lx-button-set):not(.lx-modal > footer.lx-button-set),
 .lx .lx-form .lx-button-set .lx-group,
 .lx .lx-modal .lx-form .lx-pseudo-grid .lx-button-set:not(.lx-dropdown-panel .lx-button-set):not(.lx-modal > footer.lx-button-set) {
   display: flex;
