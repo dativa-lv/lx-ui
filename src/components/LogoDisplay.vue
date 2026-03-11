@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { computed, inject } from 'vue';
 import { getLogo, getAltText } from '@/utils/logoUtils';
 
 const props = defineProps({
@@ -9,32 +9,13 @@ const props = defineProps({
   theme: { type: String, default: 'auto' }, // 'auto', 'light', 'dark'
 });
 
-let observer;
+const systemTheme = inject('theme', { state: { value: null } });
 
-const systemTheme = ref('light');
-
-const updateTheme = () => {
+const resolvedTheme = computed(() => {
   if (props.theme === 'auto') {
-    systemTheme.value = document.body.classList.contains('lx-theme-dark') ? 'dark' : 'light';
-  } else {
-    systemTheme.value = props.theme;
+    return systemTheme.state?.value === 'dark' ? 'dark' : 'light';
   }
-  return systemTheme.value;
-};
-
-onMounted(() => {
-  updateTheme();
-  if (props.theme === 'auto') {
-    observer = new MutationObserver(updateTheme);
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-  }
-});
-
-onUnmounted(() => {
-  observer?.disconnect();
+  return props.theme;
 });
 </script>
 
@@ -42,15 +23,15 @@ onUnmounted(() => {
   <template v-if="size === 'auto'">
     <picture>
       <img
-        :src="getLogo(props.value, props.kind, 's', systemTheme)"
+        :src="getLogo(props.value, props.kind, 's', resolvedTheme)"
         :alt="getAltText(props.value)"
       />
       <source
-        :srcset="getLogo(props.value, props.kind, 'm', systemTheme)"
+        :srcset="getLogo(props.value, props.kind, 'm', resolvedTheme)"
         media="(min-resolution: 2dppx)"
       />
       <source
-        :srcset="getLogo(props.value, props.kind, 'l', systemTheme)"
+        :srcset="getLogo(props.value, props.kind, 'l', resolvedTheme)"
         media="(min-resolution: 3dppx)"
       />
     </picture>
@@ -58,21 +39,21 @@ onUnmounted(() => {
 
   <template v-else-if="size === 's'">
     <img
-      :src="getLogo(props.value, props.kind, props.size, systemTheme)"
+      :src="getLogo(props.value, props.kind, props.size, resolvedTheme)"
       :alt="getAltText(props.value)"
     />
   </template>
 
   <template v-else-if="size === 'm'">
     <img
-      :src="getLogo(props.value, props.kind, props.size, systemTheme)"
+      :src="getLogo(props.value, props.kind, props.size, resolvedTheme)"
       :alt="getAltText(props.value)"
     />
   </template>
 
   <template v-else-if="size === 'l'">
     <img
-      :src="getLogo(props.value, props.kind, props.size, systemTheme)"
+      :src="getLogo(props.value, props.kind, props.size, resolvedTheme)"
       :alt="getAltText(props.value)"
     />
   </template>
