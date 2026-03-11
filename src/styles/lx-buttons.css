@@ -722,7 +722,7 @@ a.lx-button.lx-button-ghost svg {
   gap: var(--button-nav-gap);
 }
 
-.lx-layout-default .lx-nav-panel ul li .lx-button-content {
+.lx-layout-default .lx-nav-panel ul li .lx-button .lx-button-content {
   text-align: var(--button-nav-text-align);
 }
 
