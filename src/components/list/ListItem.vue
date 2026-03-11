@@ -199,11 +199,14 @@ watch(() => props.href, computeSafeTo, { immediate: true });
             :busy="action.busy"
             :destructive="action.destructive"
             :disabled="
-              action.disabled != null
+              loading ||
+              busy ||
+              disabled ||
+              (action.disabled != null
                 ? action.disabled
                 : action.enableByAttribute
                 ? !value[action.enableByAttribute]
-                : loading || busy || disabled
+                : false)
             "
             kind="ghost"
             variant="icon-only"
@@ -357,11 +360,14 @@ watch(() => props.href, computeSafeTo, { immediate: true });
             :busy="action.busy"
             :destructive="action.destructive"
             :disabled="
-              action.disabled != null
+              loading ||
+              busy ||
+              disabled ||
+              (action.disabled != null
                 ? action.disabled
                 : action.enableByAttribute
                 ? !value[action.enableByAttribute]
-                : loading || busy || disabled
+                : false)
             "
             :active="action.active"
             :badge="action.badge"
@@ -452,11 +458,14 @@ watch(() => props.href, computeSafeTo, { immediate: true });
         :busy="action.busy"
         :destructive="action.destructive"
         :disabled="
-          action.disabled != null
+          loading ||
+          busy ||
+          disabled ||
+          (action.disabled != null
             ? action.disabled
             : action.enableByAttribute
             ? !value[action.enableByAttribute]
-            : loading || busy || disabled
+            : false)
         "
         :icon="action.icon"
         :icon-set="action.iconSet"

@@ -443,7 +443,7 @@
 }
 
 .lx-list-item-wrapper .lx-list-item:not(.lx-list-item-disabled) .lx-list-icon,
-.lx-list-item:not(.lx-list-item-disabled) .lx-list-item-actions > .lx-button:not(:hover):not(:active) .lx-button-icon {
+.lx-list-item:not(.lx-list-item-disabled) .lx-list-item-actions > .lx-button:not(:hover):not(:active):not(:disabled) .lx-button-icon {
   fill: var(--color-list-icon);
 }
 
@@ -459,11 +459,11 @@
 .lx .lx-layout .lx-list-item-interactive:hover:not(.lx-list-item-disabled)
   .lx-list-item-actions 
   .lx-dropdown-toggler
-  .lx-button:not(:hover):not(:active)
+  .lx-button:not(:hover):not(:active):not(:disabled)
   svg,
 .lx .lx-layout .lx-list-item-interactive:hover:not(.lx-list-item-disabled)
   .lx-list-item-actions
-  > .lx-button:not(:hover):not(:active)
+  > .lx-button:not(:hover):not(:active):not(:disabled)
   svg {
   fill: var(--color-list-icon-hover);
 }
