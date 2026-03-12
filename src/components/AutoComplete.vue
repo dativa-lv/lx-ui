@@ -366,7 +366,7 @@ function handleMenuAndInputKeydown(e) {
 
   if (e.shiftKey && handleShiftArrowKeys(e, inputElement)) return;
 
-  if (handlePrintableOrDeleteKeys(e)) return;
+  if (inputElement?.id === props.id && handlePrintableOrDeleteKeys(e)) return;
 }
 
 function handleTabKey(e) {
@@ -1351,7 +1351,6 @@ defineExpose({ autoCompleteState });
                       kind="ghost"
                       variant="icon-only"
                       :label="displayTexts.detailsButton"
-                      @keydown.enter.stop.prevent="openDetails"
                       @keydown.space.stop.prevent="openDetails"
                       @keydown.f3.stop.prevent="openDetails"
                       @click.stop.prevent="openDetails"
@@ -1388,7 +1387,7 @@ defineExpose({ autoCompleteState });
               @keydown.down.prevent="focusNextInputElement"
               @keydown.f3.prevent="openDetails"
               @keydown.backspace="initInputFocus"
-              @keydown.prevent="handleMenuAndInputKeydown"
+              @keydown="handleMenuAndInputKeydown"
             >
               <slot name="panel" @click="closeMenu()">
                 <transition name="appear-down">
