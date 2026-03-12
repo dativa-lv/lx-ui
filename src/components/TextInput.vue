@@ -525,7 +525,12 @@ defineExpose({ focus });
 </script>
 <template>
   <div class="lx-field-wrapper">
-    <p v-if="readOnly && props.kind !== 'password'" class="lx-data" :aria-labelledby="labelledBy">
+    <p
+      v-if="readOnly && props.kind !== 'password'"
+      class="lx-data"
+      :class="{ 'lx-uppercase': uppercase }"
+      :aria-labelledby="labelledBy"
+    >
       <a v-if="isReadOnlyEmail()" class="lx-text-input-link" :href="sanitizedEmail">{{ model }}</a>
       <template v-else>
         {{ forcedMaskedValue }}

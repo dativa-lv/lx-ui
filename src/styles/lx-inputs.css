@@ -317,7 +317,8 @@
   font-size: var(--small-font-size);
 }
 
-.lx-text-input.lx-uppercase {
+.lx-text-input.lx-uppercase,
+.lx-data.lx-uppercase {
   text-transform: uppercase;
 }
 
