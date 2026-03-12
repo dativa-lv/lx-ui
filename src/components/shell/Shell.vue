@@ -1257,8 +1257,10 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
                 class="heading-1"
                 v-if="systemNameFormatted"
                 v-clean-html="systemNameFormatted"
+                role="heading"
+                aria-level="1"
               />
-              <div class="heading-1" v-else>{{ systemName }}</div>
+              <div class="heading-1" role="heading" aria-level="1" v-else>{{ systemName }}</div>
               <p class="lx-description">{{ systemSubheader }}</p>
             </div>
             <div class="cover-main-area">
@@ -1394,8 +1396,10 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
                 class="heading-1"
                 v-if="systemNameFormatted"
                 v-clean-html="systemNameFormatted"
+                role="heading"
+                aria-level="1"
               />
-              <div class="heading-1" v-else>{{ systemName }}</div>
+              <div class="heading-1" role="heading" aria-level="1" v-else>{{ systemName }}</div>
               <p class="lx-description">{{ systemSubheader }}</p>
             </div>
             <div class="cover-main-area">
