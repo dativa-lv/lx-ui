@@ -149,7 +149,6 @@ function setActiveInput(type, id, defaultFocus = true) {
   }
   if (endInputRefs.value[id] && type === 'endInput') {
     endInputRefs.value[id].focus();
-    endInputRefs.value[id].select();
   }
 }
 
@@ -1122,28 +1121,20 @@ function blurActiveElement() {
   });
 }
 
-const clickedManualInput = ref(false);
-
 function inputManualClick(id) {
-  if (id === 'inputManual') {
-    setTimeout(() => {
-      clickedManualInput.value = true;
-      if (activeInput.value === 'startInput') {
-        startInputRefs.value[props.id]?.focus();
-      } else {
-        endInputRefs.value[props.id]?.focus();
-      }
-    }, 0);
-  }
+  if (id !== 'inputManual') return;
+
+  const targetType = activeInput.value || 'startInput';
+  const target =
+    targetType === 'startInput' ? startInputRefs.value[props.id] : endInputRefs.value[props.id];
+
+  target?.focus();
+  dropDownMenuRef.value?.closeMenu();
 }
 
 // Touch handling in responsive mode (need to fix issue with second touch for dateTimeRange)
 function handleTouchResponsiveToggle(isOpen, type) {
-  if (modelInput.value && modelEndDateInput.value) {
-    clickedManualInput.value = false;
-  }
-
-  if (!isOpen && !clickedManualInput.value) {
+  if (!isOpen) {
     openMenu(type, 'touch');
     return;
   }
@@ -1181,12 +1172,19 @@ function handleTouchToggle(isOpen, type) {
   }
 }
 
+const previousClickedType = ref(null);
+
 function handleDesktopToggle(isOpen, type) {
+  if (props.pickerType === 'range' && isOpen && type !== previousClickedType.value) {
+    previousClickedType.value = type;
+    return;
+  }
   if (!isOpen) {
     openMenu(type, 'click');
   } else {
     closeMenu();
   }
+  previousClickedType.value = type;
 }
 
 function toggleMenu(type, toggleType = null) {
@@ -1321,6 +1319,16 @@ const getMaxLength = computed(() => {
   }
   return null; // No limit if not a specific mode
 });
+
+function focusInput(type) {
+  if (type === 'startInput') {
+    startInputRefs.value[props.id]?.focus();
+    activeInput.value = 'startInput';
+  } else if (type === 'endInput') {
+    endInputRefs.value[props.id]?.focus();
+    activeInput.value = 'endInput';
+  }
+}
 
 watch(
   () => [props.locale, props.firstDayOfTheWeek],
@@ -1595,6 +1603,7 @@ onMounted(async () => {
           :activeInput="activeInput"
           :setActiveInput="setActiveInput"
           :texts="displayTexts"
+          @focusActiveInput="focusInput"
         />
       </template>
     </LxDropDownMenu>
@@ -1623,6 +1632,7 @@ onMounted(async () => {
       :clearIfNotExact="clearIfNotExact"
       :pickerType="pickerType"
       :texts="displayTexts"
+      @focusActiveInput="focusInput"
     />
     <div v-if="invalid && !legacyMode" class="lx-invalidation-message">
       {{ invalidationMessage }}

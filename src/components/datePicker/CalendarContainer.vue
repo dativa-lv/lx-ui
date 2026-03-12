@@ -91,7 +91,7 @@ const responsiveView = computed(() => windowSize.width.value <= 500);
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'focusActiveInput']);
 const containerRef = ref();
 
 const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
@@ -367,7 +367,13 @@ function handleDoNotIndicateStart() {
     hoveredDate.value = null;
   }
 
-  if (nullEnd) {
+  if (props.activeInput === 'startInput' && !hasEnd && !setEnd) {
+    emits('focusActiveInput', 'endInput');
+    emits('update:modelValue', {
+      start: null,
+      end: selectedEndDate.value,
+    });
+  } else if (nullEnd) {
     emits('update:modelValue', {
       start: null,
       end: null,
@@ -399,7 +405,13 @@ function handleDoNotIndicateEnd() {
     selectedEndYear.value = null;
   }
 
-  if (nullStart) {
+  if (props.activeInput === 'endInput' && !hasStart && !setStart) {
+    emits('focusActiveInput', 'startInput');
+    emits('update:modelValue', {
+      start: selectedStartDate.value,
+      end: null,
+    });
+  } else if (nullStart) {
     emits('update:modelValue', {
       start: null,
       end: null,
@@ -893,7 +905,7 @@ function buildAndEmitFinalDateTime(date, baseDate, fullTime = false) {
   setActiveInput('startInput', id);
 }
 
-function handleDateSelection(selectedValue) {
+function handleDateSelection(selectedValue, key) {
   // Update selected date parts
   selectedDay.value = selectedValue.getDate();
   selectedMonth.value = selectedValue.getMonth();
@@ -912,6 +924,9 @@ function handleDateSelection(selectedValue) {
     emits('update:modelValue', updatedDate);
     handleLayoutDisplay();
     setActiveInput('startInput', id);
+    if (key === 'enter') {
+      props.closeMenu();
+    }
     return;
   }
 
@@ -940,7 +955,7 @@ function handleDateSelection(selectedValue) {
   }
 }
 
-function handleMonthSelection(selectedValue, newDate) {
+function handleMonthSelection(selectedValue, newDate, key) {
   newDate.setDate(1);
   newDate.setMonth(selectedValue.orderIndex);
   tempSelectedYear.value = selectedValue.year;
@@ -954,6 +969,9 @@ function handleMonthSelection(selectedValue, newDate) {
     emits('update:modelValue', newDate);
     handleLayoutDisplay();
     props.setActiveInput('startInput', props.id);
+    if (key === 'enter') {
+      props.closeMenu();
+    }
     return;
   }
 
@@ -977,7 +995,7 @@ function handleMonthSelection(selectedValue, newDate) {
   props.setActiveInput(props.activeInput, props.id);
 }
 
-function handleYearSelection(selectedValue, newDate) {
+function handleYearSelection(selectedValue, newDate, key) {
   const numericYear = Number(selectedValue);
   newDate.setFullYear(numericYear);
   currentDate.value = newDate;
@@ -1001,6 +1019,9 @@ function handleYearSelection(selectedValue, newDate) {
     emits('update:modelValue', newDate);
     handleLayoutDisplay();
     props.setActiveInput('startInput', props.id);
+    if (key === 'enter') {
+      props.closeMenu();
+    }
     return;
   }
 
@@ -1033,16 +1054,19 @@ function handleYearSelection(selectedValue, newDate) {
   props.setActiveInput(props.activeInput, props.id);
 }
 
-function handleQuarterSelection(selectedValue) {
+function handleQuarterSelection(selectedValue, key) {
   selectedQuarter.value = selectedValue?.quarter;
   selectedYear.value = selectedValue?.year;
 
   const updatedDate = dateFromYearAndQuarter(selectedYear.value, selectedQuarter.value);
   emits('update:modelValue', updatedDate);
+  if (key === 'enter') {
+    props.closeMenu();
+  }
   props.setActiveInput('startInput', props.id);
 }
 
-function handleSingleSelection(selectedValue, selectionType, isNotSelectable = false) {
+function handleSingleSelection(selectedValue, selectionType, isNotSelectable = false, key = null) {
   if (props.disabled || isNotSelectable) return;
   selectedManually.value = true;
 
@@ -1050,16 +1074,16 @@ function handleSingleSelection(selectedValue, selectionType, isNotSelectable = f
 
   switch (selectionType) {
     case 'date':
-      handleDateSelection(selectedValue);
+      handleDateSelection(selectedValue, key);
       break;
     case 'month':
-      handleMonthSelection(selectedValue, newDate);
+      handleMonthSelection(selectedValue, newDate, key);
       break;
     case 'year':
-      handleYearSelection(selectedValue, newDate);
+      handleYearSelection(selectedValue, newDate, key);
       break;
     case 'quarter':
-      handleQuarterSelection(selectedValue);
+      handleQuarterSelection(selectedValue, key);
       break;
     default:
       break;
@@ -1141,9 +1165,9 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
   }
 }
 
-function handleSelections(selectedValue, selectionType, isNotSelectable = false) {
+function handleSelections(selectedValue, selectionType, isNotSelectable = false, key = null) {
   if (props.pickerType === 'single') {
-    return handleSingleSelection(selectedValue, selectionType, isNotSelectable);
+    return handleSingleSelection(selectedValue, selectionType, isNotSelectable, key);
   }
   return handleRangeSelection(selectedValue, selectionType, isNotSelectable);
 }
@@ -2426,12 +2450,18 @@ const timeSelectButtonLabel = computed(() => {
   return `${currentHours}:${currentMinutes}`;
 });
 
-const doNotIndicateStartDisableState = computed(
-  () =>
-    props.disabled ||
+const doNotIndicateStartDisableState = computed(() => {
+  if (props.disabled) return true;
+
+  if (props.activeInput === 'startInput' && !selectedStartDate.value && !selectedEndDate.value) {
+    return false;
+  }
+
+  return (
     (!selectedStartDate.value && !selectedManually.value) ||
     (!selectedStartDate.value && !selectedEndDate.value)
-);
+  );
+});
 
 const clearButtonDisableState = computed(() => {
   if (props.disabled) return true;
@@ -2459,12 +2489,18 @@ const clearButtonDisableState = computed(() => {
   return false;
 });
 
-const doNotIndicateEndDisableState = computed(
-  () =>
-    props.disabled ||
+const doNotIndicateEndDisableState = computed(() => {
+  if (props.disabled) return true;
+
+  if (props.activeInput === 'endInput' && !selectedEndDate.value && !selectedStartDate.value) {
+    return false;
+  }
+
+  return (
     (!selectedEndDate.value && !selectedManually.value) ||
-    (!selectedEndDate.value && !selectedStartDate.value)
-);
+    (!selectedStartDate.value && !selectedEndDate.value)
+  );
+});
 
 const isMinMaxInFuture = computed(() =>
   props.minDateRef && props.maxDateRef
@@ -3603,7 +3639,8 @@ onUnmounted(() => {
                                   handleSelections(
                                     date,
                                     'date',
-                                    !canSelectDate(date, minDateRef, maxDateRef, 'date')
+                                    !canSelectDate(date, minDateRef, maxDateRef, 'date'),
+                                    'enter'
                                   )
                                 "
                                 @focusin="hoverDate(date)"
@@ -3863,7 +3900,8 @@ onUnmounted(() => {
                                   minDateRef,
                                   maxDateRef,
                                   'month-year'
-                                )
+                                ),
+                              'enter'
                             )
                           "
                           @focusin="hoverDate(new Date(month.year, month.orderIndex, 1, 0, 0, 0))"
@@ -3982,7 +4020,8 @@ onUnmounted(() => {
                               minDateRef,
                               maxDateRef,
                               'year'
-                            )
+                            ),
+                            'enter'
                           )
                         "
                         @focusin="hoverDate(new Date(year, 1, 1, 0, 0, 0))"
@@ -4106,7 +4145,8 @@ onUnmounted(() => {
                               },
                               minDateRef,
                               maxDateRef
-                            )
+                            ),
+                            'enter'
                           )
                         "
                         @focusin="hoverDate(dateFromYearAndQuarter(quarter.year, quarterItem))"
