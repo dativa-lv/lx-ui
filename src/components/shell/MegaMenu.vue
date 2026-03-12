@@ -65,6 +65,10 @@ const primaryItems = computedAsync(() => {
   return Promise.all(primary.map(async (o) => ({ ...o, href: await computeSafeTo(o.href) })));
 });
 
+const hasPrimaryMenuContent = computed(
+  () => props.showPrimaryMegaMenuItems && (primaryItems.value.length > 0 || props.hasShowAll)
+);
+
 function triggerShowAllClick() {
   emits('megaMenuShowAllClick');
 }
@@ -166,7 +170,7 @@ const safeShowAllHref = computedAsync(() => computeSafeTo(props.showAllHref), nu
 
     <template v-slot:panel>
       <div class="lx-mega-menu-container" :id="id">
-        <ul v-if="showPrimaryMegaMenuItems" class="primary-menu" role="group">
+        <ul v-if="hasPrimaryMenuContent" class="primary-menu" role="group">
           <li
             v-for="item in primaryItems"
             :key="item.id"

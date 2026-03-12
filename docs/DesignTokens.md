@@ -751,7 +751,7 @@ Customized values for contrast mode:
 | `--color-button-dropdown-disabled-background`          | transparent                                            | transparent                                            |
 | `--color-button-dropdown-disabled-border`              | transparent                                            | transparent                                            |
 | `--color-button-dropdown-focus`                        | `--color-data`                                         | `--color-data`                                         |
-| `--color-button-dropdown-focus-background`             | `--color-region-hover`                                 | `--color-region-hover`                                 |
+| `--color-button-dropdown-focus-background`             | `--color-button-dropdown-background`                   | `--color-button-dropdown-background`                   |
 | `--color-button-dropdown-focus-border`                 | `--color-button-dropdown-focus-background`             | `--color-button-dropdown-focus-background`             |
 | `--color-button-dropdown-hover`                        | `--color-data`                                         | `--color-data`                                         |
 | `--color-button-dropdown-hover-background`             | `--color-region-hover`                                 | `--color-region-hover`                                 |

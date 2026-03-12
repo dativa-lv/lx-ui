@@ -195,7 +195,7 @@
   --color-button-dropdown-active: var(--color-interactive-active-foreground);
   --color-button-dropdown-active-background: var(--color-interactive-active-background);
   --color-button-dropdown-active-border: var(--color-button-dropdown-active-background);
-  --color-button-dropdown-focus-background: var(--color-region-hover);
+  --color-button-dropdown-focus-background: var(--color-button-dropdown-background);
   --color-button-dropdown-focus-border: var(--color-button-dropdown-focus-background);
   --color-button-dropdown-disabled: var(--color-disabled-foreground);
   --color-button-dropdown-disabled-background: transparent;
