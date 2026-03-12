@@ -777,3 +777,27 @@ test('LxTextInput phone kind - changed default value', () => {
   const flag = wrapper.find('.lx-input-flag-wrapper').find('.lx-flag');
   expect(flag.attributes('aria-label')).toContain('Itālija');
 });
+
+test('LxTextInput phone kind - longest possible match', async () => {
+  wrapper = mount(LxTextInput, {
+    props: {
+      kind: 'phone',
+      modelValue: '+1',
+    },
+  });
+
+  let flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
+  expect(flag.length).toBe(2);
+  expect(flag[0].attributes('aria-label')).toContain('Amerikas Savienotās Valstis');
+  expect(flag[1].attributes('aria-label')).toContain('Kanāda');
+  await wrapper.setProps({ modelValue: '+1-2' });
+  flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
+  expect(flag.length).toBe(2);
+  await wrapper.setProps({ modelValue: '+1-26' });
+  flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
+  expect(flag.length).toBe(2);
+  await wrapper.setProps({ modelValue: '+1-268' });
+  flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
+  expect(flag.length).toBe(1);
+  expect(flag[0].attributes('aria-label')).toContain('Antigva un Barbuda');
+});

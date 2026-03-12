@@ -327,12 +327,21 @@ function isReadOnlyEmail() {
 
 const matchedFlags = computed(() => {
   const result = [];
-  Object.entries(flags)?.forEach(([key, value]) => {
+  let longestKey = null;
+  // Find only the longest matching key to avoid showing multiple flags for shared prefixes (e.g., +1)
+  Object.keys(flags)?.forEach((key) => {
     if (valueRaw.value?.toString()?.startsWith(key)) {
-      if (!Array.isArray(value)) result.push(value);
-      else value.forEach((val) => result.push(val));
+      if (longestKey === null || key.length > longestKey.length) {
+        longestKey = key;
+      }
     }
   });
+  if (longestKey) {
+    const value = flags[longestKey];
+    if (!Array.isArray(value)) result.push(value);
+    else value.forEach((val) => result.push(val));
+  }
+
   return result;
 });
 
