@@ -5,8 +5,6 @@ import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
-import LxButton from '@/components/Button.vue';
-import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxToolbar from '@/components/Toolbar.vue';
@@ -241,7 +239,7 @@ function selectMultiple(id) {
   model.value = res;
 }
 
-const query = ref();
+const query = ref('');
 
 const hiddenValues = ref([]);
 
@@ -256,25 +254,23 @@ function attributesSearch(item) {
   return found;
 }
 
-watch(
-  () => query.value,
-  () => {
-    hiddenValues.value = [];
-    itemsDisplay.value?.forEach((val) => {
-      if (props.searchAttributes) {
-        if (!attributesSearch(val) && query.value.length !== 0) {
-          hiddenValues.value.push(val);
-        }
-      } else if (
-        !textSearch(query.value, val[props.nameAttribute]) &&
-        !textSearch(query.value, val[props.descriptionAttribute]) &&
-        query.value.length !== 0
-      ) {
+function search(string) {
+  query.value = string;
+  hiddenValues.value = [];
+  itemsDisplay.value?.forEach((val) => {
+    if (props.searchAttributes) {
+      if (!attributesSearch(val) && string.length !== 0) {
         hiddenValues.value.push(val);
       }
-    });
-  }
-);
+    } else if (
+      !textSearch(string, val[props.nameAttribute]) &&
+      !textSearch(string, val[props.descriptionAttribute]) &&
+      string.length !== 0
+    ) {
+      hiddenValues.value.push(val);
+    }
+  });
+}
 
 watch(
   () => props.hasSearch,
@@ -317,6 +313,18 @@ const areAllSelected = computed(() => {
     }
   });
   return res;
+});
+
+const selectionState = computed(() => {
+  if (!areSomeSelected.value) {
+    return 'checkbox';
+  }
+
+  if (areAllSelected.value) {
+    return 'checkbox-filled';
+  }
+
+  return 'checkbox-indeterminate';
 });
 
 function selectAll() {
@@ -406,45 +414,26 @@ function focusNext() {
 </script>
 <template>
   <div class="lx-value-picker-horizontal-container" :id="id">
-    <LxToolbar v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')">
-      <template #leftArea>
-        <LxButton
-          v-if="hasSelectAll && selectionKind === 'multiple'"
-          kind="ghost"
-          :icon="
-            areSomeSelected
-              ? areAllSelected
-                ? 'checkbox-filled'
-                : 'checkbox-indeterminate'
-              : 'checkbox'
-          "
-          :disabled="disabled"
-          :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-          :label="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-          :variant="hasSearch ? 'icon-only' : 'default'"
-          @click="selectAll"
-        />
-        <LxTextInput
-          v-if="hasSearch"
-          :disabled="disabled"
-          ref="queryInput"
-          v-model="query"
-          kind="search"
-          role="search"
-          :placeholder="displayTexts.searchPlaceholder"
-        />
-        <LxButton
-          v-if="query && hasSearch"
-          icon="clear"
-          kind="ghost"
-          variant="icon-only"
-          :disabled="disabled"
-          :label="displayTexts.clearQuery"
-          @click="disabled ? undefined : (query = '')"
-        />
-      </template>
-    </LxToolbar>
-
+    <LxToolbar
+      v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')"
+      :disabled="disabled"
+      :hasSearch="hasSearch"
+      :searchString="query"
+      searchMode="defaultForce"
+      :hasSelectAll="hasSelectAll && selectionKind === 'multiple'"
+      :selectionState="selectionState"
+      selectAllSide="left"
+      :selectAllVariant="hasSearch ? 'icon-only' : 'default'"
+      :texts="{
+        placeholder: displayTexts.searchPlaceholder,
+        clear: displayTexts.clearQuery,
+        selectAllRows: displayTexts.selectAll,
+        clearSelected: displayTexts.clearChosen,
+      }"
+      @search="search"
+      @selectAll="selectAll"
+      @deselectAll="selectAll"
+    />
     <div
       class="lx-value-picker-horizontal-wrapper"
       :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && selectionKind === 'multiple' }]"

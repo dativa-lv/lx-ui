@@ -4,8 +4,6 @@ import { textSearch } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxIcon from '@/components/Icon.vue';
-import LxButton from '@/components/Button.vue';
-import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 
@@ -223,7 +221,7 @@ function selectMultiple(id) {
   model.value = res;
 }
 
-const query = ref();
+const query = ref('');
 
 const hiddenValues = ref([]);
 
@@ -238,25 +236,23 @@ function attributesSearch(item) {
   return found;
 }
 
-watch(
-  () => query.value,
-  () => {
-    hiddenValues.value = [];
-    itemsDisplay.value?.forEach((val) => {
-      if (props.searchAttributes) {
-        if (!attributesSearch(val) && query.value.length !== 0) {
-          hiddenValues.value.push(val);
-        }
-      } else if (
-          !textSearch(query.value, val[props.nameAttribute]) &&
-          !textSearch(query.value, val[props.descriptionAttribute]) &&
-          query.value.length !== 0
-        ) {
-          hiddenValues.value.push(val);
-        }
-    });
-  }
-);
+function search(string) {
+  query.value = string;
+  hiddenValues.value = [];
+  itemsDisplay.value?.forEach((val) => {
+    if (props.searchAttributes) {
+      if (!attributesSearch(val) && string.length !== 0) {
+        hiddenValues.value.push(val);
+      }
+    } else if (
+      !textSearch(string, val[props.nameAttribute]) &&
+      !textSearch(string, val[props.descriptionAttribute]) &&
+      string.length !== 0
+    ) {
+      hiddenValues.value.push(val);
+    }
+  });
+}
 
 watch(
   () => props.hasSearch,
@@ -304,6 +300,18 @@ const areAllSelected = computed(() => {
     }
   });
   return res;
+});
+
+const selectionState = computed(() => {
+  if (!areSomeSelected.value) {
+    return 'checkbox';
+  }
+
+  if (areAllSelected.value) {
+    return 'checkbox-filled';
+  }
+
+  return 'checkbox-indeterminate';
 });
 
 function selectAll() {
@@ -362,46 +370,26 @@ function updateDescriptionTabIndexes(items) {
     </template>
 
     <template v-else>
-      <LxToolbar v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')">
-        <template #leftArea>
-          <LxButton
-            v-if="hasSelectAll && selectionKind === 'multiple'"
-            kind="ghost"
-            :icon="
-              areSomeSelected
-                ? areAllSelected
-                  ? 'checkbox-filled'
-                  : 'checkbox-indeterminate'
-                : 'checkbox'
-            "
-            :disabled="disabled"
-            :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-            :label="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-            :variant="hasSearch ? 'icon-only' : 'default'"
-            @click="selectAll"
-          />
-          <LxTextInput
-            v-if="hasSearch"
-            :disabled="disabled"
-            ref="queryInput"
-            v-model="query"
-            kind="search"
-            :placeholder="displayTexts.searchPlaceholder"
-            role="search"
-            :aria-labelledby="labelId"
-          />
-          <LxButton
-            v-if="query && hasSearch"
-            icon="clear"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.clearQuery"
-            :disabled="disabled"
-            @click="query = ''"
-          />
-        </template>
-      </LxToolbar>
-      
+      <LxToolbar
+        v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')"
+        :disabled="disabled"
+        :hasSearch="hasSearch"
+        :searchString="query"
+        searchMode="defaultForce"
+        :hasSelectAll="hasSelectAll && selectionKind === 'multiple'"
+        :selectionState="selectionState"
+        selectAllSide="left"
+        :selectAllVariant="hasSearch ? 'icon-only' : 'default'"
+        :texts="{
+          placeholder: displayTexts.searchPlaceholder,
+          clear: displayTexts.clearQuery,
+          selectAllRows: displayTexts.selectAll,
+          clearSelected: displayTexts.clearChosen,
+        }"
+        @search="search"
+        @selectAll="selectAll"
+        @deselectAll="selectAll"
+      />
       <div
         class="lx-value-picker-tile-wrapper"
         :class="[{ 'lx-invalid': invalid }, { 'lx-tile-custom': variant === 'tiles-custom' }]"

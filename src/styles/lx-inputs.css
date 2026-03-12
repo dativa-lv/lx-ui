@@ -1452,7 +1452,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area,
-.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group,
+.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group:not(:has(.lx-button[id*="select-all"])),
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group > .lx-field-wrapper {
   width: 100%;
 }
@@ -3186,18 +3186,35 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-component-toolbar {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   border-top: 1px solid var(--color-chrome);
   border-bottom: 1px solid var(--color-chrome);
 }
 
-.lx-list-wrapper .lx-component-toolbar.lx-disabled .left-area {
-  background-color: var(--color-button-toolbar-ghost-disabled-background);
-  color: var(--color-button-toolbar-ghost-disabled);
-  border-color: var(--color-button-toolbar-ghost-disabled-border);
+.lx-component-toolbar .first-row {
+  display: flex;
+  width: 100%;
 }
 
-.lx-component-toolbar.lx-disabled .left-area {
+.lx-component-toolbar .left-area .lx-button[id*="select-all"] {
+  --button-toolbar-ghost-grid-areas: "icon content";
+  --button-toolbar-ghost-grid-template-columns: auto 1fr;
+}
+
+.lx-component-toolbar.lx-toolbar-default-area-left .first-row > .right-area,
+.lx-component-toolbar.lx-toolbar-default-area-right .first-row > .default-area {
+  margin-left: auto;
+}
+
+.lx .lx-region .lx-component-toolbar .lx-button.lx-button-ghost:hover:not(.lx-disabled),
+.lx .lx-region .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded:hover:not(.lx-disabled) {
+  background-color: var(--color-button-toolbar-ghost-hover-background);
+  border-color: var(--color-button-toolbar-ghost-hover-border);
+  color: var(--color-button-toolbar-ghost-hover);
+}
+
+.lx-data-grid-wrapper .lx-component-toolbar.lx-disabled .first-row {
   background-color: var(--color-button-toolbar-selection-disabled-background);
   color: var(--color-button-toolbar-selection-disabled);
   border-color: var(--color-button-toolbar-selection-disabled-border);
@@ -3286,6 +3303,11 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-component-toolbar.lx-selection-toolbar .right-area {
   flex-grow: 0;
+}
+
+.lx-component-toolbar .second-row .toolbar-search {
+  display: flex;
+  width: 100%;
 }
 
 /*** LxFileUploader styles ***/

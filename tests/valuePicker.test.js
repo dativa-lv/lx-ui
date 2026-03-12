@@ -1154,10 +1154,10 @@ test('LxValuePicker default hasSelectAll', async () => {
   });
 
   expect(wrapper.find('.select-all').exists()).toBe(true);
-  const selectAll = wrapper.find('.select-all').find('.lx-button');
-  await selectAll.trigger('click');
+  const selectAllButton = wrapper.find('.lx-button[id*="select-all"]');
+  await selectAllButton.trigger('click');
   expect(wrapper.props('modelValue')).toStrictEqual(['one', 'two', 'three']);
-  await selectAll.trigger('click');
+  await selectAllButton.trigger('click');
   expect(wrapper.props('modelValue')).toStrictEqual([]);
 });
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick, inject, onBeforeUnmount } from 'vue';
-import { useDebounceFn } from '@vueuse/core';
 
 import useLx from '@/hooks/useLx';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
@@ -9,7 +8,6 @@ import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils
 import { loadLibrary } from '@/utils/libLoader';
 
 import LxButton from '@/components/Button.vue';
-import LxTextInput from '@/components/TextInput.vue';
 import LxExpander from '@/components/Expander.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -53,7 +51,7 @@ const props = defineProps({
   emptyStateIcon: { type: String, default: '' },
   listType: { type: String, default: '3' },
   searchString: { type: String, default: '' },
-  searchSide: { type: String, default: 'client' }, // client or server
+  searchSide: { type: String, default: 'client' }, // client, server
   showLoadMore: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
@@ -63,7 +61,7 @@ const props = defineProps({
   selectionActionDefinitions: { type: Array, default: () => [] },
   includeUnspecifiedGroups: { type: Boolean, default: false },
   itemsStates: { type: Object, default: () => {} },
-  mode: { type: String, default: 'client' }, // client, server,
+  mode: { type: String, default: 'client' }, // client, server
   searchMode: { type: String, default: 'default' }, // default, compact
   labelId: { type: String, default: null },
   hasSkipLink: { type: Boolean, default: false },
@@ -133,18 +131,12 @@ const BASE_WIDTH = 300; // minimum space for layout
 const WIDTH_PER_ACTION = 120; // average button width
 
 const responsiveGroupDefinitions = ref(props.groupDefinitions);
-const query = ref(props.searchString);
-const queryRaw = ref(props.searchString);
 const itemsArray = ref([]);
 const ungroupedItemsArray = ref();
 const selectedItemsRaw = ref({});
 const draggableIsDisabledByQuery = ref(false);
 const dragging = ref(false);
 const statesNotDefined = ref({});
-const queryInputCompact = ref();
-const queryInputDefault = ref();
-const searchField = ref(false);
-
 const showInvisibleBlock = ref(false);
 const draggable = ref(null);
 const loadingLib = ref(false);
@@ -154,14 +146,8 @@ const isNarrow = ref(false);
 let invisibleBlockTimeout;
 let observer;
 
-const modelSearchString = computed({
-  get() {
-    return props.searchString;
-  },
-  set(value) {
-    emits('update:searchString', value);
-  },
-});
+const searchStringClient = ref(props.searchSide === 'client' ? props.searchString : '');
+const searchStringServer = ref(props.searchSide === 'server' ? props.searchString : '');
 
 // Convert item id's to strings
 const itemsWithStringIds = computed(() =>
@@ -183,21 +169,6 @@ watch(
   }
 );
 
-const debouncedSearchReq = useDebounceFn(async () => {
-  if (props.searchSide === 'client') query.value = foldToAscii(queryRaw.value);
-  nextTick(() => {
-    modelSearchString.value = queryRaw.value;
-  });
-}, 200);
-
-function serverSideSearch() {
-  if (props.searchSide === 'server') emits('search', foldToAscii(queryRaw.value));
-}
-
-watch(modelSearchString, (newValue, oldValue) => {
-  if (newValue !== oldValue) queryRaw.value = modelSearchString.value;
-});
-
 function validate() {
   let res = false;
   const mapUnique = new Map();
@@ -212,9 +183,9 @@ function validate() {
 }
 
 function isFiltered(value) {
-  if (query.value && !value) return false;
-  if (query.value && value) {
-    return foldToAscii(value).toLowerCase().includes(query.value.toLowerCase());
+  if (searchStringClient.value && !value) return false;
+  if (searchStringClient.value && value) {
+    return foldToAscii(value).toLowerCase().includes(searchStringClient.value.toLowerCase());
   }
   return true;
 }
@@ -288,7 +259,7 @@ function processTreeItems(items, addGroup = true) {
 
 const treeItemsWithGroups = computed(() => processTreeItems(itemsWithStringIds.value, true));
 const treeItems = computed(() =>
-  processTreeItems(itemsWithStringIds.value, queryRaw.value.length > 0)
+  processTreeItems(itemsWithStringIds.value, searchStringClient.value.length > 0)
 );
 
 const filteredGroupedItems = computed(() => {
@@ -316,17 +287,11 @@ function loadMore() {
   emits('loadMore');
 }
 
-function clear() {
-  query.value = '';
-  queryRaw.value = '';
-  if (props.searchSide === 'server') serverSideSearch();
-}
-
 function fillItemsArray() {
   let listItems = itemsWithStringIds.value;
   if (!props.groupDefinitions) return listItems;
 
-  if (props.kind === 'treelist' && queryRaw.value.length > 0) {
+  if (props.kind === 'treelist' && searchStringClient.value.length > 0) {
     listItems = treeItems.value;
   }
 
@@ -383,7 +348,7 @@ function triggerItemsArray() {
 }
 
 function searchInItemsArray() {
-  if (query.value !== '') {
+  if (searchStringClient.value !== '') {
     // @ts-ignore
     itemsArray.value = fillItemsArray();
 
@@ -406,32 +371,43 @@ function searchInItemsArray() {
   itemsArray.value = fillItemsArray();
 }
 
-watch(
-  queryRaw,
-  async () => {
-    await debouncedSearchReq();
-    searchInItemsArray();
-    ungroupedItemsArray.value = filteredItems.value;
-    if (queryRaw.value === '') {
-      draggableIsDisabledByQuery.value = false;
-    } else {
-      draggableIsDisabledByQuery.value = true;
-    }
+function clientSideSearch() {
+  searchInItemsArray();
+  ungroupedItemsArray.value = filteredItems.value;
+  if (searchStringClient.value === '') {
+    draggableIsDisabledByQuery.value = false;
+  } else {
+    draggableIsDisabledByQuery.value = true;
+  }
 
-    clearTimeout(invisibleBlockTimeout);
-    showInvisibleBlock.value = false;
-    invisibleBlockTimeout = setTimeout(() => {
-      showInvisibleBlock.value = true;
-    }, 1000);
-  },
-  { immediate: true }
-);
+  clearTimeout(invisibleBlockTimeout);
+  showInvisibleBlock.value = false;
+  invisibleBlockTimeout = setTimeout(() => {
+    showInvisibleBlock.value = true;
+  }, 1000);
+
+  emits('update:searchString', searchStringClient.value);
+}
+
+function serverSideSearch() {
+  emits('search', searchStringServer.value);
+}
+
+function search(string) {
+  if (props.searchSide === 'client') {
+    searchStringClient.value = string;
+    clientSideSearch();
+  } else if (props.searchSide === 'server') {
+    searchStringServer.value = string;
+    serverSideSearch();
+  }
+}
 
 watch(
   [filteredItems, filteredTreeItems],
   () => {
     if (
-      queryRaw.value &&
+      searchStringClient.value &&
       ((props.kind !== 'treelist' && filteredItems.value.length === 0) ||
         (props.kind === 'treelist' && filteredTreeItems.value.length === 0))
     ) {
@@ -722,18 +698,36 @@ const hasSelectableItemsInGroup = computed(() => {
   return selectableItemsMap;
 });
 
-const selectIcon = computed(() => {
+const hasSelectAll = computed(() => {
   const items = props.kind === 'treelist' ? selectableTreeItems?.value : selectableItems?.value;
-  if (selectedItems.value.length === items.length && props.selectionKind === 'multiple') {
-    return 'checkbox-filled';
-  }
-  if (props.selectionKind === 'multiple') {
-    return 'checkbox-indeterminate';
-  }
-  return 'radiobutton-filled';
+
+  return (
+    props.hasSelecting &&
+    items?.length > 0 &&
+    props.kind !== 'draggable' &&
+    (props.selectionKind !== 'single' || selectedItems.value.length > 0)
+  );
 });
 
-function selectRows(arr = null, shouldFocus = true) {
+const selectionState = computed(() => {
+  const items = props.kind === 'treelist' ? selectableTreeItems?.value : selectableItems?.value;
+
+  if (props.selectionKind === 'single') {
+    return 'radiobutton-filled';
+  }
+
+  if (selectedItems.value.length === 0) {
+    return 'checkbox';
+  }
+
+  if (selectedItems.value.length === items?.length) {
+    return 'checkbox-filled';
+  }
+
+  return 'checkbox-indeterminate';
+});
+
+function selectRows(arr = null) {
   function filterSelectable(items) {
     return items.filter(isSelectable);
   }
@@ -753,28 +747,13 @@ function selectRows(arr = null, shouldFocus = true) {
       filterSelectable(arr)?.map((x) => x?.[props.idAttribute]?.toString())
     );
   }
-  if (shouldFocus) {
-    nextTick(() => {
-      document.getElementById(`${props.id}-cancel-select-all`)?.focus();
-    });
-  }
+}
+
+function cancelSelection() {
+  selectedItemsRaw.value = {};
 }
 
 const isItemSelected = (itemId) => !!selectedItemsRaw.value[itemId];
-
-function cancelSelection(shouldFocus = true) {
-  selectedItemsRaw.value = {};
-
-  if (shouldFocus) {
-    nextTick(() => {
-      if (selectedItems.value.length === 0) {
-        document.getElementById(`${props.id}-toolbar-action-select-all`)?.focus();
-      } else {
-        document.getElementById(`${props.id}-select-all`)?.focus();
-      }
-    });
-  }
-}
 
 const selectedLabel = computed(() => {
   const selectableCount = itemsWithStringIds.value?.length?.toString();
@@ -935,21 +914,7 @@ const autoSearchMode = computed(() => {
   return 'compact';
 });
 
-function toggleSearch() {
-  query.value = '';
-  queryRaw.value = '';
-
-  searchField.value = !searchField.value;
-  nextTick(() => {
-    if (searchField.value && autoSearchMode.value === 'default') {
-      queryInputDefault.value.focus();
-    } else if (searchField.value && autoSearchMode.value === 'compact') {
-      queryInputCompact.value.focus();
-    }
-  });
-}
-
-defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
+defineExpose({ validate, cancelSelection, selectRows });
 
 const draggableButtons = ref([
   {
@@ -1083,13 +1048,7 @@ const insideForm = inject('insideForm', ref(false));
 const defaultToolbarArea = computed(() => (insideForm.value ? 'left' : 'right'));
 
 function handleToolbarActionClick(id) {
-  if (id === 'search') {
-    toggleSearch();
-  } else if (id === 'select-all') {
-    selectRows();
-  } else {
-    emits('toolbarActionClick', id);
-  }
+  emits('toolbarActionClick', id);
 }
 
 const toolbarActions = computed(() => {
@@ -1146,58 +1105,30 @@ onBeforeUnmount(() => {
 
       <div :class="[{ 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 }]">
         <LxToolbar
-          :id="`${props.id}-toolbar`"
+          :id="`${id}-toolbar`"
           :actionDefinitions="toolbarActions"
           :disabled="busy"
           :loading="loading"
           :busy="busy"
           :hasSearch="hasSearch"
-          :searchField="searchField"
+          :searchString="searchString"
+          :searchSide="searchSide"
           :searchMode="autoSearchMode"
-          :hasSelecting="hasSelecting"
-          :selectionKind="selectionKind"
+          :useSearchDebounce="true"
+          :hasSelectAll="hasSelectAll"
+          :selectionState="selectionState"
           :defaultArea="defaultToolbarArea"
           :texts="displayTexts"
           @actionClick="handleToolbarActionClick"
+          @search="search"
+          @selectAll="selectRows"
+          @deselectAll="cancelSelection"
         >
           <template #leftArea>
             <slot
               v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
               name="leftToolbar"
             />
-            <template v-if="hasSearch && !hasSelecting && autoSearchMode === 'default'">
-              <LxTextInput
-                v-if="hasSearch"
-                ref="queryInputDefault"
-                v-model="queryRaw"
-                :kind="searchSide === 'server' ? 'default' : 'search'"
-                :disabled="loading || busy"
-                :placeholder="displayTexts.placeholder"
-                role="search"
-                @keydown.enter="serverSideSearch()"
-              />
-
-              <LxButton
-                v-if="searchSide === 'server' && hasSearch"
-                icon="search"
-                kind="ghost"
-                :busy="busy"
-                :disabled="loading"
-                variant="icon-only"
-                :label="displayTexts.search"
-                @click="serverSideSearch()"
-              />
-
-              <LxButton
-                v-if="query || queryRaw"
-                icon="clear"
-                kind="ghost"
-                variant="icon-only"
-                :label="displayTexts.clear"
-                :disabled="loading || busy"
-                @click="clear()"
-              />
-            </template>
 
             <div
               v-if="hasSelecting && insideForm && selectedItems?.length > 0"
@@ -1260,40 +1191,6 @@ onBeforeUnmount(() => {
               v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
               name="toolbar"
             />
-            <template v-if="props.toolbarActionDefinitions?.length === 0">
-              <template v-if="selectedItems?.length === 0">
-                <div
-                  class="toolbar-search-button"
-                  :class="[{ 'is-expanded': searchField }]"
-                  v-if="autoSearchMode === 'compact' && hasSearch"
-                >
-                  <LxButton
-                    kind="ghost"
-                    :icon="searchField ? 'close' : 'search'"
-                    variant="icon-only"
-                    :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
-                    :disabled="loading || busy"
-                    @click="toggleSearch"
-                  />
-                </div>
-
-                <LxButton
-                  v-if="
-                    selectableItems?.length !== 0 &&
-                    hasSelecting &&
-                    selectionKind === 'multiple' &&
-                    kind !== 'draggable'
-                  "
-                  :id="`${id}-select-all`"
-                  icon="checkbox"
-                  kind="ghost"
-                  :disabled="loading || busy"
-                  variant="icon-only"
-                  :label="displayTexts.selectAllRows"
-                  @click="selectRows()"
-                />
-              </template>
-            </template>
 
             <template v-if="selectedItems?.length > 0">
               <div v-if="hasSelecting && !insideForm" class="selection-action-button-toolbar">
@@ -1347,79 +1244,7 @@ onBeforeUnmount(() => {
               >
                 {{ selectedLabel }}
               </p>
-
-              <div
-                v-if="autoSearchMode === 'compact'"
-                class="toolbar-search-button"
-                :class="[{ 'is-expanded': searchField }]"
-              >
-                <LxButton
-                  v-if="hasSearch"
-                  class="toolbar-search-button"
-                  :class="[{ 'is-expanded': searchField }]"
-                  kind="ghost"
-                  :icon="searchField ? 'close' : 'search'"
-                  :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
-                  variant="icon-only"
-                  :disabled="loading || busy"
-                  @click="toggleSearch"
-                />
-              </div>
-
-              <LxButton
-                v-if="hasSelecting && kind !== 'draggable'"
-                :id="`${id}-cancel-select-all`"
-                :icon="selectIcon"
-                variant="icon-only"
-                :label="displayTexts.clearSelected"
-                kind="ghost"
-                :disabled="loading || busy"
-                @click="cancelSelection()"
-              />
             </template>
-          </template>
-
-          <template #secondRow>
-            <div
-              v-if="hasSearch && searchField && autoSearchMode === 'compact'"
-              class="second-row"
-              :class="[{ 'second-row-selecting': hasSelecting }]"
-            >
-              <LxTextInput
-                v-if="hasSearch"
-                ref="queryInputCompact"
-                v-model="queryRaw"
-                :kind="'default'"
-                :disabled="loading || busy"
-                :placeholder="displayTexts.placeholder"
-                role="search"
-                @keydown.enter="serverSideSearch()"
-              />
-
-              <div class="lx-group lx-slot-wrapper">
-                <LxButton
-                  v-if="searchSide === 'server' && hasSearch"
-                  icon="search"
-                  kind="ghost"
-                  :busy="busy"
-                  :disabled="loading"
-                  variant="icon-only"
-                  :label="displayTexts.search"
-                  @click="serverSideSearch()"
-                />
-
-                <LxButton
-                  v-if="query || queryRaw"
-                  icon="clear"
-                  kind="ghost"
-                  :loading="loading"
-                  variant="icon-only"
-                  :label="displayTexts.clear"
-                  :disabled="loading || busy"
-                  @click="clear()"
-                />
-              </div>
-            </div>
           </template>
         </LxToolbar>
       </div>
@@ -1449,7 +1274,7 @@ onBeforeUnmount(() => {
               :icon="item[iconAttribute] ? item[iconAttribute] : icon"
               :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
               :tooltip="item[tooltipAttribute]"
-              :searchString="query"
+              :searchString="searchStringClient"
               :clickable="item[clickableAttribute]"
               :category="item[categoryAttribute]"
               :disabled="loading || busy"
@@ -1572,7 +1397,7 @@ onBeforeUnmount(() => {
                         :icon="element[iconAttribute] ? element[iconAttribute] : icon"
                         :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
                         :tooltip="element[tooltipAttribute]"
-                        :searchString="query"
+                        :searchString="searchStringClient"
                         :clickable="element[clickableAttribute]"
                         :category="element[categoryAttribute]"
                         :disabled="loading || busy"
@@ -1660,7 +1485,7 @@ onBeforeUnmount(() => {
                   :icon="item[iconAttribute] ? item[iconAttribute] : icon"
                   :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
                   :tooltip="item[tooltipAttribute]"
-                  :searchString="query"
+                  :searchString="searchStringClient"
                   :clickable="item[clickableAttribute]"
                   :category="item[categoryAttribute]"
                   :disabled="loading || busy"
@@ -1716,7 +1541,7 @@ onBeforeUnmount(() => {
         "
       >
         <LxTreeList
-          v-if="queryRaw?.length === 0"
+          v-if="searchStringClient?.length === 0"
           :items="itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
           :idAttribute="idAttribute"
           :nameAttribute="nameAttribute"
@@ -1737,7 +1562,7 @@ onBeforeUnmount(() => {
           :iconSet="iconSet"
           :hasSelecting="hasSelecting"
           :selectionKind="selectionKind"
-          :query="searchString"
+          :query="searchStringClient"
           :areSomeExpandable="areSomeExpandable"
           :disabled="busy || loading"
           v-model:selectedItems="selectedItemsRaw"
@@ -1752,7 +1577,7 @@ onBeforeUnmount(() => {
           </template>
         </LxTreeList>
 
-        <div class="tree-list-wrapper" v-else-if="queryRaw?.length > 0">
+        <div class="tree-list-wrapper" v-else-if="searchStringClient?.length > 0">
           <div class="tree-list-search" role="list">
             <div
               v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
@@ -1772,7 +1597,7 @@ onBeforeUnmount(() => {
                 :icon="item[iconAttribute] ? item[iconAttribute] : icon"
                 :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
                 :tooltip="item[tooltipAttribute]"
-                :searchString="query"
+                :searchString="searchStringClient"
                 :clickable="item[clickableAttribute]"
                 :category="item[categoryAttribute]"
                 :disabled="loading || busy"
@@ -1816,7 +1641,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <div v-if="kind === 'treelist' && groupDefinitions && queryRaw?.length === 0">
+      <div v-if="kind === 'treelist' && groupDefinitions && searchStringClient?.length === 0">
         <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
           <LxExpander
             v-if="
@@ -1864,7 +1689,7 @@ onBeforeUnmount(() => {
               :iconSet="iconSet"
               :hasSelecting="hasSelecting"
               :selectionKind="selectionKind"
-              :query="searchString"
+              :query="searchStringClient"
               :areSomeExpandable="areSomeExpandable"
               :disabled="busy || loading"
               v-model:selectedItems="selectedItemsRaw"
@@ -1882,7 +1707,7 @@ onBeforeUnmount(() => {
         </template>
       </div>
 
-      <div v-if="kind === 'treelist' && groupDefinitions && queryRaw?.length > 0">
+      <div v-if="kind === 'treelist' && groupDefinitions && searchStringClient?.length > 0">
         <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
           <LxExpander
             v-if="
@@ -1929,7 +1754,7 @@ onBeforeUnmount(() => {
                     :icon="item[iconAttribute] ? item[iconAttribute] : icon"
                     :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
                     :tooltip="item[tooltipAttribute]"
-                    :searchString="query"
+                    :searchString="searchStringClient"
                     :clickable="item[clickableAttribute]"
                     :category="item[categoryAttribute]"
                     :disabled="loading || busy"
@@ -2000,7 +1825,7 @@ onBeforeUnmount(() => {
               :icon="item[iconAttribute] ? item[iconAttribute] : icon"
               :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
               :tooltip="item[tooltipAttribute]"
-              :searchString="query"
+              :searchString="searchStringClient"
               :clickable="item[clickableAttribute]"
               :category="item[categoryAttribute]"
               :disabled="loading || busy"
@@ -2121,7 +1946,7 @@ onBeforeUnmount(() => {
                         :icon="element[iconAttribute] ? element[iconAttribute] : icon"
                         :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
                         :tooltip="element[tooltipAttribute]"
-                        :searchString="query"
+                        :searchString="searchStringClient"
                         :clickable="element[clickableAttribute]"
                         :category="element[categoryAttribute]"
                         :disabled="loading || busy"
@@ -2251,7 +2076,7 @@ onBeforeUnmount(() => {
                           :icon="element[iconAttribute] ? element[iconAttribute] : icon"
                           :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
                           :tooltip="element[tooltipAttribute]"
-                          :searchString="query"
+                          :searchString="searchStringClient"
                           :clickable="element[clickableAttribute]"
                           :category="element[categoryAttribute]"
                           :disabled="loading || busy"
@@ -2281,7 +2106,7 @@ onBeforeUnmount(() => {
       <div
         v-if="
           kind === 'treelist' &&
-          (queryRaw?.length === 0 || searchSide === 'server') &&
+          (searchStringClient?.length === 0 || searchSide === 'server') &&
           !groupDefinitions
         "
       >
@@ -2322,7 +2147,7 @@ onBeforeUnmount(() => {
       <div
         v-else-if="
           kind === 'treelist' &&
-          queryRaw?.length > 0 &&
+          searchStringClient?.length > 0 &&
           searchSide === 'client' &&
           !groupDefinitions
         "
@@ -2347,7 +2172,7 @@ onBeforeUnmount(() => {
             :icon="element[iconAttribute] ? element[iconAttribute] : icon"
             :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
             :tooltip="element[tooltipAttribute]"
-            :searchString="query"
+            :searchString="searchStringClient"
             :clickable="element[clickableAttribute]"
             :category="element[categoryAttribute]"
             :disabled="loading || busy"
@@ -2392,7 +2217,7 @@ onBeforeUnmount(() => {
       </div>
 
       <LxEmptyState
-        v-if="items?.length === 0 && !(loading || busy) && !query"
+        v-if="items?.length === 0 && !(loading || busy) && !searchStringClient"
         :label="displayTexts?.noItems"
         :description="displayTexts?.noItemsDescription"
         :icon="emptyStateIcon"
@@ -2403,16 +2228,16 @@ onBeforeUnmount(() => {
       <div
         class="lx-empty-state"
         v-if="
-          query &&
+          searchStringClient &&
           filteredItems &&
           ((props.kind !== 'treelist' && filteredItems.length === 0) ||
             (props.kind === 'treelist' && filteredTreeItems?.length === 0))
         "
       >
         <div aria-live="polite" role="status" class="lx-invisible" v-if="showInvisibleBlock">
-          {{ displayTexts.notFoundSearch }} {{ JSON.stringify(query) }}
+          {{ displayTexts.notFoundSearch }} {{ JSON.stringify(searchStringClient) }}
         </div>
-        <p>{{ displayTexts.notFoundSearch }} {{ JSON.stringify(query) }}</p>
+        <p>{{ displayTexts.notFoundSearch }} {{ JSON.stringify(searchStringClient) }}</p>
       </div>
 
       <div class="lx-load-more-button" v-if="showLoadMore">

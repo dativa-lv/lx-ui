@@ -238,16 +238,14 @@ defineExpose({ clearModel });
 </script>
 <template>
   <div class="lx-appendable-list-wrapper">
-    <div v-if="!readOnly && canAddItems && insideForm">
-      <LxToolbar
-        :id="`${props.id}-toolbar`"
-        :actionDefinitions="toolbarActions"
-        :defaultArea="defaultToolbarArea"
-        :texts="displayTexts"
-        @actionClick="handleToolbarActionClick"
-      >
-      </LxToolbar>
-    </div>
+    <LxToolbar
+      v-if="!readOnly && canAddItems && insideForm"
+      :id="`${props.id}-toolbar`"
+      :actionDefinitions="toolbarActions"
+      :defaultArea="defaultToolbarArea"
+      :texts="displayTexts"
+      @actionClick="handleToolbarActionClick"
+    />
 
     <div
       class="lx-appendable-list"

@@ -1,13 +1,14 @@
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, watch, nextTick, onMounted } from 'vue';
+import { useWindowSize, useDebounceFn } from '@vueuse/core';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import { generateUUID } from '@/utils/stringUtils';
+import LxTextInput from '@/components/TextInput.vue';
+import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { logWarn } from '@/utils/devUtils';
-import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -17,11 +18,14 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
   hasSearch: { type: Boolean, default: false },
-  searchField: { type: Boolean, default: false },
-  searchMode: { type: String, default: 'default' }, // default, compact
-  hasSelecting: { type: Boolean, default: false },
-  selectionKind: { type: String, default: 'single' }, // single, multiple
+  searchString: { type: String, default: '' },
+  searchSide: { type: String, default: 'client' }, // client, server
+  searchMode: { type: String, default: 'default' }, // default, compact, defaultForce
+  useSearchDebounce: { type: Boolean, default: false },
+  hasSelectAll: { type: Boolean, default: false },
+  selectionState: { type: String, default: 'checkbox' }, // checkbox, checkbox-filled, checkbox-indeterminate, radiobutton-filled
   selectAllSide: { type: String, default: 'right' }, // right, left
+  selectAllVariant: { type: String, default: 'icon-only' }, // icon-only, default
   defaultArea: { type: String, default: 'right' }, // right, left
   texts: {
     type: Object,
@@ -29,13 +33,17 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(['actionClick']);
+const emits = defineEmits(['actionClick', 'search', 'selectAll', 'deselectAll']);
 
 const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
   openSearch: 'Atvērt meklētāju',
   closeSearch: 'Aizvērt meklētāju',
+  placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
+  search: 'Meklēt',
+  clear: 'Notīrīt',
   selectAllRows: 'Izvēlēties visu',
+  clearSelected: 'Attīrīt izvēles',
 };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
@@ -113,43 +121,6 @@ function addPromotedAction(result, promotedAction) {
   }
 }
 
-function shouldAddSearchAction() {
-  return props.hasSearch && (props.searchMode === 'compact' || props.hasSelecting);
-}
-
-function createSearchAction() {
-  return {
-    id: 'search',
-    name: props.searchField ? displayTexts.value.closeSearch : displayTexts.value.openSearch,
-    icon: props.searchField ? 'close' : 'search',
-    area: 'right',
-    variant: 'icon-only',
-    kind: 'ghost',
-    groupId: 'lx-search',
-    disabled: props.disabled || props.loading || props.busy,
-    customClass: props.searchField ? 'toolbar-search-button is-expanded' : '',
-    nonResponsive: true,
-  };
-}
-
-function shouldAddSelectAllAction() {
-  return props.hasSelecting && props.selectionKind === 'multiple';
-}
-
-function createSelectAllAction() {
-  return {
-    id: 'select-all',
-    name: displayTexts.value.selectAllRows,
-    icon: 'checkbox',
-    area: props.selectAllSide,
-    variant: 'icon-only',
-    kind: 'ghost',
-    groupId: 'lx-select-all',
-    disabled: props.disabled || props.loading || props.busy,
-    nonResponsive: true,
-  };
-}
-
 const actionsProcessed = computed(() => {
   if (!props.actionDefinitions.length) return [];
   const normalizedActions = props.actionDefinitions.map((a) => applyDefaults(a));
@@ -158,14 +129,6 @@ const actionsProcessed = computed(() => {
 
   if (promotedAction) {
     addPromotedAction(result, promotedAction);
-  }
-
-  if (shouldAddSearchAction()) {
-    result.push(createSearchAction());
-  }
-
-  if (shouldAddSelectAllAction()) {
-    placeActionByArea(result, createSelectAllAction());
   }
 
   return result;
@@ -209,6 +172,86 @@ const isActionVisibleInGroup = (action, groupId, side) => {
 function handleActionClick(id) {
   emits('actionClick', id);
 }
+
+const searchStringRaw = ref(props.searchString);
+
+const updateSearchString = useDebounceFn(() => {
+  emits('search', foldToAscii(searchStringRaw.value));
+}, 200);
+
+function clientSideSearch() {
+  if (props.useSearchDebounce) {
+    updateSearchString();
+  } else {
+    emits('search', foldToAscii(searchStringRaw.value));
+  }
+}
+
+function serverSideSearch() {
+  emits('search', foldToAscii(searchStringRaw.value));
+}
+
+const searchInputRefresh = ref(0);
+
+function clear() {
+  searchStringRaw.value = '';
+  searchInputRefresh.value += 1;
+
+  if (props.searchSide === 'client') {
+    clientSideSearch();
+  } else if (props.searchSide === 'server') {
+    serverSideSearch();
+  }
+}
+
+watch(searchStringRaw, () => {
+  if (props.hasSearch && props.searchSide === 'client') {
+    clientSideSearch();
+  }
+});
+
+const autoSearchMode = computed(() => {
+  if (
+    (props.searchMode === 'default' && !props.hasSelectAll) ||
+    props.searchMode === 'defaultForce'
+  ) {
+    return 'default';
+  }
+
+  return 'compact';
+});
+
+const isSearchExpanded = ref(false);
+const searchInputCompact = ref();
+
+function toggleSearch() {
+  searchStringRaw.value = '';
+  isSearchExpanded.value = !isSearchExpanded.value;
+
+  nextTick(() => {
+    if (isSearchExpanded.value) {
+      searchInputCompact.value.focus();
+    }
+  });
+}
+
+function selectAll() {
+  if (props.selectionState === 'checkbox') {
+    emits('selectAll');
+  } else {
+    emits('deselectAll');
+  }
+}
+
+onMounted(() => {
+  if (props.hasSearch && props.searchString) {
+    if (props.searchSide === 'client') {
+      clientSideSearch();
+    } else if (props.searchSide === 'server') {
+      serverSideSearch();
+    }
+  }
+});
 </script>
 
 <template>
@@ -216,12 +259,31 @@ function handleActionClick(id) {
     class="lx-component-toolbar"
     :class="[
       { 'lx-toolbar-no-borders': noBorders },
-      { 'lx-disabled': props.disabled || props.loading },
+      { 'lx-disabled': disabled || loading },
+      { 'lx-toolbar-default-area-right': defaultArea === 'right' },
+      { 'lx-toolbar-default-area-left': defaultArea === 'left' },
     ]"
     role="toolbar"
   >
     <div class="first-row">
       <div class="left-area">
+        <LxToolbarGroup v-if="hasSelectAll && selectAllSide === 'left'">
+          <LxButton
+            :id="`${id}-select-all`"
+            :icon="selectionState"
+            kind="ghost"
+            :variant="selectAllVariant"
+            :label="
+              selectionState === 'checkbox'
+                ? displayTexts.selectAllRows
+                : displayTexts.clearSelected
+            "
+            :disabled="disabled || loading || busy"
+            :loading="loading"
+            @click="selectAll"
+          />
+        </LxToolbarGroup>
+
         <template v-if="width > 800">
           <LxToolbarGroup
             v-for="groupId in leftGroupIds"
@@ -396,16 +458,51 @@ function handleActionClick(id) {
           />
         </LxToolbarGroup>
 
+        <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'default'">
+          <LxTextInput
+            ref="searchInputDefault"
+            :key="searchInputRefresh"
+            role="search"
+            v-model="searchStringRaw"
+            :kind="searchSide === 'server' ? 'default' : 'search'"
+            :placeholder="displayTexts.placeholder"
+            :disabled="disabled || loading || busy"
+            @keydown.enter="serverSideSearch"
+          />
+          <LxButton
+            v-if="searchSide === 'server'"
+            icon="search"
+            kind="ghost"
+            variant="icon-only"
+            :label="displayTexts.search"
+            :disabled="disabled || loading || busy"
+            :loading="loading"
+            @click="serverSideSearch"
+          />
+          <LxButton
+            v-if="searchStringRaw"
+            icon="clear"
+            kind="ghost"
+            variant="icon-only"
+            :label="displayTexts.clear"
+            :disabled="disabled || loading || busy"
+            :loading="loading"
+            @click="clear"
+          />
+        </LxToolbarGroup>
+
         <LxToolbarGroup v-if="$slots.leftArea">
           <slot name="leftArea" />
         </LxToolbarGroup>
       </div>
 
-      <div class="right-area">
+      <div class="default-area">
         <LxToolbarGroup v-if="$slots.default">
           <slot />
         </LxToolbarGroup>
+      </div>
 
+      <div class="right-area">
         <LxToolbarGroup v-if="$slots.rightArea">
           <slot name="rightArea" />
         </LxToolbarGroup>
@@ -595,9 +692,83 @@ function handleActionClick(id) {
             @click="handleActionClick(rightActionsResponsive?.[0]?.id)"
           />
         </LxToolbarGroup>
+
+        <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'compact'">
+          <div class="toolbar-search-button" :class="[{ 'is-expanded': isSearchExpanded }]">
+            <LxButton
+              class="toolbar-search-button"
+              :class="[{ 'is-expanded': isSearchExpanded }]"
+              kind="ghost"
+              variant="icon-only"
+              :icon="isSearchExpanded ? 'close' : 'search'"
+              :label="isSearchExpanded ? displayTexts.closeSearch : displayTexts.openSearch"
+              :disabled="disabled || loading || busy"
+              :loading="loading"
+              @click="toggleSearch"
+            />
+          </div>
+        </LxToolbarGroup>
+
+        <LxToolbarGroup v-if="hasSelectAll && selectAllSide === 'right'">
+          <LxButton
+            :id="`${id}-select-all`"
+            :icon="selectionState"
+            kind="ghost"
+            :variant="selectAllVariant"
+            :label="
+              selectionState === 'checkbox'
+                ? displayTexts.selectAllRows
+                : displayTexts.clearSelected
+            "
+            :disabled="disabled || loading || busy"
+            :loading="loading"
+            @click="selectAll"
+          />
+        </LxToolbarGroup>
       </div>
     </div>
 
-    <slot name="secondRow" />
+    <div class="second-row">
+      <div
+        v-if="hasSearch && isSearchExpanded && autoSearchMode === 'compact'"
+        class="toolbar-search"
+      >
+        <LxTextInput
+          ref="searchInputCompact"
+          role="search"
+          v-model="searchStringRaw"
+          kind="default"
+          :placeholder="displayTexts.placeholder"
+          :disabled="disabled || loading || busy"
+          @keydown.enter="serverSideSearch"
+        />
+
+        <div class="lx-group lx-slot-wrapper">
+          <LxButton
+            v-if="searchSide === 'server'"
+            icon="search"
+            kind="ghost"
+            variant="icon-only"
+            :label="displayTexts.search"
+            :disabled="disabled || loading || busy"
+            :loading="loading"
+            @click="serverSideSearch"
+          />
+
+          <LxButton
+            v-if="searchStringRaw"
+            icon="clear"
+            kind="ghost"
+            variant="icon-only"
+            :label="displayTexts.clear"
+            :disabled="disabled || loading || busy"
+            :loading="loading"
+            @click="clear"
+          />
+        </div>
+      </div>
+
+      <slot name="secondRow" />
+    </div>
   </div>
 </template>

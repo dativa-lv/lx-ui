@@ -1,5 +1,13 @@
 # LX/UI Migration Guide
 
+## 2.0.5 → 2.0.6
+
+### Breaking changes
+
+#### LxList
+
+Exposed functions `selectRows` and `cancelSelection` no longer accept `shouldFocus` parameter, because focus now returns to "Select all" button automatically without interfering with other focus events.
+
 ## 2.0.4 → 2.0.5
 
 ### Breaking changes
