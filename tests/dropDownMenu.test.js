@@ -85,16 +85,33 @@ test('LxDropDownMenu component mounts successfully', () => {
 });
 
 describe('Action definitions', () => {
-  // TODO: uncomment this test when issue with empty actions in LxDropDownMenu will be fixed
-  // test('renders with empty actions', async () => {
-  //   wrapper = mountComponent();
+  test('renders with no actions correctly', async () => {
+    wrapper = mountComponent();
 
-  //   expect(wrapper.find('.lx-dropdown-toggler').exists()).toBe(true);
+    expect(wrapper.find('.lx-dropdown-toggler').exists()).toBe(true);
 
-  //   const panelElement = await openMenu();
+    const panelElement = await openMenu();
 
-  //   expect(panelElement).toBeTruthy();
-  // });
+    expect(panelElement).toBeTruthy();
+  });
+
+  test('renders with no focusable elements correctly', async () => {
+    const actionDefinitions = [
+      {
+        id: 'actionTest',
+        name: 'Test action',
+        disabled: true,
+      },
+    ];
+
+    wrapper = mountComponent({ props: { actionDefinitions } });
+
+    expect(wrapper.find('.lx-dropdown-toggler').exists()).toBe(true);
+
+    const panelElement = await openMenu();
+
+    expect(panelElement).toBeTruthy();
+  });
 
   test('renders main button correctly', async () => {
     const { mainButton, actionDefinitions } = createActionDefinitions();

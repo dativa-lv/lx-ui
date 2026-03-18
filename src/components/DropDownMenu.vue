@@ -10,6 +10,7 @@ import LxIcon from '@/components/Icon.vue';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import {
+  findFocusableElements,
   focusNextFocusableElement,
   focusFirstElementInContainer,
   focusLastElementInContainer,
@@ -75,7 +76,12 @@ function openMenu({ source = 'default', focus = 'first' } = {}) {
   nextTick(() => {
     parentFocusTrap?.pause();
 
-    if (!props.datePickerType && !isTouchSensitive.value) {
+    const focusableElements = findFocusableElements(panelRef.value);
+
+    if (focusableElements.length === 0) {
+      panelRef.value?.focus();
+    }
+    if (!props.datePickerType && !isTouchSensitive.value && focusableElements.length > 0) {
       activateFocusTrap();
     }
     if (!props.datePickerType) {

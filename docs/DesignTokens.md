@@ -634,8 +634,8 @@ Customized values for contrast mode:
 | `--button-modal-set-margin`                        | 0                                                        |
 | `--button-modal-set-padding`                       | 0                                                        |
 | `--button-primary-align`                           | center                                                   |
-| `--button-primary-badge-inset`                     | -0.66rem -0.66rem auto auto                              |
-| `--button-primary-empty-badge-inset`               | -0.56rem -0.56rem auto auto                              |
+| `--button-primary-badge-inset`                     | -0.625rem -0.625rem auto auto                            |
+| `--button-primary-empty-badge-inset`               | -0.5rem -0.5rem auto auto                                |
 | `--button-primary-border`                          | 2px solid var(--color-interactive-background)            |
 | `--button-primary-border-radius`                   | `--radius-default`                                       |
 | `--button-primary-font-size`                       | inherit                                                  |
@@ -659,7 +659,8 @@ Customized values for contrast mode:
 | `--button-primary-icon-only-padding`               | 0                                                        |
 | `--button-primary-icon-only-width`                 | auto                                                     |
 | `--button-secondary-align`                         | center                                                   |
-| `--button-secondary-badge-inset`                   | -0.66rem -0.66rem auto auto                              |
+| `--button-secondary-badge-inset`                   | -0.625rem -0.625rem auto auto                            |
+| `--button-secondary-empty-badge-inset`             | -0.5rem -0.5rem auto auto                                |
 | `--button-secondary-border`                        | 2px solid var(--color-interactive-secondary-background)  |
 | `--button-secondary-border-radius`                 | `--radius-default`                                       |
 | `--button-secondary-font-size`                     | inherit                                                  |
@@ -683,7 +684,8 @@ Customized values for contrast mode:
 | `--button-secondary-icon-only-padding`             | 0                                                        |
 | `--button-secondary-icon-only-width`               | auto                                                     |
 | `--button-tertiary-align`                          | center                                                   |
-| `--button-tertiary-badge-inset`                    | -0.66rem -0.66rem auto auto                              |
+| `--button-tertiary-badge-inset`                    | -0.625rem -0.625rem auto auto                            |
+| `--button-tertiary-empty-badge-inset`              | -0.5rem -0.5rem auto auto                                |
 | `--button-tertiary-border`                         | 2px solid var(--color-interactive-background)            |
 | `--button-tertiary-border-radius`                  | `--radius-default`                                       |
 | `--button-tertiary-font-size`                      | inherit                                                  |
@@ -707,7 +709,8 @@ Customized values for contrast mode:
 | `--button-tertiary-icon-only-padding`              | 0                                                        |
 | `--button-tertiary-icon-only-width`                | auto                                                     |
 | `--button-ghost-align`                             | center                                                   |
-| `--button-ghost-badge-inset`                       | -0.25rem -0.25rem auto auto                              |
+| `--button-ghost-badge-inset`                       | -0.125rem -0.125rem auto auto                            |
+| `--button-ghost-empty-badge-inset`                 | -0.125rem -0.125rem auto auto                            |
 | `--button-ghost-border`                            | 2px solid transparent                                    |
 | `--button-ghost-border-radius`                     | `--radius-default`                                       |
 | `--button-ghost-font-size`                         | inherit                                                  |

@@ -11,6 +11,9 @@
 }
 
 .lx-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 5.5rem;
   height: 5.5rem;
   line-height: normal;

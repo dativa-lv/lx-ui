@@ -2004,11 +2004,13 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   variant="icon-only"
                   :destructive="action.destructive"
                   :disabled="
-                    isDisabled || action.enableByAttribute ? !row[action.enableByAttribute] : false
+                    isDisabled ||
+                    action.disabled ||
+                    (action.enableByAttribute ? !row[action.enableByAttribute] : false)
                   "
                   :active="action.active"
                   :badge="action.badge"
-                  :badge-type="action.badgeType"
+                  :badgeType="action.badgeType"
                   :badgeIcon="action.badgeIcon"
                   :badgeTitle="action.badgeTitle"
                   :tabindex="
@@ -2051,15 +2053,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :busy="actionDefinitions?.[0]?.busy"
                   :destructive="actionDefinitions?.[0]?.destructive"
                   :disabled="
-                    isDisabled || actionDefinitions?.[0]?.enableByAttribute
+                    isDisabled ||
+                    actionDefinitions?.[0]?.disabled ||
+                    (actionDefinitions?.[0]?.enableByAttribute
                       ? !row[actionDefinitions?.[0]?.enableByAttribute]
-                      : false
+                      : false)
                   "
                   kind="ghost"
                   variant="icon-only"
                   :active="actionDefinitions?.[0]?.active"
                   :badge="actionDefinitions?.[0]?.badge"
-                  :badge-type="actionDefinitions?.[0]?.badgeType"
+                  :badgeType="actionDefinitions?.[0]?.badgeType"
                   :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
                   :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
                   :tabindex="
@@ -2090,6 +2094,18 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   placement="bottom-end"
                   :disabled="isDisabled"
                   :tabindex="-1"
+                  :actionDefinitions="
+                    actionDefinitionsGroup.map((a) => ({
+                      ...a,
+                      disabled:
+                        isDisabled ||
+                        a.disabled ||
+                        (a.enableByAttribute ? !row[a.enableByAttribute] : false),
+                    }))
+                  "
+                  @actionClick="
+                    (id) => handleActionClick(id, row[idAttribute], actionAdditionalParameter)
+                  "
                 >
                   <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
                   <div
@@ -2120,36 +2136,6 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       :tabindex="-1"
                     />
                   </div>
-
-                  <template v-slot:panel>
-                    <div class="lx-button-set">
-                      <LxButton
-                        v-for="action in actionDefinitionsGroup"
-                        :id="`${id}-${row[idAttribute]}-action-${action.id}`"
-                        :key="action.id"
-                        :label="action.name || action.label"
-                        :title="action.title || action.tooltip"
-                        :icon="action.icon"
-                        :iconSet="action.iconSet"
-                        :loading="action.loading"
-                        :busy="action.busy"
-                        :destructive="action.destructive"
-                        :disabled="
-                          isDisabled || action.enableByAttribute
-                            ? !row[action.enableByAttribute]
-                            : false
-                        "
-                        :active="action.active"
-                        :badge="action.badge"
-                        :badge-type="action.badgeType"
-                        :badgeIcon="action.badgeIcon"
-                        :badgeTitle="action.badgeTitle"
-                        @click="
-                          handleActionClick(action.id, row[idAttribute], actionAdditionalParameter)
-                        "
-                      />
-                    </div>
-                  </template>
                 </LxDropDownMenu>
               </div>
             </div>

@@ -2,9 +2,9 @@
 import { describe, test, expect, afterEach, beforeEach } from 'vitest';
 import { mount, RouterLinkStub } from '@vue/test-utils';
 import LxDataGrid from '@/components/DataGrid.vue';
-import { checkButtonState } from './helpers/buttonHelpers';
 import {
   actionDefinitionsCommon,
+  checkActionDefinitionsButtonsSingle,
   checkActionDefinitionsButtonsMultiple,
 } from './helpers/actionDefinitionsHelpers';
 
@@ -59,111 +59,15 @@ describe('Action definitions', () => {
     expect(wrapper.find('.lx-cell-action').exists()).toBe(false);
   });
 
-  // TODO: use checkActionDefinitionsButtonsSingle instead
-  describe('One action', () => {
-    function initButton(action) {
-      wrapper = mountComponent({ props: { ...props, actionDefinitions: [action] } });
-
-      const button = wrapper.find('.lx-cell-action > .lx-toolbar > .lx-button');
-
-      expect(button.exists()).toBe(true);
-      expect(button.attributes('id')).toContain(action.id);
-      expect(button.attributes('aria-label')).toContain(action.name);
-
-      return button;
-    }
-
-    test('simple', () => {
-      const action = {
-        id: 'actionSimple',
-        name: 'Simple action',
-        icon: 'ai',
-        title: 'This is a simple action',
-      };
-
-      const button = initButton(action);
-
-      expect(button.attributes('title')).toBe(action.title);
-    });
-
-    test('destructive', () => {
-      const action = {
-        id: 'actionDestructive',
-        name: 'Destructive action',
-        icon: 'ai',
-        destructive: true,
-      };
-
-      const button = initButton(action);
-
-      checkButtonState(button, 'destructive');
-    });
-
-    // TODO: uncomment this test when issue with disabled buttons in LxDataGrid will be fixed
-    // test('disabled', () => {
-    //   const action = {
-    //     id: 'actionDisabled',
-    //     name: 'Disabled action',
-    //     icon: 'ai',
-    //     disabled: true,
-    //   };
-
-    //   const button = initButton(action);
-
-    //   checkButtonState(button, 'disabled');
-    // });
-
-    test('busy', () => {
-      const action = {
-        id: 'actionBusy',
-        name: 'Busy action',
-        icon: 'ai',
-        busy: true,
-      };
-
-      const button = initButton(action);
-
-      checkButtonState(button, 'busy');
-    });
-
-    test('loading', () => {
-      const action = {
-        id: 'actionLoading',
-        name: 'Loading action',
-        icon: 'ai',
-        loading: true,
-      };
-
-      const button = initButton(action);
-
-      checkButtonState(button, 'loading');
-    });
-
-    test('active', () => {
-      const action = {
-        id: 'actionActive',
-        name: 'Active action',
-        icon: 'ai',
-        active: true,
-      };
-
-      const button = initButton(action);
-
-      checkButtonState(button, 'active');
-    });
-
-    test('with badge', () => {
-      const action = {
-        id: 'actionBadge',
-        name: 'Action with badge',
-        icon: 'ai',
-        badge: '🌞',
-      };
-
-      const button = initButton(action);
-
-      expect(button.find('.lx-badge').exists()).toBe(true);
-    });
+  describe('Single action variations', () => {
+    checkActionDefinitionsButtonsSingle(
+      mountComponent,
+      (w) => {
+        wrapper = w;
+      },
+      '.lx-cell-action > .lx-toolbar > .lx-button',
+      { props }
+    );
   });
 
   test('renders two actions as buttons', () => {
@@ -236,8 +140,7 @@ describe('Action definitions', () => {
   });
 
   test('renders many actions: first as button, rest in dropdown', async () => {
-    // TODO: remove filtering of disabled action when issue with disabled buttons in LxDataGrid will be fixed
-    const actionDefinitions = actionDefinitionsCommon.filter((action) => !action.disabled);
+    const actionDefinitions = actionDefinitionsCommon;
 
     wrapper = mountComponent({ props: { ...props, actionDefinitions } });
 
