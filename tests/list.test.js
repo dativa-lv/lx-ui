@@ -254,4 +254,45 @@ describe('Search', () => {
       expect(searchInput.text()).toBe('');
     });
   });
+
+  describe('Exposed function toggleSearch', () => {
+    const searchInputCompactSelector = '.lx-component-toolbar .second-row .lx-text-input';
+
+    test('toggleSearch expands and collapses compact search input', async () => {
+      wrapper = mountComponent({ props: { ...props, searchMode: 'compact' } });
+
+      let searchInput = wrapper.find(searchInputCompactSelector);
+
+      expect(searchInput.exists()).toBe(false);
+
+      wrapper.vm.toggleSearch();
+      await wrapper.vm.$nextTick();
+
+      searchInput = wrapper.find(searchInputCompactSelector);
+
+      expect(searchInput.exists()).toBe(true);
+
+      wrapper.vm.toggleSearch();
+      await wrapper.vm.$nextTick();
+
+      searchInput = wrapper.find(searchInputCompactSelector);
+
+      expect(searchInput.exists()).toBe(false);
+    });
+
+    test('toggleSearch has no effect when search mode is not compact', async () => {
+      wrapper = mountComponent({ props });
+
+      let searchInput = wrapper.find(searchInputCompactSelector);
+
+      expect(searchInput.exists()).toBe(false);
+
+      wrapper.vm.toggleSearch();
+      await wrapper.vm.$nextTick();
+
+      searchInput = wrapper.find(searchInputCompactSelector);
+
+      expect(searchInput.exists()).toBe(false);
+    });
+  });
 });

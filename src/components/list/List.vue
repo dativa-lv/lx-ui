@@ -141,6 +141,7 @@ const showInvisibleBlock = ref(false);
 const draggable = ref(null);
 const loadingLib = ref(false);
 const listWrapper = ref(null);
+const toolbarRef = ref(null);
 const isNarrow = ref(false);
 
 let invisibleBlockTimeout;
@@ -914,7 +915,11 @@ const autoSearchMode = computed(() => {
   return 'compact';
 });
 
-defineExpose({ validate, cancelSelection, selectRows });
+function toggleSearch() {
+  toolbarRef.value?.toggleSearch();
+}
+
+defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
 
 const draggableButtons = ref([
   {
@@ -1105,6 +1110,7 @@ onBeforeUnmount(() => {
 
       <div :class="[{ 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 }]">
         <LxToolbar
+          ref="toolbarRef"
           :id="`${id}-toolbar`"
           :actionDefinitions="toolbarActions"
           :disabled="busy"

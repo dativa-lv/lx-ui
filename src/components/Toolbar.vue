@@ -231,12 +231,16 @@ const isSearchExpanded = ref(false);
 const searchInputCompact = ref();
 
 function toggleSearch() {
+  if (!props.hasSearch || autoSearchMode.value !== 'compact') {
+    return;
+  }
+
   searchStringRaw.value = '';
   isSearchExpanded.value = !isSearchExpanded.value;
 
   nextTick(() => {
     if (isSearchExpanded.value) {
-      searchInputCompact.value.focus();
+      searchInputCompact.value?.focus();
     }
   });
 }
@@ -258,6 +262,8 @@ onMounted(() => {
     }
   }
 });
+
+defineExpose({ toggleSearch });
 </script>
 
 <template>
