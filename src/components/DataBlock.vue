@@ -26,6 +26,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
+  ariaLabel: { type: String, default: null },
   hasSelecting: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   selected: { type: Boolean, default: false },
@@ -152,6 +153,7 @@ const expandIconTitle = computed(() => {
         :for="id"
         :tabindex="expandable && !disabled ? 0 : null"
         :aria-invalid="invalid"
+        :aria-label="ariaLabel"
         :aria-describedby="`data-block-${id}-desc`"
         @click="toggleExpander"
         @keydown.space="handleKeyDown"

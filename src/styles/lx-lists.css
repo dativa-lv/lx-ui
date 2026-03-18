@@ -38,7 +38,8 @@
 }
 
 .lx-list-item-interactive:focus,
-.lx-list-item-interactive:focus-visible {
+.lx-list-item-interactive:focus-visible,
+.lx-appendable-list-item .lx-form-grid:focus {
   outline: 2px solid var(--color-focus-background);
   outline-offset: -2px;
 }

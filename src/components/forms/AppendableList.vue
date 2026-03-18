@@ -38,6 +38,7 @@ const props = defineProps({
 
 const defaultTexts = {
   removeItem: 'Dzēst ierakstu',
+  removeItemHint: 'Nospiediet Delete, lai noņemtu ierakstu',
   addItemButtonTooltip: 'Pievienot ierakstu',
   addButtonLabel: 'Pievienot ierakstu',
 };
@@ -73,10 +74,11 @@ function focusLastAddedElement() {
       `.lx-appendable-list-item[id="${lastItem._lx_appendableKey}"]`
     );
     if (!lastItemEl) return;
-    const focusable = lastItemEl.querySelector(
-      'a:not([disabled]), button:not([disabled]), input:not([disabled]), [tabindex="0"]'
-    );
-    if (focusable) focusable.focus();
+    if (props.expandable) {
+      lastItemEl?.querySelector('.lx-data-block-header')?.focus();
+    } else {
+      lastItemEl?.querySelector('.lx-form-grid')?.focus();
+    }
   });
 }
 function removeItem(id) {
@@ -214,6 +216,15 @@ function handleToolbarActionClick(id) {
   }
 }
 
+function onDelete(e, itemKey) {
+  if (e.key !== 'Delete') return;
+  const { activeElement } = document;
+  if (activeElement.ariaLabel !== displayTexts.value.removeItemHint) {
+    return;
+  }
+  e.preventDefault();
+  removeItem(itemKey);
+}
 const insideForm = inject('insideForm', ref(false));
 
 const defaultToolbarArea = computed(() => (insideForm.value ? 'left' : 'right'));
@@ -260,6 +271,7 @@ defineExpose({ clearModel });
         class="lx-appendable-list-item"
         :id="item._lx_appendableKey"
         role="listitem"
+        @keydown.delete="onDelete($event, item._lx_appendableKey)"
       >
         <template v-if="expandable">
           <LxDataBlock
@@ -275,6 +287,11 @@ defineExpose({ clearModel });
             :hasSelecting="hasSelecting"
             :selectionKind="selectionKind"
             :invalid="item[invalidAttribute]"
+            :ariaLabel="
+              !readOnly && (!hideRemoveAttribute || !item[hideRemoveAttribute])
+                ? displayTexts.removeItemHint
+                : null
+            "
             @actionClick="(val) => actionClick(val, item[idAttribute], item._lx_appendableKey)"
             @selectingClick="changeSelecting"
           >
@@ -300,6 +317,12 @@ defineExpose({ clearModel });
           <LxForm
             kind="stripped"
             role="group"
+            :tabindex="!readOnly && (!hideRemoveAttribute || !item[hideRemoveAttribute]) ? 0 : null"
+            :aria-label="
+              !readOnly && (!hideRemoveAttribute || !item[hideRemoveAttribute])
+                ? displayTexts.removeItemHint
+                : null
+            "
             :columnCount="columnCount"
             :required-mode="props.requiredMode"
           >
