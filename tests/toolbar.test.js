@@ -204,4 +204,60 @@ describe('Action definitions', () => {
       });
     });
   });
+
+  describe('Toggles', () => {
+    test('renders toggle as action', () => {
+      const action = {
+        id: 'testToggle',
+        name: 'Test toggle',
+        kind: 'toggle',
+      };
+
+      wrapper = mountComponent({ props: { actionDefinitions: [action] } });
+
+      const toggle = wrapper.find('.right-area .action-definitions-group .lx-toggle');
+
+      expect(toggle.exists()).toBe(true);
+      expect(toggle.attributes('id')).toContain(action.id);
+      expect(toggle.attributes('aria-label')).toContain(action.name);
+    });
+
+    test('renders toggle as nested action', async () => {
+      const parentGroupId = 'parentGroup';
+
+      const parentAction = {
+        id: 'parent',
+        name: 'Parent button',
+        icon: 'menu',
+        nestedGroupId: parentGroupId,
+      };
+
+      const childAction = {
+        id: 'testToggle',
+        name: 'Test toggle',
+        kind: 'toggle',
+        groupId: parentGroupId,
+      };
+
+      wrapper = mountComponent({ props: { actionDefinitions: [parentAction, childAction] } });
+
+      const parent = wrapper.find('.right-area .action-definitions-group .lx-button');
+
+      expect(parent.exists()).toBe(true);
+      expect(parent.attributes('id')).toContain(parentAction.id);
+      expect(parent.attributes('aria-label')).toContain(parentAction.name);
+
+      await parent.trigger('click');
+
+      const panel = document.body.querySelector('.lx-dropdown-panel-wrapper');
+      const child = panel.querySelector('.lx-dropdown-menu-toggle-wrapper');
+      const label = child.querySelector('.lx-dropdown-toggle-label');
+      const toggle = child.querySelector('.lx-toggle');
+
+      expect(label.getAttribute('id')).toContain(childAction.id);
+      expect(label.textContent).toBe(childAction.name);
+      expect(toggle.getAttribute('id')).toContain(childAction.id);
+      expect(toggle.getAttribute('aria-label')).toContain(childAction.name);
+    });
+  });
 });

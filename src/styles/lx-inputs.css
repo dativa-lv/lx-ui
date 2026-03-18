@@ -3311,6 +3311,11 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: 100%;
 }
 
+.lx-component-toolbar .lx-toggle-wrapper {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
 /*** LxFileUploader styles ***/
 
 .lx-file-upload-wrapper {
