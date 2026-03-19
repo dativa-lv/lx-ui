@@ -121,7 +121,7 @@ The component API has been updated to improve naming consistency and clarity.
 
 #### LxDropDown, LxAutoComplete
 
-The `variant` prop has been removed.
+The `variant` and `locale` prop has been removed.
 
 Custom rendering should now be used to represent different item types such as state, country, or other visual variants.
 

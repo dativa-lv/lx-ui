@@ -2,6 +2,7 @@ import { formatDate, formatDateTime } from '@/utils/dateUtils';
 import { cutString, shortenUserName } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import { countryCodeToName } from '@/utils/countryCodeUtils';
+import { isEmpty } from '@/utils/generalUtils';
 
 const EMPTY_VALUE = '—';
 
@@ -285,7 +286,7 @@ export function formatAddress(/** @type {Address} */ address, includeAtvk = fals
 }
 
 export function formatDecimal(value, precision = 2) {
-  const language = useLx().getGlobals()?.locale || 'lv-LV';
+  const language = useLx().getGlobals()?.locale?.locale || 'lv-LV';
 
   return Number.isInteger(value)
     ? value
@@ -297,4 +298,18 @@ export function formatDecimal(value, precision = 2) {
 
 export function formatCountryCode(value, language = 'lv', notExistsValue = null) {
   return countryCodeToName(value, language) || notExistsValue;
+}
+
+export function formatCurrency(value, currency = null, language = null) {
+  if (isEmpty(value) || Number.isNaN(Number(value))) {
+    return EMPTY_VALUE;
+  }
+
+  const currencyCode = currency || useLx().getGlobals()?.currency || 'EUR';
+  const locale = language || useLx().getGlobals()?.locale?.locale || 'lv-LV';
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currencyCode,
+  }).format(value);
 }

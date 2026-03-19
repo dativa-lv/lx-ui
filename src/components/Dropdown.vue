@@ -22,7 +22,6 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   labelId: { type: String, default: null },
-  locale: { type: String, default: null }, // lv, en
   meaningful: { type: Boolean, default: null },
   tabindex: {
     type: [Number, String],

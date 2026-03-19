@@ -8,6 +8,8 @@ export default () => {
    * @property {string} [dateFormat] - The current date format
    * @property {string} [dateTimeFormat] - The current date time format
    * @property {string} [dateTimeFullFormat] - The current date time full format
+   * @property {string} [currency] - The current currency
+   * @property {Object} [locale] - The current locale
    */
 
   /**
