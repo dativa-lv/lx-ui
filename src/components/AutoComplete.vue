@@ -1131,6 +1131,11 @@ onMounted(() => {
 });
 
 const autoCompleteState = computed(() => {
+
+  if (loadingState.value) {
+    return 'searching';
+  }
+
   if ((Array.isArray(model.value) && model.value.length > 0) || model.value) {
       return 'selected';
   }
@@ -1153,7 +1158,23 @@ const autoCompleteState = computed(() => {
   return 'default';
 });
 
-defineExpose({ autoCompleteState });
+const autoCompleteQuery = computed(() => {
+  if (props.queryMinLength === 0) {
+    return query.value;
+  }
+  if (finalQuery.value && finalQuery.value.length >= props.queryMinLength) {
+    return finalQuery.value;
+  }
+  return '';
+});
+
+function clearFilteredItems() {
+  if (typeof props.items === 'function') {
+    allItems.value = [];
+  }
+}
+
+defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
 </script>
 
 <template>
