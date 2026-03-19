@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick, inject, watch } from 'vue';
+import { ref, computed, nextTick, inject, watch, onUnmounted } from 'vue';
 import { onClickOutside, useWindowSize } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxPopper from '@/components/Popper.vue';
@@ -438,6 +438,12 @@ function inputManual() {
 
 onClickOutside(togglerRef, onClickOutsideHandler, {
   ignore: [panelRef],
+});
+
+onUnmounted(() => {
+  if (responsiveView.value && props.datePickerType) {
+    document.body.classList.remove('no-scroll-mobile-pickers');
+  }
 });
 
 defineExpose({ closeMenu, openMenu, preventClose, menuOpen });

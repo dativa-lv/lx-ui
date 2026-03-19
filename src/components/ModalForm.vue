@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick, provide, computed, watch } from 'vue';
+import { ref, nextTick, provide, computed, watch, onUnmounted } from 'vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxButton from '@/components/Button.vue';
 import { logWarn } from '@/utils/devUtils';
@@ -178,6 +178,12 @@ const formKind = computed(() =>
   // Do not allow 'stripped' kind in ModalForm, because it removes header which is needed for modal
   props.kind === 'compact' || props.kind === 'stripped' ? 'compact' : 'default'
 );
+
+onUnmounted(() => {
+  if (!ifModalsExist()) {
+    document.body.classList.remove('no-scroll-modal');
+  }
+});
 
 provide('insideModal', insideModal);
 defineExpose({ open, close });

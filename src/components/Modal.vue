@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick, provide, computed, watch } from 'vue';
+import { ref, nextTick, provide, computed, watch, onUnmounted } from 'vue';
 import LxButton from '@/components/Button.vue';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
@@ -195,6 +195,12 @@ watch([isOpen, isOpenModal], ([newIsOpen, newIsOpenModal]) => {
       document.body.classList.remove('no-scroll-modal');
     }
   });
+});
+
+onUnmounted(() => {
+  if (!ifModalsExist()) {
+    document.body.classList.remove('no-scroll-modal');
+  }
 });
 
 provide('insideModal', insideModal);

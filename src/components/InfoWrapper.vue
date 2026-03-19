@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, computed, useSlots, nextTick, watch } from 'vue';
+import {
+  onMounted,
+  onBeforeUnmount,
+  ref,
+  computed,
+  useSlots,
+  nextTick,
+  watch,
+  onUnmounted,
+} from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxIcon from '@/components/Icon.vue';
@@ -420,6 +429,12 @@ onBeforeUnmount(() => {
   window.removeEventListener('click', handleClickOutside);
 
   if (!props.disabled) {
+    document.body.classList.remove('no-scroll-mobile-pickers');
+  }
+});
+
+onUnmounted(() => {
+  if (responsiveView.value) {
     document.body.classList.remove('no-scroll-mobile-pickers');
   }
 });
