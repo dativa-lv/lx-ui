@@ -1578,6 +1578,12 @@
   color: var(--color-region);
 }
 
+.lx-layout > header .lx-header .lx-main-button .lx-badge.lx-badge-preprod {
+  background-color: var(--color-teal);
+  border-color: var(--color-teal);
+  color: var(--color-region);
+}
+
 .lx-expander .lx-badge {
   position: static;
   font-family: var(--font-family-mono);

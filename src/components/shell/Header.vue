@@ -265,6 +265,7 @@ const envMap = {
   local: 'loc',
   development: 'dev',
   staging: 'test',
+  preproduction: 'preprod',
   production: 'prod',
 };
 
@@ -509,6 +510,7 @@ provide('insideHeader', insideHeader);
             { 'lx-badge-loc': envLabel.id === 'local' },
             { 'lx-badge-dev': envLabel.id === 'development' },
             { 'lx-badge-test': envLabel.id === 'staging' },
+            { 'lx-badge-preprod': envLabel.id === 'preproduction' },
             { 'lx-badge-prod': envLabel.id === 'production' },
           ]"
         />

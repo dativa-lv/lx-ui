@@ -784,6 +784,12 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
   color: var(--color-region);
 }
 
+.lx-layout > header .lx-header .lx-main-button .lx-badge.lx-badge-preprod {
+  background-color: var(--color-teal);
+  border-color: var(--color-teal);
+  color: var(--color-region);
+}
+
 .lx.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-button-content-wrapper .lx-badge {
   border-color: var(--color-region);
 }
