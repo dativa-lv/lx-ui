@@ -240,7 +240,7 @@ dialog {
   padding: 0;
 }
 
-.lx-layout .lx-modal.lx-modal-form .lx-form-grid > header.lx-sticky {
+.lx-layout .lx-modal.lx-modal-form .lx-main .lx-form-grid > header.lx-sticky {
   top: 0;
 }
 

@@ -185,7 +185,11 @@ const updateSearchString = useDebounceFn(() => {
   emits('search', foldToAscii(searchStringRaw.value));
 }, 200);
 
+const isSearchActive = ref(false);
+
 function clientSideSearch() {
+  isSearchActive.value = !!searchStringRaw.value;
+
   if (props.useSearchDebounce) {
     updateSearchString();
   } else {
@@ -194,6 +198,8 @@ function clientSideSearch() {
 }
 
 function serverSideSearch() {
+  isSearchActive.value = !!searchStringRaw.value;
+
   emits('search', foldToAscii(searchStringRaw.value));
 }
 
@@ -201,6 +207,7 @@ const searchInputRefresh = ref(0);
 
 function clear() {
   searchStringRaw.value = '';
+  isSearchActive.value = false;
   searchInputRefresh.value += 1;
 
   if (props.searchSide === 'client') {
@@ -209,6 +216,10 @@ function clear() {
     serverSideSearch();
   }
 }
+
+const isSelectAllDisabled = computed(
+  () => props.disabled || props.loading || props.busy || isSearchActive.value
+);
 
 watch(searchStringRaw, () => {
   if (props.hasSearch && props.searchSide === 'client') {
@@ -290,7 +301,7 @@ defineExpose({ toggleSearch });
                 ? displayTexts.selectAllRows
                 : displayTexts.clearSelected
             "
-            :disabled="disabled || loading || busy"
+            :disabled="isSelectAllDisabled"
             :loading="loading"
             @click="selectAll"
           />
@@ -717,7 +728,7 @@ defineExpose({ toggleSearch });
                 ? displayTexts.selectAllRows
                 : displayTexts.clearSelected
             "
-            :disabled="disabled || loading || busy"
+            :disabled="isSelectAllDisabled"
             :loading="loading"
             @click="selectAll"
           />
