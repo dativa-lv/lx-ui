@@ -1034,6 +1034,41 @@ export function getQuarterStringFromDate(date) {
   return `${year}-Q${quarter}`;
 }
 
+const isDefaultOrPickerVariant = (variant) => variant === 'default' || variant === 'picker';
+
+const isFullRowsColumnsOrRange = (variant, pickerType) =>
+  variant === 'full-rows' || variant === 'full-columns' || pickerType === 'range';
+const isTailWeek = (weekIndex, totalWeeks) =>
+  weekIndex === totalWeeks - 1 || weekIndex === totalWeeks - 2;
+const isFocusableOtherMonthDay = (
+  monthIndex,
+  monthsCount,
+  weekIndex,
+  totalWeeks,
+  variant,
+  pickerType
+) => {
+  if (monthIndex === 0 && weekIndex === 0) return true;
+
+  if (monthsCount === 1 && isDefaultOrPickerVariant(variant) && isTailWeek(weekIndex, totalWeeks)) {
+    return true;
+  }
+
+  if (monthIndex === 3 && variant === 'full' && isTailWeek(weekIndex, totalWeeks)) {
+    return true;
+  }
+
+  if (
+    monthIndex === 1 &&
+    isFullRowsColumnsOrRange(variant, pickerType) &&
+    isTailWeek(weekIndex, totalWeeks)
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const getDayTabIndex = (
   date,
   month,
@@ -1045,89 +1080,26 @@ export const getDayTabIndex = (
   minDateRef,
   maxDateRef
 ) => {
-  // Case 1: Date from another month, first week of the first month
-  if (
-    !isSameMonth(date, month) &&
-    monthsList.flat().indexOf(month) === 0 &&
-    weekIndex === 0 &&
-    canSelectDate(date, minDateRef, maxDateRef)
-  ) {
-    return '0';
-  }
+  const selectable = canSelectDate(date, minDateRef, maxDateRef);
+  if (!selectable) return '-1';
 
-  // Case 2: Date from another month, last week of the last month for default and picker variants
-  if (
-    !isSameMonth(date, month) &&
-    monthsList.flat().length === 1 &&
-    (variant === 'default' || variant === 'picker') &&
-    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 1 === weekIndex &&
-    canSelectDate(date, minDateRef, maxDateRef)
-  ) {
-    return '0';
-  }
+  if (isSameMonth(date, month)) return '0';
 
-  // Case 3: Date from another month, penultimate week of the last month for default and picker variants
-  if (
-    !isSameMonth(date, month) &&
-    monthsList.flat().length === 1 &&
-    (variant === 'default' || variant === 'picker') &&
-    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 2 === weekIndex &&
-    canSelectDate(date, minDateRef, maxDateRef)
-  ) {
-    return '0';
-  }
+  const flattenedMonths = monthsList.flat();
+  const monthIndex = flattenedMonths.indexOf(month);
+  const monthsCount = flattenedMonths.length;
+  const totalWeeks = getDaysInMonthGrid(month, firstDayOfTheWeek).length;
 
-  // Case 4: Date from another month, last week of the last month for full variant
-  if (
-    !isSameMonth(date, month) &&
-    monthsList.flat().indexOf(month) === 3 &&
-    variant === 'full' &&
-    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 1 === weekIndex &&
-    canSelectDate(date, minDateRef, maxDateRef)
-  ) {
-    return '0';
-  }
-
-  // Case 5: Date from another month, penultimate week of the last month for full variant
-  if (
-    !isSameMonth(date, month) &&
-    monthsList.flat().indexOf(month) === 3 &&
-    variant === 'full' &&
-    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 2 === weekIndex &&
-    canSelectDate(date, minDateRef, maxDateRef)
-  ) {
-    return '0';
-  }
-
-  // Case 6: Date from another month, last week of the last month for full-rows, full-columns variants or range pickerType
-  if (
-    !isSameMonth(date, month) &&
-    monthsList.flat().indexOf(month) === 1 &&
-    (variant === 'full-rows' || variant === 'full-columns' || pickerType === 'range') &&
-    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 1 === weekIndex &&
-    canSelectDate(date, minDateRef, maxDateRef)
-  ) {
-    return '0';
-  }
-
-  // Case 7: Date from another month, penultimate week of the last month for full-rows, full-columns variants or range pickerType
-  if (
-    !isSameMonth(date, month) &&
-    monthsList.flat().indexOf(month) === 1 &&
-    (variant === 'full-rows' || variant === 'full-columns' || pickerType === 'range') &&
-    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 2 === weekIndex &&
-    canSelectDate(date, minDateRef, maxDateRef)
-  ) {
-    return '0';
-  }
-
-  // Case 8: Date in the same month and is selectable
-  if (isSameMonth(date, month) && canSelectDate(date, minDateRef, maxDateRef)) {
-    return '0';
-  }
-
-  // Default case: Not focusable
-  return '-1';
+  return isFocusableOtherMonthDay(
+    monthIndex,
+    monthsCount,
+    weekIndex,
+    totalWeeks,
+    variant,
+    pickerType
+  )
+    ? '0'
+    : '-1';
 };
 
 // Removes last character thats is not number or letter
@@ -1310,75 +1282,68 @@ function resolveTwoDigitYear(twoDigits, maxYear) {
   return (prevCentury + parsed).toString();
 }
 
-export function normalizeFlexibleDateInput(raw, maxDate = null) {
-  if (!raw || typeof raw !== 'string') return '';
-
-  const input = raw
+function normalizeDateInputString(raw) {
+  return raw
     .replace(/[/\-\s]+/g, '.')
     .replace(/\.+/g, '.')
     .trim();
+}
 
-  const digitsOnly = input.replace(/\D/g, '');
-
+function getMaxYearLimit(maxDate) {
   const defaultMaxYear = new Date().getFullYear() + 100;
-  const maxYear = maxDate ? new Date(maxDate).getFullYear() : defaultMaxYear;
+  return maxDate ? new Date(maxDate).getFullYear() : defaultMaxYear;
+}
+
+function normalizeYearToken(year, maxYear, currentYear, invalidReturnValue, trimLongYear = false) {
+  if (!year) return currentYear;
+  if (year.length === 1) return `200${year}`;
+  if (year.length === 2) return resolveTwoDigitYear(year, maxYear);
+  if (year.length === 3) return invalidReturnValue;
+  if (trimLongYear && year.length > 4) return year.slice(-4);
+  return year;
+}
+
+function toTwoDigitPart(value) {
+  return value.padStart(2, '0').slice(0, 2);
+}
+
+function parseCompactDateDigits(digitsOnly) {
+  const day = toTwoDigitPart(digitsOnly.slice(0, 2));
+  const month = toTwoDigitPart(digitsOnly.slice(2, 4));
+  const year = digitsOnly.slice(4);
+  return { day, month, year };
+}
+
+export function normalizeFlexibleDateInput(raw, maxDate = null) {
+  if (!raw || typeof raw !== 'string') return '';
+
+  const input = normalizeDateInputString(raw);
+  const digitsOnly = input.replace(/\D/g, '');
+  const maxYear = getMaxYearLimit(maxDate);
+  const currentYear = new Date().getFullYear().toString();
 
   if (digitsOnly.length >= 4 && !input.includes('.')) {
-    let day = '';
-    let month = '';
-    let year = '';
-
-    let pos = 0;
-
-    day = digitsOnly.slice(pos, pos + 2).padStart(2, '0');
-    pos += 2;
-
-    if (pos < digitsOnly.length) {
-      month = digitsOnly.slice(pos, pos + 2).padStart(2, '0');
-      pos += 2;
-    }
-
-    year = digitsOnly.slice(pos);
-
-    if (year === '') {
-      year = new Date().getFullYear().toString();
-    } else if (year.length === 1) {
-      year = `200${year}`;
-    } else if (year.length === 2) {
-      year = resolveTwoDigitYear(year, maxYear);
-    } else if (year.length === 3) {
-      return raw;
-    }
-
-    return `${day}.${month}.${year}.`;
+    const { day, month, year } = parseCompactDateDigits(digitsOnly);
+    const normalizedYear = normalizeYearToken(year, maxYear, currentYear, raw, false);
+    if (normalizedYear === raw) return raw;
+    return `${day}.${month}.${normalizedYear}.`;
   }
 
   const parts = input
     .split('.')
-    .map((p) => p.trim())
+    .map((part) => part.trim())
     .filter(Boolean);
 
   if (parts.length < 2) return input;
 
   const [dayStr, monthStr, yearStr] = parts;
+  const day = toTwoDigitPart(dayStr);
+  const month = toTwoDigitPart(monthStr);
 
-  const day = dayStr.padStart(2, '0').slice(0, 2);
-  const month = monthStr.padStart(2, '0').slice(0, 2);
+  const normalizedYear = normalizeYearToken(yearStr || '', maxYear, currentYear, input, true);
+  if (normalizedYear === input) return input;
 
-  let year = yearStr || '';
-  if (!year) {
-    year = new Date().getFullYear().toString();
-  } else if (year.length === 1) {
-    year = `200${year}`;
-  } else if (year.length === 2) {
-    year = resolveTwoDigitYear(year, maxYear);
-  } else if (year.length === 3) {
-    return input;
-  } else if (year.length > 4) {
-    year = year.slice(-4);
-  }
-
-  return `${day}.${month}.${year}.`;
+  return `${day}.${month}.${normalizedYear}.`;
 }
 
 export function parseExact(value) {

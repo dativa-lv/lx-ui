@@ -531,85 +531,144 @@ async function moveUngroupedItem(element, direction) {
   focusHandle(element);
 }
 
-async function moveGroupedItem(element, direction) {
-  if (props.loading || props.busy || draggableIsDisabledByQuery.value) {
-    return;
-  }
-  // Adjust groupCode assignment to handle unspecified groups
-  let groupCode;
+function calculateGroupCode(element) {
   if (element[props.groupAttribute]) {
-    groupCode = prepareCode(element[props.groupAttribute]);
-  } else if (props.includeUnspecifiedGroups) {
-    groupCode = UNSPECIFIED_GROUP_CODE;
-  } else {
-    groupCode = null;
-    return;
+    return prepareCode(element[props.groupAttribute]);
   }
+  if (props.includeUnspecifiedGroups) {
+    return UNSPECIFIED_GROUP_CODE;
+  }
+  return null;
+}
 
-  const groupKeys = Object.keys(itemsArray.value);
-  // Ensure the unspecified group exists in itemsArray.value if includeUnspecifiedGroups is true
+function ensureUnspecifiedGroupExists() {
   if (props.includeUnspecifiedGroups && !itemsArray.value[UNSPECIFIED_GROUP_CODE]) {
     itemsArray.value[UNSPECIFIED_GROUP_CODE] = [];
   }
+}
+
+function getMoveContext(element) {
+  const groupCode = calculateGroupCode(element);
+  const groupKeys = Object.keys(itemsArray.value);
   const groupIndex = groupKeys.indexOf(groupCode);
-  const itemIndex = itemsArray.value[groupCode].findIndex(
+  const itemIndex = itemsArray.value[groupCode]?.findIndex(
     (obj) => obj[props.idAttribute] === element[props.idAttribute]
   );
 
+  return { groupCode, groupKeys, groupIndex, itemIndex };
+}
+
+function moveItem(fromGroupCode, toGroupCode, itemIndex, element, insertAtStart = false) {
+  itemsArray.value[fromGroupCode].splice(itemIndex, 1);
+  if (insertAtStart) {
+    itemsArray.value[toGroupCode].unshift(element);
+  } else {
+    itemsArray.value[toGroupCode].push(element);
+  }
+}
+
+function expandTargetGroup(groupCode, groupKeys) {
+  const targetGroupIndex = groupKeys.indexOf(groupCode);
+  if (responsiveGroupDefinitions.value[targetGroupIndex]) {
+    responsiveGroupDefinitions.value[targetGroupIndex].expanded = true;
+  }
+}
+
+function tryLoopMove(context, direction, element) {
+  const { groupCode, groupKeys, groupIndex, itemIndex } = context;
   const isLastItemInLastGroup =
     groupIndex === groupKeys.length - 1 && itemIndex === itemsArray.value[groupCode].length - 1;
   const isFirstItemInFirstGroup = groupIndex === 0 && itemIndex === 0;
 
-  // Loop items moving (from last to first from first to last)
   if (isLastItemInLastGroup && direction === 'backward') {
-    itemsArray.value[groupCode].splice(itemIndex, 1);
-    const newGroupCode = groupKeys[0];
-    itemsArray.value[newGroupCode].push(element);
+    moveItem(groupCode, groupKeys[0], itemIndex, element);
+    return true;
   }
+
   if (isFirstItemInFirstGroup && direction === 'forward') {
-    itemsArray.value[groupCode].splice(itemIndex, 1);
-    const newGroupCode = groupKeys[groupKeys.length - 1];
-    itemsArray.value[newGroupCode].unshift(element);
+    moveItem(groupCode, groupKeys[groupKeys.length - 1], itemIndex, element, true);
+    return true;
   }
 
-  if (
-    (direction === 'forward' && itemIndex > 0) ||
-    (direction === 'backward' && itemIndex < itemsArray.value[groupCode].length - 1)
-  ) {
-    // Move within the same group
-    itemsArray.value[groupCode].splice(itemIndex, 1);
-    itemsArray.value[groupCode].splice(
-      direction === 'forward' ? itemIndex - 1 : itemIndex + 1,
-      0,
-      element
-    );
-  } else if (
-    (direction === 'forward' && groupIndex > 0) ||
-    (direction === 'backward' && groupIndex < groupKeys.length - 1)
-  ) {
-    // Move to a different group
-    itemsArray.value[groupCode].splice(itemIndex, 1);
-    const newGroupCode = groupKeys[direction === 'forward' ? groupIndex - 1 : groupIndex + 1];
-    itemsArray.value[newGroupCode].push(element);
+  return false;
+}
 
-    // Automatically expand the target group
-    if (responsiveGroupDefinitions.value[groupKeys.indexOf(newGroupCode)]) {
-      responsiveGroupDefinitions.value[groupKeys.indexOf(newGroupCode)].expanded = true;
-    }
-  } else if (direction === 'move-first') {
-    // Move to the first position in the current or first group
-    if (itemIndex !== 0) {
-      itemsArray.value[groupCode].splice(itemIndex, 1);
-      itemsArray.value[groupCode].unshift(element);
-    }
-  } else if (direction === 'move-last') {
-    // Move to the last position in the current or last group
-    if (itemIndex !== itemsArray.value[groupCode].length - 1) {
-      itemsArray.value[groupCode].splice(itemIndex, 1);
-      itemsArray.value[groupCode].push(element);
-    }
+function tryMoveWithinGroup(context, direction, element) {
+  const { groupCode, itemIndex } = context;
+  const canMoveForward = direction === 'forward' && itemIndex > 0;
+  const canMoveBackward =
+    direction === 'backward' && itemIndex < itemsArray.value[groupCode].length - 1;
+
+  if (!canMoveForward && !canMoveBackward) return false;
+
+  itemsArray.value[groupCode].splice(itemIndex, 1);
+  itemsArray.value[groupCode].splice(
+    direction === 'forward' ? itemIndex - 1 : itemIndex + 1,
+    0,
+    element
+  );
+  return true;
+}
+
+function tryMoveAcrossGroups(context, direction, element) {
+  const { groupCode, groupKeys, groupIndex, itemIndex } = context;
+  const canMoveForward = direction === 'forward' && groupIndex > 0;
+  const canMoveBackward = direction === 'backward' && groupIndex < groupKeys.length - 1;
+
+  if (!canMoveForward && !canMoveBackward) return false;
+
+  const newGroupCode = groupKeys[direction === 'forward' ? groupIndex - 1 : groupIndex + 1];
+  moveItem(groupCode, newGroupCode, itemIndex, element);
+  expandTargetGroup(newGroupCode, groupKeys);
+  return true;
+}
+
+function tryMoveToEdge(context, direction, element) {
+  const { groupCode, itemIndex } = context;
+  const currentGroup = itemsArray.value[groupCode];
+
+  if (direction === 'move-first' && itemIndex !== 0) {
+    currentGroup.splice(itemIndex, 1);
+    currentGroup.unshift(element);
+    return true;
   }
 
+  if (direction === 'move-last' && itemIndex !== currentGroup.length - 1) {
+    currentGroup.splice(itemIndex, 1);
+    currentGroup.push(element);
+    return true;
+  }
+
+  return false;
+}
+
+async function moveGroupedItem(element, direction) {
+  if (props.loading || props.busy || draggableIsDisabledByQuery.value) return;
+
+  ensureUnspecifiedGroupExists();
+  const context = getMoveContext(element);
+
+  if (!context.groupCode || context.groupIndex === -1 || context.itemIndex === -1) {
+    focusHandle(element);
+    return;
+  }
+
+  if (tryLoopMove(context, direction, element)) {
+    focusHandle(element);
+    return;
+  }
+
+  if (tryMoveWithinGroup(context, direction, element)) {
+    focusHandle(element);
+    return;
+  }
+
+  if (tryMoveAcrossGroups(context, direction, element)) {
+    focusHandle(element);
+    return;
+  }
+
+  tryMoveToEdge(context, direction, element);
   focusHandle(element);
 }
 
