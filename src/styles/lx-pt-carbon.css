@@ -282,6 +282,7 @@
   --input-container-width: auto;
   --input-container-width-large: 14rem;
   --input-container-width-small: 10.5rem;
+  --input-container-double-width-small: 21.5rem;
   --input-grid-areas: 'tag input invalid-icon icon button';
   --input-grid-template-columns: auto 1fr auto auto auto;
   --input-icon-height: 1.25rem;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref, inject } from 'vue';
-
+import { useElementSize } from '@vueuse/core';
 import useLx from '@/hooks/useLx';
 import {
   formatDateJSON,
@@ -71,7 +71,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
-
+const rangeWrapper = ref();
 const emits = defineEmits([
   'update:startDate',
   'update:endDate',
@@ -397,6 +397,40 @@ function onOutOfRange(payload) {
   }
 }
 
+const rangeWrapperCurrentWidth = useElementSize(rangeWrapper).width;
+
+const rangeWrapperStyleWidth = computed(() => {
+  const el = rangeWrapper.value;
+  if (!el) return null;
+
+  const style = getComputedStyle(el);
+  const remValue = parseFloat(style.getPropertyValue('--input-container-double-width-small'));
+  const fontSize = parseFloat(style.fontSize) || 16;
+  if (Number.isNaN(remValue)) return null;
+
+  return Math.round(remValue * fontSize);
+});
+
+const hasFixedParentWidth = computed(() => {
+  const el = rangeWrapper.value;
+  if (!el) return false;
+
+  const parent = el.parentElement;
+  if (!parent) return false;
+
+  const parentWidth = getComputedStyle(parent).width;
+  if (Math.ceil(Number(parentWidth.split('px')[0])) === rangeWrapperStyleWidth.value) {
+    return false;
+  }
+  return !!parentWidth && parentWidth !== 'auto';
+});
+
+const useColumnView = computed(() => {
+  if (!hasFixedParentWidth.value) return false;
+  if (rangeWrapperStyleWidth.value == null) return false;
+  return rangeWrapperCurrentWidth.value < rangeWrapperStyleWidth.value;
+});
+
 onBeforeMount(() => {
   if (props.startDate && props.endDate && props.endDate < props.startDate) {
     model.value = {
@@ -408,7 +442,11 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="lx-field-wrapper">
+  <div
+    ref="rangeWrapper"
+    class="lx-field-wrapper"
+    :class="[{ 'lx-date-time-range-column-view': useColumnView }]"
+  >
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
       <span v-if="!startDate && !endDate">—</span>
       <span v-else>

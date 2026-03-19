@@ -362,6 +362,7 @@ Some input components are both visually and functionally similar. This includes:
 | `--input-button-width`                         | 2.5rem                                     |
 | `--input-container-width-large`                | 14rem                                      |
 | `--input-container-width-small`                | 10.5rem                                    |
+| `--input-container-double-width-small`         | 21.5rem                                    |
 | `--input-text-font-size`                       | `--font-size`                              |
 | `--input-text-font-weight`                     | 400                                        |
 | `--input-grid-areas`                           | 'tag input invalid-icon icon button'       |

@@ -280,6 +280,13 @@ function selectPreviousSlide() {
     startQuarterYear.value -= 10;
     endQuarterYear.value -= 10;
   }
+
+  if (responsiveView.value) {
+    nextTick(() => {
+      document.body.classList.add('no-scroll-mobile-pickers');
+    });
+  }
+
   currentDate.value = prevMonthOrYear;
 }
 
@@ -309,6 +316,11 @@ function selectNextSlide() {
     endQuarterYear.value += 10;
   }
   currentDate.value = nextMonthOrYear;
+  if (responsiveView.value) {
+    nextTick(() => {
+      document.body.classList.add('no-scroll-mobile-pickers');
+    });
+  }
 }
 
 const DEBOUNCE_MS = 50;
@@ -613,13 +625,18 @@ function handleRangeDifferentCaseValidation(date) {
     handleLayoutDisplay();
   };
 
+  setActiveToOpposite();
+
   // No dates selected
   if (!start && !end) {
-    if (isStartInput) updateStart(date);
-    else updateEnd(date);
-    setRange(isStartInput ? date : null, isEndInput ? date : null);
-    setActiveToOpposite();
-    return;
+    if (isStartInput) {
+      updateStart(date);
+    } else {
+      updateEnd(date);
+      setRange(isStartInput ? date : null, isEndInput ? date : null);
+
+      return;
+    }
   }
 
   // Only start selected
@@ -627,7 +644,6 @@ function handleRangeDifferentCaseValidation(date) {
     if (isStartInput) {
       updateStart(date);
       setRange(date, null);
-      setActiveToOpposite();
       return;
     }
 
@@ -636,8 +652,6 @@ function handleRangeDifferentCaseValidation(date) {
       updateStart(date);
       setRange(date, null);
     }
-
-    setActiveToOpposite();
     return;
   }
 
@@ -651,14 +665,12 @@ function handleRangeDifferentCaseValidation(date) {
         setStartDate(date);
         finalizeSelection(date, end);
       }
-      setActiveToOpposite();
       return;
     }
 
     updateEnd(date);
     finalizeSelection(start, end);
     hoveredDate.value = date;
-    setActiveToOpposite();
     return;
   }
 
@@ -1306,6 +1318,13 @@ const isHoveringYearRange = (year) => {
 
   // Return false if no conditions match
   return false;
+};
+
+const isWithinMinMaxRange = (date) => {
+  const { minDateRef, maxDateRef } = props;
+  if (minDateRef && date < minDateRef) return false;
+  if (maxDateRef && date > maxDateRef) return false;
+  return true;
 };
 
 const isSelectedDateRange = (date) => {
@@ -3575,7 +3594,8 @@ onUnmounted(() => {
                                     'lx-today':
                                       date.getDate() === todayDate.getDate() &&
                                       date.getMonth() === todayDate.getMonth() &&
-                                      date.getFullYear() === todayDate.getFullYear(),
+                                      date.getFullYear() === todayDate.getFullYear() &&
+                                      isWithinMinMaxRange(date),
                                   },
                                   {
                                     'lx-selected-day':

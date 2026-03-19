@@ -138,10 +138,12 @@ const model = computed({
   },
 });
 
-function setActiveInput(type, id, defaultFocus = true) {
-  activeInput.value = type;
+function setActiveInput(type, id, defaultFocus = false) {
+  if ((!isTouchMode.value || !isTouchSensitive.value) && !responsiveView.value) {
+    activeInput.value = type;
+  }
 
-  if (isTouchSensitive.value && defaultFocus) return;
+  if (defaultFocus) return;
 
   if (startInputRefs.value[id] && type === 'startInput') {
     startInputRefs.value[id].focus();
@@ -1394,7 +1396,6 @@ watch(
         const formattedEnd = formatDateByMode(newValue.end);
         modelInput.value = formattedStart;
         modelEndDateInput.value = formattedEnd;
-        activeInput.value = null;
       } else if (newValue.start && !newValue.end) {
         // When only the start date is selected
         const formattedStart = formatDateByMode(newValue.start);
