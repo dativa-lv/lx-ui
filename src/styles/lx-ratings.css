@@ -57,21 +57,21 @@
     display: none;
 }
 
-.lx-ratings.lx-select-1 .lx-star-1 svg,
-.lx-ratings.lx-select-2 .lx-star-1 svg,
-.lx-ratings.lx-select-2 .lx-star-2 svg,
-.lx-ratings.lx-select-3 .lx-star-1 svg,
-.lx-ratings.lx-select-3 .lx-star-2 svg,
-.lx-ratings.lx-select-3 .lx-star-3 svg,
-.lx-ratings.lx-select-4 .lx-star-1 svg,
-.lx-ratings.lx-select-4 .lx-star-2 svg,
-.lx-ratings.lx-select-4 .lx-star-3 svg,
-.lx-ratings.lx-select-4 .lx-star-4 svg,
-.lx-ratings.lx-select-5 .lx-star-1 svg,
-.lx-ratings.lx-select-5 .lx-star-2 svg,
-.lx-ratings.lx-select-5 .lx-star-3 svg,
-.lx-ratings.lx-select-5 .lx-star-4 svg,
-.lx-ratings.lx-select-5 .lx-star-5 svg {
+.lx-ratings:not(.lx-read-only).lx-select-1 .lx-star-1 svg,
+.lx-ratings:not(.lx-read-only).lx-select-2 .lx-star-1 svg,
+.lx-ratings:not(.lx-read-only).lx-select-2 .lx-star-2 svg,
+.lx-ratings:not(.lx-read-only).lx-select-3 .lx-star-1 svg,
+.lx-ratings:not(.lx-read-only).lx-select-3 .lx-star-2 svg,
+.lx-ratings:not(.lx-read-only).lx-select-3 .lx-star-3 svg,
+.lx-ratings:not(.lx-read-only).lx-select-4 .lx-star-1 svg,
+.lx-ratings:not(.lx-read-only).lx-select-4 .lx-star-2 svg,
+.lx-ratings:not(.lx-read-only).lx-select-4 .lx-star-3 svg,
+.lx-ratings:not(.lx-read-only).lx-select-4 .lx-star-4 svg,
+.lx-ratings:not(.lx-read-only).lx-select-5 .lx-star-1 svg,
+.lx-ratings:not(.lx-read-only).lx-select-5 .lx-star-2 svg,
+.lx-ratings:not(.lx-read-only).lx-select-5 .lx-star-3 svg,
+.lx-ratings:not(.lx-read-only).lx-select-5 .lx-star-4 svg,
+.lx-ratings:not(.lx-read-only).lx-select-5 .lx-star-5 svg {
     fill: var(--color-interactive-hover-background);
 }
 

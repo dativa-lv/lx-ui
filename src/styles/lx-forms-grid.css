@@ -660,7 +660,7 @@ svg .lx-shade {
   font-weight: var(--data-weight);
 }
 
-.lx-form-grid .lx-main .lx-row div.lx-vertical .lx-value-picker-default-item-label {
+.lx-form-grid .lx-main .lx-row div.lx-vertical .lx-value-picker-default-item:not(.lx-value-picker-item-disabled) .lx-value-picker-default-item-label {
   color: var(--color-data);
 }
 

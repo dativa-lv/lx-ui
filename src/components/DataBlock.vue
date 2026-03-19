@@ -65,7 +65,7 @@ const expanded = shallowRef(props.modelValue);
 
 // Provides a way to toggle the expanded state of the component
 function toggleExpander() {
-  if (!props.disabled) {
+  if (!isDisabled.value) {
     if (expanded.value !== null && props.expandable) {
       expanded.value = !expanded.value;
       emits('update:modelValue', expanded.value);
@@ -86,7 +86,7 @@ function handleKeyDown(event) {
 watch(
   () => props.modelValue,
   (newValue) => {
-    if (expanded.value !== newValue && props.expandable && !props.disabled) {
+    if (expanded.value !== newValue && props.expandable && !isDisabled.value) {
       expanded.value = newValue;
     }
   }
@@ -141,17 +141,18 @@ const expandIconTitle = computed(() => {
       { 'lx-data-block-wrapper-l': size === 'l' },
       { 'lx-data-block-expander': expandable },
       { 'lx-data-block-expanded': expanded },
-      { 'lx-data-block-disabled': disabled || busy || loading },
+      { 'lx-data-block-disabled': isDisabled },
       { 'lx-data-block-custom-header': $slots.customHeader },
       { 'lx-data-block-invalid': invalid },
       { 'lx-data-block-selected': selected },
+      { 'lx-data-block-busy': busy },
     ]"
   >
     <div class="lx-data-block">
       <header
         class="lx-data-block-header"
         :for="id"
-        :tabindex="expandable && !disabled ? 0 : null"
+        :tabindex="expandable && !isDisabled ? 0 : null"
         :aria-invalid="invalid"
         :aria-label="ariaLabel"
         :aria-describedby="`data-block-${id}-desc`"
@@ -165,14 +166,14 @@ const expandIconTitle = computed(() => {
             <LxRadioButton
               v-if="selectionKind === 'single'"
               v-model="selected"
-              :disabled="disabled || loading || busy"
+              :disabled="isDisabled"
               @keyup.space.stop="emits('selectingClick', id)"
               @click="emits('selectingClick', id)"
             />
             <LxCheckbox
               v-else-if="selectionKind === 'multiple'"
               v-model="selected"
-              :disabled="disabled || loading || busy"
+              :disabled="isDisabled"
               @keyup.space.stop="emits('selectingClick', id)"
               @click="emits('selectingClick', id)"
             />
