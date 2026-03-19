@@ -10,6 +10,7 @@ import LxValuePicker from '@/components/ValuePicker.vue';
 import LxLink from '@/components/Link.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { getInitialProps } from '@/utils/accessibilityUtils';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
 const props = defineProps({
   headingTag: { type: String, default: 'div' }, // h1, h2, h3, h4, h5, h6, div
@@ -103,33 +104,6 @@ const toggleTextMap = {
   touchMode: { yes: 'touchModeOn', no: 'touchModeOff' },
 };
 
-const themes = ref([
-  {
-    id: 'auto',
-    name: 'themeAuto',
-    description: 'themeAutoDescription',
-    icon: 'theme-auto',
-  },
-  {
-    id: 'light',
-    name: 'themeLight',
-    description: 'themeLightDescription',
-    icon: 'theme-light',
-  },
-  {
-    id: 'dark',
-    name: 'themeDark',
-    description: 'themeDarkDescription',
-    icon: 'theme-dark',
-  },
-  {
-    id: 'contrast',
-    name: 'themeContrast',
-    description: 'themeContrastDescription',
-    icon: 'theme-contrast',
-  },
-]);
-
 const guidelineLinks = {
   transparency: 'https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html',
   animations: 'https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html',
@@ -156,12 +130,19 @@ const sections = computed(() => {
   return map;
 });
 
+const availableThemes = inject('availableThemes', ref([]));
+
 const themeDisplayItems = computed(() =>
-  themes.value.map((theme) => ({
-    ...theme,
-    name: displayTexts.value[theme.name],
-    description: displayTexts.value[theme.description],
-  }))
+  availableThemes.value.map((id) => {
+    const capitalizedId = capitalizeFirstLetter(id);
+
+    return {
+      id,
+      icon: `theme-${id}`,
+      name: displayTexts.value[`theme${capitalizedId}`],
+      description: displayTexts.value[`theme${capitalizedId}Description`],
+    };
+  })
 );
 
 const blockToggleModels = ref(
@@ -224,7 +205,12 @@ const headingAttrs = computed(() => {
           {{ displayTexts[section] }}
         </component>
         <template v-for="block in blocksInSection" :key="block.id">
-          <LxDataBlock size="l" :expandable="true" v-model="blockExpanderModels[block.id]">
+          <LxDataBlock
+            v-if="block.id !== 'theme' || themeDisplayItems.length > 0"
+            size="l"
+            :expandable="true"
+            v-model="blockExpanderModels[block.id]"
+          >
             <template #customHeader>
               <LxStack
                 mode="grid"

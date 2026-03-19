@@ -297,6 +297,11 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
+provide(
+  'availableThemes',
+  computed(() => props.availableThemes)
+);
+
 const notificationModel = computed({
   get: () => props.notifications,
   set: (value) => emits('update:notifications', value),
