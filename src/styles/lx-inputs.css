@@ -1096,7 +1096,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   fill: var(--color-region);
 }
 
-.lx-checkbox-wrapper:hover .lx-checkbox:checked + .lx-checkbox-label-wrapper .lx-checkbox-appearance .lx-checkbox-thumb svg {
+.lx-checkbox-wrapper:hover .lx-checkbox:checked:not(:disabled) + .lx-checkbox-label-wrapper .lx-checkbox-appearance .lx-checkbox-thumb svg {
   fill: var(--color-interactive-hover-foreground);
 }
 

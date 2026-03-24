@@ -117,6 +117,10 @@ p.lx-subtitle {
   height: 1rem;
 }
 
+.lx .lx-notifications-list .lx-notification svg.lx-close-icon {
+  fill: var(--color-data);
+}
+
 .lx .lx-notifications-list:empty {
   display: none;
 }
