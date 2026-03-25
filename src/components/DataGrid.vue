@@ -799,17 +799,22 @@ const rows = computed(() => {
   if (props.items) {
     let ret = JSON.parse(JSON.stringify([...props.items]));
 
-    const attributeName = primaryColumn()?.attributeName;
+    const primaryAttributeName = primaryColumn()?.attributeName;
+    const primaryType = primaryColumn()?.type;
 
     ret = ret.map((row) => {
-      if (Array.isArray(row[attributeName])) {
-        if (typeof row[attributeName][0] === 'object' || row[attributeName].length === 0) {
+      // If the primary column is an array display it as a string to ensure clickability, except for "person" type
+      if (Array.isArray(row[primaryAttributeName]) && primaryType !== 'person') {
+        if (
+          typeof row[primaryAttributeName][0] === 'object' ||
+          row[primaryAttributeName].length === 0
+        ) {
           return {
             ...row,
-            [attributeName]: formatValueArray(row[attributeName]),
+            [primaryAttributeName]: formatValueArray(row[primaryAttributeName]),
           };
         }
-        return { ...row, [attributeName]: row[attributeName].join(', ') };
+        return { ...row, [primaryAttributeName]: row[primaryAttributeName].join(', ') };
       }
       return row;
     });
