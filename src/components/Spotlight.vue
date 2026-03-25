@@ -81,6 +81,9 @@ const visible = computed({
   },
 });
 
+const closeButtonRef = ref();
+let openButton;
+
 const getNumberOfItem = computed(
   () => props.items.findIndex((x) => x?.id === model.value || x?.elementId === model.value) + 1
 );
@@ -117,7 +120,7 @@ function getOffsetTop() {
 
 const needsHighZ = ref(false);
 
-function setSpotlightItem() {
+function setSpotlightItem(first) {
   visible.value = true;
 
   let spotlightItem;
@@ -170,6 +173,14 @@ function setSpotlightItem() {
         });
       }
     }
+
+    // When first opening the spotlight window, save focus of the shell open that opened it and move current focus to the spotlight window
+    if (first) {
+      nextTick(() => {
+        openButton = document.activeElement;
+        closeButtonRef.value?.focus();
+      });
+    }
   });
 }
 
@@ -182,6 +193,8 @@ watch(
 
 function spotlightEnd() {
   visible.value = false;
+  // Refocus the button that opened the spotlight
+  openButton?.focus();
 }
 
 function showMore() {
@@ -219,7 +232,7 @@ function actionClick(action) {
   } else if (action === 'back') {
     model.value = props.items[Math.max(0, getNumberOfItem.value - 2)]?.id || null;
   } else {
-    visible.value = false;
+    spotlightEnd();
     model.value = null;
   }
 }
@@ -232,7 +245,7 @@ watch(
       newValue?.length === 0 ||
       newValue.findIndex((x) => x?.id === model.value || x?.elementId === model.value) === -1
     ) {
-      visible.value = false;
+      spotlightEnd();
       target.value = null;
     }
   }
@@ -286,11 +299,12 @@ defineExpose({ setSpotlightItem, spotlightEnd });
               />
             </span>
             <LxButton
+              ref="closeButtonRef"
               icon="close"
               kind="ghost"
               :label="displayTexts.close"
               variant="icon-only"
-              @click="visible = false"
+              @click="spotlightEnd"
             />
           </div>
         </div>

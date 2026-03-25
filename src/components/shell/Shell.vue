@@ -1129,7 +1129,7 @@ const spotlightItemCurrentModel = computed({
 
 function spotlightStart() {
   if (spotlight.value) {
-    spotlight.value.setSpotlightItem();
+    spotlight.value.setSpotlightItem(true);
   }
 }
 
