@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import LxLoader from '@/components/Loader.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { ref, watch } from 'vue';

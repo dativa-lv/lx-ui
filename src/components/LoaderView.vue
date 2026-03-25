@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, watch } from 'vue';
 import LxLoader from '@/components/Loader.vue';
 

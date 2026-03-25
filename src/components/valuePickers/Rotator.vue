@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';

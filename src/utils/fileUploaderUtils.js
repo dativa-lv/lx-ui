@@ -858,7 +858,7 @@ function getCorrectGPSLongtitude(longitude, longitudeRef) {
 
 function getFixedAltitude(altitude) {
   if (altitude) {
-    const number = parseFloat(altitude);
+    const number = Number.parseFloat(altitude);
     const fixedNumber = number.toFixed(2).replace('.', ',');
     return `${fixedNumber} m`;
   }

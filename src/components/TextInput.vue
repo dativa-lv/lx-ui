@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, onMounted, watch, ref, inject } from 'vue';
 import { IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';

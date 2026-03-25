@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, onBeforeMount, ref, inject } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import useLx from '@/hooks/useLx';
@@ -404,8 +404,10 @@ const rangeWrapperStyleWidth = computed(() => {
   if (!el) return null;
 
   const style = getComputedStyle(el);
-  const remValue = parseFloat(style.getPropertyValue('--input-container-double-width-small'));
-  const fontSize = parseFloat(style.fontSize) || 16;
+  const remValue = Number.parseFloat(
+    style.getPropertyValue('--input-container-double-width-small')
+  );
+  const fontSize = Number.parseFloat(style.fontSize) || 16;
   if (Number.isNaN(remValue)) return null;
 
   return Math.round(remValue * fontSize);

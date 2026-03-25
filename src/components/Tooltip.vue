@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { onMounted, ref, computed } from 'vue';
 
 import LxPopper from '@/components/Popper.vue';
@@ -69,7 +69,7 @@ const calculateDistance = (pos1, pos2) => {
 };
 
 const handleMouseMove = (event) => {
-  if (props.disabled || window.matchMedia('(hover: none)').matches) {
+  if (props.disabled || globalThis.matchMedia('(hover: none)').matches) {
     return;
   }
 

@@ -30,11 +30,11 @@ export async function unauthorizedInterceptor(error) {
     } catch (e) {
       lxDevUtils.logError(`${e.name}: ${e.message}`, useLx().getGlobals().environment);
     }
-    const u = new URL(window.location.href);
+    const u = new URL(globalThis.location.href);
     if (!u.searchParams.has('_r')) {
       u.searchParams.set('_r', '1');
-      window.history.replaceState({}, '', u);
-      window.location.reload();
+      globalThis.history.replaceState({}, '', u);
+      globalThis.location.reload();
     }
   }
 

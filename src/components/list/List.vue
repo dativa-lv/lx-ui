@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, watch, onMounted, nextTick, inject, onBeforeUnmount } from 'vue';
 
 import useLx from '@/hooks/useLx';
@@ -316,7 +316,7 @@ function fillItemsArray() {
   if (props.includeUnspecifiedGroups) {
     const nullGroupItems = listItems?.filter(
       (item) =>
-        !props.groupDefinitions.find((group) => item.group?.toString() === group.id?.toString())
+        !props.groupDefinitions.some((group) => item.group?.toString() === group.id?.toString())
     );
     array[UNSPECIFIED_GROUP_CODE] = nullGroupItems;
   }

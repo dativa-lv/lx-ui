@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, nextTick, watch, inject } from 'vue';
 import { onClickOutside, useDebounceFn, useWindowSize } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
@@ -44,7 +44,7 @@ const props = defineProps({
   hasDetails: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   detailMode: { type: String, default: 'simple' }, // 'simple' or 'detailed'
-  preloadedItems: { type: Array, default: null },  // used for preloading items if items is a function and there is need to show items before user starts typing
+  preloadedItems: { type: Array, default: null }, // used for preloading items if items is a function and there is need to show items before user starts typing
   labelId: { type: String, default: null },
   hasSelectAll: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
@@ -109,9 +109,7 @@ const isTouchSensitive = inject('isTouchMode', ref(false));
 function formatFinalQuery(q) {
   return q?.trim();
 }
-const finalQuery = computed(() => {
-  return formatFinalQuery(query.value);
-});
+const finalQuery = computed(() => formatFinalQuery(query.value));
 
 const convertBooleanToString = (v) => (isBoolean(v) ? v.toString() : v);
 
@@ -153,9 +151,7 @@ const selectedItem = ref(null);
 const selectedItems = ref([]);
 const listRef = ref();
 
-const findItemById = (id, items) => {
-  return items?.find((item) => id === getIdAttributeString(item));
-};
+const findItemById = (id, items) => items?.find((item) => id === getIdAttributeString(item));
 
 const mergeItems = (newItems, storedItems) => {
   const mergedItems = [...storedItems];
@@ -178,7 +174,7 @@ const mergeItems = (newItems, storedItems) => {
 
 function attributesSearch(item) {
   return props.searchAttributes.some((attrName) => {
-    const attrValue = item[attrName as keyof typeof item];
+    const attrValue = item[attrName];
     return textSearch(query.value, attrValue);
   });
 }
@@ -221,7 +217,7 @@ const debouncedSearchReq = useDebounceFn(async (val) => {
       menuOpen.value = false;
     }
 
-    latestRequestId.value = latestRequestId.value + 1;
+    latestRequestId.value += 1;
     const requestId = latestRequestId.value;
 
     loadingState.value = true;
@@ -596,12 +592,11 @@ function onUp() {
 }
 
 function sortModel() {
-  model.value.sort((a, b) => {
-    return (
+  model.value.sort(
+    (a, b) =>
       Object.keys(itemsModel.value).indexOf(a.toString()) -
       Object.keys(itemsModel.value).indexOf(b.toString())
-    );
-  });
+  );
 }
 
 function handleSelection(selectedValue) {
@@ -679,7 +674,8 @@ function isItemSelected(item) {
     return (
       selectedItem.value && getIdAttributeString(item) === getIdAttributeString(selectedItem.value)
     );
-  } else if (props.selectionKind === 'multiple') {
+  }
+  if (props.selectionKind === 'multiple') {
     return model.value?.includes(getIdAttributeString(item));
   }
   return false;
@@ -779,7 +775,7 @@ function handleMultipleSelection(newModelValue) {
 }
 
 function handleSingleSelection(newModelValue) {
-  let selected = findItemById(newModelValue, allItems.value);
+  const selected = findItemById(newModelValue, allItems.value);
 
   if (selected) {
     selectedItem.value = selected;
@@ -915,16 +911,15 @@ const shouldShowIcon = computed(() => {
   return false;
 });
 
-const shouldShowDetailsBtn = computed(() => {
-  return (
+const shouldShowDetailsBtn = computed(
+  () =>
     ((props.selectionKind === 'single' && !hasValue.value) ||
       (props.selectionKind === 'multiple' &&
         ((props.detailMode === 'simple' && (!hasValue.value || hasValue.value)) ||
           (props.detailMode === 'detailed' && (!hasValue.value || hasValue.value))))) &&
     props.hasDetails &&
     !(loadingState.value || props.loading)
-  );
-});
+);
 
 const detailsSwitchTypes = computed(() => [
   {
@@ -978,9 +973,7 @@ const displayReadOnlyPlaceholder = computed(() => {
   return false;
 });
 
-const showListOptions = computed(() => {
-  return displaySelectedItems.value.length > 0;
-});
+const showListOptions = computed(() => displaySelectedItems.value.length > 0);
 
 const firstFocusableIndex = computed(() =>
   props.hasSelectAll && typeof props.items !== 'function' && props.selectionKind === 'multiple'
@@ -1131,13 +1124,12 @@ onMounted(() => {
 });
 
 const autoCompleteState = computed(() => {
-
   if (loadingState.value) {
     return 'searching';
   }
 
   if ((Array.isArray(model.value) && model.value.length > 0) || model.value) {
-      return 'selected';
+    return 'selected';
   }
 
   if (
@@ -1252,7 +1244,9 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       <div class="lx-tag-button">
                         <LxInfoWrapper
                           ref="infoWrapperRef"
-                          :disabled="disabled || (selectionKind === 'multiple' && menuOpen) || responsiveView"
+                          :disabled="
+                            disabled || (selectionKind === 'multiple' && menuOpen) || responsiveView
+                          "
                           :focusable="false"
                         >
                           <LxButton
@@ -1410,6 +1404,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
               @keydown.backspace="initInputFocus"
               @keydown="handleMenuAndInputKeydown"
             >
+              <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
               <slot name="panel" @click="closeMenu()">
                 <transition name="appear-down">
                   <div
@@ -1431,6 +1426,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     <template v-if="filteredItems?.length && !loadingState">
                       <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
                         <!-- Inject "Select All" just before the first item -->
+                        <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
                         <div
                           v-if="
                             index === 0 &&
@@ -1475,6 +1471,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                         </div>
 
                         <!-- Normal item rendering -->
+                        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
                         <div
                           v-if="getIdAttributeString(item) !== 'select-all'"
                           :tabindex="
@@ -1495,7 +1492,8 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                               'lx-highlighted-item':
                                 highlightedItemId &&
                                 highlightedItemId === getIdAttributeString(item),
-                              'autocomplete-multiple lx-aligned-row lx-aligned-row-inverse lx-aligned-row-3': selectionKind === 'multiple',
+                              'autocomplete-multiple lx-aligned-row lx-aligned-row-inverse lx-aligned-row-3':
+                                selectionKind === 'multiple',
                               'autocomplete-default-item': !$slots.customItem,
                             },
                           ]"

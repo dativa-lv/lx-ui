@@ -295,22 +295,23 @@ const columnDef = computed(() => {
     });
   }
 
-  res.push({
-    id: 'value',
-    name: displayTexts.value?.valueColumn,
-    attributeName: 'value',
-    type: 'decimal',
-    size: 's',
-  });
-
-  res.push({
-    id: 'icon',
-    name: ' ',
-    attributeName: 'icon',
-    title: displayTexts.value?.iconColumn,
-    type: 'icon',
-    size: 'xs',
-  });
+  res.push(
+    {
+      id: 'value',
+      name: displayTexts.value?.valueColumn,
+      attributeName: 'value',
+      type: 'decimal',
+      size: 's',
+    },
+    {
+      id: 'icon',
+      name: ' ',
+      attributeName: 'icon',
+      title: displayTexts.value?.iconColumn,
+      type: 'icon',
+      size: 'xs',
+    }
+  );
 
   if (props.showValues === 'never') {
     res.splice(1, 1);

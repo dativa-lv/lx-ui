@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { provide, inject, computed, onMounted, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxExpander from '@/components/Expander.vue';

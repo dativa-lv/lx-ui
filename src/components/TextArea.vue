@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, watch, nextTick, inject } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';

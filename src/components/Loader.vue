@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, watch } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { textSearch } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -41,7 +41,7 @@ const textsDefault = {
   clearChosen: 'Notīrīt visas izvēlētās vērtības',
   notSelected: 'Nav izvēlēts',
   searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-  selectAll: 'Izvēlēties visu'
+  selectAll: 'Izvēlēties visu',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -64,14 +64,16 @@ onMounted(() => {
 });
 
 const itemsModel = ref({});
-const itemsDisplay = computed( () => { 
-    const res = [... props.items];
-    if(props.selectionKind === 'single' && props.nullable)  
-      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: displayTexts.value.notSelected});
-  
-    return res
-  }
-);
+const itemsDisplay = computed(() => {
+  const res = [...props.items];
+  if (props.selectionKind === 'single' && props.nullable)
+    res.unshift({
+      [props.idAttribute]: 'notSelected',
+      [props.nameAttribute]: displayTexts.value.notSelected,
+    });
+
+  return res;
+});
 
 const notSelectedId = 'notSelected';
 
@@ -80,7 +82,6 @@ function activate() {
   itemsDisplay.value?.forEach((item) => {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
-
 
   // Then set items from model as selected
   if (model.value) {
@@ -99,7 +100,7 @@ activate();
 
 watch(
   () => {
-    const value = model.value;
+    const { value } = model;
     const length = value?.length;
     return { value, length };
   },
@@ -109,11 +110,10 @@ watch(
     if (Array.isArray(value) && length === 0) {
       itemsModel.value.notSelected = true;
     }
-    
   }
 );
 
-function getIcon(item, iconAttribute){
+function getIcon(item, iconAttribute) {
   return item[iconAttribute] ? item[iconAttribute] : 'none';
 }
 
@@ -154,12 +154,12 @@ watch(
   (newKind) => {
     activate();
     itemsModel.value = {};
-        
+
     if (newKind === 'multiple') {
-         model.value = [];
+      model.value = [];
       if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
     } else if (newKind === 'single') {
-     if (props.nullable) {
+      if (props.nullable) {
         selectSingle(notSelectedId);
       } else {
         selectSingle(itemsDisplay.value[0][props.idAttribute]);
@@ -177,14 +177,14 @@ function selectMultiple(id) {
 
   idModel.value = !idModel.value;
 
-  const res = [...model.value]
+  const res = [...model.value];
 
   if (idModel.value) {
     // Check if item already exists in model
     const index = res?.indexOf(id);
     if (index === -1) {
       // Add item to model
-     res?.push(id);
+      res?.push(id);
       itemsModel.value[id] = true;
     } else {
       // Remove item from model
@@ -214,7 +214,7 @@ const hiddenValues = ref([]);
 function attributesSearch(item) {
   let found = false;
   props.searchAttributes?.forEach((attrName) => {
-    const attrValue = item[attrName as keyof typeof item];
+    const attrValue = item[attrName];
     if (textSearch(query.value, attrValue)) {
       found = true;
     }
@@ -322,7 +322,7 @@ function isSelected(item) {
 
 const indicatorTooltips = computed(() => {
   const tooltips = {};
-  itemsDisplay.value.forEach(item => {
+  itemsDisplay.value.forEach((item) => {
     tooltips[item[props.idAttribute]] = item[props.descriptionAttribute]
       ? `${item[props.nameAttribute]} : ${item[props.descriptionAttribute]}`
       : item[props.nameAttribute];
@@ -331,107 +331,109 @@ const indicatorTooltips = computed(() => {
 });
 </script>
 
-<template>  
-    <div
-      class="lx-value-picker-indicators"
-      :class="[{ 'lx-invalid': invalid }]"
-      v-if="variant === 'indicator'"
-      :id="id"
-      :title="tooltip"
-      :aria-invalid="invalid"
-      :aria-labelledby="labelId"
-    >
-      <LxToolbar
-        v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')"
-        :disabled="disabled"
-        :hasSearch="hasSearch"
-        :searchString="query"
-        searchMode="defaultForce"
-        :hasSelectAll="hasSelectAll && selectionKind === 'multiple'"
-        :selectionState="selectionState"
-        selectAllSide="left"
-        :selectAllVariant="hasSearch ? 'icon-only' : 'default'"
-        :texts="{
-          placeholder: displayTexts.searchPlaceholder,
-          clear: displayTexts.clearQuery,
-          selectAllRows: displayTexts.selectAll,
-          clearSelected: displayTexts.clearChosen,
+<template>
+  <div
+    class="lx-value-picker-indicators"
+    :class="[{ 'lx-invalid': invalid }]"
+    v-if="variant === 'indicator'"
+    :id="id"
+    :title="tooltip"
+    :aria-invalid="invalid"
+    :aria-labelledby="labelId"
+  >
+    <LxToolbar
+      v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')"
+      :disabled="disabled"
+      :hasSearch="hasSearch"
+      :searchString="query"
+      searchMode="defaultForce"
+      :hasSelectAll="hasSelectAll && selectionKind === 'multiple'"
+      :selectionState="selectionState"
+      selectAllSide="left"
+      :selectAllVariant="hasSearch ? 'icon-only' : 'default'"
+      :texts="{
+        placeholder: displayTexts.searchPlaceholder,
+        clear: displayTexts.clearQuery,
+        selectAllRows: displayTexts.selectAll,
+        clearSelected: displayTexts.clearChosen,
+      }"
+      @search="search"
+      @selectAll="selectAll"
+      @deselectAll="selectAll"
+    />
+    <ul class="lx-indicator-set" v-if="selectionKind === 'single'">
+      <li
+        v-for="item in itemsDisplay"
+        :key="item[idAttribute]"
+        class="lx-indicator"
+        :title="indicatorTooltips[item[idAttribute]]"
+        :id="getItemId(item[idAttribute])"
+        :group-id="groupId"
+        :class="{
+          'lx-indicators-selected': isSelected(item),
+          'lx-value-hidden': isElementHidden(item),
+          [`lx-indicator-${item[categoryAttribute]}`]: item[categoryAttribute] && isSelected(item),
         }"
-        @search="search"
-        @selectAll="selectAll"
-        @deselectAll="selectAll"
-      />
-      <ul class="lx-indicator-set" v-if="selectionKind === 'single'">
-        <li
-          v-for="item in itemsDisplay"
-          :key="item[idAttribute]"
-          class="lx-indicator"
-          :title="indicatorTooltips[item[idAttribute]]"
-          :id="getItemId(item[idAttribute])"
-          :group-id="groupId"
-          :class="{
-            'lx-indicators-selected': isSelected(item),
-            'lx-value-hidden': isElementHidden(item),
-            [`lx-indicator-${item[categoryAttribute]}`]: item[categoryAttribute] && isSelected(item),
-          }"
-          :disabled="disabled"
-          :aria-disabled="disabled"
-          :readOnly="readOnly"
-          :tabindex="disabled ? '-1' : (readOnly ? '-1' : '0')"
-          @click="disabled ? null : selectSingle(item[idAttribute])"
-          role="radio"
-          :aria-checked="
-            itemsModel[item[idAttribute]] ||
-              (!alwaysAsArray && item[idAttribute] === model) ||
-              item[idAttribute] === checkNull(model)
-          "
-          :aria-labelledby="getLabelId(item[idAttribute])"
-          @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
-        >
-          <template v-if="variant === 'indicator'">
-            <LxIcon
-              :id="getLabelId(item[idAttribute])"
-              :value="getIcon(item, iconAttribute)"
-              :title="indicatorTooltips[item[idAttribute]]"
-              :iconSet="getIconSet(item, iconSetAttribute)"
-              class="lx-indicator-icon"
-              />
-          </template>
-        </li>
-      </ul>
-      <ul class="lx-indicator-set" v-if="selectionKind === 'multiple'">
-        <li
-          v-for="item in itemsDisplay"
-          :key="item[idAttribute]"
-          class="lx-indicator"
-          :title="indicatorTooltips[item[idAttribute]]"
-          :id="getItemId(item[idAttribute])"
-          :group-id="groupId"
-          :class="{
-            'lx-indicators-selected': itemsModel[item[idAttribute]],
-            'lx-value-hidden': isElementHidden(item),
-            [`lx-indicator-${item[categoryAttribute]}`]: item[categoryAttribute] && itemsModel[item[idAttribute]],
-          }"
-          :disabled="disabled"
-          :aria-disabled="disabled"
-          :readOnly="readOnly"
-          :tabindex="disabled ? '-1' : (readOnly ? '-1' : '0')"
-          @click="selectMultiple(item[idAttribute])"
-          role="checkbox"
-          :aria-checked="itemsModel[item[idAttribute]]"
-          :aria-labelledby="getLabelId(item[idAttribute])"
-          @keydown.space.prevent="selectMultiple(item[idAttribute])"
-        >
-          <template v-if="variant === 'indicator'">
-            <LxIcon
-              :id="getLabelId(item[idAttribute])"
-              :value="getIcon(item, iconAttribute)"
-              :title="indicatorTooltips[item[idAttribute]]"
-              :iconSet="getIconSet(item, iconSetAttribute)"
-              class="lx-indicator-icon"/>
-          </template>
-        </li>
-      </ul>
-    </div>
-    <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+        :disabled="disabled"
+        :aria-disabled="disabled"
+        :readOnly="readOnly"
+        :tabindex="disabled ? '-1' : readOnly ? '-1' : '0'"
+        @click="disabled ? null : selectSingle(item[idAttribute])"
+        role="radio"
+        :aria-checked="
+          itemsModel[item[idAttribute]] ||
+          (!alwaysAsArray && item[idAttribute] === model) ||
+          item[idAttribute] === checkNull(model)
+        "
+        :aria-labelledby="getLabelId(item[idAttribute])"
+        @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
+      >
+        <template v-if="variant === 'indicator'">
+          <LxIcon
+            :id="getLabelId(item[idAttribute])"
+            :value="getIcon(item, iconAttribute)"
+            :title="indicatorTooltips[item[idAttribute]]"
+            :iconSet="getIconSet(item, iconSetAttribute)"
+            class="lx-indicator-icon"
+          />
+        </template>
+      </li>
+    </ul>
+    <ul class="lx-indicator-set" v-if="selectionKind === 'multiple'">
+      <li
+        v-for="item in itemsDisplay"
+        :key="item[idAttribute]"
+        class="lx-indicator"
+        :title="indicatorTooltips[item[idAttribute]]"
+        :id="getItemId(item[idAttribute])"
+        :group-id="groupId"
+        :class="{
+          'lx-indicators-selected': itemsModel[item[idAttribute]],
+          'lx-value-hidden': isElementHidden(item),
+          [`lx-indicator-${item[categoryAttribute]}`]:
+            item[categoryAttribute] && itemsModel[item[idAttribute]],
+        }"
+        :disabled="disabled"
+        :aria-disabled="disabled"
+        :readOnly="readOnly"
+        :tabindex="disabled ? '-1' : readOnly ? '-1' : '0'"
+        @click="selectMultiple(item[idAttribute])"
+        role="checkbox"
+        :aria-checked="itemsModel[item[idAttribute]]"
+        :aria-labelledby="getLabelId(item[idAttribute])"
+        @keydown.space.prevent="selectMultiple(item[idAttribute])"
+      >
+        <template v-if="variant === 'indicator'">
+          <LxIcon
+            :id="getLabelId(item[idAttribute])"
+            :value="getIcon(item, iconAttribute)"
+            :title="indicatorTooltips[item[idAttribute]]"
+            :iconSet="getIconSet(item, iconSetAttribute)"
+            class="lx-indicator-icon"
+          />
+        </template>
+      </li>
+    </ul>
+  </div>
+  <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
 </template>

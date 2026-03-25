@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, nextTick, provide, computed, watch, onUnmounted } from 'vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxButton from '@/components/Button.vue';

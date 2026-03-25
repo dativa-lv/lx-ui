@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {
   onMounted,
   onBeforeUnmount,
@@ -202,10 +202,10 @@ const handleDragEnd = () => {
     handleClose(false);
   }
 
-  window.removeEventListener('mousemove', handleDragging);
-  window.removeEventListener('mouseup', handleDragEnd);
-  window.removeEventListener('touchmove', handleDragging);
-  window.removeEventListener('touchend', handleDragEnd);
+  globalThis.removeEventListener('mousemove', handleDragging);
+  globalThis.removeEventListener('mouseup', handleDragEnd);
+  globalThis.removeEventListener('touchmove', handleDragging);
+  globalThis.removeEventListener('touchend', handleDragEnd);
 };
 
 const handleDragStart = (event) => {
@@ -214,10 +214,10 @@ const handleDragStart = (event) => {
   isDragging.value = true;
   startY.value = event.touches ? event.touches[0].clientY : event.clientY;
 
-  window.addEventListener('mousemove', handleDragging);
-  window.addEventListener('mouseup', handleDragEnd);
-  window.addEventListener('touchmove', handleDragging, { passive: false });
-  window.addEventListener('touchend', handleDragEnd);
+  globalThis.addEventListener('mousemove', handleDragging);
+  globalThis.addEventListener('mouseup', handleDragEnd);
+  globalThis.addEventListener('touchmove', handleDragging, { passive: false });
+  globalThis.addEventListener('touchend', handleDragEnd);
 };
 
 const handleClickOutside = (event) => {
@@ -316,7 +316,7 @@ function popperClick() {
 
 function togglePopperOnMobile() {
   if (
-    (window.matchMedia('(hover: none)').matches && isPanelAvailable.value) ||
+    (globalThis.matchMedia('(hover: none)').matches && isPanelAvailable.value) ||
     responsiveView.value
   ) {
     showPopper.value = !showPopper.value;
@@ -411,8 +411,8 @@ onMounted(() => {
   if (el && el instanceof HTMLElement) {
     el.setAttribute('aria-labelledby', `${props.id}-description`);
   }
-  window.addEventListener('keydown', handleGlobalKeydown);
-  window.addEventListener('click', handleClickOutside);
+  globalThis.addEventListener('keydown', handleGlobalKeydown);
+  globalThis.addEventListener('click', handleClickOutside);
 
   const observer = new MutationObserver(() => {
     hasReducedMotion.value = document.body.classList.contains('lx-no-animations');
@@ -425,8 +425,8 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleGlobalKeydown);
-  window.removeEventListener('click', handleClickOutside);
+  globalThis.removeEventListener('keydown', handleGlobalKeydown);
+  globalThis.removeEventListener('click', handleClickOutside);
 
   if (!props.disabled) {
     document.body.classList.remove('no-scroll-mobile-pickers');

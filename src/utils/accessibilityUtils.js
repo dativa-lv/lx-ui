@@ -1,8 +1,8 @@
 function safeMatchMedia(query) {
-  if (typeof window === 'undefined' || !window.matchMedia) {
+  if (typeof globalThis === 'undefined' || !globalThis.matchMedia) {
     return null;
   }
-  return window.matchMedia(query);
+  return globalThis.matchMedia(query);
 }
 
 function getPreferences() {

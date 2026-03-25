@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { shallowRef, computed, watch, defineAsyncComponent } from 'vue';
 import IconDefault from '@/components/icons/Default.vue';
 

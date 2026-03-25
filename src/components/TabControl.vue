@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { onMounted, ref, computed, nextTick, watch } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
@@ -101,7 +101,7 @@ function focusNextTab() {
 function calculateOffset(el) {
   const navRems = getComputedStyle(el).getPropertyValue('--nav-row-size').trim();
   const { fontSize } = getComputedStyle(el);
-  return parseInt(navRems, 10) * parseFloat(fontSize);
+  return Number.parseInt(navRems, 10) * Number.parseFloat(fontSize);
 }
 
 const topOutOfBounds = computed(() => {

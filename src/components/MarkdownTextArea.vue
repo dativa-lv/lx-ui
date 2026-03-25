@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, inject } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import PlaceholderData from '@/components/markdownExtensions/PlaceholderData';
@@ -280,7 +280,7 @@ function createEditorExtensions() {
             // When parsing existing content, maintain the counter
             const currentId = element.getAttribute('id');
             if (currentId && currentId.startsWith('markdown-section-')) {
-              const num = parseInt(currentId.split('-').pop(), 10);
+              const num = Number.parseInt(currentId.split('-').pop(), 10);
               headingCounter = Math.max(headingCounter, num);
             }
             return currentId;

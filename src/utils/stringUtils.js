@@ -5,7 +5,7 @@ const cyrillicToTranslit = CyrillicToTranslit();
 export function generateUUID() {
   let uuid = 'LX';
   const hexDigits = '0123456789abcdef';
-  const cryptoObj = window.crypto || window.msCrypto;
+  const cryptoObj = globalThis.crypto || globalThis.msCrypto;
 
   for (let i = 0; i < 32; i += 1) {
     const randomBytes = new Uint8Array(1);

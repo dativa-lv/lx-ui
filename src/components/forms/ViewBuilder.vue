@@ -13,7 +13,7 @@ import LxFormBuilderListItem from '@/components/forms/FormBuilderListItem.vue';
 
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
-import { lxDevUtils } from '@/utils';
+import { lxDevUtils, lxFormatUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 
 import { useVuelidate } from '@vuelidate/core';
@@ -108,7 +108,7 @@ const model = computed({
 
 const isSchemaValid = computed(() => {
   try {
-    JSON.parse(JSON.stringify(props.schema));
+    lxFormatUtils.objectClone(props.schema);
   } catch (e) {
     return false;
   }
@@ -155,10 +155,10 @@ function addDefaultValues() {
 
 const viewKind = computed(() => {
   const properties = Object.values(props.schema?.properties || {});
-  if (properties.find((v) => v?.lx?.displayType === 'form' && v?.type === 'object')) {
+  if (properties.some((v) => v?.lx?.displayType === 'form' && v?.type === 'object')) {
     return 'form';
   }
-  if (properties.find((v) => v?.lx?.displayType === 'filters' && v?.type === 'object')) {
+  if (properties.some((v) => v?.lx?.displayType === 'filters' && v?.type === 'object')) {
     return 'filters';
   }
   return 'default';
@@ -350,7 +350,7 @@ function validateOtherBuilders() {
 function validateModel() {
   const res = [];
   validateOtherBuilders();
-  const modelClone = JSON.parse(JSON.stringify(model.value));
+  const modelClone = lxFormatUtils.objectClone(model.value);
   vv.value = useVuelidate(rules, { modelClone }, { $autoDirty: true });
   vv.value.value.modelClone.$touch();
 

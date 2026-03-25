@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, inject, onMounted, ref, watch } from 'vue';
 import { useFloating, flip, shift, arrow, offset, autoUpdate } from '@floating-ui/vue';
 import { generateUUID } from '@/utils/stringUtils';
@@ -113,8 +113,8 @@ const {
 // Manually calculate floating styles if clientPosition is provided
 const floatingStyles = computed(() => {
   if (props.clientPosition) {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    const viewportWidth = globalThis.innerWidth;
+    const viewportHeight = globalThis.innerHeight;
 
     const popperWidth = floating.value?.offsetWidth || 0;
     const popperHeight = floating.value?.offsetHeight || 0;

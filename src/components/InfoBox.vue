@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';

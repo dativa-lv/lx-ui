@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
@@ -56,17 +56,18 @@ const model = computed({
 });
 
 const itemsModel = ref({});
-const itemsDisplay = computed( () => { 
-    const res = [... props.items];
-    if(props.selectionKind === 'single' && props.nullable)  
-      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: displayTexts.value.notSelected});
-  
-    return res
-  }
-);
+const itemsDisplay = computed(() => {
+  const res = [...props.items];
+  if (props.selectionKind === 'single' && props.nullable)
+    res.unshift({
+      [props.idAttribute]: 'notSelected',
+      [props.nameAttribute]: displayTexts.value.notSelected,
+    });
+
+  return res;
+});
 const notSelectedId = 'notSelected';
 let currentIndex = 0;
-
 
 onMounted(() => {
   if (!model.value && props.selectionKind === 'multiple') {
@@ -92,7 +93,6 @@ function activate() {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
 
-
   // Then set items from model as selected
   if (model.value) {
     if (Array.isArray(model.value)) {
@@ -116,7 +116,7 @@ activate();
 
 watch(
   () => {
-    const value = model.value;
+    const { value } = model;
     const length = value?.length;
     return { value, length };
   },
@@ -150,7 +150,8 @@ function getName(returnPlaceholder = true) {
 
   if (model.value && !Array.isArray(model.value)) {
     return selectedItems.value[0]?.[props.nameAttribute];
-  } else if (model.value && model.value.length > 0) {
+  }
+  if (model.value && model.value.length > 0) {
     text = selectedItems.value?.map((item) => item[props.nameAttribute])?.join(', ');
   } else if (returnPlaceholder) {
     text = props.placeholder;
@@ -208,7 +209,7 @@ function selectMultiple(id) {
 
   const idModel = ref(itemsModel.value[id]);
   idModel.value = !idModel.value;
-  const res = [...model.value]
+  const res = [...model.value];
 
   if (idModel.value) {
     // Check if item already exists in model
@@ -246,7 +247,7 @@ const hiddenValues = ref([]);
 function attributesSearch(item) {
   let found = false;
   props.searchAttributes?.forEach((attrName) => {
-    const attrValue = item[attrName as keyof typeof item];
+    const attrValue = item[attrName];
     if (textSearch(query.value, attrValue)) {
       found = true;
     }
@@ -290,9 +291,9 @@ function isElementHidden(item) {
   return false;
 }
 
-const columnReadOnly = computed(() => {
-  return selectedItems.value?.map((item) => item[props.nameAttribute]);
-});
+const columnReadOnly = computed(() =>
+  selectedItems.value?.map((item) => item[props.nameAttribute])
+);
 
 const areSomeSelected = computed(() => {
   let res = false;
@@ -347,9 +348,10 @@ function selectAll() {
 }
 
 function getTabIndex(id) {
-  const isFirstItem = itemsDisplay.value.length > 0 && itemsDisplay.value[0][props.idAttribute] === id;
-  const isValidModel = itemsDisplay.value.find(item => item[props.idAttribute] === model.value);
-  if (model.value === id || (isFirstItem && !(isValidModel))) {
+  const isFirstItem =
+    itemsDisplay.value.length > 0 && itemsDisplay.value[0][props.idAttribute] === id;
+  const isValidModel = itemsDisplay.value.find((item) => item[props.idAttribute] === model.value);
+  if (model.value === id || (isFirstItem && !isValidModel)) {
     return 0;
   }
   return -1;
@@ -386,13 +388,15 @@ function onNext() {
 function handleFocus() {
   nextTick(() => {
     const container = document.getElementById(props.id);
-    const selectedItem = container?.querySelector('.lx-value-picker-horizontal-icon-wrapper.lx-selected');
+    const selectedItem = container?.querySelector(
+      '.lx-value-picker-horizontal-icon-wrapper.lx-selected'
+    );
 
     setTimeout(() => {
       selectedItem?.scrollIntoView({
-        behavior: 'smooth', 
-        block: 'nearest',  
-        inline: 'center'
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
       });
     }, 5);
 
@@ -410,7 +414,6 @@ function focusNext() {
   onNext();
   handleFocus();
 }
-
 </script>
 <template>
   <div class="lx-value-picker-horizontal-container" :id="id">
@@ -436,9 +439,12 @@ function focusNext() {
     />
     <div
       class="lx-value-picker-horizontal-wrapper"
-      :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && selectionKind === 'multiple' }]"
+      :class="[
+        { 'lx-invalid': invalid },
+        { 'select-all': hasSelectAll && selectionKind === 'multiple' },
+      ]"
       :role="props.selectionKind === 'single' ? 'radiogroup' : 'group'"
-      tabindex='-1'
+      tabindex="-1"
     >
       <template v-if="readOnly">
         <p v-if="readOnlyRenderType === 'row'" class="lx-data">
@@ -462,20 +468,21 @@ function focusNext() {
             { 'lx-value-picker-item-disabled': disabled },
           ]"
         >
-          <div v-if="selectionKind === 'single'" 
-            class="lx-label-wrapper" 
-            :group-id="groupId" 
-          >
-            <div v-if="variant === 'horizontal'"
+          <div v-if="selectionKind === 'single'" class="lx-label-wrapper" :group-id="groupId">
+            <div
+              v-if="variant === 'horizontal'"
               class="lx-value-picker-horizontal-item-container"
               :title="item[descriptionAttribute] || tooltip"
             >
-              <div class="lx-value-picker-horizontal-item-label" 
-                   :id="`${id}-label-${item[idAttribute]}`">
+              <div
+                class="lx-value-picker-horizontal-item-label"
+                :id="`${id}-label-${item[idAttribute]}`"
+              >
                 <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
               </div>
             </div>
-            <div v-else-if="variant === 'horizontal-custom'"
+            <div
+              v-else-if="variant === 'horizontal-custom'"
               class="lx-value-picker-horizontal-item-container"
               :title="item[descriptionAttribute] || tooltip"
             >
@@ -483,8 +490,13 @@ function focusNext() {
                 <slot name="customItem" v-bind="item"></slot>
               </div>
             </div>
-            <div class="lx-value-picker-horizontal-icon-wrapper" 
-              :class="{ 'lx-selected': itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null)}"
+            <div
+              class="lx-value-picker-horizontal-icon-wrapper"
+              :class="{
+                'lx-selected':
+                  itemsModel[item[idAttribute]] ||
+                  (item[idAttribute] === notSelectedId && model === null),
+              }"
               @keydown.right.prevent="!disabled && focusNext()"
               @keydown.down.prevent="!disabled && focusNext()"
               @keydown.left.prevent="!disabled && focusPrevious()"
@@ -493,24 +505,35 @@ function focusNext() {
               :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])"
               role="radio"
               :aria-labelledby="`${id}-label-${item[idAttribute]}`"
-              :aria-checked="itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null)"
-              :aria-disabled="disabled">
+              :aria-checked="
+                itemsModel[item[idAttribute]] ||
+                (item[idAttribute] === notSelectedId && model === null)
+              "
+              :aria-disabled="disabled"
+            >
               <LxIcon
                 :id="getItemId(item[idAttribute])"
-                :value="itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null) ? 'selected' : 'unselected'"
+                :value="
+                  itemsModel[item[idAttribute]] ||
+                  (item[idAttribute] === notSelectedId && model === null)
+                    ? 'selected'
+                    : 'unselected'
+                "
                 :disabled="disabled"
                 v-model="itemsModel[item[idAttribute]]"
               />
             </div>
           </div>
-          <div v-if="selectionKind === 'multiple'"
-            class="lx-label-wrapper" 
-            :group-id="groupId" 
-          >
-            <div class="lx-value-picker-horizontal-item-container" v-if="variant === 'horizontal'" 
-              :title="item[descriptionAttribute] || tooltip">
-              <div class="lx-value-picker-horizontal-item-label" 
-                   :id="`${id}-label-${item[idAttribute]}`">
+          <div v-if="selectionKind === 'multiple'" class="lx-label-wrapper" :group-id="groupId">
+            <div
+              class="lx-value-picker-horizontal-item-container"
+              v-if="variant === 'horizontal'"
+              :title="item[descriptionAttribute] || tooltip"
+            >
+              <div
+                class="lx-value-picker-horizontal-item-label"
+                :id="`${id}-label-${item[idAttribute]}`"
+              >
                 <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
               </div>
             </div>
@@ -523,7 +546,8 @@ function focusNext() {
                 <slot name="customItem" v-bind="item"></slot>
               </div>
             </div>
-            <div class="lx-value-picker-horizontal-icon-wrapper" 
+            <div
+              class="lx-value-picker-horizontal-icon-wrapper"
               :class="{ 'lx-selected': itemsModel[item[idAttribute]] }"
               @click="selectMultiple(item[idAttribute])"
               @keydown.space.prevent="selectMultiple(item[idAttribute])"
@@ -541,7 +565,7 @@ function focusNext() {
               />
             </div>
           </div>
-          </div>
+        </div>
       </template>
     </div>
   </div>

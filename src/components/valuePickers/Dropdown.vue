@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch, generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
@@ -66,7 +66,7 @@ const textsDefault = {
   selectAll: 'Izvēlēties visu',
   noItemsMessage: 'Nav pieejamu vērtību',
   tooltipDisplayTextSingle: 'cits',
-  tooltipDisplayTextMulti: 'citi'
+  tooltipDisplayTextMulti: 'citi',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -156,7 +156,7 @@ function clear(e = { stopPropagation: () => {} }) {
 
 watch(
   () => {
-    const value = model.value;
+    const { value } = model;
     const length = value?.length;
     return { value, length };
   },
@@ -190,7 +190,8 @@ function getName(returnPlaceholder = true) {
   let text = '';
   if (model.value && !Array.isArray(model.value)) {
     return selectedItems.value[0]?.[props.nameAttribute];
-  } else if (model.value && model.value.length > 0) {
+  }
+  if (model.value && model.value.length > 0) {
     text = selectedItems.value?.map((item) => item[props.nameAttribute])?.join(', ');
   } else if (returnPlaceholder) {
     text = props.placeholder;
@@ -295,7 +296,7 @@ function selectMultiple(id) {
 function attributesSearch(item) {
   let found = false;
   props.searchAttributes?.forEach((attrName) => {
-    const attrValue = item[attrName as keyof typeof item];
+    const attrValue = item[attrName];
     if (textSearch(query.value, attrValue)) {
       found = true;
     }
@@ -342,7 +343,6 @@ const filteredItems = computed(() => {
 
   return items;
 });
-
 
 const isItemsEmpty = computed(() => {
   if (!Array.isArray(filteredItems.value)) return true;
@@ -540,9 +540,9 @@ onMounted(() => {
   }
 });
 
-const columnReadOnly = computed(() => {
-  return selectedItems.value?.map((item) => item[props.nameAttribute]);
-});
+const columnReadOnly = computed(() =>
+  selectedItems.value?.map((item) => item[props.nameAttribute])
+);
 
 const firstFocusableIndex = computed(() =>
   props.hasSelectAll && props.selectionKind === 'multiple' ? 1 : 0
@@ -686,14 +686,14 @@ function countDigits(number) {
           >
             <slot>
               <div class="pseudo-input" />
-              <div v-if="model?.length > 0" class="lx-tag" :class="[{ ['chars-' + countDigits(model?.length) ] : model?.length > 0 }]">
+              <div
+                v-if="model?.length > 0"
+                class="lx-tag"
+                :class="[{ ['chars-' + countDigits(model?.length)]: model?.length > 0 }]"
+              >
                 <div class="lx-tag-label">{{ model?.length }}</div>
                 <div class="lx-tag-button">
-                  <LxInfoWrapper
-                    ref="infoWrapperRef"
-                    :disabled="disabled"
-                    :focusable="false"
-                  >
+                  <LxInfoWrapper ref="infoWrapperRef" :disabled="disabled" :focusable="false">
                     <LxButton
                       id="clearButton"
                       :label="displayTexts.clearChosen"
@@ -703,12 +703,7 @@ function countDigits(number) {
                       icon="remove"
                       @click="clear"
                     />
-                    <template
-                      #panel
-                      v-if="
-                        displayTooltipItems?.length > 0
-                      "
-                    >
+                    <template #panel v-if="displayTooltipItems?.length > 0">
                       <ul class="lx-list">
                         <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
                           <div class="lx-row">
@@ -758,20 +753,17 @@ function countDigits(number) {
               <slot name="panel" @click="closeDropDownDefault()">
                 <div class="lx-dropdown-panel" tabindex="-1" role="listbox">
                   <template v-if="isItemsEmpty">
-                      <div class="lx-empty">
-                        <LxIcon value="info" />
-                        <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
+                    <div class="lx-empty">
+                      <LxIcon value="info" />
+                      <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
                       <p>{{ noItemsMessage }}</p>
                     </div>
-                  </template>  
+                  </template>
                   <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
                     <!-- Inject "Select All" just before the first item -->
                     <div
                       v-if="
-                        index === 0 &&
-                        hasSelectAll &&
-                        selectionKind === 'multiple' &&
-                        !isItemsEmpty
+                        index === 0 && hasSelectAll && selectionKind === 'multiple' && !isItemsEmpty
                       "
                       id="select-all"
                       class="lx-value-picker-item select-all lx-aligned-row"
@@ -824,7 +816,8 @@ function countDigits(number) {
                           'lx-selected': isItemSelected(item),
                         },
                         {
-                          'dropdown-multiple lx-aligned-row-inverse lx-aligned-row-3': selectionKind === 'multiple',
+                          'dropdown-multiple lx-aligned-row-inverse lx-aligned-row-3':
+                            selectionKind === 'multiple',
                         },
                       ]"
                       :id="getItemId(item[idAttribute])"

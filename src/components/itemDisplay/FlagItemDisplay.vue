@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import LxFlag from '@/components/Flag.vue';
 import { computed } from 'vue';
 

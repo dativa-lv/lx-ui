@@ -1,5 +1,5 @@
 <!-- eslint-disable no-param-reassign -->
-<script setup lang="ts">
+<script setup>
 import { computed, useSlots, ref, watch, onMounted, nextTick, provide, onUnmounted } from 'vue';
 import { useElementBounding, useElementSize, useWindowSize } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
@@ -273,7 +273,7 @@ const shellLayoutMode = computed(() => {
 });
 
 function remToPx(remValue) {
-  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
   return remValue * rootFontSize;
 }
 
@@ -282,8 +282,12 @@ const layoutElement = document.querySelector('.lx-layout');
 const headerElement = layoutElement?.querySelector(':scope > header');
 
 function publicShellOffset(el) {
-  const navPx = remToPx(parseFloat(getComputedStyle(el).getPropertyValue('--nav-row-size').trim()));
-  const rowPx = remToPx(parseFloat(getComputedStyle(el).getPropertyValue('--row-size').trim()));
+  const navPx = remToPx(
+    Number.parseFloat(getComputedStyle(el).getPropertyValue('--nav-row-size').trim())
+  );
+  const rowPx = remToPx(
+    Number.parseFloat(getComputedStyle(el).getPropertyValue('--row-size').trim())
+  );
 
   const publicNavElement = layoutElement?.querySelector(':scope > nav');
   const isNavVisible = publicNavElement
@@ -294,10 +298,10 @@ function publicShellOffset(el) {
     return navPx;
   }
 
-  if (window.innerHeight > remToPx(40)) {
-    return window.innerWidth > 900 ? navPx + rowPx : rowPx;
+  if (globalThis.innerHeight > remToPx(40)) {
+    return globalThis.innerWidth > 900 ? navPx + rowPx : rowPx;
   }
-  return window.innerWidth > 900 ? rowPx : 0;
+  return globalThis.innerWidth > 900 ? rowPx : 0;
 }
 
 // Calculates the offset for the form header and footer
@@ -309,7 +313,9 @@ function calculateOffset(el, considerRow = true) {
   }
 
   if (considerRow) {
-    const navRems = parseFloat(getComputedStyle(el).getPropertyValue('--nav-row-size').trim());
+    const navRems = Number.parseFloat(
+      getComputedStyle(el).getPropertyValue('--nav-row-size').trim()
+    );
     let navPx = remToPx(navRems);
 
     if (shellLayoutMode.value === 'public') {
@@ -328,12 +334,12 @@ function scrollTo(id) {
   const element = elementForm?.querySelector(`#${id}`);
   if (!element) return;
 
-  const topPosition = (element?.getBoundingClientRect().top ?? 0) + window.scrollY;
+  const topPosition = (element?.getBoundingClientRect().top ?? 0) + globalThis.scrollY;
   const offset = calculateOffset(element);
 
   const targetPosition = topPosition - offset;
 
-  window.scrollTo({
+  globalThis.scrollTo({
     top: targetPosition,
     behavior: 'smooth',
   });
@@ -699,7 +705,7 @@ function isElementVisible(el) {
   }
 
   const rect = el?.getBoundingClientRect();
-  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  const viewportHeight = globalThis.innerHeight || document.documentElement.clientHeight;
   const isVisible = rect.top <= viewportHeight - bottomMargin && rect.bottom >= topMargin;
   return isVisible;
 }
@@ -843,9 +849,9 @@ onMounted(() => {
   nextTick(() => {
     updateVisibility();
   });
-  window.addEventListener('scroll', updateVisibility);
+  globalThis.addEventListener('scroll', updateVisibility);
   onUnmounted(() => {
-    window.removeEventListener('scroll', updateVisibility);
+    globalThis.removeEventListener('scroll', updateVisibility);
   });
 
   const currentStep = itemsCopy.value.find((item) => item.isCurrentStep === true);

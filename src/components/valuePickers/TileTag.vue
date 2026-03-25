@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -98,7 +98,7 @@ activate();
 
 watch(
   () => {
-    const value = model.value;
+    const { value } = model;
     const length = value?.length;
     return { value, length };
   },
@@ -132,7 +132,8 @@ function getName(returnPlaceholder = true) {
 
   if (model.value && !Array.isArray(model.value)) {
     return selectedItems.value[0]?.[props.nameAttribute];
-  } else if (model.value && model.value.length > 0) {
+  }
+  if (model.value && model.value.length > 0) {
     text = selectedItems.value?.map((item) => item[props.nameAttribute])?.join(', ');
   } else if (returnPlaceholder) {
     text = props.placeholder;
@@ -228,7 +229,7 @@ const hiddenValues = ref([]);
 function attributesSearch(item) {
   let found = false;
   props.searchAttributes?.forEach((attrName) => {
-    const attrValue = item[attrName as keyof typeof item];
+    const attrValue = item[attrName];
     if (textSearch(query.value, attrValue)) {
       found = true;
     }
@@ -277,9 +278,9 @@ function checkNull(value) {
   return value;
 }
 
-const columnReadOnly = computed(() => {
-  return selectedItems.value?.map((item) => item[props.nameAttribute]);
-});
+const columnReadOnly = computed(() =>
+  selectedItems.value?.map((item) => item[props.nameAttribute])
+);
 
 const areSomeSelected = computed(() => {
   let res = false;
@@ -334,7 +335,7 @@ function selectAll() {
 function getDescriptionElement(itemId) {
   const parent = document.getElementById(getItemId(itemId));
   if (!parent) return null;
-  return parent.querySelector(".lx-value-picker-description") as HTMLElement;
+  return parent.querySelector('.lx-value-picker-description');
 }
 
 function shouldFocusDescription(itemId) {
@@ -394,7 +395,7 @@ function updateDescriptionTabIndexes(items) {
         class="lx-value-picker-tile-wrapper"
         :class="[{ 'lx-invalid': invalid }, { 'lx-tile-custom': variant === 'tiles-custom' }]"
         v-if="variant === 'tiles' || variant === 'tiles-custom'"
-        tabindex='-1'
+        tabindex="-1"
         role="radiogroup"
         :aria-invalid="invalid"
         :title="tooltip"

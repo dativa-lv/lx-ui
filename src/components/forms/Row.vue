@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, inject, ref, provide, useSlots } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';

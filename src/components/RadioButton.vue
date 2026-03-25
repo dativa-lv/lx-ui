@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 

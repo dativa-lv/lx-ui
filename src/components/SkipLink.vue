@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { generateUUID } from '@/utils/stringUtils';
 import LxButton from '@/components/Button.vue';
 

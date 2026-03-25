@@ -291,7 +291,7 @@ function triggerShowAllClick() {
 }
 
 function scrollUp() {
-  window.scrollTo({
+  globalThis.scrollTo({
     top: 0,
     behavior: 'smooth',
   });

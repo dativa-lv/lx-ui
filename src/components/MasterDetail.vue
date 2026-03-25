@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref, watch } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxEmptyState from '@/components/EmptyState.vue';

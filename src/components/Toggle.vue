@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref, watch, onMounted, useSlots, inject, nextTick } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';

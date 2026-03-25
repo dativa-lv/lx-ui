@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { onMounted, ref, computed } from 'vue';
 import LxFilters from '@/components/Filters.vue';
 import LxFormBuilder from '@/components/forms/FormBuilder.vue';

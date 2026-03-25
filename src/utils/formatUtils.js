@@ -35,7 +35,7 @@ export function formatValueBool(value, texts = { yes: 'Jā', no: 'Nē' }) {
 }
 
 export function formatUrl(value) {
-  let newUrl = window.decodeURIComponent(value);
+  let newUrl = globalThis.decodeURIComponent(value);
   newUrl = newUrl.trim().replace(/\s/g, '');
 
   if (/^(:\/\/)/.test(newUrl)) {

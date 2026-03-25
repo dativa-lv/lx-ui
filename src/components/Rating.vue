@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref } from 'vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';

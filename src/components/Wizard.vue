@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed } from 'vue';
 import LxSteps from '@/components/Steps.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
@@ -22,7 +22,7 @@ const model = computed({
 function calculateOffset(el) {
   const navRems = getComputedStyle(el).getPropertyValue('--nav-row-size').trim();
   const { fontSize } = getComputedStyle(el);
-  return parseInt(navRems, 10) * parseFloat(fontSize);
+  return Number.parseInt(navRems, 10) * Number.parseFloat(fontSize);
 }
 
 const wizardHeader = ref();

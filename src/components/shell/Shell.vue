@@ -376,7 +376,7 @@ const selectedLanguageModel = computed({
   get() {
     if (
       !props.selectedLanguage ||
-      !props.languages.find((item) => item.id === props.selectedLanguage.id)
+      !props.languages.some((item) => item.id === props.selectedLanguage.id)
     ) {
       return props.languages[0];
     }
@@ -386,7 +386,7 @@ const selectedLanguageModel = computed({
     if (!props.selectedLanguage) {
       emits('languageChange', value);
     }
-    if (props.languages.find((item) => item?.id === value?.id)) {
+    if (props.languages.some((item) => item?.id === value?.id)) {
       emits('update:selected-language', value);
     } else {
       lxDevUtils.log(
@@ -611,7 +611,7 @@ const selectedAlternativeProfileModel = computed({
     }
     if (
       !props.selectedAlternativeProfile ||
-      !props.alternativeProfilesInfo.find((item) => item.id === props.selectedAlternativeProfile.id)
+      !props.alternativeProfilesInfo.some((item) => item.id === props.selectedAlternativeProfile.id)
     ) {
       return props.alternativeProfilesInfo[0];
     }
@@ -621,7 +621,7 @@ const selectedAlternativeProfileModel = computed({
     if (!props.selectedAlternativeProfile) {
       emits('alternativeProfileChange', value);
     }
-    if (props.alternativeProfilesInfo.find((item) => item.id === value.id)) {
+    if (props.alternativeProfilesInfo.some((item) => item.id === value.id)) {
       emits('update:selected-alternative-profile', value);
     } else {
       lxDevUtils.log(
@@ -686,7 +686,7 @@ const navBarSwitchModel = computed({
 const navBarSwitchBasic = shallowRef(true);
 
 function navToggle(value) {
-  if (props.mode === 'digives-lite' && window.innerWidth < 1000) {
+  if (props.mode === 'digives-lite' && globalThis.innerWidth < 1000) {
     navBarSwitchModel.value = value;
     return;
   }
@@ -697,7 +697,7 @@ function navToggle(value) {
   }
 }
 
-const semiResponsiveView = computed(() => window.innerWidth < 1900);
+const semiResponsiveView = computed(() => globalThis.innerWidth < 1900);
 function navToggleButton() {
   if (props.mode === 'digives') {
     if (navBarSwitchModel.value === null) navBarSwitchModel.value = false;

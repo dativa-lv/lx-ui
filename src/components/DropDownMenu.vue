@@ -386,10 +386,10 @@ const handleDragEnd = () => {
     handleClose(false);
   }
 
-  window.removeEventListener('mousemove', handleDragging);
-  window.removeEventListener('mouseup', handleDragEnd);
-  window.removeEventListener('touchmove', handleDragging);
-  window.removeEventListener('touchend', handleDragEnd);
+  globalThis.removeEventListener('mousemove', handleDragging);
+  globalThis.removeEventListener('mouseup', handleDragEnd);
+  globalThis.removeEventListener('touchmove', handleDragging);
+  globalThis.removeEventListener('touchend', handleDragEnd);
 };
 
 const handleDragStart = (event) => {
@@ -398,10 +398,10 @@ const handleDragStart = (event) => {
   isDragging.value = true;
   startY.value = event.touches ? event.touches[0].clientY : event.clientY;
 
-  window.addEventListener('mousemove', handleDragging);
-  window.addEventListener('mouseup', handleDragEnd);
-  window.addEventListener('touchmove', handleDragging, { passive: false });
-  window.addEventListener('touchend', handleDragEnd);
+  globalThis.addEventListener('mousemove', handleDragging);
+  globalThis.addEventListener('mouseup', handleDragEnd);
+  globalThis.addEventListener('touchmove', handleDragging, { passive: false });
+  globalThis.addEventListener('touchend', handleDragEnd);
 };
 
 function onClickOutsideHandler() {

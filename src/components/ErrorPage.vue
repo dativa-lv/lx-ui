@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxIllustration from '@/components/Illustration.vue';

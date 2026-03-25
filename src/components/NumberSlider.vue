@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, watch, inject } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 

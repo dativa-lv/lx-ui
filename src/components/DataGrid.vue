@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, onMounted, ref, watch, nextTick, useSlots } from 'vue';
 import {
   useWindowSize,
@@ -9,7 +9,7 @@ import {
 
 import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
-import { formatValueArray } from '@/utils/formatUtils';
+import { formatValueArray, objectClone } from '@/utils/formatUtils';
 import { useGridKeyboardNavigation } from '@/utils/useGridKeyboardNavigation';
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
@@ -175,7 +175,7 @@ const { width, height } = useWindowSize();
 const bounding = useElementBounding(container);
 const headerSize = useElementSize(header);
 const lxElement = document.querySelector('.lx');
-const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
 
 const {
   registerCell,
@@ -797,7 +797,7 @@ function primaryColumn() {
 
 const rows = computed(() => {
   if (props.items) {
-    let ret = JSON.parse(JSON.stringify([...props.items]));
+    let ret = objectClone([...props.items]);
 
     const primaryAttributeName = primaryColumn()?.attributeName;
     const primaryType = primaryColumn()?.type;
@@ -1044,7 +1044,7 @@ function calculateOffset(el) {
   const rowRems = getComputedStyle(el).getPropertyValue('--row-size').trim();
   const { fontSize } = getComputedStyle(el);
 
-  return parseInt(rowRems, 10) * parseFloat(fontSize);
+  return Number.parseInt(rowRems, 10) * Number.parseFloat(fontSize);
 }
 
 const topOutOfBounds = computed(() => {
@@ -1081,7 +1081,7 @@ const fullBleedMargin = computed(() => {
     return `--grid-left-margin: 0; --grid-right-margin: 0;`;
   }
 
-  const bodyColWidth = parseFloat(
+  const bodyColWidth = Number.parseFloat(
     getComputedStyle(lxElement).getPropertyValue('--body-column-size')
   );
 
@@ -1091,7 +1091,8 @@ const fullBleedMargin = computed(() => {
   const gapPx = gapRem * rootFontSize;
 
   const navBarWidth = isDefaultLayout
-    ? parseFloat(getComputedStyle(lxElement).getPropertyValue('--aside-size')) * rootFontSize || 0
+    ? Number.parseFloat(getComputedStyle(lxElement).getPropertyValue('--aside-size')) *
+        rootFontSize || 0
     : 0;
 
   const baseMargin = -((width.value - bodyColWidth) / 2 - gapPx);
@@ -1166,7 +1167,7 @@ watch(
   () => {
     if (props.hasSelecting) {
       Object.keys(selectedRowsRaw.value).forEach((key) => {
-        if (!props.items.find((x) => x[props.idAttribute].toString() === key)) {
+        if (!props.items.some((x) => x[props.idAttribute].toString() === key)) {
           delete selectedRowsRaw.value[key];
         }
       });

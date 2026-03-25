@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, shallowRef, watch } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';

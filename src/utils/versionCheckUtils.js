@@ -15,7 +15,7 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
     );
 
     if (resp.data?.version) {
-      const isVersionChanged = window.config.version !== resp.data?.version;
+      const isVersionChanged = globalThis.config.version !== resp.data?.version;
 
       if (isVersionChanged) {
         if (
@@ -26,7 +26,7 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
           sessionStorage.setItem('version_update_notification', 'true');
 
           // Perform a hard refresh
-          window.location.reload();
+          globalThis.location.reload();
         } else if (!notificationShown) {
           // Default notification text if no text where provided
           const defaultNotifyText = 'Ir pieejama jauna lietotnes versija, lūdzu pārlādējiet lapu!';
@@ -65,7 +65,7 @@ export async function isAppVersionChanged(
   basePath = '/',
   throttleTime = 1000 // 1 seconds
 ) {
-  const currentEnv = window.config?.environment;
+  const currentEnv = globalThis.config?.environment;
 
   if (currentEnv?.toLowerCase() === 'local') return;
 

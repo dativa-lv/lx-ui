@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, onMounted, watch, ref } from 'vue';
 import LxRow from '@/components/forms/Row.vue';
 import { generateUUID } from '@/utils/stringUtils';
@@ -132,7 +132,7 @@ function isRequiredRow(rowIndex) {
 
 const isSchemaValid = computed(() => {
   try {
-    JSON.parse(JSON.stringify(props.schema));
+    lxFormatUtils.objectClone(props.schema);
   } catch (e) {
     return false;
   }
@@ -670,7 +670,7 @@ const vv = ref();
 function validateModel() {
   const res = [];
   if (props.mode !== 'no-schema') {
-    const modelClone = JSON.parse(JSON.stringify(model.value));
+    const modelClone = lxFormatUtils.objectClone(model.value);
     vv.value = useVuelidate(rules, { modelClone }, { $autoDirty: true });
     vv.value.value.modelClone.$touch();
 

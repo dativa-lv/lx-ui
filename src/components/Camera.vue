@@ -196,7 +196,7 @@ function changeCamera(actionId) {
 function handleActionClick(actionId) {
   if (actionId === 'refresh') {
     localStorage.removeItem(`${system}-${props.preferencesId}`);
-    window.location.reload();
+    globalThis.location.reload();
   }
 }
 

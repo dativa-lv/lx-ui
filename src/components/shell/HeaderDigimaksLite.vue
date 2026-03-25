@@ -424,7 +424,7 @@ const navItemsSettingsMenuLinks = computed(() =>
 );
 
 function settingsLinkClick(link) {
-  window.location.href = link;
+  globalThis.location.href = link;
 }
 
 const themeItems = computed(() =>

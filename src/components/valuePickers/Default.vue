@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
@@ -131,7 +131,7 @@ activate();
 
 watch(
   () => {
-    const value = model.value;
+    const { value } = model;
     const length = value?.length;
     return { value, length };
   },
@@ -165,7 +165,8 @@ function getName(returnPlaceholder = true) {
 
   if (model.value && !Array.isArray(model.value)) {
     return selectedItems.value[0]?.[props.nameAttribute];
-  } else if (model.value && model.value.length > 0) {
+  }
+  if (model.value && model.value.length > 0) {
     text = selectedItems.value?.map((item) => item[props.nameAttribute])?.join(', ');
   } else if (returnPlaceholder) {
     text = props.placeholder;
@@ -194,7 +195,7 @@ function selectSingle(id) {
 
   // nextTick necessary to fix false to nullable bug
   nextTick(() => {
-      // Select the new item
+    // Select the new item
     if (id === notSelectedId) {
       model.value = null;
       itemsModel.value.notSelected = true;
@@ -203,7 +204,6 @@ function selectSingle(id) {
       itemsModel.value[id] = true;
     }
   });
-
 }
 
 watch(
@@ -269,7 +269,7 @@ const hiddenValues = ref([]);
 function attributesSearch(item) {
   let found = false;
   props.searchAttributes?.forEach((attrName) => {
-    const attrValue = item[attrName as keyof typeof item];
+    const attrValue = item[attrName];
     if (textSearch(query.value, attrValue)) {
       found = true;
     }
@@ -313,9 +313,9 @@ function isElementHidden(item) {
   return false;
 }
 
-const columnReadOnly = computed(() => {
-  return selectedItems.value?.map((item) => item[props.nameAttribute]);
-});
+const columnReadOnly = computed(() =>
+  selectedItems.value?.map((item) => item[props.nameAttribute])
+);
 
 const areSomeSelected = computed(() => {
   let res = false;
@@ -380,7 +380,10 @@ function getTabIndex(id) {
 <template>
   <div
     class="lx-value-picker-default-wrapper"
-    :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && selectionKind === 'multiple' }]"
+    :class="[
+      { 'lx-invalid': invalid },
+      { 'select-all': hasSelectAll && selectionKind === 'multiple' },
+    ]"
     :aria-invalid="invalid"
     role="radiogroup"
     :title="tooltip"

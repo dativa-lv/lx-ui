@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, inject } from 'vue';
 import { getLogo, getAltText } from '@/utils/logoUtils';
 

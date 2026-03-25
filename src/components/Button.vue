@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, unref, useSlots, watch } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
@@ -183,11 +183,11 @@ watch([() => props.label, () => props.variant], checkOverflow, { flush: 'post' }
 
 onMounted(() => {
   checkOverflow();
-  window.addEventListener('resize', checkOverflow);
+  globalThis.addEventListener('resize', checkOverflow);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', checkOverflow);
+  globalThis.removeEventListener('resize', checkOverflow);
 });
 
 defineOptions({ inheritAttrs: false });

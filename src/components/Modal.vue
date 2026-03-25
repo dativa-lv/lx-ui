@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, nextTick, provide, computed, watch, onUnmounted } from 'vue';
 import LxButton from '@/components/Button.vue';
 import { logWarn } from '@/utils/devUtils';

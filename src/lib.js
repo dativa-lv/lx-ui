@@ -65,7 +65,7 @@ const plugin = { install };
 let GlobalVue = null;
 if (typeof window !== 'undefined') {
   // @ts-ignore
-  GlobalVue = window.Vue;
+  GlobalVue = globalThis.Vue;
 } else if (typeof global !== 'undefined') {
   GlobalVue = global.Vue;
 }

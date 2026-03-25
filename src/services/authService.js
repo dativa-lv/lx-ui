@@ -11,7 +11,7 @@ export default (authUrl, publicUrl, clientId, scope, authSessionKey) => ({
     } else {
       url += `&client_id=${clientId}`;
     }
-    window.location.href = url;
+    globalThis.location.href = url;
   },
 
   session() {

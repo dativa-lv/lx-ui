@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import CountryFlag from 'vue-country-flag-next';
 import { formatCountryCode } from '@/utils/formatUtils';
 import useLx from '@/hooks/useLx';

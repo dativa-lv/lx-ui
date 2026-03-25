@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref, watch, inject } from 'vue';
 
 import { getDisplayTexts, isDefined } from '@/utils/generalUtils';

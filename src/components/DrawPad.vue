@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted, onUnmounted, watch, computed, inject } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
 import { logError, logWarn } from '@/utils/devUtils';
@@ -46,8 +46,8 @@ const colorsList = ref([
 ]);
 
 const canvas = ref(null);
-const canvasWidth = ref(Math.max(parseInt(props.width || '0', 10), 200));
-const canvasHeight = ref(Math.max(parseInt(props.height || '0', 10), 200));
+const canvasWidth = ref(Math.max(Number.parseInt(props.width || '0', 10), 200));
+const canvasHeight = ref(Math.max(Number.parseInt(props.height || '0', 10), 200));
 const context = ref(null);
 const drawing = ref(false);
 const lastX = ref(0);
@@ -82,7 +82,7 @@ const resizeCanvas = () => {
   const rect = container.value?.getBoundingClientRect();
   if (!rect) return;
 
-  const maxWidth = Math.max(parseInt(props.width || '0', 10), 200);
+  const maxWidth = Math.max(Number.parseInt(props.width || '0', 10), 200);
   const newWidth = Math.min(rect.width, maxWidth);
   canvasWidth.value = newWidth;
   canvas.value.width = newWidth;
@@ -226,8 +226,8 @@ const getPng = () => {
 watch(
   [() => props.modelValue, () => props.width, () => props.height],
   ([newSVGData, newWidth, newHeight]) => {
-    canvasWidth.value = Math.max(parseInt(newWidth || '0', 10), 200);
-    canvasHeight.value = Math.max(parseInt(newHeight || '0', 10), 200);
+    canvasWidth.value = Math.max(Number.parseInt(newWidth || '0', 10), 200);
+    canvasHeight.value = Math.max(Number.parseInt(newHeight || '0', 10), 200);
 
     if (newWidth) {
       resizeCanvas();
@@ -295,7 +295,7 @@ const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
 onMounted(async () => {
-  const maxWidth = Math.max(parseInt(props.width || '0', 10), 200);
+  const maxWidth = Math.max(Number.parseInt(props.width || '0', 10), 200);
   canvasWidth.value = maxWidth;
   canvas.value.width = maxWidth;
   context.value = canvas.value.getContext('2d');

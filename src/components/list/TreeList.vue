@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';

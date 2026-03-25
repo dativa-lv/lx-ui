@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { foldToAscii } from '@/utils/stringUtils';
 import { computed } from 'vue';
 

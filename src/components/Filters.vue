@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import LxExpander from '@/components/Expander.vue';

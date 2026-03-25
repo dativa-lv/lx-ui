@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, watch, inject } from 'vue';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';

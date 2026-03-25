@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref, onMounted, inject } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import useLx from '@/hooks/useLx';

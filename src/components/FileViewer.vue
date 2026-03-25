@@ -183,8 +183,8 @@ function debounce(func, delay) {
 }
 
 function calculateThreshold(heightValue, isLandscape) {
-  const numericValue = parseFloat(heightValue);
-  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const numericValue = Number.parseFloat(heightValue);
+  const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
 
   if (heightValue.endsWith('px')) {
     const heightInRem = numericValue / rootFontSize;
@@ -225,7 +225,7 @@ const rootMargin = computed(() => {
     ? (headerDigivesHeight || headerHeight) + navigationHeight + toolbarHeight
     : 0;
 
-  const viewportHeight = window.innerHeight;
+  const viewportHeight = globalThis.innerHeight;
   const correction = 50;
 
   const totalOffsetBottomHeight = Math.abs(
@@ -316,9 +316,12 @@ function drawImage(providedScale) {
           const width = svgElement.getAttribute('width') || svgElement.viewBox.baseVal.width;
           const height = svgElement.getAttribute('height') || svgElement.viewBox.baseVal.height;
 
-          originalImageSize.value = { width: parseFloat(width), height: parseFloat(height) };
-          const newWidth = parseFloat(width) * providedScale;
-          const newHeight = parseFloat(height) * providedScale;
+          originalImageSize.value = {
+            width: Number.parseFloat(width),
+            height: Number.parseFloat(height),
+          };
+          const newWidth = Number.parseFloat(width) * providedScale;
+          const newHeight = Number.parseFloat(height) * providedScale;
           imgCanvas.width = newWidth;
           imgCanvas.height = newHeight;
           ctx.clearRect(0, 0, imgCanvas.width, imgCanvas.height);
@@ -381,7 +384,7 @@ const initializeFitScale = ref(false); // Track if initial scale calculation has
 
 const windowWidth = computed(() => windowSize.width.value);
 
-const devicePixelRatio = ref(window.devicePixelRatio || 1);
+const devicePixelRatio = ref(globalThis.devicePixelRatio || 1);
 
 async function renderPage(pageNum) {
   isPageRendering.value = true;
@@ -529,8 +532,8 @@ function scrollToWindow(canvasElement) {
   const totalOffsetHeight = getHeaderOffset();
   const { top: canvasTop } = canvasElement.getBoundingClientRect();
 
-  window.scrollTo({
-    top: window.scrollY + canvasTop - totalOffsetHeight,
+  globalThis.scrollTo({
+    top: globalThis.scrollY + canvasTop - totalOffsetHeight,
     behavior: 'smooth',
   });
 }
@@ -847,7 +850,7 @@ async function loadPdfFromBase64(base64) {
 function decodeBase64(newValue) {
   try {
     const base64Data = newValue.slice(newValue.indexOf(';base64,') + ';base64,'.length);
-    const binaryString = window.atob(base64Data);
+    const binaryString = globalThis.atob(base64Data);
     const bytes = new Uint8Array(Array.from(binaryString).map((char) => char.charCodeAt(0)));
     const decoder = new TextDecoder();
     binaryText.value = decoder.decode(bytes);
@@ -867,7 +870,10 @@ function prepareSVGImage(newValue) {
       const svgElement = svgDoc.documentElement;
       const width = svgElement.getAttribute('width') || svgElement.viewBox.baseVal.width;
       const height = svgElement.getAttribute('height') || svgElement.viewBox.baseVal.height;
-      originalImageSize.value = { width: parseFloat(width), height: parseFloat(height) };
+      originalImageSize.value = {
+        width: Number.parseFloat(width),
+        height: Number.parseFloat(height),
+      };
     })
     .catch((error) => {
       lxDevUtils.logError(`Error loading SVG file, ${error}`, useLx().getGlobals()?.environment);
@@ -1118,7 +1124,7 @@ async function print(printType, dpi = 300, allPages = true) {
   try {
     container = document.createElement('div');
     container.style.display = 'none';
-    window.document.body.appendChild(container);
+    globalThis.document.body.appendChild(container);
     iframe = await createPrintIframe(container);
 
     switch (printType) {
@@ -1214,11 +1220,11 @@ async function print(printType, dpi = 300, allPages = true) {
     }
 
     if (isValidFileName(props.fileName)) {
-      title = window.document.title;
-      window.document.title = props.fileName;
+      title = globalThis.document.title;
+      globalThis.document.title = props.fileName;
     } else {
-      title = window.document.title;
-      window.document.title = generateUUID();
+      title = globalThis.document.title;
+      globalThis.document.title = generateUUID();
     }
 
     iframe.contentWindow.focus();
@@ -1227,7 +1233,7 @@ async function print(printType, dpi = 300, allPages = true) {
     lxDevUtils.logError(`Printing failed, ${error}`, useLx().getGlobals()?.environment);
   } finally {
     if (title) {
-      window.document.title = title;
+      globalThis.document.title = title;
     }
 
     releaseChildCanvases(container);

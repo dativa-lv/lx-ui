@@ -55,7 +55,7 @@ export default {
     },
     forcePageState(title, url = null) {
       if (title) document.title = title;
-      if (url) window.history.pushState({}, '', url);
+      if (url) globalThis.history.pushState({}, '', url);
     },
     overrideBreadcrumbs(code, value) {
       if (!this.breadcrumbOverrides) {

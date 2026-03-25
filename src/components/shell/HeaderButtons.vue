@@ -413,48 +413,50 @@ const themeDisplayItems = computed(() => {
     });
   }
 
-  res.push({
-    id: 'animations',
-    kind: 'toggle',
-    name: displayTexts.value.animations,
-    texts: {
-      valueYes: displayTexts.value.reduceMotionOn,
-      valueNo: displayTexts.value.reduceMotionOff,
+  res.push(
+    {
+      id: 'animations',
+      kind: 'toggle',
+      name: displayTexts.value.animations,
+      texts: {
+        valueYes: displayTexts.value.reduceMotionOn,
+        valueNo: displayTexts.value.reduceMotionOff,
+      },
+      groupId: 'animations-touch',
+      value: animationsModel.value,
+      size: props.isTouchSensitive ? 'm' : 's',
     },
-    groupId: 'animations-touch',
-    value: animationsModel.value,
-    size: props.isTouchSensitive ? 'm' : 's',
-  });
-  res.push({
-    id: 'transparency',
-    kind: 'toggle',
-    name: displayTexts.value.transparency,
-    texts: {
-      valueYes: displayTexts.value.reduceTransparencyOn,
-      valueNo: displayTexts.value.reduceTransparencyOff,
+    {
+      id: 'transparency',
+      kind: 'toggle',
+      name: displayTexts.value.transparency,
+      texts: {
+        valueYes: displayTexts.value.reduceTransparencyOn,
+        valueNo: displayTexts.value.reduceTransparencyOff,
+      },
+      groupId: 'animations-touch',
+      value: transparencyModel.value,
+      size: props.isTouchSensitive ? 'm' : 's',
     },
-    groupId: 'animations-touch',
-    value: transparencyModel.value,
-    size: props.isTouchSensitive ? 'm' : 's',
-  });
-  res.push({
-    id: 'touchMode',
-    kind: 'toggle',
-    name: displayTexts.value.touchMode,
-    texts: {
-      valueYes: displayTexts.value.touchModeOn,
-      valueNo: displayTexts.value.touchModeOff,
+    {
+      id: 'touchMode',
+      kind: 'toggle',
+      name: displayTexts.value.touchMode,
+      texts: {
+        valueYes: displayTexts.value.touchModeOn,
+        valueNo: displayTexts.value.touchModeOff,
+      },
+      groupId: 'animations-touch',
+      value: touchModeModel.value,
+      size: props.isTouchSensitive ? 'm' : 's',
     },
-    groupId: 'animations-touch',
-    value: touchModeModel.value,
-    size: props.isTouchSensitive ? 'm' : 's',
-  });
-  res.push({
-    id: 'customizeSettings',
-    name: displayTexts.value.customizeSettings,
-    icon: 'open',
-    groupId: 'customizeSettings',
-  });
+    {
+      id: 'customizeSettings',
+      name: displayTexts.value.customizeSettings,
+      icon: 'open',
+      groupId: 'customizeSettings',
+    }
+  );
   return res;
 });
 

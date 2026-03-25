@@ -1267,7 +1267,7 @@ export function isStandardTimeMask(mask) {
 }
 
 function resolveTwoDigitYear(twoDigits, maxYear) {
-  const parsed = parseInt(twoDigits, 10);
+  const parsed = Number.parseInt(twoDigits, 10);
   const currentCentury = Math.floor(new Date().getFullYear() / 100) * 100;
   const prevCentury = currentCentury - 100;
 

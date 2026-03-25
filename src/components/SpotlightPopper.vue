@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref } from 'vue';
 import { useFloating, flip, shift, arrow, offset, autoUpdate } from '@floating-ui/vue';
 

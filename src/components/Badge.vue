@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue';
 import useLx from '@/hooks/useLx';
 import LxIcon from '@/components/Icon.vue';

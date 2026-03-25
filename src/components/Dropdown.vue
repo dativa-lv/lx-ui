@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref, onMounted, watch, nextTick, inject } from 'vue';
 import { onClickOutside } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';

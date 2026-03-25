@@ -90,7 +90,7 @@ const getNumberOfItem = computed(
 
 function isElementInViewport(elem, headerOffset = 50) {
   const rect = elem.getBoundingClientRect();
-  const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+  const windowHeight = globalThis.innerHeight || document.documentElement.clientHeight;
 
   return rect.top >= headerOffset && rect.bottom <= windowHeight;
 }
@@ -166,8 +166,8 @@ function setSpotlightItem(first) {
       const headerOffset = getOffsetTop();
       // Only scroll if element is not visible
       if (!isElementInViewport(elem, headerOffset)) {
-        const topPosition = elem.getBoundingClientRect().top + window.scrollY - headerOffset;
-        window.scrollTo({
+        const topPosition = elem.getBoundingClientRect().top + globalThis.scrollY - headerOffset;
+        globalThis.scrollTo({
           top: topPosition,
           behavior: 'smooth',
         });
@@ -215,11 +215,9 @@ const actions = computed(() => {
     getNumberOfItem.value !== 1 &&
     getNumberOfItem.value === props.items?.length
   ) {
-    res.push(backButton);
-    res.push(closeButton);
+    res.push(backButton, closeButton);
   } else if (props.items?.length > 1 && getNumberOfItem.value !== 1) {
-    res.push(backButton);
-    res.push(nextButton);
+    res.push(backButton, nextButton);
   } else if (props.items?.length > 1 && getNumberOfItem.value === 1) {
     res.push(nextButton);
   }
@@ -242,8 +240,8 @@ watch(
   (newValue) => {
     if (
       !newValue ||
-      newValue?.length === 0 ||
-      newValue.findIndex((x) => x?.id === model.value || x?.elementId === model.value) === -1
+      newValue.length === 0 ||
+      !newValue.some((x) => x?.id === model.value || x?.elementId === model.value)
     ) {
       spotlightEnd();
       target.value = null;

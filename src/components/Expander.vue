@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { shallowRef, watch, computed, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
