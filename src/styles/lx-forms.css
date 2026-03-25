@@ -172,8 +172,8 @@
   margin-bottom: -0.25rem;
 }
 
-.lx .lx-tag-set .lx-tag:focus,
-.lx .lx-tag-set .lx-tag:focus-visible,
+.lx-tag-set .lx-tag:focus,
+.lx-tag-set .lx-tag:focus-visible,
 .lx .lx-indicator-set .lx-indicator:focus,
 .lx .lx-indicator-set .lx-indicator:focus-visible {
   outline: 2px solid var(--color-focus-background);
