@@ -508,7 +508,7 @@ provide('insideHeader', insideHeader);
         </div>
 
         <LxBadge
-          v-if="envLabel.id !== 'production'"
+          v-if="['local', 'development', 'staging', 'preproduction'].includes(envLabel.id)"
           :value="envLabel.name"
           :tooltip="envLabel.id"
           :class="[
