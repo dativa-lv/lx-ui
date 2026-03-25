@@ -150,6 +150,15 @@ let observer;
 const searchStringClient = ref(props.searchSide === 'client' ? props.searchString : '');
 const searchStringServer = ref(props.searchSide === 'server' ? props.searchString : '');
 
+const reactiveSearchString = computed({
+  get() {
+    return props.searchString;
+  },
+  set(value) {
+    emits('update:searchString', value);
+  },
+});
+
 // Convert item id's to strings
 const itemsWithStringIds = computed(() =>
   props.items?.map((item) => ({
@@ -1176,7 +1185,7 @@ onBeforeUnmount(() => {
           :loading="loading"
           :busy="busy"
           :hasSearch="hasSearch"
-          :searchString="searchString"
+          v-model:searchString="reactiveSearchString"
           :searchSide="searchSide"
           :searchMode="autoSearchMode"
           :useSearchDebounce="true"

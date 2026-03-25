@@ -34,7 +34,13 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(['actionClick', 'search', 'selectAll', 'deselectAll']);
+const emits = defineEmits([
+  'actionClick',
+  'search',
+  'selectAll',
+  'deselectAll',
+  'update:searchString',
+]);
 
 const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
@@ -221,11 +227,30 @@ const isSelectAllDisabled = computed(
   () => props.disabled || props.loading || props.busy || isSearchActive.value
 );
 
-watch(searchStringRaw, () => {
+watch(searchStringRaw, (value) => {
   if (props.hasSearch && props.searchSide === 'client') {
     clientSideSearch();
   }
+  if (value !== props.searchString) {
+    emits('update:searchString', value);
+  }
 });
+
+watch(
+  () => props.searchString,
+  (value) => {
+    if (value !== searchStringRaw.value) {
+      searchStringRaw.value = value;
+    }
+  }
+);
+
+watch(
+  () => props.searchSide,
+  () => {
+    searchInputRefresh.value += 1;
+  }
+);
 
 const autoSearchMode = computed(() => {
   if (

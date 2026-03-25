@@ -1097,6 +1097,15 @@ const fullBleedMargin = computed(() => {
   return `--grid-left-margin: ${leftMargin}px; --grid-right-margin: ${rightMargin}px;`;
 });
 
+const reactiveSearchString = computed({
+  get() {
+    return props.searchString;
+  },
+  set(value) {
+    emits('update:searchString', value);
+  },
+});
+
 function search(string) {
   if (props.searchSide === 'server') {
     emits('search', string);
@@ -1298,6 +1307,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :hasSearch="hasSearch"
         :searchSide="searchSide"
         :searchMode="autoSearchMode"
+        v-model:searchString="reactiveSearchString"
         :hasSelectAll="hasSelecting && (selectionKind !== 'single' || selectedRows.length > 0)"
         :selectionState="selectionState"
         selectAllSide="left"
