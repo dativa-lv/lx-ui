@@ -191,8 +191,6 @@ function getFiles() {
   return advancedFilesData.value;
 }
 
-defineExpose({ changeState, getFiles });
-
 const model = computed({
   get() {
     return props.modelValue;
@@ -569,6 +567,8 @@ const showCameraButton = computed(() => {
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+
+defineExpose({ changeState, getFiles, isUploading });
 </script>
 <template>
   <div
