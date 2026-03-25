@@ -693,7 +693,11 @@ onBeforeUnmount(() => {
   editor.value.destroy();
 });
 
-defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
+function getPlainText() {
+  return editor.value?.getText() || '';
+}
+
+defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, getPlainText });
 </script>
 
 <template>
