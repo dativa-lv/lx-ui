@@ -583,17 +583,23 @@ watch(
 );
 
 const loginButtonVariant = computed(() => {
-  if ((props.mode === 'public' || props.mode === 'latvijalv') && windowWidth.value < 1000) {
+  if (
+    (props.mode === 'public' || props.mode === 'latvijalv' || props.mode === 'full-screen') &&
+    windowWidth.value < 1000
+  ) {
     return 'icon-only';
   }
-  if ((props.mode === 'public' || props.mode === 'latvijalv') && windowWidth.value < 800) {
+  if (
+    (props.mode === 'public' || props.mode === 'latvijalv' || props.mode === 'full-screen') &&
+    windowWidth.value < 800
+  ) {
     return 'icon-only';
   }
   return 'default';
 });
 
 const loginButtonKind = computed(() => {
-  if (props.mode === 'default' || props.mode === 'latvijalv') {
+  if (props.mode === 'default' || props.mode === 'latvijalv' || props.mode === 'full-screen') {
     return 'ghost';
   }
   return 'tertiary';

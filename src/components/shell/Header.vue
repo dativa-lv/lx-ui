@@ -467,7 +467,12 @@ provide('insideHeader', insideHeader);
     <div class="lx-group">
       <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
       <LxButton
-        v-if="!hideNavBar && kind !== 'public' && kind !== 'latvijalv'"
+        v-if="
+          !hideNavBar &&
+          kind !== 'public' &&
+          kind !== 'latvijalv' &&
+          (mode !== 'full-screen' || width < 500)
+        "
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
         variant="icon-only"

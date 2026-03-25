@@ -1,0 +1,48 @@
+.lx-layout.lx-layout-default.lx-layout-full-screen {
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-areas: 'header header header' 'main main main' 'footer footer footer';
+}
+
+.lx-layout.lx-layout-full-screen > .lx-main .lx-calendar-container,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-file-upload-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-appendable-list-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-form-grid,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-ratings,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-list-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-field-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-camera,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-card-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-content-switcher,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-checkbox-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-data-block-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-data-grid-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-data-visualizer,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-file-viewer,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-filter-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-map,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-master-detail,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-person-display-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-qr-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-qr-scanner-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-tile-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-visual-picker-wrapper,
+.lx-layout.lx-layout-full-screen > .lx-main .lx-widget {
+  display: none;
+}
+
+@media (max-width: 1900px) {
+  .lx-layout.lx-layout-default.lx-layout-full-screen > header .lx-header .lx-main-button.lx-nav-bar-hidden {
+    min-width: calc(var(--aside-size));
+    width: calc(var(--aside-size));
+  }
+}
+
+@media (max-width: 400px) {
+  .lx .lx-layout.lx-layout-default.lx-layout-full-screen > header .lx-header .lx-main-button {
+    padding: 0;
+    margin: 0;
+    grid-template-columns: 1fr;
+    width: auto;
+    min-width: 0;
+  }
+}

@@ -1,23 +1,27 @@
 <script setup>
-import { computed, shallowRef, onMounted, watch, ref, nextTick, provide } from 'vue';
+import {
+  computed,
+  shallowRef,
+  onMounted,
+  watch,
+  ref,
+  nextTick,
+  provide,
+  defineAsyncComponent,
+} from 'vue';
 import {
   useColorMode,
   usePreferredReducedMotion,
   usePreferredReducedTransparency,
   useMutationObserver,
   useMediaQuery,
+  useWindowSize,
 } from '@vueuse/core';
 
 import useLx from '@/hooks/useLx';
 import { formatDate } from '@/utils/dateUtils';
-import LxMainHeader from '@/components/shell/Header.vue';
-import LxMainHeaderDigives from '@/components/shell/HeaderDigives.vue';
 import LxPageHeader from '@/components/shell/PageHeader.vue';
-import LxNavBar from '@/components/shell/NavBar.vue';
-import LxNavBarDigives from '@/components/shell/NavBarDigives.vue';
 import { lxDevUtils } from '@/utils';
-import LxMainHeaderDigivesLite from '@/components/shell/HeaderDigivesLite.vue';
-import LxNavBarDigivesLite from '@/components/shell/NavBarDigivesLite.vue';
 import LxFlag from '@/components/Flag.vue';
 import Notification from '@/components/Notification.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -26,15 +30,34 @@ import LxLoader from '@/components/Loader.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import LxAlertWidget from '@/components/AlertWidget.vue';
-import LxMainHeaderDigimaks from '@/components/shell/HeaderDigimaks.vue';
-import LxMainHeaderDigimaksLite from '@/components/shell/HeaderDigimaksLite.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxSpotlight from '@/components/Spotlight.vue';
 import LxDialog from '@/components/Dialog.vue';
+import LxModal from '@/components/Modal.vue';
+import AccessibilitySettings from '@/components/AccessibilitySettings.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
+
+const LxMainHeaderDigimaks = defineAsyncComponent(() =>
+  import('@/components/shell/HeaderDigimaks.vue')
+);
+const LxMainHeaderDigimaksLite = defineAsyncComponent(() =>
+  import('@/components/shell/HeaderDigimaksLite.vue')
+);
+const LxMainHeaderDigivesLite = defineAsyncComponent(() =>
+  import('@/components/shell/HeaderDigivesLite.vue')
+);
+const LxMainHeaderDigives = defineAsyncComponent(() =>
+  import('@/components/shell/HeaderDigives.vue')
+);
+const LxMainHeader = defineAsyncComponent(() => import('@/components/shell/Header.vue'));
+const LxNavBarDigivesLite = defineAsyncComponent(() =>
+  import('@/components/shell/NavBarDigivesLite.vue')
+);
+const LxNavBar = defineAsyncComponent(() => import('@/components/shell/NavBar.vue'));
+const LxNavBarDigives = defineAsyncComponent(() => import('@/components/shell/NavBarDigives.vue'));
 
 const themeModel = useColorMode({
   selector: '.lx',
@@ -52,6 +75,8 @@ const themeModel = useColorMode({
 provide('theme', themeModel);
 
 const vCleanHtml = buildVueDompurifyHTMLDirective();
+
+const { width } = useWindowSize();
 
 const emits = defineEmits([
   'update:notifications',
@@ -88,7 +113,7 @@ const emits = defineEmits([
 ]);
 
 const props = defineProps({
-  mode: { type: String, default: 'default' }, // public, cover, digives, digives-lite, digimaks, digimaks-lite, latvijalv
+  mode: { type: String, default: 'default' }, // public, cover, digives, digives-lite, digimaks, digimaks-lite, latvijalv, full-screen
   systemNameShort: { type: String, required: true },
   systemName: { type: String, required: true },
   systemSubheader: { type: String, default: null },
@@ -292,6 +317,46 @@ const textsDefault = {
     sessionEndingIn: 'Sesija beigsies pēc',
     and: 'un',
     timeCountdown: 'Laika atskaite',
+  },
+  accessibilitySettings: {
+    title: 'Piekļūstamības iestatījumi',
+    appearance: 'Vizuālais izskats',
+    animations: 'Kustība un animācijas',
+    fonts: 'Teksts un fonti',
+    interactions: 'Mijiedarbība',
+    reset: 'Atiestatīt iestatījumus',
+    themeTitle: 'Noformējuma izvēle',
+    transparencyTitle: 'Caurspīdīgums',
+    animationsTitle: 'Animācijas',
+    fontsTitle: 'Iekārtas fonti',
+    touchModeTitle: 'Skārienvadība',
+    transparencyDescription:
+      'Caurspīdīgums ir vizuāls efekts, kas ļauj redzēt daļu no fona zem aktīviem logiem vai paneļiem. Šis iestatījums ļauj samazināt vai izslēgt caurspīdīgumu, lai fons būtu vienkrāsains, tā uzlabojot satura un fona atšķirību, padarot saturu vieglāk uztveramu. Piemērots lietotājiem ar redzes traucējumiem, koncentrēšanās grūtībām vai krāsu uztveres problēmām.',
+    animationsDescription:
+      'Animācijas ir vizuāli kustīgi efekti, kas parādās pārejās, klikšķos un citu elementu mijiedarbībā, piemēram, kad tiek atvērti logi vai pārslēgti izvēlnes elementi. Šis iestatījums ļauj samazināt vai izslēgt animācijas, lai saskarne būtu mierīgāka un mazāk traucējoša. Svarīgi lietotājiem ar vestibulāriem traucējumiem vai paaugstinātu jutību pret kustību.',
+    fontsDescription:
+      'Iekārtas fonti ir ierīces vai operētājsistēmas noklusējuma fonti. To izmantošana uzlabo teksta salasāmību un atpazīstamību, nodrošinot konsekventu un lietotājam pazīstamu teksta attēlojumu.',
+    touchModeDescription:
+      'Ieslēdzot skārienjutīgu režīmu, lietotne tiek pielāgota lietošanai ar pirkstu uz skārienekrāna. Tiek palielināti nospiežamie elementi (pogas, izvēlnes u.c. ), lai uzlabotu lietošanas ērtumu.',
+    themeAuto: 'Automātisks',
+    themeLight: 'Gaišs',
+    themeDark: 'Tumšs',
+    themeContrast: 'Kontrastains',
+    themeAutoDescription: 'Automātiskais noformējums ņem vērā ierīces vai sistēmas iestatījumus.',
+    themeLightDescription: 'Gaišs noformējums ar tumšu tekstu uz gaiša fona.',
+    themeDarkDescription: 'Tumšs noformējums ar gaišu tekstu uz tumša fona.',
+    themeContrastDescription:
+      'Noformējums ar paaugstinātu krāsu kontrastu, kas uzlabo satura salasāmību. Īpaši piemērots lietotājiem ar redzes traucējumiem.',
+    transparencyLinkLabel: 'Piekļūstamības standarti (WCAG Contrast (Minimum))',
+    animationsLinkLabel: 'Piekļūstamības standarti (WCAG Animation from Interactions)',
+    reduceTransparencyOn: 'Jā',
+    reduceTransparencyOff: 'Nē',
+    reduceMotionOn: 'Jā',
+    reduceMotionOff: 'Nē',
+    systemFontsOn: 'Jā',
+    systemFontsOff: 'Nē',
+    touchModeOn: 'Jā',
+    touchModeOff: 'Nē',
   },
 };
 
@@ -1148,7 +1213,13 @@ function closeEverything() {
   closeSignal.value = !closeSignal.value;
 }
 
+const settingsModal = ref();
+
 function handleSettingsClick() {
+  if (props.mode === 'full-screen') {
+    settingsModal.value.open();
+    return;
+  }
   emits('settingsClick');
   closeEverything();
 }
@@ -2010,7 +2081,8 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">
-        <LxMainHeaderDigivesLite
+        <component
+          :is="LxMainHeaderDigivesLite"
           :userInfo="userInfo"
           :hasAvatar="hasAvatar"
           :alternative-profiles-info="alternativeProfilesInfo"
@@ -2081,7 +2153,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
             <slot name="customButtonSafePanel" />
           </template>
-        </LxMainHeaderDigivesLite>
+        </component>
       </header>
       <div class="small-nav-bar-button" v-if="userInfo">
         <div
@@ -2430,6 +2502,223 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
       <div ref="poppers" id="poppers"></div>
     </div>
     <div
+      v-if="mode === 'full-screen'"
+      class="lx-layout lx-layout-default lx-layout-full-screen"
+      :class="[{ 'lx-collapsed': navBarSwitchBasic }, { 'lx-override': overrideDefaultStyles }]"
+    >
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
+        :tabindex="semiResponsiveView ? 1 : 0"
+        @click="focusFirstMainFocusableElement"
+      />
+      <header ref="header">
+        <LxMainHeader
+          :mode="mode"
+          :alternative-profiles-info="alternativeProfilesInfo"
+          :context-persons-info="contextPersonsInfo"
+          v-model:selectedContextPerson="selectedContextPersonModel"
+          v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          :userInfo="userInfo"
+          :has-avatar="hasAvatar"
+          :nav-bar-switch="navBarSwitchBasic"
+          :hideNavBar="hideNavBar"
+          :systemNameShort="systemNameShort"
+          :page-label="pageTitle"
+          :home-path="pageIndexPath"
+          :backLabel="pageBackLabel"
+          :backPath="pageBackPath"
+          :show-back-button="pageBackButtonVisible"
+          :breadcrumbs="pageBreadcrumbs"
+          :has-language-picker="hasLanguagePicker"
+          :languages="languages"
+          :system-icon="systemIcon"
+          :has-alerts="hasAlerts"
+          :alerts-kind="alertsKind"
+          :clickSafeAlerts="clickSafeAlerts"
+          :alerts="alerts"
+          :alert-count="alertCount"
+          :alert-level="alertLevel"
+          :has-help="hasHelp"
+          :has-theme-picker="hasThemePicker"
+          :available-themes="availableThemes"
+          :environment="environment"
+          :headerNavDisable="headerNavDisable"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          :hasLoginButton="hasLoginButton"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+          :hasCustomButton="hasCustomButton"
+          :customButtonIcon="customButtonIcon"
+          :customButtonBadge="customButtonBadge"
+          :customButtonBadgeType="customButtonBadgeType"
+          :customButtonBadgeIcon="customButtonBadgeIcon"
+          :customButtonKind="customButtonKind"
+          v-model:customButtonOpened="customButtonOpenedModal"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:theme="themeModel"
+          v-model:hasReducedAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
+          v-model:isTouchSensitive="touchModeModel"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
+          :secondsToLive="secondsToLive"
+          :showIdleBadge="showIdleBadge"
+          @log-in-click="loginClicked"
+          @language-change="languageChange"
+          @alert-item-click="alertItemClicked"
+          @alerts-click="alertsClicked"
+          @help-click="helpClicked"
+          @go-home="goHome"
+          @go-back="goBack"
+          @log-out="logOut"
+          @nav-toggle="navToggle"
+          @contextPersonChange="contextPersonChange"
+          @alternativeProfileChange="alternativeProfileChange"
+          @customButtonClick="emits('customButtonClick')"
+          @toggleSpotlight="toggleSpotlight"
+          @settingsClick="handleSettingsClick"
+          :texts="displayTexts"
+        >
+          <template v-if="!systemIcon" #logo>
+            <slot name="logoSmall" />
+          </template>
+          <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
+          <template #customButtonPanel v-if="$slots.customButtonPanel">
+            <slot name="customButtonPanel" />
+          </template>
+          <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+            <slot name="customButtonSafePanel" />
+          </template>
+        </LxMainHeader>
+      </header>
+      <nav ref="nav" aria-label="navigation panel" v-if="!hideNavBar && width < 500">
+        <LxNavBar
+          v-model:theme="themeModel"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:hasReducedAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
+          v-model:isTouchSensitive="touchModeModel"
+          :userInfo="userInfo"
+          :headerNavDisable="headerNavDisable"
+          :has-theme-picker="hasThemePicker"
+          :available-themes="availableThemes"
+          :has-language-picker="hasLanguagePicker"
+          :languages="languages"
+          :texts="displayTexts"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          :has-login-button="hasLoginButton"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuShowAllHref="megaMenuShowAllHref"
+          :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
+          @log-in-click="loginClicked"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          @nav-toggle="navToggle"
+          @navClick="navClick"
+          @toggleSpotlight="toggleSpotlight"
+          @settingsClick="handleSettingsClick"
+        />
+      </nav>
+      <main ref="main" class="lx-main">
+        <LxPageHeader
+          v-if="pageHeaderVisible"
+          :label="pageTitle"
+          :description="pageDescription"
+          :backLabel="pageBackLabel"
+          :backPath="pageBackPath"
+          :show-back-button="pageBackButtonVisible"
+          :breadcrumbs="pageBreadcrumbs"
+          :hide-header-text="hideHeaderText"
+          :texts="displayTexts"
+          @go-back="goBack"
+        />
+        <transition name="nav">
+          <slot />
+        </transition>
+        <div class="lx-loader-screen" v-if="navigating">
+          <div class="spinner">
+            <LxLoader :loading="true" />
+          </div>
+        </div>
+      </main>
+      <footer ref="footer">
+        <div></div>
+        <div>
+          <slot name="footer" />
+        </div>
+        <div></div>
+      </footer>
+      <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
+      <LxDialog
+        ref="idleModalRef"
+        id="idle-modal"
+        kind="warning"
+        :label="displayTexts.idleModalLabel"
+        :description="idleModalDescription"
+        :buttonSecondaryIsCancel="false"
+        :disableClosing="true"
+        :actionDefinitions="idleModalActions"
+        :texts="displayTexts"
+        @actionClick="idleModalClicked"
+      />
+
+      <LxDialog
+        ref="confirmModal"
+        :id="confirmDialogData?.$state.confirmDialogState?.id ?? generateUUID()"
+        :kind="confirmDialogData?.$state.confirmDialogState.kind ?? 'question'"
+        :label="confirmDialogData?.$state.confirmDialogState.title"
+        :description="confirmDialogData?.$state.confirmDialogState.message"
+        :buttonSecondaryIsCancel="false"
+        :disableClosing="confirmDialogData?.$state.confirmDialogState?.disableClosing ?? false"
+        :escEnabled="confirmDialogData?.$state.confirmDialogState.escEnabled"
+        :actionDefinitions="confirmModalActions"
+        :texts="displayTexts"
+        @actionClick="confirmModalClicked"
+        @close="onClosedConfirmModal"
+      />
+
+      <LxSpotlight
+        ref="spotlight"
+        :items="viewSpotlightItems"
+        :hasItemCounter="spotlightHasCounter"
+        :hasShowMore="spotlightHasShowMore"
+        :shellMode="mode"
+        :shellNavItems="navItems"
+        :texts="displayTexts.spotlight"
+        v-model="spotlightItemCurrentModel"
+        v-model:visible="spotlightVisible"
+        @showMore="emits('spotlightShowMore', spotlightItemCurrentModel)"
+      />
+      <Notification v-model="notificationModel" />
+      <LxModal
+        ref="settingsModal"
+        :label="displayTexts.accessibilitySettings.title"
+        size="l"
+        :action-definitions="[
+          {
+            id: 'close',
+            name: displayTexts.close,
+            kind: 'secondary',
+            destructive: false,
+          },
+        ]"
+      >
+        <AccessibilitySettings :texts="displayTexts.accessibilitySettings" />
+      </LxModal>
+    </div>
+    <div
       v-if="
         mode !== 'cover' &&
         mode !== 'cover-digives-lite' &&
@@ -2438,7 +2727,8 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         mode !== 'digives' &&
         mode !== 'digives-lite' &&
         mode !== 'digimaks' &&
-        mode !== 'digimaks-lite'
+        mode !== 'digimaks-lite' &&
+        mode !== 'full-screen'
       "
       class="lx-layout lx-layout-default"
       :class="[{ 'lx-collapsed': navBarSwitchBasic }, { 'lx-override': overrideDefaultStyles }]"
