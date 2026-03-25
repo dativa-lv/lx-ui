@@ -837,7 +837,6 @@
 .lx-accessibility-settings-block .lx-data-block-wrapper .lx-theme-item-content > svg {
   height: var(--tile-icon-height);
   width: var(--tile-icon-width);
-  margin-bottom: 1rem;
   fill: var(--color-data);
 }
 

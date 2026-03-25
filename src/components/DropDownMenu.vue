@@ -415,6 +415,15 @@ function onClickOutsideHandler() {
   }
 }
 
+function toggleAction(action, event) {
+  event?.stopPropagation();
+
+  if (action?.disabled) return;
+
+  action.value = !action.value;
+  emits('actionClick', action.id, action.value);
+}
+
 watch(
   () => responsiveView.value,
   () => {
@@ -601,12 +610,18 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     </template>
                   </LxValuePicker>
                 </div>
-                <div v-else-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
+                <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+                <div
+                  v-else-if="action?.kind === 'toggle'"
+                  class="lx-dropdown-menu-toggle-wrapper"
+                  @click="toggleAction(action, $event)"
+                >
                   <label
                     class="lx-dropdown-toggle-label"
                     :id="`${action.id}-label`"
                     :for="action?.id"
                     aria-hidden="true"
+                    @click.stop
                   >
                     {{ action?.name || action?.label }}
                   </label>
@@ -708,12 +723,18 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     </template>
                   </LxValuePicker>
                 </div>
-                <div v-else-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
+                <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+                <div
+                  v-else-if="action?.kind === 'toggle'"
+                  class="lx-dropdown-menu-toggle-wrapper"
+                  @click="toggleAction(action, $event)"
+                >
                   <label
                     class="lx-dropdown-toggle-label"
                     :id="`${action.id}-label`"
                     :for="action?.id"
                     aria-hidden="true"
+                    @click.stop
                   >
                     {{ action?.name || action?.label }}
                   </label>

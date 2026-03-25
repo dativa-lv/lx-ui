@@ -473,10 +473,16 @@ const additionalOptionsGroups = computed(() => [
                   variant="icon-only"
                   tabindex="-1"
                 />
-                <template #clickSafePanel>
+                <template #panel>
                   <div class="lx-button-set lx-dropdown-menu-group lx-map-slider">
                     <div class="lx-label">{{ displayTexts.grayscale }}</div>
-                    <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" />
+                    <LxNumberSlider
+                      v-model="grayscaleRef"
+                      :min="0"
+                      :max="100"
+                      :step="1"
+                      @click.stop
+                    />
                   </div>
                 </template>
               </LxDropDownMenu>

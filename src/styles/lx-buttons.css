@@ -2283,6 +2283,7 @@ a.lx-button.lx-button-ghost svg {
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0.5rem 0.5rem 1rem;
+  cursor: pointer;
 }
 
 .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper > .lx-dropdown-toggle-label {
@@ -2291,6 +2292,12 @@ a.lx-button.lx-button-ghost svg {
   white-space: nowrap;
   padding-right: 0.5rem;
   color: var(--color-data);
+  cursor: pointer;
+}
+
+.popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper:has(.lx-toggle[disabled]) > .lx-dropdown-toggle-label,
+.popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper:has(.lx-toggle[disabled]) {
+  cursor: not-allowed;
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag-set {

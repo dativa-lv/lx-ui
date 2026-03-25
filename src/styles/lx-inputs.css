@@ -1328,26 +1328,40 @@ h2.lx-section-header + p.lx-invalidation-message,
   cursor: pointer;
 }
 
-.lx:not(.lx-touch-mode) .lx-toggle-wrapper:not([data-disabled]):hover
-  .lx-toggle:not(:checked)
-  + .lx-toggle-label-wrapper
-  .lx-toggle-appearance {
-  border-color: var(--color-toggle-hover-background);
-}
+@media (pointer: fine) {
+  .lx-dropdown-menu-toggle-wrapper:hover
+    .lx-toggle:not(:checked):not([disabled])
+    + .lx-toggle-label-wrapper
+    .lx-toggle-appearance,
+  .lx .lx-toggle-wrapper:not([data-disabled]):hover
+    .lx-toggle:not(:checked)
+    + .lx-toggle-label-wrapper
+    .lx-toggle-appearance {
+    border-color: var(--color-toggle-hover-background);
+  }
 
-.lx:not(.lx-touch-mode) .lx-toggle-wrapper:not([data-disabled]):hover
-  .lx-toggle:not(:checked)
-  + .lx-toggle-label-wrapper
-  .lx-toggle-appearance::before {
-  background-color: var(--color-toggle-hover-background);
-}
+  .lx-dropdown-menu-toggle-wrapper:hover
+    .lx-toggle:not(:checked):not([disabled])
+    + .lx-toggle-label-wrapper
+    .lx-toggle-appearance::before,
+  .lx .lx-toggle-wrapper:not([data-disabled]):hover
+    .lx-toggle:not(:checked)
+    + .lx-toggle-label-wrapper
+    .lx-toggle-appearance::before {
+    background-color: var(--color-toggle-hover-background);
+  }
 
-.lx:not(.lx-touch-mode) .lx-toggle-wrapper:not([data-disabled]):hover
-  .lx-toggle:checked
-  + .lx-toggle-label-wrapper
-  .lx-toggle-appearance {
-  background-color: var(--color-toggle-hover-background);
-  border-color: var(--color-toggle-hover-background);
+  .lx-dropdown-menu-toggle-wrapper:hover
+    .lx-toggle:checked:not([disabled])
+    + .lx-toggle-label-wrapper
+    .lx-toggle-appearance,
+  .lx .lx-toggle-wrapper:not([data-disabled]):hover
+    .lx-toggle:checked
+    + .lx-toggle-label-wrapper
+    .lx-toggle-appearance {
+    background-color: var(--color-toggle-hover-background);
+    border-color: var(--color-toggle-hover-background);
+  }
 }
 
 .lx-toggle-text p {

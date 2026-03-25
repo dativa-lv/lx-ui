@@ -1961,7 +1961,7 @@
 
 .lx .lx-layout .lx-mega-menu-container ul.primary-menu {
   display: grid;
-  grid-template-columns: 4.65rem 4.65rem 4.65rem;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: .5rem;
   border-bottom: 1px solid var(--color-chrome);
   padding-bottom: .5rem;
