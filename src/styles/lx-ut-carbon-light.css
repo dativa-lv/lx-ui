@@ -445,6 +445,12 @@
   --color-data-block-chevron: var(--color-data);
   --color-data-block-disabled-foreground: var(--color-disabled-foreground);
 
+  --color-loader-active: var(--color-interactive-background);
+  --color-loader-track: var(--color-chrome);
+  --color-loader-text-primary: var(--color-data);
+  --color-loader-text-secondary: var(--color-label);
+  --color-loader-bar-stop-indicator: transparent;
+
   --color-draft-background: var(--color-draft);
   --color-new-background: var(--color-new);
   --color-edited-background: var(--color-edited);

@@ -148,4 +148,6 @@
   --color-button-nav-selected-background: var(--contrast-foreground);
   --color-button-nav-public-hover: var(--contrast-background);
   --color-button-nav-public-icon-hover: var(--contrast-background);
+
+  --color-loader-track: var(--contrast-background);
 }

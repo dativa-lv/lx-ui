@@ -60,131 +60,53 @@ const loaderAriaHidden = computed(() => {
 <template>
   <div class="lx-loader-wrapper" :id="id" :aria-hidden="loaderAriaHidden" :aria-label="props.label">
     <div
-      class="lx-loader-indeterminate"
-      :class="[{ 'lx-small': size === 's' }, { bar: variant === 'bar' }]"
-      v-if="loading && kind === 'indeterminate'"
+      v-if="loading || kind !== 'progress' || variant !== 'default'"
+      :class="[
+        { 'lx-loader-indeterminate': kind === 'indeterminate' },
+        { 'lx-loader-progress': kind === 'progress' },
+        { 'lx-loader-default': variant === 'default' },
+        { 'lx-loader-bar': variant === 'bar' },
+        { 'lx-loader-state-error': state === 'error' },
+        { 'lx-loader-state-success': state === 'success' },
+        { 'lx-loader-small': size === 's' },
+        { 'lx-loader-large': size === 'l' },
+      ]"
       :title="props.description"
+      :role="kind === 'progress' ? 'progressbar' : undefined"
+      :aria-valuenow="kind === 'progress' ? model : undefined"
+      :aria-valuemin="kind === 'progress' ? 0 : undefined"
+      :aria-valuemax="kind === 'progress' ? 1 : undefined"
     >
-      <div
-        v-if="variant === 'default' && state === 'default'"
-        class="lx-loader"
-        :class="[{ 'lx-small': size === 's' }, { 'lx-large': size === 'l' }]"
-      >
-        <svg viewBox="0 0 100 100">
-          <circle
-            v-if="size === 's'"
-            class="lx-loader-background"
-            cx="50%"
-            cy="50%"
-            r="44"
-          ></circle>
-          <circle class="lx-loader-stroke" cx="50%" cy="50%" r="44"></circle>
-        </svg>
-      </div>
-      <div v-if="variant === 'default' && state !== 'default'" class="lx-loader-state">
-        <LxIcon v-if="state === 'error'" customClass="lx-invalidation-icon" value="invalid" />
-        <LxIcon
-          v-if="state === 'success'"
-          customClass="lx-success-icon"
-          value="notification-success"
-        />
-      </div>
-      <div
-        class="lx-loader-data"
-        v-if="variant === 'default' && (props.label || (props.description && size !== 's'))"
-      >
-        <p class="lx-primary">{{ props.label }}</p>
-        <p class="lx-secondary" v-if="size !== 's'">{{ props.description }}</p>
-      </div>
-      <div class="lx-loader-bar-header" v-if="variant === 'bar'">
-        <p class="lx-primary">{{ props.label }}</p>
-        <div class="lx-loader-state-bar">
-          <LxIcon v-if="state === 'error'" customClass="lx-invalidation-icon" value="invalid" />
-          <LxIcon
-            v-if="state === 'success'"
-            customClass="lx-success-icon"
-            value="notification-success"
-          />
+      <template v-if="variant === 'default'">
+        <div class="lx-loader" v-if="state === 'default'">
+          <svg viewBox="0 0 100 100">
+            <circle
+              class="lx-loader-track"
+              cx="50%"
+              cy="50%"
+              :r="kind === 'progress' ? radius : 44"
+              :stroke-width="kind === 'progress' ? strokeWidth : undefined"
+              :stroke-dasharray="kind === 'progress' ? strokeDashArray : undefined"
+              :stroke-dashoffset="kind === 'progress' ? 0 : undefined"
+            />
+            <circle
+              class="lx-loader-active"
+              cx="50%"
+              cy="50%"
+              :r="kind === 'progress' ? radius : 44"
+              :stroke-width="kind === 'progress' ? strokeWidth : undefined"
+              :stroke-dashoffset="kind === 'progress' ? defaultLoaderValue : undefined"
+              :stroke-dasharray="kind === 'progress' ? strokeDashArray : undefined"
+              :style="
+                kind === 'progress' && props.faked
+                  ? {
+                      transition: `stroke-dashoffset ${props.fakedDuration}ms cubic-bezier(0.22,0.05,0,0.87)`,
+                    }
+                  : {}
+              "
+            />
+          </svg>
         </div>
-      </div>
-
-      <div
-        v-if="variant === 'bar'"
-        class="lx-loader-bar-track"
-        :class="[{ 'lx-small': size === 's' }, { 'lx-large': size === 'l' }]"
-      >
-        <div class="lx-loader-bar-indeterminate"></div>
-      </div>
-      <p class="lx-secondary" v-if="variant === 'bar'">{{ props.description }}</p>
-    </div>
-    <div
-      v-if="kind === 'progress'"
-      class="lx-loader-progress"
-      role="progressbar"
-      :aria-valuenow="model"
-      :aria-valuemin="0"
-      :aria-valuemax="1"
-      :class="[{ 'state-error': state === 'error' }, { 'state-success': state === 'success' }]"
-    >
-      <div class="lx-loader-bar-header" v-if="variant === 'bar'">
-        <p class="lx-primary">{{ props.label }}</p>
-        <div class="lx-loader-state-bar">
-          <LxIcon v-if="state === 'error'" customClass="lx-invalidation-icon" value="invalid" />
-          <LxIcon
-            v-if="state === 'success'"
-            customClass="lx-success-icon"
-            value="notification-success"
-          />
-        </div>
-      </div>
-      <div
-        v-if="variant === 'bar'"
-        class="lx-loader-bar-track"
-        :class="[{ 'lx-small': size === 's' }, { 'lx-large': size === 'l' }]"
-      >
-        <div
-          class="lx-loader-bar-progress"
-          :style="[
-            { width: Number(model) * 100 + '%' },
-            props.faked
-              ? { transition: `width ${props.fakedDuration}ms cubic-bezier(0.22,0.05,0,0.87)` }
-              : {},
-          ]"
-        ></div>
-      </div>
-      <p class="lx-secondary" v-if="variant === 'bar'">{{ props.description }}</p>
-      <div
-        v-if="variant === 'default'"
-        class="lx-loader-default-progress"
-        :class="[{ 'lx-small': size === 's' }, { 'lx-large': size === 'l' }]"
-      >
-        <svg viewBox="0 0 100 100" v-if="state === 'default'">
-          <circle
-            class="lx-loader-default-progress-default-track"
-            :r="radius"
-            cx="50%"
-            cy="50%"
-            :stroke-width="strokeWidth"
-            :stroke-dasharray="strokeDashArray"
-            stroke-dashoffset="0"
-          ></circle>
-          <circle
-            class="lx-loader-default-progress-default-fill"
-            :style="[
-              props.faked
-                ? {
-                    transition: `stroke-dashoffset ${props.fakedDuration}ms cubic-bezier(0.22,0.05,0,0.87)`,
-                  }
-                : {},
-            ]"
-            :r="radius"
-            cx="50%"
-            cy="50%"
-            :stroke-width="strokeWidth"
-            :stroke-dashoffset="defaultLoaderValue"
-            :stroke-dasharray="strokeDashArray"
-          ></circle>
-        </svg>
         <div class="lx-loader-state" v-else>
           <LxIcon v-if="state === 'error'" customClass="lx-invalidation-icon" value="invalid" />
           <LxIcon
@@ -193,11 +115,42 @@ const loaderAriaHidden = computed(() => {
             value="notification-success"
           />
         </div>
-        <div class="lx-loader-data">
-          <p class="lx-primary">{{ props.label }}</p>
-          <p class="lx-secondary" v-if="size !== 's'">{{ props.description }}</p>
+        <div class="lx-loader-data" v-if="props.label || (props.description && size !== 's')">
+          <div class="lx-primary">{{ props.label }}</div>
+          <div class="lx-secondary" v-if="size !== 's'">{{ props.description }}</div>
         </div>
-      </div>
+      </template>
+      <template v-else-if="variant === 'bar'">
+        <div class="lx-loader-bar-header">
+          <p class="lx-primary">{{ props.label }}</p>
+          <div class="lx-loader-bar-state">
+            <LxIcon v-if="state === 'error'" customClass="lx-invalidation-icon" value="invalid" />
+            <LxIcon
+              v-if="state === 'success'"
+              customClass="lx-success-icon"
+              value="notification-success"
+            />
+          </div>
+        </div>
+        <div class="lx-loader-bar-track">
+          <div
+            class="lx-loader-active"
+            :style="
+              kind === 'progress'
+                ? [
+                    { width: Number(model) * 100 + '%' },
+                    props.faked
+                      ? {
+                          transition: `width ${props.fakedDuration}ms cubic-bezier(0.22,0.05,0,0.87)`,
+                        }
+                      : {},
+                  ]
+                : {}
+            "
+          />
+        </div>
+        <div class="lx-secondary">{{ props.description }}</div>
+      </template>
     </div>
   </div>
 </template>

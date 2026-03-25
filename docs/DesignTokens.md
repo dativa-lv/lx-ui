@@ -736,6 +736,7 @@ Customized values for contrast mode:
 | `--button-ghost-icon-only-width`                   | auto                                                     |
 
 ### Color
+
 | Variable name                                          | Light mode value                                       | Dark mode value                                        |
 |--------------------------------------------------------|--------------------------------------------------------|--------------------------------------------------------|
 | `--color-button-active-mode`                           | `--color-data`                                         | `--color-data`                                         |
@@ -1002,3 +1003,62 @@ Customized values for contrast mode:
 | `--color-button-nav-selected-background` | `--contrast-foreground`  |
 | `--color-button-nav-public-hover`        | `--contrast-background`  |
 | `--color-button-nav-public-icon-hover`   | `--contrast-background`  |
+
+## LxLoader
+
+### Layout
+
+| Variable name                                | Default value       |
+|----------------------------------------------|---------------------|
+| `--loader-height-l`                          | 5.5rem              |
+| `--loader-width-l`                           | 5.5rem              |
+| `--loader-height-s`                          | 1.25rem             |
+| `--loader-width-s`                           | 1.25rem             |
+| `--loader-active-cap`                        | butt                |
+| `--loader-active-width-s`                    | 16                  |
+| `--loader-active-width-l`                    | 10                  |
+| `--loader-bar-height-s`                      | 0.25rem             |
+| `--loader-bar-height-l`                      | 0.5rem              |
+| `--loader-bar-border-radius-s`               | 0                   |
+| `--loader-bar-border-radius-l`               | 0                   |
+| `--loader-bar-min-width`                     | `--aside-size`      |
+| `--loader-bar-indicator-height`              | 1.25rem             |
+| `--loader-bar-indicator-width`               | 1.25rem             |
+| `--loader-bar-stop-indicator-margin-right-s` | 0                   |
+| `--loader-bar-stop-indicator-margin-right-l` | 0.125rem            |
+| `--loader-bar-stop-indicator-width-s`        | 0.25rem             |
+| `--loader-bar-stop-indicator-height-s`       | 0.25rem             |
+| `--loader-bar-stop-indicator-width-l`        | 0.25rem             |
+| `--loader-bar-stop-indicator-height-l`       | 0.25rem             |
+| `--loader-text-gap`                          | 0.25rem             |
+| `--loader-text-primary-font-size`            | `--font-size`       |
+| `--loader-text-primary-font-weight`          | `--font-weight`     |
+| `--loader-text-primary-line-height`          | 1.5                 |
+| `--loader-text-secondary-font-size`          | `--small-font-size` |
+| `--loader-text-secondary-font-weight`        | `--font-weight`     |
+| `--loader-text-secondary-line-height`        | 1.1em               |
+| `--loader-state-indicator-height-l`          | 4rem                |
+| `--loader-state-indicator-width-l`           | 4rem                |
+| `--loader-state-indicator-margin-l`          | 0 0 1.5rem 0        |
+| `--loader-state-indicator-height-s`          | 1.25rem             |
+| `--loader-state-indicator-width-s`           | 1.25rem             |
+| `--loader-state-indicator-margin-s`          | 0                   |
+| `--loader-row-gap`                           | 0.5rem              |
+| `--loader-column-gap`                        | 1rem                |
+
+### Color
+
+| Variable name                       | Light mode value                 | Dark mode value                  |
+| ----------------------------------- | -------------------------------- | -------------------------------- |
+| `--color-loader-active`             | `--color-interactive-background` | `--color-interactive-background` |
+| `--color-loader-track`              | `--color-chrome`                 | `--color-chrome`                 |
+| `--color-loader-text-primary`       | `--color-data`                   | `--color-data`                   |
+| `--color-loader-text-secondary`     | `--color-label`                  | `--color-label`                  |
+| `--color-loader-bar-stop-indicator` | transparent                      | transparent                      |
+
+<br>
+Customized value for contrast mode:
+
+| Variable name          | Contrast mode value     |
+|------------------------|-------------------------|
+| `--color-loader-track` | `--contrast-background` |

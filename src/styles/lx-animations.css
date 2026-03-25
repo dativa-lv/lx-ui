@@ -432,16 +432,16 @@
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
-.lx-loader-default-progress-default-fill {
+.lx-loader-progress .lx-loader-active {
   transition: stroke-dashoffset 0.7s ease-in-out;
 }
 
-.lx-loader-bar-indeterminate {
+.lx-loader-bar.lx-loader-indeterminate .lx-loader-active {
   transition: width 0.3s ease-in-out;
   animation: indeterminateAnimation 1.5s infinite ease-in-out;
 }
 
-.lx-loader-bar-progress {
+.lx-loader-bar .lx-loader-active {
   transition: width 0.7s ease-in-out;
 }
 
@@ -626,7 +626,7 @@
   }
 }
 
-.lx-loader {
+.lx-loader-indeterminate:not(.lx-loader-state-error):not(.lx-loader-state-success) .lx-loader {
   -webkit-animation-duration: 690ms;
   animation-duration: 690ms;
   -webkit-animation-fill-mode: forwards;
@@ -639,7 +639,7 @@
   animation-timing-function: linear;
 }
 
-.lx-loader svg circle {
+.lx-loader-indeterminate .lx-loader svg circle {
   -webkit-animation-duration: 10ms;
   animation-duration: 10ms;
   -webkit-animation-name: init-stroke;
