@@ -140,7 +140,7 @@
       "validator": "13.15.26",
       "esbuild": "0.27.3",
       "rollup": "4.59.0",
-      "flatted": "3.4.0"
+      "flatted": "3.4.2"
     }
   },
   "peerDependencies": {
