@@ -291,6 +291,7 @@ defineExpose({ open, close });
                 :badgeType="action?.badgeType"
                 :badgeIcon="action?.badgeIcon"
                 :badgeTitle="action?.badgeTitle"
+                :href="action?.href"
                 @click="handleActionClick(action)"
               />
             </template>

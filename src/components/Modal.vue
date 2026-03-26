@@ -270,6 +270,7 @@ defineExpose({ open, close });
               :destructive="action?.destructive"
               :active="action?.active"
               :disabled="action?.disabled"
+              :href="action?.href"
               @click="handleActionClick(action)"
             />
           </footer>
@@ -329,13 +330,15 @@ defineExpose({ open, close });
               v-for="action in actionDefinitionsDisplay"
               :key="action?.id"
               :id="`${id}-action-${action?.id}`"
-              :kind="action?.kind"
               :label="action?.name || action?.label"
-              :title="action?.title"
+              :title="action?.title || action?.tooltip"
+              :kind="action?.kind"
               :loading="action?.loading"
               :busy="action?.busy"
               :destructive="action?.destructive"
+              :active="action?.active"
               :disabled="action?.disabled"
+              :href="action?.href"
               @click="handleActionClick(action)"
             />
           </footer>

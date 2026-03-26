@@ -121,6 +121,7 @@ const titleDescription = computed(() => {
           :badgeIcon="action.badgeIcon"
           :badgeTitle="action.badgeTitle"
           variant="default"
+          :href="action.href"
           @click="handleActionClick(action.id)"
         />
       </div>

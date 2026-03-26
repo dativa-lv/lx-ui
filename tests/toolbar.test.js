@@ -75,7 +75,7 @@ describe('Action definitions', () => {
 
     const buttonElements = wrapper.findAll('.right-area .action-definitions-group .lx-button');
 
-    checkActionDefinitionsButtonsMultiple(buttonElements, { areIconOnly: true });
+    checkActionDefinitionsButtonsMultiple(buttonElements, { wrapper, areIconOnly: true });
   });
 
   test('many actions in left area (using defaultArea prop)', () => {
@@ -85,7 +85,7 @@ describe('Action definitions', () => {
 
     const buttonElements = wrapper.findAll('.left-area .action-definitions-group .lx-button');
 
-    checkActionDefinitionsButtonsMultiple(buttonElements, { areIconOnly: true });
+    checkActionDefinitionsButtonsMultiple(buttonElements, { wrapper, areIconOnly: true });
   });
 
   test('many actions in left area (using area property for each action)', () => {
@@ -99,6 +99,7 @@ describe('Action definitions', () => {
     const buttonElements = wrapper.findAll('.left-area .action-definitions-group .lx-button');
 
     checkActionDefinitionsButtonsMultiple(buttonElements, {
+      wrapper,
       actionDefinitionsOverride: actionDefinitions,
       areIconOnly: true,
     });

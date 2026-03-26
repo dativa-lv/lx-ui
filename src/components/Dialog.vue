@@ -194,6 +194,7 @@ defineExpose({ open, close });
                 :destructive="action?.destructive"
                 :disabled="action?.disabled"
                 :active="action?.active"
+                :href="action?.href"
                 @click="handleActionClick(action)"
               />
             </template>

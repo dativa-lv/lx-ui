@@ -278,6 +278,7 @@ provide('rowId', idComputed);
             :badgeType="actionDefinitions?.[0]?.badgeType"
             :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
             :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
+            :href="actionDefinitions?.[0]?.href"
             @click="handleActionClick(id, actionDefinitions?.[0].id)"
           />
         </template>
@@ -345,7 +346,7 @@ provide('rowId', idComputed);
             :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
             :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
             :icon="actionDefinitions?.[0]?.icon || 'default'"
-            :icon-set="actionDefinitions?.[0]?.iconSet"
+            :iconSet="actionDefinitions?.[0]?.iconSet"
             :disabled="actionDefinitions?.[0]?.disabled"
             :loading="actionDefinitions?.[0]?.loading"
             :busy="actionDefinitions?.[0]?.busy"
@@ -355,6 +356,7 @@ provide('rowId', idComputed);
             :badgeType="actionDefinitions?.[0]?.badgeType"
             :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
             :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
+            :href="actionDefinitions?.[0]?.href"
             @click="handleActionClick(id, actionDefinitions?.[0].id)"
           />
         </template>

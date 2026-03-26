@@ -1023,7 +1023,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           :label="button.name || button.label"
           :title="button.title || button.tooltip"
           :icon="button.icon"
-          :icon-set="button.iconSet"
+          :iconSet="button.iconSet"
           kind="ghost"
           :loading="button.loading"
           :busy="button.busy"
@@ -1031,10 +1031,11 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           :disabled="button.disabled"
           :active="button.active"
           :badge="button.badge"
-          :badge-type="button.badgeType"
-          :badge-title="button.badgeTitle"
-          :badge-icon="button.badgeIcon"
+          :badgeType="button.badgeType"
+          :badgeTitle="button.badgeTitle"
+          :badgeIcon="button.badgeIcon"
           variant="icon-only"
+          :href="button.href"
           @click="clickHandler(button.id)"
         />
       </div>
@@ -1058,7 +1059,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
             kind="ghost"
             variant="icon-only"
             tabindex="-1"
-            custom-class="additional-button-icon"
+            customClass="additional-button-icon"
             :label="displayTexts?.otherActions"
           />
           <LxButton
@@ -1066,7 +1067,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
             kind="ghost"
             variant="icon-only"
             :label="displayTexts.overflowMenu"
-            custom-class="additional-button-icon-menu"
+            customClass="additional-button-icon-menu"
           />
           <template #panel>
             <p
@@ -1099,6 +1100,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
                   :badgeTitle="button.badgeTitle"
                   :badgeIcon="button.badgeIcon"
                   kind="ghost"
+                  :href="button.href"
                   @click="clickHandler(button.id)"
                 />
               </div>
@@ -1255,17 +1257,18 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           :label="button.name || button.label"
           :title="button.title || button.tooltip"
           :icon="button.icon"
-          :icon-set="button.iconSet"
+          :iconSet="button.iconSet"
           :loading="button.loading"
           :busy="button.busy"
           :destructive="button.destructive"
           :disabled="button.disabled"
           :active="button.active"
           :badge="button.badge"
-          :badge-type="button.badgeType"
-          :badge-title="button.badgeTitle"
-          :badge-icon="button.badgeIcon"
+          :badgeType="button.badgeType"
+          :badgeTitle="button.badgeTitle"
+          :badgeIcon="button.badgeIcon"
           kind="primary"
+          :href="button.href"
           @click="clickHandler(button.id)"
         />
 
@@ -1290,20 +1293,21 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           :label="button.name || button.label"
           :title="button.title || button.tooltip"
           :icon="button.icon"
-          :icon-set="button.iconSet"
+          :iconSet="button.iconSet"
           :loading="button.loading"
           :busy="button.busy"
           :destructive="button.destructive"
           :disabled="button.disabled"
           :active="button.active"
           :badge="button.badge"
-          :badge-type="button.badgeType"
-          :badge-title="button.badgeTitle"
-          :badge-icon="button.badgeIcon"
+          :badgeType="button.badgeType"
+          :badgeTitle="button.badgeTitle"
+          :badgeIcon="button.badgeIcon"
           kind="secondary"
-          :custom-class="
+          :customClass="
             notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
           "
+          :href="button.href"
           @click="clickHandler(button.id)"
         />
       </div>
@@ -1320,20 +1324,21 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           :label="button.name || button.label"
           :title="button.title || button.tooltip"
           :icon="button.icon"
-          :icon-set="button.iconSet"
+          :iconSet="button.iconSet"
           :loading="button.loading"
           :busy="button.busy"
           :destructive="button.destructive"
           :disabled="button.disabled"
-          :custom-class="
+          :customClass="
             notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
           "
           :active="button.active"
           :badge="button.badge"
-          :badge-type="button.badgeType"
-          :badge-title="button.badgeTitle"
+          :badgeType="button.badgeType"
+          :badgeTitle="button.badgeTitle"
           :badgeIcon="button.badgeIcon"
           kind="tertiary"
+          :href="button.href"
           @click="clickHandler(button.id)"
         />
       </div>

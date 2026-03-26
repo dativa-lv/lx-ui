@@ -215,6 +215,9 @@ function handleTogglerClick(e) {
   switch (props.triggerClick) {
     case 'left':
       if (e.type === 'click') {
+        e.preventDefault();
+        e.stopPropagation();
+
         if (!menuOpen.value) {
           openMenu();
         } else {
@@ -225,6 +228,7 @@ function handleTogglerClick(e) {
     case 'right':
       if (e.type === 'contextmenu') {
         e.preventDefault();
+        e.stopPropagation();
 
         if (!menuOpen.value) {
           openMenu();
@@ -244,10 +248,14 @@ function handleTogglerKeyup(e) {
     case 'Enter':
     case 'ArrowDown':
       e.preventDefault();
+      e.stopPropagation();
+
       openMenu({ source: 'keyboard' });
       break;
     case 'ArrowUp':
       e.preventDefault();
+      e.stopPropagation();
+
       openMenu({ source: 'keyboard', focus: 'last' });
       break;
     default:

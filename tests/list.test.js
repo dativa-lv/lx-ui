@@ -134,7 +134,205 @@ describe('Action definitions', () => {
     const panelElement = document.body.querySelector('.lx-dropdown-panel-wrapper');
     const buttonElements = panelElement.querySelectorAll('.lx-button');
 
-    checkActionDefinitionsButtonsMultiple(buttonElements);
+    checkActionDefinitionsButtonsMultiple(buttonElements, { wrapper });
+  });
+});
+
+describe('Item and action interactions', () => {
+  const testItems = {
+    simple: {
+      id: 'itemSimple',
+      name: 'Item simple',
+    },
+    href: {
+      id: 'itemHref',
+      name: 'Item href',
+      href: { name: 'info' },
+    },
+    clickable: {
+      id: 'itemClickable',
+      name: 'Item clickable',
+      clickable: true,
+    },
+  };
+
+  const testActions = {
+    simple1: {
+      id: 'actionSimple1',
+      name: 'Action simple 1',
+      icon: 'ai',
+    },
+    simple2: {
+      id: 'actionSimple2',
+      name: 'Action simple 2',
+      icon: 'ai',
+    },
+    href1: {
+      id: 'actionHref1',
+      name: 'Action href 1',
+      icon: 'ai',
+      href: { name: 'migration' },
+    },
+    href2: {
+      id: 'actionHref2',
+      name: 'Action href 2',
+      icon: 'ai',
+      href: { name: 'migration' },
+    },
+  };
+
+  const layouts = ['horizontal', 'vertical'];
+
+  const scenarios = [
+    {
+      name: 'single simple action',
+      actions: [testActions.simple1],
+    },
+    {
+      name: 'single href action',
+      actions: [testActions.href1],
+    },
+    {
+      name: 'multiple simple actions',
+      actions: [testActions.simple1, testActions.simple2],
+    },
+    {
+      name: 'multiple href actions',
+      actions: [testActions.href1, testActions.href2],
+    },
+  ];
+
+  async function checkActions(item, actions) {
+    const itemClickEmits = wrapper.emitted('click')?.length ?? 0;
+
+    if (actions.length === 1) {
+      const actionButton = wrapper.get('.lx-list-item-actions .lx-button');
+      await actionButton.trigger('click');
+
+      // Ensure that item click event is not emitted when clicked on action button
+      expect(wrapper.emitted('click')?.length ?? 0).toBe(itemClickEmits);
+
+      expect(wrapper.emitted('actionClick').at(-1)).toEqual([actions[0].id, item.id]);
+
+      if (actions[0].href) {
+        const link = wrapper
+          .findAllComponents({ name: 'RouterLinkStub' })
+          .find((l) => l.attributes('id')?.includes(actions[0].id));
+
+        expect(link?.exists()).toBe(true);
+        expect(link?.props('to')?.name).toBe(actions[0].href.name);
+      }
+    } else if (actions.length > 1) {
+      const dropdown = wrapper.get('.lx-list-item-actions .lx-dropdown-toggler');
+      await dropdown.trigger('click');
+
+      // Ensure that item click event is not emitted when clicked on dropdown
+      expect(wrapper.emitted('click')?.length ?? 0).toBe(itemClickEmits);
+
+      const panel = document.body.querySelector('.lx-dropdown-panel-wrapper');
+      const buttons = panel.querySelectorAll('.lx-button');
+
+      expect(buttons.length).toBe(actions.length);
+
+      if (actions[0].href) {
+        const link = wrapper
+          .findAllComponents({ name: 'RouterLinkStub' })
+          .find((l) => l.attributes('id')?.includes(actions[0].id));
+
+        expect(link?.exists()).toBe(true);
+        expect(link?.props('to')?.name).toBe(actions[0].href.name);
+      }
+
+      await buttons[0].click();
+
+      expect(wrapper.emitted('actionClick').at(-1)).toEqual([actions[0].id, item.id]);
+    }
+  }
+
+  describe('Simple item', () => {
+    const testItem = testItems.simple;
+
+    layouts.forEach((layout) => {
+      describe(`Layout: ${layout}`, () => {
+        scenarios.forEach(({ name, actions }) => {
+          test(name, async () => {
+            wrapper = mountComponent({
+              props: {
+                items: [testItem],
+                actionDefinitions: actions,
+                actionsLayout: layout,
+              },
+            });
+
+            const itemElement = wrapper.get('.lx-list-item');
+            await itemElement.trigger('click');
+
+            expect(wrapper.emitted('actionClick')).toBeUndefined();
+
+            await checkActions(testItem, actions);
+          });
+        });
+      });
+    });
+  });
+
+  describe('Item with href', () => {
+    const testItem = testItems.href;
+
+    layouts.forEach((layout) => {
+      describe(`Layout: ${layout}`, () => {
+        scenarios.forEach(({ name, actions }) => {
+          test(name, async () => {
+            wrapper = mountComponent({
+              props: {
+                items: [testItem],
+                actionDefinitions: actions,
+                actionsLayout: layout,
+              },
+            });
+
+            const itemLink = wrapper.get('.lx-list-item');
+            expect(itemLink.element.tagName).toBe('A');
+
+            const link = wrapper
+              .findAllComponents({ name: 'RouterLinkStub' })
+              .find((l) => l.attributes('class')?.includes('lx-list-item'));
+
+            expect(link?.exists()).toBe(true);
+            expect(link?.props('to')?.name).toBe(testItem.href.name);
+
+            await checkActions(testItem, actions);
+          });
+        });
+      });
+    });
+  });
+
+  describe('Clickable item', () => {
+    const testItem = testItems.clickable;
+
+    layouts.forEach((layout) => {
+      describe(`Layout: ${layout}`, () => {
+        scenarios.forEach(({ name, actions }) => {
+          test(name, async () => {
+            wrapper = mountComponent({
+              props: {
+                items: [testItem],
+                actionDefinitions: actions,
+                actionsLayout: layout,
+              },
+            });
+
+            const item = wrapper.get('.lx-list-item');
+            await item.trigger('click');
+
+            expect(wrapper.emitted('actionClick')[0]).toEqual(['click', testItem.id]);
+
+            await checkActions(testItem, actions);
+          });
+        });
+      });
+    });
   });
 });
 

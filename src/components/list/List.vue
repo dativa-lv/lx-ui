@@ -993,26 +993,22 @@ const draggableButtons = ref([
   {
     id: 'move-first',
     icon: 'move-first',
-    title: 'Pārvietot sākumā',
-    disabled: false,
+    name: 'Pārvietot sākumā',
   },
   {
     id: 'move-up',
     icon: 'move-up',
-    title: 'Pārvietot uz augšu',
-    disabled: false,
+    name: 'Pārvietot uz augšu',
   },
   {
     id: 'move-down',
     icon: 'move-down',
-    title: 'Pārvietot uz leju',
-    disabled: false,
+    name: 'Pārvietot uz leju',
   },
   {
     id: 'move-last',
     icon: 'move-last',
-    title: 'Pārvietot beigās',
-    disabled: false,
+    name: 'Pārvietot beigās',
   },
 ]);
 
@@ -1224,9 +1220,10 @@ onBeforeUnmount(() => {
                   kind="ghost"
                   :active="selectAction.active"
                   :badge="selectAction.badge"
-                  :badge-type="selectAction.badgeType"
+                  :badgeType="selectAction.badgeType"
                   :badgeIcon="selectAction.badgeIcon"
                   :badgeTitle="selectAction.badgeTitle"
+                  :href="selectAction.href"
                   @click="selectionActionClick(selectAction.id, selectedItems)"
                 />
               </div>
@@ -1284,9 +1281,10 @@ onBeforeUnmount(() => {
                     kind="ghost"
                     :active="selectAction.active"
                     :badge="selectAction.badge"
-                    :badge-type="selectAction.badgeType"
+                    :badgeType="selectAction.badgeType"
                     :badgeIcon="selectAction.badgeIcon"
                     :badgeTitle="selectAction.badgeTitle"
+                    :href="selectAction.href"
                     @click="selectionActionClick(selectAction.id, selectedItems)"
                   />
                 </div>
@@ -1426,6 +1424,8 @@ onBeforeUnmount(() => {
                         triggerClick="right"
                         :disabled="loading || busy || draggableIsDisabledByQuery"
                         :tabindex="-1"
+                        :actionDefinitions="draggableButtons"
+                        @actionClick="(id) => moveDraggableItem(id, element, 'grouped')"
                       >
                         <div
                           class="lx-handle"
@@ -1444,19 +1444,6 @@ onBeforeUnmount(() => {
                         >
                           <LxIcon class="lx-icon" value="drag"></LxIcon>
                         </div>
-
-                        <template #panel>
-                          <div class="lx-button-set">
-                            <LxButton
-                              v-for="button in draggableButtons"
-                              :key="button.id"
-                              :icon="button.icon"
-                              :label="button.title"
-                              :disabled="button.disabled"
-                              @click="moveDraggableItem(button.id, element, 'grouped')"
-                            />
-                          </div>
-                        </template>
                       </LxDropDownMenu>
 
                       <LxListItem
@@ -1976,6 +1963,8 @@ onBeforeUnmount(() => {
                         triggerClick="right"
                         :disabled="loading || busy || draggableIsDisabledByQuery"
                         :tabindex="-1"
+                        :actionDefinitions="draggableButtons"
+                        @actionClick="(id) => moveDraggableItem(id, element, 'ungrouped')"
                       >
                         <div
                           class="lx-handle"
@@ -1994,18 +1983,6 @@ onBeforeUnmount(() => {
                         >
                           <LxIcon class="lx-icon" value="drag"></LxIcon>
                         </div>
-                        <template #panel>
-                          <div class="lx-button-set">
-                            <LxButton
-                              v-for="button in draggableButtons"
-                              :key="button.id"
-                              :icon="button.icon"
-                              :label="button.title"
-                              :disabled="button.disabled"
-                              @click="moveDraggableItem(button.id, element, 'ungrouped')"
-                            />
-                          </div>
-                        </template>
                       </LxDropDownMenu>
 
                       <LxListItem
@@ -2105,6 +2082,8 @@ onBeforeUnmount(() => {
                           triggerClick="right"
                           :disabled="loading || busy || draggableIsDisabledByQuery"
                           :tabindex="-1"
+                          :actionDefinitions="draggableButtons"
+                          @actionClick="(id) => moveDraggableItem(id, element, 'grouped')"
                         >
                           <div
                             class="lx-handle"
@@ -2123,19 +2102,6 @@ onBeforeUnmount(() => {
                           >
                             <LxIcon class="lx-icon" value="drag"></LxIcon>
                           </div>
-
-                          <template #panel>
-                            <div class="lx-button-set">
-                              <LxButton
-                                v-for="button in draggableButtons"
-                                :key="button.id"
-                                :icon="button.icon"
-                                :label="button.title"
-                                :disabled="button.disabled"
-                                @click="moveDraggableItem(button.id, element, 'grouped')"
-                              />
-                            </div>
-                          </template>
                         </LxDropDownMenu>
 
                         <LxListItem

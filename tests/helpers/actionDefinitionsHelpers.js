@@ -45,6 +45,12 @@ export const actionDefinitionsCommon = [
     icon: 'ai',
     badge: '🌞',
   },
+  {
+    id: 'actionHref',
+    name: 'Action as link',
+    icon: 'ai',
+    href: { name: 'info' },
+  },
 ];
 
 /**
@@ -72,7 +78,7 @@ export function checkActionDefinitionsButtonsSingle(
     expect(button.attributes('id')).toContain(action.id);
     expect(button.attributes('aria-label')).toContain(action.name);
 
-    return button;
+    return { button, wrapper };
   }
 
   test('simple', () => {
@@ -83,7 +89,7 @@ export function checkActionDefinitionsButtonsSingle(
       title: 'This is a simple action',
     };
 
-    const button = initButton(action);
+    const { button } = initButton(action);
 
     expect(button.attributes('title')).toBe(action.title);
   });
@@ -96,7 +102,7 @@ export function checkActionDefinitionsButtonsSingle(
       destructive: true,
     };
 
-    const button = initButton(action);
+    const { button } = initButton(action);
 
     checkButtonState(button, 'destructive');
   });
@@ -109,7 +115,7 @@ export function checkActionDefinitionsButtonsSingle(
       disabled: true,
     };
 
-    const button = initButton(action);
+    const { button } = initButton(action);
 
     checkButtonState(button, 'disabled');
   });
@@ -122,7 +128,7 @@ export function checkActionDefinitionsButtonsSingle(
       busy: true,
     };
 
-    const button = initButton(action);
+    const { button } = initButton(action);
 
     checkButtonState(button, 'busy');
   });
@@ -135,7 +141,7 @@ export function checkActionDefinitionsButtonsSingle(
       loading: true,
     };
 
-    const button = initButton(action);
+    const { button } = initButton(action);
 
     checkButtonState(button, 'loading');
   });
@@ -148,7 +154,7 @@ export function checkActionDefinitionsButtonsSingle(
       active: true,
     };
 
-    const button = initButton(action);
+    const { button } = initButton(action);
 
     checkButtonState(button, 'active');
   });
@@ -161,9 +167,29 @@ export function checkActionDefinitionsButtonsSingle(
       badge: '🌞',
     };
 
-    const button = initButton(action);
+    const { button } = initButton(action);
 
     expect(button.find('.lx-badge').exists()).toBe(true);
+  });
+
+  test('as link', () => {
+    const action = {
+      id: 'actionHref',
+      name: 'Action as link',
+      icon: 'ai',
+      href: { name: 'info' },
+    };
+
+    const { button, wrapper } = initButton(action);
+
+    expect(button.element.tagName).toBe('A');
+
+    const link = wrapper
+      .findAllComponents({ name: 'RouterLinkStub' })
+      .find((l) => l.attributes('id').includes(action.id));
+
+    expect(link?.exists()).toBe(true);
+    expect(link?.props('to')?.name).toBe(action.href.name);
   });
 }
 
@@ -171,12 +197,13 @@ export function checkActionDefinitionsButtonsSingle(
  * Checks that button elements (properties and states) match the expected action definitions.
  * @param {NodeListOf<Element>|Array} buttons - DOM button elements or Vue Test Utils wrappers to validate
  * @param {Object} [options={}] - Configuration options
- * @param {Array} [options.actionDefinitionsOverride=null] - Custom action definitions to validate against; if null, uses actionDefinitionsCommon
+ * @param {Object} [options.wrapper] - Vue Test Utils root wrapper (required for href assertions)
+ * @param {Array} [options.actionDefinitionsOverride] - Custom action definitions to validate against; if not defined, uses actionDefinitionsCommon
  * @param {boolean} [options.areIconOnly=false] - When true, skips visible label text assertion for icon-only buttons
  */
 export function checkActionDefinitionsButtonsMultiple(
   buttons,
-  { actionDefinitionsOverride = null, areIconOnly = false } = {}
+  { wrapper, actionDefinitionsOverride, areIconOnly = false } = {}
 ) {
   const actionDefinitions = actionDefinitionsOverride ?? actionDefinitionsCommon;
 
@@ -220,6 +247,24 @@ export function checkActionDefinitionsButtonsMultiple(
 
     if (actionDefinitions[i].badge) {
       expect(buttonElement.querySelector('.lx-badge')).toBeTruthy();
+    }
+
+    if (actionDefinitions[i].href) {
+      expect(buttonElement.tagName).toBe('A');
+
+      if (!wrapper) {
+        throw new Error('wrapper is required when checking href actionDefinitions');
+      }
+
+      const link = wrapper
+        .findAllComponents({ name: 'RouterLinkStub' })
+        .find((l) => l.attributes('id').includes(actionDefinitions[i].id));
+
+      expect(link?.exists()).toBe(true);
+
+      if (actionDefinitions[i].href.name) {
+        expect(link?.props('to')?.name).toBe(actionDefinitions[i].href.name);
+      }
     }
   });
 }

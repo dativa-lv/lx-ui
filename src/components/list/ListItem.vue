@@ -56,33 +56,36 @@ function performClick() {
   }
 }
 
-const dropDownMenu = ref();
-
-function handleActionClick(actionName, rowCode, event = null, href = false, close = false) {
-  event?.stopPropagation();
-  if (href) event?.preventDefault();
-  emits('actionClick', actionName, rowCode);
-  if (close) dropDownMenu.value.closeMenu();
-}
-
-function openDropDownMenu(event, href = false) {
-  if (href) {
-    event.preventDefault();
-  } else {
-    event.stopPropagation();
-    dropDownMenu.value.openMenu();
-  }
+function handleActionClick(actionId) {
+  emits('actionClick', actionId, props.id);
 }
 
 function getItemId(id, parentId) {
   return `${parentId}-item-${id}`;
 }
 
-const visibleActionDefinitions = computed(() =>
-  props.actionDefinitions?.filter((action) =>
-    action.visibleByAttribute ? props.value[action.visibleByAttribute] : true
-  )
-);
+const visibleActionDefinitions = computed(() => {
+  const actions = (props.actionDefinitions || [])
+    .filter((action) => (action.visibleByAttribute ? props.value[action.visibleByAttribute] : true))
+    .map((action) => ({
+      ...action,
+      disabled:
+        action.disabled ||
+        (action.enableByAttribute ? !props.value[action.enableByAttribute] : false),
+    }));
+
+  if (actions.length > 1) {
+    actions.unshift({
+      id: `${props.id}-action-open-menu`,
+      label: displayTexts.value.overflowMenu,
+      icon: 'overflow-menu',
+      kind: 'main',
+      variant: 'icon-only',
+    });
+  }
+
+  return actions;
+});
 
 const tabIndex = computed(() => {
   if (props.disabled || props.busy || props.loading) {
@@ -115,13 +118,13 @@ watch(() => props.href, computeSafeTo, { immediate: true });
       :tabindex="tabIndex"
       class="lx-list-item"
       :id="getItemId(id, parentId)"
-      @click="performClick()"
+      @click="performClick"
       :role="clickable ? 'button' : null"
       :aria-labelledby="label && clickable ? `${id}-label` : null"
       :aria-describedby="description && clickable ? `${id}-desc` : null"
       :aria-invalid="invalid"
-      v-on:keyup.enter="performClick()"
-      v-on:keyup.space="performClick()"
+      v-on:keyup.enter="performClick"
+      v-on:keyup.space="performClick"
       v-on:keydown.space.prevent
       :title="clickable ? tooltip : ''"
       :class="[
@@ -188,34 +191,33 @@ watch(() => props.href, computeSafeTo, { immediate: true });
           "
         >
           <LxButton
-            v-for="action in visibleActionDefinitions"
-            :id="`${id}-action-${action.id}`"
-            :key="action.id"
-            :label="action.name || action.label"
-            :title="action.title || action.tooltip"
-            :icon="action.icon"
-            :icon-set="action.iconSet"
-            :loading="action.loading"
-            :busy="action.busy"
-            :destructive="action.destructive"
+            :id="`${id}-action-${visibleActionDefinitions[0].id}`"
+            :label="visibleActionDefinitions[0].name || visibleActionDefinitions[0].label"
+            :title="visibleActionDefinitions[0].title || visibleActionDefinitions[0].tooltip"
+            :icon="visibleActionDefinitions[0].icon"
+            :iconSet="visibleActionDefinitions[0].iconSet"
+            :loading="visibleActionDefinitions[0].loading"
+            :busy="visibleActionDefinitions[0].busy"
+            :destructive="visibleActionDefinitions[0].destructive"
             :disabled="
               loading ||
               busy ||
               disabled ||
-              (action.disabled != null
-                ? action.disabled
-                : action.enableByAttribute
-                ? !value[action.enableByAttribute]
+              (visibleActionDefinitions[0].disabled != null
+                ? visibleActionDefinitions[0].disabled
+                : visibleActionDefinitions[0].enableByAttribute
+                ? !value[visibleActionDefinitions[0].enableByAttribute]
                 : false)
             "
+            :active="visibleActionDefinitions[0].active"
+            :badge="visibleActionDefinitions[0].badge"
+            :badgeType="visibleActionDefinitions[0].badgeType"
+            :badgeIcon="visibleActionDefinitions[0].badgeIcon"
+            :badgeTitle="visibleActionDefinitions[0].badgeTitle"
+            :href="visibleActionDefinitions[0].href"
             kind="ghost"
             variant="icon-only"
-            :active="action.active"
-            :badge="action.badge"
-            :badge-type="action.badgeType"
-            :badgeIcon="action.badgeIcon"
-            :badgeTitle="action.badgeTitle"
-            @click="handleActionClick(action.id, id, $event)"
+            @click.prevent.stop="handleActionClick(visibleActionDefinitions[0].id)"
           />
         </div>
         <div
@@ -224,52 +226,11 @@ watch(() => props.href, computeSafeTo, { immediate: true });
           :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
         >
           <LxDropDownMenu
-            ref="dropDownMenu"
-            :disabled="loading || busy || disabled"
             v-if="visibleActionDefinitions.length > 1"
-          >
-            <div>
-              <LxButton
-                :id="`${id}-action-open-menu`"
-                icon="overflow-menu"
-                kind="ghost"
-                :disabled="loading || busy || disabled"
-                :label="displayTexts.overflowMenu"
-                variant="icon-only"
-                tabindex="-1"
-                @click="openDropDownMenu($event, clickable ? false : true)"
-              />
-            </div>
-            <template v-slot:panel>
-              <div class="lx-button-set">
-                <LxButton
-                  v-for="action in visibleActionDefinitions"
-                  :key="action.id"
-                  :id="`${id}-action-${action.id}`"
-                  :label="action.name || action.label"
-                  :title="action.title || action.tooltip"
-                  :icon="action.icon"
-                  :icon-set="action.iconSet"
-                  :loading="action.loading"
-                  :busy="action.busy"
-                  :destructive="action.destructive"
-                  :disabled="
-                    action.disabled != null
-                      ? action.disabled
-                      : action.enableByAttribute
-                      ? !value[action.enableByAttribute]
-                      : false
-                  "
-                  :active="action.active"
-                  :badge="action.badge"
-                  :badge-type="action.badgeType"
-                  :badgeIcon="action.badgeIcon"
-                  :badgeTitle="action.badgeTitle"
-                  @click="handleActionClick(action.id, id, $event, false, true)"
-                />
-              </div>
-            </template>
-          </LxDropDownMenu>
+            :disabled="loading || busy || disabled"
+            :actionDefinitions="visibleActionDefinitions"
+            @actionClick="(id) => handleActionClick(id)"
+          />
         </div>
       </div>
     </div>
@@ -349,34 +310,33 @@ watch(() => props.href, computeSafeTo, { immediate: true });
           "
         >
           <LxButton
-            v-for="action in visibleActionDefinitions"
-            :id="`${id}-action-${action.id}`"
-            :key="action.id"
-            :label="action.name || action.label"
-            :title="action.title || action.tooltip"
-            :icon="action.icon"
-            :icon-set="action.iconSet"
-            :loading="action.loading"
-            :busy="action.busy"
-            :destructive="action.destructive"
+            :id="`${id}-action-${visibleActionDefinitions[0].id}`"
+            :label="visibleActionDefinitions[0].name || visibleActionDefinitions[0].label"
+            :title="visibleActionDefinitions[0].title || visibleActionDefinitions[0].tooltip"
+            :icon="visibleActionDefinitions[0].icon"
+            :iconSet="visibleActionDefinitions[0].iconSet"
+            :loading="visibleActionDefinitions[0].loading"
+            :busy="visibleActionDefinitions[0].busy"
+            :destructive="visibleActionDefinitions[0].destructive"
             :disabled="
               loading ||
               busy ||
               disabled ||
-              (action.disabled != null
-                ? action.disabled
-                : action.enableByAttribute
-                ? !value[action.enableByAttribute]
+              (visibleActionDefinitions[0].disabled != null
+                ? visibleActionDefinitions[0].disabled
+                : visibleActionDefinitions[0].enableByAttribute
+                ? !value[visibleActionDefinitions[0].enableByAttribute]
                 : false)
             "
-            :active="action.active"
-            :badge="action.badge"
-            :badge-type="action.badgeType"
-            :badgeIcon="action.badgeIcon"
-            :badgeTitle="action.badgeTitle"
+            :active="visibleActionDefinitions[0].active"
+            :badge="visibleActionDefinitions[0].badge"
+            :badgeType="visibleActionDefinitions[0].badgeType"
+            :badgeIcon="visibleActionDefinitions[0].badgeIcon"
+            :badgeTitle="visibleActionDefinitions[0].badgeTitle"
+            :href="visibleActionDefinitions[0].href"
             kind="ghost"
             variant="icon-only"
-            @click="handleActionClick(action.id, id, $event, true)"
+            @click.prevent.stop="handleActionClick(visibleActionDefinitions[0].id)"
           />
         </div>
         <div
@@ -385,52 +345,11 @@ watch(() => props.href, computeSafeTo, { immediate: true });
           :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
         >
           <LxDropDownMenu
-            ref="dropDownMenu"
-            :disabled="loading || busy || disabled"
             v-if="visibleActionDefinitions.length > 1"
-          >
-            <div>
-              <LxButton
-                :id="`${id}-action-open-menu`"
-                icon="overflow-menu"
-                kind="ghost"
-                :disabled="loading || busy || disabled"
-                :label="displayTexts.overflowMenu"
-                variant="icon-only"
-                tabindex="-1"
-                @click="openDropDownMenu($event, true)"
-              />
-            </div>
-            <template v-slot:panel>
-              <div class="lx-button-set">
-                <LxButton
-                  v-for="action in visibleActionDefinitions"
-                  :id="`${id}-action-${action.id}`"
-                  :key="action.id"
-                  :label="action.name || action.label"
-                  :title="action.title || action.tooltip"
-                  :icon="action.icon"
-                  :icon-set="action.iconSet"
-                  :loading="action.loading"
-                  :busy="action.busy"
-                  :destructive="action.destructive"
-                  :disabled="
-                    action.disabled != null
-                      ? action.disabled
-                      : action.enableByAttribute
-                      ? !value[action.enableByAttribute]
-                      : false
-                  "
-                  :active="action.active"
-                  :badge="action.badge"
-                  :badge-type="action.badgeType"
-                  :badgeIcon="action.badgeIcon"
-                  :badgeTitle="action.badgeTitle"
-                  @click="handleActionClick(action.id, id, $event, true, true)"
-                />
-              </div>
-            </template>
-          </LxDropDownMenu>
+            :disabled="loading || busy || disabled"
+            :actionDefinitions="visibleActionDefinitions"
+            @actionClick="(id) => handleActionClick(id)"
+          />
         </div>
       </div>
     </router-link>
@@ -448,34 +367,33 @@ watch(() => props.href, computeSafeTo, { immediate: true });
       "
     >
       <LxButton
-        v-for="action in visibleActionDefinitions"
-        :id="`${id}-action-${action.id}`"
-        :key="action.id"
-        kind="ghost"
-        :label="action.name || action.label"
-        :title="action.title || action.tooltip"
-        :loading="action.loading"
-        :busy="action.busy"
-        :destructive="action.destructive"
+        :id="`${id}-action-${visibleActionDefinitions[0].id}`"
+        :label="visibleActionDefinitions[0].name || visibleActionDefinitions[0].label"
+        :title="visibleActionDefinitions[0].title || visibleActionDefinitions[0].tooltip"
+        :loading="visibleActionDefinitions[0].loading"
+        :busy="visibleActionDefinitions[0].busy"
+        :destructive="visibleActionDefinitions[0].destructive"
         :disabled="
           loading ||
           busy ||
           disabled ||
-          (action.disabled != null
-            ? action.disabled
-            : action.enableByAttribute
-            ? !value[action.enableByAttribute]
+          (visibleActionDefinitions[0].disabled != null
+            ? visibleActionDefinitions[0].disabled
+            : visibleActionDefinitions[0].enableByAttribute
+            ? !value[visibleActionDefinitions[0].enableByAttribute]
             : false)
         "
-        :icon="action.icon"
-        :icon-set="action.iconSet"
+        :icon="visibleActionDefinitions[0].icon"
+        :iconSet="visibleActionDefinitions[0].iconSet"
+        :active="visibleActionDefinitions[0].active"
+        :badge="visibleActionDefinitions[0].badge"
+        :badgeType="visibleActionDefinitions[0].badgeType"
+        :badgeIcon="visibleActionDefinitions[0].badgeIcon"
+        :badgeTitle="visibleActionDefinitions[0].badgeTitle"
+        :href="visibleActionDefinitions[0].href"
+        kind="ghost"
         variant="icon-only"
-        :active="action.active"
-        :badge="action.badge"
-        :badge-type="action.badgeType"
-        :badgeIcon="action.badgeIcon"
-        :badgeTitle="action.badgeTitle"
-        @click="handleActionClick(action.id, id, $event)"
+        @click.prevent.stop="handleActionClick(visibleActionDefinitions[0].id)"
       />
     </div>
 
@@ -485,50 +403,11 @@ watch(() => props.href, computeSafeTo, { immediate: true });
       :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
     >
       <LxDropDownMenu
-        :disabled="loading || busy || disabled"
         v-if="visibleActionDefinitions.length > 1"
-      >
-        <div>
-          <LxButton
-            :id="`${id}-action-overflow-menu`"
-            icon="overflow-menu"
-            kind="ghost"
-            :label="displayTexts.overflowMenu"
-            variant="icon-only"
-            :disabled="loading || busy || disabled"
-            tabindex="-1"
-          />
-        </div>
-        <template v-slot:panel>
-          <div class="lx-button-set">
-            <LxButton
-              v-for="action in visibleActionDefinitions"
-              :key="action.id"
-              :id="`${id}-action-${action.id}`"
-              :label="action.name || action.label"
-              :title="action.title || action.tooltip"
-              :icon="action.icon"
-              :icon-set="action.iconSet"
-              :loading="action.loading"
-              :busy="action.busy"
-              :destructive="action.destructive"
-              :disabled="
-                action.disabled != null
-                  ? action.disabled
-                  : action.enableByAttribute
-                  ? !value[action.enableByAttribute]
-                  : false
-              "
-              :active="action.active"
-              :badge="action.badge"
-              :badge-type="action.badgeType"
-              :badgeIcon="action.badgeIcon"
-              :badgeTitle="action.badgeTitle"
-              @click="handleActionClick(action.id, id)"
-            />
-          </div>
-        </template>
-      </LxDropDownMenu>
+        :disabled="loading || busy || disabled"
+        :actionDefinitions="visibleActionDefinitions"
+        @actionClick="(id) => handleActionClick(id)"
+      />
     </div>
   </div>
 </template>

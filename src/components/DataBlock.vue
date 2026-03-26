@@ -230,6 +230,7 @@ const expandIconTitle = computed(() => {
           :badgeType="actionDefinitions[0].badgeType"
           :badgeIcon="actionDefinitions[0].badgeIcon"
           :badgeTitle="actionDefinitions[0].badgeTitle"
+          :href="actionDefinitions[0].href"
           @click="handleActionClick(actionDefinitions[0].id, props.id)"
         />
         <LxDropDownMenu

@@ -39,7 +39,6 @@ The prop `actionDefinitions` is available for following components:
 | `groupId` | String | Identifier for grouping related actions together. **Note:** Currently only supported in LxDropDownMenu, LxForm, LxToolbar. |
 | `area` | String | Position where the action should be placed. Allowed values: `left`, `right`. **Note:** Only supported in LxToolbar. |
 | `customClass` | String | Custom CSS class name(s) to apply to the action button for additional styling. Multiple classes can be separated by spaces (e.g., `class-1 class-2`). |
-| `href` | String | URL for navigation when the action is clicked. Converts the action into a link. |
 | `badge` | String | Badge text or count to display on the action button. |
 | `badgeType` | String | Visual style for the badge. Allowed values: `default`, `info`, `success`, `warning`, `error`. |
 | `badgeIcon` | String | Icon identifier to display inside the badge instead of text. |
@@ -50,3 +49,4 @@ The prop `actionDefinitions` is available for following components:
 | `loading` | Boolean | Shows loading indicator on the action button and disables interaction. |
 | `active` | Boolean | Applies active/selected styling to indicate the action is currently active. |
 | `nonResponsive` | Boolean | Prevents the action from being responsive. It will not collapse into overflow menus on smaller screens. |
+| `href` | Object | Route for navigation when the action is clicked. Converts the action into a link. Example: `{ name: 'info' }`. |

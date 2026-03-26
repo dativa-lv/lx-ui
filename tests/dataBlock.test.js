@@ -104,6 +104,6 @@ describe('Action definitions', () => {
     const panel = document.body.querySelector('.lx-dropdown-panel-wrapper');
     const panelButtons = panel.querySelectorAll('.lx-button');
 
-    checkActionDefinitionsButtonsMultiple(panelButtons);
+    checkActionDefinitionsButtonsMultiple(panelButtons, { wrapper });
   });
 });

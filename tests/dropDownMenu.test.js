@@ -138,7 +138,7 @@ describe('Action definitions', () => {
     const panelElement = await openMenu();
     const buttonElements = panelElement.querySelectorAll('.lx-button');
 
-    checkActionDefinitionsButtonsMultiple(buttonElements);
+    checkActionDefinitionsButtonsMultiple(buttonElements, { wrapper });
   });
 
   test('renders action toggles correctly', async () => {

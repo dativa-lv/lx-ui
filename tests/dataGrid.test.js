@@ -155,6 +155,7 @@ describe('Action definitions', () => {
     const panelActions = actionDefinitions.slice(1);
 
     checkActionDefinitionsButtonsMultiple(buttonElements, {
+      wrapper,
       actionDefinitionsOverride: panelActions,
     });
   });

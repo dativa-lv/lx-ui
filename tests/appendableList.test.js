@@ -98,6 +98,7 @@ describe('Action definitions', () => {
     const panelButtons = panel.querySelectorAll('.lx-button');
 
     checkActionDefinitionsButtonsMultiple(panelButtons, {
+      wrapper,
       actionDefinitionsOverride: [defaultDeleteAction, ...actionDefinitionsCommon],
     });
   });

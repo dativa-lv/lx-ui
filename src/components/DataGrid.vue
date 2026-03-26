@@ -2043,6 +2043,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         hasSelecting ? colCount + 1 : colCount
                       )
                   "
+                  :href="action.href"
                   @click="handleActionClick(action.id, row[idAttribute], actionAdditionalParameter)"
                 />
               </div>
@@ -2096,6 +2097,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         hasSelecting ? colCount + 1 : colCount
                       )
                   "
+                  :href="actionDefinitions?.[0]?.href"
                   @click="
                     handleActionClick(
                       actionDefinitions?.[0]?.id,

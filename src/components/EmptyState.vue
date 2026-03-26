@@ -54,6 +54,7 @@ function handleActionClick(actionName) {
           :badgeType="action?.badgeType"
           :badgeIcon="action?.badgeIcon"
           :badgeTitle="action?.badgeTitle"
+          :href="action?.href"
           @click="handleActionClick(action?.id)"
         />
       </div>

@@ -76,7 +76,7 @@ function handleActionClick(id) {
           :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
           :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
           :icon="actionDefinitions?.[0]?.icon"
-          :icon-set="actionDefinitions?.[0]?.iconSet"
+          :iconSet="actionDefinitions?.[0]?.iconSet"
           :loading="actionDefinitions?.[0]?.loading"
           :busy="actionDefinitions?.[0]?.busy"
           :destructive="actionDefinitions?.[0]?.destructive"
@@ -84,9 +84,10 @@ function handleActionClick(id) {
           :active="actionDefinitions?.[0]?.active"
           variant="icon-only"
           :badge="actionDefinitions?.[0]?.badge"
-          :badge-type="actionDefinitions?.[0]?.badgeType"
+          :badgeType="actionDefinitions?.[0]?.badgeType"
           :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
           :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
+          :href="actionDefinitions?.[0]?.href"
           @click="handleActionClick(actionDefinitions?.[0]?.id)"
         />
       </div>

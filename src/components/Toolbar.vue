@@ -344,7 +344,7 @@ defineExpose({ toggleSearch });
                 :id="`${id}-action-${action?.id}`"
                 :kind="action?.kind || 'ghost'"
                 :icon="action?.icon"
-                :icon-set="action?.iconSet"
+                :iconSet="action?.iconSet"
                 :busy="action?.busy"
                 :loading="action?.loading"
                 :title="action?.title || action?.tooltip"
@@ -359,6 +359,7 @@ defineExpose({ toggleSearch });
                 :badgeType="action?.badgeType"
                 :badgeIcon="action?.badgeIcon"
                 :badgeTitle="action?.badgeTitle"
+                :href="action?.href"
                 @click="handleActionClick(action?.id)"
               />
               <LxToggle
@@ -384,7 +385,7 @@ defineExpose({ toggleSearch });
                   :label="action?.name || action?.label"
                   :title="action?.title || action?.tooltip"
                   :icon="action?.icon || 'menu'"
-                  :icon-set="action?.iconSet"
+                  :iconSet="action?.iconSet"
                   :kind="action?.kind || 'ghost'"
                   :tabindex="-1"
                   :loading="action?.loading"
@@ -416,7 +417,7 @@ defineExpose({ toggleSearch });
                 :label="item?.name || item?.label"
                 :title="item?.title || item?.tooltip"
                 :icon="item?.icon"
-                :icon-set="item?.iconSet"
+                :iconSet="item?.iconSet"
                 :kind="item?.kind || 'ghost'"
                 :loading="item?.loading"
                 :busy="item?.busy"
@@ -428,6 +429,7 @@ defineExpose({ toggleSearch });
                 :badgeType="item?.badgeType"
                 :badgeIcon="item?.badgeIcon"
                 :badgeTitle="item?.badgeTitle"
+                :href="item?.href"
                 @click="handleActionClick(item?.id)"
               />
               <LxToggle
@@ -469,7 +471,7 @@ defineExpose({ toggleSearch });
               :label="leftActionsResponsive?.[0]?.name || leftActionsResponsive?.[0]?.label"
               :title="leftActionsResponsive?.[0]?.title || leftActionsResponsive?.[0]?.tooltip"
               :icon="leftActionsResponsive?.[0]?.icon"
-              :icon-set="leftActionsResponsive?.[0]?.iconSet"
+              :iconSet="leftActionsResponsive?.[0]?.iconSet"
               :kind="leftActionsResponsive?.[0]?.kind || 'ghost'"
               :loading="leftActionsResponsive?.[0].loading"
               :busy="leftActionsResponsive?.[0].busy"
@@ -481,6 +483,7 @@ defineExpose({ toggleSearch });
               :badgeType="leftActionsResponsive?.[0]?.badgeType"
               :badgeIcon="leftActionsResponsive?.[0]?.badgeIcon"
               :badgeTitle="leftActionsResponsive?.[0]?.badgeTitle"
+              :href="leftActionsResponsive?.[0]?.href"
               @click="handleActionClick(leftActionsResponsive?.[0].id)"
             />
             <LxToggle
@@ -560,7 +563,7 @@ defineExpose({ toggleSearch });
                 :label="action?.name || action?.label"
                 :title="action?.title || action?.tooltip"
                 :icon="action?.icon"
-                :icon-set="action?.iconSet"
+                :iconSet="action?.iconSet"
                 :kind="action?.kind || 'ghost'"
                 :loading="action?.loading"
                 :busy="action?.busy"
@@ -575,6 +578,7 @@ defineExpose({ toggleSearch });
                 :badgeType="action?.badgeType"
                 :badgeIcon="action?.badgeIcon"
                 :badgeTitle="action?.badgeTitle"
+                :href="action?.href"
                 @click="handleActionClick(action?.id)"
               />
               <LxToggle
@@ -600,7 +604,7 @@ defineExpose({ toggleSearch });
                   :label="action?.name || action?.label"
                   :title="action?.title || action?.tooltip"
                   :icon="action?.icon || 'menu'"
-                  :icon-set="action?.iconSet"
+                  :iconSet="action?.iconSet"
                   :kind="action?.kind || 'ghost'"
                   :tabindex="-1"
                   :loading="action?.loading"
@@ -656,7 +660,7 @@ defineExpose({ toggleSearch });
                 :label="item?.name || item?.label"
                 :title="item?.title || item?.tooltip"
                 :icon="item?.icon"
-                :icon-set="item?.iconSet"
+                :iconSet="item?.iconSet"
                 variant="icon-only"
                 :kind="item?.kind || 'ghost'"
                 :loading="item?.loading"
@@ -665,10 +669,11 @@ defineExpose({ toggleSearch });
                 :disabled="item?.disabled || props.disabled || props.loading"
                 :active="item?.active"
                 :badge="item?.badge"
-                :badge-type="item?.badgeType"
+                :badgeType="item?.badgeType"
                 :badgeIcon="item?.badgeIcon"
                 :badgeTitle="item?.badgeTitle"
-                :custom-class="item?.customClass"
+                :customClass="item?.customClass"
+                :href="item?.href"
                 @click="handleActionClick(item?.id)"
               />
               <LxToggle
@@ -696,7 +701,7 @@ defineExpose({ toggleSearch });
               :label="rightActionsResponsive?.[0]?.name || rightActionsResponsive?.[0]?.label"
               :title="rightActionsResponsive?.[0]?.title || rightActionsResponsive?.[0]?.tooltip"
               :icon="rightActionsResponsive?.[0]?.icon"
-              :icon-set="rightActionsResponsive?.[0]?.iconSet"
+              :iconSet="rightActionsResponsive?.[0]?.iconSet"
               variant="icon-only"
               :kind="rightActionsResponsive?.[0]?.kind || 'ghost'"
               :loading="rightActionsResponsive?.[0]?.loading"
@@ -705,10 +710,11 @@ defineExpose({ toggleSearch });
               :disabled="rightActionsResponsive?.[0]?.disabled || props.disabled || props.loading"
               :active="rightActionsResponsive?.[0]?.active"
               :badge="rightActionsResponsive?.[0]?.badge"
-              :badge-type="rightActionsResponsive?.[0]?.badgeType"
+              :badgeType="rightActionsResponsive?.[0]?.badgeType"
               :badgeIcon="rightActionsResponsive?.[0]?.badgeIcon"
               :badgeTitle="rightActionsResponsive?.[0]?.badgeTitle"
-              :custom-class="rightActionsResponsive?.[0]?.customClass"
+              :customClass="rightActionsResponsive?.[0]?.customClass"
+              :href="rightActionsResponsive?.[0]?.href"
               @click="handleActionClick(rightActionsResponsive?.[0]?.id)"
             />
             <LxToggle
