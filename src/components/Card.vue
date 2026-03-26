@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, shallowRef, onMounted } from 'vue';
+import { computed, ref, watch, shallowRef, onMounted, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxButton from '@/components/Button.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -48,6 +48,8 @@ const hoverTilt = ref(null);
 const cardPerspective = '--card-perspective';
 const cardRotateX = '--card-rotate-x';
 const cardRotateY = '--card-rotate-y';
+
+const hasReducedAnimations = inject('hasReducedAnimations', ref(false));
 
 const isFlipped = shallowRef(props.modelValue);
 
@@ -104,6 +106,12 @@ watch(
 
 watch(isFlipped, (newFlipped, oldFlipped) => {
   if (isAnimating.value) return;
+
+  if (hasReducedAnimations.value) {
+    applyTilt(0, newFlipped ? -180 : 0);
+    emit('update:modelValue', newFlipped);
+    return;
+  }
 
   applyTilt(0, oldFlipped ? -180 : 0);
   isAnimating.value = true;
