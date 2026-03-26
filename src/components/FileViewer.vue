@@ -1,4 +1,5 @@
 <script setup>
+/* eslint-disable no-await-in-loop */
 import { ref, computed, shallowRef, watch, nextTick, onMounted, onUnmounted, provide } from 'vue';
 import { useWindowSize, useMutationObserver } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -1073,30 +1074,8 @@ function changeTextSize(action) {
   }
 }
 
-function addPrintStyles(iframe, sizeX, sizeY) {
-  const style = iframe.contentWindow.document.createElement('style');
-  style.textContent = `
-    @page { margin: 0; size: ${sizeX}pt ${sizeY}pt; }
-    body { margin: 0; }
-    canvas { page-break-after: always; page-break-before: avoid; page-break-inside: avoid; }
-  `;
-  iframe.contentWindow.document.head.appendChild(style);
-}
-
-function createPrintIframe(container) {
-  return new Promise((resolve) => {
-    const iframe = document.createElement('iframe');
-    iframe.width = '0';
-    iframe.height = '0';
-    iframe.style.position = 'absolute';
-    iframe.style.top = '0';
-    iframe.style.left = '0';
-    iframe.style.border = 'none';
-    iframe.style.overflow = 'hidden';
-    iframe.onload = () => resolve(iframe);
-    container.appendChild(iframe);
-  });
-}
+let activePrintStyleEl = null;
+let activePrintRootEl = null;
 
 function releaseChildCanvases(el) {
   /* eslint-disable no-param-reassign */
@@ -1107,139 +1086,317 @@ function releaseChildCanvases(el) {
   });
 }
 
+function isMobile() {
+  return navigator.maxTouchPoints > 0;
+}
+
+function getPrintRootId() {
+  return `${props.id}-print-root`;
+}
+
+function cssEscapeOrRaw(value) {
+  return globalThis.CSS?.escape
+    ? globalThis.CSS.escape(value)
+    : value.replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+}
+
+function ensurePrintRoot() {
+  const id = getPrintRootId();
+  let el = globalThis.document.getElementById(id);
+
+  if (!el) {
+    el = globalThis.document.createElement('div');
+    el.id = id;
+    globalThis.document.body.appendChild(el);
+  }
+
+  el.innerHTML = '';
+  activePrintRootEl = el;
+  return el;
+}
+
+function setPrintGateEnabled(enabled) {
+  const root = globalThis.document.documentElement;
+
+  if (enabled) {
+    root.classList.add('lx-printing');
+    root.dataset.lxPrintOwner = String(props.id);
+  } else {
+    root.classList.remove('lx-printing');
+    delete root.dataset.lxPrintOwner;
+  }
+}
+
+function addGlobalPrintStyles() {
+  if (activePrintStyleEl) activePrintStyleEl.remove();
+
+  const printRootId = getPrintRootId();
+  const escapedPrintRootId = cssEscapeOrRaw(printRootId);
+
+  // Gate print CSS to only run when THIS component initiated printing
+  // (to avoid affecting future LX print mode #265396)
+  const owner = String(props.id).replace(/"/g, '\\"');
+  const gate = `html.lx-printing[data-lx-print-owner="${owner}"]`;
+
+  const style = globalThis.document.createElement('style');
+  style.setAttribute('data-lx-print-style', 'true');
+  style.textContent = `
+@page { margin: 0; }
+
+@media screen {
+  /* Must NOT be display:none (mobile print can drop it). Keep it off-screen. */
+  #${escapedPrintRootId} {
+    position: fixed !important;
+    left: -10000px !important;
+    top: 0 !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    background: white;
+  }
+}
+
+@media print {
+  ${gate} body { margin: 0 !important; }
+
+  ${gate} body > :not(#${escapedPrintRootId}) { display: none !important; }
+
+  /* extra safety: hide everything, then re-show print root */
+  /* without this selectors sometimes i got visual artifacts */
+  ${gate} body * { visibility: hidden !important; }
+  ${gate} #${escapedPrintRootId},
+  ${gate} #${escapedPrintRootId} * { visibility: visible !important; }
+
+  ${gate} #${escapedPrintRootId} {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Page breaks */
+  ${gate} #${escapedPrintRootId} .lx-print-page {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  /* Avoid an extra trailing blank page in some browsers */
+  ${gate} #${escapedPrintRootId} .lx-print-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  ${gate} #${escapedPrintRootId} img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+    
+  /* Bitmap pages (PDF rendered pages + image prints) */
+  ${gate} #${escapedPrintRootId} .lx-print-page--bitmap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  /* Fit canvas into printable page box */
+  ${gate} #${escapedPrintRootId} .lx-print-page--bitmap > canvas {
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
+    max-height: 99dvh;
+    margin: 0 auto;
+  }
+
+  /* iOS-safe physical page boxes + clipping */
+  @media print and (orientation: portrait) {
+    ${gate} #${escapedPrintRootId} .lx-print-page--bitmap.lx-print-page--mobile {
+      width: 7.75in;
+      height: 10.45in;
+      overflow: hidden;
+    }
+    ${gate} #${escapedPrintRootId} .lx-print-page--bitmap.lx-print-page--mobile > canvas {
+      max-width: 7.75in;
+      max-height: 10.45in;
+    }
+  }
+
+  @media print and (orientation: landscape) {
+    ${gate} #${escapedPrintRootId} .lx-print-page--bitmap.lx-print-page--mobile {
+      width: 10.45in;
+      height: 7.75in;
+      overflow: hidden;
+    }
+    ${gate} #${escapedPrintRootId} .lx-print-page--bitmap.lx-print-page--mobile > canvas {
+      max-width: 10.45in;
+      max-height: 7.75in;
+    }
+  }
+}
+`;
+  globalThis.document.head.appendChild(style);
+  activePrintStyleEl = style;
+}
+
+function cleanupPrintArtifacts() {
+  if (activePrintRootEl) {
+    // prevents memory spikes if print content contains canvases
+    releaseChildCanvases(activePrintRootEl);
+    activePrintRootEl.innerHTML = '';
+    activePrintRootEl.remove();
+    activePrintRootEl = null;
+  }
+  if (activePrintStyleEl) {
+    activePrintStyleEl.remove();
+    activePrintStyleEl = null;
+  }
+}
+
+function nextFrame() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => resolve());
+  });
+}
+
 /**
- *
- * @param {number} dpi - Print resolution.
- * @param {boolean} allPages - Flag to print all pages.
+ * @param {'pdf'|'img'|'binary'} printType
+ * @param {number} dpi
+ * @param {boolean} allPages
  */
 async function print(printType, dpi = 300, allPages = true) {
+  if (printInProgress.value) return;
   printInProgress.value = true;
 
-  const printUnits = dpi / 72;
-  const styleUnits = 96 / 72;
-  let container;
-  let iframe;
-  let title;
+  if (activePrintRootEl) activePrintRootEl.innerHTML = '';
+
+  let originalTitle;
+  // Added mobile check because mobile browsers can recalculate print layout when user changes print settings,
+  // which would remove the print root and styles if cleaned up immediately after calling print()
+  const mobile = isMobile();
+
+  const effectiveDpi = mobile ? Math.min(dpi, 120) : dpi;
+
+  const finishDesktop = () => {
+    globalThis.removeEventListener('afterprint', finishDesktop);
+    if (originalTitle != null) globalThis.document.title = originalTitle;
+    cleanupPrintArtifacts();
+    setPrintGateEnabled(false);
+    printInProgress.value = false;
+  };
 
   try {
-    container = document.createElement('div');
-    container.style.display = 'none';
-    globalThis.document.body.appendChild(container);
-    iframe = await createPrintIframe(container);
+    originalTitle = globalThis.document.title;
+    globalThis.document.title = isValidFileName(props.fileName) ? props.fileName : generateUUID();
+
+    setPrintGateEnabled(true);
+
+    const printRoot = ensurePrintRoot();
+    addGlobalPrintStyles();
 
     switch (printType) {
-      case 'binary': // Handle Binary Printing
-        {
-          const A4_WIDTH = 794; // A4 width in pixels (96 DPI)
-          const A4_HEIGHT = 1123; // A4 height in pixels (96 DPI)
+      case 'binary': {
+        const element = binaryWrapper.value?.querySelector('article');
+        if (!element) throw new Error('Binary article not found');
 
-          const element = binaryWrapper.value.querySelector('article');
+        const pageEl = globalThis.document.createElement('div');
+        pageEl.className = 'lx-print-page';
+        pageEl.appendChild(element.cloneNode(true));
+        printRoot.appendChild(pageEl);
+        break;
+      }
 
-          // Clone the element for printing
-          const clonedElement = element.cloneNode(true);
-          iframe.contentWindow.document.body.appendChild(clonedElement);
+      case 'img': {
+        const src = imgCanvasRef.value;
+        if (!src) throw new Error('Image canvas not found');
 
-          addPrintStyles(iframe, A4_WIDTH, A4_HEIGHT);
+        const cnv = globalThis.document.createElement('canvas');
+        cnv.width = src.width;
+        cnv.height = src.height;
+
+        const ctx = cnv.getContext('2d');
+        ctx.drawImage(src, 0, 0);
+
+        cnv.style.width = `${Math.floor(src.width)}px`;
+        cnv.style.height = `${Math.floor(src.height)}px`;
+
+        const pageEl = globalThis.document.createElement('div');
+        pageEl.className = 'lx-print-page lx-print-page--bitmap';
+        pageEl.appendChild(cnv);
+        printRoot.appendChild(pageEl);
+        break;
+      }
+
+      case 'pdf': {
+        if (!pdf.value) throw new Error('PDF is not loaded');
+
+        const pageNums =
+          currentPage.value && !allPages
+            ? [currentPage.value]
+            : Array.from({ length: pdf.value.numPages }, (_, i) => i + 1);
+
+        for (let i = 0; i < pageNums.length; i += 1) {
+          const pageNum = pageNums[i];
+          const page = await pdf.value.getPage(pageNum);
+          const printScale = effectiveDpi / 96;
+          const viewport = page.getViewport({ scale: printScale });
+          const cssViewport = page.getViewport({ scale: 1 });
+
+          const cnv = globalThis.document.createElement('canvas');
+          cnv.width = Math.floor(viewport.width);
+          cnv.height = Math.floor(viewport.height);
+          cnv.style.width = `${Math.floor(cssViewport.width)}px`;
+          cnv.style.height = `${Math.floor(cssViewport.height)}px`;
+
+          await page.render({
+            canvasContext: cnv.getContext('2d'),
+            viewport,
+            intent: 'print',
+          }).promise;
+
+          const pageEl = globalThis.document.createElement('div');
+          pageEl.className = `lx-print-page lx-print-page--bitmap ${
+            mobile ? 'lx-print-page--mobile' : ''
+          }`;
+          pageEl.appendChild(cnv);
+          printRoot.appendChild(pageEl);
         }
         break;
-      case 'img': // Handle Image Printing
-        {
-          const cnv = document.createElement('canvas');
-          const ctx = cnv.getContext('2d');
-
-          const imgCanvas = imgCanvasRef.value;
-
-          const img = new Image();
-          img.src = imgCanvas.toDataURL('image/png');
-
-          await new Promise((resolve, reject) => {
-            img.onload = () => {
-              // Set canvas dimensions
-              cnv.width = imgCanvas.offsetWidth * printUnits;
-              cnv.height = imgCanvas.offsetHeight * printUnits;
-
-              // Draw image on the canvas
-              ctx.drawImage(img, 0, 0, cnv.width, cnv.height);
-
-              // Add canvas to iframe for printing
-              const canvasClone = cnv.cloneNode();
-              iframe.contentWindow.document.body.appendChild(canvasClone);
-              canvasClone.getContext('2d').drawImage(cnv, 0, 0);
-
-              resolve();
-            };
-            img.onerror = reject;
-          });
-
-          const sizeX = (imgCanvas.offsetWidth * printUnits) / styleUnits;
-          const sizeY = (imgCanvas.offsetHeight * printUnits) / styleUnits;
-
-          addPrintStyles(iframe, sizeX, sizeY);
-        }
-        break;
-      case 'pdf': // Handle PDF Printing
-        {
-          const pageNums =
-            currentPage.value && !allPages
-              ? [currentPage.value]
-              : [...Array(pdf.value.numPages + 1).keys()].slice(1);
-
-          await Promise.all(
-            pageNums.map(async (pageNum, i) => {
-              const page = await pdf.value.getPage(pageNum);
-              const viewport = page.getViewport({ scale: 1 });
-
-              if (i === 0) {
-                const sizeX = (viewport.width * printUnits) / styleUnits;
-                const sizeY = (viewport.height * printUnits) / styleUnits;
-                addPrintStyles(iframe, sizeX, sizeY);
-              }
-
-              const cnv = document.createElement('canvas');
-              cnv.width = viewport.width * printUnits;
-              cnv.height = viewport.height * printUnits;
-              container.appendChild(cnv);
-              const canvasClone = cnv.cloneNode();
-              iframe.contentWindow.document.body.appendChild(canvasClone);
-
-              await page.render({
-                canvasContext: cnv.getContext('2d'),
-                intent: 'print',
-                transform: [printUnits, 0, 0, printUnits, 0, 0],
-                viewport,
-              }).promise;
-
-              canvasClone.getContext('2d').drawImage(cnv, 0, 0);
-            })
-          );
-        }
-        break;
+      }
 
       default:
         break;
     }
 
-    if (isValidFileName(props.fileName)) {
-      title = globalThis.document.title;
-      globalThis.document.title = props.fileName;
-    } else {
-      title = globalThis.document.title;
-      globalThis.document.title = generateUUID();
+    if (!mobile) {
+      globalThis.addEventListener('afterprint', finishDesktop);
     }
 
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
+    await nextFrame();
+
+    globalThis.focus();
+    globalThis.print();
+
+    if (mobile) {
+      // print preview recalculates when user changes settings
+      // wthout this will show whole LX page instead of print content
+      if (originalTitle != null) globalThis.document.title = originalTitle;
+      printInProgress.value = false;
+    }
   } catch (error) {
     lxDevUtils.logError(`Printing failed, ${error}`, useLx().getGlobals()?.environment);
-  } finally {
-    if (title) {
-      globalThis.document.title = title;
+
+    if (!mobile) {
+      globalThis.removeEventListener('afterprint', finishDesktop);
+      finishDesktop();
+    } else {
+      if (originalTitle != null) globalThis.document.title = originalTitle;
+      cleanupPrintArtifacts();
+      setPrintGateEnabled(false);
+      printInProgress.value = false;
     }
-
-    releaseChildCanvases(container);
-    container.parentNode?.removeChild(container);
-
-    printInProgress.value = false;
   }
 }
 
