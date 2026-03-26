@@ -750,7 +750,7 @@ svg .lx-shade {
   overflow-x: hidden;
 }
 
-.lx-form-grid > .lx-main .lx-row .lx-vertical .lx-data {
+.lx-form-grid > .lx-main .lx-row .lx-vertical .lx-data:not(.lx-badge-text) {
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;

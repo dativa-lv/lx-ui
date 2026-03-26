@@ -4,6 +4,7 @@ import LxIcon from '@/components/Icon.vue';
 import useLx from '@/hooks/useLx';
 import { useWindowSize } from '@vueuse/core';
 import { lxDevUtils, lxStringUtils } from '@/utils';
+import LxBadge from '@/components/Badge.vue';
 
 const props = defineProps({
   id: { type: String, default: () => lxStringUtils.generateUUID() },
@@ -156,6 +157,26 @@ function checkIfHighlighted(id) {
         <div v-if="(kind === 'default' || kind === 'combo') && isWideScreen">
           {{ item[props.nameAttribute] }}
         </div>
+        <LxBadge
+          :icon="isWideScreen ? item['badgeIcon'] : null"
+          :icon-set="item['badgeIconSet'] ? item['badgeIconSet'] : iconSet"
+          :value="isWideScreen ? item['badge'] : ' '"
+          :tooltip="
+            isWideScreen
+              ? item['badgeTitle']
+              : item['badgeTitle']
+              ? item['badgeTitle']
+              : item['badge']
+          "
+          :class="[
+            { 'lx-badge-empty': item['badge'] === ' ' || !isWideScreen },
+            { 'lx-badge-info': item['badgeType'] === 'default' || item['badgeType'] === 'info' },
+            { 'lx-badge-success': item['badgeType'] === 'success' },
+            { 'lx-badge-warning': item['badgeType'] === 'warning' },
+            { 'lx-badge-error': item['badgeType'] === 'error' },
+          ]"
+          v-if="item['badge'] || item['badgeIcon']"
+        />
       </div>
     </div>
   </div>

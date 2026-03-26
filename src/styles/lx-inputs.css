@@ -2285,13 +2285,14 @@ h2.lx-section-header + p.lx-invalidation-message,
   padding-right: 1rem;
   cursor: pointer;
   overflow: hidden;
+  gap: 0.5rem;
 }
 
 .lx-content-switcher .lx-content-switcher-item::before {
   border-left: 1px solid var(--color-chrome);
   height: 1rem;
   content: '';
-  margin-right: 1rem;
+  margin-right: 0.5rem;
   margin-left: -1rem;
 }
 
@@ -2340,7 +2341,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   color: var(--color-region-hover-foreground);
 }
 
-.lx-content-switcher .lx-content-switcher-item:not(.lx-selected):hover svg {
+.lx-content-switcher .lx-content-switcher-item:not(.lx-selected):hover svg:not(.lx-badge-icon) {
   fill: var(--color-region-hover-foreground);
 }
 
@@ -2390,12 +2391,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-content-switcher-item svg {
-  width: 1.15rem;
+  width: 1.25rem;
   flex-shrink: 0;
-}
-
-.lx-content-switcher.lx-icons-content-switcher svg {
-  margin-right: 0.5rem;
 }
 
 .lx-content-switcher-item.lx-selected svg {
@@ -2419,15 +2416,75 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-content-switcher .index-icon {
-  width: 1.15rem;
+  width: 1.25rem;
   text-align: center;
+}
+
+.lx-content-switcher .lx-badge {
+  margin-left: auto;
+  margin-right: 0;
+  line-height: 1.2em;
+  flex-shrink: 0;
+  max-width: calc(100% - 1.75rem); /* icon size + gap */
+}
+
+.lx-content-switcher .lx-content-switcher-item .lx-badge {
+  align-items: center;
+}
+
+.lx-content-switcher .lx-content-switcher-item .lx-badge-text {
+  color: var(--color-data);
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx-content-switcher .lx-content-switcher-item.lx-disabled .lx-badge-text {
+  color: var(--color-disabled-foreground);
+}
+
+.lx-content-switcher .lx-content-switcher-item .lx-badge-icon {
+  fill: var(--color-data);
+}
+
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-success {
+  background: var(--color-green);
+}
+
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-warning {
+  background: var(--color-orange);
+}
+
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-error {
+  background: var(--color-red);
+}
+
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-empty {
+  min-height: 1rem;
+  min-width: 1rem;
+}
+
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-success .lx-badge-text,
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-warning .lx-badge-text,
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-error .lx-badge-text {
+  color: var(--color-badge-foreground);
+}
+
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-success .lx-badge-icon,
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-warning .lx-badge-icon,
+.lx-content-switcher .lx-content-switcher-item .lx-badge.lx-badge-error .lx-badge-icon {
+  fill: var(--color-badge-foreground);
+}
+
+.lx-theme-contrast .lx-content-switcher .lx-content-switcher-item.lx-selected .lx-badge {
+  border: 2px solid var(--color-region);
 }
 
 /*** LxFlag styles ***/
 
 .lx-flag {
   display: flex;
-  margin: -0.0625rem
+  margin: -0.0625rem;
 }
 
 .lx-flag.lx-normal {
