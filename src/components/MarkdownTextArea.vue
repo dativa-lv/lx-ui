@@ -653,7 +653,7 @@ watch(inputImage, (n) => {
 });
 
 watch(
-  () => model,
+  () => model.value,
   (newText) => {
     const textInEditor = editor.value.storage.markdown.getMarkdown();
     if (newText !== textInEditor) {
