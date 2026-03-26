@@ -16,6 +16,7 @@ const logoAltTexts = {
   'latvija-lv': 'Latvija.lv logo',
   digimaks: 'Digimaks logo',
   dorvis: 'Dōrvis logo',
+  dativa: 'Dativa logo',
 };
 
 const logoMap = {};

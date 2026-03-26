@@ -13,7 +13,8 @@ const systemTheme = inject('theme', { state: { value: null } });
 
 const resolvedTheme = computed(() => {
   if (props.theme === 'auto') {
-    return systemTheme.state?.value === 'dark' ? 'dark' : 'light';
+    // Temporarily default to dark logos in contrast theme until mono logos are added
+    return systemTheme.state?.value === 'light' ? 'light' : 'dark';
   }
   return props.theme;
 });
