@@ -2218,7 +2218,6 @@ a.lx-button.lx-button-ghost svg {
   height: auto;
   width: calc(100% - 2rem);
 }
-
 .lx-layout>.lx-skip-link-wrapper {
     z-index: 9999;
 }
@@ -2231,9 +2230,11 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-skip-link-wrapper .lx-button {
-  opacity: 0;
-  width: 0px;
-  height: 0px;
+  visibility: visible;
+  clip: rect(0,0,0,0);
+  block-size: 1px;
+  border: 0;
+  inline-size: 1px;
   position: absolute;
 }
 
@@ -2245,14 +2246,22 @@ a.lx-button.lx-button-ghost svg {
   overflow: hidden;
 }
 
-.lx .lx-skip-link-wrapper .lx-button:focus {
-  opacity: 1;
-  width: var(--button-primary-width);
-  height: var(--button-primary-height);
+.lx .lx-skip-link-wrapper .lx-button:focus,
+.lx .lx-skip-link-wrapper .lx-button:focus-visible {
+  clip: auto;
+  block-size: var(--button-primary-height);
+  inline-size: auto;
+  inset-block-start: 0;
+  inset-inline-start: 0;
 }
 
 .lx .lx-skip-link-wrapper .lx-button:focus div {
   overflow: visible;
+}
+
+/* need to avoid lx button voice over focus on semantic title */
+.lx .lx-skip-link-wrapper p.lx-invisible {
+  display: none;
 }
 
 /* LxDropDownMenu action definitions */
