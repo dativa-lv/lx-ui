@@ -281,12 +281,6 @@ function selectPreviousSlide() {
     endQuarterYear.value -= 10;
   }
 
-  if (responsiveView.value) {
-    nextTick(() => {
-      document.body.classList.add('no-scroll-mobile-pickers');
-    });
-  }
-
   currentDate.value = prevMonthOrYear;
 }
 
@@ -316,11 +310,6 @@ function selectNextSlide() {
     endQuarterYear.value += 10;
   }
   currentDate.value = nextMonthOrYear;
-  if (responsiveView.value) {
-    nextTick(() => {
-      document.body.classList.add('no-scroll-mobile-pickers');
-    });
-  }
 }
 
 const DEBOUNCE_MS = 50;
@@ -669,7 +658,7 @@ function handleRangeDifferentCaseValidation(date) {
     }
 
     updateEnd(date);
-    finalizeSelection(start, end);
+    finalizeSelection(selectedStartDate.value, date);
     hoveredDate.value = date;
     return;
   }

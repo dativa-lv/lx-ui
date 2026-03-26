@@ -139,7 +139,7 @@ const model = computed({
 });
 
 function setActiveInput(type, id, defaultFocus = false) {
-  if ((!isTouchMode.value || !isTouchSensitive.value) && !responsiveView.value) {
+  if (!responsiveView.value) {
     activeInput.value = type;
   }
 

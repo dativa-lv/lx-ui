@@ -1022,7 +1022,8 @@
   overflow: auto;
 }
 
-.lx.no-scroll-mobile-pickers,
+.lx.no-scroll-mobile-sheet-pickers,
+.lx.no-scroll-mobile-sheet-info-wrapper,
 .lx.no-scroll-modal {
   overflow: hidden;
 }

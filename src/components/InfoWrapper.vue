@@ -117,7 +117,7 @@ const handleOpen = () => {
   showPopper.value = true;
 
   if (responsiveView.value) {
-    document.body.classList.add('no-scroll-mobile-pickers');
+    document.body.classList.add('no-scroll-mobile-sheet-info-wrapper');
     nextTick(() => {
       panelAreaScrolled();
       panelRef.value?.focus();
@@ -321,7 +321,7 @@ function togglePopperOnMobile() {
   ) {
     showPopper.value = !showPopper.value;
     if (showPopper.value && responsiveView.value) {
-      document.body.classList.add('no-scroll-mobile-pickers');
+      document.body.classList.add('no-scroll-mobile-sheet-info-wrapper');
       nextTick(() => {
         panelAreaScrolled();
         panelRef.value?.focus();
@@ -375,7 +375,7 @@ watch(
   () => showPopper.value,
   (newVal) => {
     if (!newVal) {
-      document.body.classList.remove('no-scroll-mobile-pickers');
+      document.body.classList.remove('no-scroll-mobile-sheet-info-wrapper');
     }
   }
 );
@@ -429,13 +429,13 @@ onBeforeUnmount(() => {
   globalThis.removeEventListener('click', handleClickOutside);
 
   if (!props.disabled) {
-    document.body.classList.remove('no-scroll-mobile-pickers');
+    document.body.classList.remove('no-scroll-mobile-sheet-info-wrapper');
   }
 });
 
 onUnmounted(() => {
   if (responsiveView.value) {
-    document.body.classList.remove('no-scroll-mobile-pickers');
+    document.body.classList.remove('no-scroll-mobile-sheet-info-wrapper');
   }
 });
 

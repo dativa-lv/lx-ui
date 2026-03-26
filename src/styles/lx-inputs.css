@@ -377,15 +377,6 @@
   width: var(--input-container-width-small);
 }
 
-.lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-date-time-icon,
-.lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-invalidation-icon {
-  position: static;
-  grid-column: 1;
-  grid-row: 1;
-  transform: none;
-  z-index: 1;
-}
-
 .lx-date-time-picker-wrapper.lx-time {
   width: var(--input-container-width-small);
 }
@@ -4632,17 +4623,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   }
 }
 
-@media (max-width: 640px) {
-  .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-date-time-icon,
-  .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-invalidation-icon {
-    position: static;
-    grid-column: 1;
-    grid-row: 1;
-    transform: none;
-    z-index: 1;
-    margin-top: -0.5rem;
-  }
-}
 
 .lx-file-viewer.image {
   text-align: center;

@@ -70,7 +70,7 @@ function openMenu({ source = 'default', focus = 'first' } = {}) {
 
   menuOpen.value = true;
   if (props.datePickerType && responsiveView.value) {
-    document.body.classList.add('no-scroll-mobile-pickers');
+    document.body.classList.add('no-scroll-mobile-sheet-pickers');
   }
 
   nextTick(() => {
@@ -442,8 +442,8 @@ watch(
 watch(
   () => menuOpen.value,
   (newVal) => {
-    if (!newVal && responsiveView.value && props.datePickerType) {
-      document.body.classList.remove('no-scroll-mobile-pickers');
+    if (!newVal && props.datePickerType) {
+      document.body.classList.remove('no-scroll-mobile-sheet-pickers');
     }
   }
 );
@@ -459,7 +459,7 @@ onClickOutside(togglerRef, onClickOutsideHandler, {
 
 onUnmounted(() => {
   if (responsiveView.value && props.datePickerType) {
-    document.body.classList.remove('no-scroll-mobile-pickers');
+    document.body.classList.remove('no-scroll-mobile-sheet-pickers');
   }
 });
 
