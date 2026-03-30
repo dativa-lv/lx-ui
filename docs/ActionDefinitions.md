@@ -32,7 +32,7 @@ The prop `actionDefinitions` is available for following components:
 | `icon` | String | Icon identifier to display on the action button. Must exist in the specified icon set. |
 | `iconSet` | String | Specifies which icon set to use. Allowed values: `cds`, `material`, `phosphor`, `brand`. |
 | `title` | String | Tooltip text shown when hovering over the action button. |
-| `kind` | String | Visual style and prominence of the action button. Allowed values: `primary`, `secondary`, `tertiary`, `ghost`, `additional`, `main`, `menuitem`, `toggle`. |
+| `kind` | String | Visual style and prominence of the action button. Allowed values: `primary`, `secondary`, `tertiary`, `ghost`, `additional`, `main`, `menuitem`, `toggle`, `slot`. |
 | `variant` | String | Display variant for the action button. Allowed values: `default`, `icon-only`. Controls whether the button shows both icon and label or just the icon. |
 | `visibleByAttribute` | String | Attribute name from the data object. Action is only visible when this attribute evaluates to true. |
 | `enableByAttribute` | String | Attribute name from the data object. Action is only enabled when this attribute evaluates to true. |

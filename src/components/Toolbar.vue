@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, nextTick, onMounted } from 'vue';
+import { ref, computed, watch, nextTick, onMounted, inject } from 'vue';
 import { useWindowSize, useDebounceFn } from '@vueuse/core';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
@@ -27,7 +27,7 @@ const props = defineProps({
   selectionState: { type: String, default: 'checkbox' }, // checkbox, checkbox-filled, checkbox-indeterminate, radiobutton-filled
   selectAllSide: { type: String, default: 'right' }, // right, left
   selectAllVariant: { type: String, default: 'icon-only' }, // icon-only, default
-  defaultArea: { type: String, default: 'right' }, // right, left
+  defaultArea: { type: String, default: 'auto' }, // auto, right, left
   texts: {
     type: Object,
     default: () => ({}),
@@ -41,6 +41,10 @@ const emits = defineEmits([
   'deselectAll',
   'update:searchString',
 ]);
+
+const GROUP_ID_DEFAULT = 'lx_group_default';
+const GROUP_ID_EXTRA = 'lx_group_extra';
+const ACTION_KINDS_SPECIAL = ['toggle', 'slot'];
 
 const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
@@ -57,11 +61,24 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const globalEnvironment = useLx().getGlobals()?.environment;
 const { width } = useWindowSize();
 
+const insideForm = inject('insideForm', ref(false));
+
+const defaultAreaComputed = computed(() => {
+  if (props.defaultArea === 'right' || props.defaultArea === 'left') {
+    return props.defaultArea;
+  }
+
+  return insideForm.value ? 'left' : 'right';
+});
+
 function getArea(action) {
   const parentAction = props.actionDefinitions.find(
     (a) => action.groupId && a.nestedGroupId && a.nestedGroupId === action.groupId
   );
-  return parentAction ? parentAction.area ?? props.defaultArea : action.area ?? props.defaultArea;
+
+  return parentAction
+    ? parentAction.area ?? defaultAreaComputed.value
+    : action.area ?? defaultAreaComputed.value;
 }
 
 function applyDefaults(action, overrides = {}) {
@@ -70,22 +87,52 @@ function applyDefaults(action, overrides = {}) {
     action.value = false;
   }
 
+  if (action.extra) {
+    return {
+      ...action,
+      icon: action.icon ?? 'fallback-icon',
+      area: getArea(action),
+      kind: action.kind === 'toggle' ? 'toggle' : 'ghost',
+      variant: 'icon-only',
+      groupId: action.groupId ?? GROUP_ID_EXTRA,
+      disabled: action.disabled || props.disabled || props.loading || props.busy,
+      ...overrides,
+    };
+  }
+
+  if (action.kind === 'slot') {
+    return {
+      ...action,
+      area: getArea(action),
+      groupId: action.groupId ?? GROUP_ID_DEFAULT,
+      nonResponsive: true,
+      ...overrides,
+    };
+  }
+
   return {
     ...action,
     icon: action.icon ?? 'fallback-icon',
     area: getArea(action),
     kind: action.kind ?? 'ghost',
     variant: action.variant ?? 'icon-only',
-    groupId: action.groupId ?? 'lx-default',
+    groupId: action.groupId ?? GROUP_ID_DEFAULT,
     disabled: action.disabled || props.disabled || props.loading || props.busy,
     ...overrides,
   };
 }
 
 function applyKindAndVariant(action, overrides = {}) {
+  if (ACTION_KINDS_SPECIAL.includes(action.kind)) {
+    return {
+      ...action,
+      ...overrides,
+    };
+  }
+
   return {
     ...action,
-    kind: action.kind === 'toggle' ? 'toggle' : 'ghost',
+    kind: 'ghost',
     variant: 'icon-only',
     ...overrides,
   };
@@ -134,16 +181,22 @@ function addPromotedAction(result, promotedAction) {
 }
 
 const actionsProcessed = computed(() => {
-  if (!props.actionDefinitions.length) return [];
+  if (!props.actionDefinitions.length) {
+    return [];
+  }
+
   const normalizedActions = props.actionDefinitions.map((a) => applyDefaults(a));
-  const { promotedAction, demotedActions } = processGroup(normalizedActions);
+  const regularActions = normalizedActions.filter((a) => !a.extra);
+  const extraActions = normalizedActions.filter((a) => a.extra);
+  const sortedExtraActions = insideForm.value ? extraActions : [...extraActions].reverse();
+  const { promotedAction, demotedActions } = processGroup(regularActions);
   const result = [...demotedActions];
 
   if (promotedAction) {
     addPromotedAction(result, promotedAction);
   }
 
-  return result;
+  return [...sortedExtraActions, ...result];
 });
 
 const leftActions = computed(() => actionsProcessed.value?.filter((x) => x?.area === 'left'));
@@ -308,8 +361,8 @@ defineExpose({ toggleSearch });
     :class="[
       { 'lx-toolbar-no-borders': noBorders },
       { 'lx-disabled': disabled || loading },
-      { 'lx-toolbar-default-area-right': defaultArea === 'right' },
-      { 'lx-toolbar-default-area-left': defaultArea === 'left' },
+      { 'lx-toolbar-default-area-right': defaultAreaComputed === 'right' },
+      { 'lx-toolbar-default-area-left': defaultAreaComputed === 'left' },
     ]"
     role="toolbar"
   >
@@ -340,7 +393,10 @@ defineExpose({ toggleSearch });
           >
             <template v-for="action in leftActions" :key="action?.id">
               <LxButton
-                v-if="isActionVisibleInGroup(action, groupId, 'left') && action?.kind !== 'toggle'"
+                v-if="
+                  isActionVisibleInGroup(action, groupId, 'left') &&
+                  !ACTION_KINDS_SPECIAL.includes(action?.kind)
+                "
                 :id="`${id}-action-${action?.id}`"
                 :kind="action?.kind || 'ghost'"
                 :icon="action?.icon"
@@ -363,7 +419,9 @@ defineExpose({ toggleSearch });
                 @click="handleActionClick(action?.id)"
               />
               <LxToggle
-                v-if="isActionVisibleInGroup(action, groupId, 'left') && action?.kind === 'toggle'"
+                v-else-if="
+                  isActionVisibleInGroup(action, groupId, 'left') && action?.kind === 'toggle'
+                "
                 :id="`${id}-action-${action?.id}`"
                 :label="action?.name || action?.label"
                 :disabled="action?.disabled || props.disabled || props.loading"
@@ -372,15 +430,22 @@ defineExpose({ toggleSearch });
                 :tooltip="action?.title || action?.tooltip"
                 @update:modelValue="(value) => handleActionClick(action?.id, { value })"
               />
-
               <LxDropDownMenu
-                v-if="action?.groupId === groupId && action?.nestedGroupId"
+                v-else-if="
+                  action?.groupId === groupId &&
+                  action?.nestedGroupId &&
+                  !ACTION_KINDS_SPECIAL.includes(action?.kind)
+                "
                 :disabled="action?.disabled || props.disabled || props.loading"
                 :actionDefinitions="leftActions.filter((a) => action?.nestedGroupId === a.groupId)"
                 @actionClick="(id, value) => handleActionClick(id, { value })"
               >
                 <LxButton
-                  v-if="action?.groupId === groupId && action?.nestedGroupId"
+                  v-if="
+                    action?.groupId === groupId &&
+                    action?.nestedGroupId &&
+                    !ACTION_KINDS_SPECIAL.includes(action?.kind)
+                  "
                   :id="`${id}-action-${action?.id}`"
                   :label="action?.name || action?.label"
                   :title="action?.title || action?.tooltip"
@@ -400,6 +465,12 @@ defineExpose({ toggleSearch });
                   variant="icon-only"
                 />
               </LxDropDownMenu>
+              <slot
+                v-else-if="
+                  isActionVisibleInGroup(action, groupId, 'left') && action?.kind === 'slot'
+                "
+                :name="action?.id"
+              />
             </template>
           </LxToolbarGroup>
         </template>
@@ -408,10 +479,26 @@ defineExpose({ toggleSearch });
           class="action-definitions-small"
           v-if="width < 801 && leftActions?.length > 0"
         >
+          <LxDropDownMenu
+            v-if="leftActionsResponsive?.length > 1"
+            :disabled="props.disabled || props.loading"
+            :actionDefinitions="leftActionsResponsive.filter((a) => !a.nestedGroupId)"
+            @actionClick="(id, value) => handleActionClick(id, { value })"
+          >
+            <LxButton
+              kind="ghost"
+              :tabindex="-1"
+              icon="menu"
+              :label="displayTexts.overflowMenu"
+              variant="icon-only"
+              :disabled="props.disabled || props.loading"
+            />
+          </LxDropDownMenu>
+
           <template v-if="leftActionsNonResponsive?.length > 0">
             <template v-for="item in leftActionsNonResponsive" :key="item?.id">
               <LxButton
-                v-if="item?.kind !== 'toggle'"
+                v-if="!ACTION_KINDS_SPECIAL.includes(item?.kind)"
                 v-show="!item?.nestedGroupId"
                 :id="`${id}-action-${item?.id}`"
                 :label="item?.name || item?.label"
@@ -433,7 +520,7 @@ defineExpose({ toggleSearch });
                 @click="handleActionClick(item?.id)"
               />
               <LxToggle
-                v-if="item?.kind === 'toggle'"
+                v-else-if="item?.kind === 'toggle'"
                 v-show="!item?.nestedGroupId"
                 :id="`${id}-action-${item?.id}`"
                 :label="item?.name || item?.label"
@@ -443,30 +530,15 @@ defineExpose({ toggleSearch });
                 :tooltip="item?.title || item?.tooltip"
                 @update:modelValue="(value) => handleActionClick(item?.id, { value })"
               />
+              <slot v-else-if="item?.kind === 'slot'" :name="item?.id" />
             </template>
           </template>
-
-          <LxDropDownMenu
-            v-if="leftActionsResponsive?.length > 1"
-            :disabled="props.disabled || props.loading"
-            :actionDefinitions="leftActionsResponsive.filter((a) => !a.nestedGroupId)"
-            @actionClick="(id, value) => handleActionClick(id, { value })"
-          >
-            <LxButton
-              kind="ghost"
-              :tabindex="-1"
-              icon="menu"
-              :label="displayTexts.overflowMenu"
-              variant="icon-only"
-              :disabled="props.disabled || props.loading"
-            />
-          </LxDropDownMenu>
 
           <template
             v-if="leftActionsResponsive?.length === 1 && !leftActionsResponsive?.[0]?.nestedGroupId"
           >
             <LxButton
-              v-if="leftActionsResponsive?.[0]?.kind !== 'toggle'"
+              v-if="!ACTION_KINDS_SPECIAL.includes(leftActionsResponsive?.[0]?.kind)"
               :id="`${id}-action-${leftActionsResponsive?.[0].id}`"
               :label="leftActionsResponsive?.[0]?.name || leftActionsResponsive?.[0]?.label"
               :title="leftActionsResponsive?.[0]?.title || leftActionsResponsive?.[0]?.tooltip"
@@ -487,7 +559,7 @@ defineExpose({ toggleSearch });
               @click="handleActionClick(leftActionsResponsive?.[0].id)"
             />
             <LxToggle
-              v-if="leftActionsResponsive?.[0]?.kind === 'toggle'"
+              v-else-if="leftActionsResponsive?.[0]?.kind === 'toggle'"
               :id="`${id}-action-${leftActionsResponsive?.[0]?.id}`"
               :label="leftActionsResponsive?.[0]?.name || leftActionsResponsive?.[0]?.label"
               :disabled="leftActionsResponsive?.[0]?.disabled || props.disabled || props.loading"
@@ -558,7 +630,10 @@ defineExpose({ toggleSearch });
           >
             <template v-for="action in rightActions" :key="action?.id">
               <LxButton
-                v-if="isActionVisibleInGroup(action, groupId, 'right') && action?.kind !== 'toggle'"
+                v-if="
+                  isActionVisibleInGroup(action, groupId, 'right') &&
+                  !ACTION_KINDS_SPECIAL.includes(action?.kind)
+                "
                 :id="`${id}-action-${action?.id}`"
                 :label="action?.name || action?.label"
                 :title="action?.title || action?.tooltip"
@@ -582,7 +657,9 @@ defineExpose({ toggleSearch });
                 @click="handleActionClick(action?.id)"
               />
               <LxToggle
-                v-if="isActionVisibleInGroup(action, groupId, 'right') && action?.kind === 'toggle'"
+                v-else-if="
+                  isActionVisibleInGroup(action, groupId, 'right') && action?.kind === 'toggle'
+                "
                 :id="`${id}-action-${action?.id}`"
                 :label="action?.name || action?.label"
                 :disabled="action?.disabled || props.disabled || props.loading"
@@ -591,15 +668,22 @@ defineExpose({ toggleSearch });
                 :tooltip="action?.title || action?.tooltip"
                 @update:modelValue="(value) => handleActionClick(action?.id, { value })"
               />
-
               <LxDropDownMenu
-                v-if="action?.groupId === groupId && action?.nestedGroupId"
+                v-else-if="
+                  action?.groupId === groupId &&
+                  action?.nestedGroupId &&
+                  !ACTION_KINDS_SPECIAL.includes(action?.kind)
+                "
                 :disabled="action?.disabled || props.disabled || props.loading"
                 :actionDefinitions="rightActions.filter((a) => action?.nestedGroupId === a.groupId)"
                 @actionClick="(id, value) => handleActionClick(id, { value })"
               >
                 <LxButton
-                  v-if="action?.groupId === groupId && action?.nestedGroupId"
+                  v-if="
+                    action?.groupId === groupId &&
+                    action?.nestedGroupId &&
+                    !ACTION_KINDS_SPECIAL.includes(action?.kind)
+                  "
                   :id="`${id}-action-${action?.id}`"
                   :label="action?.name || action?.label"
                   :title="action?.title || action?.tooltip"
@@ -619,6 +703,12 @@ defineExpose({ toggleSearch });
                   variant="icon-only"
                 />
               </LxDropDownMenu>
+              <slot
+                v-else-if="
+                  isActionVisibleInGroup(action, groupId, 'right') && action?.kind === 'slot'
+                "
+                :name="action?.id"
+              />
             </template>
           </LxToolbarGroup>
         </template>
@@ -630,22 +720,6 @@ defineExpose({ toggleSearch });
             (rightActionsResponsive?.length > 0 || rightActionsNonResponsive?.length > 0)
           "
         >
-          <LxDropDownMenu
-            v-if="rightActionsResponsive?.length > 1"
-            :disabled="props.disabled || props.loading"
-            :actionDefinitions="rightActionsResponsive.filter((a) => !a.nestedGroupId)"
-            @actionClick="(id, value) => handleActionClick(id, { value })"
-          >
-            <LxButton
-              kind="ghost"
-              :tabindex="-1"
-              icon="menu"
-              :label="displayTexts.overflowMenu"
-              variant="icon-only"
-              :disabled="props.disabled || props.loading"
-            />
-          </LxDropDownMenu>
-
           <template
             v-if="
               (rightActionsResponsive?.length === 1 && !rightActions?.[0]?.nestedGroupId) ||
@@ -654,7 +728,7 @@ defineExpose({ toggleSearch });
           >
             <template v-for="item in rightActionsNonResponsive" :key="item?.id">
               <LxButton
-                v-if="item?.kind !== 'toggle'"
+                v-if="!ACTION_KINDS_SPECIAL.includes(item?.kind)"
                 v-show="!item?.nestedGroupId && item?.nonResponsive"
                 :id="`${id}-action-${item?.id}`"
                 :label="item?.name || item?.label"
@@ -677,7 +751,7 @@ defineExpose({ toggleSearch });
                 @click="handleActionClick(item?.id)"
               />
               <LxToggle
-                v-if="item?.kind === 'toggle'"
+                v-else-if="item?.kind === 'toggle'"
                 v-show="!item?.nestedGroupId && item?.nonResponsive"
                 :id="`${id}-action-${item?.id}`"
                 :label="item?.name || item?.label"
@@ -687,6 +761,7 @@ defineExpose({ toggleSearch });
                 :tooltip="item?.title || item?.tooltip"
                 @update:modelValue="(value) => handleActionClick(item?.id, { value })"
               />
+              <slot v-else-if="item?.kind === 'slot'" :name="item?.id" />
             </template>
           </template>
 
@@ -696,7 +771,7 @@ defineExpose({ toggleSearch });
             "
           >
             <LxButton
-              v-if="rightActionsResponsive?.[0]?.kind !== 'toggle'"
+              v-if="!ACTION_KINDS_SPECIAL.includes(rightActionsResponsive?.[0]?.kind)"
               :id="`${id}-action-${rightActionsResponsive?.[0]?.id}`"
               :label="rightActionsResponsive?.[0]?.name || rightActionsResponsive?.[0]?.label"
               :title="rightActionsResponsive?.[0]?.title || rightActionsResponsive?.[0]?.tooltip"
@@ -718,7 +793,7 @@ defineExpose({ toggleSearch });
               @click="handleActionClick(rightActionsResponsive?.[0]?.id)"
             />
             <LxToggle
-              v-if="rightActionsResponsive?.[0]?.kind === 'toggle'"
+              v-else-if="rightActionsResponsive?.[0]?.kind === 'toggle'"
               :id="`${id}-action-${rightActionsResponsive?.[0]?.id}`"
               :label="rightActionsResponsive?.[0]?.name || rightActionsResponsive?.[0]?.label"
               :disabled="rightActionsResponsive?.[0]?.disabled || props.disabled || props.loading"
@@ -730,6 +805,22 @@ defineExpose({ toggleSearch });
               "
             />
           </template>
+
+          <LxDropDownMenu
+            v-if="rightActionsResponsive?.length > 1"
+            :disabled="props.disabled || props.loading"
+            :actionDefinitions="rightActionsResponsive.filter((a) => !a.nestedGroupId)"
+            @actionClick="(id, value) => handleActionClick(id, { value })"
+          >
+            <LxButton
+              kind="ghost"
+              :tabindex="-1"
+              icon="menu"
+              :label="displayTexts.overflowMenu"
+              variant="icon-only"
+              :disabled="props.disabled || props.loading"
+            />
+          </LxDropDownMenu>
         </LxToolbarGroup>
 
         <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'compact'">

@@ -3265,9 +3265,17 @@ h2.lx-section-header + p.lx-invalidation-message,
   --button-toolbar-ghost-grid-template-columns: auto 1fr;
 }
 
-.lx-component-toolbar.lx-toolbar-default-area-left .first-row > .right-area,
-.lx-component-toolbar.lx-toolbar-default-area-right .first-row > .default-area {
+.lx-component-toolbar.lx-toolbar-default-area-left .right-area,
+.lx-component-toolbar.lx-toolbar-default-area-right .default-area {
   margin-left: auto;
+}
+
+.lx-component-toolbar.lx-toolbar-default-area-left .default-area > .lx-group {
+  border-right: 1px solid var(--color-chrome);
+}
+
+.lx-component-toolbar.lx-toolbar-default-area-right .default-area > .lx-group {
+  border-left: 1px solid var(--color-chrome);
 }
 
 .lx .lx-region .lx-component-toolbar .lx-button.lx-button-ghost:hover:not(.lx-disabled),
@@ -3314,11 +3322,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-right: 1px solid var(--color-chrome);
 }
 
-.lx-toolbar-no-borders .left-area .lx-group {
+.lx-toolbar-no-borders .left-area .lx-group,
+.lx-component-toolbar.lx-toolbar-default-area-left.lx-toolbar-no-borders .default-area .lx-group {
   border-right: transparent;
 }
 
-.lx-toolbar-no-borders .right-area .lx-group {
+.lx-toolbar-no-borders .right-area .lx-group,
+.lx-component-toolbar.lx-toolbar-default-area-right.lx-toolbar-no-borders .default-area .lx-group {
   border-left: transparent;
 }
 
@@ -3374,8 +3384,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-component-toolbar .lx-toggle-wrapper {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 /*** LxFileUploader styles ***/

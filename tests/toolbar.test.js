@@ -10,11 +10,12 @@ import {
 
 let wrapper;
 
-function mountComponent({ props = {} } = {}) {
+function mountComponent({ props = {}, slots = {} } = {}) {
   expect(LxToolbar).toBeTruthy();
 
   return mount(LxToolbar, {
     props,
+    slots,
     global: {
       stubs: {
         RouterLink: RouterLinkStub,
@@ -206,7 +207,7 @@ describe('Action definitions', () => {
     });
   });
 
-  describe('Toggles', () => {
+  describe("kind: 'toggle'", () => {
     test('renders toggle as action', () => {
       const action = {
         id: 'testToggle',
@@ -259,6 +260,58 @@ describe('Action definitions', () => {
       expect(label.textContent).toBe(childAction.name);
       expect(toggle.getAttribute('id')).toContain(childAction.id);
       expect(toggle.getAttribute('aria-label')).toContain(childAction.name);
+    });
+  });
+
+  describe("kind: 'slot'", () => {
+    const slotAction = {
+      id: 'testSlot',
+      kind: 'slot',
+    };
+
+    const slotId = 'test-slot';
+    const slotText = 'Test slot';
+    const slotContents = `<div id="${slotId}">${slotText}</div>`;
+
+    test('renders slot as action', () => {
+      wrapper = mountComponent({
+        props: { actionDefinitions: [slotAction] },
+        slots: { [slotAction.id]: slotContents },
+      });
+
+      const slotElement = wrapper.find(`#${slotId}`);
+
+      expect(slotElement.exists()).toBe(true);
+      expect(slotElement.text()).toBe(slotText);
+    });
+
+    test('renders slot as action between other actions', () => {
+      const actions = [
+        {
+          id: 'action1',
+          name: 'Action 1',
+          icon: 'ai',
+        },
+        slotAction,
+        {
+          id: 'action2',
+          name: 'Action 2',
+          icon: 'ai',
+        },
+      ];
+
+      wrapper = mountComponent({
+        props: { actionDefinitions: actions },
+        slots: { [slotAction.id]: slotContents },
+      });
+
+      const elements = wrapper.get('.action-definitions-group').findAll(':scope > *');
+
+      expect(elements.length).toBe(actions.length);
+      expect(elements[0].attributes('id')).toContain(actions[0].id);
+      expect(elements[1].attributes('id')).toBe(slotId);
+      expect(elements[1].text()).toBe(slotText);
+      expect(elements[2].attributes('id')).toContain(actions[2].id);
     });
   });
 });

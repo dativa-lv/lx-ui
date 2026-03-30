@@ -1,19 +1,16 @@
 <script setup>
 import { computed, ref, shallowRef, watch, nextTick, onMounted, onUnmounted, provide } from 'vue';
+import { useStorage } from '@vueuse/core';
 
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
 
-import { useStorage } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
-import LxTextInput from '@/components/TextInput.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxNumberSlider from '@/components/NumberSlider.vue';
-import LxToggle from '@/components/Toggle.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxToolbar from '@/components/Toolbar.vue';
-import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxLoaderView from '@/components/LoaderView.vue';
 
 import markerBlue from '@/assets/marker-blue.png';
@@ -34,6 +31,7 @@ const emits = defineEmits([
   'search',
   'update:selected-base-layer',
   'update:selected-overlay-layers',
+  'actionClick',
 ]);
 
 const props = defineProps({
@@ -63,6 +61,7 @@ const props = defineProps({
   showToolbar: { type: Boolean, default: false },
   ignoreThemeChange: { type: Boolean, default: false },
   hasUserLocation: { type: Boolean, default: false },
+  actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -152,15 +151,8 @@ function markerColor(color) {
   return colorMap[color] || markerDefault;
 }
 
-const searchValue = ref('');
-
-function emitSearch() {
-  emits('search', searchValue.value);
-}
-
-function clearSearch() {
-  searchValue.value = '';
-  emitSearch();
+function emitSearch(value) {
+  emits('search', value);
 }
 
 function zoomIn() {
@@ -172,8 +164,8 @@ function zoomOut() {
 const grayscaleRef = useStorage('lx-map-gs', 0);
 const isGrayscale = shallowRef(false);
 
-function grayscaleToggle() {
-  grayscaleRef.value = isGrayscale.value ? 100 : 0;
+function grayscaleToggle(value) {
+  grayscaleRef.value = value ? 100 : 0;
 }
 
 watch(grayscaleRef, (newValue) => {
@@ -296,30 +288,83 @@ watch(
   }
 );
 
-const toolbarActions = computed(() => [
-  { id: 'zoomIn', name: displayTexts.value.zoomIn, icon: 'zoom-in', groupId: '1', area: 'right' },
-  {
-    id: 'zoomOut',
-    name: displayTexts.value.zoomOut,
-    icon: 'zoom-Out',
-    groupId: '1',
-    area: 'right',
-  },
-  {
-    id: 'fullscreen',
-    name: isExpanded.value ? displayTexts.value.collapse : displayTexts.value.expand,
-    icon: isExpanded.value ? 'collapse' : 'expand',
-    groupId: '2',
-    area: 'right',
-  },
-]);
+const toolbarActions = computed(() => {
+  const actionsDefault = [
+    {
+      id: 'isGrayscale',
+      name: displayTexts.value.grayscale,
+      title: displayTexts.value.grayscale,
+      groupId: 'misc',
+      area: 'right',
+      kind: 'toggle',
+      value: isGrayscale.value,
+    },
+    {
+      id: 'additionalOptions',
+      kind: 'slot',
+      groupId: 'misc',
+      area: 'right',
+    },
+    {
+      id: 'zoomIn',
+      name: displayTexts.value.zoomIn,
+      icon: 'zoom-in',
+      groupId: 'zoom',
+      area: 'right',
+    },
+    {
+      id: 'zoomOut',
+      name: displayTexts.value.zoomOut,
+      icon: 'zoom-out',
+      groupId: 'zoom',
+      area: 'right',
+    },
+    {
+      id: 'fullscreen',
+      name: isExpanded.value ? displayTexts.value.collapse : displayTexts.value.expand,
+      icon: isExpanded.value ? 'collapse' : 'expand',
+      groupId: 'fullscreen',
+      area: 'right',
+    },
+  ];
+
+  if (props.hasUserLocation) {
+    actionsDefault.splice(1, 0, {
+      id: 'currentLocation',
+      name: displayTexts.value.currentLocation,
+      icon: 'location-current',
+      groupId: 'misc',
+      area: 'right',
+    });
+  }
+
+  const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
+
+  return [...actionsExtra, ...actionsDefault];
+});
 
 const insideFullscreenOverlay = computed(() => isExpanded.value);
 
-function toolbarActionClick(action) {
-  if (action === 'zoomIn') zoomIn();
-  else if (action === 'zoomOut') zoomOut();
-  else if (action === 'fullscreen') toggleExpand();
+function toolbarActionClick(id, value) {
+  switch (id) {
+    case 'isGrayscale':
+      grayscaleToggle(value);
+      break;
+    case 'currentLocation':
+      centerLocation();
+      break;
+    case 'zoomIn':
+      zoomIn();
+      break;
+    case 'zoomOut':
+      zoomOut();
+      break;
+    case 'fullscreen':
+      toggleExpand();
+      break;
+    default:
+      emits('actionClick', id, value);
+  }
 }
 
 async function loadLeaflet() {
@@ -419,76 +464,36 @@ const additionalOptionsGroups = computed(() => [
     >
       <LxToolbar
         v-if="showToolbar"
-        :action-definitions="toolbarActions"
         class="lx-map-toolbar"
+        :actionDefinitions="toolbarActions"
+        :hasSearch="showSearch"
+        searchSide="server"
         :texts="displayTexts"
-        @action-click="toolbarActionClick"
+        @actionClick="toolbarActionClick"
+        @search="emitSearch"
       >
-        <template #leftArea v-if="showSearch">
-          <div class="lx-map-search">
-            <LxTextInput v-model="searchValue" @keydown.enter="emitSearch()" />
+        <template #additionalOptions>
+          <LxDropDownMenu
+            :actionDefinitions="additionalOptions"
+            :groupDefinitions="additionalOptionsGroups"
+            @actionClick="handleOptionClick"
+          >
             <LxButton
-              icon="search"
+              icon="overflow-menu"
               kind="ghost"
+              :label="displayTexts.moreOptions"
               variant="icon-only"
-              :label="displayTexts.search"
-              @click="emitSearch()"
+              tabindex="-1"
             />
-            <LxButton
-              v-if="searchValue"
-              icon="clear"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.clear"
-              @click="clearSearch()"
-            />
-          </div>
+            <template #panel>
+              <div class="lx-button-set lx-dropdown-menu-group lx-map-slider">
+                <div class="lx-label">{{ displayTexts.grayscale }}</div>
+                <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" @click.stop />
+              </div>
+            </template>
+          </LxDropDownMenu>
         </template>
-        <template #rightArea>
-          <slot name="toolbar" />
-          <LxToolbarGroup>
-            <div class="lx-map-grayscale">
-              <LxToggle
-                v-model="isGrayscale"
-                :tooltip="isGrayscale ? displayTexts.grayscaleOff : displayTexts.grayscaleOn"
-                @update:model-value="grayscaleToggle()"
-              />
-              <LxButton
-                v-if="hasUserLocation"
-                icon="location-current"
-                kind="ghost"
-                variant="icon-only"
-                :label="displayTexts.currentLocation"
-                @click="centerLocation"
-              />
-              <LxDropDownMenu
-                :actionDefinitions="additionalOptions"
-                :groupDefinitions="additionalOptionsGroups"
-                @actionClick="handleOptionClick"
-              >
-                <LxButton
-                  icon="overflow-menu"
-                  kind="ghost"
-                  :label="displayTexts.moreOptions"
-                  variant="icon-only"
-                  tabindex="-1"
-                />
-                <template #panel>
-                  <div class="lx-button-set lx-dropdown-menu-group lx-map-slider">
-                    <div class="lx-label">{{ displayTexts.grayscale }}</div>
-                    <LxNumberSlider
-                      v-model="grayscaleRef"
-                      :min="0"
-                      :max="100"
-                      :step="1"
-                      @click.stop
-                    />
-                  </div>
-                </template>
-              </LxDropDownMenu>
-            </div>
-          </LxToolbarGroup>
-        </template>
+        <slot name="toolbar" />
       </LxToolbar>
       <LMap
         v-model:zoom="zoom"
