@@ -2,6 +2,11 @@
   "name": "@dativa-lv/lx-ui",
   "description": "LX/UI",
   "prettier": "@zzdats/prettier-config",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dativa-lv/lx-ui.git"
+  },
+  "homepage": "https://lx-ui.dev/",
   "files": [
     "dist",
     "dist/lx-fonts/*.woff",
