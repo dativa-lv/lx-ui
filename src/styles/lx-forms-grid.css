@@ -636,8 +636,8 @@ svg .lx-shade {
 .lx-form-grid > .lx-main .lx-row ul.lx-tag-set,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row ul.lx-tag-set,
 .lx-form .lx-row ul.lx-tag-set {
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .lx-form.lx-form-region ul.lx-tag-set .lx-tag,
@@ -1780,6 +1780,11 @@ p .lx-person-display-wrapper {
   .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section-8,
   .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section-8 {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .lx-row-column-6,
+  .lx-row-column-8 {
+    grid-column: span 4 / auto;
   }
 }
 

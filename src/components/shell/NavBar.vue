@@ -158,6 +158,7 @@ const emits = defineEmits([
 ]);
 
 function loginClicked() {
+  emits('nav-toggle', true);
   emits('logInClick');
 }
 
