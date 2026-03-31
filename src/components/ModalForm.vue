@@ -39,7 +39,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['close', 'actionClick']);
+const emits = defineEmits(['close', 'actionClick', 'update:index']);
 
 const isOpen = ref(false);
 const modalRef = ref();
@@ -91,6 +91,10 @@ function handleActionClick(action) {
 
 function buttonClicked(action) {
   emits('actionClick', action);
+}
+
+function indexUpdated(event) {
+  emits('update:index', event);
 }
 
 const actionDefinitionsDisplay = computed(() => {
@@ -225,6 +229,7 @@ defineExpose({ open, close });
               :texts="displayTexts"
               :kind="formKind"
               @actionClick="buttonClicked"
+              @update:index="indexUpdated"
             >
               <template v-if="$slots['preHeader']" #preHeader>
                 <slot name="preHeader" />
