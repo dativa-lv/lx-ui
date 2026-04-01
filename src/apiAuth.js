@@ -48,7 +48,7 @@ export async function unauthorizedInterceptor(error) {
  * @param {Object} [options] - Additional options to pass to axios.create
  * @param {boolean} [options.allowAnonymous] - Allow anonymous requests. Defaults to false.
  */
-export default (authUrl, sessionKey, options = {}) => {
+export default function apiAuth(authUrl, sessionKey, options = {}) {
   const key = sessionStorage.getItem(sessionKey);
   const { allowAnonymous = false } = options;
   if (!key && !allowAnonymous) {
@@ -73,4 +73,4 @@ export default (authUrl, sessionKey, options = {}) => {
   http.interceptors.response.use(null, unauthorizedInterceptor);
 
   return http;
-};
+}

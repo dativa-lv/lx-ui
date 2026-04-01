@@ -11,6 +11,7 @@ import {
   isNil,
 } from '@/utils/generalUtils';
 import { logWarn, logError } from '@/utils/devUtils';
+import { objectClone } from '@/utils/formatUtils';
 import useLx from '@/hooks/useLx';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
@@ -506,13 +507,13 @@ onClickOutside(refRoot, closeOnClickOutside, {
 function clear() {
   itemsModel.value = {};
 
-  if (!Array.isArray(model.value)) {
+  if (Array.isArray(model.value)) {
+    model.value = [];
+    selectedItems.value = [];
+  } else {
     model.value = null;
     selectedItem.value = null;
     selectedItemStored.value = null;
-  } else {
-    model.value = [];
-    selectedItems.value = [];
   }
 
   if (!menuOpen.value) {
@@ -534,20 +535,13 @@ const handleFocusOut = (e) => {
   }
 };
 
-const shouldShowPlaceholder = computed(() => {
-  if (!hasValue.value && !query.value && !menuOpen.value) return true;
-  return false;
-});
+const shouldShowPlaceholder = computed(() => !hasValue.value && !query.value && !menuOpen.value);
 
-const shouldShowInputPlaceholder = computed(() => {
-  if (!query.value && menuOpen.value) return true;
-  return false;
-});
+const shouldShowInputPlaceholder = computed(() => !query.value && menuOpen.value);
 
-const shouldShowValuePlaceholder = computed(() => {
-  if (hasValue.value && !menuOpen.value && !query.value) return true;
-  return false;
-});
+const shouldShowValuePlaceholder = computed(
+  () => hasValue.value && !menuOpen.value && !query.value
+);
 
 function onDown() {
   if (!menuOpen.value) {
@@ -962,16 +956,12 @@ function handleSelectionChange(selectedValue) {
   }, 150);
 }
 
-const displayReadOnlyPlaceholder = computed(() => {
-  if (
+const displayReadOnlyPlaceholder = computed(
+  () =>
     (props.selectionKind === 'single' && isNil(selectedItem.value)) ||
     (props.selectionKind === 'multiple' &&
       (isNil(selectedItems.value) || selectedItems.value?.length === 0))
-  ) {
-    return true;
-  }
-  return false;
-});
+);
 
 const showListOptions = computed(() => displaySelectedItems.value.length > 0);
 
@@ -991,7 +981,7 @@ watch(
     const shouldSetItems =
       Array.isArray(items) && JSON.stringify(items) !== JSON.stringify(oldItems);
     if (shouldSetItems) {
-      allItems.value = JSON.parse(JSON.stringify(items));
+      allItems.value = objectClone(items);
       return;
     }
 

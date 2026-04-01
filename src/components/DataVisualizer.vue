@@ -107,7 +107,7 @@ function checkValue(item, cloneThreshold, grid) {
 
   const { excludes, min, max, color } = cloneThreshold;
   const value = item[props.valueAttribute];
-  const getColor = () => (!grid ? `var(--color-${color}-background)` : color);
+  const getColor = () => (grid ? color : `var(--color-${color}-background)`);
 
   if (
     (!excludes && value >= min && value <= max) ||
@@ -120,6 +120,7 @@ function checkValue(item, cloneThreshold, grid) {
 
   return null;
 }
+
 function resolveThresholdColor(item, grid) {
   let color = null;
 

@@ -73,7 +73,7 @@ const displayText = computed(() => {
   if (result.value) {
     return props.readOnly ? tooltipText.value : result.value;
   }
-  return !props.readOnly ? displayTexts.value.noResults : '';
+  return props.readOnly ? '' : displayTexts.value.noResults;
 });
 
 function updatePlaceholder(unit) {

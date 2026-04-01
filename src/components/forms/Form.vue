@@ -525,16 +525,16 @@ const additionalButtons = computed(() =>
 
 const additionalButtonsGrouped = computed(() =>
   additionalButtons.value.reduce((acc, action) => {
-    if (!action?.groupId) {
-      if (!acc.lx_group) {
-        acc.lx_group = [];
-      }
-      acc.lx_group.push(action);
-    } else {
+    if (action?.groupId) {
       if (!acc[action?.groupId]) {
         acc[action?.groupId] = [];
       }
       acc[action?.groupId].push(action);
+    } else {
+      if (!acc.lx_group) {
+        acc.lx_group = [];
+      }
+      acc.lx_group.push(action);
     }
     return acc;
   }, {})
@@ -788,18 +788,18 @@ function setSelectedIndex(indexId) {
 
     itemsCopy.value = itemsCopy.value.map((item, index) => {
       const newItem = item;
-      if (item !== selectedItem) {
+      if (item === selectedItem) {
+        newItem.isCurrentStep = true;
+        if (item.state !== 'invalid') {
+          newItem.state = 'current';
+        }
+      } else {
         if (item.state !== 'invalid' && index > selectedIndex) {
           newItem.state = undefined;
         } else if (item.state !== 'invalid' && index < selectedIndex) {
           newItem.state = 'complete';
         }
         newItem.isCurrentStep = false;
-      } else {
-        newItem.isCurrentStep = true;
-        if (item.state !== 'invalid') {
-          newItem.state = 'current';
-        }
       }
       return newItem;
     });

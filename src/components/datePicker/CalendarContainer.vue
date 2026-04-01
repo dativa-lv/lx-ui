@@ -932,8 +932,7 @@ function handleDateSelection(selectedValue, key) {
   }
 
   if (isDateTime) {
-    const isPartial =
-      (isFullTimeMode && isPartialTimeSelection()) || (!isFullTimeMode && isPartialTimeSelection());
+    const isPartial = isPartialTimeSelection();
 
     if (clearIfNotExact && isPartial) {
       clearSelectedValues();
@@ -2284,7 +2283,7 @@ function resolveMinuteIndex(cadence, minutesValue, filteredMin) {
     index = getTimeOrderIndex(filteredMin, minutesValue, cadence);
   }
 
-  return index >= 0 ? index : 0;
+  return Math.max(index, 0);
 }
 
 function resolveSecondIndex(cadence, secondsValue, filteredSec) {
@@ -2294,7 +2293,7 @@ function resolveSecondIndex(cadence, secondsValue, filteredSec) {
     index = getTimeOrderIndex(filteredSec, secondsValue, cadence);
   }
 
-  return index >= 0 ? index : 0;
+  return Math.max(index, 0);
 }
 
 function applyRangeDate(date) {
@@ -3144,10 +3143,10 @@ watch(
           endQuarterYear.value = decadeStartYear + 9;
         }
 
-        if (!props.menuState) {
-          currentDate.value = newValue.start;
-        } else {
+        if (props.menuState) {
           updateCurrentDateIfNotInMonthsList(newValue.start);
+        } else {
+          currentDate.value = newValue.start;
         }
 
         selectedStartDate.value = newValue.start;
@@ -3199,10 +3198,10 @@ watch(
           endQuarterYear.value = decadeStartYear + 9;
         }
 
-        if (!props.menuState) {
-          currentDate.value = newValue.start;
-        } else {
+        if (props.menuState) {
           updateCurrentDateIfNotInMonthsList(newValue.start);
+        } else {
+          currentDate.value = newValue.start;
         }
 
         selectedStartDate.value = newValue.start;
@@ -3255,10 +3254,10 @@ watch(
           endQuarterYear.value = decadeStartYear + 9;
         }
 
-        if (!props.menuState) {
-          currentDate.value = newValue.end;
-        } else {
+        if (props.menuState) {
           updateCurrentDateIfNotInMonthsList(newValue.end);
+        } else {
+          currentDate.value = newValue.end;
         }
 
         selectedStartDate.value = null;

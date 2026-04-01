@@ -183,9 +183,10 @@ function validate() {
   let res = false;
   const mapUnique = new Map();
   itemsWithStringIds.value?.forEach((x) => {
-    if (!mapUnique.has(x[props.idAttribute])) mapUnique.set(x[props.idAttribute], 1);
-    else {
+    if (mapUnique.has(x[props.idAttribute])) {
       res = true;
+    } else {
+      mapUnique.set(x[props.idAttribute], 1);
     }
   });
   if (res) return 'Item codes are not unique!!!';
@@ -193,7 +194,9 @@ function validate() {
 }
 
 function isFiltered(value) {
-  if (searchStringClient.value && !value) return false;
+  if (searchStringClient.value && !value) {
+    return false;
+  }
   if (searchStringClient.value && value) {
     return foldToAscii(value).toLowerCase().includes(searchStringClient.value.toLowerCase());
   }
@@ -446,11 +449,11 @@ function setGroupedListOrders() {
           [props.orderAttribute]: index + 1,
         };
 
-        if (key !== UNSPECIFIED_GROUP_CODE) {
+        if (key === UNSPECIFIED_GROUP_CODE) {
+          delete newElement[props.groupAttribute];
+        } else {
           newElement[props.groupAttribute] =
             element[props.groupAttribute] === key ? element[props.groupAttribute] : key;
-        } else {
-          delete newElement[props.groupAttribute];
         }
 
         return newElement;
@@ -802,13 +805,13 @@ function selectRows(arr = null) {
   }
 
   if (arr === null) {
-    if (props.kind !== 'treelist') {
+    if (props.kind === 'treelist') {
       selectedItemsRaw.value = arrayToObject(
-        filterSelectable(itemsWithStringIds.value)?.map((x) => x?.[props.idAttribute]?.toString())
+        filterSelectable(treeItems.value)?.map((x) => x?.[props.idAttribute]?.toString())
       );
     } else {
       selectedItemsRaw.value = arrayToObject(
-        filterSelectable(treeItems.value)?.map((x) => x?.[props.idAttribute]?.toString())
+        filterSelectable(itemsWithStringIds.value)?.map((x) => x?.[props.idAttribute]?.toString())
       );
     }
   } else {
@@ -848,10 +851,10 @@ const selectedLabel = computed(() => {
     labelStart = displayTexts.value.selected?.endingWith1;
   }
 
-  if (props.kind !== 'treelist') {
-    ret = `${labelStart} ${selectedCountDisplay} ${label} ${displayTexts.value.of} ${selectableCount}`;
-  } else {
+  if (props.kind === 'treelist') {
     ret = `${labelStart} ${selectedCountDisplay} ${label} ${displayTexts.value.of} ${selectableTreeListItems}`;
+  } else {
+    ret = `${labelStart} ${selectedCountDisplay} ${label} ${displayTexts.value.of} ${selectableCount}`;
   }
   return ret;
 });

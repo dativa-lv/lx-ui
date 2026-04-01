@@ -125,9 +125,7 @@ const model = computed({
 });
 
 function isRequiredRow(rowIndex) {
-  const find = props.schema?.required?.find((x) => x === rowIndex);
-  if (!find) return false;
-  return true;
+  return !!props.schema?.required?.some((x) => x === rowIndex);
 }
 
 const isSchemaValid = computed(() => {

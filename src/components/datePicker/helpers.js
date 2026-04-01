@@ -625,7 +625,7 @@ export function getSurroundingMinutesOrSeconds(arr, selectedId, isMobileScreen) 
 }
 
 export function checkForSpecialDate(dayToCheck, datesArr) {
-  return datesArr?.some((date) => date === formatDateJSON(dayToCheck));
+  return datesArr?.includes(formatDateJSON(dayToCheck));
 }
 
 // Function to checks if a day has any special dates

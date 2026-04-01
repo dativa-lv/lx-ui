@@ -177,8 +177,11 @@ const torch = ref(false);
 
 function cameraOn(capabilities) {
   loading.value = false;
-  if (!capabilities?.torch) torchNotSupported.value = true;
-  else torchNotSupported.value = false;
+  if (capabilities?.torch) {
+    torchNotSupported.value = false;
+  } else {
+    torchNotSupported.value = true;
+  }
 }
 
 const showScanner = computed(() => {

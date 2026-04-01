@@ -275,7 +275,11 @@ watch(
 watch(
   () => props.color,
   (newColorLabel) => {
-    if (!colorsList.value.some((c) => c.label === newColorLabel)) {
+    if (colorsList.value.some((c) => c.label === newColorLabel)) {
+      selectedColor.value = getColorOrVariableByLabel(newColorLabel);
+      selectedColorLabel.value = newColorLabel;
+      selectedColorVariable.value = getColorOrVariableByLabel(newColorLabel, 'variable');
+    } else {
       logWarn(
         `Color not found, defaulting to: ${colorsList.value[0].label}`,
         useLx().getGlobals()?.environment
@@ -283,10 +287,6 @@ watch(
 
       const defaultColor = colorsList.value[0];
       updateColor(defaultColor.value, defaultColor.label, defaultColor.variable);
-    } else {
-      selectedColor.value = getColorOrVariableByLabel(newColorLabel);
-      selectedColorLabel.value = newColorLabel;
-      selectedColorVariable.value = getColorOrVariableByLabel(newColorLabel, 'variable');
     }
   }
 );

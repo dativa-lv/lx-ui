@@ -173,12 +173,7 @@ function getGroupLabel(groupName) {
 const groupedItems = computed(() => {
   const res = props.actionDefinitions.reduce((acc, action) => {
     if (action?.kind === 'main') return acc; // skip 'main' items
-    if (!action?.groupId) {
-      if (!acc.lx_group) {
-        acc.lx_group = [];
-      }
-      acc.lx_group.push(action);
-    } else {
+    if (action?.groupId) {
       if (!acc[action?.groupId]) acc[action?.groupId] = [];
       acc[action?.groupId].push(action);
 
@@ -188,6 +183,11 @@ const groupedItems = computed(() => {
           acc[action?.groupId][0].value = selectedItem.id;
         }
       }
+    } else {
+      if (!acc.lx_group) {
+        acc.lx_group = [];
+      }
+      acc.lx_group.push(action);
     }
 
     if (action?.kind === 'toggle' && action?.value === undefined) {
@@ -218,10 +218,10 @@ function handleTogglerClick(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        if (!menuOpen.value) {
-          openMenu();
-        } else {
+        if (menuOpen.value) {
           closeMenu();
+        } else {
+          openMenu();
         }
       }
       break;
@@ -230,10 +230,10 @@ function handleTogglerClick(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        if (!menuOpen.value) {
-          openMenu();
-        } else {
+        if (menuOpen.value) {
           closeMenu();
+        } else {
+          openMenu();
         }
       }
       break;

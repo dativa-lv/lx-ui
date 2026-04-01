@@ -56,7 +56,7 @@ const color = ref('--color-brand');
 
     <div class="lx-steps-data">
       <div class="lx-steps-data-block" v-for="item in items" :key="item[idAttribute]">
-        <lx-icon
+        <LxIcon
           v-show="(busy && item[stateAttribute] !== 'current') || !busy"
           customClass="lx-steps-icon"
           :style="{
@@ -84,7 +84,7 @@ const color = ref('--color-brand');
           "
         />
         <div class="lx-steps-icon" v-if="busy && item[stateAttribute] === 'current'">
-          <lx-loader :loading="true" size="s" />
+          <LxLoader :loading="true" size="s" />
         </div>
 
         <div>
@@ -107,7 +107,7 @@ const color = ref('--color-brand');
         :key="item[idAttribute]"
       >
         <LxInfoWrapper>
-          <lx-icon
+          <LxIcon
             v-show="(busy && item[stateAttribute] !== 'current') || !busy"
             customClass="lx-steps-icon"
             :style="{
@@ -135,7 +135,7 @@ const color = ref('--color-brand');
             "
           />
           <div class="lx-steps-icon" v-if="busy && item[stateAttribute] === 'current'">
-            <lx-loader :loading="true" size="s" />
+            <LxLoader :loading="true" size="s" />
           </div>
 
           <div>
@@ -148,7 +148,7 @@ const color = ref('--color-brand');
           </div>
           <template #panel>
             <div v-for="item in items" :key="item[idAttribute]">
-              <lx-icon
+              <LxIcon
                 v-show="(busy && item[stateAttribute] !== 'current') || !busy"
                 customClass="lx-steps-icon"
                 :value="
@@ -167,7 +167,7 @@ const color = ref('--color-brand');
                 "
               />
               <div class="lx-steps-icon" v-if="busy && item[stateAttribute] === 'current'">
-                <lx-loader :loading="true" size="s" />
+                <LxLoader :loading="true" size="s" />
               </div>
 
               <div>

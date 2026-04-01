@@ -222,11 +222,11 @@ function determineCameraMode(settingsObj) {
 }
 
 async function initializeCameraSettings(settingsObj) {
-  if (!settingsObj?.camera?.facingMode) {
-    await switchCamera(settingsObj?.camera);
-  } else {
+  if (settingsObj?.camera?.facingMode) {
     determineCameraMode(settingsObj);
     await switchCamera();
+  } else {
+    await switchCamera(settingsObj?.camera);
   }
 
   if (settingsObj?.flashlight) {

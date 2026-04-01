@@ -215,12 +215,9 @@ const formatActionsButtons = computed(() => {
     { name: 'strike', icon: 'text-strikethrough', command: 'toggleStrike' },
   ];
 
-  return baseActions.filter((action) => {
-    if (action.name === 'underline' && !props.showUnderlineToggle) {
-      return false;
-    }
-    return true;
-  });
+  return baseActions.filter(
+    (action) => !(action.name === 'underline' && !props.showUnderlineToggle)
+  );
 });
 
 const listActionsButtons = computed(() => [
@@ -565,14 +562,14 @@ function setLink() {
 }
 
 function checkIfOpen() {
-  if (!isModalOpen.value) {
+  if (isModalOpen.value) {
+    editUrlModal.value.close();
+  } else {
     isModalOpen.value = !isModalOpen.value;
     editUrlModal.value.open();
     nextTick(() => {
       inputLinkField.value.focus();
     });
-  } else {
-    editUrlModal.value.close();
   }
 }
 

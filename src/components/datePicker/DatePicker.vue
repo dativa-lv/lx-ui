@@ -1158,11 +1158,11 @@ function handleTouchToggle(isOpen, type) {
       break;
 
     case 2:
-      if (activeInput.value !== type) {
-        nextTick(() => setActiveInput(type, props.id, false));
-      } else {
+      if (activeInput.value === type) {
         closeMenu();
         blurActiveElement();
+      } else {
+        nextTick(() => setActiveInput(type, props.id, false));
       }
       break;
 
@@ -1181,10 +1181,10 @@ function handleDesktopToggle(isOpen, type) {
     previousClickedType.value = type;
     return;
   }
-  if (!isOpen) {
-    openMenu(type, 'click');
-  } else {
+  if (isOpen) {
     closeMenu();
+  } else {
+    openMenu(type, 'click');
   }
   previousClickedType.value = type;
 }

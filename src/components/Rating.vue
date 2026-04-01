@@ -85,12 +85,13 @@ const valueClass = computed(() => {
 });
 
 function setValue(value) {
-  if (!props.readOnly && !props.disabled) {
-    if (model.value !== value) {
-      model.value = value;
-    } else {
-      model.value = null;
-    }
+  if (props.readOnly || props.disabled) {
+    return;
+  }
+  if (model.value !== value) {
+    model.value = value;
+  } else {
+    model.value = null;
   }
 }
 

@@ -291,7 +291,7 @@ const forcedMaskedValue = computed(() => {
       return `${value.substring(0, 6)}-${value.substring(6)}`;
     case 'newbornId':
     case 'newborn-id':
-      return value[11] !== '/' ? `${value.substring(0, 11)}/${value.substring(11)}` : value;
+      return value[11] === '/' ? value : `${value.substring(0, 11)}/${value.substring(11)}`;
     case 'decimal':
       return value.replace('.', ',');
     case 'currency':
@@ -338,8 +338,11 @@ const matchedFlags = computed(() => {
   });
   if (longestKey) {
     const value = flags[longestKey];
-    if (!Array.isArray(value)) result.push(value);
-    else value.forEach((val) => result.push(val));
+    if (Array.isArray(value)) {
+      value.forEach((val) => result.push(val));
+    } else {
+      result.push(value);
+    }
   }
 
   return result;
@@ -433,17 +436,17 @@ function formatTimeValue(newValue) {
   else if (strValue?.length === 2) res = `${strValue}:__`;
   else if (strValue?.length === 3) res = `${strValue.slice(0, 2)}:${strValue.slice(2)}_`;
 
-  return res !== valueRaw.value ? model.value : valueRaw.value;
+  return res === valueRaw.value ? valueRaw.value : model.value;
 }
 
 function formatCurrencyValue(newValue) {
   const res = `${newValue} €`;
-  return res?.replace('.', ',') !== valueRaw.value ? model.value?.toString() : valueRaw.value;
+  return res?.replace('.', ',') === valueRaw.value ? valueRaw.value : model.value?.toString();
 }
 
 function formatPhoneValue(newValue) {
   const res = newValue?.toString()?.replace(/[()-]/g, '');
-  return res !== valueRaw.value ? model.value?.toString() : valueRaw.value;
+  return res === valueRaw.value ? valueRaw.value : model.value?.toString();
 }
 
 function updateValueRaw(newValue) {
@@ -473,11 +476,11 @@ watch(
       return;
     }
 
-    if (convertValue(newValue) !== convertValue(oldValue)) {
-      updateValueRaw(newValue);
-    } else {
+    if (convertValue(newValue) === convertValue(oldValue)) {
       valueRaw.value =
         props.mask === 'decimal' ? newValue?.toString()?.replace('.', ',') : newValue?.toString();
+    } else {
+      updateValueRaw(newValue);
     }
   },
   { immediate: true }

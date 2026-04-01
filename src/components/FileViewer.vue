@@ -63,8 +63,8 @@ const imgCanvasRef = ref(null);
 let observer = null;
 let resizeObserver = null;
 const scale = ref(1.25);
-const imgScale = ref(1.0);
-const fontSizeScale = ref(1.0);
+const imgScale = ref(1);
+const fontSizeScale = ref(1);
 
 const binaryText = ref();
 const pdf = shallowRef(null);
@@ -106,9 +106,9 @@ const inputRef = ref(null);
 const windowSize = useWindowSize();
 
 const MAX_ZOOM = {
-  pdf: 3.0,
-  img: 5.0,
-  font: 3.0,
+  pdf: 3,
+  img: 5,
+  font: 3,
 };
 const MIN_ZOOM = {
   pdf: 0.5,
@@ -222,9 +222,9 @@ const rootMargin = computed(() => {
 
   const elemHeigh = canvasArray.value[0].clientHeight || 0;
 
-  const totalOffsetTopHeight = !isExpanded.value
-    ? (headerDigivesHeight || headerHeight) + navigationHeight + toolbarHeight
-    : 0;
+  const totalOffsetTopHeight = isExpanded.value
+    ? 0
+    : (headerDigivesHeight || headerHeight) + navigationHeight + toolbarHeight;
 
   const viewportHeight = globalThis.innerHeight;
   const correction = 50;
@@ -521,9 +521,9 @@ function getHeaderOffset() {
   const headerHeight = getHeight('.lx-header');
   const headerDigivesHeight = getHeight('.lx-header-digives');
   const navigationHeight =
-    document.querySelector('.lx-nav-panel')?.style.display !== 'none'
-      ? getHeight('.lx-nav-panel')
-      : 0;
+    document.querySelector('.lx-nav-panel')?.style.display === 'none'
+      ? 0
+      : getHeight('.lx-nav-panel');
   const toolbarHeight = getHeight('.lx-component-toolbar');
 
   return (headerDigivesHeight || headerHeight) + navigationHeight + toolbarHeight;
@@ -1261,6 +1261,72 @@ function nextFrame() {
   });
 }
 
+function prepareBinaryPage(printRoot) {
+  const element = binaryWrapper.value?.querySelector('article');
+  if (!element) throw new Error('Binary article not found');
+
+  const pageEl = globalThis.document.createElement('div');
+  pageEl.className = 'lx-print-page';
+  pageEl.appendChild(element.cloneNode(true));
+  printRoot.appendChild(pageEl);
+}
+
+function prepareImgPage(printRoot) {
+  const src = imgCanvasRef.value;
+  if (!src) throw new Error('Image canvas not found');
+
+  const cnv = globalThis.document.createElement('canvas');
+  cnv.width = src.width;
+  cnv.height = src.height;
+
+  const ctx = cnv.getContext('2d');
+  ctx.drawImage(src, 0, 0);
+
+  cnv.style.width = `${Math.floor(src.width)}px`;
+  cnv.style.height = `${Math.floor(src.height)}px`;
+
+  const pageEl = globalThis.document.createElement('div');
+  pageEl.className = 'lx-print-page lx-print-page--bitmap';
+  pageEl.appendChild(cnv);
+  printRoot.appendChild(pageEl);
+}
+
+async function preparePdfPages(printRoot, allPages, effectiveDpi, mobile) {
+  if (!pdf.value) throw new Error('PDF is not loaded');
+
+  const pageNums =
+    currentPage.value && !allPages
+      ? [currentPage.value]
+      : Array.from({ length: pdf.value.numPages }, (_, i) => i + 1);
+
+  for (let i = 0; i < pageNums.length; i += 1) {
+    const pageNum = pageNums[i];
+    const page = await pdf.value.getPage(pageNum);
+    const printScale = effectiveDpi / 96;
+    const viewport = page.getViewport({ scale: printScale });
+    const cssViewport = page.getViewport({ scale: 1 });
+
+    const cnv = globalThis.document.createElement('canvas');
+    cnv.width = Math.floor(viewport.width);
+    cnv.height = Math.floor(viewport.height);
+    cnv.style.width = `${Math.floor(cssViewport.width)}px`;
+    cnv.style.height = `${Math.floor(cssViewport.height)}px`;
+
+    await page.render({
+      canvasContext: cnv.getContext('2d'),
+      viewport,
+      intent: 'print',
+    }).promise;
+
+    const pageEl = globalThis.document.createElement('div');
+    pageEl.className = `lx-print-page lx-print-page--bitmap ${
+      mobile ? 'lx-print-page--mobile' : ''
+    }`;
+    pageEl.appendChild(cnv);
+    printRoot.appendChild(pageEl);
+  }
+}
+
 /**
  * @param {'pdf'|'img'|'binary'} printType
  * @param {number} dpi
@@ -1297,75 +1363,15 @@ async function print(printType, dpi = 300, allPages = true) {
     addGlobalPrintStyles();
 
     switch (printType) {
-      case 'binary': {
-        const element = binaryWrapper.value?.querySelector('article');
-        if (!element) throw new Error('Binary article not found');
-
-        const pageEl = globalThis.document.createElement('div');
-        pageEl.className = 'lx-print-page';
-        pageEl.appendChild(element.cloneNode(true));
-        printRoot.appendChild(pageEl);
+      case 'binary':
+        prepareBinaryPage(printRoot);
         break;
-      }
-
-      case 'img': {
-        const src = imgCanvasRef.value;
-        if (!src) throw new Error('Image canvas not found');
-
-        const cnv = globalThis.document.createElement('canvas');
-        cnv.width = src.width;
-        cnv.height = src.height;
-
-        const ctx = cnv.getContext('2d');
-        ctx.drawImage(src, 0, 0);
-
-        cnv.style.width = `${Math.floor(src.width)}px`;
-        cnv.style.height = `${Math.floor(src.height)}px`;
-
-        const pageEl = globalThis.document.createElement('div');
-        pageEl.className = 'lx-print-page lx-print-page--bitmap';
-        pageEl.appendChild(cnv);
-        printRoot.appendChild(pageEl);
+      case 'img':
+        prepareImgPage(printRoot);
         break;
-      }
-
-      case 'pdf': {
-        if (!pdf.value) throw new Error('PDF is not loaded');
-
-        const pageNums =
-          currentPage.value && !allPages
-            ? [currentPage.value]
-            : Array.from({ length: pdf.value.numPages }, (_, i) => i + 1);
-
-        for (let i = 0; i < pageNums.length; i += 1) {
-          const pageNum = pageNums[i];
-          const page = await pdf.value.getPage(pageNum);
-          const printScale = effectiveDpi / 96;
-          const viewport = page.getViewport({ scale: printScale });
-          const cssViewport = page.getViewport({ scale: 1 });
-
-          const cnv = globalThis.document.createElement('canvas');
-          cnv.width = Math.floor(viewport.width);
-          cnv.height = Math.floor(viewport.height);
-          cnv.style.width = `${Math.floor(cssViewport.width)}px`;
-          cnv.style.height = `${Math.floor(cssViewport.height)}px`;
-
-          await page.render({
-            canvasContext: cnv.getContext('2d'),
-            viewport,
-            intent: 'print',
-          }).promise;
-
-          const pageEl = globalThis.document.createElement('div');
-          pageEl.className = `lx-print-page lx-print-page--bitmap ${
-            mobile ? 'lx-print-page--mobile' : ''
-          }`;
-          pageEl.appendChild(cnv);
-          printRoot.appendChild(pageEl);
-        }
+      case 'pdf':
+        await preparePdfPages(printRoot, allPages, effectiveDpi, mobile);
         break;
-      }
-
       default:
         break;
     }
@@ -1388,14 +1394,14 @@ async function print(printType, dpi = 300, allPages = true) {
   } catch (error) {
     lxDevUtils.logError(`Printing failed, ${error}`, useLx().getGlobals()?.environment);
 
-    if (!mobile) {
-      globalThis.removeEventListener('afterprint', finishDesktop);
-      finishDesktop();
-    } else {
+    if (mobile) {
       if (originalTitle != null) globalThis.document.title = originalTitle;
       cleanupPrintArtifacts();
       setPrintGateEnabled(false);
       printInProgress.value = false;
+    } else {
+      globalThis.removeEventListener('afterprint', finishDesktop);
+      finishDesktop();
     }
   }
 }
