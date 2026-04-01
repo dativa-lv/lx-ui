@@ -349,12 +349,6 @@ code {
   height: var(--row-size);
 }
 
-.lx-main .lx-list-toolbar {
-  width: 100%;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
-
 .lx-context-container {
   position: inherit;
   display: flex;

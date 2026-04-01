@@ -14,7 +14,7 @@
 
 .lx-curtain
   .lx-modal
-  > header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(
+  > header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-item header):not(
     .lx-filter header.lx-head
   ) {
   display: flex;
@@ -28,7 +28,7 @@
 
 .lx-curtain
   .lx-modal
-  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-head):not(
+  header:not(.lx-pseudo-grid .lx-labels):not(.lx-head):not(
     .lx-list-item header
   ):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky):not(.lx-data-block-header)
   .lx-primary {
@@ -44,7 +44,7 @@
 
 .lx-curtain
   .lx-modal
-  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(
+  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-item header):not(
     .lx-filter header.lx-head
   )
   .lx-button {

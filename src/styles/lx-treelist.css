@@ -173,10 +173,6 @@
     padding-top: 0rem;
 }
 
-.lx-list-wrapper .lx-list-toolbar .selection-action-button-toolbar .selection-action-text>p {
-    padding: 0 0.5rem;
-}
-
 @media (max-width: 800px) {
 
     .lx-list-wrapper .tree-list {

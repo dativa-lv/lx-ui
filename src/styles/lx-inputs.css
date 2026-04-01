@@ -3585,10 +3585,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: 100%;
 }
 
-.lx-file-upload-wrapper.single > .lx-list-wrapper .lx-list-toolbar {
-  margin: 0;
-}
-
 .lx-draggable-upload-wrapper.lx-disabled,
 .lx-draggable-upload-wrapper:hover.lx-disabled {
   border: 2px dashed var(--color-disabled);
