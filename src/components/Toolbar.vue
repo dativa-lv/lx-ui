@@ -1,5 +1,16 @@
 <script setup>
-import { ref, computed, watch, nextTick, onMounted, inject } from 'vue';
+import {
+  ref,
+  computed,
+  watch,
+  nextTick,
+  onMounted,
+  inject,
+  useSlots,
+  Comment,
+  Fragment,
+  Text,
+} from 'vue';
 import { useWindowSize, useDebounceFn } from '@vueuse/core';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
@@ -45,6 +56,7 @@ const emits = defineEmits([
 const GROUP_ID_DEFAULT = 'lx_group_default';
 const GROUP_ID_EXTRA = 'lx_group_extra';
 const ACTION_KINDS_SPECIAL = ['toggle', 'slot'];
+const CONTENT_SLOTS = ['default', 'leftArea', 'rightArea', 'secondRow'];
 
 const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
@@ -60,6 +72,34 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const globalEnvironment = useLx().getGlobals()?.environment;
 const { width } = useWindowSize();
+const slots = useSlots();
+
+const hasSlotContent = (nodes = []) => {
+  if (!Array.isArray(nodes)) {
+    return false;
+  }
+
+  return nodes.some((node) => {
+    if (!node || node.type === Comment) {
+      return false;
+    }
+    if (node.type === Text) {
+      return String(node.children ?? '').trim().length > 0;
+    }
+    if (node.type === Fragment) {
+      return hasSlotContent(node.children);
+    }
+    return true;
+  });
+};
+
+const isToolbarEmpty = computed(
+  () =>
+    !props.actionDefinitions.length &&
+    !props.hasSearch &&
+    !props.hasSelectAll &&
+    CONTENT_SLOTS.every((name) => !hasSlotContent(slots[name]?.() ?? []))
+);
 
 const insideForm = inject('insideForm', ref(false));
 
@@ -90,11 +130,11 @@ function applyDefaults(action, overrides = {}) {
   if (action.extra) {
     return {
       ...action,
-      icon: action.icon ?? 'fallback-icon',
+      icon: action.icon,
       area: getArea(action),
       kind: action.kind === 'toggle' ? 'toggle' : 'ghost',
       variant: 'icon-only',
-      groupId: action.groupId ?? GROUP_ID_EXTRA,
+      groupId: action.groupId || GROUP_ID_EXTRA,
       disabled: action.disabled || props.disabled || props.loading || props.busy,
       ...overrides,
     };
@@ -104,7 +144,7 @@ function applyDefaults(action, overrides = {}) {
     return {
       ...action,
       area: getArea(action),
-      groupId: action.groupId ?? GROUP_ID_DEFAULT,
+      groupId: action.groupId || GROUP_ID_DEFAULT,
       nonResponsive: true,
       ...overrides,
     };
@@ -112,11 +152,11 @@ function applyDefaults(action, overrides = {}) {
 
   return {
     ...action,
-    icon: action.icon ?? 'fallback-icon',
+    icon: action.icon,
     area: getArea(action),
-    kind: action.kind ?? 'ghost',
-    variant: action.variant ?? 'icon-only',
-    groupId: action.groupId ?? GROUP_ID_DEFAULT,
+    kind: action.kind || 'ghost',
+    variant: action.variant || 'icon-only',
+    groupId: action.groupId || GROUP_ID_DEFAULT,
     disabled: action.disabled || props.disabled || props.loading || props.busy,
     ...overrides,
   };
@@ -190,20 +230,35 @@ const actionsProcessed = computed(() => {
   const extraActions = normalizedActions.filter((a) => a.extra);
   const sortedExtraActions = insideForm.value ? extraActions : [...extraActions].reverse();
   const { promotedAction, demotedActions } = processGroup(regularActions);
-  const result = [...demotedActions];
+  const result = [...demotedActions, ...sortedExtraActions];
 
   if (promotedAction) {
     addPromotedAction(result, promotedAction);
   }
 
-  return [...sortedExtraActions, ...result];
+  return result;
 });
 
-const leftActions = computed(() => actionsProcessed.value?.filter((x) => x?.area === 'left'));
+const sortActionsByExtra = (actions, extraFirst) => {
+  const extraWeight = extraFirst ? -1 : 1;
+  return actions?.sort((a, b) => (a?.extra ? extraWeight : 0) - (b?.extra ? extraWeight : 0));
+};
+
+const leftActions = computed(() =>
+  sortActionsByExtra(
+    actionsProcessed.value?.filter((x) => x?.area === 'left'),
+    false
+  )
+);
 const leftActionsResponsive = computed(() => leftActions.value?.filter((x) => !x?.nonResponsive));
 const leftActionsNonResponsive = computed(() => leftActions.value?.filter((x) => x?.nonResponsive));
 
-const rightActions = computed(() => actionsProcessed.value?.filter((x) => x?.area === 'right'));
+const rightActions = computed(() =>
+  sortActionsByExtra(
+    actionsProcessed.value?.filter((x) => x?.area === 'right'),
+    true
+  )
+);
 const rightActionsResponsive = computed(() => rightActions.value?.filter((x) => !x?.nonResponsive));
 const rightActionsNonResponsive = computed(() =>
   rightActions.value?.filter((x) => x?.nonResponsive)
@@ -360,9 +415,10 @@ defineExpose({ toggleSearch });
     class="lx-component-toolbar"
     :class="[
       { 'lx-toolbar-no-borders': noBorders },
-      { 'lx-disabled': disabled || loading },
       { 'lx-toolbar-default-area-right': defaultAreaComputed === 'right' },
       { 'lx-toolbar-default-area-left': defaultAreaComputed === 'left' },
+      { 'lx-toolbar-empty': isToolbarEmpty },
+      { 'lx-disabled': disabled || loading },
     ]"
     role="toolbar"
   >

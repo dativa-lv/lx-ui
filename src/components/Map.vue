@@ -340,7 +340,7 @@ const toolbarActions = computed(() => {
 
   const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
 
-  return [...actionsExtra, ...actionsDefault];
+  return [...actionsDefault, ...actionsExtra];
 });
 
 const insideFullscreenOverlay = computed(() => isExpanded.value);

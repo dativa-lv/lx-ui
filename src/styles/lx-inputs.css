@@ -2837,10 +2837,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-label-20);
 }
 
-.lx-markdown-text-area-wrapper .lx-component-toolbar .left-area > .lx-group {
-  border-right: none;
-}
-
 /*** Misc dropdown, LxAutoComplete, LxRotator, LxValuePicker styles ***/
 
 .lx-dropdown {
@@ -4509,12 +4505,11 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-camera img,
-.lx-camera:has(> .lx-component-toolbar .right-area > .lx-group:empty) video
-{
+.lx-camera:has(> .lx-toolbar-empty) video {
   margin-top: calc(var(--row-size) + 2px);
 }
 
-.lx-camera > .lx-component-toolbar:has(.right-area > .lx-group:empty) {
+.lx-camera > .lx-toolbar-empty {
   display: none;
 }
 

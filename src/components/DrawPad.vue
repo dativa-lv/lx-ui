@@ -6,7 +6,6 @@ import useLx from '@/hooks/useLx';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
-import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 
 const props = defineProps({
@@ -20,6 +19,7 @@ const props = defineProps({
   showColorPicker: { type: Boolean, default: false },
   showClearAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
+  actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -31,7 +31,12 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue', 'update:instrument', 'update:color']);
+const emits = defineEmits([
+  'update:modelValue',
+  'update:instrument',
+  'update:color',
+  'actionClick',
+]);
 
 const colorsList = ref([
   { id: 1, label: 'black', value: '#000', variable: '--color-data' },
@@ -223,6 +228,55 @@ const getPng = () => {
   return canvas.value.toDataURL('image/png');
 };
 
+const toolbarActions = computed(() => {
+  const actionsDefault = [];
+
+  if (props.showInstruments) {
+    actionsDefault.push({
+      id: 'brush',
+      name: displayTexts.value.paintbrush,
+      icon: 'brush',
+      groupId: 'brush',
+      area: 'left',
+      active: selectedInstrument.value === 'brush',
+      nonResponsive: true,
+    });
+  }
+
+  if (props.showColorPicker) {
+    actionsDefault.push({
+      id: 'color',
+      kind: 'slot',
+      groupId: 'color',
+      area: 'left',
+    });
+  }
+
+  if (props.showClearAll) {
+    actionsDefault.push({
+      id: 'clear',
+      name: displayTexts.value.clear,
+      icon: 'reset',
+      groupId: 'clear',
+      area: 'right',
+    });
+  }
+
+  const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
+
+  return [...actionsDefault, ...actionsExtra];
+});
+
+function toolbarActionClick(id, value) {
+  if (id === 'brush') {
+    updatedInstrument('brush');
+  } else if (id === 'clear') {
+    clearCanvas();
+  } else {
+    emits('actionClick', id, value);
+  }
+}
+
 watch(
   [() => props.modelValue, () => props.width, () => props.height],
   ([newSVGData, newWidth, newHeight]) => {
@@ -321,21 +375,13 @@ defineExpose({ getPng });
 <template>
   <div class="lx-field-wrapper">
     <div ref="container" class="lx-drawpad-wrapper">
-      <LxToolbar>
-        <template #leftArea>
-          <LxToolbarGroup v-if="showInstruments" class="left-group">
-            <LxButton
-              icon="brush"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.paintbrush"
-              :disabled="disabled"
-              :active="selectedInstrument === 'brush'"
-              @click="updatedInstrument('brush')"
-            />
-          </LxToolbarGroup>
-
-          <LxDropDownMenu v-if="showColorPicker" :disabled="props.disabled">
+      <LxToolbar
+        :disabled="props.disabled"
+        :actionDefinitions="toolbarActions"
+        @actionClick="toolbarActionClick"
+      >
+        <template #color>
+          <LxDropDownMenu :disabled="props.disabled">
             <LxButton
               icon="color"
               kind="ghost"
@@ -365,18 +411,6 @@ defineExpose({ getPng });
               </ul>
             </template>
           </LxDropDownMenu>
-        </template>
-
-        <template #rightArea>
-          <LxButton
-            v-if="showClearAll"
-            icon="reset"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.clear"
-            :disabled="disabled"
-            @click="clearCanvas"
-          />
         </template>
       </LxToolbar>
       <div class="lx-input-wrapper" :class="{ 'lx-disabled': disabled }">

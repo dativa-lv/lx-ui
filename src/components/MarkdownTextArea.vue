@@ -14,7 +14,6 @@ import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
-import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxLoader from '@/components/Loader.vue';
 import { isUrl, generateUUID } from '@/utils/stringUtils';
@@ -43,9 +42,11 @@ const props = defineProps({
   imageMaxSize: { type: Number, default: 3000000 }, // 3MB
   dictionary: { type: Object, default: null },
   labelId: { type: String, default: null },
+  actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
 });
-const emits = defineEmits(['update:modelValue', 'notification', 'preparedImage']);
+
+const emits = defineEmits(['update:modelValue', 'notification', 'preparedImage', 'actionClick']);
 
 const textsDefault = {
   undo: 'Atcelt pēdējo darbību',
@@ -153,40 +154,40 @@ const model = computed({
 
 const isHeadingSelected = computed(() => editor.value.isActive('heading'));
 
-const actionDefinitions = computed(() => [
+const headingDefinitions = computed(() => [
   {
     id: 'Heading1',
-    label: displayTexts.value.headingH1,
+    name: displayTexts.value.headingH1,
     active: editor.value.isActive('heading', { level: 1 }),
     level: 1,
   },
   {
     id: 'Heading2',
-    label: displayTexts.value.headingH2,
+    name: displayTexts.value.headingH2,
     active: editor.value.isActive('heading', { level: 2 }),
     level: 2,
   },
   {
     id: 'Heading3',
-    label: displayTexts.value.headingH3,
+    name: displayTexts.value.headingH3,
     active: editor.value.isActive('heading', { level: 3 }),
     level: 3,
   },
   {
     id: 'Heading4',
-    label: displayTexts.value.headingH4,
+    name: displayTexts.value.headingH4,
     active: editor.value.isActive('heading', { level: 4 }),
     level: 4,
   },
   {
     id: 'Heading5',
-    label: displayTexts.value.headingH5,
+    name: displayTexts.value.headingH5,
     active: editor.value.isActive('heading', { level: 5 }),
     level: 5,
   },
   {
     id: 'Heading6',
-    label: displayTexts.value.headingH6,
+    name: displayTexts.value.headingH6,
     active: editor.value.isActive('heading', { level: 6 }),
     level: 6,
   },
@@ -644,6 +645,145 @@ function onError(id, error) {
   emitNotification(error);
 }
 
+const toolbarActions = computed(() => {
+  const actionsDefault = [];
+
+  actionsDefault.push({
+    id: 'undo',
+    name: displayTexts.value.undo,
+    icon: 'undo',
+    groupId: 'undoRedo',
+    area: 'left',
+    disabled: !editor.value.can().undo(),
+  });
+
+  actionsDefault.push({
+    id: 'redo',
+    name: displayTexts.value.redo,
+    icon: 'redo',
+    groupId: 'undoRedo',
+    area: 'left',
+    disabled: !editor.value.can().redo(),
+  });
+
+  const formatButtons = formatActionsButtons.value.map((button) => ({
+    id: button.name,
+    name: displayTexts.value[button.name],
+    icon: button.icon,
+    groupId: 'format1',
+    area: 'left',
+    disabled: isSelectionEmpty.value,
+    active: editor.value.isActive(button.name),
+  }));
+
+  actionsDefault.push(...formatButtons);
+
+  if (props.showColorPicker) {
+    actionsDefault.push({
+      id: 'color',
+      kind: 'slot',
+      groupId: 'format1',
+      area: 'left',
+    });
+  }
+
+  if (props.showHeadingPicker) {
+    const headingsGroupId = 'headings';
+
+    const mainButton = {
+      id: 'heading',
+      name: displayTexts.value.heading,
+      icon: 'text-heading',
+      groupId: 'format2',
+      nestedGroupId: headingsGroupId,
+      area: 'left',
+      disabled: isSelectionEmpty.value,
+      active: isHeadingSelected.value,
+    };
+
+    const headings = headingDefinitions.value.map((heading) => ({
+      id: heading.id,
+      name: heading.name,
+      groupId: headingsGroupId,
+      active: heading.active,
+    }));
+
+    actionsDefault.push(mainButton, ...headings);
+  }
+
+  listActionsButtons.value.forEach((button) => {
+    actionsDefault.push({
+      id: button.name,
+      name: displayTexts.value[button.name],
+      icon: button.icon,
+      groupId: 'format2',
+      area: 'left',
+      active: editor.value.isActive(button.isActiveCheck),
+    });
+  });
+
+  if (props.showLinkEditor) {
+    actionsDefault.push({
+      id: 'link',
+      name: displayTexts.value.link,
+      icon: 'link',
+      groupId: 'insertion',
+      area: 'left',
+      disabled: isSelectionEmpty.value,
+      active: editor.value.isActive('link'),
+    });
+  }
+
+  if (props.showImagePicker) {
+    actionsDefault.push({
+      id: 'image',
+      name: displayTexts.value.image,
+      icon: 'image',
+      groupId: 'insertion',
+      area: 'left',
+      disabled: !isSelectionEmpty.value,
+      active: editor.value.isActive('image'),
+    });
+  }
+
+  if (props.showPlaceholderPicker) {
+    actionsDefault.push({
+      id: 'placeholder',
+      kind: 'slot',
+      groupId: 'placeholder',
+      area: 'left',
+    });
+  }
+
+  const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
+
+  return [...actionsDefault, ...actionsExtra];
+});
+
+function toolbarActionClick(id, value) {
+  const formatAction = formatActionsButtons.value.find((action) => action.name === id);
+  const headingAction = headingDefinitions.value.find((action) => action.id === id);
+  const listAction = listActionsButtons.value.find((action) => action.name === id);
+
+  if (id === 'undo') {
+    editor.value.chain().focus().undo().run();
+  } else if (id === 'redo') {
+    editor.value.chain().focus().redo().run();
+  } else if (formatAction) {
+    editor.value.chain().focus()[formatAction.command]().run();
+  } else if (headingAction) {
+    editor.value.chain().focus().unsetLink().toggleHeading({ level: headingAction.level }).run();
+  } else if (listAction) {
+    editor.value.chain().focus()[listAction.command]().run();
+  } else if (id === 'link') {
+    checkIfOpen();
+  } else if (id === 'image') {
+    openImage();
+  } else {
+    emits('actionClick', id, value);
+  }
+}
+
 watch(inputImage, (n) => {
   const fn = formatUrl(n);
   imageLink.value = isUrl(fn) ? fn : null;
@@ -707,245 +847,142 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
       :data-invalid="invalid ? '' : null"
       @click="focus()"
     >
-      <LxToolbar v-if="editor">
-        <template #leftArea>
-          <LxToolbarGroup class="left-group">
+      <LxToolbar
+        v-if="editor"
+        :disabled="isDisabled"
+        :actionDefinitions="toolbarActions"
+        @actionClick="toolbarActionClick"
+      >
+        <template #color>
+          <LxDropDownMenu :disabled="isSelectionEmpty || isDisabled">
             <LxButton
-              icon="undo"
+              icon="color"
               kind="ghost"
               variant="icon-only"
-              :label="displayTexts.undo"
-              :disabled="!editor.can().undo() || isDisabled"
-              @click="editor.chain().focus().undo().run()"
-            />
-            <LxButton
-              icon="redo"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.redo"
-              :disabled="!editor.can().redo() || isDisabled"
-              @click="editor.chain().focus().redo().run()"
-            />
-          </LxToolbarGroup>
-
-          <LxToolbarGroup class="left-group">
-            <LxButton
-              v-for="button in formatActionsButtons"
-              :key="button.name"
-              :icon="button.icon"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts[button.name]"
+              tabindex="-1"
+              :label="displayTexts.color"
               :disabled="isSelectionEmpty || isDisabled"
-              :active="editor.isActive(button.name)"
-              @click="editor.chain().focus()[button.command]().run()"
+              :active="editor.isActive('textStyle')"
             />
-
-            <LxDropDownMenu v-if="showColorPicker" :disabled="isSelectionEmpty || isDisabled">
-              <LxButton
-                icon="color"
-                kind="ghost"
-                variant="icon-only"
-                tabindex="-1"
-                :label="displayTexts.color"
-                :disabled="isSelectionEmpty || isDisabled"
-                :active="editor.isActive('textStyle')"
-              />
-              <template #panel>
-                <ul class="lx-color-list">
-                  <li
-                    v-for="color in colorPickerColors"
-                    :key="color.name"
-                    :class="[
-                      'lx-color-item',
-                      color.name,
-                      { 'lx-selected': editor.isActive('textStyle', { color: color.var }) },
-                    ]"
-                  >
-                    <div
-                      @click="editor.chain().focus().setColor(color.var).run()"
-                      @keydown.enter="editor.chain().focus().setColor(color.var).run()"
-                    />
-                  </li>
-                </ul>
-              </template>
-            </LxDropDownMenu>
-          </LxToolbarGroup>
-
-          <LxToolbarGroup class="left-group">
-            <LxDropDownMenu v-if="showHeadingPicker" :disabled="isSelectionEmpty || isDisabled">
-              <LxButton
-                icon="text-heading"
-                kind="ghost"
-                variant="icon-only"
-                tabindex="-1"
-                :label="displayTexts.heading"
-                :disabled="isSelectionEmpty || isDisabled"
-                :active="isHeadingSelected"
-              />
-              <template #panel>
-                <div class="lx-button-set">
-                  <LxButton
-                    v-for="action in actionDefinitions"
-                    :key="action.id"
-                    :label="action.label"
-                    tabindex="0"
-                    :active="action.active"
-                    @click="
-                      editor
-                        .chain()
-                        .focus()
-                        .unsetLink()
-                        .toggleHeading({ level: action.level })
-                        .run()
-                    "
-                  />
-                </div>
-              </template>
-            </LxDropDownMenu>
-
-            <LxButton
-              v-for="button in listActionsButtons"
-              :key="button.name"
-              :icon="button.icon"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts[button.name]"
-              :disabled="isDisabled"
-              :active="editor.isActive(button.isActiveCheck)"
-              @click="editor.chain().focus()[button.command]().run()"
-            />
-          </LxToolbarGroup>
-
-          <LxToolbarGroup v-if="props.showLinkEditor || props.showImagePicker" class="left-group">
-            <LxButton
-              v-if="props.showLinkEditor"
-              icon="link"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.link"
-              :disabled="isSelectionEmpty || isDisabled"
-              :active="editor.isActive('link')"
-              @click="checkIfOpen()"
-            />
-
-            <LxModal
-              ref="editUrlModal"
-              :label="displayTexts.modalLabel"
-              size="s"
-              kind="native"
-              :button-secondary-is-cancel="false"
-              :action-definitions="modalActionDefinitions"
-              @close="handleEditUrlModalClose"
-              @action-click="handleEditUrlActionClick"
-            >
-              <p class="lx-description">{{ displayTexts.modalDescription }}</p>
-              <LxTextInput
-                ref="inputLinkField"
-                v-model="inputLink"
-                :invalid="isNotLink"
-                :invalidation-message="displayTexts.invalidLinkMessage"
-              />
-            </LxModal>
-
-            <div v-if="props.showImagePicker" class="lx-toolbar-group">
-              <LxButton
-                icon="image"
-                kind="ghost"
-                variant="icon-only"
-                :label="displayTexts.image"
-                :disabled="isDisabled || !isSelectionEmpty"
-                :active="editor.isActive('image')"
-                @click="openImage()"
-              />
-
-              <LxModal
-                ref="markdownImageModal"
-                id="imageModal"
-                :label="displayTexts.imageModalLabel"
-                size="s"
-                :button-secondary-is-cancel="false"
-                :action-definitions="modalActionDefinitions"
-                @close="clearModalVariables()"
-                @action-click="handleMarkdownImageActionClick"
-              >
-                <LxContentSwitcher :items="imageInputTypes" v-model="imageModalInputType" />
-                <LxForm :show-header="false" :show-footer="false">
-                  <LxRow
-                    :label="displayTexts.imageModalLinkDescription"
-                    v-if="imageModalInputType === 'url'"
-                  >
-                    <LxTextInput
-                      id="inputImageField"
-                      ref="inputImageField"
-                      v-model="inputImage"
-                      :invalid="isNotImage"
-                      :invalidation-message="displayTexts.invalidImageLink"
-                    />
-                  </LxRow>
-
-                  <LxRow
-                    :label="displayTexts.imageModalFileDescription"
-                    v-if="imageModalInputType === 'fileUploader'"
-                  >
-                    <LxFileUploader
-                      ref="fileUploader"
-                      v-model="uploadedImage"
-                      data-type="content"
-                      :disabled="isDisabled"
-                      :draggable="true"
-                      :allowedFileExtensions="allowedFileExtensions"
-                      :maxFileSize="imageMaxSize"
-                      @onError="onError"
-                    />
-                  </LxRow>
-
-                  <LxRow :label="displayTexts.imageModalAltDescription">
-                    <LxTextInput id="inputAltField" v-model="inputAlt" />
-                  </LxRow>
-
-                  <LxRow :label="displayTexts.imageModalTitleDescription">
-                    <LxTextInput id="inputTitleField" v-model="inputTitle" />
-                  </LxRow>
-                </LxForm>
-              </LxModal>
-            </div>
-          </LxToolbarGroup>
-
-          <LxToolbarGroup v-if="props.showPlaceholderPicker" class="left-group">
-            <LxDropDownMenu
-              :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')"
-            >
-              <LxButton
-                icon="tag"
-                kind="ghost"
-                variant="icon-only"
-                tabindex="-1"
-                :label="displayTexts.templatePicker"
-                :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')"
-                :active="editor.isActive('backgroundColor')"
-              />
-              <template #panel>
-                <div
-                  class="lx-markdown-tag-item"
-                  v-for="item in dictionary"
-                  :key="item.id"
-                  :title="item?.description"
-                  @click="postPlaceholder(item.value)"
-                  @keydown.enter="postPlaceholder(item.value)"
+            <template #panel>
+              <ul class="lx-color-list">
+                <li
+                  v-for="color in colorPickerColors"
+                  :key="color.name"
+                  :class="[
+                    'lx-color-item',
+                    color.name,
+                    { 'lx-selected': editor.isActive('textStyle', { color: color.var }) },
+                  ]"
                 >
-                  <p class="lx-data">{{ item?.name }}</p>
-                  <div>
-                    <p :class="`${chooseColor(item.displayType)}`" class="lx-data">
-                      {{ item?.value }}
-                    </p>
-                  </div>
+                  <div
+                    @click="editor.chain().focus().setColor(color.var).run()"
+                    @keydown.enter="editor.chain().focus().setColor(color.var).run()"
+                  />
+                </li>
+              </ul>
+            </template>
+          </LxDropDownMenu>
+        </template>
+        <template #placeholder>
+          <LxDropDownMenu :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')">
+            <LxButton
+              icon="tag"
+              kind="ghost"
+              variant="icon-only"
+              tabindex="-1"
+              :label="displayTexts.templatePicker"
+              :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')"
+              :active="editor.isActive('backgroundColor')"
+            />
+            <template #panel>
+              <div
+                class="lx-markdown-tag-item"
+                v-for="item in dictionary"
+                :key="item.id"
+                :title="item?.description"
+                @click="postPlaceholder(item.value)"
+                @keydown.enter="postPlaceholder(item.value)"
+              >
+                <p class="lx-data">{{ item?.name }}</p>
+                <div>
+                  <p :class="`${chooseColor(item.displayType)}`" class="lx-data">
+                    {{ item?.value }}
+                  </p>
                 </div>
-              </template>
-            </LxDropDownMenu>
-          </LxToolbarGroup>
+              </div>
+            </template>
+          </LxDropDownMenu>
         </template>
       </LxToolbar>
+      <LxModal
+        ref="editUrlModal"
+        :label="displayTexts.modalLabel"
+        size="s"
+        kind="native"
+        :button-secondary-is-cancel="false"
+        :action-definitions="modalActionDefinitions"
+        @close="handleEditUrlModalClose"
+        @action-click="handleEditUrlActionClick"
+      >
+        <p class="lx-description">{{ displayTexts.modalDescription }}</p>
+        <LxTextInput
+          ref="inputLinkField"
+          v-model="inputLink"
+          :invalid="isNotLink"
+          :invalidation-message="displayTexts.invalidLinkMessage"
+        />
+      </LxModal>
+      <LxModal
+        ref="markdownImageModal"
+        id="imageModal"
+        :label="displayTexts.imageModalLabel"
+        size="s"
+        :button-secondary-is-cancel="false"
+        :action-definitions="modalActionDefinitions"
+        @close="clearModalVariables()"
+        @action-click="handleMarkdownImageActionClick"
+      >
+        <LxContentSwitcher :items="imageInputTypes" v-model="imageModalInputType" />
+        <LxForm :show-header="false" :show-footer="false">
+          <LxRow
+            :label="displayTexts.imageModalLinkDescription"
+            v-if="imageModalInputType === 'url'"
+          >
+            <LxTextInput
+              id="inputImageField"
+              ref="inputImageField"
+              v-model="inputImage"
+              :invalid="isNotImage"
+              :invalidation-message="displayTexts.invalidImageLink"
+            />
+          </LxRow>
+
+          <LxRow
+            :label="displayTexts.imageModalFileDescription"
+            v-if="imageModalInputType === 'fileUploader'"
+          >
+            <LxFileUploader
+              ref="fileUploader"
+              v-model="uploadedImage"
+              data-type="content"
+              :disabled="isDisabled"
+              :draggable="true"
+              :allowedFileExtensions="allowedFileExtensions"
+              :maxFileSize="imageMaxSize"
+              @onError="onError"
+            />
+          </LxRow>
+
+          <LxRow :label="displayTexts.imageModalAltDescription">
+            <LxTextInput id="inputAltField" v-model="inputAlt" />
+          </LxRow>
+
+          <LxRow :label="displayTexts.imageModalTitleDescription">
+            <LxTextInput id="inputTitleField" v-model="inputTitle" />
+          </LxRow>
+        </LxForm>
+      </LxModal>
 
       <div
         class="lx-input-wrapper"

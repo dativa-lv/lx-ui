@@ -1,15 +1,12 @@
 <script setup>
 import { ref, onMounted, watch, computed, onUnmounted, inject } from 'vue';
 import LxButton from '@/components/Button.vue';
-import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
-import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxLoader from '@/components/Loader.vue';
-import LxToggle from '@/components/Toggle.vue';
-import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import { lxDevUtils } from '@/utils';
+import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 
 const props = defineProps({
@@ -20,6 +17,7 @@ const props = defineProps({
   imageSize: { type: String, default: 'default' }, // default || max
   preferencesId: { type: String, default: 'lx-camera-settings' },
   labelId: { type: String, default: null },
+  actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -37,7 +35,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const system = useLx().getGlobals()?.systemId;
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'actionClick']);
 
 const model = computed({
   get() {
@@ -160,15 +158,6 @@ function handleCameraError() {
   lxDevUtils.logError('Error switching cameras', useLx().getGlobals()?.environment);
 }
 
-const cameraListDisplay = computed(() =>
-  camerasList.value.map((camera) => ({
-    ...camera,
-    id: camera.deviceId,
-    name: camera.label || camera.deviceId,
-    active: selectedCamera.value?.deviceId === camera.deviceId,
-  }))
-);
-
 async function switchCamera(val) {
   await stopStream();
   await getCameraDevices();
@@ -237,6 +226,73 @@ async function initializeCameraSettings(settingsObj) {
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
+const toolbarActions = computed(() => {
+  const actionsDefault = [];
+
+  if (props.hasFlashlightToggle && cameraHasFlashlight.value && !loading.value && !error.value) {
+    actionsDefault.push({
+      id: 'flashlight',
+      name: displayTexts.value.toggleFlashlight,
+      title: displayTexts.value.toggleFlashlight,
+      groupId: 'flashlight',
+      area: 'right',
+      kind: 'toggle',
+      value: flashlight.value,
+    });
+  }
+
+  if (camerasList.value?.length > 1) {
+    if (props.cameraSwitcherMode === 'toggle') {
+      actionsDefault.push({
+        id: 'switchCamera',
+        name: displayTexts.value.changeCamera,
+        icon: 'camera-switch',
+        groupId: 'switchCamera',
+        area: 'right',
+        disabled: error.value || loading.value,
+      });
+    } else if (props.cameraSwitcherMode === 'list') {
+      const camerasGroupId = 'camerasList';
+
+      const mainButton = {
+        id: 'changeCamera',
+        name: displayTexts.value.changeCamera,
+        icon: 'menu',
+        groupId: 'changeCamera',
+        nestedGroupId: camerasGroupId,
+        area: 'right',
+        disabled: error.value || loading.value,
+      };
+
+      const cameras = camerasList.value.map((camera) => ({
+        id: `camera-${camera.deviceId}`,
+        name: camera.label || camera.deviceId,
+        groupId: camerasGroupId,
+        active: selectedCamera.value?.deviceId === camera.deviceId,
+      }));
+
+      actionsDefault.push(mainButton, ...cameras);
+    }
+  }
+
+  const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
+
+  return [...actionsDefault, ...actionsExtra];
+});
+
+function toolbarActionClick(id, value) {
+  if (id === 'flashlight') {
+    flashlight.value = value;
+  } else if (id === 'switchCamera') {
+    switchCamera();
+  } else if (id.startsWith('camera-')) {
+    const cameraId = id.replace('camera-', '');
+    changeCamera(cameraId);
+  } else {
+    emits('actionClick', id, value);
+  }
+}
+
 watch(
   () => flashlight.value,
   (newValue) => {
@@ -297,38 +353,11 @@ onUnmounted(() => {
 
 <template>
   <div class="lx-camera" :aria-labelledby="labelledBy">
-    <LxToolbar v-if="!modelValue">
-      <template #rightArea>
-        <LxToolbarGroup v-if="hasFlashlightToggle && cameraHasFlashlight && !loading && !error">
-          <LxToggle v-model="flashlight" :tooltip="displayTexts.toggleFlashlight" />
-        </LxToolbarGroup>
-        <LxToolbarGroup v-if="camerasList?.length > 1">
-          <LxButton
-            v-if="cameraSwitcherMode === 'toggle'"
-            icon="camera-switch"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.changeCamera"
-            :disabled="error || loading"
-            @click="switchCamera()"
-          />
-          <LxDropDownMenu
-            v-if="cameraSwitcherMode === 'list'"
-            :actionDefinitions="cameraListDisplay"
-            @actionClick="(id) => changeCamera(id)"
-          >
-            <LxButton
-              :label="displayTexts.changeCamera"
-              variant="icon-only"
-              kind="ghost"
-              icon="menu"
-              tabindex="-1"
-              :disabled="error || loading"
-            />
-          </LxDropDownMenu>
-        </LxToolbarGroup>
-      </template>
-    </LxToolbar>
+    <LxToolbar
+      v-if="!modelValue"
+      :actionDefinitions="toolbarActions"
+      @actionClick="toolbarActionClick"
+    />
     <LxLoader :loading="true" v-if="loading" />
     <div v-else-if="error" class="lx-camera-error">
       <LxEmptyState
