@@ -60,7 +60,7 @@ const loaderAriaHidden = computed(() => {
 <template>
   <div class="lx-loader-wrapper" :id="id" :aria-hidden="loaderAriaHidden" :aria-label="props.label">
     <div
-      v-if="loading || kind !== 'progress' || variant !== 'default'"
+      v-if="loading || kind === 'progress'"
       :class="[
         { 'lx-loader-indeterminate': kind === 'indeterminate' },
         { 'lx-loader-progress': kind === 'progress' },
