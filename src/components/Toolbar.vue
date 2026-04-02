@@ -923,7 +923,7 @@ defineExpose({ toggleSearch });
           ref="searchInputCompact"
           role="search"
           v-model="searchStringRaw"
-          kind="default"
+          :kind="searchSide === 'server' ? 'default' : 'search'"
           :placeholder="displayTexts.placeholder"
           :disabled="disabled || loading || busy"
           @keydown.enter="serverSideSearch"

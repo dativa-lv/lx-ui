@@ -773,7 +773,6 @@
 .lx .lx-region .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-modal .lx-list-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
 .lx-modal .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
-.lx-region .lx-list-wrapper .lx-component-toolbar .second-row .lx-text-input-wrapper .lx-text-input,
 .lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-modal .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
 .lx-form-grid .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded {
