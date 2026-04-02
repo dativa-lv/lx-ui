@@ -2081,8 +2081,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">
-        <component
-          :is="LxMainHeaderDigivesLite"
+        <LxMainHeaderDigivesLite
           :userInfo="userInfo"
           :hasAvatar="hasAvatar"
           :alternative-profiles-info="alternativeProfilesInfo"
@@ -2153,7 +2152,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
             <slot name="customButtonSafePanel" />
           </template>
-        </component>
+        </LxMainHeaderDigivesLite>
       </header>
       <div class="small-nav-bar-button" v-if="userInfo">
         <div
@@ -2522,6 +2521,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           :userInfo="userInfo"
           :has-avatar="hasAvatar"
+          :nav-items="navItems"
           :nav-bar-switch="navBarSwitchBasic"
           :hideNavBar="hideNavBar"
           :systemNameShort="systemNameShort"
@@ -2631,18 +2631,6 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         />
       </nav>
       <main ref="main" class="lx-main">
-        <LxPageHeader
-          v-if="pageHeaderVisible"
-          :label="pageTitle"
-          :description="pageDescription"
-          :backLabel="pageBackLabel"
-          :backPath="pageBackPath"
-          :show-back-button="pageBackButtonVisible"
-          :breadcrumbs="pageBreadcrumbs"
-          :hide-header-text="hideHeaderText"
-          :texts="displayTexts"
-          @go-back="goBack"
-        />
         <transition name="nav">
           <slot />
         </transition>
