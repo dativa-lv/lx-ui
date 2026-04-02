@@ -271,6 +271,10 @@ defineExpose({ open, close });
               :active="action?.active"
               :disabled="action?.disabled"
               :href="action?.href"
+              :badge="action?.badge"
+              :badgeType="action?.badgeType"
+              :badgeIcon="action?.badgeIcon"
+              :badgeTitle="action?.badgeTitle"
               @click="handleActionClick(action)"
             />
           </footer>
@@ -339,6 +343,10 @@ defineExpose({ open, close });
               :active="action?.active"
               :disabled="action?.disabled"
               :href="action?.href"
+              :badge="action?.badge"
+              :badgeType="action?.badgeType"
+              :badgeIcon="action?.badgeIcon"
+              :badgeTitle="action?.badgeTitle"
               @click="handleActionClick(action)"
             />
           </footer>

@@ -4899,6 +4899,17 @@ h2.lx-section-header + p.lx-invalidation-message,
   font-feature-settings: var(--font-features-mono);
 }
 
+.lx-modal > footer.lx-button-set > .lx-button:not(#userMenuButton) .lx-badge {
+  position: static;
+  margin-left: 0.5rem;
+}
+
+.lx-modal > footer.lx-button-set > .lx-button .lx-badge .lx-badge-text {
+  max-width: 6ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (max-height: 499px) {
   .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
     position: static;

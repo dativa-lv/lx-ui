@@ -1435,7 +1435,7 @@ a.lx-button.lx-button-ghost svg {
   align-items: var(--button-modal-primary-align);
   --button-primary-gap: 0;
   --button-primary-grid-areas: 'content';
-  --button-primary-grid-template-columns: 1fr;
+  --button-primary-grid-template-columns: 1fr auto auto;
   --button-primary-grid-template-rows: 1fr;
 }
 
@@ -1443,7 +1443,7 @@ a.lx-button.lx-button-ghost svg {
   align-items: var(--button-modal-secondary-align);
   --button-secondary-gap: 0;
   --button-secondary-grid-areas: 'content';
-  --button-secondary-grid-template-columns: 1fr;
+  --button-secondary-grid-template-columns: 1fr auto auto;
   --button-secondary-grid-template-rows: 1fr;
 }
 

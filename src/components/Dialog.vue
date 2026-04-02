@@ -195,6 +195,10 @@ defineExpose({ open, close });
                 :disabled="action?.disabled"
                 :active="action?.active"
                 :href="action?.href"
+                :badge="action?.badge"
+                :badgeType="action?.badgeType"
+                :badgeIcon="action?.badgeIcon"
+                :badgeTitle="action?.badgeTitle"
                 @click="handleActionClick(action)"
               />
             </template>
