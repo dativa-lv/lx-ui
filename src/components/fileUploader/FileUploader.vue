@@ -37,6 +37,7 @@ const props = defineProps({
   hasFlashlightToggle: { type: Boolean, default: false },
   imageSize: { type: String, default: 'default' }, // default || max
   preferencesId: { type: String, default: 'lx-camera-settings' },
+  itemsStates: { type: Object, default: () => {} },
   labelId: { type: String, default: null },
   texts: {
     type: Object,
@@ -122,11 +123,15 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 // states:
 // id - id of the file
-// state - 'draft', 'loading', 'invalid'
+// state - 'draft', 'loading', 'invalid', 'busy'
 // description - description of the file
 // invalidDescription - description of invalidation
+//  loaderKind - 'indeterminate', 'progress', loader kind for busy state
+//  value - number between 0 and 100 for progress loader
+//  faked - boolean to determine if the progress value is faked
+//  fakedDuration - if faked is true, duration of the fake progress in ms
 
-const emits = defineEmits(['update:modelValue', 'onError', 'downloadFile']);
+const emits = defineEmits(['update:modelValue', 'update:itemsStates', 'onError', 'downloadFile']);
 
 const advancedFilesData = ref([]);
 const storedBase64Strings = ref([]);
@@ -134,6 +139,47 @@ const fileInput = ref(null);
 const infoModal = ref();
 const cameraModal = ref();
 const cameraPhoto = ref();
+const internalStates = ref({});
+
+function normalizeStates(value) {
+  if (!value) return {};
+
+  if (Array.isArray(value)) {
+    return value.reduce((acc, item) => {
+      if (item?.id) {
+        acc[item.id] = {
+          description: item.description,
+          invalidDescription: item.invalidDescription,
+          invalid: item.state === 'invalid',
+          busy: item.state === 'busy',
+          loading: item.state === 'loading',
+          draft: item.state === 'draft',
+        };
+      }
+      return acc;
+    }, {});
+  }
+
+  return value;
+}
+
+const states = computed({
+  get() {
+    return internalStates.value;
+  },
+  set(value) {
+    internalStates.value = normalizeStates(value);
+    emits('update:itemsStates', internalStates.value);
+  },
+});
+
+watch(
+  () => props.itemsStates,
+  (value) => {
+    internalStates.value = normalizeStates(value);
+  },
+  { immediate: true, deep: true }
+);
 
 const infoModalActionDefinitions = ref([
   {
@@ -174,14 +220,57 @@ const remainingSlots = computed(() => {
   return Math.max(0, maxLength.value - (advancedFilesData.value?.length || 0));
 });
 
-function changeState(e) {
-  advancedFilesData.value = advancedFilesData.value.map((file) => {
-    const matchingObject = e.find((obj) => obj.id === file.id);
-    if (matchingObject) {
-      return { ...file, ...matchingObject };
-    }
-    return file;
-  });
+function getStateById(id) {
+  const emptyState = {
+    state: undefined,
+    description: undefined,
+    invalidDescription: undefined,
+    loaderKind: undefined,
+    value: undefined,
+    faked: undefined,
+    fakedDuration: undefined,
+  };
+
+  const stateConfig = states.value?.[id];
+
+  if (!stateConfig) return emptyState;
+
+  if (typeof stateConfig === 'string') {
+    return { ...emptyState, state: stateConfig };
+  }
+
+  const mappedState = { ...emptyState };
+
+  if (!isNil(stateConfig.description)) mappedState.description = stateConfig.description;
+  if (!isNil(stateConfig.invalidDescription)) {
+    mappedState.invalidDescription = stateConfig.invalidDescription;
+  }
+
+  if (stateConfig.invalid) mappedState.state = 'invalid';
+  else if (stateConfig.busy) mappedState.state = 'busy';
+  else if (stateConfig.loading) mappedState.state = 'loading';
+  else if (stateConfig.draft) mappedState.state = 'draft';
+
+  if (stateConfig.loaderKind) mappedState.loaderKind = stateConfig.loaderKind;
+  if (!isNil(stateConfig.value)) mappedState.value = stateConfig.value;
+  if (stateConfig.faked) mappedState.faked = stateConfig.faked;
+  if (!isNil(stateConfig.fakedDuration)) mappedState.fakedDuration = stateConfig.fakedDuration;
+
+  return mappedState;
+}
+
+const filesWithStates = computed(() =>
+  advancedFilesData.value.map((file) => ({
+    ...file,
+    ...getStateById(file.id),
+  }))
+);
+
+/**
+ * @deprecated Use `v-model:itemsStates` instead. This exposed API will be removed in the next LX major release.
+ */
+function changeState(value) {
+  states.value = normalizeStates(value);
 }
 
 function getFiles() {
@@ -206,17 +295,21 @@ function onError(id, errorType) {
 }
 
 async function updateModel() {
-  const fileData = advancedFilesData.value.map((file) => ({
-    id: file.id,
-    name: file.name,
-    meta: file.meta,
-    content: file.content,
-    state: file.state,
-    description: file.description,
-    invalidDescription: file.invalidDescription,
-    enableDownload: file.enableDownload,
-    readOnly: file.readOnly,
-  }));
+  const fileData = advancedFilesData.value.map((file) => {
+    const stateData = getStateById(file.id);
+
+    return {
+      id: file.id,
+      name: file.name,
+      meta: file.meta,
+      content: file.content,
+      state: stateData.state ?? file.state,
+      description: stateData.description ?? file.description,
+      invalidDescription: stateData.invalidDescription ?? file.invalidDescription,
+      enableDownload: file.enableDownload,
+      readOnly: file.readOnly,
+    };
+  });
 
   emits('update:modelValue', fileData);
 }
@@ -568,6 +661,8 @@ const showCameraButton = computed(() => {
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
+// Exposed variant of setting states will be deprecated in next LX major release
+
 defineExpose({ changeState, getFiles, isUploading });
 </script>
 <template>
@@ -735,7 +830,7 @@ defineExpose({ changeState, getFiles, isUploading });
       <LxList
         v-if="readOnly || !(advancedFilesData.length === 0 && selectionKind === 'single')"
         id="FilesList"
-        :items="advancedFilesData"
+        :items="filesWithStates"
         :has-search="hasSearch && selectionKind === 'multiple'"
         listType="1"
         :texts="displayTexts"
@@ -747,13 +842,28 @@ defineExpose({ changeState, getFiles, isUploading });
             meta,
             state,
             description,
+            loaderKind,
+            value,
+            faked,
+            fakedDuration,
             invalidDescription,
             enableDownload,
             readOnly,
           }"
         >
           <FileUploaderItem
-            :customItem="{ id, name, meta, state, description, invalidDescription }"
+            :customItem="{
+              id,
+              name,
+              meta,
+              state,
+              description,
+              invalidDescription,
+              loaderKind,
+              value,
+              faked,
+              fakedDuration,
+            }"
             :mode="mode"
             :hasDownloadButton="
               isNil(enableDownload) ? hasDownloadButton : enableDownload && hasDownloadButton

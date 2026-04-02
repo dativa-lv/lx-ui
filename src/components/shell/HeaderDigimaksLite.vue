@@ -500,7 +500,7 @@ provide('insideHeader', insideHeader);
         <div class="lx-nav-header">
           <LxButton
             customClass="nav-toggle"
-            :icon="navBarSwitch ? 'menu' : 'close'"
+            icon="menu"
             :label="navBarSwitch ? displayTexts.openNavbar : displayTexts.close"
             kind="ghost"
             :badge="hasAlerts && alerts && navBarSwitch ? alerts?.length?.toString() : ''"

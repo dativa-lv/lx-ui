@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -47,19 +47,31 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['downloadFile', 'openModal', 'removeFile']);
+const isItemBusy = computed(
+  () => props.customItem.state === 'busy' || props.customItem.state === 'loading'
+);
+const loaderValue = ref(props.customItem.value);
+
+watch(
+  () => props.customItem.value,
+  (value) => {
+    loaderValue.value = value;
+  },
+  { immediate: true }
+);
 
 function downloadFile(id) {
-  if (!props.disabled && !props.loading && !props.busy) {
+  if (!props.disabled && !props.loading && !props.busy && !isItemBusy.value) {
     emits('downloadFile', id);
   }
 }
 function openModal(id) {
-  if (!props.disabled && !props.loading && !props.busy) {
+  if (!props.disabled && !props.loading && !props.busy && !isItemBusy.value) {
     emits('openModal', id);
   }
 }
 function removeFile(id) {
-  if (!props.disabled && !props.loading && !props.busy) {
+  if (!props.disabled && !props.loading && !props.busy && !isItemBusy.value) {
     emits('removeFile', id);
   }
 }
@@ -97,7 +109,7 @@ const additionalInfoTitle = computed(() => {
     class="lx-file-wrapper"
     :class="{
       'lx-invalid': props.customItem.state === 'invalid',
-      'lx-disabled': props.disabled || props.loading || props.busy,
+      'lx-disabled': props.disabled || props.loading || props.busy || isItemBusy,
     }"
     ref="wrapperContainer"
   >
@@ -105,11 +117,17 @@ const additionalInfoTitle = computed(() => {
       <div
         class="lx-list-item"
         :tabindex="
-          props.hasDownloadButton && !props.disabled && !props.loading && !props.busy ? 0 : -1
+          props.hasDownloadButton && !props.disabled && !props.loading && !props.busy && !isItemBusy
+            ? 0
+            : -1
         "
         :class="{
           'lx-list-item-interactive':
-            props.hasDownloadButton && !props.disabled && !props.loading && !props.busy,
+            props.hasDownloadButton &&
+            !props.disabled &&
+            !props.loading &&
+            !props.busy &&
+            !isItemBusy,
         }"
         :title="props.hasDownloadButton ? displayTexts.download : ''"
         @keyup.space="downloadFile(props.customItem.id)"
@@ -127,7 +145,15 @@ const additionalInfoTitle = computed(() => {
         </div>
       </div>
       <div class="lx-file-indicators" v-if="props.customItem.state">
-        <LxLoader v-if="props.customItem.state === 'loading'" :loading="true" size="s" />
+        <LxLoader
+          v-if="props.customItem.state === 'loading' || props.customItem.state === 'busy'"
+          :kind="props.customItem.loaderKind"
+          v-model="loaderValue"
+          :faked="props.customItem.faked"
+          :faked-duration="props.customItem.fakedDuration"
+          :loading="true"
+          size="s"
+        />
         <LxIcon
           v-if="props.customItem.state === 'invalid'"
           customClass="lx-invalidation-icon"
@@ -143,7 +169,7 @@ const additionalInfoTitle = computed(() => {
           icon="remove"
           :label="displayTexts.clear"
           :destructive="true"
-          :disabled="props.disabled || props.busy"
+          :disabled="props.disabled || props.busy || isItemBusy"
           :loading="props.loading"
           @click="removeFile(props.customItem.id)"
         />
@@ -205,7 +231,7 @@ const additionalInfoTitle = computed(() => {
               <LxButton
                 kind="ghost"
                 :label="displayTexts.infoButton"
-                :disabled="props.disabled || props.busy"
+                :disabled="props.disabled || props.busy || isItemBusy"
                 :loading="props.loading"
                 icon="info"
                 :variant="infoButtonVariant"
@@ -242,7 +268,7 @@ const additionalInfoTitle = computed(() => {
               v-if="props.showMeta"
               kind="ghost"
               :label="displayTexts.infoButton"
-              :disabled="props.disabled || props.busy"
+              :disabled="props.disabled || props.busy || isItemBusy"
               :loading="props.loading"
               icon="info"
               :variant="infoButtonVariant"
@@ -259,7 +285,7 @@ const additionalInfoTitle = computed(() => {
       class="lx-file-wrapper"
       :class="{
         'lx-invalid': props.customItem.state === 'invalid',
-        'lx-disabled': props.disabled || props.loading || props.busy,
+        'lx-disabled': props.disabled || props.loading || props.busy || isItemBusy,
       }"
       ref="wrapperContainer"
     >
@@ -268,12 +294,22 @@ const additionalInfoTitle = computed(() => {
         <div
           v-else
           :tabindex="
-            props.hasDownloadButton && !props.disabled && !props.loading && !props.busy ? 0 : -1
+            props.hasDownloadButton &&
+            !props.disabled &&
+            !props.loading &&
+            !props.busy &&
+            !isItemBusy
+              ? 0
+              : -1
           "
           class="lx-list-item"
           :class="{
             'lx-list-item-interactive':
-              props.hasDownloadButton && !props.disabled && !props.loading && !props.busy,
+              props.hasDownloadButton &&
+              !props.disabled &&
+              !props.loading &&
+              !props.busy &&
+              !isItemBusy,
           }"
           :title="props.hasDownloadButton ? displayTexts.download : ''"
           @keyup.space="downloadFile(props.customItem.id)"
@@ -326,6 +362,10 @@ const additionalInfoTitle = computed(() => {
         <div class="lx-file-indicators" v-if="props.customItem.state">
           <LxLoader
             v-if="props.customItem.state === 'loading' || props.customItem.state === 'busy'"
+            :kind="props.customItem.loaderKind"
+            v-model="loaderValue"
+            :faked="props.customItem.faked"
+            :faked-duration="props.customItem.fakedDuration"
             :loading="true"
             size="s"
           ></LxLoader>
@@ -341,7 +381,7 @@ const additionalInfoTitle = computed(() => {
             v-if="props.showMeta && !props.readOnly && props.mode === 'compact'"
             kind="ghost"
             variant="icon-only"
-            :disabled="props.disabled || props.busy"
+            :disabled="props.disabled || props.busy || isItemBusy"
             :loading="props.loading"
             icon="info"
             :title="displayTexts.infoButton"
@@ -354,7 +394,7 @@ const additionalInfoTitle = computed(() => {
             icon="remove"
             :title="displayTexts.clear"
             :destructive="true"
-            :disabled="props.disabled || props.busy"
+            :disabled="props.disabled || props.busy || isItemBusy"
             :loading="props.loading"
             @click="removeFile(props.customItem.id)"
           />
