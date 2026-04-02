@@ -13,6 +13,7 @@ const props = defineProps({
   icon: { type: String, default: '' },
   actionDefinitions: { type: Array, default: null },
   texts: { type: Object, default: () => ({}) },
+  announce: { type: Boolean, default: true },
 });
 
 const textsDefault = {
@@ -73,7 +74,7 @@ function handleActionClick(actionName) {
         </LxDropDownMenu>
       </div>
     </div>
-    <div aria-live="polite" role="status" class="lx-invisible">
+    <div v-if="announce" aria-live="polite" role="status" class="lx-invisible">
       {{ label }}
     </div>
   </div>

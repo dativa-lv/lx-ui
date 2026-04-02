@@ -2470,22 +2470,16 @@ onBeforeUnmount(() => {
         :actionDefinitions="emptyStateActionDefinitions"
         @actionClick="handleEmptyStateActionClick"
       />
-
-      <div
-        class="lx-empty-state"
+      <LxEmptyState
         v-if="
           searchStringClient &&
           filteredItems &&
           ((props.kind !== 'treelist' && filteredItems.length === 0) ||
             (props.kind === 'treelist' && filteredTreeItems?.length === 0))
         "
-      >
-        <div aria-live="polite" role="status" class="lx-invisible" v-if="showInvisibleBlock">
-          {{ displayTexts.notFoundSearch }} {{ JSON.stringify(searchStringClient) }}
-        </div>
-        <p>{{ displayTexts.notFoundSearch }} {{ JSON.stringify(searchStringClient) }}</p>
-      </div>
-
+        :label="displayTexts.notFoundSearch + ' ' + JSON.stringify(searchStringClient)"
+        :announce="showInvisibleBlock"
+      />
       <div class="lx-load-more-button" v-if="showLoadMore">
         <LxButton
           :label="displayTexts.loadMore"
