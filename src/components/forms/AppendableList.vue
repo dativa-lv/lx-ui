@@ -233,6 +233,7 @@ const toolbarActions = computed(() => [
   {
     id: 'add-item',
     name: displayTexts.value.addButtonLabel,
+    title: displayTexts.value.addItemButtonTooltip,
     icon: 'add-item',
     kind: 'tertiary',
   },
