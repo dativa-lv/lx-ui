@@ -80,7 +80,7 @@ Object.entries(logos).forEach(([path, image]) => {
 });
 
 export function getLogo(name, kind, size, theme = 'light') {
-  return logoMap?.[name]?.[kind]?.[theme]?.[size] || 'zzdats';
+  return logoMap?.[name]?.[kind]?.[theme]?.[size] || 'dativa';
 }
 
 export function getAltText(name) {

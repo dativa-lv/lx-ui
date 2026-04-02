@@ -3,7 +3,7 @@ import { computed, inject } from 'vue';
 import { getLogo, getAltText } from '@/utils/logoUtils';
 
 const props = defineProps({
-  value: { type: String, default: 'zzdats' },
+  value: { type: String, default: 'dativa' },
   kind: { type: String, default: 'default' }, // 'default' - 16:9 format, 'square' - 1:1 format
   size: { type: String, default: 'auto' }, // 'auto', 's', 'm', 'l'
   theme: { type: String, default: 'auto' }, // 'auto', 'light', 'dark'

@@ -1,5 +1,13 @@
 # LX/UI Migration Guide
 
+## 2.0.8 → 2.1
+
+### Breaking changes
+
+#### LxLogoDisplay
+
+The default value of the `value` prop in `LxLogoDisplay` has changed from `zzdats` to `dativa`. If you rely on the previous default (`zzdats`), you must now set it explicitly.
+
 ## 2.0.5 → 2.0.6
 
 ### Breaking changes
