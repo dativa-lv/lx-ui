@@ -4,6 +4,7 @@ export function logInfo(message, environment) {
   switch (environment) {
     case 'development':
     case 'local':
+    case 'staging':
       console.info(message);
       break;
     default:
@@ -19,6 +20,7 @@ export function logError(message, environment) {
   switch (environment) {
     case 'development':
     case 'local':
+    case 'staging':
       console.error(message);
       break;
     default:
@@ -30,6 +32,7 @@ export function logWarn(message, environment) {
   switch (environment) {
     case 'development':
     case 'local':
+    case 'staging':
       console.warn(message);
       break;
     default:
