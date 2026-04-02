@@ -127,8 +127,7 @@
 }
 
 .lx-empty {
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 0.875rem 1rem;
   min-height: var(--row-size);
   display: flex;
   align-items: center;
@@ -137,12 +136,11 @@
 }
 
 .lx-empty svg {
-  height: 1.1rem;
-  width: 1.1rem;
+  height: 1.25rem;
+  width: 1.25rem;
   display: inline-block;
   fill: var(--color-label);
   flex-shrink: 0;
-  margin-right: 1rem;
 }
 
 /*** Input padding ***/
@@ -331,6 +329,7 @@
 
 .lx .lx-layout .lx-dropdown-default-content .lx-empty > p {
   color: var(--color-label);
+  line-height: 1.25rem;
 }
 
 .lx-dropdown-default-data.dropdown-multiple,
@@ -2958,7 +2957,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-empty.additional-text {
-  padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--color-chrome);
   align-items: start;
 }
@@ -2967,11 +2965,9 @@ h2.lx-section-header + p.lx-invalidation-message,
   align-self: center;
 }
 
-
 .lx-empty.additional-text > svg {
-  margin: 0.5rem 0.5rem 0 0.3rem;
+  margin-left: 0.25rem;
 }
-
 
 .lx-autocomplete .lx-autocomplete-default-panel .lx-text-input-wrapper > .lx-value.lx-input-area > div,
 .lx-autocomplete .lx-autocomplete-default-panel .lx-text-input-wrapper > .lx-placeholder.lx-input-area > div{

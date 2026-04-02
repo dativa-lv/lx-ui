@@ -1984,6 +1984,7 @@
   border: 2px solid transparent;
   height: 5rem;
   padding: 0.25rem;
+  margin: 0;
 }
 
 .lx .lx-layout .lx-mega-menu-container ul li.primary-menu-tile > a {

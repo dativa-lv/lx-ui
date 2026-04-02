@@ -1404,7 +1404,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     role="listbox"
                   >
                     <template v-if="props.enableAdditionalText">
-                      <div class="lx-empty additional-text">
+                      <div class="lx-empty additional-text lx-aligned-row">
                         <LxIcon value="info" />
                         <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
                         <p>
@@ -1535,7 +1535,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                         !props.enableAdditionalText
                       "
                     >
-                      <div class="lx-empty">
+                      <div class="lx-empty lx-aligned-row">
                         <LxIcon value="info" />
                         <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
                         <p>
@@ -1555,7 +1555,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                         !props.enableAdditionalText
                       "
                     >
-                      <div class="lx-empty">
+                      <div class="lx-empty lx-aligned-row">
                         <LxIcon value="info" />
                         <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
                         <p>
