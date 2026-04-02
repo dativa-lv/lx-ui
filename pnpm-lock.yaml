@@ -18,6 +18,7 @@ overrides:
   rollup: 4.59.0
   flatted: 3.4.2
   picomatch: 4.0.4
+  '@xmldom/xmldom': 0.9.9
 
 importers:
 
@@ -1535,10 +1536,9 @@ packages:
     peerDependencies:
       vue: ^3.5.0
 
-  '@xmldom/xmldom@0.9.8':
-    resolution: {integrity: sha512-p96FSY54r+WJ50FIOsCOjyj/wavs8921hG5+kVMmZgKcvIKxMXHTrjNJvRgWa/zuX3B6t2lijLNFaOyuxUH+2A==}
+  '@xmldom/xmldom@0.9.9':
+    resolution: {integrity: sha512-qycIHAucxy/LXAYIjmLmtQ8q9GPnMbnjG1KXhWm9o5sCr6pOYDATkMPiTNa6/v8eELyqOQ2FsEqeoFYmgv/gJg==}
     engines: {node: '>=14.6'}
-    deprecated: this version has critical issues, please update to the latest version
 
   '@zzdats/prettier-config@1.0.0':
     resolution: {integrity: sha512-VHLMZ2YV337MvN6zoUEdRSkn6S+6C5AvFalvbqPG08trHHGUZTBuE+pJPLJgY85/0xltolMKgm0+0HQrI0yiqA==}
@@ -5535,7 +5535,7 @@ snapshots:
     dependencies:
       vue: 3.5.17(typescript@5.8.2)
 
-  '@xmldom/xmldom@0.9.8':
+  '@xmldom/xmldom@0.9.9':
     optional: true
 
   '@zzdats/prettier-config@1.0.0': {}
@@ -6481,7 +6481,7 @@ snapshots:
 
   exifreader@4.27.0:
     optionalDependencies:
-      '@xmldom/xmldom': 0.9.8
+      '@xmldom/xmldom': 0.9.9
 
   exit@0.1.2: {}
 

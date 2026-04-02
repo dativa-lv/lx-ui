@@ -795,11 +795,17 @@ function primaryColumn() {
   return clickableObject || primaryObject || columnsComputed.value[0];
 }
 
+// Used to format LxAppendableList header names correctly
+function primaryColumnDisplayAttribute() {
+  return `_lx_${primaryColumn()?.attributeName}`;
+}
+
 const rows = computed(() => {
   if (props.items) {
     let ret = objectClone([...props.items]);
 
     const primaryAttributeName = primaryColumn()?.attributeName;
+    const primaryAttributeNameHeaders = primaryColumnDisplayAttribute();
     const primaryType = primaryColumn()?.type;
 
     ret = ret.map((row) => {
@@ -812,11 +818,16 @@ const rows = computed(() => {
           return {
             ...row,
             [primaryAttributeName]: formatValueArray(row[primaryAttributeName]),
+            [primaryAttributeNameHeaders]: formatValueArray(row[primaryAttributeName]),
           };
         }
-        return { ...row, [primaryAttributeName]: row[primaryAttributeName].join(', ') };
+        return {
+          ...row,
+          [primaryAttributeName]: row[primaryAttributeName],
+          [primaryAttributeNameHeaders]: row[primaryAttributeName].join(', '),
+        };
       }
-      return row;
+      return { ...row, [primaryAttributeNameHeaders]: row[primaryAttributeName] };
     });
 
     const colCode = Object.keys(sortedColumns.value)[0];
@@ -2207,7 +2218,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
     <LxAppendableList
       :modelValue="rows"
       :expandable="true"
-      :nameAttribute="primaryColumn()?.attributeName"
+      :nameAttribute="primaryColumnDisplayAttribute()"
       kind="compact"
       :readOnly="true"
       :hasSelecting="hasSelecting"

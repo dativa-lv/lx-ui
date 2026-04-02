@@ -146,7 +146,8 @@
       "esbuild": "0.27.3",
       "rollup": "4.59.0",
       "flatted": "3.4.2",
-      "picomatch": "4.0.4"
+      "picomatch": "4.0.4",
+      "@xmldom/xmldom": "0.9.9"
     }
   },
   "peerDependencies": {
