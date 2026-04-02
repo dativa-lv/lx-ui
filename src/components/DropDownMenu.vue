@@ -267,12 +267,18 @@ function handlePanelKeydown(e) {
   switch (e.key) {
     case ' ':
     case 'Enter':
-    case 'ArrowDown':
-    case 'ArrowUp':
     case 'Home':
     case 'End':
     case 'Escape':
       e.preventDefault();
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      focusNextElementInContainer(panelRef.value);
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      focusPreviousElementInContainer(panelRef.value);
       break;
     case 'Tab':
       e.preventDefault();
@@ -298,17 +304,6 @@ function handlePanelKeyup(e) {
       } else if (panelRef.value?.contains(document.activeElement)) {
         document.activeElement.click();
       }
-      break;
-    case 'ArrowDown':
-      e.preventDefault();
-      if (document.activeElement === panelRef.value) {
-        firstFocusableElement.value?.focus();
-      }
-      focusNextElementInContainer(panelRef.value);
-      break;
-    case 'ArrowUp':
-      e.preventDefault();
-      focusPreviousElementInContainer(panelRef.value);
       break;
     case 'Home':
       e.preventDefault();
