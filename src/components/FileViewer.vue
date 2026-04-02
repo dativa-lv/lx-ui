@@ -4,11 +4,9 @@ import { ref, computed, shallowRef, watch, nextTick, onMounted, onUnmounted, pro
 import { useWindowSize, useMutationObserver } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxToolbar from '@/components/Toolbar.vue';
-import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxTextInput from '@/components/TextInput.vue';
-import LxToggle from '@/components/Toggle.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import { generateUUID, isValidFileName } from '@/utils/stringUtils';
 import LxEmptyState from '@/components/EmptyState.vue';
@@ -30,6 +28,7 @@ const props = defineProps({
   stickyHeader: { type: Boolean, default: true },
   zoomLevel: { type: Number, default: null }, //  50, 75, 100, 125, 150, 175, 200, 250, 300
   downloadType: { type: String, default: 'default' }, // "default" - component will start download, "emit" - component will emit download event
+  actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
   /** @description list of mime types that should load they library on component initialization, useful when you already know that you will use pdf viewer and want to load it as soon as possible */
   preloadLibs: { type: Array, default: () => [] },
@@ -121,7 +120,7 @@ const ZOOM_LEVELS = [50, 75, 100, 125, 150, 175, 200, 250, 300];
 const pdfjsLib = shallowRef(null);
 const loadingPdfjs = ref(false);
 
-const emits = defineEmits(['download']);
+const emits = defineEmits(['download', 'actionClick']);
 
 async function loadPdfLib() {
   if (!pdfjsLib.value) {
@@ -911,26 +910,47 @@ const isZoomOutDisabled = computed(() => {
 });
 
 const toolbarActions = computed(() => {
-  const buttons = [];
+  const actionsDefault = [];
+
+  if (pdf.value) {
+    actionsDefault.push({
+      id: 'pagination',
+      kind: 'slot',
+      groupId: 'pagination',
+      area: 'right',
+    });
+  }
 
   if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
-    buttons.push({
+    actionsDefault.push({
+      id: 'grabToScroll',
+      name: dragToScrollMode.value
+        ? displayTexts.value.grabToScrollTrue
+        : displayTexts.value.grabToScrollFalse,
+      groupId: 'grabToScroll',
+      area: 'right',
+      kind: 'toggle',
+      value: dragToScrollMode.value,
+      texts: {
+        valueYes: displayTexts.value.grabToScrollTrue,
+        valueNo: displayTexts.value.grabToScrollFalse,
+      },
+    });
+    actionsDefault.push({
       id: 'fitToHeight',
       name: displayTexts.value.fitToHeight,
       icon: 'fit-to-height',
-      active: fitType.value === 'fit-to-height',
-      groupId: '4',
+      groupId: 'fit',
       area: 'right',
-      loading: renderingInProgress.value,
+      active: fitType.value === 'fit-to-height',
     });
-    buttons.push({
+    actionsDefault.push({
       id: 'fitToWidth',
       name: displayTexts.value.fitToWidth,
       icon: 'fit-to-width',
-      active: fitType.value === 'fit-to-width',
-      groupId: '4',
+      groupId: 'fit',
       area: 'right',
-      loading: renderingInProgress.value,
+      active: fitType.value === 'fit-to-width',
     });
   }
 
@@ -940,75 +960,57 @@ const toolbarActions = computed(() => {
     supportedFileType.value === 'SVG' ||
     supportedFileType.value === 'Binary'
   ) {
-    buttons.push({
+    actionsDefault.push({
       id: 'zoomIn',
       name: displayTexts.value.zoomIn,
       icon: 'zoom-in',
-      groupId: '1',
+      groupId: 'zoom',
       area: 'right',
       disabled: isZoomInDisabled.value,
-      loading: renderingInProgress.value,
     });
-    buttons.push({
+    actionsDefault.push({
       id: 'zoomOut',
       name: displayTexts.value.zoomOut,
       icon: 'zoom-out',
-      groupId: '1',
+      groupId: 'zoom',
       area: 'right',
       disabled: isZoomOutDisabled.value,
-      loading: renderingInProgress.value,
     });
   }
 
   if (props.showPrintButton) {
-    buttons.push({
+    actionsDefault.push({
       id: 'print',
       name: displayTexts.value.print,
       icon: 'print',
-      groupId: '5',
+      groupId: 'print',
       area: 'right',
-      loading: renderingInProgress.value,
     });
   }
 
-  if (!props.primaryDownloadButton) {
-    buttons.push({
-      id: 'download',
-      name: displayTexts.value.download,
-      icon: 'download',
-      groupId: '3',
-      area: 'right',
-      loading: renderingInProgress.value,
-      busy: downloadInProgress.value,
-    });
-  }
+  actionsDefault.push({
+    id: 'download',
+    name: displayTexts.value.download,
+    icon: 'download',
+    groupId: 'download',
+    area: 'right',
+    kind: props.primaryDownloadButton ? 'primary' : 'ghost',
+    busy: downloadInProgress.value,
+  });
 
   if (props.showFullScreenButton) {
-    buttons.push({
+    actionsDefault.push({
       id: 'fullscreen',
       name: isExpanded.value ? displayTexts.value.collapse : displayTexts.value.expand,
       icon: isExpanded.value ? 'collapse' : 'expand',
-      groupId: '2',
+      groupId: 'fullscreen',
       area: 'right',
-      loading: renderingInProgress.value,
     });
   }
 
-  if (props.primaryDownloadButton && windowWidth.value > 800) {
-    buttons.push({
-      id: 'download',
-      name: displayTexts.value.download,
-      icon: 'download',
-      groupId: '3',
-      area: 'right',
-      kind: 'primary',
-      label: displayTexts.value.download,
-      loading: renderingInProgress.value,
-      busy: downloadInProgress.value,
-    });
-  }
+  const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
 
-  return buttons;
+  return [...actionsDefault, ...actionsExtra];
 });
 
 function changeImageSize(action) {
@@ -1406,18 +1408,18 @@ async function print(printType, dpi = 300, allPages = true) {
   }
 }
 
-function toolbarActionClick(action) {
-  switch (action) {
+function toolbarActionClick(id, value) {
+  switch (id) {
     case 'zoomOut':
     case 'zoomIn':
       if (supportedFileType.value === 'PDF') {
-        zoom(action);
+        zoom(id);
       }
       if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
-        changeImageSize(action);
+        changeImageSize(id);
       }
       if (supportedFileType.value === 'Binary') {
-        changeTextSize(action);
+        changeTextSize(id);
       }
       break;
     case 'fullscreen':
@@ -1428,7 +1430,7 @@ function toolbarActionClick(action) {
       break;
     case 'fitToHeight':
     case 'fitToWidth':
-      changeFitType(action);
+      changeFitType(id);
       break;
     case 'grabToScroll':
       dragToScrollMode.value = !dragToScrollMode.value;
@@ -1445,16 +1447,13 @@ function toolbarActionClick(action) {
       }
       break;
     default:
+      emits('actionClick', id, value);
       break;
   }
 }
 
 const inlineSize = computed(() =>
   isExpanded.value ? {} : { width: props.width, height: props.height }
-);
-
-const showToolbarPrimaryDownloadButton = computed(
-  () => props.primaryDownloadButton && windowWidth.value <= 800
 );
 
 const insideFullscreenOverlay = computed(() => isExpanded.value);
@@ -1602,112 +1601,83 @@ onUnmounted(() => {
 
     <LxToolbar
       v-if="supportedFileType"
-      :action-definitions="toolbarActions"
       class="lx-file-viewer-toolbar"
+      :loading="renderingInProgress"
+      :actionDefinitions="toolbarActions"
       :texts="displayTexts"
-      @action-click="toolbarActionClick"
+      @actionClick="toolbarActionClick"
     >
-      <template #rightArea>
-        <LxToolbarGroup v-if="pdf">
-          <LxButton
-            :id="`${id}-action-first-page`"
-            icon="first-page"
-            @click="firstPage"
-            kind="ghost"
+      <template #pagination>
+        <LxButton
+          :id="`${id}-action-first-page`"
+          icon="first-page"
+          @click="firstPage"
+          kind="ghost"
+          variant="icon-only"
+          :label="displayTexts.firstPage"
+          :disabled="isPrevBtnDisabled"
+        />
+        <LxButton
+          :id="`${id}-action-previous-page`"
+          icon="previous-page"
+          @click="debouncedPrevPage"
+          kind="ghost"
+          variant="icon-only"
+          :label="displayTexts.prevPage"
+          :disabled="isPrevBtnDisabled"
+        />
+        <div class="pdf-page-input" ref="pageInputWrapper">
+          <div
+            class="placeholder"
+            v-if="!showInput || renderingInProgress"
+            tabindex="0"
             variant="icon-only"
-            :label="displayTexts.firstPage"
-            :disabled="isPrevBtnDisabled"
-          />
-
-          <LxButton
-            :id="`${id}-action-previous-page`"
-            icon="previous-page"
-            @click="debouncedPrevPage"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.prevPage"
-            :disabled="isPrevBtnDisabled"
-          />
-
-          <div class="pdf-page-input" ref="pageInputWrapper">
-            <div
-              class="placeholder"
-              v-if="!showInput || renderingInProgress"
-              tabindex="0"
-              variant="icon-only"
-              :label="displayTexts.inputTooltip"
-              @click="handlePlaceholderClick"
-              @keydown.enter="handlePlaceholderClick"
-            >
-              {{ currentPage }} / {{ totalPages }}
-            </div>
-
-            <LxTextInput
-              v-if="showInput && !renderingInProgress"
-              ref="inputRef"
-              mask="integer"
-              v-model.number="inputPage"
-              @keydown.enter="goToPage"
-            />
-
-            <LxButton
-              :id="`${id}-action-selected-page`"
-              icon="arrow-right"
-              @click="goToPage"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.goToPage"
-              :disabled="!showInput || renderingInProgress"
-            />
+            :label="displayTexts.inputTooltip"
+            @click="handlePlaceholderClick"
+            @keydown.enter="handlePlaceholderClick"
+          >
+            {{ currentPage }} / {{ totalPages }}
           </div>
-
-          <div class="pdf-page-indicator">
-            <div class="placeholder" :title="displayTexts.inputTooltip">
-              {{ currentPage }} / {{ totalPages }}
-            </div>
+          <LxTextInput
+            v-if="showInput && !renderingInProgress"
+            ref="inputRef"
+            mask="integer"
+            v-model.number="inputPage"
+            @keydown.enter="goToPage"
+          />
+          <LxButton
+            :id="`${id}-action-selected-page`"
+            icon="arrow-right"
+            @click="goToPage"
+            kind="ghost"
+            variant="icon-only"
+            :label="displayTexts.goToPage"
+            :disabled="!showInput || renderingInProgress"
+          />
+        </div>
+        <div class="pdf-page-indicator">
+          <div class="placeholder" :title="displayTexts.inputTooltip">
+            {{ currentPage }} / {{ totalPages }}
           </div>
-
-          <LxButton
-            :id="`${id}-action-next-page`"
-            icon="next-page"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.nextPage"
-            :disabled="isNextBtnDisabled"
-            @click="debouncedNextPage"
-          />
-
-          <LxButton
-            :id="`${id}-action-last-page`"
-            icon="last-page"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.lastPage"
-            :disabled="isNextBtnDisabled"
-            @click="lastPage"
-          />
-
-          <LxButton
-            v-if="showToolbarPrimaryDownloadButton"
-            :id="`${id}-action-download`"
-            icon="download"
-            kind="primary"
-            :label="displayTexts.download"
-            :variant="windowWidth >= 540 ? 'default' : 'icon-only'"
-            :disabled="renderingInProgress"
-            @click="downloadFile()"
-          />
-        </LxToolbarGroup>
-
-        <LxToolbarGroup v-if="supportedFileType === 'Image' || supportedFileType === 'SVG'">
-          <LxToggle
-            v-model="dragToScrollMode"
-            :texts="{
-              valueYes: displayTexts.grabToScrollTrue,
-              valueNo: displayTexts.grabToScrollFalse,
-            }"
-          />
-        </LxToolbarGroup>
+        </div>
+        <LxButton
+          :id="`${id}-action-next-page`"
+          icon="next-page"
+          kind="ghost"
+          variant="icon-only"
+          :label="displayTexts.nextPage"
+          :disabled="isNextBtnDisabled"
+          @click="debouncedNextPage"
+        />
+        <LxButton
+          :id="`${id}-action-last-page`"
+          icon="last-page"
+          kind="ghost"
+          variant="icon-only"
+          :label="displayTexts.lastPage"
+          :disabled="isNextBtnDisabled"
+          @click="lastPage"
+        />
       </template>
     </LxToolbar>
 

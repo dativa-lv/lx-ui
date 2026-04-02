@@ -2,18 +2,24 @@
 
 The prop `actionDefinitions` is available for following components:
 - LxAppendableList
+- LxCamera
 - LxDataBlock
 - LxDataGrid
 - LxDialog
+- LxDrawPad
 - LxDropDownMenu
 - LxEmptyState
 - LxErrorPage
+- LxFileViewer
 - LxForm
 - LxInfoBox
 - LxList
 - LxListItem
+- LxMap
+- LxMarkdownTextArea
 - LxModal
 - LxModalForm
+- LxQrScanner
 - LxRow
 - LxSection
 - LxToolbar

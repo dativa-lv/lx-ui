@@ -2,10 +2,9 @@
 import { ref, onMounted, nextTick, computed, watch, inject } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
-import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxLoader from '@/components/Loader.vue';
-import LxToggle from '@/components/Toggle.vue';
+import LxToolbar from '@/components/Toolbar.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
@@ -19,6 +18,7 @@ const props = defineProps({
   hasFlashlightToggle: { type: Boolean, default: false },
   showAlerts: { type: Boolean, default: true },
   labelId: { type: String, default: null },
+  actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -39,7 +39,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update', 'error']);
+const emits = defineEmits(['update', 'error', 'actionClick']);
 
 const accepted = ref(false);
 const error = ref(false);
@@ -108,15 +108,6 @@ const getCameraDevices = async () => {
     emits('error', error_);
   }
 };
-
-const cameraListDisplay = computed(() =>
-  camerasList.value.map((camera) => ({
-    ...camera,
-    id: camera.deviceId,
-    name: camera.label || camera.deviceId,
-    active: selectedCamera.value?.deviceId === camera.deviceId,
-  }))
-);
 
 const showPreview = ref(false);
 
@@ -201,6 +192,81 @@ async function loadQrReader() {
   QrcodeCapture = lib.QrcodeCapture;
 }
 
+const toolbarActions = computed(() => {
+  const actionsDefault = [];
+
+  if (!torchNotSupported.value && props.hasFlashlightToggle) {
+    actionsDefault.push({
+      id: 'flashlight',
+      name: displayTexts.value.toggleFlashlight,
+      title: displayTexts.value.toggleFlashlight,
+      groupId: 'flashlight',
+      area: 'right',
+      kind: 'toggle',
+      value: torch.value,
+    });
+  }
+
+  if (props.hasFileUploader) {
+    actionsDefault.push({
+      id: 'scanFile',
+      name: displayTexts.value.scanFile,
+      icon: 'documents',
+      groupId: 'scanFile',
+      area: 'right',
+    });
+  }
+
+  if (camerasList.value?.length > 1) {
+    if (props.cameraSwitcherMode === 'toggle') {
+      actionsDefault.push({
+        id: 'switchCamera',
+        name: displayTexts.value.changeCamera,
+        icon: 'camera-switch',
+        groupId: 'switchCamera',
+        area: 'right',
+      });
+    } else if (props.cameraSwitcherMode === 'list') {
+      const camerasGroupId = 'camerasList';
+
+      const mainButton = {
+        id: 'changeCamera',
+        name: displayTexts.value.changeCamera,
+        icon: 'menu',
+        groupId: 'changeCamera',
+        nestedGroupId: camerasGroupId,
+        area: 'right',
+      };
+
+      const cameras = camerasList.value.map((camera) => ({
+        id: `camera-${camera.deviceId}`,
+        name: camera.label || camera.deviceId,
+        groupId: camerasGroupId,
+        active: selectedCamera.value?.deviceId === camera.deviceId,
+      }));
+
+      actionsDefault.push(mainButton, ...cameras);
+    }
+  }
+
+  const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
+
+  return [...actionsDefault, ...actionsExtra];
+});
+
+function toolbarActionClick(id, value) {
+  if (id === 'scanFile') {
+    openCapture();
+  } else if (id === 'switchCamera') {
+    switchCamera();
+  } else if (id.startsWith('camera-')) {
+    const cameraId = id.replace('camera-', '');
+    changeCamera(cameraId);
+  } else {
+    emits('actionClick', id, value);
+  }
+}
+
 onMounted(async () => {
   await getCameraDevices();
   await loadQrReader();
@@ -214,46 +280,12 @@ onMounted(async () => {
     :class="{ 'drag-over': dragOver }"
     :aria-labelledby="labelledBy"
   >
-    <div
-      class="lx-toolbar lx-qr-scanner-toolbar"
+    <LxToolbar
       v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"
-    >
-      <LxToggle
-        v-model="torch"
-        v-if="!torchNotSupported && hasFlashlightToggle"
-        :tooltip="displayTexts.toggleFlashlight"
-      />
-      <LxButton
-        variant="icon-only"
-        :label="displayTexts.scanFile"
-        kind="ghost"
-        icon="documents"
-        :disabled="refreshError || accepted || error"
-        @click="openCapture"
-        v-if="hasFileUploader"
-      />
-      <LxButton
-        v-if="camerasList?.length > 1 && cameraSwitcherMode === 'toggle'"
-        icon="camera-switch"
-        kind="ghost"
-        variant="icon-only"
-        :label="displayTexts.changeCamera"
-        @click="switchCamera()"
-      />
-      <LxDropDownMenu
-        v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'"
-        :actionDefinitions="cameraListDisplay"
-        @actionClick="(id) => changeCamera(id)"
-      >
-        <LxButton
-          :label="displayTexts.changeCamera"
-          variant="icon-only"
-          kind="ghost"
-          icon="menu"
-          tabindex="-1"
-        />
-      </LxDropDownMenu>
-    </div>
+      :disabled="loading || error || refreshError || accepted"
+      :actionDefinitions="toolbarActions"
+      @actionClick="toolbarActionClick"
+    />
     <div class="lx-qr-scanner">
       <Transition name="fade">
         <QrcodeStream

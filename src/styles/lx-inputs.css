@@ -4073,7 +4073,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 /*** LxFileViewer styles ***/
 
 .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
-  max-height: var(--nav-row-size);
   position: sticky;
   top: var(--nav-row-size);
   background-color: var(--color-region);
@@ -4091,7 +4090,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-file-viewer:not(.lx-file-viewer-fullscreen) {
   position: relative;
   display: grid;
-  grid-template-rows: var(--row-size) 1fr;
+  grid-template-rows: auto 1fr;
 }
 
 .lx-file-viewer.lx-file-viewer-fullscreen .lx-pdf-canvas-wrapper {
@@ -4690,19 +4689,11 @@ h2.lx-section-header + p.lx-invalidation-message,
   clear: both;
 }
 
-
-.lx-file-viewer-toolbar .lx-toggle-wrapper {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}
-
-
 .lx-file-viewer .lx-img-wrapper.lx-img-wrapper-fullscreen,
 .lx-file-viewer .lx-binary-wrapper.lx-binary-wrapper-fullscreen {
   overflow: auto;
   grid-row: 2 / 2;
 }
-
 
 .lx-img-wrapper.lx-img-wrapper-fullscreen img {
   max-width: none;

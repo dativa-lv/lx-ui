@@ -249,7 +249,6 @@ const toolbarActions = computed(() => {
         icon: 'camera-switch',
         groupId: 'switchCamera',
         area: 'right',
-        disabled: error.value || loading.value,
       });
     } else if (props.cameraSwitcherMode === 'list') {
       const camerasGroupId = 'camerasList';
@@ -261,7 +260,6 @@ const toolbarActions = computed(() => {
         groupId: 'changeCamera',
         nestedGroupId: camerasGroupId,
         area: 'right',
-        disabled: error.value || loading.value,
       };
 
       const cameras = camerasList.value.map((camera) => ({
@@ -355,6 +353,7 @@ onUnmounted(() => {
   <div class="lx-camera" :aria-labelledby="labelledBy">
     <LxToolbar
       v-if="!modelValue"
+      :disabled="error || loading"
       :actionDefinitions="toolbarActions"
       @actionClick="toolbarActionClick"
     />
