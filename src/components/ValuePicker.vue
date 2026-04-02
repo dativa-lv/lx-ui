@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref, inject } from 'vue';
-import { generateUUID } from '@/utils/stringUtils';
+import { generateUUID, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
@@ -52,20 +52,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const emits = defineEmits(['update:modelValue']);
 
 const stringifiedItems = computed(() =>
-  props.items?.map((item) => {
-    if (!item || typeof item !== 'object' || Array.isArray(item)) {
-      return item;
-    }
-
-    const id = item[props.idAttribute];
-    if (typeof id === 'number') {
-      return {
-        ...item,
-        [props.idAttribute]: String(id),
-      };
-    }
-    return item;
-  })
+  stringifyItemsByIdAttribute(props.items, props.idAttribute)
 );
 
 function isDropdownVariant() {

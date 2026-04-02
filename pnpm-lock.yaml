@@ -30,6 +30,9 @@ importers:
       '@floating-ui/vue':
         specifier: ^1.1.6
         version: 1.1.6(vue@3.5.17(typescript@5.8.2))
+      '@tanstack/vue-virtual':
+        specifier: 3.13.21
+        version: 3.13.21(vue@3.5.17(typescript@5.8.2))
       '@tiptap/core':
         specifier: 2.11.3
         version: 2.11.3(@tiptap/pm@2.1.12)
@@ -1065,6 +1068,14 @@ packages:
 
   '@sinonjs/fake-timers@10.3.0':
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
+
+  '@tanstack/virtual-core@3.13.21':
+    resolution: {integrity: sha512-ww+fmLHyCbPSf7JNbWZP3g7wl6SdNo3ah5Aiw+0e9FDErkVHLKprYUrwTm7dF646FtEkN/KkAKPYezxpmvOjxw==}
+
+  '@tanstack/vue-virtual@3.13.21':
+    resolution: {integrity: sha512-zneUNdQTcUhoDl6+ek+/O4S9gSZRAc2q7VLscZ4WZnFfZcHc3M7OyVCfSDC3hGuwFqzfL8Cx5bZF6zbGCYwXmw==}
+    peerDependencies:
+      vue: ^2.7.0 || ^3.0.0
 
   '@testing-library/dom@9.3.4':
     resolution: {integrity: sha512-FlS4ZWlp97iiNWig0Muq8p+3rVDjRiYE+YKGbAqXOu9nwJFFOdL00kFpz42M+4huzYi86vAK1sOOfyOG45muIQ==}
@@ -4995,6 +5006,13 @@ snapshots:
   '@sinonjs/fake-timers@10.3.0':
     dependencies:
       '@sinonjs/commons': 3.0.1
+
+  '@tanstack/virtual-core@3.13.21': {}
+
+  '@tanstack/vue-virtual@3.13.21(vue@3.5.17(typescript@5.8.2))':
+    dependencies:
+      '@tanstack/virtual-core': 3.13.21
+      vue: 3.5.17(typescript@5.8.2)
 
   '@testing-library/dom@9.3.4':
     dependencies:

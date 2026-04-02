@@ -94,6 +94,11 @@ const libraryLoaders = {
     return module.default || module;
   },
 
+  vueVirtual: async () => {
+    const module = await import('@tanstack/vue-virtual');
+    return module;
+  },
+
   marked: async () => {
     const module = await import('marked');
     return module;

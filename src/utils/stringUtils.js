@@ -188,3 +188,21 @@ export function kebabToCamel(kebabStr) {
     })
     .join('');
 }
+
+export function stringifyItemsByIdAttribute(items, idAttribute = 'id') {
+  return items?.map((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) {
+      return item;
+    }
+
+    const id = item[idAttribute];
+    if (typeof id === 'number') {
+      return {
+        ...item,
+        [idAttribute]: String(id),
+      };
+    }
+
+    return item;
+  });
+}

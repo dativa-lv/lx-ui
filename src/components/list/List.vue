@@ -1,12 +1,15 @@
-<script setup>
-import { ref, computed, watch, onMounted, nextTick, inject, onBeforeUnmount } from 'vue';
-
-import useLx from '@/hooks/useLx';
-import { generateUUID, foldToAscii } from '@/utils/stringUtils';
-import { lxDevUtils } from '@/utils';
-import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
-import { loadLibrary } from '@/utils/libLoader';
-
+<script setup lang="ts">
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  nextTick,
+  inject,
+  onBeforeUnmount,
+  shallowRef,
+  effectScope,
+} from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxExpander from '@/components/Expander.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -21,6 +24,11 @@ import LxTreeList from '@/components/list/TreeList.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
+import useLx from '@/hooks/useLx';
+import { generateUUID, foldToAscii, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
+import { lxDevUtils } from '@/utils';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import { loadLibrary } from '@/utils/libLoader';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -65,6 +73,7 @@ const props = defineProps({
   searchMode: { type: String, default: 'default' }, // default, compact
   labelId: { type: String, default: null },
   hasSkipLink: { type: Boolean, default: false },
+  hasVirtualization: { type: Boolean, default: true },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -129,6 +138,7 @@ const emits = defineEmits([
 const UNSPECIFIED_GROUP_CODE = 'lx_list_nullable_group';
 const BASE_WIDTH = 300; // minimum space for layout
 const WIDTH_PER_ACTION = 120; // average button width
+const VIRTUALIZED_ESTIMATED_ITEM_HEIGHT = 72;
 
 const responsiveGroupDefinitions = ref(props.groupDefinitions);
 const itemsArray = ref([]);
@@ -144,11 +154,17 @@ const listWrapper = ref(null);
 const toolbarRef = ref(null);
 const isNarrow = ref(false);
 
-let invisibleBlockTimeout;
-let observer;
+const defaultListRef = ref(null);
+const defaultListScrollMargin = ref(0);
+const defaultListGap = ref(8);
+const defaultListVirtualizer = shallowRef(null);
 
 const searchStringClient = ref(props.searchSide === 'client' ? props.searchString : '');
 const searchStringServer = ref(props.searchSide === 'server' ? props.searchString : '');
+
+let invisibleBlockTimeout;
+let observer;
+let virtualizerScope = null;
 
 const reactiveSearchString = computed({
   get() {
@@ -159,13 +175,8 @@ const reactiveSearchString = computed({
   },
 });
 
-// Convert item id's to strings
-const itemsWithStringIds = computed(() =>
-  props.items?.map((item) => ({
-    // @ts-ignore
-    ...item,
-    [props.idAttribute]: String(item[props.idAttribute]),
-  }))
+const stringifiedItems = computed(() =>
+  stringifyItemsByIdAttribute(props.items, props.idAttribute)
 );
 
 function prepareCode(value) {
@@ -182,7 +193,7 @@ watch(
 function validate() {
   let res = false;
   const mapUnique = new Map();
-  itemsWithStringIds.value?.forEach((x) => {
+  stringifiedItems.value?.forEach((x) => {
     if (mapUnique.has(x[props.idAttribute])) {
       res = true;
     } else {
@@ -208,13 +219,91 @@ function handleActionClick(actionName, rowCode) {
 }
 
 const filteredItems = computed(() => {
-  if (itemsWithStringIds.value) {
-    return itemsWithStringIds.value.filter(
+  if (stringifiedItems.value) {
+    return stringifiedItems.value.filter(
       (o) => isFiltered(o[props.nameAttribute]) || isFiltered(o[props.descriptionAttribute])
     );
   }
   return [];
 });
+
+const normalizedListType = computed(() => {
+  const listType = `${props.listType}`;
+  if (['1', '2', '3'].includes(listType)) return listType;
+  return '1';
+});
+
+const wantsDefaultListVirtualization = computed(
+  () =>
+    props.hasVirtualization &&
+    props.kind === 'default' &&
+    !props.groupDefinitions &&
+    normalizedListType.value === '1'
+);
+
+async function loadVueVirtual() {
+  const lib = await loadLibrary('vueVirtual');
+  if (virtualizerScope) virtualizerScope.stop();
+  virtualizerScope = effectScope();
+  virtualizerScope.run(() => {
+    defaultListVirtualizer.value = lib.useWindowVirtualizer({
+      get count() {
+        if (!wantsDefaultListVirtualization.value) return 0;
+        return filteredItems.value?.length || 0;
+      },
+      getItemKey: (index) => filteredItems.value?.[index]?.[props.idAttribute] ?? index,
+      get scrollMargin() {
+        return defaultListScrollMargin.value;
+      },
+      estimateSize: () => VIRTUALIZED_ESTIMATED_ITEM_HEIGHT,
+      get gap() {
+        return defaultListGap.value;
+      },
+      overscan: 6, // The number of items to render above and below the visible area
+    });
+  });
+}
+
+const shouldVirtualizeDefaultList = computed(
+  () => wantsDefaultListVirtualization.value && !!defaultListVirtualizer.value
+);
+
+const defaultListRows = computed(() => {
+  const vRef = defaultListVirtualizer.value;
+  if (!vRef) return [];
+  return vRef.value
+    .getVirtualItems()
+    .map((virtualRow) => ({
+      virtualRow,
+      item: filteredItems.value?.[virtualRow.index],
+    }))
+    .filter((row) => row.item);
+});
+
+const defaultListTotalSize = computed(() => {
+  const vRef = defaultListVirtualizer.value;
+  if (!vRef) return 0;
+  return vRef.value.getTotalSize();
+});
+
+function updateDefaultListScrollOffset() {
+  if (!shouldVirtualizeDefaultList.value || !defaultListRef.value) return;
+  const computedStyle = window.getComputedStyle(defaultListRef.value);
+  const rowGap = Number.parseFloat(computedStyle.rowGap || computedStyle.gap || '0');
+  defaultListGap.value = Number.isFinite(rowGap) ? rowGap : 0;
+  defaultListScrollMargin.value = defaultListRef.value.getBoundingClientRect().top + window.scrollY;
+}
+
+function handleDefaultListResize() {
+  if (!shouldVirtualizeDefaultList.value) return;
+  updateDefaultListScrollOffset();
+  defaultListVirtualizer.value?.value.measure();
+}
+
+function measureDefaultListRow(element) {
+  if (!shouldVirtualizeDefaultList.value || !element) return;
+  defaultListVirtualizer.value?.value.measureElement(element);
+}
 
 function findObjectById(array) {
   const res = [];
@@ -233,8 +322,8 @@ function findObjectById(array) {
 
 const filteredTreeItems = computed(() => {
   let res = [];
-  if (itemsWithStringIds.value) {
-    res = findObjectById(itemsWithStringIds.value);
+  if (stringifiedItems.value) {
+    res = findObjectById(stringifiedItems.value);
   }
   return res;
 });
@@ -270,13 +359,13 @@ function processTreeItems(items, addGroup = true) {
   return res;
 }
 
-const treeItemsWithGroups = computed(() => processTreeItems(itemsWithStringIds.value, true));
+const treeItemsWithGroups = computed(() => processTreeItems(stringifiedItems.value, true));
 const treeItems = computed(() =>
-  processTreeItems(itemsWithStringIds.value, searchStringClient.value.length > 0)
+  processTreeItems(stringifiedItems.value, searchStringClient.value.length > 0)
 );
 
 const filteredGroupedItems = computed(() => {
-  let listItems = itemsWithStringIds.value;
+  let listItems = stringifiedItems.value;
 
   if (props.kind === 'treelist') {
     listItems = treeItems.value;
@@ -301,7 +390,7 @@ function loadMore() {
 }
 
 function fillItemsArray() {
-  let listItems = itemsWithStringIds.value;
+  let listItems = stringifiedItems.value;
   if (!props.groupDefinitions) return listItems;
 
   if (props.kind === 'treelist' && searchStringClient.value.length > 0) {
@@ -328,11 +417,11 @@ function fillItemsArray() {
 }
 
 function convertItemsArray() {
-  if (!props.groupDefinitions) return itemsWithStringIds.value;
+  if (!props.groupDefinitions) return stringifiedItems.value;
 
   const array = Object.keys(itemsArray.value).reduce((acc, key) => {
     const items = itemsArray.value[key].map((item) => {
-      const originalItem = itemsWithStringIds.value.find(
+      const originalItem = stringifiedItems.value.find(
         (original) => original[props.idAttribute] === item[props.idAttribute]
       );
       if (originalItem && props.orderAttribute in originalItem) {
@@ -416,6 +505,32 @@ function search(string) {
   }
 }
 
+watch(filteredItems, () => {
+  if (!shouldVirtualizeDefaultList.value) return;
+  nextTick(() => {
+    updateDefaultListScrollOffset();
+    defaultListVirtualizer.value?.value.measure();
+  });
+});
+
+watch(shouldVirtualizeDefaultList, (isEnabled) => {
+  if (!isEnabled) return;
+  nextTick(() => {
+    updateDefaultListScrollOffset();
+    defaultListVirtualizer.value?.value.measure();
+  });
+});
+
+watch(
+  wantsDefaultListVirtualization,
+  async (wants) => {
+    if (wants && !defaultListVirtualizer.value) {
+      await loadVueVirtual();
+    }
+  },
+  { immediate: true }
+);
+
 watch(
   [filteredItems, filteredTreeItems],
   () => {
@@ -471,7 +586,7 @@ function setListOrders() {
 
 function prepareUnGroupedItemsArray() {
   return ungroupedItemsArray.value.map((item) => {
-    const originalItem = itemsWithStringIds.value.find(
+    const originalItem = stringifiedItems.value.find(
       (propsItem) => propsItem[props.idAttribute] === item[props.idAttribute]
     );
 
@@ -713,7 +828,7 @@ const selectedItems = computed(() => {
           (item) => item[props.idAttribute]?.toString() === key?.toString()
         );
       } else {
-        isKeyValid = itemsWithStringIds?.value.some((item) => item[props.idAttribute] === key);
+        isKeyValid = stringifiedItems?.value.some((item) => item[props.idAttribute] === key);
       }
 
       if (isKeyValid) {
@@ -748,14 +863,14 @@ const isSelectable = (item) => {
   return item?.[attribute] !== false;
 };
 
-const selectableItems = computed(() => itemsWithStringIds.value?.filter(isSelectable));
+const selectableItems = computed(() => stringifiedItems.value?.filter(isSelectable));
 const selectableTreeItems = computed(() =>
   treeItemsWithGroups.value?.filter((item) => isSelectable(item))
 );
 
 const hasSelectableItemsInGroup = computed(() => {
   const selectableItemsMap = {};
-  let listItems = itemsWithStringIds.value;
+  let listItems = stringifiedItems.value;
   if (props.kind === 'treelist') {
     listItems = treeItemsWithGroups.value;
   }
@@ -811,7 +926,7 @@ function selectRows(arr = null) {
       );
     } else {
       selectedItemsRaw.value = arrayToObject(
-        filterSelectable(itemsWithStringIds.value)?.map((x) => x?.[props.idAttribute]?.toString())
+        filterSelectable(stringifiedItems.value)?.map((x) => x?.[props.idAttribute]?.toString())
       );
     }
   } else {
@@ -828,7 +943,7 @@ function cancelSelection() {
 const isItemSelected = (itemId) => !!selectedItemsRaw.value[itemId];
 
 const selectedLabel = computed(() => {
-  const selectableCount = itemsWithStringIds.value?.length?.toString();
+  const selectableCount = stringifiedItems.value?.length?.toString();
   const selectableTreeListItems = treeItems.value?.length?.toString();
   const selectedCount = selectedItems.value?.length;
   const selectedCountDisplay = selectedCount?.toString();
@@ -881,7 +996,7 @@ function loadChildren(id) {
 
 const groupSelectionStatuses = computed(() => {
   const res = {};
-  let listItems = itemsWithStringIds.value;
+  let listItems = stringifiedItems.value;
   if (props.kind === 'treelist') {
     listItems = treeItemsWithGroups.value;
   }
@@ -910,7 +1025,7 @@ function selectSection(group) {
       ? treeItemsWithGroups.value?.filter(
           (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
         )
-      : itemsWithStringIds.value?.filter(
+      : stringifiedItems.value?.filter(
           (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
         );
   const groupItemsIds = groupItems.map((o) => o[props.idAttribute]);
@@ -944,7 +1059,7 @@ function selectSection(group) {
 }
 
 function getTabIndex(id) {
-  const firstSelectable = itemsWithStringIds.value.find((item) => isSelectable(item));
+  const firstSelectable = stringifiedItems.value.find((item) => isSelectable(item));
   const isFirstSelectable = firstSelectable && firstSelectable[props.idAttribute] === id;
   const hasSelectedItem = Object.keys(selectedItemsRaw.value).length > 0;
 
@@ -957,7 +1072,7 @@ function getTabIndex(id) {
 function getGroupedTabIndex(id, groupId) {
   let groupItems = [];
   if (groupId) {
-    groupItems = itemsWithStringIds.value.filter(
+    groupItems = stringifiedItems.value.filter(
       (o) => prepareCode(o[props.groupAttribute]) === prepareCode(groupId)
     );
   } else {
@@ -1149,10 +1264,18 @@ onMounted(() => {
   });
 
   observer.observe(listWrapper.value);
+
+  nextTick(() => {
+    updateDefaultListScrollOffset();
+    defaultListVirtualizer.value?.value.measure();
+  });
+  window.addEventListener('resize', handleDefaultListResize);
 });
 
 onBeforeUnmount(() => {
+  virtualizerScope?.stop();
   observer?.disconnect();
+  window.removeEventListener('resize', handleDefaultListResize);
 });
 </script>
 
@@ -1326,11 +1449,11 @@ onBeforeUnmount(() => {
 
       <div v-if="groupDefinitions && filteredUngroupedItems && filteredUngroupedItems.length > 0">
         <ul
+          v-if="kind === 'default'"
           :id="id"
           class="lx-list"
           :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
           :aria-labelledby="labelledBy"
-          v-if="kind === 'default'"
         >
           <li
             v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
@@ -1870,10 +1993,90 @@ onBeforeUnmount(() => {
 
       <template v-if="!groupDefinitions && filteredItems && filteredItems.length > 0">
         <ul
-          v-if="kind === 'default'"
+          v-if="shouldVirtualizeDefaultList"
+          ref="defaultListRef"
           :id="id"
           class="lx-list"
-          :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+          :aria-labelledby="labelledBy"
+          :style="{ height: `${defaultListTotalSize}px`, position: 'relative' }"
+        >
+          <li
+            v-for="row in defaultListRows"
+            :key="row.item[idAttribute]"
+            :data-index="row.virtualRow.index"
+            class="lx-list-item-container"
+            :ref="measureDefaultListRow"
+            :style="{
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              width: '100%',
+              transform: `translateY(${row.virtualRow.start - defaultListScrollMargin}px)`,
+            }"
+          >
+            <LxListItem
+              :id="row.item[idAttribute]"
+              :parentId="props.id"
+              :label="row.item[nameAttribute]"
+              :description="row.item[descriptionAttribute]"
+              :value="row.item"
+              :href="row.item[hrefAttribute]"
+              :actionDefinitions="actionDefinitions"
+              :actionsLayout="actionsLayout"
+              :icon="row.item[iconAttribute] ? row.item[iconAttribute] : icon"
+              :iconSet="row.item[iconSetAttribute] ? row.item[iconSetAttribute] : iconSet"
+              :tooltip="row.item[tooltipAttribute]"
+              :searchString="searchStringClient"
+              :clickable="row.item[clickableAttribute]"
+              :category="row.item[categoryAttribute]"
+              :disabled="loading || busy"
+              :selected="isItemSelected(row.item[idAttribute])"
+              :texts="displayTexts"
+              @click="
+                row.item[hrefAttribute] ? null : handleActionClick('click', row.item[idAttribute])
+              "
+              @action-click="handleActionClick"
+            >
+              <template #customItem="item" v-if="$slots.customItem">
+                <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+              </template>
+            </LxListItem>
+
+            <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+              <template v-if="isSelectable(row.item)">
+                <LxRadioButton
+                  v-if="selectionKind === 'single'"
+                  :id="`select-${id}-${row.item[idAttribute]}`"
+                  v-model="selectedItemsRaw[row.item[idAttribute]]"
+                  :value="row.item[idAttribute]"
+                  :disabled="loading || busy"
+                  :label="row.item[nameAttribute]"
+                  :group-id="`selection-${id}`"
+                  :tabindex="getTabIndex(row.item[idAttribute])"
+                  @click="selectRow(row.item[idAttribute])"
+                />
+                <LxCheckbox
+                  v-else
+                  :id="`select-${id}-${row.item[idAttribute]}`"
+                  v-model="selectedItemsRaw[row.item[idAttribute]]"
+                  :value="row.item[idAttribute]"
+                  :disabled="loading || busy"
+                  :label="row.item[nameAttribute]"
+                  :group-id="`selection-${id}`"
+                />
+              </template>
+              <p v-else class="lx-checkbox-placeholder"></p>
+            </div>
+          </li>
+        </ul>
+        <ul
+          v-else-if="kind === 'default'"
+          :id="id"
+          class="lx-list"
+          :class="[
+            { 'lx-list-2': normalizedListType === '2' },
+            { 'lx-list-3': normalizedListType === '3' },
+          ]"
           :aria-labelledby="labelledBy"
         >
           <li v-for="item in filteredItems" :key="item[idAttribute]" class="lx-list-item-container">
