@@ -422,8 +422,14 @@ a.lx-button.lx-button-ghost svg {
   fill: var(--color-button-toolbar-ghost-icon-active);
 }
 
-.lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active svg {
+.lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active svg,
+.lx .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-active svg {
   fill: var(--color-selected);
+}
+
+.lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active:hover svg,
+.lx .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-active:hover svg {
+  fill: var(--color-button-toolbar-ghost-icon-hover);
 }
 
 .lx-component-toolbar .second-row .lx-button.lx-button-ghost.lx-disabled svg,
@@ -1125,6 +1131,12 @@ a.lx-button.lx-button-ghost svg {
   background-color: var(--color-selected-background);
   color: var(--color-selected);
   border-color: var(--color-selected-border);
+}
+
+.lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost.lx-active:hover,
+.lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active:hover,
+.lx .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-active:hover {
+  background-color: var(--color-button-toolbar-ghost-hover-background);
 }
 
 /* Selection toolbar button styles */
