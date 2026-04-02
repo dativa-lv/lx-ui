@@ -599,10 +599,6 @@ function handleRangeDifferentCaseValidation(date) {
   const isStartInput = input === 'startInput';
   const isEndInput = input === 'endInput';
 
-  const setActiveToOpposite = () => {
-    props.setActiveInput(isStartInput ? 'endInput' : 'startInput', props.id);
-  };
-
   const setRange = (s, e, resetEnd = false) => {
     updateRange(s, e);
     if (resetEnd) resetEndDate();
@@ -614,18 +610,24 @@ function handleRangeDifferentCaseValidation(date) {
     handleLayoutDisplay();
   };
 
-  setActiveToOpposite();
-
   // No dates selected
   if (!start && !end) {
     if (isStartInput) {
       updateStart(date);
+      setRange(date, null);
+
+      nextTick(() => {
+        props.setActiveInput('endInput', props.id);
+      });
     } else {
       updateEnd(date);
       setRange(isStartInput ? date : null, isEndInput ? date : null);
-
+      nextTick(() => {
+        props.setActiveInput('startInput', props.id);
+      });
       return;
     }
+    return;
   }
 
   // Only start selected
@@ -633,33 +635,37 @@ function handleRangeDifferentCaseValidation(date) {
     if (isStartInput) {
       updateStart(date);
       setRange(date, null);
+      props.setActiveInput('endInput', props.id);
       return;
     }
 
-    if (date >= start) finalizeSelection(start, date);
-    else {
+    if (date >= start) {
+      finalizeSelection(start, date);
+      props.setActiveInput('endInput', props.id);
+    } else {
       updateStart(date);
       setRange(date, null);
+      props.setActiveInput('endInput', props.id);
     }
     return;
   }
 
   // Only end selected
   if (!start && end) {
-    if (isStartInput) {
-      if (date > end) {
-        updateStart(date);
-        setRange(date, null, true);
-      } else {
-        setStartDate(date);
-        finalizeSelection(date, end);
-      }
+    if (isEndInput) {
+      updateEnd(date);
+      props.setActiveInput('startInput', props.id);
       return;
     }
 
-    updateEnd(date);
-    finalizeSelection(selectedStartDate.value, date);
-    hoveredDate.value = date;
+    if (date > end) {
+      updateStart(date);
+      setRange(date, null, true);
+    } else {
+      setStartDate(date);
+      finalizeSelection(date, end);
+      props.setActiveInput('startInput', props.id);
+    }
     return;
   }
 
@@ -667,10 +673,12 @@ function handleRangeDifferentCaseValidation(date) {
   const handleBothSelected = () => {
     if (isEndInput && date >= start) {
       finalizeSelection(start, date);
+      props.setActiveInput('endInput', props.id);
       return;
     }
     if (!isEndInput && date <= end) {
       finalizeSelection(date, end);
+      props.setActiveInput('startInput', props.id);
       return;
     }
 
@@ -682,7 +690,6 @@ function handleRangeDifferentCaseValidation(date) {
 
   handleBothSelected();
 }
-
 function checkMinutesCadence(cadence, filteredIndexParameter, minutesValue) {
   let filteredIndex = filteredIndexParameter;
   // Check if cadence is 5 and filteredMinutes length is 12
@@ -2793,10 +2800,34 @@ watch(
   { immediate: true }
 );
 
+function getRangeOpenAnchorDate() {
+  const start = selectedStartDate.value;
+  const end = selectedEndDate.value;
+  const isEndInput = props.activeInput === 'endInput';
+
+  if (isEndInput) return end || start || todayDate.value;
+  return start || end || todayDate.value;
+}
+
+function applyOpenAnchorDate(anchorDate) {
+  const date = new Date(anchorDate);
+  currentDate.value = date;
+
+  const decadeStart = findDecadeStartYear(date.getFullYear());
+  startYear.value = decadeStart - 1;
+  endYear.value = decadeStart + 10;
+  startQuarterYear.value = decadeStart;
+  endQuarterYear.value = decadeStart + 9;
+}
+
 watch(
   () => props.menuState,
   (newValue) => {
     if (newValue) {
+      if (props.pickerType === 'range') {
+        applyOpenAnchorDate(getRangeOpenAnchorDate());
+      }
+
       showCalendar.value = true;
       handleLayoutDisplay();
     }
@@ -3143,24 +3174,29 @@ watch(
           endQuarterYear.value = decadeStartYear + 9;
         }
 
+        const rangeAnchor = props.activeInput === 'endInput' ? newValue.end : newValue.start;
+
         if (props.menuState) {
-          updateCurrentDateIfNotInMonthsList(newValue.start);
+          updateCurrentDateIfNotInMonthsList(rangeAnchor);
         } else {
-          currentDate.value = newValue.start;
+          currentDate.value = rangeAnchor;
         }
 
         selectedStartDate.value = newValue.start;
         selectedStartDay.value = newValue.start.getDate();
         selectedStartMonth.value = newValue.start.getMonth();
         selectedStartYear.value = newValue.start.getFullYear();
+
         selectedEndDate.value = newValue.end;
         selectedEndDay.value = newValue.end.getDate();
         selectedEndMonth.value = newValue.end.getMonth();
         selectedEndYear.value = newValue.end.getFullYear();
 
-        const decadeStartYear = findDecadeStartYear(newValue.start.getFullYear());
+        const decadeStartYear = findDecadeStartYear(rangeAnchor.getFullYear());
         startYear.value = decadeStartYear - 1;
         endYear.value = decadeStartYear + 10;
+        startQuarterYear.value = decadeStartYear;
+        endQuarterYear.value = decadeStartYear + 9;
 
         emits('update:modelValue', {
           start: selectedStartDate.value,

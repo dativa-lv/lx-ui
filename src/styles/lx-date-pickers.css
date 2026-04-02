@@ -1056,9 +1056,6 @@
   background-color: var(--color-region);
 }
 
-.lx .lx-layout .popper .date-picker-type  .lx-dropdown-panel {
-  box-shadow: none;
-}
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-header .lx-button.lx-calendar-special-days-button {
   position: absolute;

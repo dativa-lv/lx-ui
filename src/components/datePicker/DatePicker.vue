@@ -155,6 +155,27 @@ function setActiveInput(type, id, defaultFocus = false) {
 }
 
 function validateIfExact(e, type = 'startInput') {
+  const applyRangeFocus = (rangeValue) => {
+    if (props.pickerType !== 'range') return;
+
+    const hasStart = Boolean(rangeValue?.start);
+    const hasEnd = Boolean(rangeValue?.end);
+
+    if (hasStart && !hasEnd) {
+      setActiveInput('endInput', props.id);
+      return;
+    }
+
+    if (!hasStart && hasEnd) {
+      setActiveInput('startInput', props.id);
+      return;
+    }
+
+    if (hasStart && hasEnd) {
+      setActiveInput(type, props.id);
+    }
+  };
+
   if (props.pickerType === 'single' && !e.target.value) {
     emits('update:modelValue', null);
     return;
@@ -350,7 +371,7 @@ function validateIfExact(e, type = 'startInput') {
             end: model.value.end,
           };
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput', props.id);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
         if (!updatedValue && !model.value.end) {
@@ -372,11 +393,10 @@ function validateIfExact(e, type = 'startInput') {
               start: updatedValue,
               end: null,
             };
-            setActiveInput('endInput', props.id);
           }
 
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput', props.id);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
         if (updatedValue && !model.value.start && model.value.end) {
@@ -390,9 +410,9 @@ function validateIfExact(e, type = 'startInput') {
               start: updatedValue,
               end: null,
             };
-            setActiveInput('endInput', props.id);
           }
           emits('update:modelValue', updatedDatesObject);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
         if (updatedValue && model.value.start && !model.value.end) {
@@ -401,7 +421,7 @@ function validateIfExact(e, type = 'startInput') {
             end: null,
           };
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput', props.id);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
         if (updatedValue && !model.value.start && !model.value.end) {
@@ -410,7 +430,7 @@ function validateIfExact(e, type = 'startInput') {
             end: null,
           };
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput', props.id);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
       }
@@ -422,6 +442,7 @@ function validateIfExact(e, type = 'startInput') {
             end: null,
           };
           emits('update:modelValue', updatedDatesObject);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
         if (!updatedValue && !model.value.start) {
@@ -443,7 +464,6 @@ function validateIfExact(e, type = 'startInput') {
               start: updatedValue,
               end: null,
             };
-            setActiveInput('endInput', props.id);
             liveMessage.value = `${displayTexts.value.selectedStartDate}: ${formatLocalizedDate(
               props.locale,
               updatedValue
@@ -451,6 +471,7 @@ function validateIfExact(e, type = 'startInput') {
           }
 
           emits('update:modelValue', updatedDatesObject);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
         if (updatedValue && model.value.start && !model.value.end) {
@@ -464,13 +485,13 @@ function validateIfExact(e, type = 'startInput') {
               start: updatedValue,
               end: null,
             };
-            setActiveInput('endInput', props.id);
             liveMessage.value = `${displayTexts.value.selectedStartDate}: ${formatLocalizedDate(
               props.locale,
               updatedValue
             )}`;
           }
           emits('update:modelValue', updatedDatesObject);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
         if (updatedValue && !model.value.start && model.value.end) {
@@ -479,7 +500,7 @@ function validateIfExact(e, type = 'startInput') {
             end: updatedValue,
           };
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('startInput', props.id);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
         if (updatedValue && !model.value.start && !model.value.end) {
@@ -488,6 +509,7 @@ function validateIfExact(e, type = 'startInput') {
             end: updatedValue,
           };
           emits('update:modelValue', updatedDatesObject);
+          applyRangeFocus(updatedDatesObject);
           return;
         }
       }
@@ -1513,7 +1535,7 @@ onMounted(async () => {
             @touchstart="onTouchStart($event, 'startInput')"
             @click="toggleMenu('startInput', 'click')"
             @keyup.arrow-down.prevent="openMenu('startInput', 'keyboard')"
-            @keyup.enter.stop="toggleMenu('startInput', 'enter')"
+            @keyup.enter.stop="validateIfExact($event, 'startInput')"
             @keydown.esc.prevent="closeMenu"
             @change="validateIfExact($event, 'startInput')"
             @input="sanitizeDateInput($event, mode)"
@@ -1565,7 +1587,7 @@ onMounted(async () => {
               @touchstart="onTouchStart($event, 'endInput')"
               @click="toggleMenu('endInput', 'click')"
               @keyup.arrow-down.prevent="openMenu('endInput', 'keyboard')"
-              @keyup.enter.stop="toggleMenu('endInput', 'enter')"
+              @keyup.enter.stop="validateIfExact($event, 'endInput')"
               @keydown.esc.prevent="closeMenu"
               @change="validateIfExact($event, 'endInput')"
               @input="sanitizeDateInput($event, mode)"
