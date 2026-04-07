@@ -139,7 +139,7 @@
       "cross-spawn": "7.0.6",
       "imask>@babel/runtime-corejs3": "7.26.10",
       "linkifyjs": "4.3.2",
-      "lodash": "4.17.23",
+      "lodash": "4.18.1",
       "markdown-it": "14.1.1",
       "minimatch": "10.2.3",
       "js-yaml": "4.1.1",
