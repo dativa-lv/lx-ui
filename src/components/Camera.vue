@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed, onUnmounted, inject } from 'vue';
+import { ref, onMounted, watch, computed, onUnmounted, inject, nextTick } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
@@ -175,10 +175,10 @@ async function switchCamera(val) {
   }
 }
 
-function changeCamera(actionId) {
+async function changeCamera(actionId) {
   const camera = camerasList.value.find((x) => x?.deviceId === actionId);
   if (camera) {
-    switchCamera(camera);
+    await switchCamera(camera);
   }
 }
 
@@ -278,17 +278,24 @@ const toolbarActions = computed(() => {
   return [...actionsDefault, ...actionsExtra];
 });
 
-function toolbarActionClick(id, value) {
+const toolbarRef = ref(null);
+
+function switchToolbarFocus(actionId) {
+  nextTick(() => toolbarRef.value?.focusAction(actionId));
+}
+
+async function toolbarActionClick(id, value) {
   if (id === 'flashlight') {
     flashlight.value = value;
   } else if (id === 'switchCamera') {
-    switchCamera();
+    await switchCamera();
   } else if (id.startsWith('camera-')) {
     const cameraId = id.replace('camera-', '');
-    changeCamera(cameraId);
+    await changeCamera(cameraId);
   } else {
     emits('actionClick', id, value);
   }
+  switchToolbarFocus(id);
 }
 
 watch(
@@ -352,7 +359,9 @@ onUnmounted(() => {
 <template>
   <div class="lx-camera" :aria-labelledby="labelledBy">
     <LxToolbar
+      ref="toolbarRef"
       v-if="!modelValue"
+      :id="`${id}-toolbar`"
       :disabled="error || loading"
       :actionDefinitions="toolbarActions"
       @actionClick="toolbarActionClick"

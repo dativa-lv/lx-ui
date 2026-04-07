@@ -397,6 +397,34 @@ function selectAll() {
   }
 }
 
+function focusAction(actionId) {
+  const action = actionsProcessed.value.find((a) => a.id === actionId);
+  if (!action) {
+    return;
+  }
+
+  const direct = document.getElementById(`${props.id}-action-${actionId}`);
+  if (direct) {
+    direct.focus();
+    return;
+  }
+
+  const parentAction = actionsProcessed.value.find(
+    (a) => a.nestedGroupId && a.nestedGroupId === action.groupId
+  );
+  if (parentAction) {
+    const parentDirect = document.getElementById(`${props.id}-action-${parentAction.id}`);
+    if (parentDirect) {
+      parentDirect.focus();
+      return;
+    }
+  }
+
+  const overflowId =
+    action.area === 'left' ? `${props.id}-overflow-left` : `${props.id}-overflow-right`;
+  document.getElementById(overflowId)?.focus();
+}
+
 onMounted(() => {
   if (props.hasSearch && props.searchString) {
     if (props.searchSide === 'client') {
@@ -407,7 +435,7 @@ onMounted(() => {
   }
 });
 
-defineExpose({ toggleSearch });
+defineExpose({ toggleSearch, focusAction });
 </script>
 
 <template>
@@ -542,6 +570,7 @@ defineExpose({ toggleSearch });
             @actionClick="(id, value) => handleActionClick(id, { value })"
           >
             <LxButton
+              :id="`${id}-overflow-left`"
               kind="ghost"
               :tabindex="-1"
               icon="menu"
@@ -869,6 +898,7 @@ defineExpose({ toggleSearch });
             @actionClick="(id, value) => handleActionClick(id, { value })"
           >
             <LxButton
+              :id="`${id}-overflow-right`"
               kind="ghost"
               :tabindex="-1"
               icon="menu"
