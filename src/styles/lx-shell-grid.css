@@ -1597,7 +1597,7 @@
   color: var(--color-region);
 }
 
-.lx-expander .lx-badge {
+.lx-expander .lx-head .lx-badge {
   position: static;
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
@@ -1620,49 +1620,49 @@
   opacity: 1;
 }
 
-.lx-expander .lx-badge .lx-badge-text {
+.lx-expander .lx-head .lx-badge .lx-badge-text {
   color: var(--color-badge-foreground);
 }
 
-.lx-expander .lx-badge .lx-badge-icon {
+.lx-expander .lx-head .lx-badge .lx-badge-icon {
   fill: var(--color-badge-foreground);
 }
 
-.lx-expander .lx-badge.lx-icon-badge {
+.lx-expander .lx-head .lx-badge.lx-icon-badge {
   margin-right: 0.5rem;
   padding: 0;
 }
 
-.lx-expander .lx-badge.lx-badge-info {
+.lx-expander .lx-head .lx-badge.lx-badge-info {
   background: var(--color-region);
 }
 
-.lx-expander .lx-badge.lx-badge-info .lx-badge-text,
-.lx-form .lx-expander .lx-badge.lx-badge-info .lx-badge-text {
+.lx-expander .lx-head .lx-badge.lx-badge-info .lx-badge-text,
+.lx-form .lx-expander .lx-head .lx-badge.lx-badge-info .lx-badge-text {
   color: var(--color-data);
 }
 
-.lx-expander .lx-badge.lx-badge-info .lx-badge-icon,
-.lx-form .lx-expander .lx-badge.lx-badge-info .lx-badge-icon {
+.lx-expander .lx-head .lx-badge.lx-badge-info .lx-badge-icon,
+.lx-form .lx-expander .lx-head .lx-badge.lx-badge-info .lx-badge-icon {
   fill: var(--color-data);
 }
 
-.lx-form .lx-expander .lx-badge.lx-badge-info,
-.lx-modal .lx-expander .lx-badge.lx-badge-info,
-.lx-region .lx-expander .lx-badge.lx-badge-info,
-.lx-form-grid .lx-expander .lx-badge.lx-badge-info {
+.lx-form .lx-expander .lx-head .lx-badge.lx-badge-info,
+.lx-modal .lx-expander .lx-head .lx-badge.lx-badge-info,
+.lx-region .lx-expander .lx-head .lx-badge.lx-badge-info,
+.lx-form-grid .lx-expander .lx-head .lx-badge.lx-badge-info {
   background: var(--color-region-2);
 }
 
-.lx-expander .lx-badge.lx-badge-success {
+.lx-expander .lx-head .lx-badge.lx-badge-success {
   background: var(--color-green);
 }
 
-.lx-expander .lx-badge.lx-badge-warning {
+.lx-expander .lx-head .lx-badge.lx-badge-warning {
   background: var(--color-orange);
 }
 
-.lx-expander .lx-badge.lx-badge-error {
+.lx-expander .lx-head .lx-badge.lx-badge-error {
   background: var(--color-red);
 }
 

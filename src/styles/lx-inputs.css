@@ -4880,18 +4880,24 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-region .lx-badge,
 .lx-modal .lx-badge,
 .lx-form-grid .lx-badge,
-.lx-list .lx-badge,
+.lx-list-item-wrapper .lx-badge,
 .lx-appendable-list .lx-badge {
   background-color: var(--color-badge-region-background);
 }
 
-.lx-form-grid .lx-list .lx-badge,
-.lx-region .lx-appendable-list .lx-badge {
+.lx-form-grid .lx-list-item-wrapper .lx-badge,
+.lx-region .lx-appendable-list .lx-badge,
+.lx-region .lx-list-item-wrapper .lx-badge,
+.lx-modal .lx-list-item-wrapper .lx-badge {
   background-color: var(--color-badge-background);
 }
 
-.lx-list .lx-list-item-container .lx-list-item-wrapper .lx-list-item .lx-badge .lx-badge-text {
-  color: var(--color-badge-text-color); 
+.lx-form-grid .lx-expander .lx-list-item .lx-badge .lx-badge-text {
+  color: var(--color-data);
+}
+
+.lx-form-grid .lx-expander .lx-list-item .lx-badge .lx-badge-icon {
+  fill: var(--color-data);
 }
 
 .lx-badge .lx-badge-text.lx-badge-type-number{
