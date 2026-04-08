@@ -256,7 +256,7 @@ function focus() {
 }
 
 function concatEscapedWords(words) {
-  const escapedWords = words.map((word) => word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'));
+  const escapedWords = words.map((word) => word?.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'));
   const joinedWords = escapedWords.join('|');
   return joinedWords;
 }
@@ -792,9 +792,9 @@ watch(inputImage, (n) => {
 watch(
   () => model.value,
   (newText) => {
-    const textInEditor = editor.value.storage.markdown.getMarkdown();
+    const textInEditor = editor.value?.storage.markdown.getMarkdown();
     if (newText !== textInEditor) {
-      editor.value.commands.setContent(newText, false);
+      editor.value?.commands.setContent(newText, false);
     }
     loading.value = false;
     if (props.maxlength) {
@@ -812,6 +812,7 @@ watch(
   [
     () => props.dictionary,
     () => props.maxlength,
+    () => props.placeholder,
     () => props.imageAllowBase64,
     () => props.imageAllowInline,
     () => props.imageResizable,
@@ -827,7 +828,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  editor.value.destroy();
+  editor.value?.destroy();
 });
 
 function getPlainText() {
