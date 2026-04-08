@@ -48,6 +48,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
+const itemRef = ref(null);
 const safeTo = ref(null);
 
 function performClick() {
@@ -109,12 +110,19 @@ async function computeSafeTo() {
   safeTo.value = cleaned ?? null;
 }
 
+function focus() {
+  itemRef.value?.focus();
+}
+
 watch(() => props.href, computeSafeTo, { immediate: true });
+
+defineExpose({ focus });
 </script>
 <template>
   <div class="lx-list-item-wrapper" :id="id">
     <div
       v-if="!safeTo"
+      ref="itemRef"
       :tabindex="tabIndex"
       class="lx-list-item"
       :id="getItemId(id, parentId)"
