@@ -450,7 +450,7 @@ code {
   flex-direction: column;
   padding: var(--tile-padding);
   text-decoration: var(--button-text-decoration);
-  border: 2px solid transparent;
+  border: var(--border-width-2) solid transparent;
   cursor: pointer;
 }
 
@@ -524,7 +524,7 @@ code {
 
 .lx .lx-tile.lx-selected {
   background-color: var(--color-background);
-  border: 2px solid var(--color-region);
+  border: var(--border-width-2) solid var(--color-region);
 }
 
 .lx .lx-tile.lx-tile-green:hover header .lx-primary,
@@ -678,7 +678,7 @@ code {
   line-height: 1.1em;
   background-size: 100% auto;
   background-position: center bottom;
-  border: 2px solid transparent;
+  border: var(--border-width-2) solid transparent;
   cursor: pointer;
 }
 
@@ -710,7 +710,7 @@ code {
 
 .lx-empty-state {
   height: calc(var(--row-size) * 4);
-  border: 2px solid var(--color-chrome);
+  border: var(--border-width-2) solid var(--color-chrome);
   padding: var(--row-size);
   display: flex;
   align-items: center;
@@ -721,7 +721,7 @@ code {
 
 .lx-info-box {
   min-height: var(--row-size);
-  border: 2px solid var(--color-region);
+  border: var(--border-width-2) solid var(--color-region);
   padding: var(--row-size);
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;

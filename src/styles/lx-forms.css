@@ -206,7 +206,7 @@
   height: 0.66rem;
   width: 0.66rem;
   background-color: var(--color-chrome);
-  border: 2px solid var(--color-chrome);
+  border: var(--border-width-2) solid var(--color-chrome);
   border-radius: 50%;
   flex-shrink: 0;
 }

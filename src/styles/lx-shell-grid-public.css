@@ -94,7 +94,7 @@
   border-radius: 1rem;
   font-weight: var(--font-weight-data);
   font-size: var(--small-font-size);
-  border: 2px solid transparent;
+  border: var(--border-width-2) solid transparent;
 }
 
 .lx-layout.lx-layout-public>header .lx-header .lx-main-button .lx-badge.lx-badge-loc {
@@ -179,7 +179,7 @@
   min-height: var(--row-size);
   align-items: center;
   outline: none;
-  border: 2px solid transparent;
+  border: var(--border-width-2) solid transparent;
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button:hover {

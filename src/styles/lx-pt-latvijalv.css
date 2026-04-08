@@ -21,12 +21,12 @@
   --color-nav-foreground: #fff;
   --color-nav-hover-background: #bf4e2c;
   --color-nav-chrome: transparent;
-  --tab-border: 4px solid transparent;
+  --tab-border: var(--border-width-4) solid transparent;
 
-  --region-border: 1px solid #edeef2;
+  --region-border: var(--border-width-1) solid #edeef2;
   --region-border-transparent: var(--region-border);
-  --list-item-border: 1px solid #edeef2;
-  --input-border: 1px solid #e6e7ee;
+  --list-item-border: var(--border-width-1) solid #edeef2;
+  --input-border: var(--border-width-1) solid #e6e7ee;
 
   --color-toggle-background-false: #d0d5dc;
   --color-toggle-border-false: #d0d5dc;
@@ -118,10 +118,10 @@
   --color-nav-foreground: #fff;
   --color-nav-hover-background: #bf4e2c;
   --color-nav-chrome: transparent;
-  --tab-border: 4px solid transparent;
-  --region-border: 1px solid var(--color-chrome);
-  --list-item-border: 1px solid var(--color-chrome);
-  --input-border: 1px solid var(--color-chrome);
+  --tab-border: var(--border-width-4) solid transparent;
+  --region-border: var(--border-width-1) solid var(--color-chrome);
+  --list-item-border: var(--border-width-1) solid var(--color-chrome);
+  --input-border: var(--border-width-1) solid var(--color-chrome);
   --color-toggle-background-false: #d0d5dc;
   --color-toggle-border-false: #d0d5dc;
   --color-toggle-foreground-false: #6e7681;

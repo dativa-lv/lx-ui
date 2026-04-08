@@ -607,7 +607,7 @@
 }
 
 .lx-header-digives-lite .header-display-logo {
-    border: 2px solid transparent;
+    border: var(--border-width-2) solid transparent;
 }
 
 .lx-header-digives-lite .header-display-logo:hover {
@@ -687,19 +687,19 @@
 
 
 .lx-layout-digives-lite .lx-main>.lx-digives-lite-alert-list>.lx-digives-lite-alert .lx-alert-success {
-  border: 2px solid var(--color-green-20);
+  border: var(--border-width-2) solid var(--color-green-20);
   border-left: 4px solid var(--color-notification-success-foreground);
   background-color: var(--color-notification-success-background);
 }
 
 .lx-layout-digives-lite .lx-main>.lx-digives-lite-alert-list>.lx-digives-lite-alert .lx-alert-warning {
-  border: 2px solid var(--color-orange-20);
+  border: var(--border-width-2) solid var(--color-orange-20);
   border-left: 4px solid var(--color-notification-warning-foreground);
   background-color: var(--color-notification-warning-background);
 }
 
 .lx-layout-digives-lite .lx-main>.lx-digives-lite-alert-list>.lx-digives-lite-alert .lx-alert-error {
-  border: 2px solid var(--color-red-20);
+  border: var(--border-width-2) solid var(--color-red-20);
   border-left: 4px solid var(--color-notification-error-foreground);
   background-color: var(--color-notification-error-background);
 }
@@ -831,7 +831,7 @@ border-top: 2px solid var(--color-brand-secondary);
   z-index: 1;
   font-weight: 700;
   padding: var(--button-badge-padding);
-  border: 2px solid var(--color-region);
+  border: var(--border-width-2) solid var(--color-region);
 }
 
 .lx-layout .lx-header-digives-lite .lx-user-menu .lx-timeout-badge .lx-badge-text,

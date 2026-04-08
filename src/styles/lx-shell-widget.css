@@ -629,7 +629,7 @@ header.lx.lx-layout-default .lx-header .lx-user-button {
     cursor: pointer;
     overflow: hidden;
     transition: width 0.1s ease-out;
-    border: 2px solid transparent;
+    border: var(--border-width-2) solid transparent;
     outline: none;
     box-sizing: border-box;
     height: var(--nav-row-size);
@@ -708,7 +708,7 @@ header.lx.lx-layout-public>.lx-header .lx-user-button {
   height: var(--row-size);
   align-items: center;
   outline: none;
-  border: 2px solid transparent;
+  border: var(--border-width-2) solid transparent;
 }
 
 header.lx.lx-layout-public>.lx-header .lx-user-button:hover {
@@ -763,7 +763,7 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge {
   border-radius: 1rem;
   font-weight: var(--font-weight-data);
   font-size: var(--small-font-size);
-  border: 2px solid transparent;
+  border: var(--border-width-2) solid transparent;
 }
 
 header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-loc {
@@ -879,7 +879,7 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
   align-self: center;
   justify-content: center;
   gap: 0.5rem;
-  border: 2px solid transparent;
+  border: var(--border-width-2) solid transparent;
   height: 5rem;
   padding: 0.25rem;
 }
@@ -982,7 +982,7 @@ header.lx.lx-header-wrapper .lx-header .lx-additional-nav-menu > .lx-additional-
   font-weight: var(--font-weight-data);
   cursor: pointer;
   outline: none;
-  border: 2px solid transparent;
+  border: var(--border-width-2) solid transparent;
   box-sizing: border-box;
 }
 
@@ -1029,7 +1029,7 @@ display: flex;
   padding: .5rem;
   width: 100%;
   box-sizing: border-box;
-  border: 2px solid var(--color-chrome);
+  border: var(--border-width-2) solid var(--color-chrome);
   background-color: var(--color-region);
 }
 
@@ -1127,7 +1127,7 @@ display: flex;
   align-items: center;
   padding: var(--button-badge-padding);
   line-height: 1em;
-  border: 2px solid var(--color-background);
+  border: var(--border-width-2) solid var(--color-background);
   text-align: center;
   margin-top: 0;
   opacity: 1;

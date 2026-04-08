@@ -123,7 +123,7 @@
 
 .lx-empty-state {
   height: calc(var(--row-size) * 2);
-  border: 2px solid var(--color-chrome);
+  border: var(--border-width-2) solid var(--color-chrome);
   padding: var(--row-size);
   display: flex;
   align-items: center;
@@ -1042,7 +1042,7 @@
 
 .lx-tile-wrapper > .lx-tile .lx-badge {
   --color-badge-background: var(--color-badge-region-background);
-  border: 2px solid var(--color-region);
+  border: var(--border-width-2) solid var(--color-region);
 }
 
 .lx-tile-wrapper > .lx-tile .lx-badge .lx-badge-text {

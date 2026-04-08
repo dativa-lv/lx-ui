@@ -14,7 +14,7 @@
 
   --color-red: #e83077;
 
-  --list-item-border: 1px solid var(--color-chrome);
+  --list-item-border: var(--border-width-1) solid var(--color-chrome);
   --region-border: var(--list-item-border);
   --radius-default: calc(var(--row-size) / 2);
   --radius-1: var(--radius-default);
@@ -26,7 +26,7 @@
 
   --color-button-nav-selected-background: var(--color-highlight);
 
-  --button-secondary-border: 1px solid var(--color-chrome);
+  --button-secondary-border: var(--border-width-1) solid var(--color-chrome);
   --color-button-secondary-background: var(--color-region);
   --color-button-secondary: var(--color-brand);
   --color-button-secondary-icon: var(--color-brand);
@@ -122,7 +122,7 @@
   --color-region-2: var(--color-background);
   --color-chrome: #0d0c10;
 
-  --button-secondary-border: 1px solid var(--color-chrome);
+  --button-secondary-border: var(--border-width-1) solid var(--color-chrome);
   --color-button-secondary-background: var(--color-region);
   --color-button-secondary: var(--color-brand);
   --color-button-secondary-icon: var(--color-brand);

@@ -153,7 +153,7 @@ p.lx-subtitle {
   padding: .5rem;
   width: 100%;
   box-sizing: border-box;
-  border: 2px solid var(--color-chrome);
+  border: var(--border-width-2) solid var(--color-chrome);
   background-color: var(--color-region);
 }
 

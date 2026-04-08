@@ -1926,7 +1926,7 @@ a.lx-button.lx-button-ghost svg {
   align-items: center;
   padding: var(--button-badge-padding);
   line-height: 1em;
-  border: 2px solid var(--color-background);
+  border: var(--border-width-2) solid var(--color-background);
   text-align: center;
   margin-top: 0;
   opacity: 1;
@@ -1993,7 +1993,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-region .lx-button:not(#userMenuButton) .lx-badge {
-  border: 2px solid var(--color-region);
+  border: var(--border-width-2) solid var(--color-region);
 }
 
 /*** Main header styles ***/
@@ -2159,7 +2159,7 @@ a.lx-button.lx-button-ghost svg {
   visibility: visible;
   clip: rect(0,0,0,0);
   block-size: 1px;
-  border: 0;
+  border: none;
   inline-size: 1px;
   position: absolute;
 }

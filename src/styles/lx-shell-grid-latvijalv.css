@@ -104,7 +104,7 @@
     border-radius: 1rem;
     font-weight: var(--font-weight-data);
     font-size: var(--small-font-size);
-    border: 2px solid transparent;
+    border: var(--border-width-2) solid transparent;
   }
   
   .lx-layout.lx-layout-latvijalv>header .lx-header .lx-main-button .lx-badge.lx-badge-loc {
@@ -189,7 +189,7 @@
     min-height: var(--row-size);
     align-items: center;
     outline: none;
-    border: 2px solid transparent;
+    border: var(--border-width-2) solid transparent;
   }
   
   .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-user-button:hover {
@@ -317,7 +317,7 @@
     display: grid;
     grid-column: 1 / span 3;
     grid-template-columns: subgrid;
-    border: 2px solid transparent;
+    border: var(--border-width-2) solid transparent;
     border-top: none;
   }
 

@@ -62,14 +62,14 @@
 }
 
 .lx-date-time-picker-wrapper[data-invalid] .lx-datepicker-default > .lx-calendar-container {
-  border: 2px solid var(--color-bad);
+  border: var(--border-width-2) solid var(--color-bad);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-header {
   display: flex;
   justify-content: center;
   position: relative;
-  border-bottom: 2px solid var(--color-chrome);
+  border-bottom: var(--border-width-2) solid var(--color-chrome);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-header .lx-button.lx-calendar-return-to-today-button {
@@ -873,7 +873,7 @@
   margin-right: 0.3rem;
   transition: var(--day-content-transition);
   background-color: var(--bar-bg);
-  border: 1px solid var(--color-region);
+  border: var(--border-width-1) solid var(--color-region);
   border-radius: 1rem;
 }
 

@@ -54,7 +54,7 @@
 
 .tree-list .tree-item .tree-item-invalid,
 .tree-list-small>.tree-item-invalid {
-    border: 2px solid var(--color-red);
+    border: var(--border-width-2) solid var(--color-red);
     height: var(--row-size);
     margin-left: calc(2 * var(--row-size));
     margin-top: 0.5rem;

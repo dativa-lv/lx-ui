@@ -2,7 +2,7 @@
     display: flex;
     height: var(--row-size);
     width: auto;
-    border: 2px solid transparent;
+    border: var(--border-width-2) solid transparent;
     align-items: center;
     padding-left: 0.5rem;
     padding-right: 0.5rem;

@@ -53,12 +53,18 @@
   --content-padding-l: 16rem;
   --content-padding: 8rem;
   --content-padding-s: 2rem;
-  --aside-border: 0px solid var(--color-chrome);
+  --aside-border: var(--border-width-0) solid var(--color-chrome);
   --region-border: none;
-  --region-border-transparent: 2px solid transparent;
+  --region-border-transparent: var(--border-width-2) solid transparent;
 
-  --toggle-border: 1px solid transparent;
-  --toggle-border-invalid: 2px solid transparent;
+  --border-width-0: 0px;
+  --border-width-1: 1px;
+  --border-width-2: 2px;
+  --border-width-3: 3px;
+  --border-width-4: 4px;
+
+  --toggle-border: var(--border-width-1) solid transparent;
+  --toggle-border-invalid: var(--border-width-2) solid transparent;
   --toggle-width: 3rem;
   --toggle-height: 1.5rem;
   --toggle-thumb-width: 1rem;
@@ -84,9 +90,9 @@
   --toggle-checked-icon-height: 1.5rem;
 
   --margin-default: 0.25rem;
-  --tab-border: 4px solid transparent;
+  --tab-border: var(--border-width-4) solid transparent;
 
-  --notification-border: 0px 0px 0px 4px;
+  --notification-border: var(--border-width-0) var(--border-width-0) var(--border-width-0) var(--border-width-4);
 
   --padding: 0.5rem;
   --padding-dropdown: 0.5rem;
@@ -118,12 +124,12 @@
   --screen-xxs: 672px;
   --screen-xxxs: 320px;
 
-  --selected-border: 2px solid var(--color-selected-border);
-  --selected-dropdown-border: 2px solid var(--color-selected-dropdown-border);
+  --selected-border: var(--border-width-2) solid var(--color-selected-border);
+  --selected-dropdown-border: var(--border-width-2) solid var(--color-selected-dropdown-border);
 
   --card-min-height: 12rem;
-  --card-border: 2px solid var(--color-card-background);
-  --card-border-region: 2px solid var(--color-card-background-region);
+  --card-border: var(--border-width-2) solid var(--color-card-background);
+  --card-border-region: var(--border-width-2) solid var(--color-card-background-region);
   --card-border-radius: 0;
   --card-padding: 1rem;
   --card-width: auto;
@@ -142,7 +148,7 @@
   --list-item-gap: 0.5rem;
   --list-item-header-padding: 0.25rem 0.35rem 0.2rem 0.25rem;
   --list-item-header-min-height: 2.75rem;
-  --list-item-border: 2px solid transparent;
+  --list-item-border: var(--border-width-2) solid transparent;
   --list-item-border-radius: 0;
   --list-item-border-radius-inner: var(--list-item-border-radius);
   --list-item-loader-padding: 0.85rem 1rem 0 1rem;
@@ -264,10 +270,10 @@
   --appendable-list-padding-expandable: 1rem;
   --appendable-list-padding-expandable-compact: 0.5rem;
 
-  --input-border: 2px solid transparent;
-  --input-border-disabled: 2px solid transparent;
-  --input-border-bottom: 1px solid var(--color-label);
-  --input-border-bottom-disabled: 1px solid var(--color-disabled-foreground);
+  --input-border: var(--border-width-2) solid transparent;
+  --input-border-disabled: var(--border-width-2) solid transparent;
+  --input-border-bottom: var(--border-width-1) solid var(--color-label);
+  --input-border-bottom-disabled: var(--border-width-1) solid var(--color-disabled-foreground);
   --input-border-radius: 0;
   --input-button-border-radius: 0;
   --input-button-height: 2.5rem;
@@ -311,7 +317,7 @@
   --button-set-gap: 0.5rem;
   --button-text-decoration: none;
   --button-dropdown-align: center;
-  --button-dropdown-border: 2px solid var(--color-button-dropdown-background);
+  --button-dropdown-border: var(--border-width-2) solid var(--color-button-dropdown-background);
   --button-dropdown-border-radius: var(--radius-default);
   --button-dropdown-font-size: inherit;
   --button-dropdown-font-weight: var(--font-weight-interactive);
@@ -333,7 +339,7 @@
   --button-toolbar-group-gap: 0;
   --button-toolbar-gap: 0;
   --button-toolbar-primary-align: center;
-  --button-toolbar-primary-border: 2px solid var(--color-button-toolbar-primary-background);
+  --button-toolbar-primary-border: var(--border-width-2) solid var(--color-button-toolbar-primary-background);
   --button-toolbar-primary-border-radius: var(--radius-default);
   --button-toolbar-primary-font-size: inherit;
   --button-toolbar-primary-font-weight: var(--font-weight-interactive);
@@ -356,7 +362,7 @@
   --button-toolbar-primary-icon-only-padding: 0;
   --button-toolbar-primary-icon-only-width: auto;
   --button-toolbar-secondary-align: center;
-  --button-toolbar-secondary-border: 2px solid var(--color-interactive-secondary-background);
+  --button-toolbar-secondary-border: var(--border-width-2) solid var(--color-interactive-secondary-background);
   --button-toolbar-secondary-border-radius: var(--radius-default);
   --button-toolbar-secondary-font-size: inherit;
   --button-toolbar-secondary-font-weight: var(--font-weight-interactive);
@@ -379,7 +385,7 @@
   --button-toolbar-secondary-icon-only-padding: 0;
   --button-toolbar-secondary-icon-only-width: auto;
   --button-toolbar-tertiary-align: center;
-  --button-toolbar-tertiary-border: 2px solid var(--color-interactive-background);
+  --button-toolbar-tertiary-border: var(--border-width-2) solid var(--color-interactive-background);
   --button-toolbar-tertiary-border-radius: var(--radius-default);
   --button-toolbar-tertiary-font-size: inherit;
   --button-toolbar-tertiary-font-weight: var(--font-weight-interactive);
@@ -402,7 +408,7 @@
   --button-toolbar-tertiary-icon-only-padding: 0;
   --button-toolbar-tertiary-icon-only-width: auto;
   --button-toolbar-ghost-align: center;
-  --button-toolbar-ghost-border: 2px solid transparent;
+  --button-toolbar-ghost-border: var(--border-width-2) solid transparent;
   --button-toolbar-ghost-border-radius: var(--radius-default);
   --button-toolbar-ghost-font-size: inherit;
   --button-toolbar-ghost-font-weight: var(--font-weight-interactive);
@@ -425,7 +431,7 @@
   --button-toolbar-ghost-icon-only-padding: 0;
   --button-toolbar-ghost-icon-only-width: auto;
   --button-toolbar-selection-align: center;
-  --button-toolbar-selection-border: 2px solid transparent;
+  --button-toolbar-selection-border: var(--border-width-2) solid transparent;
   --button-toolbar-selection-border-radius: var(--radius-default);
   --button-toolbar-selection-font-size: inherit;
   --button-toolbar-selection-font-weight: var(--font-weight-interactive);
@@ -448,7 +454,7 @@
   --button-toolbar-selection-icon-only-padding: 0;
   --button-toolbar-selection-icon-only-width: auto;
   --button-nav-align: center;
-  --button-nav-border: 2px solid transparent;
+  --button-nav-border: var(--border-width-2) solid transparent;
   --button-nav-border-radius: 0;
   --button-nav-font-size: inherit;
   --button-nav-font-weight: var(--font-weight-interactive);
@@ -467,7 +473,7 @@
   --button-nav-text-decoration: none;
   --button-nav-width: 100%;
   --button-nav-public-align: center;
-  --button-nav-public-border: 0;
+  --button-nav-public-border: none;
   --button-nav-public-border-radius: 0;
   --button-nav-public-font-size: inherit;
   --button-nav-public-font-weight: var(--font-weight-interactive);
@@ -486,7 +492,7 @@
   --button-nav-public-text-decoration: none;
   --button-nav-public-width: auto;
   --button-modal-primary-align: start;
-  --button-modal-primary-border: 2px solid var(--color-button-dropdown-background);
+  --button-modal-primary-border: var(--border-width-2) solid var(--color-button-dropdown-background);
   --button-modal-primary-border-radius: 0;
   --button-modal-primary-font-size: inherit;
   --button-modal-primary-font-weight: var(--font-weight-interactive);
@@ -499,7 +505,7 @@
   --button-modal-primary-text-decoration: none;
   --button-modal-primary-width: 100%;
   --button-modal-secondary-align: start;
-  --button-modal-secondary-border: 2px solid var(--color-button-dropdown-background);
+  --button-modal-secondary-border: var(--border-width-2) solid var(--color-button-dropdown-background);
   --button-modal-secondary-border-radius: 0;
   --button-modal-secondary-font-size: inherit;
   --button-modal-secondary-font-weight: var(--font-weight-interactive);
@@ -519,7 +525,7 @@
   --button-primary-align: center;
   --button-primary-badge-inset: -0.625rem -0.625rem auto auto;
   --button-primary-empty-badge-inset: -0.5rem -0.5rem auto auto;
-  --button-primary-border: 2px solid var(--color-interactive-background);
+  --button-primary-border: var(--border-width-2) solid var(--color-interactive-background);
   --button-primary-border-radius: var(--radius-default);
   --button-primary-font-size: inherit;
   --button-primary-font-weight: var(--font-weight-interactive);
@@ -544,7 +550,7 @@
   --button-secondary-align: center;
   --button-secondary-badge-inset: -0.625rem -0.625rem auto auto;
   --button-secondary-empty-badge-inset: -0.5rem -0.5rem auto auto;
-  --button-secondary-border: 2px solid var(--color-interactive-secondary-background);
+  --button-secondary-border: var(--border-width-2) solid var(--color-interactive-secondary-background);
   --button-secondary-border-radius: var(--radius-default);
   --button-secondary-font-size: inherit;
   --button-secondary-font-weight: var(--font-weight-interactive);
@@ -569,7 +575,7 @@
   --button-tertiary-align: center;
   --button-tertiary-badge-inset: -0.625rem -0.625rem auto auto;
   --button-tertiary-empty-badge-inset: -0.5rem -0.5rem auto auto;
-  --button-tertiary-border: 2px solid var(--color-interactive-background);
+  --button-tertiary-border: var(--border-width-2) solid var(--color-interactive-background);
   --button-tertiary-border-radius: var(--radius-default);
   --button-tertiary-font-size: inherit;
   --button-tertiary-font-weight: var(--font-weight-interactive);
@@ -594,7 +600,7 @@
   --button-ghost-align: center;
   --button-ghost-badge-inset: -0.125rem -0.125rem auto auto;
   --button-ghost-empty-badge-inset: -0.125rem -0.125rem auto auto;
-  --button-ghost-border: 2px solid transparent;
+  --button-ghost-border: var(--border-width-2) solid transparent;
   --button-ghost-border-radius: var(--radius-default);
   --button-ghost-font-size: inherit;
   --button-ghost-font-weight: var(--font-weight-interactive);

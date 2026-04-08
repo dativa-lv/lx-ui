@@ -312,7 +312,7 @@
 }
 
 .lx-data-visualizer .lx-target-wrapper-multiple > .lx-target-header {
-  border: 0.125rem solid var(--color-data);
+  border: var(--border-width-2) solid var(--color-data);
   color: var(--color-data);
   background-color: var(--color-region);
   border-radius: 50%;

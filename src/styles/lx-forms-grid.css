@@ -317,7 +317,7 @@ svg .lx-shade {
   background: var(--color-region);
   border-radius: 1rem;
   margin-right: 0.5rem;
-  border: 2px solid var(--color-blue);
+  border: var(--border-width-2) solid var(--color-blue);
 }
 
 .lx-form-grid
@@ -1063,7 +1063,7 @@ svg .lx-shade {
   justify-content: center;
   align-items: center;
   align-self: flex-start;
-  border: 2px solid var(--color-region);
+  border: var(--border-width-2) solid var(--color-region);
   border-radius: 50%;
   overflow: hidden;
   padding: 0.4rem;
@@ -1077,7 +1077,7 @@ svg .lx-shade {
 }
 
 .lx-person-display-multiple .lx-person-icon-display {
-  border: 2px solid var(--color-region);
+  border: var(--border-width-2) solid var(--color-region);
   border-radius: 50%;
   background-color: var(--color-region);
 }
@@ -1096,7 +1096,7 @@ svg .lx-shade {
 
 .lx-user-icon-displaym
 .lx-person-icon-display {
-  border: 1px solid var(--color-region);
+  border: var(--border-width-1) solid var(--color-region);
 }
 
 .lx-region .lx-avatar-display,
