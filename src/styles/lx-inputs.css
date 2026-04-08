@@ -2492,7 +2492,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-field-wrapper p.lx-data .lx-item-display .lx-flag {
-  margin-top: 0.4rem;
+  margin-top: 0;
 }
 
 .lx-flag .flag {
