@@ -61,7 +61,7 @@ const rotatorItemsArray = computed(() => {
 
 const model = computed({
   get() {
-    return props.modelValue ?? rotatorItemsArray.value[0]?.[props.idAttribute];
+    return props.modelValue;
   },
   set(value) {
     emits('update:modelValue', value);
@@ -72,6 +72,7 @@ const currentIndex = ref(0);
 const itemsModel = ref({});
 const highlightedItemId = ref(null);
 const dropdownMenuRef = ref(null);
+const suppressTransition = ref(false);
 
 function activate() {
   rotatorItemsArray.value?.forEach((item) => {
@@ -139,12 +140,20 @@ watch(
     return { value, length };
   },
   ({ value, length }) => {
+    if (!props.nullable && !value) {
+      suppressTransition.value = true;
+      model.value = rotatorItemsArray.value[0]?.[props.idAttribute];
+      nextTick(() => {
+        suppressTransition.value = false;
+      });
+    }
     activate();
     if (Array.isArray(value) && length === 0) {
       itemsModel.value.notSelected = true;
     }
     recalculateIndex();
-  }
+  },
+  { immediate: true }
 );
 
 const selectedItems = computed(() => {
@@ -382,6 +391,7 @@ function onUp() {
 
           <TransitionGroup
             name="rotator"
+            :css="!suppressTransition"
             tag="ul"
             class="lx-rotator-set lx-input-area"
             :class="[{ 'lx-rotator-set-custom': variant === 'rotator-custom' }]"

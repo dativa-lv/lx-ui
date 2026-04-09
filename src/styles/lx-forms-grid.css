@@ -745,8 +745,7 @@ svg .lx-shade {
   padding-right: 0;
 }
 
-.lx-modal > .lx-main .lx-form-grid > .lx-main .lx-row,
-.lx-modal > .lx-main .lx-form-grid > .lx-main .lx-row .lx-vertical:not(:has(.lx-loader-wrapper)) {
+.lx-modal > .lx-main .lx-form-grid > .lx-main .lx-row {
   overflow-x: hidden;
 }
 
