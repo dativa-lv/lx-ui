@@ -29,6 +29,8 @@ const textsDefault = {
   takePhoto: 'Uzņemt attēlu',
   deletePhoto: 'Mēģināt vēlreiz',
   toggleFlashlight: 'Zibspuldze',
+  photoTaken: 'Attēls uzņemts',
+  photoDeleted: 'Attēls dzēsts',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -50,9 +52,17 @@ const video = ref(null);
 const canvas = ref(null);
 const error = ref(false);
 const loading = ref(true);
+const announcementMessage = ref('');
 
 const flashlight = ref(false);
 const cameraHasFlashlight = ref(false);
+
+function announce(message) {
+  announcementMessage.value = '';
+  nextTick(() => {
+    announcementMessage.value = message;
+  });
+}
 
 function captureImage() {
   const context = canvas.value.getContext('2d');
@@ -62,6 +72,12 @@ function captureImage() {
   }
   context.drawImage(video.value, 0, 0, canvas.value.width, canvas.value.height);
   model.value = canvas.value.toDataURL('image/jpeg');
+  announce(displayTexts.value.photoTaken);
+}
+
+function deleteImage() {
+  model.value = null;
+  announce(displayTexts.value.photoDeleted);
 }
 
 const camerasList = ref([]);
@@ -358,6 +374,16 @@ onUnmounted(() => {
 
 <template>
   <div class="lx-camera" :aria-labelledby="labelledBy">
+    <div
+      :id="`${id}-announce`"
+      class="lx-invisible"
+      aria-live="polite"
+      role="status"
+      aria-atomic="true"
+    >
+      {{ announcementMessage }}
+    </div>
+
     <LxToolbar
       ref="toolbarRef"
       v-if="!modelValue"
@@ -392,7 +418,7 @@ onUnmounted(() => {
       <LxButton
         icon="cancel"
         :label="displayTexts.deletePhoto"
-        @click="model = null"
+        @click="deleteImage"
         kind="tertiary"
         v-else
       />
