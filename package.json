@@ -31,7 +31,7 @@
     },
     "./vite": {
       "import": "./dist/vite/dativa-lv-lx-ui-vite.es.js",
-      "types": "./dist/vite/types/index.d.ts"
+      "types": "./dist/types/vite/index.d.ts"
     },
     "./dist/styles/*": "./dist/styles/*",
     "./dist/bundles/*": "./dist/bundles/*",

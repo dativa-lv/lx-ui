@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { defineConfig } from 'vite';
 import path from 'path';
+import fs from 'fs';
 import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
 
@@ -34,12 +35,15 @@ const vueConfig = defineConfig({
   plugins: [
     vue(),
     dts({
-      outputDir: 'dist/types',
+      outDir: 'dist/types',
       include: ['src/**/*'],
-      staticImport: true,
-      insertTypesEntry: true,
-      copyDtsFiles: true,
       exclude: ['tests/**', '**/*.test.*', '**/*.spec.*'],
+      afterBuild: () => {
+        fs.writeFileSync(
+          path.resolve(__dirname, 'dist/dativa-lv-lx-ui.d.ts'),
+          "export * from './types/lib';\n"
+        );
+      },
     }),
   ],
   test: {
