@@ -55,6 +55,7 @@ const emits = defineEmits([
 
 const GROUP_ID_DEFAULT = 'lx_group_default';
 const GROUP_ID_EXTRA = 'lx_group_extra';
+const GROUP_ID_PROMOTED = 'lx_group_promoted';
 const ACTION_KINDS_SPECIAL = ['toggle', 'slot'];
 const CONTENT_SLOTS = ['default', 'leftArea', 'rightArea', 'secondRow'];
 
@@ -197,7 +198,11 @@ function processGroup(group) {
 
   const rest = group.filter((a) => a.id !== firstAction.id);
   return {
-    promotedAction: applyDefaults(firstAction, { kind: firstAction.kind, variant: 'default' }),
+    promotedAction: applyDefaults(firstAction, {
+      kind: firstAction.kind,
+      variant: 'default',
+      groupId: GROUP_ID_PROMOTED,
+    }),
     demotedActions: rest.map((action) => applyKindAndVariant(action)),
   };
 }
