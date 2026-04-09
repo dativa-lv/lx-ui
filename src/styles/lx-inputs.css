@@ -2543,47 +2543,58 @@ h2.lx-section-header + p.lx-invalidation-message,
   min-height: auto;
 }
 
-.lx-markdown-text-area-wrapper .placeholder-new {
+.lx-markdown-text-area-wrapper .placeholder-new,
+.lx-markdown-tag-item .placeholder-new {
   background-color: var(--color-state-new-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-edit {
+.lx-markdown-text-area-wrapper .placeholder-edit,
+.lx-markdown-tag-item .placeholder-edit {
   background-color: var(--color-state-edited-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-delete {
+.lx-markdown-text-area-wrapper .placeholder-delete,
+.lx-markdown-tag-item .placeholder-delete {
   background-color: var(--color-state-deleted-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-finished {
+.lx-markdown-text-area-wrapper .placeholder-finished,
+.lx-markdown-tag-item .placeholder-finished {
   background-color: var(--color-state-finished-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-red {
+.lx-markdown-text-area-wrapper .placeholder-red,
+.lx-markdown-tag-item .placeholder-red {
   background-color: var(--color-red-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-green {
+.lx-markdown-text-area-wrapper .placeholder-green,
+.lx-markdown-tag-item .placeholder-green {
   background-color: var(--color-green-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-blue {
+.lx-markdown-text-area-wrapper .placeholder-blue,
+.lx-markdown-tag-item .placeholder-blue {
   background-color: var(--color-blue-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-purple {
+.lx-markdown-text-area-wrapper .placeholder-purple,
+.lx-markdown-tag-item .placeholder-purple {
   background-color: var(--color-purple-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-orange {
+.lx-markdown-text-area-wrapper .placeholder-orange,
+.lx-markdown-tag-item .placeholder-orange {
   background-color: var(--color-orange-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-yellow {
+.lx-markdown-text-area-wrapper .placeholder-yellow,
+.lx-markdown-tag-item .placeholder-yellow {
   background-color: var(--color-yellow-20);
 }
 
-.lx-markdown-text-area-wrapper .placeholder-label {
+.lx-markdown-text-area-wrapper .placeholder-label,
+.lx-markdown-tag-item .placeholder-label {
   background-color: var(--color-label-20);
 }
 

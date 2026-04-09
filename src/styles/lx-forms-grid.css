@@ -16,9 +16,6 @@ svg .lx-shade {
 
 .lx-appendable-list-item .lx-form-grid {
   position: unset;
-}
-
-.lx-appendable-list-item .lx-form-grid:not(:has(.lx-form-section-1)) {
   width: 100%;
 }
 
