@@ -13,9 +13,9 @@
   margin-right: 0.5rem;
 }
 
-.lx-day-input-result-info-icon svg{
-  height: 1.5rem;
-  width: 1.5rem;
+.lx-day-input-result-info-icon svg {
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
   margin-left: 0.5rem;
   margin-top: 0.5rem;
   margin-right: 0.5rem;

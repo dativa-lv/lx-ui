@@ -159,8 +159,8 @@
 }
 
 .lx .lx-indicator-set .lx-indicator .lx-indicator-icon {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: var(--icon-size-m);
+  height: var(--icon-size-m);
   fill: var(--color-data);
 }
 
@@ -375,8 +375,8 @@
 }
 
 .lx-state svg.lx-state-icon {
-  height: 1rem;
-  width: 1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   margin: 0 0.3rem 0 -0.15rem;
   flex-shrink: 0;
 }
@@ -739,8 +739,8 @@
 }
 
 .lx .lx-form .lx-item-region>svg.lx-item-icon {
-  height: 2rem;
-  width: 2rem;
+  width: var(--icon-size-l);
+  height: var(--icon-size-l);
   margin-right: 1rem;
   fill: var(--color-label);
 }
@@ -816,7 +816,8 @@
 }
 
 .lx-row>.lx-info-wrapper.lx-info-slot-wrapper label svg {
-  width: 1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   margin-bottom: -0.2rem;
   margin-left: 0.2rem;
   fill: var(--color-label);

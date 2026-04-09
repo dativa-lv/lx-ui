@@ -90,7 +90,8 @@
 .tree-list .tree-item .tree-item-invalid>.invalid-text>svg,
 .tree-list-small>.tree-item-invalid>.invalid-text>svg {
     fill: var(--color-red);
-    height: 1.1rem;
+    width: var(--icon-size-xs);
+    height: var(--icon-size-xs);
 }
 
 .tree-list .tree-item .tree-item-body > .lx-button {

@@ -59,7 +59,7 @@ const modifiedItems = computed(() =>
   <div class="lx-wizard" :style="`${topOutOfBounds}`" ref="wizard">
     <header ref="wizardHeader" class="lx-toolbar lx-sticky">
       <div class="lx-wizard-container">
-        <LxSteps v-model="model" :items="modifiedItems" kind="compact"></LxSteps>
+        <LxSteps v-model="model" :items="modifiedItems" kind="compact" />
       </div>
     </header>
 

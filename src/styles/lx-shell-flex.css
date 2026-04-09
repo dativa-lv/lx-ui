@@ -292,7 +292,8 @@ code {
 .lx-main h2.lx-invalid svg,
 .lx-main .heading-2.lx-invalid svg {
   fill: var(--color-bad);
-  height: 0.75em;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   margin-bottom: 0;
   margin-right: 0;
 }
@@ -309,7 +310,8 @@ code {
 
 .lx-main h2 svg,
 .lx-main .heading-2 svg {
-  height: 1.25em;
+  width: var(--icon-size-s);
+  height: var(--icon-size-s);
   margin-right: 0.5rem;
   margin-bottom: -0.45rem;
   fill: var(--color-label);
@@ -469,7 +471,8 @@ code {
 }
 
 .lx-tile svg.lx-icon {
-  height: 2rem;
+  width: var(--icon-size-l);
+  height: var(--icon-size-l);
   fill: var(--color-data);
 }
 
@@ -828,7 +831,8 @@ code {
 }
 
 .lx-toolbar .lx-toolbar-chip svg {
-  height: 1.25rem;
+  height: var(--icon-size-s);
+  width: var(--icon-size-s);
   margin-left: 0.5rem;
   margin-top: -0.05rem;
 }
@@ -842,7 +846,8 @@ code {
 }
 
 .lx-toolbar .lx-toolbar-chip span svg {
-  height: 1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   margin-left: 0.25rem;
   margin-bottom: -0.1rem;
 }
@@ -1119,8 +1124,8 @@ code {
 }
 
 .lx .lx-info-box svg {
-  height: 1.5em;
-  width: 1.5em;
+  width: var(--icon-size-m);
+  height: var(--icon-size-m);
   flex-shrink: 0;
   fill: var(--color-label);
   align-self: flex-start;

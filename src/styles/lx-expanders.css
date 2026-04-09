@@ -285,8 +285,8 @@
 }
 
 .lx-expander .lx-chevron-icon svg {
-  height: 1rem;
-  width: 1rem;
+  height: var(--icon-size-xs);
+  width: var(--icon-size-xs);
 }
 
 .lx-expander-additional-info {
@@ -614,8 +614,8 @@
 /*** LxDataBlock icon styles ***/
 
 .lx-data-block .lx-icons > svg {
-  height: var(--data-block-icon-height);
-  width: var(--data-block-icon-width);
+  height: var(--data-block-icon-size);
+  width: var(--data-block-icon-size);
   fill: var(--color-data-block-icon);
 }
 
@@ -626,8 +626,8 @@
 }
 
 .lx-data-block-invalid > .lx-data-block .lx-indications > svg {
-  height: var(--data-block-invalid-icon-height);
-  width: var(--data-block-invalid-icon-width);
+  height: var(--data-block-invalid-icon-size);
+  width: var(--data-block-invalid-icon-size);
 }
 
 .lx-data-block .additional-buttons .lx-dropdown-toggler > .lx-button,
@@ -781,8 +781,8 @@
 }
 
 .lx-accessibility-settings-dropdown-content > svg {
-  height: 1.5rem;
-  width: 1.5rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
   fill: var(--color-input);
 }
 
@@ -835,8 +835,8 @@
 }
 
 .lx-accessibility-settings-block .lx-data-block-wrapper .lx-theme-item-content > svg {
-  height: var(--tile-icon-height);
-  width: var(--tile-icon-width);
+  height: var(--tile-icon-size);
+  width: var(--tile-icon-size);
   fill: var(--color-data);
 }
 

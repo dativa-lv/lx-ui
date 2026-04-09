@@ -15,6 +15,17 @@
   --font-weight-extra-bold: 700;
   --text-decoration-link: underline;
 
+  --icon-size-xs: 1rem;
+  --icon-size-s: 1.25rem;
+  --icon-size-m: 1.5rem;
+  --icon-size-l: 2rem;
+
+  --border-width-0: 0px;
+  --border-width-1: 1px;
+  --border-width-2: 2px;
+  --border-width-3: 3px;
+  --border-width-4: 4px;
+
   --color-preview-backdrop: rgba(0, 0, 0, 0.1);
 
   --description-font-weight: 400;
@@ -46,7 +57,6 @@
   --form-column-size: 30rem;
   --aside-size: 16rem;
   --grid-primary-button-size: 12rem;
-  --icon-size: 2rem;
   --indicator-size: 2.5rem;
   --content-switcher-height: 2.5rem;
 
@@ -56,12 +66,6 @@
   --aside-border: var(--border-width-0) solid var(--color-chrome);
   --region-border: none;
   --region-border-transparent: var(--border-width-2) solid transparent;
-
-  --border-width-0: 0px;
-  --border-width-1: 1px;
-  --border-width-2: 2px;
-  --border-width-3: 3px;
-  --border-width-4: 4px;
 
   --margin-default: 0.25rem;
   --tab-border: var(--border-width-4) solid transparent;
@@ -113,8 +117,7 @@
   --list-category-border-radius: 0;
   --list-category-margin: 0.25rem;
   --list-category-width: 0.25rem;
-  --list-icon-height: 1.5rem;
-  --list-icon-width: 1.5rem;
+  --list-icon-size: var(--icon-size-m);
   --list-icon-wrapper-max-height: var(--list-button-max-height);
   --list-icon-wrapper-width: var(--list-button-width);
   --list-item-min-height: var(--row-size);
@@ -145,8 +148,7 @@
   --list-draggable-grid-inner-column-span: 1 / span 3;
   --list-draggable-grid-outer-column-span: 2 / span 4;
   --list-draggable-grid-template-columns: auto auto 1fr auto auto;
-  --list-draggable-handle-icon-height: var(--icon-size);
-  --list-draggable-handle-icon-width: var(--icon-size);
+  --list-draggable-handle-icon-size: var(--icon-size-l);
   --list-draggable-handle-width: var(--row-size);
   --list-treelist-expander-height: var(--row-size);
   --list-treelist-expander-width: var(--row-size);
@@ -175,8 +177,7 @@
   --tile-border-radius-inner: var(--tile-border-radius);
   --tile-icon-padding: 0;
   --tile-mini-icon-padding: var(--tile-icon-padding);
-  --tile-icon-height: var(--icon-size);
-  --tile-icon-width: var(--icon-size);
+  --tile-icon-size: var(--icon-size-l);
   --tile-loader-padding: 0.4rem 0rem 0.35rem 0rem;
   --tile-mini-loader-padding: 0 0.75rem 0 0;
   --tile-header-padding: 0;
@@ -214,14 +215,12 @@
   --data-block-grid-template-columns: auto 1fr auto auto;
   --data-block-height-m: var(--list-item-min-height);
   --data-block-height-l: 4rem;
-  --data-block-icon-height: 2rem;
-  --data-block-icon-width: 2rem;
+  --data-block-icon-size: var(--icon-size-l);
   --data-block-icon-wrapper-max-height-m: var(--row-size);
   --data-block-icon-wrapper-max-height-l: 4rem;
   --data-block-icon-wrapper-width-m: var(--row-size);
   --data-block-icon-wrapper-width-l: 4rem;
-  --data-block-invalid-icon-height: 1rem;
-  --data-block-invalid-icon-width: 1rem;
+  --data-block-invalid-icon-size: var(--icon-size-xs);
   --data-block-left-indent-m: 1rem;
   --data-block-left-indent-l: 2rem;
   --data-block-right-indent-m: 1rem;
@@ -264,16 +263,14 @@
   --input-container-double-width-small: 21.5rem;
   --input-grid-areas: 'tag input invalid-icon icon button';
   --input-grid-template-columns: auto 1fr auto auto auto;
-  --input-icon-height: 1.25rem;
+  --input-icon-size: var(--icon-size-s);
   --input-icon-indent-left: 0rem;
   --input-icon-indent-right: var(--input-icon-wrapper-width);
-  --input-icon-width: 1.25rem;
   --input-icon-wrapper-height: 100%;
   --input-icon-wrapper-width: var(--input-button-width);
-  --input-invalid-icon-height: 1.15rem;
+  --input-invalid-icon-size: var(--icon-size-s);
   --input-invalid-icon-indent-left: 0rem;
   --input-invalid-icon-indent-right: var(--input-icon-wrapper-width);
-  --input-invalid-icon-width: 1.15rem;
   --input-tag-height: 1.5rem;
   --input-tag-indent-left: calc(var(--input-tag-width) + 1rem);
   --input-tag-indent-right: 0rem;
@@ -299,8 +296,7 @@
   --button-dropdown-grid-template-columns: 1fr auto;
   --button-dropdown-grid-template-rows: 1fr;
   --button-dropdown-height: var(--row-size-dynamic);
-  --button-dropdown-icon-height: 1.5rem;
-  --button-dropdown-icon-width: 1.55rem;
+  --button-dropdown-icon-size: var(--icon-size-m);
   --button-dropdown-margin: 0;
   --button-dropdown-min-width: var(--row-size);
   --button-dropdown-outline-offset: -2px;
@@ -321,8 +317,7 @@
   --button-toolbar-primary-grid-template-columns: minmax(max-content, 1fr) auto;
   --button-toolbar-primary-grid-template-rows: 1fr;
   --button-toolbar-primary-height: var(--row-size);
-  --button-toolbar-primary-icon-height: 1.5rem;
-  --button-toolbar-primary-icon-width: 1.55rem;
+  --button-toolbar-primary-icon-size: var(--icon-size-m);
   --button-toolbar-primary-margin: 0;
   --button-toolbar-primary-min-width: var(--row-size);
   --button-toolbar-primary-outline-offset: 0;
@@ -344,8 +339,7 @@
   --button-toolbar-secondary-grid-template-columns: minmax(max-content, 1fr) auto;
   --button-toolbar-secondary-grid-template-rows: 1fr;
   --button-toolbar-secondary-height: var(--row-size);
-  --button-toolbar-secondary-icon-height: 1.5rem;
-  --button-toolbar-secondary-icon-width: 1.55rem;
+  --button-toolbar-secondary-icon-size: var(--icon-size-m);
   --button-toolbar-secondary-margin: 0;
   --button-toolbar-secondary-min-width: var(--row-size);
   --button-toolbar-secondary-outline-offset: 0;
@@ -367,8 +361,7 @@
   --button-toolbar-tertiary-grid-template-columns: minmax(max-content, 1fr) auto;
   --button-toolbar-tertiary-grid-template-rows: 1fr;
   --button-toolbar-tertiary-height: var(--row-size);
-  --button-toolbar-tertiary-icon-height: 1.5rem;
-  --button-toolbar-tertiary-icon-width: 1.55rem;
+  --button-toolbar-tertiary-icon-size: var(--icon-size-m);
   --button-toolbar-tertiary-margin: 0;
   --button-toolbar-tertiary-min-width: var(--row-size);
   --button-toolbar-tertiary-outline-offset: 0;
@@ -390,8 +383,7 @@
   --button-toolbar-ghost-grid-template-columns: minmax(max-content, 1fr) auto;
   --button-toolbar-ghost-grid-template-rows: 1fr;
   --button-toolbar-ghost-height: var(--row-size);
-  --button-toolbar-ghost-icon-height: 1.5rem;
-  --button-toolbar-ghost-icon-width: 1.55rem;
+  --button-toolbar-ghost-icon-size: var(--icon-size-m);
   --button-toolbar-ghost-margin: 0;
   --button-toolbar-ghost-min-width: var(--row-size);
   --button-toolbar-ghost-outline-offset: -2px;
@@ -413,8 +405,7 @@
   --button-toolbar-selection-grid-template-columns: minmax(max-content, 1fr) auto;
   --button-toolbar-selection-grid-template-rows: 1fr;
   --button-toolbar-selection-height: var(--row-size);
-  --button-toolbar-selection-icon-height: 1.5rem;
-  --button-toolbar-selection-icon-width: 1.55rem;
+  --button-toolbar-selection-icon-size: var(--icon-size-m);
   --button-toolbar-selection-margin: 0;
   --button-toolbar-selection-min-width: var(--row-size);
   --button-toolbar-selection-outline-offset: -2px;
@@ -436,8 +427,7 @@
   --button-nav-grid-template-columns: auto 1fr;
   --button-nav-grid-template-rows: 1fr;
   --button-nav-height: var(--row-size);
-  --button-nav-icon-height: 1.5rem;
-  --button-nav-icon-width: 1.55rem;
+  --button-nav-icon-size: var(--icon-size-m);
   --button-nav-margin: 0;
   --button-nav-min-width: var(--row-size);
   --button-nav-outline-offset: -2px;
@@ -455,8 +445,7 @@
   --button-nav-public-grid-template-columns: 1fr;
   --button-nav-public-grid-template-rows: 1fr;
   --button-nav-public-height: calc(var(--row-size) - 1.35px);
-  --button-nav-public-icon-height: 1.5rem;
-  --button-nav-public-icon-width: 1.55rem;
+  --button-nav-public-icon-size: var(--icon-size-m);
   --button-nav-public-margin: 0;
   --button-nav-public-min-width: var(--row-size);
   --button-nav-public-outline-offset: -2px;
@@ -507,8 +496,7 @@
   --button-primary-grid-template-columns: 1fr auto;
   --button-primary-grid-template-rows: 1fr;
   --button-primary-height: var(--row-size);
-  --button-primary-icon-height: 1.5rem;
-  --button-primary-icon-width: 1.55rem;
+  --button-primary-icon-size: var(--icon-size-m);
   --button-primary-margin: 0;
   --button-primary-min-width: var(--row-size);
   --button-primary-outline-offset: 0;
@@ -532,8 +520,7 @@
   --button-secondary-grid-template-columns: 1fr auto;
   --button-secondary-grid-template-rows: 1fr;
   --button-secondary-height: var(--row-size);
-  --button-secondary-icon-height: 1.5rem;
-  --button-secondary-icon-width: 1.55rem;
+  --button-secondary-icon-size: var(--icon-size-m);
   --button-secondary-margin: 0;
   --button-secondary-min-width: var(--row-size);
   --button-secondary-outline-offset: 0;
@@ -557,8 +544,7 @@
   --button-tertiary-grid-template-columns: 1fr auto;
   --button-tertiary-grid-template-rows: 1fr;
   --button-tertiary-height: var(--row-size);
-  --button-tertiary-icon-height: 1.5rem;
-  --button-tertiary-icon-width: 1.55rem;
+  --button-tertiary-icon-size: var(--icon-size-m);
   --button-tertiary-margin: 0;
   --button-tertiary-min-width: var(--row-size);
   --button-tertiary-outline-offset: 0;
@@ -582,8 +568,7 @@
   --button-ghost-grid-template-columns: 1fr auto;
   --button-ghost-grid-template-rows: 1fr;
   --button-ghost-height: var(--row-size);
-  --button-ghost-icon-height: 1.5rem;
-  --button-ghost-icon-width: 1.55rem;
+  --button-ghost-icon-size: var(--icon-size-m);
   --button-ghost-margin: 0;
   --button-ghost-min-width: var(--row-size);
   --button-ghost-outline-offset: -2px;
@@ -605,7 +590,7 @@
   --badge-min-width: 1.5rem;
   --badge-min-height: 1.5rem;
   --badge-gap: 0.25rem;
-  --badge-icon-width: 1rem;
+  --badge-icon-size: var(--icon-size-xs);
 
   --loader-height-l: 5.5rem;
   --loader-width-l: 5.5rem;
@@ -619,8 +604,8 @@
   --loader-bar-border-radius-s: 0;
   --loader-bar-border-radius-l: 0;
   --loader-bar-min-width: var(--aside-size);
-  --loader-bar-indicator-height: 1.25rem;
-  --loader-bar-indicator-width: 1.25rem;
+  --loader-bar-indicator-height: var(--icon-size-s);
+  --loader-bar-indicator-width: var(--icon-size-s);
   --loader-bar-stop-indicator-margin-right-s: 0;
   --loader-bar-stop-indicator-margin-right-l: 0.125rem;
   --loader-bar-stop-indicator-width-s: 0.25rem;
@@ -637,8 +622,8 @@
   --loader-state-indicator-height-l: 4rem;
   --loader-state-indicator-width-l: 4rem;
   --loader-state-indicator-margin-l: 0 0 1.5rem 0;
-  --loader-state-indicator-height-s: 1.25rem;
-  --loader-state-indicator-width-s: 1.25rem;
+  --loader-state-indicator-height-s: var(--icon-size-s);
+  --loader-state-indicator-width-s: var(--icon-size-s);
   --loader-state-indicator-margin-s: 0;
   --loader-row-gap: 0.5rem;
   --loader-column-gap: 1rem;

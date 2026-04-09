@@ -418,8 +418,8 @@
 .lx .lx-list-item .lx-list-icon,
 .lx-list-item svg,
 .lx-list-item img {
-  height: var(--list-icon-height);
-  width: var(--list-icon-width);
+  height: var(--list-icon-size);
+  width: var(--list-icon-size);
   flex-shrink: 0;
 }
 
@@ -860,8 +860,8 @@
 
 .lx-handle .lx-icon {
   margin-top: 0.5rem;
-  width: var(--list-draggable-handle-icon-width);
-  height: var(--list-draggable-handle-icon-height);
+  width: var(--list-draggable-handle-icon-size);
+  height: var(--list-draggable-handle-icon-size);
   fill: var(--color-list-handle-icon);
 }
 
@@ -1036,8 +1036,8 @@
 }
 
 .lx-tile-wrapper > .lx-tile > .lx-tile-item-loader .lx-loader-wrapper .lx-loader-indeterminate {
-  height: var(--icon-size);
-  width: var(--icon-size);
+  height: var(--icon-size-l);
+  width: var(--icon-size-l);
 }
 
 .lx-tile-wrapper > .lx-tile .lx-badge {
@@ -1053,7 +1053,7 @@
 }
 
 .lx-tile-wrapper > .lx-tile .lx-badge:has(.lx-badge-icon) .lx-badge-text {
-  width: calc(100% - var(--badge-icon-width) - var(--badge-gap));
+  width: calc(100% - var(--badge-icon-size) - var(--badge-gap));
 }
 
 .lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-empty {
@@ -1156,8 +1156,8 @@
 }
 
 .lx-tile > .lx-tile-icon-wrapper .lx-icon {
-  height: var(--tile-icon-height);
-  width: var(--tile-icon-width);
+  height: var(--tile-icon-size);
+  width: var(--tile-icon-size);
   flex-shrink: 0;
 }
 

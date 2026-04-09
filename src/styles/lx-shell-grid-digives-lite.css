@@ -157,10 +157,9 @@
 }
 
 .end-section .shell-buttons.patient-info svg {
-  height: var(--button-ghost-icon-height);
-  width: var(--button-ghost-icon-width);
+  height: var(--button-ghost-icon-size);
+  width: var(--button-ghost-icon-size);
 }
-
 
 .end-section .lx-dropdown-default {
   font-weight: var(--font-weight-bold);
@@ -517,8 +516,8 @@
 
 .end-section .lx-user-menu .lx-avatar svg.lx-icon,
 .digives-lite-nav-panel .lx-user-menu .lx-avatar svg.lx-icon {
-  width: 2rem !important;
-  height: 2rem !important;
+  width: var(--icon-size-l) !important;
+  height: var(--icon-size-l) !important;
   fill: var(--color-label);
 }
 
@@ -541,9 +540,8 @@
 
 .end-section .lx-user-button .lx-chevron svg,
 .digives-lite-nav-panel .lx-user-button .lx-chevron svg {
-  width: 1.5rem;
-  height: 1.5rem;
-
+  width: var(--icon-size-m);
+  height: var(--icon-size-m);
 }
 
 .end-section .shell-buttons.patient-info.without-context-person svg,
@@ -558,8 +556,8 @@
 
 .shell-buttons.patient-info.without-context-person .patient-inactive-icon {
   margin: 0.75rem;
-  width: 1.55rem;
-  height: 1.5rem;
+  width: var(--icon-size-m);
+  height: var(--icon-size-m);
 }
 .shell-buttons.patient-info.without-context-person:hover .patient-inactive-icon {
   cursor: help;
@@ -914,8 +912,8 @@ border-top: 2px solid var(--color-brand-secondary);
   }
 
   .small-nav-bar-button .lx-info-wrapper svg {
-    width: 1.55rem;
-    height: 1.5rem;
+    width: var(--icon-size-m);
+    height: var(--icon-size-m);
     align-self: center;
   }
 

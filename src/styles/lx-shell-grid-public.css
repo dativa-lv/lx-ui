@@ -103,7 +103,7 @@
 
 .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button svg {
   fill: var(--color-brand);
-  height: calc(var(--icon-size) * 1.5);
+  height: calc(var(--icon-size-l) * 1.5);
   padding-left: 0;
   padding-right: 0;
   transition: height 0.2s ease-in-out;
@@ -394,8 +394,8 @@
 
 
 .handle-wrapper .handle-icon {
-  width: 2rem;
-  height: 2rem;
+  width: var(--icon-size-l);
+  height: var(--icon-size-l);
   position: absolute;
   margin-top: 0.5rem;
 }
@@ -603,8 +603,8 @@
   }
 
   .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button svg {
-    height: var(--icon-size);
-    width: var(--icon-size);
+    height: var(--icon-size-l);
+    width: var(--icon-size-l);
   }
 
   .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-description {

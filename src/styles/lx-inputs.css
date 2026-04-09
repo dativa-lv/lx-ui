@@ -136,8 +136,8 @@
 }
 
 .lx-empty svg {
-  height: 1.25rem;
-  width: 1.25rem;
+  height: var(--icon-size-s);
+  width: var(--icon-size-s);
   display: inline-block;
   fill: var(--color-label);
   flex-shrink: 0;
@@ -771,8 +771,8 @@
 }
 
 .lx-modifier-icon {
-  height: var(--input-icon-height);
-  width: var(--input-icon-width);
+  height: var(--input-icon-size);
+  width: var(--input-icon-size);
   position: absolute;
   top: 50%;
   -webkit-transform: translateY(-50%);
@@ -793,8 +793,8 @@
 
 .lx-input-wrapper .lx-invalidation-icon {
   position: absolute;
-  height: var(--input-invalid-icon-height);
-  width: var(--input-invalid-icon-width);
+  height: var(--input-invalid-icon-size);
+  width: var(--input-invalid-icon-size);
   z-index: 1;
   pointer-events: none;
 }
@@ -1051,8 +1051,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-checkbox-appearance .lx-checkbox-thumb svg {
-  height: 1.5rem;
-  width: 1.5rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
   margin-left: -0.3rem;
   margin-right: -0.3rem;
   margin-top: -0.3rem;
@@ -1225,12 +1225,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  width: var(--row-size);
+  height: var(--row-size);
 }
 
 .lx-value-picker-horizontal-icon-wrapper svg {
-  width: 1.2rem;
+  width: var(--icon-size-s);
+  height: var(--icon-size-s);
 }
 
 .lx-value-picker-horizontal-item.lx-value-picker-item-disabled .lx-value-picker-horizontal-icon-wrapper svg {
@@ -1369,8 +1370,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-value-picker-dropdown-wrapper .lx-tag-button .lx-button svg,
 .lx-autocomplete-input-icon-container .lx-tag-button .lx-button svg {
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   fill: var(--color-interactive-secondary-foreground);
 }
 
@@ -1490,8 +1491,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-value-picker-icon {
   flex-shrink: 0;
-  width: 19px;
-  height: 19px;
+  width: var(--icon-size-s);
+  height: var(--icon-size-s);
 }
 
 .lx-value-picker-tile-header {
@@ -1852,14 +1853,16 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all > svg {
   fill: var(--color-brand);
-  height: 1.45rem;
+  width: var(--icon-size-m);
+  height: var(--icon-size-m);
   padding-left: 0.9rem;
   padding-right: 0.2rem;
 }
 
 .lx .lx-dropdown-default-content .lx-dropdown-panel .lx-value-picker-item.select-all > svg{
   fill: var(--color-brand);
-  height: 1.45rem;
+  width: var(--icon-size-m);
+  height: var(--icon-size-m);
 }
 
 /*** Misc input state + placeholder styles ***/
@@ -2141,7 +2144,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-content-switcher-item svg {
-  width: 1.25rem;
+  width: var(--icon-size-s);
+  height: var(--icon-size-s);
   flex-shrink: 0;
 }
 
@@ -2166,7 +2170,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-content-switcher .index-icon {
-  width: 1.25rem;
+  width: var(--icon-size-s);
+  height: var(--icon-size-s);
   text-align: center;
 }
 
@@ -2862,8 +2867,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-qr-scanner-wrapper .lx-qr-success svg {
-  height: 3rem;
-  width: 3rem;
+  height: var(--row-size);
+  width: var(--row-size);
   fill: var(--color-green);
 }
 
@@ -2995,8 +3000,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-qr-scanner-wrapper .lx-qr-scanner .lx-qr-notification svg {
-  height: 1.5rem;
-  width: 1.5rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
 }
 
 /*** LxToolbar styles ***/
@@ -3305,8 +3310,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-file-upload-wrapper .lx-list-item .lx-file-indicators .lx-invalidation-icon,
 .lx-file-upload-wrapper .lx-list-item .lx-file-indicators .lx-loader svg,
 .lx-file-upload-wrapper .lx-list-item .lx-file-indicators .lx-loader.lx-small {
-  height: 1rem;
-  width: 1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   margin: 0;
 }
 
@@ -3347,8 +3352,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-list-item .lx-archive-content-icon {
   display: flex;
-  width: calc(var(--icon-size) + 0.3rem);
-  height: var(--icon-size);
+  width: var(--icon-size-l);
+  height: var(--icon-size-l);
   flex-shrink: 0;
 }
 
@@ -3632,8 +3637,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-uploaded-file-preview-wrapper > .lx-file-preview-wrapper svg {
-  width: 2rem;
-  height: 2rem;
+  width: var(--icon-size-l);
+  height: var(--icon-size-l);
   margin: 0;
 }
 
@@ -3656,7 +3661,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-download-icon {
   width: var(--row-size);
-  height: calc(var(--row-size) - 2px);
+  height: var(--row-size);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -3745,8 +3750,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge svg,
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge svg {
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   fill: var(--color-interactive-foreground);
   margin: 0;
 }
@@ -3774,7 +3779,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge svg {
-  height: 0.9rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   margin: 0.2rem;
 }
 
@@ -4109,8 +4115,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-rotator svg.thumb {
-  --input-icon-height: 1.5rem;
-  --input-icon-width: auto;
+  --input-icon-size: var(--icon-size-m);
   fill: var(--color-input);
   pointer-events: none;
 }
@@ -4218,7 +4223,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-file-upload-wrapper .lx-draggable-upload-wrapper > svg {
-  width: 1.5rem;
+  width: var(--icon-size-m);
   fill: var(--color-brand);
   margin-right: 1rem;
   flex-shrink: 0;
@@ -4289,7 +4294,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-translate svg {
   fill: var(--color-interactive-secondary-background);
-  height: 1.1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   margin-left: 0.2rem;
 }
 
@@ -4328,7 +4334,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-adaptivity svg {
-  height: 1.25rem;
+  height: var(--icon-size-s);
+  width: var(--icon-size-s);
   margin-left: 0.2rem;
 }
 
@@ -4618,7 +4625,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx .lx-badge-icon {
-  width: var(--badge-icon-width);
+  width: var(--badge-icon-size);
   height: auto;
 }
 

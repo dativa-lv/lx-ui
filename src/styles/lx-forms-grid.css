@@ -98,7 +98,7 @@ svg .lx-shade {
 }
 
 .lx-form-grid > header > .lx-group .lx-toolbar-chip .lx-info-wrapper svg {
-  min-width: var(--icon-size);
+  min-width: var(--icon-size-l);
 }
 
 .lx-form-grid h2,
@@ -327,14 +327,16 @@ svg .lx-shade {
   margin: 0;
   padding: 0;
   fill: var(--color-interactive-foreground);
-  height: 1rem;
+  height: var(--icon-size-xs);
+  width: var(--icon-size-xs);
 }
 
 .lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.c2paBadgeIcon > .lx-head > .lx-group > .lx-icon-wrapper svg {
   margin: 0;
   padding: 0;
   fill: var(--color-blue);
-  height: 1rem;
+  height: var(--icon-size-xs);
+  width: var(--icon-size-xs);
 }
 
 .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row.lx-main-data-icon-row .lx-vertical {
@@ -358,7 +360,8 @@ svg .lx-shade {
 
 .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge svg {
   fill: var(--color-interactive-foreground);
-  height: 1rem
+  height: var(--icon-size-xs);
+  width: var(--icon-size-xs);
 }
 
 .lx-form-grid>.lx-main>.lx-form-section:first-of-type,
@@ -1040,14 +1043,14 @@ svg .lx-shade {
 }
 
 .lx-person-display > svg {
-  height: 2rem;
-  width: 2rem;
+  height: var(--icon-size-l);
+  width: var(--icon-size-l);
   fill: var(--color-label);
 }
 
 .lx-person-display.lx-person-display-s > svg {
-  height: 1.5rem;
-  width: 1.5rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
 }
 
 .lx-avatar-display,
@@ -1079,8 +1082,8 @@ svg .lx-shade {
 }
 
 .lx .lx-person-display-multiple .lx-person-icon-display > svg {
-  height: 1.25rem;
-  width: 1.25rem;
+  height: var(--icon-size-s);
+  width: var(--icon-size-s);
 }
 
 .lx .lx-avatar-display > svg,
@@ -1291,8 +1294,8 @@ p .lx-person-display-wrapper {
 .lx-form-grid > .lx-index > ul > li > .index-text > svg,
 .lx-form-grid > .lx-index > ul > li > .index-text svg {
   fill: var(--color-bad);
-  width: 1.25rem;
-  height: 1.25rem;
+  width: var(--icon-size-s);
+  height: var(--icon-size-s);
   flex-shrink: 0;
 }
 
@@ -1308,8 +1311,8 @@ p .lx-person-display-wrapper {
 
 .lx .lx-layout .additional-index-button.lx-button.lx-invalid > .lx-button-content-wrapper > svg {
   fill: var(--color-bad);
-  width: 1.25rem;
-  height: 1.25rem;
+  width: var(--icon-size-s);
+  height: var(--icon-size-s);
 }
 
 .lx-form-grid .additional-index-button > .lx-button-content-wrapper > p {
@@ -1375,7 +1378,8 @@ p .lx-person-display-wrapper {
 }
 
 .lx-form-grid .lx-row > .lx-row-header > .popper-wrapper.lx-info-slot-wrapper label svg {
-  width: 1rem;
+  height: var(--icon-size-xs);
+  width: var(--icon-size-xs);
   margin-bottom: -0.2rem;
   margin-left: 0.2rem;
   fill: var(--color-label);
@@ -1389,8 +1393,8 @@ p .lx-person-display-wrapper {
 
 .lx-row > .lx-row-header > div > .lx-button > .lx-button-content-wrapper svg,
 .lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button > .lx-button-content-wrapper svg {
-  height: 1.25rem;
-  width: 1.25rem;
+  height: var(--icon-size-s);
+  width: var(--icon-size-s);
   fill: var(--color-button-toolbar-ghost-icon);
 }
 
@@ -1401,7 +1405,7 @@ p .lx-person-display-wrapper {
 
 .lx-row >  .lx-row-header > div > .lx-button:active > .lx-button-content-wrapper svg, 
 .lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:active > .lx-button-content-wrapper svg  {
-    fill: var(--color-button-toolbar-ghost-icon-active);
+  fill: var(--color-button-toolbar-ghost-icon-active);
 }
 
 .lx .lx-filter .lx-form.lx-form-region:has(>.lx-form-grid) {
@@ -1561,7 +1565,8 @@ p .lx-person-display-wrapper {
 }
 
 .lx-wizard .lx-wizard-container .lx-wizard-step svg {
-  height: 1.2rem;
+  height: var(--icon-size-s);
+  width: var(--icon-size-s);
   flex-shrink: 0;
   flex-grow: 0;
   margin-bottom: 0.2rem;
@@ -1676,10 +1681,10 @@ p .lx-person-display-wrapper {
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > svg,
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-stack > svg,
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-stack > .lx-stack > svg {
-  height: var(--button-toolbar-primary-icon-width);
-  width: var(--button-toolbar-primary-icon-width);
-  min-height: var(--button-toolbar-primary-icon-width);
-  min-width: var(--button-toolbar-primary-icon-width);
+  height: var(--button-toolbar-primary-icon-size);
+  width: var(--button-toolbar-primary-icon-size);
+  min-height: var(--button-toolbar-primary-icon-size);
+  min-width: var(--button-toolbar-primary-icon-size);
 }
 
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-context-container {
@@ -1689,15 +1694,16 @@ p .lx-person-display-wrapper {
 .lx-form-grid > header > .lx-group.lx-single-header-button  .lx-button svg,
 .lx-form-grid > header > .lx-group > .lx-context-container .lx-button svg,
 .lx-form-grid > header > .responsive-default-index-button .lx-dropdown-toggler > .lx-button svg {
-    --color-button-ghost-icon: var(--color-button-toolbar-ghost-icon);
-    --color-button-ghost-icon-hover: var(--color-button-toolbar-ghost-icon-hover);
-    --color-button-ghost-icon-focus: var(--color-button-toolbar-ghost-icon-focus);
-    --color-button-ghost-icon-active: var(--color-button-toolbar-ghost-icon-active);
+  --color-button-ghost-icon: var(--color-button-toolbar-ghost-icon);
+  --color-button-ghost-icon-hover: var(--color-button-toolbar-ghost-icon-hover);
+  --color-button-ghost-icon-focus: var(--color-button-toolbar-ghost-icon-focus);
+  --color-button-ghost-icon-active: var(--color-button-toolbar-ghost-icon-active);
 }
 
 .lx-form-grid > header svg {
-    height: 1rem;
-    fill: var(--color-label);
+  height: var(--icon-size-xs);
+  width: var(--icon-size-xs);
+  fill: var(--color-label);
 }
 
 .lx .lx-form-grid .lx-row .lx-vertical.lx-content-aligned,
@@ -1916,19 +1922,17 @@ p .lx-person-display-wrapper {
     align-items: center;
   }
 
+  .responsive-overflow-header > .overflow-icon-container > .popper-wrapper .lx-info-wrapper-content,
   .responsive-overflow-header > .overflow-icon-container > .popper-wrapper {
-    height: var(--icon-size);
+    height: var(--icon-size-l);
+    width: var(--icon-size-l);
   }
 
   .responsive-overflow-header > .overflow-icon-container > .popper-wrapper svg {
-    height: var(--icon-size);
+    height: var(--icon-size-l);
+    width: var(--icon-size-l);
     fill: var(--color-label);
   }
-
-  .responsive-overflow-header > .overflow-icon-container > .popper-wrapper .lx-info-wrapper-content {
-    height: var(--icon-size);
-  }
-  
 
   .lx-form-grid > header > .lx-group.lx-primary .lx-toolbar-chip {
     justify-content: left;

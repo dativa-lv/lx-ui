@@ -4,6 +4,40 @@
 
 ### Breaking changes
 
+**Token renames**
+- `--icon-size` → `--icon-size-l`
+- `--toggle-s-width` → `--toggle-width-s`
+- `--toggle-s-height` → `--toggle-height-s`
+
+#### Icons
+
+Icon `height` and `width` tokens have been merged into a single `size` token. Update any usages to the new tokens listed below.
+
+| Old tokens                                                                        | New token                              |
+|-----------------------------------------------------------------------------------|----------------------------------------|
+| `--list-icon-height`, `--list-icon-width`                                         | `--list-icon-size`                     |
+| `--list-draggable-handle-icon-height`, `--list-draggable-handle-icon-width`       | `--list-draggable-handle-icon-size`    |
+| `--tile-icon-height`, `--tile-icon-width`                                         | `--tile-icon-size`                     |
+| `--data-block-icon-height`, `--data-block-icon-width`                             | `--data-block-icon-size`               |
+| `--data-block-invalid-icon-height`, `--data-block-invalid-icon-width`             | `--data-block-invalid-icon-size`       |
+| `--badge-icon-width`                                                              | `--badge-icon-size`                    |
+| `--input-icon-height`, `--input-icon-width`                                       | `--input-icon-size`                    |
+| `--input-invalid-icon-height`, `--input-invalid-icon-width`                       | `--input-invalid-icon-size`            |
+| `--button-dropdown-icon-height`, `--button-dropdown-icon-width`                   | `--button-dropdown-icon-size`          |
+| `--button-toolbar-primary-icon-height`, `--button-toolbar-primary-icon-width`     | `--button-toolbar-primary-icon-size`   |
+| `--button-toolbar-secondary-icon-height`, `--button-toolbar-secondary-icon-width` | `--button-toolbar-secondary-icon-size` |
+| `--button-toolbar-tertiary-icon-height`, `--button-toolbar-tertiary-icon-width`   | `--button-toolbar-tertiary-icon-size`  |
+| `--button-toolbar-ghost-icon-height`, `--button-toolbar-ghost-icon-width`         | `--button-toolbar-ghost-icon-size`     |
+| `--button-toolbar-selection-icon-height`, `--button-toolbar-selection-icon-width` | `--button-toolbar-selection-icon-size` |
+| `--button-nav-icon-height`, `--button-nav-icon-width`                             | `--button-nav-icon-size`               |
+| `--button-nav-public-icon-height`, `--button-nav-public-icon-width`               | `--button-nav-public-icon-size`        |
+| `--button-primary-icon-height`, `--button-primary-icon-width`                     | `--button-primary-icon-size`           |
+| `--button-secondary-icon-height`, `--button-secondary-icon-width`                 | `--button-secondary-icon-size`         |
+| `--button-tertiary-icon-height`, `--button-tertiary-icon-width`                   | `--button-tertiary-icon-size`          |
+| `--button-ghost-icon-height`, `--button-ghost-icon-width`                         | `--button-ghost-icon-size`             |
+| `--loader-bar-indicator-height`, `--loader-bar-indicator-width`                   | `--loader-bar-indicator-size`          |
+| `--loader-state-indicator-height-s`, `--loader-state-indicator-width-s`           | `--loader-state-indicator-size-s`      |
+
 #### LxToggle
 
 Most LxToggle styles have been moved to a separate file - `lx-toggles.css`. Import this file in your project to ensure correct toggle appearance and behavior.
@@ -20,12 +54,8 @@ The following tokens have been removed:
 - `--toggle-label-readonly-margin`
 - `--toggle-text-margin-left`
 - `--toggle-checked-icon-position-left`
-
-**Token renames**
-
-The following tokens have been renamed:
-- `--toggle-s-width` → `--toggle-width-s`
-- `--toggle-s-height` → `--toggle-height-s`
+- `--toggle-checked-icon-height`
+- `--toggle-checked-icon-width`
 
 Some existing tokens have been divided into size-based (`m` / `s`) or state-based (`on` / `off`) variants.
 

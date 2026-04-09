@@ -58,24 +58,22 @@
     display: flex;
 }
 
-.lx-steps-container-wrapper .lx-steps-label { 
-    margin-top: 0.1rem;
-}
-
 .lx-form-grid>.lx-main .lx-row .lx-steps-label {
   color: var(--color-data);
 }
 
 .lx-steps-icon {
-    margin-top: 0.25rem;
-    margin-right: 0.3rem;
-    min-width: 17px;
-    max-height: 17px;
+    width: var(--icon-size-xs);
+    height: var(--icon-size-xs);
 }
 
 .lx-steps-description {
     line-height: 1.1em;
     font-size: var(--small-font-size);
+}
+
+.lx-info-wrapper .lx-steps-description .lx-description {
+    color: var(--color-tooltip-foreground-label);
 }
 
 .lx-steps-container-wrapper-disabled {
@@ -96,7 +94,7 @@
 }
 
 @media (max-width: 800px) {
-    .lx-steps-data-block {
+    .lx-steps-container-wrapper .lx-steps-data .lx-steps-data-block {
         display: none;
     }
 

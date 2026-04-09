@@ -36,7 +36,8 @@
 }
 
 .lx-master-detail .lx-master li svg {
-    height: 1.5rem;
+    height: var(--icon-size-m);
+    width: var(--icon-size-m);
     flex-shrink: 0;
 }
 
@@ -86,7 +87,8 @@
 }
 
 .lx .lx-master-detail .lx-master .lx-list-item.lx-invalid .lx-invalidation-icon {
-    height: 1.5rem;
+    height: var(--icon-size-m);
+    width: var(--icon-size-m);
     fill: var(--color-bad);
     grid-area: invalid-icon;
 }

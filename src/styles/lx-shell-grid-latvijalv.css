@@ -113,7 +113,7 @@
   
   .lx .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-main-button svg {
     fill: var(--color-brand);
-    height: calc(var(--icon-size) * 1.5);
+    height: calc(var(--icon-size-l) * 1.5);
     padding-left: 0;
     padding-right: 0;
     transition: height 0.2s ease-in-out;
@@ -417,21 +417,20 @@
   }
 
   .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert-list .lx-button {
-    --button-ghost-icon-only-height: 1.25rem;
-    --button-ghost-icon-only-width: 1.25rem;
-    --button-ghost-icon-only-min-width: 1.25rem;
+    --button-ghost-icon-only-height: var(--icon-size-s);
+    --button-ghost-icon-only-width: var(--icon-size-s);
+    --button-ghost-icon-only-min-width: var(--icon-size-s);
   }
 
   .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert-list .lx-button svg {
-    --button-ghost-icon-height: 1rem;
-    --button-ghost-icon-width: 1rem;
+    --button-ghost-icon-size: var(--icon-size-xs);
     --color-button-ghost-icon: var(--color-latvijalv-alert-foreground);
     --color-button-ghost-icon-focus: var(--color-latvijalv-alert-foreground);
   }
 
   .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert-list .lx-latvijalv-alert-icon {
-    height: 1.5rem;
-    width: 1.5rem;
+    height: var(--icon-size-m);
+    width: var(--icon-size-m);
   }
 
   .lx-layout.lx-layout-latvijalv .lx-alert-clickable {
@@ -677,8 +676,8 @@
     }
   
     .lx .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-main-button svg {
-      height: var(--icon-size);
-      width: var(--icon-size);
+      height: var(--icon-size-l);
+      width: var(--icon-size-l);
     }
   
     .lx .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-main-button .lx-description {

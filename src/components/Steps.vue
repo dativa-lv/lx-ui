@@ -55,7 +55,11 @@ const color = ref('--color-brand');
     </div>
 
     <div class="lx-steps-data">
-      <div class="lx-steps-data-block" v-for="item in items" :key="item[idAttribute]">
+      <div
+        class="lx-steps-data-block lx-aligned-row lx-aligned-row-4"
+        v-for="item in items"
+        :key="item[idAttribute]"
+      >
         <LxIcon
           v-show="(busy && item[stateAttribute] !== 'current') || !busy"
           customClass="lx-steps-icon"
@@ -107,43 +111,48 @@ const color = ref('--color-brand');
         :key="item[idAttribute]"
       >
         <LxInfoWrapper>
-          <LxIcon
-            v-show="(busy && item[stateAttribute] !== 'current') || !busy"
-            customClass="lx-steps-icon"
-            :style="{
-              fill: isDisabledLoadingBusy
-                ? 'var(--color-disabled-background)'
-                : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
-                ? 'var(--color-brand)'
-                : item[stateAttribute] === 'invalid'
-                ? 'var(--color-bad)'
-                : null,
-            }"
-            :value="
-              (() => {
-                switch (item[stateAttribute]) {
-                  case 'current':
-                    return 'incomplete';
-                  case 'invalid':
-                    return 'invalid';
-                  case 'complete':
-                    return 'notification-success';
-                  default:
-                    return 'unselected';
-                }
-              })()
-            "
-          />
-          <div class="lx-steps-icon" v-if="busy && item[stateAttribute] === 'current'">
-            <LxLoader :loading="true" size="s" />
-          </div>
-
-          <div>
-            <div class="lx-steps-label">
-              <strong>{{ item?.[nameAttribute] }} </strong>
+          <div
+            class="lx-steps-data-block-small-content"
+            :class="{ 'lx-aligned-row lx-aligned-row-4': kind === 'compact' }"
+          >
+            <LxIcon
+              v-show="(busy && item[stateAttribute] !== 'current') || !busy"
+              customClass="lx-steps-icon"
+              :style="{
+                fill: isDisabledLoadingBusy
+                  ? 'var(--color-disabled-background)'
+                  : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
+                  ? 'var(--color-brand)'
+                  : item[stateAttribute] === 'invalid'
+                  ? 'var(--color-bad)'
+                  : null,
+              }"
+              :value="
+                (() => {
+                  switch (item[stateAttribute]) {
+                    case 'current':
+                      return 'incomplete';
+                    case 'invalid':
+                      return 'invalid';
+                    case 'complete':
+                      return 'notification-success';
+                    default:
+                      return 'unselected';
+                  }
+                })()
+              "
+            />
+            <div class="lx-steps-icon" v-if="busy && item[stateAttribute] === 'current'">
+              <LxLoader :loading="true" size="s" />
             </div>
-            <div class="lx-steps-description" v-if="kind === 'default'">
-              <p class="lx-description">{{ item?.[descriptionAttribute] }}</p>
+
+            <div>
+              <div class="lx-steps-label">
+                <strong>{{ item?.[nameAttribute] }} </strong>
+              </div>
+              <div class="lx-steps-description" v-if="kind === 'default'">
+                <p class="lx-description">{{ item?.[descriptionAttribute] }}</p>
+              </div>
             </div>
           </div>
           <template #panel>

@@ -229,8 +229,8 @@ a.lx-sitemap-link {
 
 .lx .lx-button svg,
 .lx a.lx-button svg {
-  height: var(--button-primary-icon-height);
-  width: var(--button-primary-icon-width);
+  height: var(--button-primary-icon-size);
+  width: var(--button-primary-icon-size);
   fill: var(--color-button-primary-icon);
   margin: var(--button-icon-margin);
   justify-self: var(--button-icon-justify);
@@ -241,30 +241,30 @@ a.lx-sitemap-link {
 
 .lx-button.lx-button-secondary svg,
 a.lx-button.lx-button-secondary svg {
-  height: var(--button-secondary-icon-height);
-  width: var(--button-secondary-icon-width);
+  height: var(--button-secondary-icon-size);
+  width: var(--button-secondary-icon-size);
   fill: var(--color-button-secondary-icon);
 }
 
 .lx-button.lx-button-tertiary svg,
 a.lx-button.lx-button-tertiary svg {
-  height: var(--button-tertiary-icon-height);
-  width: var(--button-tertiary-icon-width);
+  height: var(--button-tertiary-icon-size);
+  width: var(--button-tertiary-icon-size);
   fill: var(--color-button-tertiary-icon);
 }
 
 .lx-button.lx-button-ghost svg,
 a.lx-button.lx-button-ghost svg {
-  height: var(--button-ghost-icon-height);
-  width: var(--button-ghost-icon-width);
+  height: var(--button-ghost-icon-size);
+  width: var(--button-ghost-icon-size);
   fill: var(--color-button-ghost-icon);
 }
 
 /* Nav icon styles */
 
 .lx-layout-default .lx-nav-panel ul li .lx-button svg {
-  height: var(--button-nav-icon-height);
-  width: var(--button-nav-icon-width);
+  height: var(--button-nav-icon-size);
+  width: var(--button-nav-icon-size);
   fill: var(--color-button-nav-icon);
 }
 
@@ -280,8 +280,8 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-layout-public .lx-nav-panel ul li:first-of-type .lx-button svg,
 .lx-layout-latvijalv .lx-nav-panel ul li:first-of-type .lx-button svg {
-  height: var(--button-nav-public-icon-height);
-  width: var(--button-nav-public-icon-width);
+  height: var(--button-nav-public-icon-size);
+  width: var(--button-nav-public-icon-size);
 }
 
 .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button svg,
@@ -311,8 +311,8 @@ a.lx-button.lx-button-ghost svg {
 /* Toolbar primary icon styles */
 
 .lx-layout .lx-component-toolbar .lx-button svg {
-  height: var(--button-toolbar-primary-icon-height);
-  width: var(--button-toolbar-primary-icon-width);
+  height: var(--button-toolbar-primary-icon-size);
+  width: var(--button-toolbar-primary-icon-size);
   fill: var(--color-button-toolbar-primary-icon);
 }
 
@@ -339,8 +339,8 @@ a.lx-button.lx-button-ghost svg {
 /* Toolbar secondary icon styles */
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary svg {
-  height: var(--button-toolbar-secondary-icon-height);
-  width: var(--button-toolbar-secondary-icon-width);
+  height: var(--button-toolbar-secondary-icon-size);
+  width: var(--button-toolbar-secondary-icon-size);
   fill: var(--color-button-toolbar-secondary-icon);
 }
 
@@ -367,8 +367,8 @@ a.lx-button.lx-button-ghost svg {
 /* Toolbar tertiary icon styles */
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary svg {
-  height: var(--button-toolbar-tertiary-icon-height);
-  width: var(--button-toolbar-tertiary-icon-width);
+  height: var(--button-toolbar-tertiary-icon-size);
+  width: var(--button-toolbar-tertiary-icon-size);
   fill: var(--color-button-toolbar-tertiary-icon);
 }
 
@@ -397,8 +397,8 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-data-grid-wrapper .second-row .lx-button svg,
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost svg,
 .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost svg {
-  height: var(--button-toolbar-ghost-icon-height);
-  width: var(--button-toolbar-ghost-icon-width);
+  height: var(--button-toolbar-ghost-icon-size);
+  width: var(--button-toolbar-ghost-icon-size);
   fill: var(--color-button-toolbar-ghost-icon);
 }
 
@@ -448,8 +448,8 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) svg,
 .lx-selection-toolbar .lx-component-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) svg {
-  height: var(--button-toolbar-selection-icon-height);
-  width: var(--button-toolbar-selection-icon-width);
+  height: var(--button-toolbar-selection-icon-size);
+  width: var(--button-toolbar-selection-icon-size);
   fill: var(--color-button-toolbar-selection-icon);
 }
 
@@ -484,8 +484,8 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button svg,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button svg,
 .lx .lx-layout .lx-dropdown-panel > .lx-button svg {
-  height: calc(var(--button-dropdown-icon-height) - 0.25rem);		
-  width: calc(var(--button-dropdown-icon-width) - 0.25rem);		
+  height: calc(var(--button-dropdown-icon-size) - 0.25rem);		
+  width: calc(var(--button-dropdown-icon-size) - 0.25rem);		
   fill: var(--color-button-dropdown-icon);
 }
 
@@ -493,8 +493,8 @@ a.lx-button.lx-button-ghost svg {
 .lx.lx-touch-mode .lx-dropdown-panel .lx-button-set .lx-button svg,
 .lx.lx-touch-mode .lx-layout .lx-dropdown-panel > div > .lx-button svg,
 .lx.lx-touch-mode .lx-layout .lx-dropdown-panel > .lx-button svg {
-  height: var(--button-dropdown-icon-height);
-  width: var(--button-dropdown-icon-width);
+  height: var(--button-dropdown-icon-size);
+  width: var(--button-dropdown-icon-size);
   fill: var(--color-button-dropdown-icon);
 }
 
@@ -745,7 +745,7 @@ a.lx-button.lx-button-ghost svg {
   list-style: none;
   padding: 0;
   --button-nav-gap: 0;
-  --button-nav-padding: 0 1rem 0 calc(1.55rem + var(--button-nav-icon-width));
+  --button-nav-padding: 0 1rem 0 calc(1.55rem + var(--button-nav-icon-size));
 }
 
 .lx-layout-default .lx-nested-nav {
@@ -1895,8 +1895,8 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-user-button .lx-avatar .lx-icon {
-  width: 1.5rem !important;
-  height: 1.55rem !important;
+  width: var(--icon-size-m) !important;
+  height: var(--icon-size-m) !important;
 }
 
 /*** Badge styles ***/
@@ -1933,7 +1933,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-button:not(#userMenuButton) .lx-badge .lx-badge-icon {
-  width: 1rem;
+  width: var(--icon-size-xs);
   height: unset;
   margin: 0;
   fill: var(--color-badge-foreground);
@@ -2023,7 +2023,8 @@ a.lx-button.lx-button-ghost svg {
 /*** Loader styles ***/
 
 .lx-button .lx-loader-container {
-  height: 1.55rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
   justify-content: center;
   justify-self: var(--button-icon-justify);
   align-items: center;
@@ -2032,18 +2033,18 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-button.lx-button-secondary .lx-loader-container {
-  height: var(--button-secondary-icon-height);
-  height: var(--button-secondary-icon-width);
+  height: var(--button-secondary-icon-size);
+  height: var(--button-secondary-icon-size);
 }
 
 .lx-button.lx-button-tertiary .lx-loader-container {
-  height: var(--button-tertiary-icon-height);
-  height: var(--button-tertiary-icon-width);
+  height: var(--button-tertiary-icon-size);
+  height: var(--button-tertiary-icon-size);
 }
 
 .lx-button.lx-button-ghost .lx-loader-container {
-  height: var(--button-ghost-icon-height);
-  height: var(--button-ghost-icon-width);
+  height: var(--button-ghost-icon-size);
+  height: var(--button-ghost-icon-size);
 }
 
 .lx .lx-button.lx-button-icon-only .lx-loader-container {
@@ -2057,8 +2058,8 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-button .lx-loader-container .lx-loader svg {
   margin: 0;
-  height: 1.25rem;
-  width: 1.25rem;
+  height: var(--icon-size-s);
+  width: var(--icon-size-s);
   fill: transparent !important;
 }
 
@@ -2286,8 +2287,8 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag svg {
-  height: 1.5rem;
-  width: 1.5rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag[disabled="false"]:hover svg {

@@ -46,8 +46,8 @@
 }
 
 .lx .lx-notifications-list .lx-notification svg {
-  height: 1.5rem;
-  width: 1.5rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
   margin-right: var(--padding);
   flex-shrink: 0;
   margin-top: 0.3rem;
@@ -113,8 +113,8 @@ p.lx-subtitle {
 .lx .lx-notifications-list .lx-notification .lx-close-icon {
   margin-left: auto;
   margin-right: 0;
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
 }
 
 .lx .lx-notifications-list .lx-notification svg.lx-close-icon {
@@ -144,8 +144,8 @@ p.lx-subtitle {
 .lx-info-box-button>.lx-info-box-icon {
   margin-top: 0;
   margin-right: .5rem;
-  min-width: 1.5rem;
-  min-height: 1.5rem;
+  min-width: var(--icon-size-m);
+  min-height: var(--icon-size-m);
 }
 
 .lx-info-box-button {

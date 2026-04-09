@@ -98,8 +98,8 @@
 }
 
 .lx-layout-digimaks .lx-nav-panel-group ul li .lx-button svg {
-  height: var(--button-nav-icon-height);
-  width: var(--button-nav-icon-width);
+  height: var(--button-nav-icon-size);
+  width: var(--button-nav-icon-size);
   fill: var(--color-button-nav-icon);
   --color-button-ghost-icon: var(--color-button-nav-icon);
   --color-button-primary-icon: var(--color-button-nav-icon);
@@ -197,7 +197,8 @@
 }
 
 .lx-layout-digimaks .lx-nav-panel .lx-nav-panel-group .lx-nav-group > .lx-user-button svg {
-  height: 1.5rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
 }
 
 .lx-layout-digimaks .lx-nav-panel .lx-user-button:hover,
@@ -501,8 +502,8 @@
   --button-tertiary-border-radius: var(--list-item-border-radius);
   --button-tertiary-padding: 0.35rem 0 0.2rem 1rem;
   --button-tertiary-height: 100%;
-  --button-icon-width: var(--list-icon-width);
-  --button-icon-height: var(--list-icon-height);
+  --button-icon-width: var(--list-icon-size);
+  --button-icon-height: var(--list-icon-size);
   --button-icon-margin: 0 0.75rem 0 0;
   --button-tertiary-font-weight: var(--font-weight);
 }

@@ -342,8 +342,8 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
 }
 
 .lx-button.lx-button-ghost svg {
-  height: var(--button-ghost-icon-height);
-  width: var(--button-ghost-icon-width);
+  height: var(--button-ghost-icon-size);
+  width: var(--button-ghost-icon-size);
   fill: var(--color-button-ghost-icon);
 }
 
@@ -385,8 +385,8 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
 }
 
 .lx-button.lx-button-tertiary svg {
-  height: var(--button-tertiary-icon-height);
-  width: var(--button-tertiary-icon-width);
+  height: var(--button-tertiary-icon-size);
+  width: var(--button-tertiary-icon-size);
   fill: var(--color-button-tertiary-icon);
 }
 
@@ -537,8 +537,8 @@ header.lx.lx-header-wrapper .lx-header>.lx-right-group .lx-button:active {
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button svg {
-  height: calc(var(--button-dropdown-icon-height) - 0.25rem);
-  width: calc(var(--button-dropdown-icon-width) - 0.25rem);
+  height: calc(var(--button-dropdown-icon-size) - 0.25rem);
+  width: calc(var(--button-dropdown-icon-size) - 0.25rem);
   fill: var(--color-button-dropdown-icon);
 }
 
@@ -680,8 +680,8 @@ header.lx.lx-layout-default .lx-header .lx-user-button .lx-icon {
 }
 
 .lx-dropdown-toggler .lx-user-button .lx-avatar .lx-icon {
-  width: 23.25px !important;
-  height: 22.5px !important;
+  width: var(--icon-size-m) !important;
+  height: var(--icon-size-m) !important;
 }
 
 header.lx.lx-layout-default .lx-header .lx-user-button:hover .lx-icon,
@@ -836,8 +836,8 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
 }
 
 .lx.lx-header-wrapper .lx-mega-menu-container ul li svg {
-  width: 2rem;
-  height: 2rem;
+  width: var(--icon-size-l);
+  height: var(--icon-size-l);
 }
 
 .lx.lx-header-wrapper .lx-mega-menu-container ul.primary-menu {
@@ -939,7 +939,7 @@ header.lx.lx-layout-default .lx-header .lx-main-button .lx-logo {
 
 header.lx.lx-layout-public>.lx-header .lx-main-button svg {
   fill: var(--color-brand);
-  height: calc(var(--icon-size) * 1.5);
+  height: calc(var(--icon-size-l) * 1.5);
   padding-left: 0;
   padding-right: 0;
   transition: height 0.2s ease-in-out;
@@ -1108,8 +1108,8 @@ display: flex;
 .lx-info-box-button > .lx-info-box-icon {
   margin-top: 0;
   margin-right: 0.5rem;
-  min-width: 1.5rem;
-  min-height: 1.5rem;
+  min-width: var(--icon-size-m);
+  min-height: var(--icon-size-m);
 }
 
 .lx-button:not(#userMenuButton) .lx-badge {
@@ -1371,8 +1371,8 @@ display: flex;
   }
 
   header.lx.lx-layout-public>.lx-header .lx-main-button svg {
-    height: var(--icon-size);
-    width: var(--icon-size);
+    height: var(--icon-size-l);
+    width: var(--icon-size-l);
   }
 
   header.lx.lx-layout-public>.lx-header .lx-main-button .lx-description {

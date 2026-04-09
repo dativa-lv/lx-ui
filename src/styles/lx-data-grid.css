@@ -306,7 +306,8 @@
 }
 
 .lx .lx-data-grid-wrapper .lx-cell-header div svg {
-  height: 1.2rem;
+  height: var(--icon-size-s);
+  width: var(--icon-size-s);
   flex-shrink: 0;
   align-self: flex-start;
   margin-left: 0.5rem;
@@ -1028,8 +1029,7 @@
 }
 
 .lx-data-grid-wrapper .lx-statusbar .lx-chip.lx-button {
-  --button-ghost-icon-height: 1rem;
-  --button-ghost-icon-width: 1rem;
+  --button-ghost-icon-size: 1rem;
   --button-ghost-min-width: 5rem;
   --button-ghost-margin: 0 0 0 0.5rem;
   --color-button-ghost: var(--color-label);
@@ -1241,7 +1241,8 @@
   .lx-data-block-content
   .lx-row
   svg.lx-grid-column-icon {
-  height: 1.5rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
 }
 
 .lx-grid-icon-wrapper {
@@ -1308,7 +1309,8 @@
 }
 
 .lx-responsive-grid-icons-row svg {
-  height: 1.5rem;
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
 }
 
 .lx-data-grid-wrapper .lx-appendable-list.lx-data-grid-full .lx-appendable-list-item .lx-row.lx-responsive-grid-icons-row .lx-cell-extra {
