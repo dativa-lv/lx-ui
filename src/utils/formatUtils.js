@@ -38,14 +38,11 @@ export function formatUrl(value) {
   let newUrl = globalThis.decodeURIComponent(value);
   newUrl = newUrl.trim().replace(/\s/g, '');
 
-  if (/^(:\/\/)/.test(newUrl)) {
-    return `https${newUrl}`;
-  }
-  if (!/^(f|ht)tps?:\/\//i.test(newUrl)) {
-    return `https://${newUrl}`;
+  if (/^[a-z][a-z0-9+.-]*:(?=.*[a-z0-9]).+$/i.test(newUrl)) {
+    return newUrl;
   }
 
-  return newUrl;
+  return `https://${newUrl}`;
 }
 
 export function formatValue(value, type = 'default', texts = { yes: 'Jā', no: 'Nē' }) {

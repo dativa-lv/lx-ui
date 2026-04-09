@@ -88,6 +88,9 @@ export function isUrl(value) {
     value
   );
 }
+export function isUri(value) {
+  return /^[a-z][a-z0-9+.-]*:(?=.*[a-z0-9]).+$/i.test(value);
+}
 /**
  * Check if a string is a valid file name
  * @param {string} fileName -  file name to check

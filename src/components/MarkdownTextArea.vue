@@ -16,7 +16,7 @@ import LxToolbar from '@/components/Toolbar.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxLoader from '@/components/Loader.vue';
-import { isUrl, generateUUID } from '@/utils/stringUtils';
+import { isUrl, isUri, generateUUID, isEmail, isPhone } from '@/utils/stringUtils';
 import { checkArrayObjectProperty } from '@/utils/arrayUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { formatValue, formatUrl } from '@/utils/formatUtils';
@@ -312,7 +312,7 @@ function createEditorExtensions() {
 
     Link.configure({
       autolink: false,
-      validate: (href) => /^https?:\/\//.test(href),
+      validate: (href) => /^[a-z][a-z0-9+.-]*:/i.test(href),
     }),
 
     Placeholder.configure({
@@ -543,6 +543,28 @@ async function updateEditorExtensions() {
 function setLink() {
   isNotLink.value = false;
   const url = inputLink;
+  if (!isUri(url.value)) {
+    isNotLink.value = true;
+    return;
+  }
+
+  // check known uri schemes and url structure
+  const urlScheme = url.value.split(':')[0].toLowerCase();
+  let isValid = false;
+  if (urlScheme === 'http' || urlScheme === 'https') {
+    isValid = isUrl(url.value);
+  } else if (urlScheme === 'mailto') {
+    isValid = isEmail(url.value.replace(/^mailto:/i, ''));
+  } else if (urlScheme === 'tel') {
+    isValid = isPhone(url.value.replace(/^tel:/i, ''));
+  } else {
+    isValid = true;
+  }
+  if (!isValid) {
+    isNotLink.value = true;
+    return;
+  }
+
   const formatedUrl = formatValue(url.value, 'link');
   // empty
   if (url.value === '' || url.value === undefined || url.value === null) {
@@ -552,10 +574,6 @@ function setLink() {
     return;
   }
 
-  if (!isUrl(formatedUrl)) {
-    isNotLink.value = true;
-    return;
-  }
   // update link
   editUrlModal.value.close();
   editor.value.chain().focus().extendMarkRange('link').setLink({ href: formatedUrl }).run();
