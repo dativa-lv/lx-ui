@@ -1,5 +1,46 @@
 # LX/UI Migration Guide
 
+## 2.1.0 → 2.1.1
+
+### Breaking changes
+
+#### LxToggle
+
+Most LxToggle styles have been moved to a separate file - `lx-toggles.css`. Import this file in your project to ensure correct toggle appearance and behavior.
+
+The following tokens have been removed:
+- `--toggle-border-invalid`
+- `--toggle-padding-left-false`
+- `--toggle-padding-left-true`
+- `--toggle-indeterminate-padding-left`
+- `--toggle-indeterminate-padding-right`
+- `--toggle-s-indeterminate-padding-left`
+- `--toggle-s-indeterminate-padding-right`
+- `--toggle-s-padding-left-true`
+- `--toggle-label-readonly-margin`
+- `--toggle-text-margin-left`
+- `--toggle-checked-icon-position-left`
+
+**Token renames**
+
+The following tokens have been renamed:
+- `--toggle-s-width` → `--toggle-width-s`
+- `--toggle-s-height` → `--toggle-height-s`
+
+Some existing tokens have been divided into size-based (`m` / `s`) or state-based (`on` / `off`) variants.
+
+| Old token                | New tokens                                                                                                                  |
+|--------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `--toggle-border`        | `--toggle-border-m`, `--toggle-border-s`                                                                                    |
+| `--toggle-width`         | `--toggle-width-m`, `--toggle-width-s`                                                                                      |
+| `--toggle-height`        | `--toggle-height-m`, `--toggle-height-s`                                                                                    |
+| `--toggle-border-radius` | `--toggle-border-radius-m`, `--toggle-border-radius-s`                                                                      |
+| `--toggle-padding-right` | `--toggle-padding-right-m`, `--toggle-padding-right-s`                                                                      |
+| `--toggle-thumb-width`   | `--toggle-thumb-width-off-m`, `--toggle-thumb-width-on-m`,<br>`--toggle-thumb-width-off-s`, `--toggle-thumb-width-on-s`     |
+| `--toggle-thumb-height`  | `--toggle-thumb-height-off-m`, `--toggle-thumb-height-on-m`,<br>`--toggle-thumb-height-off-s`, `--toggle-thumb-height-on-s` |
+
+Check for any unintended visual changes in toggles.
+
 ## 2.0.8 → 2.1
 
 ### Breaking changes

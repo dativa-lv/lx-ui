@@ -1804,7 +1804,7 @@
 .lx:not(.lx-touch-mode) .lx-layout .popper > .lx-dropdown-panel-wrapper
   > .lx-dropdown-panel
   > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {		
-  padding: 0.15rem 0.35rem 0.15rem 1.1rem;		
+  padding: 0 0.35rem 0 1.1rem;
 }
 
 .lx-touch-mode-controller {		

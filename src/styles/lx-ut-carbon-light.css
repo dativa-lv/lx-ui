@@ -44,17 +44,6 @@
   --color-highlight-background: var(--color-highlight);
   --color-highlight-foreground: var(--color-data);
 
-  --color-toggle-border-true: var(--color-interactive-background);
-  --color-toggle-background-true: var(--color-interactive-background);
-  --color-toggle-foreground-true: var(--color-region);
-  --color-toggle-border-false: var(--color-data);
-  --color-toggle-background-false: var(--color-region);
-  --color-toggle-foreground-false: var(--color-data);
-  --color-toggle-foreground-null: var(--color-data);
-  --color-toggle-hover-border: var(--color-interactive-hover-background);
-  --color-toggle-hover-background: var(--color-interactive-hover-background);
-  --color-toggle-hover-foreground: var(--color-interactive-hover-foreground);
-
   --color-content-switcher-foreground: var(--color-data);
   --color-cover-title: var(--color-data);
   --color-checkmark-foreground: #fff;
@@ -450,6 +439,22 @@
   --color-loader-text-primary: var(--color-data);
   --color-loader-text-secondary: var(--color-label);
   --color-loader-bar-stop-indicator: transparent;
+
+  --color-toggle-background-off: var(--color-region);
+  --color-toggle-background-on: var(--color-interactive-background);
+  --color-toggle-background-hover-off: var(--color-region);
+  --color-toggle-background-hover-on: var(--color-interactive-hover-background);
+  --color-toggle-thumb-off: var(--color-data);
+  --color-toggle-thumb-on: var(--color-region);
+  --color-toggle-thumb-hover-off: var(--color-interactive-hover-background);
+  --color-toggle-thumb-hover-on: var(--color-region);
+  --color-toggle-checkmark: var(--color-region);
+  --color-toggle-checkmark-hover: var(--color-region);
+  --color-toggle-border-off: var(--color-data);
+  --color-toggle-border-on: transparent;
+  --color-toggle-border-hover-off: var(--color-interactive-hover-background);
+  --color-toggle-border-hover-on: transparent;
+  --color-toggle-text: var(--color-data);
 
   --color-draft-background: var(--color-draft);
   --color-new-background: var(--color-new);

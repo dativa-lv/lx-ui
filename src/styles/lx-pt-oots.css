@@ -24,9 +24,9 @@
     --region-border-transparent: var(--region-border);
     --list-item-border: var(--border-width-1) solid var(--color-chrome);
     --input-border: var(--border-width-1) solid var(--color-chrome);
-    --color-toggle-background-false: #d0d5dc;
-    --color-toggle-border-false: #d0d5dc;
-    --color-toggle-foreground-false: #6e7681;
+    --color-toggle-background-off: #d0d5dc;
+    --color-toggle-border-off: #d0d5dc;
+    --color-toggle-thumb-off: #6e7681;
   
     --color-content-switcher-foreground: #565656;
     --color-disabled-foreground: #e6e7ee;
@@ -66,9 +66,9 @@
     --region-border: var(--border-width-1) solid var(--color-chrome);
     --list-item-border: var(--border-width-1) solid var(--color-chrome);
     --input-border: var(--border-width-1) solid var(--color-chrome);
-    --color-toggle-background-false: #d0d5dc;
-    --color-toggle-border-false: #d0d5dc;
-    --color-toggle-foreground-false: #6e7681;
+    --color-toggle-background-off: #d0d5dc;
+    --color-toggle-border-off: #d0d5dc;
+    --color-toggle-thumb-off: #6e7681;
     --color-content-switcher-foreground: #aaaaaa;
     --color-disabled-foreground: #333333;
   

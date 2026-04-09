@@ -1,0 +1,272 @@
+.lx-toggle-wrapper {
+  display: flex;
+  width: fit-content;
+  margin: 0;
+  cursor: default;
+  column-gap: var(--toggle-gap);
+}
+
+.lx-layout .lx-toggle-wrapper input[type="checkbox"].lx-toggle {
+  position: absolute;
+  overflow: hidden;
+  height: 0;
+  width: 0;
+  padding: 0;
+  border: none;
+  margin: -1px;
+  clip: rect(0, 0, 0, 0);
+  visibility: inherit;
+  white-space: nowrap;
+  outline: none;
+}
+
+.lx-toggle-appearance {
+  display: grid;
+  align-items: center;
+  justify-content: start;
+  position: relative;
+  flex-shrink: 0;
+  width: var(--toggle-width-m);
+  height: var(--toggle-height-m);
+  border: var(--toggle-border-m);
+  border-radius: var(--toggle-border-radius-m);
+  padding-left: var(--toggle-padding-left-m);
+  padding-right: var(--toggle-padding-right-m);
+  background-color: var(--color-toggle-background-off);
+  cursor: pointer;
+}
+
+.lx-toggle-wrapper.lx-checked .lx-toggle-label-wrapper .lx-toggle-appearance {
+  background-color: var(--color-toggle-background-on);
+  border-color: var(--color-toggle-border-on);
+}
+
+.lx-modal .lx-expander .lx-toggle-appearance,
+.lx-modal .lx-data-block .lx-toggle-appearance,
+.lx-form-grid .lx-data-block .lx-toggle-appearance,
+.lx-region .lx-appendable-list .lx-toggle-appearance,
+.lx-region .lx-data-block-wrapper .lx-toggle-appearance {
+  background-color: var(--color-toggle-background-off);
+}
+
+.lx-modal .lx-toggle-appearance,
+.lx-region .lx-toggle-appearance,
+.lx-expander .lx-toggle-appearance,
+.lx-form-grid .lx-toggle-appearance,
+.lx-data-block .lx-toggle-appearance,
+.lx-dropdown-panel .lx-toggle-appearance {
+  --color-toggle-background-off: var(--color-region-2);
+  --color-toggle-background-hover-off: var(--color-region-2);
+}
+
+.lx-toggle:focus + .lx-toggle-label-wrapper .lx-toggle-appearance,
+.lx-toggle:active + .lx-toggle-label-wrapper .lx-toggle-appearance {
+  outline: 2px solid var(--color-focus-background);
+}
+
+/*** Thumb styles ***/
+
+.lx-toggle-appearance .lx-toggle-thumb {
+  display: block;
+  width: var(--toggle-thumb-width-off-m);
+  height: var(--toggle-thumb-height-off-m);
+  border-radius: var(--toggle-thumb-border-radius-m);
+  background-color: var(--color-toggle-thumb-off);
+  border: var(--toggle-border-m);
+  border-color: var(--color-toggle-thumb-off);
+  transform: translateX(0);
+}
+
+.lx-toggle-wrapper.lx-checked .lx-toggle-appearance .lx-toggle-thumb {
+  transform: translateX(
+    calc(
+      var(--toggle-width-m)
+      - var(--toggle-thumb-width-on-m)
+      - var(--toggle-padding-left-m)
+      - var(--toggle-padding-right-m)
+      - (2 * var(--toggle-border-width-m))
+    )
+  );
+  width: var(--toggle-thumb-width-on-m);
+  height: var(--toggle-thumb-height-on-m);
+  background-color: var(--color-toggle-thumb-on);
+  border-color: var(--color-toggle-thumb-on);
+}
+
+.lx-toggle-wrapper.lx-indeterminate .lx-toggle-appearance .lx-toggle-thumb {
+  transform: translateX(
+    calc((
+      var(--toggle-width-m)
+      - var(--toggle-thumb-width-off-m)
+      - var(--toggle-padding-left-m)
+      - var(--toggle-padding-right-m)
+      - (2 * var(--toggle-border-width-m))
+    ) / 2)
+  );
+}
+
+/*** Small toggle styles ***/
+
+.lx-form-grid .lx-small .lx-toggle-label-wrapper {
+  margin: 0.75rem 0; /* TODO: replace with spacing token. --toggle-height-s + 0.75 * 2 = --input-container-height */ 
+}
+
+.lx-form-grid .lx-row-header .lx-small .lx-toggle-label-wrapper {
+  margin: 0.25rem 0; /* TODO: replace with spacing token */ 
+}
+
+.lx-toggle-wrapper.lx-small .lx-toggle-appearance {
+  width: var(--toggle-width-s);
+  height: var(--toggle-height-s);
+  border: var(--toggle-border-s);
+  border-radius: var(--toggle-border-radius-s);
+  padding-left: var(--toggle-padding-left-s);
+  padding-right: var(--toggle-padding-right-s);
+}
+
+.lx-toggle-wrapper.lx-small .lx-toggle-thumb {
+  border: var(--toggle-border-s);
+  border-color: var(--color-toggle-thumb-off);
+  border-radius: var(--toggle-border-radius-s);
+  width: var(--toggle-thumb-width-off-s);
+  height: var(--toggle-thumb-height-off-s);
+}
+
+.lx-toggle-wrapper.lx-small.lx-checked .lx-toggle-thumb {
+  transform: translateX(
+    calc(
+      var(--toggle-width-s)
+      - var(--toggle-thumb-width-on-s)
+      - var(--toggle-padding-left-s)
+      - var(--toggle-padding-right-s)
+      - (2 * var(--toggle-border-width-s))
+    )
+  );
+  border-color: var(--color-toggle-thumb-on);
+  width: var(--toggle-thumb-width-on-s);
+  height: var(--toggle-thumb-height-on-s);
+}
+
+.lx-toggle-wrapper.lx-small.lx-indeterminate .lx-toggle-thumb {
+  transform: translateX(
+    calc((
+      var(--toggle-width-s)
+      - var(--toggle-thumb-width-off-s)
+      - var(--toggle-padding-left-s)
+      - var(--toggle-padding-right-s)
+      - (2 * var(--toggle-border-width-s))
+    ) / 2)
+  );
+}
+
+/*** Disabled styles  ***/
+
+.lx-toggle-wrapper.lx-disabled .lx-toggle-label-wrapper {
+  color: var(--color-disabled-foreground);
+}
+
+.lx-toggle-wrapper.lx-disabled .lx-toggle-appearance .lx-toggle-thumb {
+  background-color: transparent;
+  border-color: var(--color-disabled-foreground);
+  box-sizing: border-box;
+}
+
+.lx-toggle-wrapper.lx-disabled .lx-toggle-appearance .lx-toggle-checkmark {
+  fill: var(--color-disabled-foreground);
+}
+
+.lx-toggle-wrapper.lx-disabled .lx-toggle + .lx-toggle-label-wrapper .lx-toggle-appearance {
+  background-color: transparent;
+  border-color: var(--color-disabled-foreground);
+  outline: none;
+}
+
+.lx-toggle-wrapper.lx-disabled .lx-toggle-text,
+.lx-toggle-wrapper.lx-disabled .lx-toggle-appearance,
+.lx-toggle-wrapper.lx-disabled .lx-toggle-label-wrapper,
+.lx-toggle-wrapper.lx-disabled .lx-toggle-appearance .lx-toggle-checkmark {
+  cursor: not-allowed;
+}
+
+/*** Invalid styles ***/
+
+.lx-toggle-wrapper .lx-invalidation-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lx-toggle-wrapper .lx-invalidation-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lx-toggle-wrapper.lx-invalid .lx-toggle + .lx-toggle-label-wrapper .lx-toggle-appearance {
+  border: var(--border-width-2) solid var(--color-bad);
+}
+
+@media (pointer: fine) {
+  .lx-dropdown-menu-toggle-wrapper:hover .lx-toggle-appearance,
+  .lx-toggle-wrapper:hover .lx-toggle-appearance {
+    background-color: var(--color-toggle-background-hover-off);
+    border-color: var(--color-toggle-border-hover-off);
+  }
+
+  .lx-dropdown-menu-toggle-wrapper:hover .lx-toggle-thumb,
+  .lx-toggle-wrapper:hover .lx-toggle-thumb {
+    background-color: var(--color-toggle-thumb-hover-off);
+    border-color: var(--color-toggle-thumb-hover-off);
+  }
+
+  .lx-dropdown-menu-toggle-wrapper:hover .lx-checked .lx-toggle-appearance,
+  .lx-toggle-wrapper.lx-checked:hover .lx-toggle-appearance {
+    background-color: var(--color-toggle-background-hover-on);
+    border-color: var(--color-toggle-border-hover-on);
+  }
+
+  .lx-dropdown-menu-toggle-wrapper:hover .lx-checked .lx-toggle-thumb,
+  .lx-toggle-wrapper.lx-checked:hover .lx-toggle-thumb {
+    background-color: var(--color-toggle-thumb-hover-on);
+  }
+
+  .lx-dropdown-menu-toggle-wrapper:hover .lx-toggle-checkmark,
+  .lx-toggle-wrapper:hover .lx-toggle-checkmark {
+    fill: var(--color-toggle-checkmark-hover);
+  }
+}
+
+/*** Misc styles ***/
+
+.lx-row > .lx-vertical > .lx-field-wrapper > .lx-toggle-wrapper {
+  width: fit-content;
+}
+
+.lx-toggle-label-wrapper {
+  display: flex;
+  column-gap: var(--toggle-gap);
+  font-weight: var(--toggle-text-font-weight);
+  font-size: var(--toggle-text-font-size);
+  line-height: var(--toggle-text-line-height);
+  color: var(--color-toggle-text);
+  margin: 0.5rem 0; /* TODO: replace with spacing token. --toggle-height-m + 0.5 * 2 = --input-container-height */ 
+}
+
+.lx-toggle-appearance ~ .lx-toggle-text {
+  cursor: pointer;
+}
+
+.lx-toggle-wrapper.lx-checked .lx-toggle-checkmark {
+  position: absolute;
+  width: var(--toggle-checkmark-size);
+  height: var(--toggle-checkmark-size);
+  fill: var(--color-toggle-checkmark);
+  z-index: 1;
+  cursor: pointer;
+}
+
+.lx-toggle-read-only {
+  font-size: var(--font-size);
+  color: var(--color-data);
+}

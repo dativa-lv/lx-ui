@@ -131,7 +131,13 @@ onMounted(() => {
     <div
       v-else
       class="lx-toggle-wrapper"
-      :class="{ 'lx-small': size === 's' }"
+      :class="{
+        'lx-small': size === 's',
+        'lx-checked': internalModel === true,
+        'lx-indeterminate': model === null,
+        'lx-invalid': invalid,
+        'lx-disabled': disabled,
+      }"
       :data-disabled="disabled ? '' : null"
       :data-invalid="invalid ? '' : null"
       :title="tooltipValue"
@@ -143,7 +149,6 @@ onMounted(() => {
         v-model="model"
         type="checkbox"
         class="lx-toggle"
-        :class="[{ 'lx-invalid': invalid }]"
         :id="id"
         :name="id"
         :checked="model"
@@ -157,9 +162,16 @@ onMounted(() => {
       />
       <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
-      <div class="lx-toggle-label-wrapper lx-aligned-row" @click.stop.prevent="toggleValue">
-        <LxIcon v-if="internalModel && size === 'm'" value="check" :title="tooltipValue" />
-        <span class="lx-toggle-appearance" role="presentation" />
+      <div class="lx-toggle-label-wrapper" @click.stop.prevent="toggleValue">
+        <div class="lx-toggle-appearance" role="presentation">
+          <LxIcon
+            v-if="internalModel && size === 'm'"
+            customClass="lx-toggle-checkmark"
+            value="check"
+            :title="tooltipValue"
+          />
+          <span class="lx-toggle-thumb" />
+        </div>
 
         <label class="lx-toggle-text" v-if="size !== 's' && hasSlots" :for="id">
           <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate"> <slot /> </span>

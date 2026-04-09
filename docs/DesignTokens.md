@@ -286,50 +286,66 @@ It is worth noting that some LxDataBlock tokens use LxList tokens as default val
 
 ### Layout
 
-| Variable name                           | Default value                           |
-|-----------------------------------------|-----------------------------------------|
-| `--toggle-border`                       | 1px solid transparent                   |
-| `--toggle-border-invalid`               | 2px solid transparent                   |
-| `--toggle-width`                        | 3rem                                    |
-| `--toggle-height`                       | 1.5rem                                  |
-| `--toggle-thumb-width`                  | 1rem                                    |
-| `--toggle-thumb-height`                 | 1rem                                    |
-| `--toggle-thumb-border-radius`          | 50%                                     |
-| `--toggle-s-width`                      | 2rem                                    |
-| `--toggle-s-height`                     | 1rem                                    |
-| `--toggle-s-thumb-width`                | 0.625rem                                |
-| `--toggle-s-thumb-height`               | 0.625rem                                |
-| `--toggle-border-radius`                | 0.75rem                                 |
-| `--toggle-padding-left-false`           | 0.165rem                                |
-| `--toggle-padding-left-true`            | 1.7rem                                  |
-| `--toggle-indeterminate-padding-left`   | 0.935rem                                |
-| `--toggle-indeterminate-padding-right`  | 0.935rem                                |
-| `--toggle-s-indeterminate-padding-left` | 0.625rem                                |
-| `--toggle-s-indeterminate-padding-right`| 0.625rem                                |
-| `--toggle-s-padding-left-true`          | 1.075rem                                |
-| `--toggle-padding-right`                | 0.165rem                                |
-| `--toggle-label-readonly-margin`        | 0.4rem 0                                |
-| `--toggle-text-margin-left`             | 0.5rem                                  |
-| `--toggle-checked-icon-position-left`   | 0.185rem                                |
-| `--toggle-checked-icon-width`           | 1.5rem                                  |
-| `--toggle-checked-icon-height`          | 1.5rem                                  |
-
+| Variable name                    | Default value                                                     |
+| -------------------------------- | ----------------------------------------------------------------- |
+| `--toggle-border-width-m`        | `--border-width-1`                                                |
+| `--toggle-border-width-s`        | `--border-width-1`                                                |
+| `--toggle-border-m`              | var(--toggle-border-width-m) solid var(--color-toggle-border-off) |
+| `--toggle-border-s`              | var(--toggle-border-width-s) solid var(--color-toggle-border-off) |
+| `--toggle-width-m`               | 3rem                                                              |
+| `--toggle-height-m`              | 1.5rem                                                            |
+| `--toggle-width-s`               | 2rem                                                              |
+| `--toggle-height-s`              | 1rem                                                              |
+| `--toggle-checkmark-size`        | 1.5rem                                                            |
+| `--toggle-thumb-width-off-m`     | 1rem                                                              |
+| `--toggle-thumb-height-off-m`    | 1rem                                                              |
+| `--toggle-thumb-width-off-s`     | 0.625rem                                                          |
+| `--toggle-thumb-height-off-s`    | 0.625rem                                                          |
+| `--toggle-thumb-width-on-m`      | 1rem                                                              |
+| `--toggle-thumb-height-on-m`     | 1rem                                                              |
+| `--toggle-thumb-width-on-s`      | 0.625rem                                                          |
+| `--toggle-thumb-height-on-s`     | 0.625rem                                                          |
+| `--toggle-thumb-border-radius-m` | 50%                                                               |
+| `--toggle-thumb-border-radius-s` | 50%                                                               |
+| `--toggle-border-radius-m`       | 0.75rem                                                           |
+| `--toggle-border-radius-s`       | 0.75rem                                                           |
+| `--toggle-padding-right-m`       | 0.1875rem                                                         |
+| `--toggle-padding-left-m`        | 0.1875rem                                                         |
+| `--toggle-padding-right-s`       | 0.1875rem                                                         |
+| `--toggle-padding-left-s`        | 0.1875rem                                                         |
+| `--toggle-text-font-weight`      | `--font-weight`                                                   |
+| `--toggle-text-font-size`        | `--small-font-size`                                               |
+| `--toggle-text-line-height`      | 1.5                                                               |
+| `--toggle-gap`                   | 0.5rem                                                            |
 
 ### Color
 
-| Variable name                       | Light mode value                        | Dark mode value                         |
-|-------------------------------------|-----------------------------------------|-----------------------------------------|
-| `--color-toggle-border-true`        | `--color-interactive-background`        | `--color-interactive-background`        |
-| `--color-toggle-background-true`    | `--color-interactive-background`        | `--color-interactive-background`        |
-| `--color-toggle-foreground-true`    | `--color-region`                        | `--color-region`                        |
-| `--color-toggle-border-false`       | `--color-data`                          | `--color-data`                          |
-| `--color-toggle-background-false`   | `--color-interactive-foreground`        | `--color-interactive-foreground`        |
-| `--color-toggle-foreground-false`   | `--color-data`                          | `--color-data`                          |
-| `--color-toggle-foreground-null`    | `--color-data`                          | `--color-data`                          |
-| `--color-toggle-hover-border`       | `--color-interactive-hover-background`  | `--color-interactive-hover-background`  |
-| `--color-toggle-hover-background`   | `--color-interactive-hover-background`  | `--color-interactive-hover-background`  |
-| `--color-toggle-hover-foreground`   | `--color-interactive-hover-foreground`  | `--color-region`                        |
+| Variable name                         | Light mode value                       | Dark mode value                        |
+| ------------------------------------- | -------------------------------------- | -------------------------------------- |
+| `--color-toggle-background-off`       | `--color-region`                       | `--color-region`                       |
+| `--color-toggle-background-on`        | `--color-interactive-background`       | `--color-interactive-background`       |
+| `--color-toggle-background-hover-off` | `--color-region`                       | `--color-region`                       |
+| `--color-toggle-background-hover-on`  | `--color-interactive-hover-background` | `--color-interactive-hover-background` |
+| `--color-toggle-thumb-off`            | `--color-data`                         | `--color-data`                         |
+| `--color-toggle-thumb-on`             | `--color-region`                       | `--color-region`                       |
+| `--color-toggle-thumb-hover-off`      | `--color-interactive-hover-background` | `--color-interactive-hover-background` |
+| `--color-toggle-thumb-hover-on`       | `--color-region`                       | `--color-region`                       |
+| `--color-toggle-checkmark`            | `--color-region`                       | `--color-region`                       |
+| `--color-toggle-checkmark-hover`      | `--color-region`                       | `--color-region`                       |
+| `--color-toggle-border-off`           | `--color-data`                         | `--color-data`                         |
+| `--color-toggle-border-on`            | transparent                            | transparent                            |
+| `--color-toggle-border-hover-off`     | `--color-interactive-hover-background` | `--color-interactive-hover-background` |
+| `--color-toggle-border-hover-on`      | transparent                            | transparent                            |
+| `--color-toggle-text`                 | `--color-data`                         | `--color-data`                         |
 
+<br>
+Customized values for contrast mode:
+
+| Variable name                   | Contrast mode value                   |
+|---------------------------------|---------------------------------------|
+| `--color-toggle-background-on`  | `--contrast-foreground`               |
+| `--color-toggle-background-off` | `--contrast-background`               |
+| `--color-toggle-border-off`     | `--contrast-foreground`               |
 
 ## Inputs 
 
@@ -402,7 +418,6 @@ Some input components are both visually and functionally similar. This includes:
 | `--color-input-disabled-background`    | transparent                         | transparent                         |
 | `--color-input-disabled-icon`          | `--color-disabled-foreground`       | `--color-disabled-foreground`       |
 | `--color-input-region-background`      | `--color-region-2`                  | `--color-region-2`                  |
-
 
 <br>
 Customized values for contrast mode:

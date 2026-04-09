@@ -5,10 +5,9 @@
     --color-highlight: #cdd3db;
     --color-background: #eff0f3;
     --color-data: #12161e;
-    --color-toggle-background-true: #455874;
-    --color-toggle-border-true: #455874;
-    --color-toggle-hover-border: #1D3354;
-    --color-toggle-hover-background: #1D3354;
+    --color-toggle-background-on: #455874;
+    --color-toggle-border-hover-off: #1D3354;
+    --color-toggle-background-hover-off: #1D3354;
 
     --color-button-nav-selected-background: var(--color-highlight);
   }
