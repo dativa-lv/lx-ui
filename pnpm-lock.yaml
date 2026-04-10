@@ -89,13 +89,13 @@ importers:
         version: 13.4.0(vue@3.5.17(typescript@5.8.2))
       '@vueuse/integrations':
         specifier: ^11.0.3
-        version: 11.3.0(axios@1.13.5)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))
+        version: 11.3.0(axios@1.15.0)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))
       avvvatars-vue:
         specifier: ^1.0.2
         version: 1.1.1(vue@3.5.17(typescript@5.8.2))
       axios:
-        specifier: ^1.13.5
-        version: 1.13.5
+        specifier: 1.15.0
+        version: 1.15.0
       c2pa:
         specifier: ^0.22.3
         version: 0.22.6
@@ -1707,8 +1707,8 @@ packages:
     resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
     engines: {node: '>=4'}
 
-  axios@1.13.5:
-    resolution: {integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==}
+  axios@1.15.0:
+    resolution: {integrity: sha512-wWyJDlAatxk30ZJer+GeCWS209sA42X+N5jU2jy6oHTp7ufw8uzUTVFBX9+wTfAlhiJXGS0Bq7X6efruWjuK9Q==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -3394,8 +3394,9 @@ packages:
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
 
-  proxy-from-env@1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+  proxy-from-env@2.1.0:
+    resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
+    engines: {node: '>=10'}
 
   psl@1.15.0:
     resolution: {integrity: sha512-JZd3gMVBAVQkSs6HdNZo9Sdo0LNcQeMNP3CozBJb3JYC/QUYZTnKxP+f8oWRX4rHP5EurWxqAHTSwUCjlNKa1w==}
@@ -5516,13 +5517,13 @@ snapshots:
       '@vueuse/shared': 13.4.0(vue@3.5.17(typescript@5.8.2))
       vue: 3.5.17(typescript@5.8.2)
 
-  '@vueuse/integrations@11.3.0(axios@1.13.5)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))':
+  '@vueuse/integrations@11.3.0(axios@1.15.0)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))':
     dependencies:
       '@vueuse/core': 11.3.0(vue@3.5.17(typescript@5.8.2))
       '@vueuse/shared': 11.3.0(vue@3.5.17(typescript@5.8.2))
       vue-demi: 0.14.10(vue@3.5.17(typescript@5.8.2))
     optionalDependencies:
-      axios: 1.13.5
+      axios: 1.15.0
       focus-trap: 7.6.4
       sortablejs: 1.14.0
     transitivePeerDependencies:
@@ -5716,11 +5717,11 @@ snapshots:
 
   axe-core@4.10.3: {}
 
-  axios@1.13.5:
+  axios@1.15.0:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.5
-      proxy-from-env: 1.1.0
+      proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
 
@@ -7861,7 +7862,7 @@ snapshots:
 
   proto-list@1.2.4: {}
 
-  proxy-from-env@1.1.0: {}
+  proxy-from-env@2.1.0: {}
 
   psl@1.15.0:
     dependencies:
