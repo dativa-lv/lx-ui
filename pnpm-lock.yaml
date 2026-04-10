@@ -179,8 +179,8 @@ importers:
         specifier: ^5.0.3
         version: 5.2.3(vite@7.3.2(@types/node@22.13.16))(vue@3.5.17(typescript@5.8.2))
       '@vue/eslint-config-airbnb':
-        specifier: ^7.0.1
-        version: 7.0.1(eslint-plugin-vue@9.33.0(eslint@8.57.1))(eslint@8.57.1)
+        specifier: 8.0.0
+        version: 8.0.0(eslint-plugin-vue@9.33.0(eslint@8.57.1))(eslint@8.57.1)
       '@zzdats/prettier-config':
         specifier: ^1.0.0
         version: 1.0.0
@@ -1420,8 +1420,8 @@ packages:
   '@vue/devtools-api@6.6.4':
     resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
-  '@vue/eslint-config-airbnb@7.0.1':
-    resolution: {integrity: sha512-8d5QJeaL3PxKXfCVNGSA7RSKk+GNQLkOAMgN33ST+wJaXSdUI/4dJ0+LfqoLOu92NqwmKiIEZWMyPiGywhS1BA==}
+  '@vue/eslint-config-airbnb@8.0.0':
+    resolution: {integrity: sha512-0PGJubVK8+arJC+07xeL7gFLLfr5hxub7UCl+x+bxgvE2qtJodbOXZ27mdt1tAYsgUuhmp3ymn9mNbAIvNGahA==}
     peerDependencies:
       eslint: ^8.2.0
       eslint-plugin-vue: ^9.2.0
@@ -2230,11 +2230,6 @@ packages:
     engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^6.2.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
-
-  eslint-plugin-vuejs-accessibility@1.2.0:
-    resolution: {integrity: sha512-wF7kT22lS2VOmIpDeI65bnFFKFgESEEpI+CWKr43mdfDRywA4sCk7cKhtZsvfbPOtKO0GDlnpFxZbOIGsFn7IQ==}
-    peerDependencies:
-      eslint: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
 
   eslint-plugin-vuejs-accessibility@2.4.1:
     resolution: {integrity: sha512-ZRZhPdslplZXSF71MtSG+zXYRAT5KiHR4JVuo/DERQf9noAkDvi5W418VOE1qllmJd7wTenndxi1q8XeDMxdHw==}
@@ -4223,7 +4218,7 @@ snapshots:
       '@babel/traverse': 7.27.0
       '@babel/types': 7.27.0
       convert-source-map: 2.0.0
-      debug: 4.4.0
+      debug: 4.4.3
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -4394,7 +4389,7 @@ snapshots:
       '@babel/parser': 7.27.0
       '@babel/template': 7.27.0
       '@babel/types': 7.27.0
-      debug: 4.4.0
+      debug: 4.4.3
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -5411,7 +5406,7 @@ snapshots:
 
   '@vue/devtools-api@6.6.4': {}
 
-  '@vue/eslint-config-airbnb@7.0.1(eslint-plugin-vue@9.33.0(eslint@8.57.1))(eslint@8.57.1)':
+  '@vue/eslint-config-airbnb@8.0.0(eslint-plugin-vue@9.33.0(eslint@8.57.1))(eslint@8.57.1)':
     dependencies:
       eslint: 8.57.1
       eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1)
@@ -5421,7 +5416,7 @@ snapshots:
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.57.1)
       eslint-plugin-react: 7.37.5(eslint@8.57.1)
       eslint-plugin-vue: 9.33.0(eslint@8.57.1)
-      eslint-plugin-vuejs-accessibility: 1.2.0(eslint@8.57.1)
+      eslint-plugin-vuejs-accessibility: 2.4.1(eslint@8.57.1)
       vue-eslint-parser: 9.4.3(eslint@8.57.1)
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
@@ -6394,15 +6389,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-vuejs-accessibility@1.2.0(eslint@8.57.1):
-    dependencies:
-      aria-query: 5.3.2
-      emoji-regex: 10.4.0
-      eslint: 8.57.1
-      vue-eslint-parser: 9.4.3(eslint@8.57.1)
-    transitivePeerDependencies:
-      - supports-color
-
   eslint-plugin-vuejs-accessibility@2.4.1(eslint@8.57.1):
     dependencies:
       aria-query: 5.3.2
@@ -6950,7 +6936,7 @@ snapshots:
 
   istanbul-lib-source-maps@4.0.1:
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.3
       istanbul-lib-coverage: 3.2.2
       source-map: 0.6.1
     transitivePeerDependencies:
@@ -8528,7 +8514,7 @@ snapshots:
 
   vue-eslint-parser@9.4.3(eslint@8.57.1):
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.3
       eslint: 8.57.1
       eslint-scope: 7.2.2
       eslint-visitor-keys: 3.4.3
