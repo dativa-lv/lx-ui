@@ -2,7 +2,7 @@
 /* eslint-disable no-await-in-loop */
 import { ref, computed, shallowRef, watch, nextTick, onMounted, onUnmounted, provide } from 'vue';
 import { useWindowSize, useMutationObserver } from '@vueuse/core';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
@@ -1329,6 +1329,10 @@ async function preparePdfPages(printRoot, allPages, effectiveDpi, mobile) {
   }
 }
 
+function restoreTitle(originalTitle) {
+  if (isDefined(originalTitle)) globalThis.document.title = originalTitle;
+}
+
 /**
  * @param {'pdf'|'img'|'binary'} printType
  * @param {number} dpi
@@ -1349,7 +1353,7 @@ async function print(printType, dpi = 300, allPages = true) {
 
   const finishDesktop = () => {
     globalThis.removeEventListener('afterprint', finishDesktop);
-    if (originalTitle != null) globalThis.document.title = originalTitle;
+    restoreTitle(originalTitle);
     cleanupPrintArtifacts();
     setPrintGateEnabled(false);
     printInProgress.value = false;
@@ -1390,14 +1394,14 @@ async function print(printType, dpi = 300, allPages = true) {
     if (mobile) {
       // print preview recalculates when user changes settings
       // wthout this will show whole LX page instead of print content
-      if (originalTitle != null) globalThis.document.title = originalTitle;
+      restoreTitle(originalTitle);
       printInProgress.value = false;
     }
   } catch (error) {
     lxDevUtils.logError(`Printing failed, ${error}`, useLx().getGlobals()?.environment);
 
     if (mobile) {
-      if (originalTitle != null) globalThis.document.title = originalTitle;
+      restoreTitle(originalTitle);
       cleanupPrintArtifacts();
       setPrintGateEnabled(false);
       printInProgress.value = false;

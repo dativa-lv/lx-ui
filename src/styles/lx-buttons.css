@@ -2034,17 +2034,17 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-secondary .lx-loader-container {
   height: var(--button-secondary-icon-size);
-  height: var(--button-secondary-icon-size);
+  width: var(--button-secondary-icon-size);
 }
 
 .lx-button.lx-button-tertiary .lx-loader-container {
   height: var(--button-tertiary-icon-size);
-  height: var(--button-tertiary-icon-size);
+  width: var(--button-tertiary-icon-size);
 }
 
 .lx-button.lx-button-ghost .lx-loader-container {
   height: var(--button-ghost-icon-size);
-  height: var(--button-ghost-icon-size);
+  width: var(--button-ghost-icon-size);
 }
 
 .lx .lx-button.lx-button-icon-only .lx-loader-container {

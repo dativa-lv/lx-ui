@@ -180,127 +180,122 @@ function isNumber(type) {
   return type === 'number' || type === 'integer';
 }
 
-// Creates rule for 'modelValue' validation based on the provided schema
-const buildRules = (schema) => {
-  const req = schema?.required;
-  const res = {};
-
-  req?.forEach((property) => {
-    res[property] = res[property] || {};
-    res[property].required = helpers.withMessage(() => displayTexts.value.required, required);
-  });
-
-  if (schema?.properties) {
-    Object.entries(schema.properties).forEach(([key, value]) => {
-      // Recursively handle nested objects
-      if (value?.type === 'object' && value?.properties) {
-        res[key] = buildRules(value);
-      } else {
-        if (isNumber(value?.type)) {
-          if (value?.minimum !== undefined) {
-            res[key] = res[key] || {};
-            res[key].minValue = helpers.withMessage(
-              ({ $params }) => replaceErrorMessage(displayTexts.value.minimum, $params.min),
-              minValue(value.minimum)
-            );
-          }
-          if (value?.exclusiveMinimum !== undefined) {
-            const exclusiveMinimum = (param) =>
-              helpers.withParams(
-                { type: 'exclusiveMinimum', value: param },
-                (targetValue) => targetValue > param
-              );
-            res[key] = res[key] || {};
-            res[key].exclusiveMinimum = helpers.withMessage(
-              () =>
-                replaceErrorMessage(displayTexts.value.exclusiveMinimum, value.exclusiveMinimum),
-              exclusiveMinimum(value.exclusiveMinimum)
-            );
-          }
-          if (value?.maximum !== undefined) {
-            res[key] = res[key] || {};
-            res[key].maxValue = helpers.withMessage(
-              ({ $params }) => replaceErrorMessage(displayTexts.value.maximum, $params.max),
-              maxValue(value.maximum)
-            );
-          }
-          if (value?.exclusiveMaximum !== undefined) {
-            const exclusiveMaximum = (param) =>
-              helpers.withParams(
-                { type: 'exclusiveMaximum', value: param },
-                (targetValue) => targetValue < param
-              );
-            res[key] = res[key] || {};
-            res[key].exclusiveMaximum = helpers.withMessage(
-              () =>
-                replaceErrorMessage(displayTexts.value.exclusiveMaximum, value.exclusiveMaximum),
-              exclusiveMaximum(value.exclusiveMaximum)
-            );
-          }
-          if (value?.multipleOf !== undefined) {
-            const multipleOf = (param) =>
-              helpers.withParams(
-                { type: 'multipleOf', value: param },
-                (targetValue) => targetValue % param === 0
-              );
-            res[key] = res[key] || {};
-            res[key].multipleOf = helpers.withMessage(
-              () => replaceErrorMessage(displayTexts.value.multipleOf, value.multipleOf),
-              multipleOf(value.multipleOf)
-            );
-          }
-        }
-        if (value?.minLength !== undefined && value?.type === 'string') {
-          res[key] = res[key] || {};
-          res[key].minLength = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.minLength, $params.min),
-            minLength(value.minLength)
-          );
-        }
-        if (value?.maxLength !== undefined && value?.type === 'string') {
-          res[key] = res[key] || {};
-          res[key].maxLength = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.maxLength, $params.max),
-            maxLength(value.maxLength)
-          );
-        }
-        if (value?.pattern && value?.type === 'string') {
-          const pattern = (param) =>
-            helpers.withParams({ type: 'pattern', value: param }, (targetValue) =>
-              new RegExp(param).test(targetValue)
-            );
-          res[key] = res[key] || {};
-          res[key].pattern = helpers.withMessage(
-            () => replaceErrorMessage(displayTexts.value.pattern, value.pattern),
-            pattern(value.pattern)
-          );
-        }
-        if (value?.minItems !== undefined && value?.type === 'array') {
-          res[key] = res[key] || {};
-          res[key].minItems = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.minItems, $params.min),
-            minLength(value.minItems)
-          );
-        }
-        if (value?.maxItems !== undefined && value?.type === 'array') {
-          res[key] = res[key] || {};
-          res[key].maxItems = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.maxItems, $params.max),
-            maxLength(value.maxItems)
-          );
-        }
-        if (value?.uniqueItems && value?.type === 'array') {
-          const uniqueItems = (targetValue) => new Set(targetValue)?.size === targetValue?.length;
-          res[key] = res[key] || {};
-          res[key].uniqueItems = helpers.withMessage(
-            () => displayTexts.value.uniqueItems,
-            uniqueItems
-          );
-        }
-      }
-    });
+function addNumberRules(res, key, value) {
+  if (value?.minimum !== undefined) {
+    res[key] = res[key] || {};
+    res[key].minValue = helpers.withMessage(
+      ({ $params }) => replaceErrorMessage(displayTexts.value.minimum, $params.min),
+      minValue(value.minimum)
+    );
   }
+  if (value?.exclusiveMinimum !== undefined) {
+    const exclusiveMinimum = (param) =>
+      helpers.withParams(
+        { type: 'exclusiveMinimum', value: param },
+        (targetValue) => targetValue > param
+      );
+    res[key] = res[key] || {};
+    res[key].exclusiveMinimum = helpers.withMessage(
+      () => replaceErrorMessage(displayTexts.value.exclusiveMinimum, value.exclusiveMinimum),
+      exclusiveMinimum(value.exclusiveMinimum)
+    );
+  }
+  if (value?.maximum !== undefined) {
+    res[key] = res[key] || {};
+    res[key].maxValue = helpers.withMessage(
+      ({ $params }) => replaceErrorMessage(displayTexts.value.maximum, $params.max),
+      maxValue(value.maximum)
+    );
+  }
+  if (value?.exclusiveMaximum !== undefined) {
+    const exclusiveMaximum = (param) =>
+      helpers.withParams(
+        { type: 'exclusiveMaximum', value: param },
+        (targetValue) => targetValue < param
+      );
+    res[key] = res[key] || {};
+    res[key].exclusiveMaximum = helpers.withMessage(
+      () => replaceErrorMessage(displayTexts.value.exclusiveMaximum, value.exclusiveMaximum),
+      exclusiveMaximum(value.exclusiveMaximum)
+    );
+  }
+  if (value?.multipleOf !== undefined) {
+    const multipleOf = (param) =>
+      helpers.withParams(
+        { type: 'multipleOf', value: param },
+        (targetValue) => targetValue % param === 0
+      );
+    res[key] = res[key] || {};
+    res[key].multipleOf = helpers.withMessage(
+      () => replaceErrorMessage(displayTexts.value.multipleOf, value.multipleOf),
+      multipleOf(value.multipleOf)
+    );
+  }
+}
 
+function addStringRules(res, key, value) {
+  if (value?.minLength !== undefined) {
+    res[key] = res[key] || {};
+    res[key].minLength = helpers.withMessage(
+      ({ $params }) => replaceErrorMessage(displayTexts.value.minLength, $params.min),
+      minLength(value.minLength)
+    );
+  }
+  if (value?.maxLength !== undefined) {
+    res[key] = res[key] || {};
+    res[key].maxLength = helpers.withMessage(
+      ({ $params }) => replaceErrorMessage(displayTexts.value.maxLength, $params.max),
+      maxLength(value.maxLength)
+    );
+  }
+  if (value?.pattern) {
+    const pattern = (param) =>
+      helpers.withParams({ type: 'pattern', value: param }, (targetValue) =>
+        new RegExp(param).test(targetValue)
+      );
+    res[key] = res[key] || {};
+    res[key].pattern = helpers.withMessage(
+      () => replaceErrorMessage(displayTexts.value.pattern, value.pattern),
+      pattern(value.pattern)
+    );
+  }
+}
+
+function addArrayRules(res, key, value) {
+  if (value?.minItems !== undefined) {
+    res[key] = res[key] || {};
+    res[key].minItems = helpers.withMessage(
+      ({ $params }) => replaceErrorMessage(displayTexts.value.minItems, $params.min),
+      minLength(value.minItems)
+    );
+  }
+  if (value?.maxItems !== undefined) {
+    res[key] = res[key] || {};
+    res[key].maxItems = helpers.withMessage(
+      ({ $params }) => replaceErrorMessage(displayTexts.value.maxItems, $params.max),
+      maxLength(value.maxItems)
+    );
+  }
+  if (value?.uniqueItems) {
+    const uniqueItems = (targetValue) => new Set(targetValue)?.size === targetValue?.length;
+    res[key] = res[key] || {};
+    res[key].uniqueItems = helpers.withMessage(() => displayTexts.value.uniqueItems, uniqueItems);
+  }
+}
+
+function addPropertyRules(res, key, value) {
+  if (isNumber(value?.type)) {
+    addNumberRules(res, key, value);
+  }
+  if (value?.type === 'string') {
+    addStringRules(res, key, value);
+  }
+  if (value?.type === 'array') {
+    addArrayRules(res, key, value);
+  }
+}
+
+function addObjectLevelRules(res, schema) {
   if (schema?.minProperties !== undefined && schema?.type === 'object') {
     const minProperties = (param) =>
       helpers.withParams(
@@ -323,6 +318,29 @@ const buildRules = (schema) => {
       maxProperties(schema.maxProperties)
     );
   }
+}
+
+// Creates rule for 'modelValue' validation based on the provided schema
+const buildRules = (schema) => {
+  const req = schema?.required;
+  const res = {};
+
+  req?.forEach((property) => {
+    res[property] = res[property] || {};
+    res[property].required = helpers.withMessage(() => displayTexts.value.required, required);
+  });
+
+  if (schema?.properties) {
+    Object.entries(schema.properties).forEach(([key, value]) => {
+      if (value?.type === 'object' && value?.properties) {
+        res[key] = buildRules(value);
+      } else {
+        addPropertyRules(res, key, value);
+      }
+    });
+  }
+
+  addObjectLevelRules(res, schema);
 
   return res;
 };
