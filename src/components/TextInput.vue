@@ -1,12 +1,12 @@
 <script setup>
-import { computed, onMounted, watch, ref, inject } from 'vue';
+import { computed, onMounted, watch, ref, inject, nextTick } from 'vue';
 import { IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
 import { computedAsync } from '@vueuse/core';
 
 import { generateUUID, isEmail } from '@/utils/stringUtils';
 import { flagMap } from '@/utils/flagUtils';
-import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
+import { getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import { PHONE_MAX_LENGTH_BY_PREFIX } from '@/constants';
 import { loadLibrary } from '@/utils/libLoader';
 
@@ -83,6 +83,7 @@ const flags = flagMap;
 
 const input = ref();
 const valueRaw = ref();
+const isUpdatingMask = ref(false);
 
 function focus() {
   if (input.value !== null && input.value !== undefined) input.value.focus();
@@ -241,6 +242,10 @@ function rewriteValue(regEx, oldVal, newVal) {
 }
 
 function onAccept(e) {
+  if (isUpdatingMask.value) {
+    return;
+  }
+
   const maskRef = e.detail;
   let v = maskRef.unmaskedValue;
 
@@ -255,8 +260,14 @@ function onAccept(e) {
 function maskUpdate() {
   const mask = input?.value?.maskRef;
   if (mask) {
-    mask.typedValue = model.value;
-    // Ref: https://github.com/uNmAnNeR/imaskjs/issues/61#issuecomment-391050350
+    isUpdatingMask.value = true;
+    if (isNil(model.value)) {
+      mask.value = '';
+    } else {
+      mask.typedValue = model.value;
+      // Ref: https://github.com/uNmAnNeR/imaskjs/issues/61#issuecomment-391050350
+    }
+    isUpdatingMask.value = false;
   }
 }
 
@@ -450,6 +461,10 @@ function formatPhoneValue(newValue) {
 }
 
 function updateValueRaw(newValue) {
+  if (isNil(newValue)) {
+    valueRaw.value = '';
+    return;
+  }
   if (isDecimalLikeMask.value) {
     valueRaw.value = model.value?.toString().replace('.', ',');
   } else if (props.mask === 'time') {
@@ -481,6 +496,10 @@ watch(
         props.mask === 'decimal' ? newValue?.toString()?.replace('.', ',') : newValue?.toString();
     } else {
       updateValueRaw(newValue);
+    }
+
+    if (isNil(newValue)) {
+      nextTick(() => maskUpdate());
     }
   },
   { immediate: true }
