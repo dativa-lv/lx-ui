@@ -213,6 +213,8 @@ defineExpose({ open, close });
             { 'lx-modal-xl': size === 'xl' },
           ]"
           :style="`${bottomOutOfBounds}`"
+          role="dialog"
+          :aria-labelledby="`${id}-label`"
         >
           <div class="lx-main" ref="modalContent">
             <LxForm
@@ -241,7 +243,7 @@ defineExpose({ open, close });
 
               <template #header>
                 <slot name="header" v-if="$slots.header" />
-                <span v-else>{{ label }}</span>
+                <span v-else :id="`${id}-label`">{{ label }}</span>
               </template>
 
               <template v-if="$slots['postHeader']" #postHeader>

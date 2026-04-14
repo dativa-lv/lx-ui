@@ -95,6 +95,10 @@ const actionDefinitionsDisplay = computed(() => {
   return [...primary.slice(0, 1), ...secondary.slice(0, 1)];
 });
 
+const dialogRole = computed(() =>
+  props.kind === 'warning' || props.kind === 'error' ? 'alertdialog' : 'dialog'
+);
+
 const illustrationMap = {
   default: 'question',
   question: 'question',
@@ -151,7 +155,13 @@ defineExpose({ open, close });
         tabindex="-1"
         @keydown.esc="close('esc')"
       >
-        <div :id="id" class="lx-modal lx-dialog lx-modal-s">
+        <div
+          :id="id"
+          class="lx-modal lx-dialog lx-modal-s"
+          :aria-labelledby="`${id}-label`"
+          :aria-describedby="`${id}-description`"
+          :role="dialogRole"
+        >
           <header ref="modalHeader">
             <div class="illustration-wrapper">
               <LxIllustration
@@ -169,8 +179,8 @@ defineExpose({ open, close });
             />
           </header>
           <article class="lx-main" ref="modalContent">
-            <p v-if="label" class="heading-3">{{ label }}</p>
-            <p v-if="description">{{ description }}</p>
+            <p v-if="label" :id="`${id}-label`" class="heading-3">{{ label }}</p>
+            <p v-if="description" :id="`${id}-description`">{{ description }}</p>
           </article>
           <footer
             ref="modalFooter"

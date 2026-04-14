@@ -232,9 +232,11 @@ defineExpose({ open, close });
             { 'lx-modal-xl': size === 'xl' },
           ]"
           :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
+          role="dialog"
+          :aria-labelledby="`${id}-label`"
         >
           <header ref="modalHeader">
-            <p class="lx-primary" :title="label">{{ label }}</p>
+            <p :id="`${id}-label`" class="lx-primary" :title="label">{{ label }}</p>
             <LxButton
               v-if="!disableClosing"
               icon="close"
@@ -302,11 +304,13 @@ defineExpose({ open, close });
           ]"
           tabindex="-1"
           :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
+          role="dialog"
+          :aria-labelledby="`${id}-label`"
           @close="close"
           @keydown="handleKeyDown"
         >
           <header ref="modalHeader">
-            <p class="lx-primary">{{ label }}</p>
+            <p :id="`${id}-label`" class="lx-primary">{{ label }}</p>
             <LxButton
               v-if="!disableClosing"
               icon="close"
