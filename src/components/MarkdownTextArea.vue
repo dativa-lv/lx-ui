@@ -893,11 +893,11 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
                     color.name,
                     { 'lx-selected': editor.isActive('textStyle', { color: color.var }) },
                   ]"
+                  tabindex="0"
+                  @click="editor.chain().focus().setColor(color.var).run()"
+                  @keydown.enter.prevent="editor.chain().focus().setColor(color.var).run()"
                 >
-                  <div
-                    @click="editor.chain().focus().setColor(color.var).run()"
-                    @keydown.enter="editor.chain().focus().setColor(color.var).run()"
-                  />
+                  <div></div>
                 </li>
               </ul>
             </template>
