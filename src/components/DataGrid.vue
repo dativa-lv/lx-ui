@@ -1242,7 +1242,8 @@ function handleHeaderClick(colId, colIndex) {
 function handleMenuClick(rowIndex) {
   setActiveFromClick(
     props.hasSorting ? rowIndex + 1 : rowIndex,
-    props.hasSelecting ? colCount.value + 2 : colCount.value + 1
+    props.hasSelecting ? colCount.value + 2 : colCount.value + 1,
+    false
   );
 
   const offset = props.hasSorting ? 1 : 0;

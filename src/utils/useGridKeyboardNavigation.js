@@ -27,7 +27,7 @@ export function useGridKeyboardNavigation() {
     return activeRow.value === row && activeCol.value === col;
   }
 
-  function focusCell(row, col) {
+  function focusCell(row, col, scroll = true) {
     const target = cellRefs.value[row]?.[col];
     if (!target) return;
 
@@ -35,12 +35,14 @@ export function useGridKeyboardNavigation() {
     activeCol.value = col;
 
     nextTick(() => {
-      target.focus();
-      target.scrollIntoView({
-        behavior: 'instant',
-        block: 'nearest',
-        inline: 'nearest',
-      });
+      target.focus({ preventScroll: !scroll });
+      if (scroll) {
+        target.scrollIntoView({
+          behavior: 'instant',
+          block: 'nearest',
+          inline: 'nearest',
+        });
+      }
     });
   }
 
@@ -88,8 +90,8 @@ export function useGridKeyboardNavigation() {
     focusCell(r, c);
   }
 
-  function setActiveFromClick(row, col) {
-    focusCell(row, col);
+  function setActiveFromClick(row, col, scroll = true) {
+    focusCell(row, col, scroll);
   }
 
   function getTabIndex(row, col) {
