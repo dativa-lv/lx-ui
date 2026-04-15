@@ -2283,6 +2283,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   gap: 1rem;
   display: flex;
   height: 2.5rem;
+  user-select: none;
 }
 
 .input-slider-filled {

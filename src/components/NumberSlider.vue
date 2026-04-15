@@ -60,6 +60,10 @@ const fillingUp = computed(() => ((model.value - props.min) / (props.max - props
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+
+const onMouseDown = () => {
+  window.getSelection()?.removeAllRanges();
+};
 </script>
 <template>
   <div class="lx-field-wrapper">
@@ -84,6 +88,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :max="props.max"
           :aria-labelledby="labelledBy"
           :disabled
+          @mousedown="onMouseDown"
           @keydown.up="onIncreaseStep"
           @keydown.right="onIncreaseStep"
           @keydown.down="onDecreaseStep"
