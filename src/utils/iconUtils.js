@@ -3,16 +3,32 @@ import { getFileNameFromPath, camelToKebab, removeExtension } from '@/utils/stri
 export function getAvailableIcons(iconSet = 'cds') {
   let icons = [];
   if (iconSet === 'cds') {
-    icons = import.meta.glob('@/components/icons/cds/*.vue', { eager: true, as: 'url' });
+    icons = import.meta.glob('@/components/icons/cds/*.vue', {
+      eager: true,
+      query: '?url',
+      import: 'default',
+    });
   }
   if (iconSet === 'material') {
-    icons = import.meta.glob('@/components/icons/material/*.vue', { eager: true, as: 'url' });
+    icons = import.meta.glob('@/components/icons/material/*.vue', {
+      eager: true,
+      query: '?url',
+      import: 'default',
+    });
   }
   if (iconSet === 'phosphor') {
-    icons = import.meta.glob('@/components/icons/phosphor/*.vue', { eager: true, as: 'url' });
+    icons = import.meta.glob('@/components/icons/phosphor/*.vue', {
+      eager: true,
+      query: '?url',
+      import: 'default',
+    });
   }
   if (iconSet === 'brand') {
-    icons = import.meta.glob('@/components/icons/brand/*.vue', { eager: true, as: 'url' });
+    icons = import.meta.glob('@/components/icons/brand/*.vue', {
+      eager: true,
+      query: '?url',
+      import: 'default',
+    });
   }
 
   return Object.keys(icons).map((o) => camelToKebab(removeExtension(getFileNameFromPath(o))));
@@ -47,6 +63,10 @@ export function getAvailableIconSets() {
 }
 
 export function getAvailableIllustrations() {
-  const icons = import.meta.glob('@/components/pictograms/*.vue', { eager: true, as: 'url' });
+  const icons = import.meta.glob('@/components/pictograms/*.vue', {
+    eager: true,
+    query: '?url',
+    import: 'default',
+  });
   return Object.keys(icons).map((o) => camelToKebab(removeExtension(getFileNameFromPath(o))));
 }

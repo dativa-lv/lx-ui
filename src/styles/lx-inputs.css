@@ -3922,6 +3922,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   outline: none;
   transition: border-color 0.1s ease-in, background-color 0.1s ease-in;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .lx-file-viewer .pdf-page-input .placeholder:hover {
@@ -3951,6 +3952,9 @@ h2.lx-section-header + p.lx-invalidation-message,
 
   .lx-file-viewer .pdf-page-indicator {
     width: auto;
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
   }
 }
 

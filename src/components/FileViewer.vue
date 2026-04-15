@@ -297,6 +297,7 @@ function disconnectObserver() {
 
 function drawImage(providedScale) {
   const imgCanvas = imgCanvasRef.value;
+  if (!imgCanvas) return;
   const ctx = imgCanvas.getContext('2d');
   if (supportedFileType.value === 'SVG') {
     // Handle SVG separately
@@ -426,7 +427,7 @@ async function renderPage(pageNum) {
       canvasElement = canvas.value;
     }
 
-    const context = canvasElement.getContext('2d');
+    const context = canvasElement?.getContext('2d');
 
     const scaledWidth = adjustedViewport.width;
     const scaledHeight = adjustedViewport.height;
@@ -545,11 +546,11 @@ function scrollToContainer(canvasElement) {
     return;
   }
 
-  const { top: containerTop, scrollTop } = container.getBoundingClientRect();
+  const { top: containerTop } = container.getBoundingClientRect();
   const { top: canvasTop } = canvasElement.getBoundingClientRect();
 
   container.scrollTo({
-    top: canvasTop - containerTop + scrollTop,
+    top: canvasTop - containerTop + container.scrollTop,
     behavior: 'smooth',
   });
 }
@@ -1023,7 +1024,9 @@ function changeImageSize(action) {
       imgScale.value -= 0.1;
     }
   }
-  drawImage(imgScale.value);
+  nextTick(() => {
+    drawImage(imgScale.value);
+  });
 }
 
 function changeFitType(action) {
@@ -1032,6 +1035,9 @@ function changeFitType(action) {
   } else if (action === 'fitToWidth') {
     fitType.value = fitType.value === 'fit-to-width' ? '' : 'fit-to-width';
   }
+  nextTick(() => {
+    drawImage(imgScale.value);
+  });
 }
 
 function setDownloadInProgress(value) {
@@ -1546,7 +1552,9 @@ watch(
           originalImageSize.value = { width: img.width, height: img.height };
         };
       }
-      drawImage(imgScale.value);
+      nextTick(() => {
+        drawImage(imgScale.value);
+      });
     }
 
     if (supportedFileType.value === 'Binary') {
