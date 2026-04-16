@@ -340,6 +340,22 @@
   padding-left: 0.5rem;
 }
 
+.lx-layout-digimaks header > .lx-badge.lx-badge-beta {
+  position: fixed;
+  top: 0.75rem;
+  background-color: var(--color-warning);
+  border-color: var(--color-warning);
+  color: var(--color-badge-foreground);
+  right: calc(var(--button-secondary-icon-only-height) * 2 + 3rem); /* 2 dashboard right side buttons + gaps */
+  z-index: 101;
+}
+
+.lx-layout-digimaks #modals .lx-modal footer .lx-button {
+  margin-bottom: var(--native-inset-bottom, 0px);
+  --button-modal-primary-height: 5rem;
+  --button-modal-secondary-height: 5rem;
+}
+
 .lx-layout-digimaks > header > .lx-header .lx-button.lx-nav-back {
   --color-button-ghost-background: var(--color-background);
   --color-button-ghost-hover-background: var(--color-background);

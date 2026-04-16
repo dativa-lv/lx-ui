@@ -13,6 +13,7 @@ import LxRow from '@/components/forms/Row.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxToggle from '@/components/Toggle.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
+import LxBadge from '@/components/Badge.vue';
 
 import { shortenUserName } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -462,6 +463,7 @@ watch(
 provide('insideHeader', insideHeader);
 </script>
 <template>
+  <LxBadge value="beta" tooltip="beta" class="lx-badge-beta" />
   <div
     class="lx-header"
     :class="[
@@ -841,7 +843,7 @@ provide('insideHeader', insideHeader);
       </div>
     </nav>
 
-    <div class="lx-group lx-right-group"></div>
+    <div class="lx-group lx-right-group" />
   </div>
 
   <LxModal
