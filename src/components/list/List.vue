@@ -27,7 +27,7 @@ import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
 import useLx from '@/hooks/useLx';
 import { generateUUID, foldToAscii, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { lxDevUtils } from '@/utils';
-import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import { focusNextFocusableElement, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
 
 const props = defineProps({
@@ -165,6 +165,7 @@ const searchStringServer = ref(props.searchSide === 'server' ? props.searchStrin
 let invisibleBlockTimeout;
 let observer;
 let virtualizerScope = null;
+let defaultListScrollOffsetRaf = null;
 
 const reactiveSearchString = computed({
   get() {
@@ -288,14 +289,29 @@ const defaultListTotalSize = computed(() => {
 
 function updateDefaultListScrollOffset() {
   if (!shouldVirtualizeDefaultList.value || !defaultListRef.value) return;
-  const computedStyle = window.getComputedStyle(defaultListRef.value);
+  defaultListScrollMargin.value =
+    defaultListRef.value.getBoundingClientRect().top + globalThis.scrollY;
+}
+
+function updateDefaultListGap() {
+  if (!shouldVirtualizeDefaultList.value || !defaultListRef.value) return;
+  const computedStyle = globalThis.getComputedStyle(defaultListRef.value);
   const rowGap = Number.parseFloat(computedStyle.rowGap || computedStyle.gap || '0');
   defaultListGap.value = Number.isFinite(rowGap) ? rowGap : 0;
-  defaultListScrollMargin.value = defaultListRef.value.getBoundingClientRect().top + window.scrollY;
+}
+
+function scheduleDefaultListScrollOffsetUpdate() {
+  if (!shouldVirtualizeDefaultList.value || isDefined(defaultListScrollOffsetRaf)) return;
+
+  defaultListScrollOffsetRaf = globalThis.requestAnimationFrame(() => {
+    defaultListScrollOffsetRaf = null;
+    updateDefaultListScrollOffset();
+  });
 }
 
 function handleDefaultListResize() {
   if (!shouldVirtualizeDefaultList.value) return;
+  updateDefaultListGap();
   updateDefaultListScrollOffset();
   defaultListVirtualizer.value?.value.measure();
 }
@@ -508,6 +524,7 @@ function search(string) {
 watch(filteredItems, () => {
   if (!shouldVirtualizeDefaultList.value) return;
   nextTick(() => {
+    updateDefaultListGap();
     updateDefaultListScrollOffset();
     defaultListVirtualizer.value?.value.measure();
   });
@@ -516,6 +533,7 @@ watch(filteredItems, () => {
 watch(shouldVirtualizeDefaultList, (isEnabled) => {
   if (!isEnabled) return;
   nextTick(() => {
+    updateDefaultListGap();
     updateDefaultListScrollOffset();
     defaultListVirtualizer.value?.value.measure();
   });
@@ -1266,16 +1284,23 @@ onMounted(() => {
   observer.observe(listWrapper.value);
 
   nextTick(() => {
+    updateDefaultListGap();
     updateDefaultListScrollOffset();
     defaultListVirtualizer.value?.value.measure();
   });
-  window.addEventListener('resize', handleDefaultListResize);
+  globalThis.addEventListener('scroll', scheduleDefaultListScrollOffsetUpdate, { passive: true });
+  globalThis.addEventListener('resize', handleDefaultListResize);
 });
 
 onBeforeUnmount(() => {
   virtualizerScope?.stop();
   observer?.disconnect();
-  window.removeEventListener('resize', handleDefaultListResize);
+  if (isDefined(defaultListScrollOffsetRaf)) {
+    globalThis.cancelAnimationFrame(defaultListScrollOffsetRaf);
+    defaultListScrollOffsetRaf = null;
+  }
+  globalThis.removeEventListener('scroll', scheduleDefaultListScrollOffsetUpdate);
+  globalThis.removeEventListener('resize', handleDefaultListResize);
 });
 </script>
 
@@ -2477,7 +2502,7 @@ onBeforeUnmount(() => {
           ((props.kind !== 'treelist' && filteredItems.length === 0) ||
             (props.kind === 'treelist' && filteredTreeItems?.length === 0))
         "
-        :label="displayTexts.notFoundSearch + ' ' + JSON.stringify(searchStringClient)"
+        :label="`${displayTexts.notFoundSearch} ${JSON.stringify(searchStringClient)}`"
         :announce="showInvisibleBlock"
       />
       <div class="lx-load-more-button" v-if="showLoadMore">

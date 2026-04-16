@@ -1,7 +1,9 @@
 /* eslint-disable no-restricted-imports */
 import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
 import { mount, RouterLinkStub } from '@vue/test-utils';
+import { nextTick, ref } from 'vue';
 import LxList from '@/components/list/List.vue';
+import * as libLoader from '@/utils/libLoader';
 import {
   actionDefinitionsCommon,
   checkActionDefinitionsButtonsSingle,
@@ -492,5 +494,243 @@ describe('Search', () => {
 
       expect(searchInput.exists()).toBe(false);
     });
+  });
+});
+
+describe('Virtualization', () => {
+  test('updates virtual offsets independently for multiple lists after scroll', async () => {
+    const getTopByListId = {
+      'list-a': 100,
+      'list-b': 300,
+    };
+
+    Object.defineProperty(globalThis, 'scrollY', {
+      value: 0,
+      writable: true,
+      configurable: true,
+    });
+
+    const getBoundingClientRectSpy = vi
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function mockGetBoundingClientRect() {
+        const elementId = this?.id;
+        const top = getTopByListId[elementId] ?? 0;
+
+        return {
+          x: 0,
+          y: top,
+          top,
+          left: 0,
+          right: 0,
+          bottom: top,
+          width: 0,
+          height: 0,
+          toJSON: () => ({}),
+        };
+      });
+
+    const requestAnimationFrameSpy = vi
+      .spyOn(globalThis, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0);
+        return 1;
+      });
+    const cancelAnimationFrameSpy = vi
+      .spyOn(globalThis, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
+
+    const useWindowVirtualizerMock = vi.fn((options) =>
+      ref({
+        getVirtualItems: () => [
+          {
+            index: 0,
+            start: 120,
+          },
+        ],
+        getTotalSize: () => 72,
+        measure: () => {},
+        measureElement: () => {},
+        options,
+      })
+    );
+
+    const loadLibrarySpy = vi.spyOn(libLoader, 'loadLibrary').mockResolvedValue({
+      useWindowVirtualizer: useWindowVirtualizerMock,
+    });
+
+    const items = Array.from({ length: 5 }, (_, index) => ({
+      id: `item-${index}`,
+      name: `Item ${index}`,
+    }));
+
+    let wrapperB;
+    try {
+      const wrapperA = mountComponent({
+        props: {
+          id: 'list-a',
+          items,
+          kind: 'default',
+          listType: '1',
+          hasVirtualization: true,
+        },
+      });
+      wrapper = wrapperA;
+
+      wrapperB = mountComponent({
+        props: {
+          id: 'list-b',
+          items,
+          kind: 'default',
+          listType: '1',
+          hasVirtualization: true,
+        },
+      });
+
+      await Promise.resolve();
+      await nextTick();
+
+      const firstRowA = wrapperA.find('li.lx-list-item-container');
+      const firstRowB = wrapperB.find('li.lx-list-item-container');
+
+      expect(firstRowA.exists()).toBe(true);
+      expect(firstRowB.exists()).toBe(true);
+
+      const styleBeforeA = firstRowA.attributes('style');
+      const styleBeforeB = firstRowB.attributes('style');
+
+      getTopByListId['list-a'] = 50;
+      getTopByListId['list-b'] = 250;
+
+      globalThis.dispatchEvent(new Event('scroll'));
+      await nextTick();
+
+      const styleAfterA = firstRowA.attributes('style');
+      const styleAfterB = firstRowB.attributes('style');
+
+      expect(styleBeforeA).not.toBe(styleAfterA);
+      expect(styleBeforeB).not.toBe(styleAfterB);
+      expect(styleAfterA).toContain('transform: translateY(');
+      expect(styleAfterB).toContain('transform: translateY(');
+      expect(loadLibrarySpy).toHaveBeenCalled();
+      expect(useWindowVirtualizerMock).toHaveBeenCalledTimes(2);
+    } finally {
+      wrapperB?.unmount();
+      getBoundingClientRectSpy.mockRestore();
+      requestAnimationFrameSpy.mockRestore();
+      cancelAnimationFrameSpy.mockRestore();
+      loadLibrarySpy.mockRestore();
+    }
+  });
+
+  test('recalculates virtual offset only after scroll when list position changes', async () => {
+    const getTopByListId = {
+      'list-scroll-check': 120,
+    };
+
+    Object.defineProperty(globalThis, 'scrollY', {
+      value: 0,
+      writable: true,
+      configurable: true,
+    });
+
+    const getBoundingClientRectSpy = vi
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function mockGetBoundingClientRect() {
+        const elementId = this?.id;
+        const top = getTopByListId[elementId] ?? 0;
+
+        return {
+          x: 0,
+          y: top,
+          top,
+          left: 0,
+          right: 0,
+          bottom: top,
+          width: 0,
+          height: 0,
+          toJSON: () => ({}),
+        };
+      });
+
+    const requestAnimationFrameSpy = vi
+      .spyOn(globalThis, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0);
+        return 1;
+      });
+    const cancelAnimationFrameSpy = vi
+      .spyOn(globalThis, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
+    const addEventListenerSpy = vi.spyOn(globalThis, 'addEventListener');
+    const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener');
+
+    const useWindowVirtualizerMock = vi.fn((options) =>
+      ref({
+        getVirtualItems: () => [
+          {
+            index: 0,
+            start: 120,
+          },
+        ],
+        getTotalSize: () => 72,
+        measure: () => {},
+        measureElement: () => {},
+        options,
+      })
+    );
+
+    const loadLibrarySpy = vi.spyOn(libLoader, 'loadLibrary').mockResolvedValue({
+      useWindowVirtualizer: useWindowVirtualizerMock,
+    });
+
+    const items = Array.from({ length: 5 }, (_, index) => ({
+      id: `item-${index}`,
+      name: `Item ${index}`,
+    }));
+
+    let wrapperA;
+    try {
+      wrapperA = mountComponent({
+        props: {
+          id: 'list-scroll-check',
+          items,
+          kind: 'default',
+          listType: '1',
+          hasVirtualization: true,
+        },
+      });
+      wrapper = wrapperA;
+
+      await Promise.resolve();
+      await nextTick();
+
+      const firstRow = wrapperA.find('li.lx-list-item-container');
+      expect(firstRow.exists()).toBe(true);
+      expect(addEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function), {
+        passive: true,
+      });
+
+      const styleBeforeScroll = firstRow.attributes('style');
+
+      getTopByListId['list-scroll-check'] = 60;
+
+      globalThis.dispatchEvent(new Event('scroll'));
+      await nextTick();
+
+      const styleAfterScroll = firstRow.attributes('style');
+      expect(styleAfterScroll).not.toBe(styleBeforeScroll);
+      expect(styleAfterScroll).toContain('transform: translateY(');
+      expect(loadLibrarySpy).toHaveBeenCalled();
+      expect(useWindowVirtualizerMock).toHaveBeenCalledTimes(1);
+    } finally {
+      wrapperA?.unmount();
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
+      getBoundingClientRectSpy.mockRestore();
+      requestAnimationFrameSpy.mockRestore();
+      cancelAnimationFrameSpy.mockRestore();
+      addEventListenerSpy.mockRestore();
+      removeEventListenerSpy.mockRestore();
+      loadLibrarySpy.mockRestore();
+    }
   });
 });
