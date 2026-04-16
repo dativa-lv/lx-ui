@@ -4028,7 +4028,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   flex-direction: column;
 }
 
-.lx .lx-region .lx-visual-picker-wrapper .lx-tag-set .lx-tag {
+.lx .lx-region .lx-visual-picker-wrapper .lx-tag-set .lx-tag,
+.lx .lx-form-grid .lx-visual-picker-wrapper .lx-tag-set .lx-tag {
   background-color: var(--color-background);
 }
 

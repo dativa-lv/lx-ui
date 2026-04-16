@@ -1394,6 +1394,8 @@
   flex-wrap: wrap;
 }
 
+.lx-region .lx-data-grid-wrapper > header > .lx-grid-badge-wrapper .lx-badge,
+.lx-modal .lx-data-grid-wrapper > header > .lx-grid-badge-wrapper .lx-badge,
 .lx-data-grid-wrapper > header > .lx-grid-badge-wrapper .lx-badge {
   background-color: var(--color-badge-region-background);
 }
@@ -1463,8 +1465,13 @@
   .lx-data-grid-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
     display: none;
   }
+
   .lx .lx-data-grid-wrapper {
     background-color: transparent;
+  }
+
+  .lx-data-grid-wrapper > header > .lx-grid-badge-wrapper .lx-badge {
+    background-color: var(--color-badge-background);
   }
 
   .lx-data-grid-wrapper .lx-selection-toolbar .lx-component-toolbar .selection-action-buttons-small .lx-dropdown-panel{
