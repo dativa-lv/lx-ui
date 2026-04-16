@@ -487,6 +487,7 @@ provide('insideHeader', insideHeader);
         :class="[{ 'lx-nav-bar-hidden': !hideNavBar }]"
         tabindex="0"
         role="button"
+        :aria-label="systemNameShort"
         v-on:keyup.enter="goHome"
         v-on:keyup.space="goHome"
         @click="goHome"

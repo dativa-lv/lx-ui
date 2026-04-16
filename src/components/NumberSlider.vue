@@ -77,10 +77,9 @@ const onMouseDown = () => {
         <p>{{ props.min }}</p>
       </div>
 
-      <div class="input-slider">
+      <div class="input-slider" :title="tooltip">
         <input
           v-model="model"
-          :title="tooltip"
           type="range"
           class="lx-number-slider"
           :id="id"
