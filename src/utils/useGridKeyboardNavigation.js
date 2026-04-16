@@ -27,27 +27,91 @@ export function useGridKeyboardNavigation() {
     return activeRow.value === row && activeCol.value === col;
   }
 
+  function isDisabledCell(target) {
+    if (!target) return true;
+
+    if (target.disabled || target.getAttribute?.('aria-disabled') === 'true') {
+      return true;
+    }
+
+    return [
+      'lx-disabled-date',
+      'lx-disabled-month',
+      'lx-disabled-year',
+      'lx-disabled-quarter',
+      'is-disabled',
+    ].some((className) => target.classList?.contains(className));
+  }
+
+  function findClosestFocusableCell(row, col) {
+    return Object.entries(cellRefs.value)
+      .reduce((matches, [rowKey, rowCells]) => {
+        const currentRow = Number(rowKey);
+
+        return matches.concat(
+          Object.entries(rowCells || {})
+            .map(([colKey, target]) => {
+              const currentCol = Number(colKey);
+
+              if (isDisabledCell(target)) return null;
+
+              const rowDistance = Math.abs(currentRow - row);
+              const colDistance = Math.abs(currentCol - col);
+
+              return {
+                row: currentRow,
+                col: currentCol,
+                target,
+                distance: rowDistance + colDistance,
+                rowDistance,
+                colDistance,
+              };
+            })
+            .filter(Boolean)
+        );
+      }, [])
+      .reduce((bestMatch, candidate) => {
+        if (!bestMatch) return candidate;
+
+        if (candidate.distance < bestMatch.distance) return candidate;
+        if (candidate.distance > bestMatch.distance) return bestMatch;
+
+        if (candidate.rowDistance < bestMatch.rowDistance) return candidate;
+        if (candidate.rowDistance > bestMatch.rowDistance) return bestMatch;
+
+        if (candidate.colDistance < bestMatch.colDistance) return candidate;
+
+        return bestMatch;
+      }, null);
+  }
+
   function focusCell(row, col, scroll = true) {
     const target = cellRefs.value[row]?.[col];
-    if (!target) return;
+    const resolvedCell = !isDisabledCell(target)
+      ? { row, col, target }
+      : findClosestFocusableCell(row, col);
 
-    activeRow.value = row;
-    activeCol.value = col;
+    if (!resolvedCell?.target) return null;
+
+    activeRow.value = resolvedCell.row;
+    activeCol.value = resolvedCell.col;
 
     nextTick(() => {
-      target.focus({ preventScroll: !scroll });
+      resolvedCell.target.focus({ preventScroll: !scroll });
       if (scroll) {
-        target.scrollIntoView({
+        resolvedCell.target.scrollIntoView({
           behavior: 'instant',
           block: 'nearest',
           inline: 'nearest',
         });
       }
     });
+
+    return resolvedCell;
   }
 
   function onGridFocus() {
-    focusCell(activeRow.value, activeCol.value);
+    return focusCell(activeRow.value, activeCol.value);
   }
 
   function onKeydown(e, rowCount, colCount, isMenuOpen = false) {
@@ -91,7 +155,7 @@ export function useGridKeyboardNavigation() {
   }
 
   function setActiveFromClick(row, col, scroll = true) {
-    focusCell(row, col, scroll);
+    return focusCell(row, col, scroll);
   }
 
   function getTabIndex(row, col) {

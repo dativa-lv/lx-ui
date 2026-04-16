@@ -663,24 +663,6 @@
   font-weight: var(--font-weight-extra-bold);
 }
 
-.lx .lx-layout .lx-calendar-container .lx-time-picker-time-list-wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.lx .lx-layout .lx-calendar-container
-  .lx-time-picker-time-list-wrapper
-  .lx-button {
-  height: 2rem;
-}
-
-.lx .lx-layout .lx-calendar-container .lx-time-picker-time-list-wrapper .lx-button svg {
-  height: var(--icon-size-xs);
-  width: var(--icon-size-xs);
-  fill: var(--color-data)
-}
-
 .lx .lx-layout .lx-calendar-container .lx-calendar-time-picker {
   position: relative;
   display: flex;
@@ -693,40 +675,9 @@
   border-left: none;
 }
 
-.lx .lx-layout .lx-calendar-container .lx-time-picker-time-list::before,
-.lx .lx-layout .lx-calendar-container .lx-time-picker-time-list::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2rem;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.lx .lx-layout .lx-calendar-container .lx-time-picker-time-list::before {
-  top: 5.8rem;
-  background: linear-gradient(180deg,  var(--color-region) 20%, transparent 100%);
-}
-
-.lx .lx-layout .lx-calendar-container .lx-time-picker-time-list::after {
-  top: 17rem;
-  background: linear-gradient(0deg,  var(--color-region) 20%, transparent 100%);
-}
-
-.lx .lx-layout .lx-calendar-container .lx-time-picker-time-list::-webkit-scrollbar {
-  display: none;
-}
-
 .lx .lx-layout .lx-calendar-container .time-picker-wrapper {
   overflow: hidden;
   height: 12.6rem;
-}
-
-.lx .lx-layout .lx-calendar-container .lx-time-picker-time-list {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  transform: translateY(-6.1rem);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-time-list-item {
@@ -775,8 +726,7 @@
 .lx .lx-layout .lx-calendar-container .lx-calendar-weeks .lx-calendar-week .lx-calendar-day.lx-disabled-date,
 .lx .lx-layout .lx-calendar-container .lx-calendar-months .lx-calendar-month.lx-disabled-month,
 .lx .lx-layout .lx-calendar-container .lx-calendar-years .lx-calendar-year.lx-disabled-year,
-.lx .lx-layout .lx-calendar-container .lx-calendar-quarters .lx-calendar-quarter.lx-disabled-quarter,
-.lx .lx-layout .lx-calendar-container .lx-calendar-time-picker .lx-time-picker-time-list .lx-time-list-item.lx-disabled-time-unit {
+.lx .lx-layout .lx-calendar-container .lx-calendar-quarters .lx-calendar-quarter.lx-disabled-quarter {
   opacity: 1;
   color: var(--color-disabled-foreground);
   cursor: not-allowed;
@@ -1205,31 +1155,6 @@ height: 100%;
   height: unset;
 } 
 
-
-.lx .lx-layout .fullscreen-popper .lx-calendar-container .lx-time-picker-time-list::before,
-.lx .lx-layout .lx-calendar-container.mode-time .lx-time-picker-time-list::before,
-.lx .lx-layout .lx-calendar-container.mode-time-full .lx-time-picker-time-list::before,
-.lx .lx-layout .lx-calendar-container.mode-date-time .lx-time-picker-time-list::before,
-.lx .lx-layout .lx-calendar-container.mode-date-time-full .lx-time-picker-time-list::before  {
-  top: 7.8rem;
-}
-
-.lx .lx-layout .fullscreen-popper .lx-calendar-container .lx-time-picker-time-list,
-.lx .lx-layout .lx-calendar-container.mode-time .lx-time-picker-time-list,
-.lx .lx-layout .lx-calendar-container.mode-time-full .lx-time-picker-time-list,
-.lx .lx-layout .lx-calendar-container.mode-date-time .lx-time-picker-time-list,
-.lx .lx-layout .lx-calendar-container.mode-date-time-full .lx-time-picker-time-list {
-  transform: translateY(-8.3rem);
-}
-
-.lx .lx-layout .fullscreen-popper .lx-calendar-container .lx-time-picker-time-list::after,
-.lx .lx-layout .lx-calendar-container.mode-time .lx-time-picker-time-list::after,
-.lx .lx-layout .lx-calendar-container.mode-time-full .lx-time-picker-time-list::after,
-.lx .lx-layout .lx-calendar-container.mode-date-time .lx-time-picker-time-list::after,
-.lx .lx-layout .lx-calendar-container.mode-date-time-full .lx-time-picker-time-list::after {
-  top: 19rem;
-}
-
 .lx-field-wrapper.lx-date-time-range-column-view .lx-date-time-picker-wrapper.lx-date-time-range-wrapper {
   width: var(--input-container-width-small);
 }
@@ -1237,6 +1162,143 @@ height: 100%;
 .lx .lx-layout .lx-field-wrapper.lx-date-time-range-column-view .lx-context-container .lx-datepicker-input-container.range {
   flex-direction: column;
   align-items: flex-start;
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-list-item {
+  border: 2px solid transparent;
+}
+.lx .lx-layout .lx-calendar-container .lx-time-list-item:focus,
+.lx .lx-layout .lx-calendar-container .lx-time-list-item:focus-visible {
+  border-color: var(--color-focus-background);
+  outline: none;
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-list-item.is-active {
+  color: var(--color-interactive-foreground);
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-columns {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-column {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 2rem 1fr 2rem;
+  overflow: hidden;
+}
+
+.lx .lx-layout .lx-time-list-viewport {
+  position: relative;
+  overflow: hidden;
+  height: 10rem;
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-list {
+  height: 100%;
+  display: grid;
+  grid-template-rows: repeat(5, 2rem);
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-column button.lx-button {
+  height: 2rem;
+}
+.lx .lx-layout .lx-calendar-container .lx-time-column button.lx-button:hover svg {
+  fill: var(--color-interactive-hover-foreground);
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-column button.lx-button svg {
+  fill: var(--color-data);
+  height: 1rem;
+  width: 1rem;
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-list-item.is-disabled {
+  color: var(--color-disabled-foreground);
+  cursor: not-allowed;
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-list-item.lx-active {
+  background-color: var(--color-interactive-background);
+  color: var(--color-interactive-foreground);
+  font-weight: var(--font-weight-extra-bold);
+}
+
+.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:focus,
+.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:focus-visible {
+  border: 2px solid var(--color-focus-background);
+  outline: none;
+}
+
+
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main {
+  justify-content: center;
+  align-items: center;
+}
+.lx .lx-layout .lx-calendar-container .lx-time-picker-container {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+}
+
+.lx-time-list-viewport::after,
+.lx-time-list-viewport::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.lx-time-list-viewport::before {
+  background: linear-gradient(180deg,var(--color-region) 20%,transparent 100%);
+}
+.lx-time-list-viewport::after {
+  background: linear-gradient(0deg,var(--color-region) 20%,transparent 100%);
+  bottom: 0rem;
+}
+
+.lx .lx-layout .lx-calendar-container .lx-time-picker-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  border-left: 2px solid var(--color-chrome);
+}
+
+.lx .lx-region .lx-datepicker-default .lx-calendar-container .lx-time-list-viewport::before,
+.lx .lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-list-viewport::before,
+.lx .lx-modal .lx-datepicker-default .lx-calendar-container .lx-time-list-viewport::before {
+  background: linear-gradient(180deg,var(--color-background) 20%,transparent 100%);
+}
+
+.lx .lx-region .lx-datepicker-default .lx-calendar-container .lx-time-list-viewport::after,
+.lx .lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-list-viewport::after,
+.lx .lx-modal .lx-datepicker-default .lx-calendar-container .lx-time-list-viewport::after {
+  background: linear-gradient(0deg,var(--color-background) 20%,transparent 100%);
+}
+
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container .lx-time-picker-container,
+.lx .lx-layout .popper .lx-calendar-container.mode-time .lx-time-picker-container,
+.lx .lx-layout .popper .lx-calendar-container.mode-time-full .lx-time-picker-container,
+.lx .lx-layout .lx-date-time-picker-wrapper .lx-calendar-container.mode-time .lx-time-picker-container,
+.lx .lx-layout .lx-date-time-picker-wrapper .lx-calendar-container.mode-time-full .lx-time-picker-container {
+	  border-left: none;
+}
+
+.lx-date-time-picker-wrapper .lx-calendar-container.mode-date-time .lx-time-picker-container .lx-time-columns,
+.lx-date-time-picker-wrapper .lx-calendar-container.mode-time .lx-time-picker-container .lx-time-columns {
+	width: 11rem;
+}
+.lx-date-time-picker-wrapper .lx-calendar-container.mode-date-time-full .lx-time-picker-container .lx-time-columns,
+.lx-date-time-picker-wrapper .lx-calendar-container.mode-time-full .lx-time-picker-container .lx-time-columns {
+  width: 16rem;
 }
 
 
@@ -1312,9 +1374,6 @@ height: 100%;
     margin-bottom: 0.5rem;
   }
 
-  .lx .lx-layout .lx-calendar-container .lx-time-picker-time-list::after {
-    top: 17rem;
-  }
 
   .lx-date-time-picker-wrapper.lx-date-time-range-wrapper .legacy-pickers-wrapper {
     display: block;

@@ -100,16 +100,22 @@ function openMenu({ source = 'default', focus = 'first' } = {}) {
           break;
       }
     }
-    if (props.datePickerType && (isTouchSensitive.value || source === 'keyboard')) {
-      nextTick(() => {
-        focusFirstElementInContainer(panelRef.value);
-      });
+    if (props.datePickerType && responsiveView.value) {
+      if (source === 'keyboard') {
+        return;
+      }
+
+      setTimeout(() => {
+        const toolbar = panelRef.value?.querySelector('.dropdown-handle-toolbar');
+        focusFirstElementInContainer(toolbar || panelRef.value);
+      }, 0);
     }
   });
 }
 
 const popperToClose = ref(false);
 const hasReducedMotion = ref(document.body.classList.contains('lx-no-animations'));
+const CLOSE_ANIMATION_MS = 300;
 
 function handleClose(hasAnimation = true) {
   popperToClose.value = true;
@@ -123,7 +129,7 @@ function handleClose(hasAnimation = true) {
     setTimeout(() => {
       menuOpen.value = false;
       popperToClose.value = false;
-    }, 300);
+    }, CLOSE_ANIMATION_MS);
   }
 
   nextTick(() => {
@@ -139,9 +145,6 @@ function closeMenu({ source = 'default' } = {}) {
 
     parentFocusTrap?.unpause();
 
-    if (source === 'keyboard') {
-      togglerRef.value?.focus();
-    }
     return;
   }
   menuOpen.value = false;
@@ -150,7 +153,7 @@ function closeMenu({ source = 'default' } = {}) {
 
   parentFocusTrap?.unpause();
 
-  if (source === 'keyboard') {
+  if (source === 'keyboard' && !props.datePickerType) {
     togglerRef.value?.focus();
   }
 }
@@ -273,14 +276,49 @@ function handlePanelKeydown(e) {
       e.preventDefault();
       break;
     case 'ArrowDown':
+      if (props.datePickerType) {
+        return;
+      }
       e.preventDefault();
       focusNextElementInContainer(panelRef.value);
       break;
     case 'ArrowUp':
+      if (props.datePickerType) {
+        return;
+      }
       e.preventDefault();
       focusPreviousElementInContainer(panelRef.value);
       break;
     case 'Tab':
+      if (props.datePickerType && responsiveView.value) {
+        e.preventDefault();
+
+        const focusableElements = findFocusableElements(panelRef.value);
+        if (!focusableElements.length) {
+          panelRef.value?.focus();
+          return;
+        }
+
+        const currentIndex = focusableElements.indexOf(document.activeElement);
+        if (currentIndex === -1) {
+          if (e.shiftKey) {
+            focusableElements[focusableElements.length - 1].focus();
+          } else {
+            focusableElements[0].focus();
+          }
+          return;
+        }
+
+        const nextIndex = e.shiftKey
+          ? (currentIndex - 1 + focusableElements.length) % focusableElements.length
+          : (currentIndex + 1) % focusableElements.length;
+
+        focusableElements[nextIndex].focus();
+        return;
+      }
+      if (props.datePickerType) {
+        break;
+      }
       e.preventDefault();
       closeMenu();
       if (e.shiftKey) {
@@ -382,7 +420,7 @@ const handleDragEnd = () => {
     popperEl.style.transform = '';
     setTimeout(() => {
       popperEl.style.transition = '';
-    }, 300);
+    }, CLOSE_ANIMATION_MS);
   }
 
   if (deltaY > dragThreshold) {
@@ -565,7 +603,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
               icon="chevron-down"
               variant="icon-only"
               :label="displayTexts.bottomSheetClose"
-              @click="handleClose()"
+              @click="closeMenu()"
             />
           </div>
           <div v-if="$slots.clickSafePanel" ref="wrapperPanelRef" class="lx-dropdown-panel">

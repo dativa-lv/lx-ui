@@ -10,16 +10,22 @@ const focusableSelectors = [
 export function findFocusableElements(element) {
   if (!element) return [];
 
+  const isExcludedByTabindex = (el) =>
+    el?.hasAttribute('tabindex') && el.getAttribute('tabindex') === '-1';
+
   const candidates = [
     ...(element.matches(focusableSelectors.join(', ')) &&
     !element.disabled &&
-    element.offsetParent !== null
+    element.offsetParent !== null &&
+    !isExcludedByTabindex(element)
       ? [element]
       : []),
     ...element.querySelectorAll(focusableSelectors.join(', ')),
   ];
 
-  return candidates.filter((el) => !el.disabled && el.offsetParent !== null);
+  return candidates.filter(
+    (el) => !el.disabled && el.offsetParent !== null && !isExcludedByTabindex(el)
+  );
 }
 
 export function findNextFocusableElement(startElement, forward) {

@@ -69,6 +69,7 @@ const textsDefault = {
   specialDatesButton: 'Atvērt notikumus',
   closeSpecialDatesButton: 'Aizvērt notikumus',
   bottomSheetClose: 'Paslēpt paneli',
+  scrollUpDown: 'Ritināt uz augšu vai leju',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

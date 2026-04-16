@@ -92,6 +92,7 @@ const textsDefault = {
   noSpecialDates: 'Šajā mēnesī nav ieplānotu notikumu',
   inputManual: 'Ievadīt manuāli',
   bottomSheetClose: 'Paslēpt paneli',
+  scrollUpDown: 'Ritināt uz augšu vai leju',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -119,6 +120,7 @@ const endInputRefs = ref({});
 const liveMessage = ref('');
 
 const tapStage = ref(0);
+const openSource = ref(null);
 
 const windowSize = useWindowSize();
 
@@ -142,6 +144,13 @@ function setActiveInput(type, id, defaultFocus = false) {
   if (!responsiveView.value) {
     activeInput.value = type;
   }
+
+  const shouldPreservePickerFocus =
+    props.pickerType === 'range' &&
+    dropDownMenuRef.value?.menuOpen &&
+    openSource.value === 'keyboard';
+
+  if (shouldPreservePickerFocus) return;
 
   if (defaultFocus) return;
 
@@ -1129,12 +1138,14 @@ function validateIfExact(e, type = 'startInput') {
 function openMenu(type, source = null) {
   if (props.disabled) return;
   activeInput.value = type;
+  openSource.value = source;
   dropDownMenuRef.value?.openMenu({ source });
 }
 
 function closeMenu() {
   activeInput.value = null;
   tapStage.value = 0;
+  openSource.value = null;
   dropDownMenuRef.value?.closeMenu();
 }
 
@@ -1345,6 +1356,16 @@ const getMaxLength = computed(() => {
 });
 
 function focusInput(type) {
+  const shouldPreservePickerFocus =
+    props.pickerType === 'range' &&
+    dropDownMenuRef.value?.menuOpen &&
+    openSource.value === 'keyboard';
+
+  if (shouldPreservePickerFocus) {
+    activeInput.value = type;
+    return;
+  }
+
   if (type === 'startInput') {
     startInputRefs.value[props.id]?.focus();
     activeInput.value = 'startInput';
@@ -1452,8 +1473,26 @@ watch(
   () => dropDownMenuRef.value?.menuOpen,
   (newValue) => {
     if (!newValue) {
-      activeInput.value = null;
+      const previousActiveInput = activeInput.value;
+      const shouldRestoreInputFocusOnClose = openSource.value === 'keyboard';
+
       tapStage.value = 0;
+      openSource.value = null;
+
+      if (
+        shouldRestoreInputFocusOnClose &&
+        (previousActiveInput === 'startInput' || previousActiveInput === 'endInput')
+      ) {
+        nextTick(() => {
+          focusInput(previousActiveInput);
+        });
+        return;
+      }
+
+      activeInput.value = null;
+      nextTick(() => {
+        focusInput(activeInput.value);
+      });
     }
   }
 );
@@ -1625,6 +1664,7 @@ onMounted(async () => {
           :pickerType="pickerType"
           :activeInput="activeInput"
           :setActiveInput="setActiveInput"
+          :openSource="openSource"
           :texts="displayTexts"
           @focusActiveInput="focusInput"
         />
@@ -1654,6 +1694,7 @@ onMounted(async () => {
       :cadenceOfSeconds="cadenceOfSeconds"
       :clearIfNotExact="clearIfNotExact"
       :pickerType="pickerType"
+      :openSource="openSource"
       :texts="displayTexts"
       @focusActiveInput="focusInput"
     />

@@ -68,6 +68,7 @@ const textsDefault = {
   endDateLabel: 'Beigu datums',
   dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
   selectedStartDate: 'Izvēlēts sākuma datums',
+  scrollUpDown: 'Ritināt uz augšu vai leju',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

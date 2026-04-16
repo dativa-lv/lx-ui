@@ -364,13 +364,6 @@
   opacity: 1;
 }
 
-/* time rotator part */
-
-.lx:not(.lx-no-animations) .lx-time-picker-time-list,
-.lx:not(.lx-no-animations) .lx-time-picker-time-list .lx-time-list-item {
-  transition: transform 200ms ease-out;
-}
-
 /* lx-expanders */
 
 .lx:not(.lx-no-animations) .lx-expander .lx-head {
@@ -853,3 +846,36 @@
   animation: slideDown 0.33s ease-in;
 }
 
+.lx:not(.lx-no-animations) .scroll-down-enter-active,
+.lx:not(.lx-no-animations) .scroll-down-leave-active,
+.lx:not(.lx-no-animations) .scroll-up-enter-active,
+.lx:not(.lx-no-animations) .scroll-up-leave-active {
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.lx:not(.lx-no-animations) .scroll-down-enter-from {
+  transform: translateY(0.75rem);
+  opacity: 0;
+}
+
+.lx:not(.lx-no-animations) .scroll-down-leave-to {
+  transform: translateY(-0.75rem);
+  opacity: 0;
+}
+
+.lx:not(.lx-no-animations) .scroll-up-enter-from {
+  transform: translateY(-0.75rem);
+  opacity: 0;
+}
+
+.lx:not(.lx-no-animations) .scroll-up-leave-to {
+  transform: translateY(0.75rem);
+  opacity: 0;
+}
+
+.lx:not(.lx-no-animations) .scroll-down-move,
+.lx:not(.lx-no-animations) .scroll-up-move {
+  transition: transform 0.2s ease;
+}

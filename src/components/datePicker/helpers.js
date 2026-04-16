@@ -52,6 +52,28 @@ export function getTimeOrderIndex(arr, value, cadence = 1) {
   return index;
 }
 
+export function findCadenceSpecialIndex(cadence, filteredItems, rawValue) {
+  if (!Array.isArray(filteredItems) || filteredItems.length === 0) return -1;
+
+  const hasSpecialLength =
+    (cadence === 5 && filteredItems.length === 12) ||
+    (cadence === 15 && filteredItems.length === 16);
+
+  if (!hasSpecialLength) return -1;
+
+  return filteredItems.findIndex((item) => Number(item.value) === Number(rawValue));
+}
+
+export function resolveCadenceIndex(cadence, rawValue, filteredItems) {
+  let index = findCadenceSpecialIndex(cadence, filteredItems, rawValue);
+
+  if (index === -1) {
+    index = getTimeOrderIndex(filteredItems, rawValue, cadence);
+  }
+
+  return Math.max(index, 0);
+}
+
 export function getMonthNameByOrder(arrList, orderNumber, capitalize = false, nameType = 'full') {
   const month = arrList.find((m) => m.orderIndex === orderNumber);
   if (!month) return null;
@@ -60,6 +82,28 @@ export function getMonthNameByOrder(arrList, orderNumber, capitalize = false, na
   const monthName = nameType === 'full' ? month.fullName : month.shortName;
 
   return capitalize ? capitalizeFirstLetter(monthName) : monthName;
+}
+
+export function positiveMod(value, max) {
+  return ((value % max) + max) % max;
+}
+
+export function formatTimeValue(value) {
+  return String(value).padStart(2, '0');
+}
+
+export function getCadencedTimeItems(items, cadenceValue, minVisibleItems = 9) {
+  const validCadenceValues = [1, 5, 15];
+  const cadence = validCadenceValues.includes(cadenceValue) ? cadenceValue : 1;
+
+  let filtered = items.filter((_, index) => index % cadence === 0);
+
+  // Keep enough items for smooth cyclic rendering when cadence is sparse.
+  while (filtered.length < minVisibleItems) {
+    filtered = filtered.concat(filtered);
+  }
+
+  return filtered.map((item, index) => ({ ...item, id: `${item.value}-${index}` }));
 }
 
 /**
@@ -807,6 +851,27 @@ export function getMonths(currentDate, variant, mode, pickerType, isMobileScreen
 
   // Remove empty rows if any
   return rows.filter((row) => row.length > 0);
+}
+
+export function isMonthInRangeAcrossYears(startYr, startMth, endYr, endMth, month) {
+  if (!month) return false;
+
+  if (startYr === endYr) {
+    const [min, max] = [startMth, endMth].sort((a, b) => a - b);
+    return month.year === startYr && month.orderIndex >= min && month.orderIndex <= max;
+  }
+
+  const isForward = startYr < endYr || (startYr === endYr && startMth <= endMth);
+
+  if (isForward) {
+    if (month.year === startYr) return month.orderIndex >= startMth;
+    if (month.year === endYr) return month.orderIndex <= endMth;
+    return month.year > startYr && month.year < endYr;
+  }
+
+  if (month.year === startYr) return month.orderIndex <= startMth;
+  if (month.year === endYr) return month.orderIndex >= endMth;
+  return month.year < startYr && month.year > endYr;
 }
 
 export function isQuarterValid(quarterObject, minDateRef, maxDateRef) {

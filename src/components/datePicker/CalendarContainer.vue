@@ -1,16 +1,18 @@
 <script setup>
 import { ref, computed, watch, onUnmounted, nextTick } from 'vue';
-import { subYears, addYears, subMonths, addMonths } from 'date-fns';
+import { subYears, addYears, subMonths, addMonths, addDays } from 'date-fns';
 import { useWindowSize, onClickOutside, useMediaQuery, useDebounceFn } from '@vueuse/core';
+import { useGridKeyboardNavigation } from '@/utils/useGridKeyboardNavigation';
 import { formatLocalizedDate } from '@/utils/dateUtils';
-import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
+import { getDisplayTexts, isDefined, isNil, findFocusableElements } from '@/utils/generalUtils';
 import {
   normalizeDate,
   getTimeOrderIndex,
   getMonthNameByOrder,
   canSelectDate,
   canSelectTime,
+  isSameDay,
   isSameMonth,
   getSurroundingHours,
   getSurroundingMinutesOrSeconds,
@@ -20,14 +22,18 @@ import {
   getGrid,
   getMonthGrid,
   getMonths,
+  isMonthInRangeAcrossYears,
   isQuarterValid,
   zeroPad,
   dateFromYearAndQuarter,
   extractQuarterFromDate,
-  getDayTabIndex,
   quarterFromMonth,
   findDecadeStartYear,
   isStartOrEndYear,
+  resolveCadenceIndex,
+  positiveMod,
+  formatTimeValue,
+  getCadencedTimeItems,
 } from '@/components/datePicker/helpers';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -56,6 +62,7 @@ const props = defineProps({
   pickerType: { type: String, default: 'single' }, // 'single', 'range'
   activeInput: { type: String, default: 'startInput' }, // 'startInput', 'endInput'
   setActiveInput: { type: Function, default: () => {} },
+  openSource: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({}),
@@ -82,8 +89,16 @@ const textsDefault = {
   doNotIndicateEnd: 'Nenorādīt beigas',
   scrollUp: 'Ritināt uz augšu',
   scrollDown: 'Ritināt uz leju',
+  scrollUpDown: 'Ritināt uz augšu vai leju',
   noSpecialDates: 'Šajā mēnesī nav ieplānotu notikumu',
 };
+const {
+  registerCell: registerCalendarCell,
+  onKeydown: onCalendarKeydown,
+  setActiveFromClick: setCalendarActiveFromClick,
+  activeRow: activeCalendarRow,
+  activeCol: activeCalendarCol,
+} = useGridKeyboardNavigation();
 
 const windowSize = useWindowSize();
 
@@ -98,6 +113,7 @@ const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
 
 const transitionName = ref('lx-next-slide');
 const showCalendar = ref(false);
+const quarterDecadeFocusTimeout = ref(null);
 
 // Layouts for different selections, like mont days, months and years
 const regularLayout = ref(true);
@@ -112,7 +128,9 @@ const todayDate = ref(new Date());
 
 // Selected date if value is provided
 const currentDate = ref(todayDate.value);
+const activeCalendarDate = ref(currentDate.value);
 const selectedManually = ref(false);
+const hasCommittedDateTimeSelection = ref(false);
 
 const selectedDate = ref();
 const selectedDay = ref();
@@ -128,7 +146,7 @@ const selectedStartYear = ref();
 const selectedEndYear = ref();
 const selectedStartMonth = ref();
 const selectedEndMonth = ref();
-
+const scrollOffset = ref(0);
 const hoveredDate = ref(null);
 
 const startYear = ref(findDecadeStartYear(todayDate.value.getFullYear()) - 1);
@@ -136,6 +154,8 @@ const endYear = ref(findDecadeStartYear(todayDate.value.getFullYear()) + 10);
 
 const startQuarterYear = ref(findDecadeStartYear(todayDate.value.getFullYear()));
 const endQuarterYear = ref(findDecadeStartYear(todayDate.value.getFullYear()) + 9);
+
+const DEBOUNCE_MS = 50;
 
 const tempSelectedYear = ref(null);
 
@@ -170,9 +190,482 @@ const selectedHour = ref(null);
 const selectedMinute = ref(null);
 const selectedSecond = ref(null);
 
+// Settings for time picker scrolling and focus management
+const timeContainerRef = ref(null);
+const VISIBLE_COUNT = 5;
+const INITIAL_ACTIVE_OFFSET = Math.floor(VISIBLE_COUNT / 2);
+
+const columnOrder = ['hours', 'minutes', 'seconds'];
+const baseRanges = {
+  hours: 24,
+  minutes: 60,
+  seconds: 60,
+};
+const timeDirections = ref({
+  hours: 'down',
+  minutes: 'down',
+  seconds: 'down',
+});
+
+const timeStarts = ref({
+  hours: 0,
+  minutes: 0,
+  seconds: 0,
+});
+
+const timeActiveOffsets = ref({
+  hours: INITIAL_ACTIVE_OFFSET,
+  minutes: INITIAL_ACTIVE_OFFSET,
+  seconds: INITIAL_ACTIVE_OFFSET,
+});
+
+const activeTimeColumn = ref(null);
+const pendingTimeFocusFrame = ref(null);
+
 const outsideOfToday = ref(false);
 
+const filteredMinutes = computed(() => getCadencedTimeItems(minutes.value, props.cadenceOfMinutes));
+
+const filteredSeconds = computed(() => getCadencedTimeItems(seconds.value, props.cadenceOfSeconds));
+
+function getColumnMax(column) {
+  if (column === 'minutes') {
+    return filteredMinutes.value.length;
+  }
+  if (column === 'seconds') {
+    return filteredSeconds.value.length;
+  }
+  return baseRanges[column];
+}
+
+const timeModeColumns = computed(() =>
+  props.mode === 'time-full' || props.mode === 'date-time-full' ? columnOrder : ['hours', 'minutes']
+);
+
+function syncTimeSelected(column) {
+  const max = getColumnMax(column);
+  const value = positiveMod(timeStarts.value[column] + timeActiveOffsets.value[column], max);
+  if (column === 'hours') selectedHour.value = value;
+  else if (column === 'minutes') {
+    const item = filteredMinutes.value[value];
+    selectedMinute.value = item ? Number(item.value) : null;
+  } else if (column === 'seconds') {
+    const item = filteredSeconds.value[value];
+    selectedSecond.value = item ? Number(item.value) : null;
+  }
+}
+
+function getVisibleTimeItems(column) {
+  let itemsArray;
+  if (column === 'minutes') {
+    itemsArray = filteredMinutes.value;
+  } else if (column === 'seconds') {
+    itemsArray = filteredSeconds.value;
+  } else {
+    itemsArray = Array.from({ length: baseRanges[column] }, (_, i) => ({ value: i }));
+  }
+
+  const max = itemsArray.length;
+  const start = timeStarts.value[column];
+
+  return Array.from({ length: VISIBLE_COUNT }, (_, offset) => {
+    const virtualIndex = start + offset;
+    const index = positiveMod(virtualIndex, max);
+    const item = itemsArray[index];
+
+    return {
+      key: `${column}-${virtualIndex}`,
+      value: item.value,
+      virtualIndex,
+      offset,
+      active: offset === timeActiveOffsets.value[column],
+    };
+  });
+}
+
+function timeTransitionName(column) {
+  return timeDirections.value[column] === 'down' ? 'scroll-down' : 'scroll-up';
+}
+
+function centerTimeColumnOnIndex(column, index) {
+  timeStarts.value[column] = Number(index) - INITIAL_ACTIVE_OFFSET;
+  timeActiveOffsets.value[column] = INITIAL_ACTIVE_OFFSET;
+}
+
+function centerTimeColumnOnValue(column, value) {
+  let index = Number(value);
+  if (column === 'minutes') {
+    const item = filteredMinutes.value.find((m) => Number(m.value) === Number(value));
+    if (item) {
+      index = filteredMinutes.value.indexOf(item);
+    }
+  } else if (column === 'seconds') {
+    const item = filteredSeconds.value.find((s) => Number(s.value) === Number(value));
+    if (item) {
+      index = filteredSeconds.value.indexOf(item);
+    }
+  }
+
+  centerTimeColumnOnIndex(column, index);
+}
+
+function getTimeColumnValueFromIndex(column, index) {
+  if (column === 'hours') {
+    return Number(index);
+  }
+
+  if (column === 'minutes') {
+    const max = filteredMinutes.value.length;
+    if (!max) return null;
+    const item = filteredMinutes.value[positiveMod(index, max)];
+    return item ? Number(item.value) : null;
+  }
+
+  if (column === 'seconds') {
+    const max = filteredSeconds.value.length;
+    if (!max) return null;
+    const item = filteredSeconds.value[positiveMod(index, max)];
+    return item ? Number(item.value) : null;
+  }
+
+  return null;
+}
+
+function isSelectedTimeValue(column, value) {
+  if (column === 'hours') {
+    if (selectedHour.value === null || selectedHour.value === undefined) return false;
+    return Number(selectedHour.value) === Number(value);
+  }
+
+  if (column === 'minutes') {
+    if (selectedMinute.value === null || selectedMinute.value === undefined) return false;
+    return Number(selectedMinute.value) === Number(value);
+  }
+
+  if (selectedSecond.value === null || selectedSecond.value === undefined) return false;
+  return Number(selectedSecond.value) === Number(value);
+}
+
+function isTimeValueSelectable(column, value) {
+  if (!props.minDateRef && !props.maxDateRef) return true;
+
+  let timeUnit = 'second';
+  if (column === 'hours') {
+    timeUnit = 'hour';
+  } else if (column === 'minutes') {
+    timeUnit = 'minute';
+  }
+
+  const useTimeOnlyValidation = props.mode === 'time' || props.mode === 'time-full';
+
+  return canSelectTime(
+    value,
+    props.minDateRef,
+    props.maxDateRef,
+    selectedDay.value,
+    selectedMonth.value,
+    selectedYear.value,
+    timeUnit,
+    selectedHour.value,
+    selectedMinute.value,
+    selectedSecond.value,
+    useTimeOnlyValidation
+  );
+}
+
+function findSelectableTimeValue(column, fromValue, delta = 1) {
+  const max = getColumnMax(column);
+  const step = delta >= 0 ? 1 : -1;
+
+  for (let distance = 1; distance <= max; distance += 1) {
+    const candidate = positiveMod(fromValue + distance * step, max);
+    const candidateValue = getTimeColumnValueFromIndex(column, candidate);
+    if (!isNil(candidateValue) && isTimeValueSelectable(column, candidateValue)) {
+      return candidate;
+    }
+  }
+
+  return null;
+}
+
+function ensureTimeColumnSelectableFocus(column, preferredDirection = 1) {
+  const max = getColumnMax(column);
+  const activeIndex = positiveMod(timeStarts.value[column] + timeActiveOffsets.value[column], max);
+  const activeValue = getTimeColumnValueFromIndex(column, activeIndex);
+  if (!isNil(activeValue) && isTimeValueSelectable(column, activeValue)) {
+    return true;
+  }
+
+  const forward = findSelectableTimeValue(column, activeIndex, preferredDirection);
+  const backward = findSelectableTimeValue(column, activeIndex, -preferredDirection);
+  const nextSelectable = forward ?? backward;
+
+  if (nextSelectable === null) {
+    return false;
+  }
+
+  timeDirections.value[column] = preferredDirection > 0 ? 'down' : 'up';
+  centerTimeColumnOnIndex(column, nextSelectable);
+  return true;
+}
+
+function getTimeItemTabIndex(column, item) {
+  const visibleItems = getVisibleTimeItems(column);
+  const activeItem = visibleItems.find(
+    (candidate) => candidate.active && isTimeValueSelectable(column, candidate.value)
+  );
+
+  if (activeItem) {
+    return item.offset === activeItem.offset ? 0 : -1;
+  }
+
+  const fallbackItem = visibleItems.find((candidate) =>
+    isTimeValueSelectable(column, candidate.value)
+  );
+  if (fallbackItem) {
+    return item.offset === fallbackItem.offset ? 0 : -1;
+  }
+
+  return -1;
+}
+
+function clearScheduledTimeRefocus() {
+  if (pendingTimeFocusFrame.value !== null) {
+    cancelAnimationFrame(pendingTimeFocusFrame.value);
+    pendingTimeFocusFrame.value = null;
+  }
+}
+
+function getStableActiveTimeItem(column) {
+  if (!timeContainerRef.value) return null;
+
+  const activeOffset = timeActiveOffsets.value[column];
+  const candidates = Array.from(
+    timeContainerRef.value.querySelectorAll(
+      `.lx-time-list-item[data-column="${column}"][data-offset="${activeOffset}"]`
+    )
+  );
+
+  if (!candidates.length) return null;
+
+  const stableItem = candidates.find(
+    (candidate) =>
+      !candidate.classList.contains('is-disabled') &&
+      !candidate.classList.contains('scroll-down-leave-active') &&
+      !candidate.classList.contains('scroll-up-leave-active')
+  );
+
+  if (stableItem) return stableItem;
+
+  return (
+    candidates.find((candidate) => !candidate.classList.contains('is-disabled')) ||
+    candidates[0] ||
+    null
+  );
+}
+
+async function focusActiveTimeItem(column, retries = 3) {
+  ensureTimeColumnSelectableFocus(column);
+  await nextTick();
+  const el =
+    getStableActiveTimeItem(column) ||
+    timeContainerRef.value?.querySelector(
+      `.lx-time-list-item[data-column="${column}"][tabindex="0"]`
+    );
+
+  if (el) {
+    if (document.activeElement !== el) {
+      el.focus({ preventScroll: true });
+    }
+    activeTimeColumn.value = column;
+    return;
+  }
+
+  if (retries > 0) {
+    clearScheduledTimeRefocus();
+    pendingTimeFocusFrame.value = requestAnimationFrame(() => {
+      pendingTimeFocusFrame.value = null;
+      focusActiveTimeItem(column, retries - 1);
+    });
+  }
+}
+
+function scheduleTimeRefocus(column, retries = 3) {
+  if (!column) return;
+  activeTimeColumn.value = column;
+  clearScheduledTimeRefocus();
+
+  pendingTimeFocusFrame.value = requestAnimationFrame(() => {
+    pendingTimeFocusFrame.value = null;
+    focusActiveTimeItem(column, retries);
+  });
+}
+
+function stepTimeColumn(column, delta, keepFocus = false) {
+  const max = getColumnMax(column);
+  const currentIndex = positiveMod(timeStarts.value[column] + timeActiveOffsets.value[column], max);
+  const nextSelectable = findSelectableTimeValue(column, currentIndex, delta);
+
+  if (nextSelectable === null) {
+    return;
+  }
+
+  timeDirections.value[column] = delta > 0 ? 'down' : 'up';
+  centerTimeColumnOnIndex(column, nextSelectable);
+  activeTimeColumn.value = column;
+
+  if (keepFocus) {
+    scheduleTimeRefocus(column);
+  }
+}
+
+function onTimeWheel(event, column) {
+  event.preventDefault();
+  const delta = event.deltaY > 0 ? 1 : -1;
+  stepTimeColumn(column, delta, false);
+}
+
+function moveTimeHorizontal(column, direction) {
+  const modeColumns = timeModeColumns.value;
+  const currentIdx = modeColumns.indexOf(column);
+  const target = modeColumns[currentIdx + direction];
+  scrollOffset.value += direction;
+  if (!target) return;
+  ensureTimeColumnSelectableFocus(target, direction);
+  scheduleTimeRefocus(target);
+}
+
+function initializeTimePicker() {
+  const modelDate = props.modelValue instanceof Date ? props.modelValue : null;
+  const anchorDate = selectedDate.value || modelDate || currentDate.value || todayDate.value;
+
+  const hour = selectedHour.value ?? anchorDate.getHours();
+  const minute = selectedMinute.value ?? anchorDate.getMinutes();
+  const second = selectedSecond.value ?? anchorDate.getSeconds();
+
+  timeStarts.value.hours = hour - INITIAL_ACTIVE_OFFSET;
+  timeStarts.value.minutes = minute - INITIAL_ACTIVE_OFFSET;
+  timeStarts.value.seconds = second - INITIAL_ACTIVE_OFFSET;
+
+  timeActiveOffsets.value.hours = INITIAL_ACTIVE_OFFSET;
+  timeActiveOffsets.value.minutes = INITIAL_ACTIVE_OFFSET;
+  timeActiveOffsets.value.seconds = INITIAL_ACTIVE_OFFSET;
+
+  ensureTimeColumnSelectableFocus('hours');
+  ensureTimeColumnSelectableFocus('minutes');
+  ensureTimeColumnSelectableFocus('seconds');
+}
+
+function syncTimeColumnViewportWithSelection({ preserveFocus = false } = {}) {
+  const columns = timeModeColumns.value;
+
+  columns.forEach((column) => {
+    let selectedValue = null;
+    if (column === 'hours') selectedValue = selectedHour.value;
+    else if (column === 'minutes') selectedValue = selectedMinute.value;
+    else if (column === 'seconds') selectedValue = selectedSecond.value;
+
+    if (!isNil(selectedValue)) {
+      centerTimeColumnOnValue(column, selectedValue);
+    }
+
+    ensureTimeColumnSelectableFocus(column);
+  });
+
+  if (!preserveFocus) return;
+
+  const fallbackColumn = columns[0];
+  const focusColumn =
+    activeTimeColumn.value && columns.includes(activeTimeColumn.value)
+      ? activeTimeColumn.value
+      : fallbackColumn;
+
+  if (focusColumn) {
+    scheduleTimeRefocus(focusColumn);
+  }
+}
+
+function moveTimeColumnsToNow() {
+  const now = new Date();
+
+  centerTimeColumnOnValue('hours', now.getHours());
+  centerTimeColumnOnValue('minutes', now.getMinutes());
+  centerTimeColumnOnValue('seconds', now.getSeconds());
+}
+
+const isCurrentTimeVisibleInPicker = computed(() => {
+  const now = new Date();
+
+  const hoursVisible = getVisibleTimeItems('hours').some((item) => item.value === now.getHours());
+  const minutesVisible = getVisibleTimeItems('minutes').some(
+    (item) => item.value === now.getMinutes()
+  );
+
+  if (props.mode === 'time-full' || props.mode === 'date-time-full') {
+    const secondsVisible = getVisibleTimeItems('seconds').some(
+      (item) => item.value === now.getSeconds()
+    );
+    return hoursVisible && minutesVisible && secondsVisible;
+  }
+
+  return hoursVisible && minutesVisible;
+});
+
 const isMobileScreen = computed(() => windowSize.width.value < 640);
+
+const isTimePickerVisible = computed(
+  () =>
+    ((props.mode === 'time' ||
+      props.mode === 'date-time' ||
+      props.mode === 'time-full' ||
+      props.mode === 'date-time-full') &&
+      !isMobileScreen.value) ||
+    ((props.mode === 'time' || props.mode === 'time-full') && isMobileScreen.value) ||
+    ((props.mode === 'date-time' || props.mode === 'date-time-full') &&
+      isMobileScreen.value &&
+      mobileTimeLayout.value)
+);
+
+function handleTimeArrowKey(column, key) {
+  if (!column) return;
+
+  if (key === 'ArrowLeft') {
+    moveTimeHorizontal(column, -1);
+    return;
+  }
+
+  if (key === 'ArrowRight') {
+    moveTimeHorizontal(column, 1);
+    return;
+  }
+
+  if (key === 'ArrowUp') {
+    stepTimeColumn(column, -1, false);
+    scheduleTimeRefocus(column);
+    return;
+  }
+
+  if (key === 'ArrowDown') {
+    stepTimeColumn(column, 1, false);
+    scheduleTimeRefocus(column);
+  }
+}
+
+function onGlobalTimeArrowKeydown(event) {
+  if (!props.menuState || !isTimePickerVisible.value) return;
+  if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+
+  const activeEl = document.activeElement;
+  const isInsideCalendar =
+    activeEl instanceof HTMLElement && containerRef.value?.contains(activeEl);
+  if (isInsideCalendar) return;
+
+  const column = activeTimeColumn.value || timeModeColumns.value[0];
+  if (!column) return;
+
+  event.preventDefault();
+  handleTimeArrowKey(column, event.key);
+}
 
 function openMonthSelect() {
   if (props.mode === 'month-year' && monthsLayout.value) return;
@@ -182,6 +675,14 @@ function openMonthSelect() {
     regularLayout.value = false;
     yearsLayout.value = false;
     specialDatesLayout.value = false;
+    nextTick(() => {
+      const firstMonth =
+        containerRef.value?.querySelector('.lx-calendar-month[tabindex="0"]') ||
+        containerRef.value?.querySelector('.lx-calendar-month:not(.lx-disabled-month)');
+      if (firstMonth instanceof HTMLElement) {
+        firstMonth.focus({ preventScroll: true });
+      }
+    });
   } else {
     regularLayout.value = true;
   }
@@ -192,6 +693,14 @@ function openYearSelect() {
     regularLayout.value = false;
     monthsLayout.value = false;
     specialDatesLayout.value = false;
+    nextTick(() => {
+      const firstYear =
+        containerRef.value?.querySelector('.lx-calendar-year[tabindex="0"]') ||
+        containerRef.value?.querySelector('.lx-calendar-year:not(.lx-disabled-year)');
+      if (firstYear instanceof HTMLElement) {
+        firstYear.focus({ preventScroll: true });
+      }
+    });
   } else {
     if (props.mode === 'month' || props.mode === 'month-year') {
       monthsLayout.value = true;
@@ -255,7 +764,136 @@ const computedNextTransitionName = computed(() =>
   props.variant === 'full-rows' ? 'lx-next-full-row-slide' : 'lx-next-slide'
 );
 
-function selectPreviousSlide() {
+function isDateBasedMode(mode) {
+  return mode === 'date' || mode === 'date-time' || mode === 'date-time-full';
+}
+
+function syncActiveMonthToYear(targetYear) {
+  const referenceDate =
+    activeCalendarDate.value || selectedDate.value || currentDate.value || todayDate.value;
+  activeCalendarDate.value = new Date(targetYear, referenceDate.getMonth(), 1);
+}
+
+function syncActiveDayToMonth(targetYear, targetMonth) {
+  const referenceDate =
+    activeCalendarDate.value || selectedDate.value || currentDate.value || todayDate.value;
+  const targetDay = Math.min(
+    referenceDate.getDate(),
+    new Date(targetYear, targetMonth + 1, 0).getDate()
+  );
+
+  activeCalendarDate.value = new Date(targetYear, targetMonth, targetDay);
+}
+
+function findQuarterCellInVisibleDecade(targetDate) {
+  if (!targetDate) return null;
+
+  const targetYear = targetDate.getFullYear();
+  const targetQuarter = quarterFromMonth(targetDate.getMonth());
+  const visibleQuarterGrid = getGrid('quarters', 5, startQuarterYear.value, endQuarterYear.value);
+
+  for (let row = 0; row < visibleQuarterGrid.length; row += 1) {
+    const quarterRow = visibleQuarterGrid[row];
+
+    if (quarterRow && !Array.isArray(quarterRow) && Array.isArray(quarterRow.items)) {
+      for (let col = 0; col < quarterRow.items.length; col += 1) {
+        const quarterItem = Number(quarterRow.items[col]);
+        if (
+          Number(quarterRow.year) === Number(targetYear) &&
+          quarterItem === Number(targetQuarter) &&
+          isQuarterValid(
+            {
+              year: quarterRow.year,
+              quarter: quarterRow.items[col],
+            },
+            props.minDateRef,
+            props.maxDateRef
+          )
+        ) {
+          return {
+            row,
+            col,
+            year: quarterRow.year,
+            quarter: quarterRow.items[col],
+          };
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+function getEdgeSelectableQuarterCell(direction = 1) {
+  const visibleQuarterGrid = getGrid('quarters', 5, startQuarterYear.value, endQuarterYear.value);
+  const rowStart = direction >= 0 ? 0 : visibleQuarterGrid.length - 1;
+  const rowEnd = direction >= 0 ? visibleQuarterGrid.length : -1;
+  const rowStep = direction >= 0 ? 1 : -1;
+
+  for (let row = rowStart; row !== rowEnd; row += rowStep) {
+    const quarterRow = visibleQuarterGrid[row];
+
+    if (quarterRow && !Array.isArray(quarterRow) && Array.isArray(quarterRow.items)) {
+      const colStart = direction >= 0 ? 0 : quarterRow.items.length - 1;
+      const colEnd = direction >= 0 ? quarterRow.items.length : -1;
+      const colStep = direction >= 0 ? 1 : -1;
+
+      for (let col = colStart; col !== colEnd; col += colStep) {
+        if (
+          isQuarterValid(
+            {
+              year: quarterRow.year,
+              quarter: quarterRow.items[col],
+            },
+            props.minDateRef,
+            props.maxDateRef
+          )
+        ) {
+          return {
+            row,
+            col,
+            year: quarterRow.year,
+            quarter: quarterRow.items[col],
+          };
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+function syncVisibleQuarterAfterDecadeChange(direction = 1, shouldRestoreGridFocus = false) {
+  const referenceDate =
+    activeCalendarDate.value || selectedDate.value || currentDate.value || todayDate.value;
+
+  const resolvedCell =
+    findQuarterCellInVisibleDecade(referenceDate) || getEdgeSelectableQuarterCell(direction);
+
+  if (!resolvedCell) {
+    return;
+  }
+
+  activeCalendarDate.value = dateFromYearAndQuarter(resolvedCell.year, resolvedCell.quarter);
+  activeCalendarRow.value = resolvedCell.row;
+  activeCalendarCol.value = resolvedCell.col;
+
+  if (!shouldRestoreGridFocus) {
+    return;
+  }
+
+  if (quarterDecadeFocusTimeout.value !== null) {
+    clearTimeout(quarterDecadeFocusTimeout.value);
+  }
+
+  // Wait transition time to finish animation and avoid missing tabindex for cell
+  quarterDecadeFocusTimeout.value = setTimeout(() => {
+    setCalendarActiveFromClick(resolvedCell.row, resolvedCell.col);
+    quarterDecadeFocusTimeout.value = null;
+  }, DEBOUNCE_MS);
+}
+
+function selectPreviousSlide(shouldRestoreQuarterGridFocus = false) {
   transitionName.value = computedPrevTransitionName.value;
 
   const prevMonthOrYear = new Date(currentDate.value);
@@ -267,10 +905,15 @@ function selectPreviousSlide() {
     const monthOffset = props.variant === 'full' ? 2 : 1;
     prevMonthOrYear.setDate(1);
     prevMonthOrYear.setMonth(currentDate.value.getMonth() - monthOffset);
+
+    if (isDateBasedMode(props.mode)) {
+      syncActiveDayToMonth(prevMonthOrYear.getFullYear(), prevMonthOrYear.getMonth());
+    }
   }
   if (monthsLayout.value && currentDate.value) {
     prevMonthOrYear.setDate(1);
     prevMonthOrYear.setFullYear(currentDate.value.getFullYear() - 1);
+    syncActiveMonthToYear(prevMonthOrYear.getFullYear());
   }
   if (yearsLayout.value) {
     startYear.value -= 10;
@@ -279,12 +922,14 @@ function selectPreviousSlide() {
   if (quartersLayout.value) {
     startQuarterYear.value -= 10;
     endQuarterYear.value -= 10;
+
+    syncVisibleQuarterAfterDecadeChange(-1, shouldRestoreQuarterGridFocus);
   }
 
   currentDate.value = prevMonthOrYear;
 }
 
-function selectNextSlide() {
+function selectNextSlide(shouldRestoreQuarterGridFocus = false) {
   transitionName.value = computedNextTransitionName.value;
 
   const nextMonthOrYear = new Date(currentDate.value);
@@ -296,10 +941,15 @@ function selectNextSlide() {
     const monthOffset = props.variant === 'full' ? 2 : 1;
     nextMonthOrYear.setDate(1);
     nextMonthOrYear.setMonth(currentDate.value.getMonth() + monthOffset);
+
+    if (isDateBasedMode(props.mode)) {
+      syncActiveDayToMonth(nextMonthOrYear.getFullYear(), nextMonthOrYear.getMonth());
+    }
   }
   if (monthsLayout.value && currentDate.value) {
     nextMonthOrYear.setDate(1);
     nextMonthOrYear.setFullYear(currentDate.value.getFullYear() + 1);
+    syncActiveMonthToYear(nextMonthOrYear.getFullYear());
   }
   if (yearsLayout.value) {
     startYear.value += 10;
@@ -308,14 +958,14 @@ function selectNextSlide() {
   if (quartersLayout.value) {
     startQuarterYear.value += 10;
     endQuarterYear.value += 10;
+
+    syncVisibleQuarterAfterDecadeChange(1, shouldRestoreQuarterGridFocus);
   }
   currentDate.value = nextMonthOrYear;
 }
 
-const DEBOUNCE_MS = 50;
-
-const debouncedPrevious = useDebounceFn(selectPreviousSlide, DEBOUNCE_MS);
-const debouncedNext = useDebounceFn(selectNextSlide, DEBOUNCE_MS);
+const debouncedPrevious = useDebounceFn(() => selectPreviousSlide(false), DEBOUNCE_MS);
+const debouncedNext = useDebounceFn(() => selectNextSlide(false), DEBOUNCE_MS);
 
 function clearSelectedValues(handleActiveInputSwitch = true) {
   selectedDate.value = null;
@@ -339,6 +989,7 @@ function clearSelectedValues(handleActiveInputSwitch = true) {
 
   hoveredDate.value = null;
   selectedManually.value = false;
+  hasCommittedDateTimeSelection.value = false;
   tempSelectedYear.value = null;
 
   emits('update:modelValue', null);
@@ -346,6 +997,14 @@ function clearSelectedValues(handleActiveInputSwitch = true) {
   if (props.pickerType === 'range' && handleActiveInputSwitch) {
     props.setActiveInput('startInput', props.id);
   }
+}
+
+function handleClearButtonClick() {
+  clearSelectedValues(false);
+
+  nextTick(() => {
+    containerRef.value?.focus();
+  });
 }
 
 function handleDoNotIndicateStart() {
@@ -468,54 +1127,6 @@ const monthsList = computed(() =>
   getMonths(currentDate.value, props.variant, props.mode, props.pickerType, isMobileScreen.value)
 );
 
-// Create a computed property for filtering minutes based on cadence
-const filteredMinutes = computed(() => {
-  const validCadenceValues = [1, 5, 15];
-  let cadence = props.cadenceOfMinutes;
-
-  if (!validCadenceValues.includes(cadence)) {
-    cadence = 1;
-  }
-
-  // Filter the minutes array based on the cadence
-  let filtered = minutes.value.filter((_, index) => index % cadence === 0);
-
-  // Extend the array if it has fewer than 9 items (for consistent rendering)
-  const minVisibleItems = 9; // Minimum number of visible items for smooth scrolling
-  if (filtered.length < minVisibleItems) {
-    while (filtered.length < minVisibleItems) {
-      filtered = filtered.concat(filtered);
-    }
-  }
-
-  // Map over filtered array to add unique IDs (to avoid key duplication issues)
-  return filtered.map((item) => ({ ...item, id: generateUUID() }));
-});
-
-// Create a computed property for filtering seconds based on cadence
-const filteredSeconds = computed(() => {
-  const validCadenceValues = [1, 5, 15];
-  let cadence = props.cadenceOfSeconds;
-
-  if (!validCadenceValues.includes(cadence)) {
-    cadence = 1;
-  }
-
-  // Filter the seconds array based on the cadence
-  let filtered = seconds.value.filter((_, index) => index % cadence === 0);
-
-  // Extend the array if it has fewer than 9 items (for consistent rendering)
-  const minVisibleItems = 9; // Minimum number of visible items for smooth scrolling
-  if (filtered.length < minVisibleItems) {
-    while (filtered.length < minVisibleItems) {
-      filtered = filtered.concat(filtered);
-    }
-  }
-
-  // Map over filtered array to add unique IDs (to avoid key duplication issues)
-  return filtered.map((item) => ({ ...item, id: generateUUID() }));
-});
-
 const currentHourIndex = ref(getTimeOrderIndex(hours.value, todayDate.value.getHours()));
 const currentMinuteIndex = ref(
   getTimeOrderIndex(filteredMinutes.value, todayDate.value.getMinutes(), props.cadenceOfMinutes)
@@ -527,6 +1138,377 @@ const currentSecondIndex = ref(
 );
 const selectedSecondId = ref(null);
 const selectedSecondCenterId = ref(filteredSeconds.value[currentSecondIndex.value]?.id);
+const hasTimeGridActiveCell = ref(false);
+
+function syncCalendarActiveCell(row, col) {
+  if (activeCalendarRow.value === row && activeCalendarCol.value === col) return;
+  setCalendarActiveFromClick(row, col);
+}
+
+function setActiveCalendarDate(date) {
+  activeCalendarDate.value = date ? new Date(date) : null;
+}
+
+function getActiveCalendarDate() {
+  return activeCalendarDate.value || selectedDate.value || currentDate.value || todayDate.value;
+}
+
+function isActiveCalendarDay(date) {
+  const activeDate = getActiveCalendarDate();
+  return (
+    date.getDate() === activeDate.getDate() &&
+    date.getMonth() === activeDate.getMonth() &&
+    date.getFullYear() === activeDate.getFullYear()
+  );
+}
+
+function getDayCellCoordinates(targetDate) {
+  const targetDay = new Date(targetDate);
+  let fallbackCoordinates = null;
+
+  for (let monthsRowsIdx = 0; monthsRowsIdx < monthsList.value.length; monthsRowsIdx += 1) {
+    const monthsRows = monthsList.value[monthsRowsIdx];
+
+    for (let monthIdx = 0; monthIdx < monthsRows.length; monthIdx += 1) {
+      const month = monthsRows[monthIdx];
+      const weeks = getDaysInMonthGrid(month, props.firstDayOfTheWeek);
+
+      for (let weekIndex = 0; weekIndex < weeks.length; weekIndex += 1) {
+        const week = weeks[weekIndex];
+
+        for (let dayIndex = 0; dayIndex < week.length; dayIndex += 1) {
+          const date = week[dayIndex];
+
+          if (
+            date.getDate() === targetDay.getDate() &&
+            date.getMonth() === targetDay.getMonth() &&
+            date.getFullYear() === targetDay.getFullYear()
+          ) {
+            const coordinates = {
+              row: monthsRowsIdx * 6 + weekIndex,
+              col: monthIdx * 7 + dayIndex,
+            };
+
+            // fix for range kind, when there is more than 1 same day in calendar
+            if (isSameMonth(date, month)) {
+              return coordinates;
+            }
+
+            if (!fallbackCoordinates) {
+              fallbackCoordinates = coordinates;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return fallbackCoordinates;
+}
+
+function getFirstFocusableVisibleDay() {
+  for (let monthsRowsIdx = 0; monthsRowsIdx < monthsList.value.length; monthsRowsIdx += 1) {
+    const monthsRows = monthsList.value[monthsRowsIdx];
+
+    for (let monthIdx = 0; monthIdx < monthsRows.length; monthIdx += 1) {
+      const month = monthsRows[monthIdx];
+      const weeks = getDaysInMonthGrid(month, props.firstDayOfTheWeek);
+
+      for (let weekIndex = 0; weekIndex < weeks.length; weekIndex += 1) {
+        const week = weeks[weekIndex];
+
+        for (let dayIndex = 0; dayIndex < week.length; dayIndex += 1) {
+          const date = week[dayIndex];
+          if (
+            isSameMonth(date, month) &&
+            canSelectDate(date, props.minDateRef, props.maxDateRef, 'date')
+          ) {
+            return date;
+          }
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+function focusInitialPickerCell(targetDate = null) {
+  const tryFocusDay = (attempt = 0) => {
+    const activeDate = targetDate ? new Date(targetDate) : getActiveCalendarDate();
+    const coordinates = getDayCellCoordinates(activeDate);
+
+    if (coordinates) {
+      syncCalendarActiveCell(coordinates.row, coordinates.col);
+      return;
+    }
+
+    if (attempt === 0 && !targetDate) {
+      const fallbackDate = getFirstFocusableVisibleDay();
+      if (fallbackDate) {
+        setActiveCalendarDate(fallbackDate);
+      }
+    }
+
+    if (attempt < 4) {
+      setTimeout(() => tryFocusDay(attempt + 1), 20);
+    }
+  };
+
+  nextTick(() => {
+    if (
+      regularLayout.value &&
+      (props.mode === 'date' || props.mode === 'date-time' || props.mode === 'date-time-full')
+    ) {
+      tryFocusDay();
+      return;
+    }
+
+    if (monthsLayout.value) {
+      const activeDate = getActiveCalendarDate();
+      const monthGrid = getMonthGrid(
+        props.pickerType,
+        props.mode,
+        currentDate.value.getFullYear(),
+        3,
+        props.localizedMonthsList,
+        isMobileScreen.value
+      );
+      const rowsPerYear = monthGrid[0]?.length || 1;
+      let focusedMonth = null;
+
+      for (let yearIndex = 0; yearIndex < monthGrid.length; yearIndex += 1) {
+        const yearRows = monthGrid[yearIndex];
+
+        for (let monthsRowIndex = 0; monthsRowIndex < yearRows.length; monthsRowIndex += 1) {
+          const months = yearRows[monthsRowIndex];
+
+          for (let monthIndex = 0; monthIndex < months.length; monthIndex += 1) {
+            const month = months[monthIndex];
+
+            if (
+              month.orderIndex === activeDate.getMonth() &&
+              month.year === activeDate.getFullYear()
+            ) {
+              focusedMonth = {
+                row: yearIndex * rowsPerYear + monthsRowIndex,
+                col: monthIndex,
+                date: new Date(month.year, month.orderIndex, 1, 0, 0, 0),
+              };
+              break;
+            }
+          }
+
+          if (focusedMonth) break;
+        }
+      }
+
+      if (!focusedMonth) {
+        for (let yearIndex = 0; yearIndex < monthGrid.length && !focusedMonth; yearIndex += 1) {
+          const yearRows = monthGrid[yearIndex];
+
+          for (
+            let monthsRowIndex = 0;
+            monthsRowIndex < yearRows.length && !focusedMonth;
+            monthsRowIndex += 1
+          ) {
+            const months = yearRows[monthsRowIndex];
+
+            for (let monthIndex = 0; monthIndex < months.length; monthIndex += 1) {
+              const month = months[monthIndex];
+              const monthDate = new Date(month.year, month.orderIndex, 1, 0, 0, 0);
+
+              if (canSelectDate(monthDate, props.minDateRef, props.maxDateRef, 'month-year')) {
+                focusedMonth = {
+                  row: yearIndex * rowsPerYear + monthsRowIndex,
+                  col: monthIndex,
+                  date: monthDate,
+                };
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      if (focusedMonth) {
+        setActiveCalendarDate(focusedMonth.date);
+        syncCalendarActiveCell(focusedMonth.row, focusedMonth.col);
+      }
+      return;
+    }
+
+    if (yearsLayout.value) {
+      const yearGrid = getGrid('years', 3, startYear.value, endYear.value).map((row) =>
+        Array.isArray(row) ? row : []
+      );
+      const activeDate = getActiveCalendarDate();
+      const preferredYear = Number(selectedYear.value ?? activeDate.getFullYear());
+      let focusedYear = null;
+
+      for (let yearsRowIndex = 0; yearsRowIndex < yearGrid.length; yearsRowIndex += 1) {
+        const years = yearGrid[yearsRowIndex];
+
+        for (let yearIndex = 0; yearIndex < years.length; yearIndex += 1) {
+          const year = years[yearIndex];
+          const selectable = canSelectDate(
+            new Date(
+              year,
+              selectedMonth.value !== null && selectedMonth.value !== undefined
+                ? selectedMonth.value
+                : todayDate.value.getMonth(),
+              1
+            ),
+            props.minDateRef,
+            props.maxDateRef,
+            'year'
+          );
+
+          if (year === preferredYear && selectable) {
+            focusedYear = { row: yearsRowIndex, col: yearIndex, year };
+            break;
+          }
+        }
+
+        if (focusedYear) break;
+      }
+
+      if (!focusedYear) {
+        for (let yearsRowIndex = 0; yearsRowIndex < yearGrid.length; yearsRowIndex += 1) {
+          const years = yearGrid[yearsRowIndex];
+
+          for (let yearIndex = 0; yearIndex < years.length; yearIndex += 1) {
+            const year = years[yearIndex];
+            const selectable = canSelectDate(
+              new Date(
+                year,
+                selectedMonth.value !== null && selectedMonth.value !== undefined
+                  ? selectedMonth.value
+                  : todayDate.value.getMonth(),
+                1
+              ),
+              props.minDateRef,
+              props.maxDateRef,
+              'year'
+            );
+
+            if (selectable) {
+              focusedYear = { row: yearsRowIndex, col: yearIndex, year };
+              break;
+            }
+          }
+
+          if (focusedYear) break;
+        }
+      }
+
+      if (focusedYear) {
+        setActiveCalendarDate(
+          new Date(
+            focusedYear.year,
+            activeDate.getMonth(),
+            Math.min(activeDate.getDate(), 28),
+            0,
+            0,
+            0
+          )
+        );
+        syncCalendarActiveCell(focusedYear.row, focusedYear.col);
+      }
+      return;
+    }
+
+    if (quartersLayout.value) {
+      const quarterGrid = getGrid('quarters', 5, startQuarterYear.value, endQuarterYear.value);
+      const activeDate = getActiveCalendarDate();
+      const preferredYear = activeDate.getFullYear();
+      const preferredQuarter = quarterFromMonth(activeDate.getMonth());
+      let focusedQuarter = null;
+
+      for (let rowIndex = 0; rowIndex < quarterGrid.length; rowIndex += 1) {
+        const row = quarterGrid[rowIndex];
+        const rowYear = Number(Array.isArray(row) ? null : row?.year);
+        let rowItems = [];
+        if (!Array.isArray(row) && Array.isArray(row?.items)) {
+          rowItems = row.items;
+        }
+
+        for (let colIndex = 0; colIndex < rowItems.length; colIndex += 1) {
+          const quarterItem = rowItems[colIndex];
+          const selectable = isQuarterValid(
+            {
+              year: rowYear,
+              quarter: quarterItem,
+            },
+            props.minDateRef,
+            props.maxDateRef
+          );
+
+          if (
+            selectable &&
+            rowYear === preferredYear &&
+            Number(quarterItem) === Number(preferredQuarter)
+          ) {
+            focusedQuarter = {
+              row: rowIndex,
+              col: colIndex,
+              year: rowYear,
+              quarter: quarterItem,
+            };
+            break;
+          }
+        }
+
+        if (focusedQuarter) break;
+      }
+
+      if (!focusedQuarter) {
+        for (let rowIndex = 0; rowIndex < quarterGrid.length; rowIndex += 1) {
+          const row = quarterGrid[rowIndex];
+          const rowYear = Number(Array.isArray(row) ? null : row?.year);
+          let rowItems = [];
+          if (!Array.isArray(row) && Array.isArray(row?.items)) {
+            rowItems = row.items;
+          }
+
+          for (let colIndex = 0; colIndex < rowItems.length; colIndex += 1) {
+            const quarterItem = rowItems[colIndex];
+            const selectable = isQuarterValid(
+              {
+                year: rowYear,
+                quarter: quarterItem,
+              },
+              props.minDateRef,
+              props.maxDateRef
+            );
+
+            if (selectable) {
+              focusedQuarter = {
+                row: rowIndex,
+                col: colIndex,
+                year: rowYear,
+                quarter: quarterItem,
+              };
+              break;
+            }
+          }
+
+          if (focusedQuarter) break;
+        }
+      }
+
+      if (focusedQuarter) {
+        setActiveCalendarDate(dateFromYearAndQuarter(focusedQuarter.year, focusedQuarter.quarter));
+        syncCalendarActiveCell(focusedQuarter.row, focusedQuarter.col);
+      }
+      return;
+    }
+
+    if (monthsLayout.value) {
+      syncCalendarActiveCell(0, 0);
+    }
+  });
+}
 
 // Update visible hours
 function updateVisibleHours() {
@@ -690,33 +1672,6 @@ function handleRangeDifferentCaseValidation(date) {
 
   handleBothSelected();
 }
-function checkMinutesCadence(cadence, filteredIndexParameter, minutesValue) {
-  let filteredIndex = filteredIndexParameter;
-  // Check if cadence is 5 and filteredMinutes length is 12
-  // Check if cadence is 15 and filteredMinutes length is 16
-  if (
-    (cadence === 5 && filteredMinutes.value.length === 12) ||
-    (cadence === 15 && filteredMinutes.value.length === 16)
-  ) {
-    filteredIndex = filteredMinutes.value.findIndex((item) => Number(item.value) === minutesValue);
-  }
-
-  return filteredIndex;
-}
-
-function checkSecondsCadence(cadence, filteredIndexParameter, secondsValue) {
-  let filteredIndex = filteredIndexParameter;
-  // Check if cadence is 5 and filteredSeconds length is 12
-  // Check if cadence is 15 and filteredSeconds length is 16
-  if (
-    (cadence === 5 && filteredSeconds.value.length === 12) ||
-    (cadence === 15 && filteredSeconds.value.length === 16)
-  ) {
-    filteredIndex = filteredSeconds.value.findIndex((item) => Number(item.value) === secondsValue);
-  }
-
-  return filteredIndex;
-}
 
 function handleDateLayoutAutoScroll(date) {
   const flatList = monthsList.value.flat();
@@ -801,31 +1756,28 @@ function applyMinuteBoundsIfNeeded(date) {
   if (props.clearIfNotExact) return;
 
   const cadence = props.cadenceOfMinutes;
-  let filteredIndex = -1;
 
-  const sameMinDay = props.minDateRef && date.getDate() === props.minDateRef.getDate();
+  const sameMinDay = props.minDateRef && isSameDay(date, props.minDateRef);
   if (
     sameMinDay &&
     (isNil(selectedMinute.value) || selectedMinute.value < props.minDateRef.getMinutes())
   ) {
     selectedMinute.value = props.minDateRef.getMinutes();
-    filteredIndex = checkMinutesCadence(cadence, filteredIndex, selectedMinute.value);
   }
 
-  const sameMaxDay = props.maxDateRef && date.getDate() === props.maxDateRef.getDate();
+  const sameMaxDay = props.maxDateRef && isSameDay(date, props.maxDateRef);
   if (
     sameMaxDay &&
     (isNil(selectedMinute.value) || selectedMinute.value > props.maxDateRef.getMinutes())
   ) {
     selectedMinute.value = props.maxDateRef.getMinutes();
-    filteredIndex = checkMinutesCadence(cadence, filteredIndex, selectedMinute.value);
   }
 
-  if (filteredIndex === -1) {
-    filteredIndex = getTimeOrderIndex(filteredMinutes.value, selectedMinute.value, cadence);
-  }
-
-  currentMinuteIndex.value = Math.max(0, filteredIndex);
+  currentMinuteIndex.value = resolveCadenceIndex(
+    cadence,
+    selectedMinute.value,
+    filteredMinutes.value
+  );
   selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
   selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
   updateVisibleMinutes();
@@ -835,44 +1787,41 @@ function applySecondBoundsIfNeeded(date) {
   if (props.clearIfNotExact) return;
 
   const cadence = props.cadenceOfSeconds;
-  let filteredIndex = -1;
 
-  const sameMinDay = props.minDateRef && date.getDate() === props.minDateRef.getDate();
+  const sameMinDay = props.minDateRef && isSameDay(date, props.minDateRef);
   if (
     sameMinDay &&
     (isNil(selectedSecond.value) || selectedSecond.value < props.minDateRef.getSeconds())
   ) {
     selectedSecond.value = props.minDateRef.getSeconds();
-    filteredIndex = checkSecondsCadence(cadence, filteredIndex, selectedSecond.value);
   }
 
-  const sameMaxDay = props.maxDateRef && date.getDate() === props.maxDateRef.getDate();
+  const sameMaxDay = props.maxDateRef && isSameDay(date, props.maxDateRef);
   if (
     sameMaxDay &&
     (isNil(selectedSecond.value) || selectedSecond.value > props.maxDateRef.getSeconds())
   ) {
     selectedSecond.value = props.maxDateRef.getSeconds();
-    filteredIndex = checkSecondsCadence(cadence, filteredIndex, selectedSecond.value);
   }
 
-  if (filteredIndex === -1) {
-    filteredIndex = getTimeOrderIndex(filteredSeconds.value, selectedSecond.value, cadence);
-  }
-
-  currentSecondIndex.value = Math.max(0, filteredIndex);
+  currentSecondIndex.value = resolveCadenceIndex(
+    cadence,
+    selectedSecond.value,
+    filteredSeconds.value
+  );
 
   selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value].id;
   selectedSecondId.value = filteredSeconds.value[currentSecondIndex.value].id;
   updateVisibleSeconds();
 }
 
-function buildAndEmitFinalDateTime(date, baseDate, fullTime = false) {
+function buildAndEmitFinalDateTime(date, baseDate, fullTime = false, triggerKey = null) {
   const { minDateRef, maxDateRef, id, setActiveInput } = props;
 
   const selected = { Hour: selectedHour, Minute: selectedMinute, Second: selectedSecond };
 
   const adjustWithinBounds = (bound, comparator) => {
-    if (!bound || baseDate.getDate() !== bound.getDate()) return;
+    if (!bound || !isSameDay(baseDate, bound)) return;
 
     const compareAndClamp = (unit, get, set, checkFull = false) => {
       if (checkFull && !fullTime) return;
@@ -906,11 +1855,14 @@ function buildAndEmitFinalDateTime(date, baseDate, fullTime = false) {
   if (fullTime) date.setSeconds(selectedSecond.value || 0);
 
   currentDate.value = date;
+  hasCommittedDateTimeSelection.value = true;
   emits('update:modelValue', date);
 
   handleLayoutDisplay();
 
-  setActiveInput('startInput', id);
+  if (triggerKey !== 'space') {
+    setActiveInput('startInput', id);
+  }
 }
 
 function handleDateSelection(selectedValue, key) {
@@ -931,7 +1883,9 @@ function handleDateSelection(selectedValue, key) {
     handleDateLayoutAutoScroll(updatedDate);
     emits('update:modelValue', updatedDate);
     handleLayoutDisplay();
-    setActiveInput('startInput', id);
+    if (key !== 'space') {
+      setActiveInput('startInput', id);
+    }
     if (key === 'enter') {
       props.closeMenu();
     }
@@ -953,12 +1907,32 @@ function handleDateSelection(selectedValue, key) {
     applyMinuteBoundsIfNeeded(selectedValue);
     if (isFullTimeMode) applySecondBoundsIfNeeded(selectedValue);
 
+    const activeEl = document.activeElement;
+    const shouldPreserveTimeFocus =
+      activeEl instanceof HTMLElement && timeContainerRef.value?.contains(activeEl);
+    syncTimeColumnViewportWithSelection({ preserveFocus: shouldPreserveTimeFocus });
+
     // Emit if full time is complete
     const isComplete = isFullTimeMode ? isCompleteTimeFullSelection() : isCompleteTimeSelection();
 
-    if (isComplete) {
-      buildAndEmitFinalDateTime(updatedDate, selectedValue, isFullTimeMode);
+    if (isComplete && hasCommittedDateTimeSelection.value) {
+      buildAndEmitFinalDateTime(updatedDate, selectedValue, isFullTimeMode, key);
     }
+
+    if (key === 'enter' && !isMobileScreen.value && !mobileTimeLayout.value) {
+      ensureTimeColumnSelectableFocus('hours');
+      scheduleTimeRefocus('hours');
+    }
+  }
+}
+
+function focusLayoutTriggerButton(type) {
+  const selector =
+    type === 'month' ? '.lx-calendar-months-select-button' : '.lx-calendar-years-select-button';
+  const trigger = containerRef.value?.querySelector(selector);
+
+  if (trigger instanceof HTMLElement) {
+    trigger.focus({ preventScroll: true });
   }
 }
 
@@ -972,10 +1946,16 @@ function handleMonthSelection(selectedValue, newDate, key) {
   const monthIndex = Number(selectedValue.orderIndex);
   selectedMonth.value = monthIndex;
 
+  if (props.mode === 'date') {
+    syncActiveDayToMonth(newDate.getFullYear(), monthIndex);
+  }
+
   if (props.mode === 'month') {
     emits('update:modelValue', newDate);
     handleLayoutDisplay();
-    props.setActiveInput('startInput', props.id);
+    if (key !== 'space') {
+      props.setActiveInput('startInput', props.id);
+    }
     if (key === 'enter') {
       props.closeMenu();
     }
@@ -989,11 +1969,26 @@ function handleMonthSelection(selectedValue, newDate, key) {
       const updatedDate = new Date(selectedYear.value, monthIndex, 1);
       emits('update:modelValue', updatedDate);
       handleLayoutDisplay();
-      props.setActiveInput('startInput', props.id);
+      if (key !== 'space') {
+        props.setActiveInput('startInput', props.id);
+      }
     } else {
       monthsLayout.value = false;
       yearsLayout.value = true;
     }
+    return;
+  }
+
+  if (isDateBasedMode(props.mode) && key === 'space') {
+    return;
+  }
+
+  if (isDateBasedMode(props.mode)) {
+    monthsLayout.value = false;
+    regularLayout.value = true;
+    nextTick(() => {
+      focusLayoutTriggerButton('month');
+    });
     return;
   }
 
@@ -1017,6 +2012,7 @@ function handleYearSelection(selectedValue, newDate, key) {
   if (numericYear === endYear.value) transitionName.value = computedNextTransitionName.value;
 
   if (props.mode === 'month') {
+    syncActiveMonthToYear(numericYear);
     yearsLayout.value = false;
     monthsLayout.value = true;
     return;
@@ -1025,7 +2021,9 @@ function handleYearSelection(selectedValue, newDate, key) {
   if (props.mode === 'year') {
     emits('update:modelValue', newDate);
     handleLayoutDisplay();
-    props.setActiveInput('startInput', props.id);
+    if (key !== 'space') {
+      props.setActiveInput('startInput', props.id);
+    }
     if (key === 'enter') {
       props.closeMenu();
     }
@@ -1048,11 +2046,28 @@ function handleYearSelection(selectedValue, newDate, key) {
       const updatedDate = new Date(numericYear, selectedMonth.value, 1);
       emits('update:modelValue', updatedDate);
       handleLayoutDisplay();
-      props.setActiveInput('startInput', props.id);
+      if (key !== 'space') {
+        props.setActiveInput('startInput', props.id);
+      }
       return;
     }
+    syncActiveMonthToYear(numericYear);
     yearsLayout.value = false;
     monthsLayout.value = true;
+    return;
+  }
+
+  if (isDateBasedMode(props.mode) && key === 'space') {
+    syncActiveMonthToYear(numericYear);
+    return;
+  }
+
+  if (isDateBasedMode(props.mode)) {
+    yearsLayout.value = false;
+    regularLayout.value = true;
+    nextTick(() => {
+      focusLayoutTriggerButton('year');
+    });
     return;
   }
 
@@ -1070,7 +2085,9 @@ function handleQuarterSelection(selectedValue, key) {
   if (key === 'enter') {
     props.closeMenu();
   }
-  props.setActiveInput('startInput', props.id);
+  if (key !== 'space') {
+    props.setActiveInput('startInput', props.id);
+  }
 }
 
 function handleSingleSelection(selectedValue, selectionType, isNotSelectable = false, key = null) {
@@ -1212,50 +2229,8 @@ const isHoveringRange = (date) => {
   return false;
 };
 
-function isMonthBetweenInYear(startMth, endMth, targetMth, targetYr, expectedYr) {
-  if (targetYr !== expectedYr) return false;
-  const [min, max] = [startMth, endMth].sort((a, b) => a - b);
-  return targetMth >= min && targetMth <= max;
-}
-
-function isMonthInForwardMultiYearRange(startYr, startMth, endYr, endMth, month) {
-  if (month.year === startYr) {
-    return month.orderIndex >= startMth;
-  }
-  if (month.year === endYr) {
-    return month.orderIndex <= endMth;
-  }
-  return month.year > startYr && month.year < endYr;
-}
-
-function isMonthInBackwardMultiYearRange(startYr, startMth, endYr, endMth, month) {
-  if (month.year === startYr) {
-    return month.orderIndex <= startMth;
-  }
-  if (month.year === endYr) {
-    return month.orderIndex >= endMth;
-  }
-  return month.year < startYr && month.year > endYr;
-}
-
 function isMonthInHoverRange({ anchorYear, anchorMonth, hoverYear, hoverMonth, month }) {
-  const isSameYear = anchorYear === hoverYear;
-  const isForward = hoverYear > anchorYear || (isSameYear && hoverMonth >= anchorMonth);
-  const isBackward = hoverYear < anchorYear || (isSameYear && hoverMonth < anchorMonth);
-
-  if (isSameYear) {
-    return isMonthBetweenInYear(anchorMonth, hoverMonth, month.orderIndex, month.year, anchorYear);
-  }
-
-  if (isForward) {
-    return isMonthInForwardMultiYearRange(anchorYear, anchorMonth, hoverYear, hoverMonth, month);
-  }
-
-  if (isBackward) {
-    return isMonthInBackwardMultiYearRange(anchorYear, anchorMonth, hoverYear, hoverMonth, month);
-  }
-
-  return false;
+  return isMonthInRangeAcrossYears(anchorYear, anchorMonth, hoverYear, hoverMonth, month);
 }
 
 // Check if a month/month-year is in the hovering range
@@ -1457,6 +2432,15 @@ const isSelectedQuarterRange = (quarterYear, quarterItem) => {
 function returnToToday() {
   const newDate = new Date();
 
+  if (
+    props.mode === 'time' ||
+    props.mode === 'time-full' ||
+    props.mode === 'date-time' ||
+    props.mode === 'date-time-full'
+  ) {
+    moveTimeColumnsToNow();
+  }
+
   // Check if the mode is not 'year' or 'quarters' to handle month transitions
   if (props.mode !== 'year' && props.mode !== 'quarters') {
     if (currentDate.value > newDate) {
@@ -1510,60 +2494,20 @@ function returnToToday() {
   updateVisibleSeconds();
 
   handleLayoutDisplay();
-}
 
-// Handle scrolling to update the hour or minute
-function onScrollClick(direction, type) {
-  if (type === 'hours') {
-    if (hours.value.length) {
-      currentHourIndex.value =
-        (currentHourIndex.value + direction + hours.value.length) % hours.value.length;
-      updateVisibleHours();
-    }
-  } else if (type === 'minutes') {
-    if (filteredMinutes.value.length) {
-      // Update the currentMinuteIndex based on cadence
-      currentMinuteIndex.value =
-        (currentMinuteIndex.value + direction + filteredMinutes.value.length) %
-        filteredMinutes.value.length;
+  if (isDateBasedMode(props.mode)) {
+    setActiveCalendarDate(newDate);
 
-      // Set the selectedMinuteId based on the updated currentMinuteIndex
-      selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+    nextTick(() => {
+      focusInitialPickerCell();
 
-      updateVisibleMinutes();
-    }
-  } else if (type === 'seconds') {
-    if (filteredSeconds.value.length) {
-      // Update the currentSecondIndex based on cadence
-      currentSecondIndex.value =
-        (currentSecondIndex.value + direction + filteredSeconds.value.length) %
-        filteredSeconds.value.length;
+      if (isTouchMode.value) return;
 
-      // Set the selectedSecondId based on the updated currentSecondIndex
-      selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value].id;
-
-      updateVisibleSeconds();
-    }
-  }
-}
-
-const scrollThreshold = 100; // Threshold to trigger scroll
-let scrollAccumulated = 0;
-
-function onScrollWheel(event, type) {
-  event.preventDefault(); // Prevent default scroll behavior
-
-  scrollAccumulated += event.deltaY;
-
-  if (Math.abs(scrollAccumulated) >= scrollThreshold) {
-    // Determine scroll direction based on accumulated scroll
-    const direction = scrollAccumulated > 0 ? 1 : -1;
-
-    // Call the function to change the visible hours
-    onScrollClick(direction, type);
-
-    // Reset scroll accumulator for smooth scrolling
-    scrollAccumulated = 0;
+      const todayCell = containerRef.value?.querySelector('.lx-calendar-day[tabindex="0"]');
+      if (todayCell instanceof HTMLElement) {
+        todayCell.focus({ preventScroll: true });
+      }
+    });
   }
 }
 
@@ -1631,6 +2575,7 @@ const selectHour = (hourObj, isNotSelectable) => {
 
     selectedDate.value = updatedDate;
     currentDate.value = updatedDate;
+    hasCommittedDateTimeSelection.value = true;
     emits('update:modelValue', updatedDate);
 
     if (!isMobileScreen.value) {
@@ -1703,6 +2648,7 @@ const selectMinute = (minuteObj, isNotSelectable) => {
 
     selectedDate.value = updatedDate;
     currentDate.value = updatedDate;
+    hasCommittedDateTimeSelection.value = true;
     emits('update:modelValue', updatedDate);
 
     if (!isMobileScreen.value) {
@@ -1765,6 +2711,7 @@ const selectSecond = (secondObj, isNotSelectable) => {
 
     selectedDate.value = updatedDate;
     currentDate.value = updatedDate;
+    hasCommittedDateTimeSelection.value = true;
     emits('update:modelValue', updatedDate);
 
     if (!isMobileScreen.value) {
@@ -1773,6 +2720,66 @@ const selectSecond = (secondObj, isNotSelectable) => {
     }
   }
 };
+
+function setTimeSelected(column, offset, keepFocus = false) {
+  const visibleItems = getVisibleTimeItems(column);
+  const hit = visibleItems.find((item) => item.offset === offset);
+  if (!hit) return;
+
+  if (!isTimeValueSelectable(column, hit.value)) {
+    return;
+  }
+
+  timeDirections.value[column] =
+    hit.virtualIndex > timeStarts.value[column] + timeActiveOffsets.value[column] ? 'down' : 'up';
+  centerTimeColumnOnValue(column, hit.value);
+  syncTimeSelected(column);
+
+  if (keepFocus) {
+    focusActiveTimeItem(column);
+  } else {
+    const { activeElement } = document;
+    if (activeElement instanceof HTMLElement && timeContainerRef.value?.contains(activeElement)) {
+      activeElement.blur();
+    }
+  }
+
+  if (column === 'hours') {
+    selectHour({ value: hit.value.toString().padStart(2, '0'), orderIndex: hit.value }, false);
+  } else if (column === 'minutes') {
+    selectMinute(
+      { value: hit.value.toString().padStart(2, '0'), orderIndex: hit.value, id: `${hit.value}` },
+      false
+    );
+  } else if (column === 'seconds') {
+    selectSecond(
+      { value: hit.value.toString().padStart(2, '0'), orderIndex: hit.value, id: `${hit.value}` },
+      false
+    );
+  }
+}
+
+function onTimeContainerKeydown(event) {
+  const { target } = event;
+  const column = target?.dataset.column || activeTimeColumn.value;
+  if (!column) return;
+
+  activeTimeColumn.value = column;
+
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+    event.preventDefault();
+    handleTimeArrowKey(column, event.key);
+    return;
+  }
+
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    const value = Number(target?.dataset.value);
+    if (isTimeValueSelectable(column, value)) {
+      setTimeSelected(column, timeActiveOffsets.value[column], true);
+    }
+  }
+}
 
 function moveCalendar(minDate, maxDate) {
   const now = normalizeDate(new Date(), props.mode);
@@ -2115,6 +3122,42 @@ function handleClose(e) {
   props.closeMenu();
 }
 
+function handleContainerTabTrap(e) {
+  if (responsiveView.value) {
+    return;
+  }
+
+  e.preventDefault();
+
+  const container = containerRef.value;
+  if (!container) return;
+
+  const focusableElements = findFocusableElements(container);
+
+  if (!focusableElements.length) {
+    container.focus();
+    return;
+  }
+
+  const { activeElement } = document;
+  const currentIndex = focusableElements.indexOf(activeElement);
+
+  if (currentIndex === -1) {
+    if (e.shiftKey) {
+      focusableElements[focusableElements.length - 1].focus();
+    } else {
+      focusableElements[0].focus();
+    }
+    return;
+  }
+
+  const nextIndex = e.shiftKey
+    ? (currentIndex - 1 + focusableElements.length) % focusableElements.length
+    : (currentIndex + 1) % focusableElements.length;
+
+  focusableElements[nextIndex].focus();
+}
+
 const updateCurrentDateIfNotInMonthsList = (selectedDateValue) => {
   if (props.mode === 'month-year' && props.pickerType === 'range') return;
   // Check if the selectedStartDate month/year exists in monthsList
@@ -2283,26 +3326,6 @@ function hasOtherSelectableYear(currentYear, min, max) {
   return canGoPrev || canGoNext;
 }
 
-function resolveMinuteIndex(cadence, minutesValue, filteredMin) {
-  let index = checkMinutesCadence(cadence, -1, minutesValue);
-
-  if (index === -1) {
-    index = getTimeOrderIndex(filteredMin, minutesValue, cadence);
-  }
-
-  return Math.max(index, 0);
-}
-
-function resolveSecondIndex(cadence, secondsValue, filteredSec) {
-  let index = checkSecondsCadence(cadence, -1, secondsValue);
-
-  if (index === -1) {
-    index = getTimeOrderIndex(filteredSec, secondsValue, cadence);
-  }
-
-  return Math.max(index, 0);
-}
-
 function applyRangeDate(date) {
   const year = date.getFullYear();
 
@@ -2352,6 +3375,164 @@ const yearsList = computed(() => getGrid('years', 3, startYear.value, endYear.va
 const quartersList = computed(() =>
   getGrid('quarters', 5, startQuarterYear.value, endQuarterYear.value)
 );
+
+const regularGridRowCount = computed(() => Math.max(0, monthsList.value.length * 6 - 1));
+
+const regularGridColCount = computed(() => {
+  const maxMonthsPerRow = Math.max(1, ...monthsList.value.map((row) => row.length));
+  return Math.max(0, maxMonthsPerRow * 7 - 1);
+});
+
+const monthsGridRowCount = computed(() => {
+  const rowsPerYear = monthsInYear.value[0]?.length || 1;
+  return Math.max(0, monthsInYear.value.length * rowsPerYear - 1);
+});
+
+const monthsGridColCount = computed(() =>
+  Math.max(0, (monthsInYear.value[0]?.[0]?.length || 1) - 1)
+);
+
+const yearsGridRowCount = computed(() => Math.max(0, yearsList.value.length - 1));
+
+const yearsGridColCount = computed(() =>
+  Math.max(0, (Array.isArray(yearsList.value[0]) ? yearsList.value[0].length : 1) - 1)
+);
+
+const quartersGridRowCount = computed(() => Math.max(0, quartersList.value.length - 1));
+
+const quartersGridColCount = computed(() => 3);
+
+const calendarGridRowCount = computed(() => {
+  if (regularLayout.value) return regularGridRowCount.value;
+  if (monthsLayout.value) return monthsGridRowCount.value;
+  if (yearsLayout.value) return yearsGridRowCount.value;
+  if (quartersLayout.value) return quartersGridRowCount.value;
+  return 0;
+});
+
+const calendarGridColCount = computed(() => {
+  if (regularLayout.value) return regularGridColCount.value;
+  if (monthsLayout.value) return monthsGridColCount.value;
+  if (yearsLayout.value) return yearsGridColCount.value;
+  if (quartersLayout.value) return quartersGridColCount.value;
+  return 0;
+});
+
+function handleDayGridKeydown(e) {
+  if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return false;
+  if (props.disabled) return true;
+
+  const currentDateValue = getActiveCalendarDate();
+  let nextDate = new Date(currentDateValue);
+
+  if (e.key === 'ArrowLeft') nextDate = addDays(nextDate, -1);
+  if (e.key === 'ArrowRight') nextDate = addDays(nextDate, 1);
+  if (e.key === 'ArrowUp') nextDate = addDays(nextDate, -7);
+  if (e.key === 'ArrowDown') nextDate = addDays(nextDate, 7);
+
+  e.preventDefault();
+
+  if (!canSelectDate(nextDate, props.minDateRef, props.maxDateRef, 'date')) {
+    return true;
+  }
+
+  setActiveCalendarDate(nextDate);
+  handleDateLayoutAutoScroll(nextDate);
+
+  nextTick(() => {
+    const coordinates = getDayCellCoordinates(nextDate);
+    if (coordinates) {
+      syncCalendarActiveCell(coordinates.row, coordinates.col);
+    }
+  });
+
+  return true;
+}
+
+function handleCalendarKeydown(e) {
+  if (
+    regularLayout.value &&
+    (props.mode === 'date' || props.mode === 'date-time' || props.mode === 'date-time-full')
+  ) {
+    if (handleDayGridKeydown(e)) return;
+  }
+
+  onCalendarKeydown(e, calendarGridRowCount.value, calendarGridColCount.value);
+}
+
+function isActiveCalendarMonth(month) {
+  const activeDate = getActiveCalendarDate();
+  return month.orderIndex === activeDate.getMonth() && month.year === activeDate.getFullYear();
+}
+
+function getYearSelectionDate(year) {
+  return new Date(
+    year,
+    selectedMonth.value !== null && selectedMonth.value !== undefined
+      ? selectedMonth.value
+      : todayDate.value.getMonth(),
+    1
+  );
+}
+
+function isYearSelectable(year) {
+  return canSelectDate(getYearSelectionDate(year), props.minDateRef, props.maxDateRef, 'year');
+}
+
+function getFirstSelectableYearCell() {
+  for (let row = 0; row < yearsList.value.length; row += 1) {
+    const years = yearsList.value[row];
+    if (Array.isArray(years)) {
+      for (let col = 0; col < years.length; col += 1) {
+        if (isYearSelectable(years[col])) {
+          return { row, col, year: years[col] };
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+const activeSelectableYearCell = computed(() => {
+  const activeYear = getActiveCalendarDate().getFullYear();
+
+  for (let row = 0; row < yearsList.value.length; row += 1) {
+    const years = yearsList.value[row];
+    if (Array.isArray(years)) {
+      const col = years.findIndex((year) => year === activeYear);
+
+      if (col !== -1 && isYearSelectable(activeYear)) {
+        return { row, col, year: activeYear };
+      }
+    }
+  }
+
+  return null;
+});
+
+function getYearCellTabIndex(year, row, col) {
+  if (isTouchMode.value) return -1;
+  if (!isYearSelectable(year)) return -1;
+
+  const activeCell = activeSelectableYearCell.value;
+  if (activeCell) {
+    return activeCell.row === row && activeCell.col === col ? 0 : -1;
+  }
+
+  const fallbackCell = getFirstSelectableYearCell();
+  if (!fallbackCell) return -1;
+
+  return fallbackCell.row === row && fallbackCell.col === col ? 0 : -1;
+}
+
+function isActiveCalendarQuarter(quarterYear, quarterItem) {
+  const activeDate = getActiveCalendarDate();
+  return (
+    quarterYear === activeDate.getFullYear() &&
+    Number(quarterItem) === quarterFromMonth(activeDate.getMonth())
+  );
+}
 
 const monthsSelectButtonLabel = computed(() => {
   if (
@@ -2562,7 +3743,8 @@ const onToday = computed(() => {
         date.getMonth() === now.getMonth() &&
         date.getFullYear() === now.getFullYear() &&
         hour === now.getHours() &&
-        minute === now.getMinutes()
+        minute === now.getMinutes() &&
+        isCurrentTimeVisibleInPicker.value
       );
     }
 
@@ -2572,16 +3754,24 @@ const onToday = computed(() => {
         date.getFullYear() === now.getFullYear() &&
         hour === now.getHours() &&
         minute === now.getMinutes() &&
-        second === now.getSeconds()
+        second === now.getSeconds() &&
+        isCurrentTimeVisibleInPicker.value
       );
     }
 
     case 'time': {
-      return hour === now.getHours() && minute === now.getMinutes();
+      return (
+        hour === now.getHours() && minute === now.getMinutes() && isCurrentTimeVisibleInPicker.value
+      );
     }
 
     case 'time-full': {
-      return hour === now.getHours() && minute === now.getMinutes() && second === now.getSeconds();
+      return (
+        hour === now.getHours() &&
+        minute === now.getMinutes() &&
+        second === now.getSeconds() &&
+        isCurrentTimeVisibleInPicker.value
+      );
     }
 
     case 'year': {
@@ -2628,13 +3818,13 @@ function handleSinglePickerUnmount() {
 
   currentHourIndex.value = getTimeOrderIndex(hours.value, selectedHour.value);
 
-  currentMinuteIndex.value = resolveMinuteIndex(
+  currentMinuteIndex.value = resolveCadenceIndex(
     props.cadenceOfMinutes,
     selectedMinute.value,
     filteredMinutes.value
   );
 
-  currentSecondIndex.value = resolveSecondIndex(
+  currentSecondIndex.value = resolveCadenceIndex(
     props.cadenceOfSeconds,
     selectedSecond.value,
     filteredSeconds.value
@@ -2801,12 +3991,56 @@ watch(
 );
 
 function getRangeOpenAnchorDate() {
-  const start = selectedStartDate.value;
-  const end = selectedEndDate.value;
+  const modelRange =
+    props.modelValue && typeof props.modelValue === 'object' && !(props.modelValue instanceof Date)
+      ? props.modelValue
+      : null;
+  let start = null;
+  if (modelRange && modelRange.start instanceof Date) {
+    start = modelRange.start;
+  } else if (selectedStartDate.value instanceof Date) {
+    start = selectedStartDate.value;
+  }
+
+  let end = null;
+  if (modelRange && modelRange.end instanceof Date) {
+    end = modelRange.end;
+  } else if (selectedEndDate.value instanceof Date) {
+    end = selectedEndDate.value;
+  }
+
   const isEndInput = props.activeInput === 'endInput';
 
   if (isEndInput) return end || start || todayDate.value;
   return start || end || todayDate.value;
+}
+
+function getRangeFocusDate() {
+  const modelRange =
+    props.modelValue && typeof props.modelValue === 'object' && !(props.modelValue instanceof Date)
+      ? props.modelValue
+      : null;
+  let start = null;
+  if (modelRange && modelRange.start instanceof Date) {
+    start = modelRange.start;
+  } else if (selectedStartDate.value instanceof Date) {
+    start = selectedStartDate.value;
+  }
+
+  let end = null;
+  if (modelRange && modelRange.end instanceof Date) {
+    end = modelRange.end;
+  } else if (selectedEndDate.value instanceof Date) {
+    end = selectedEndDate.value;
+  }
+
+  const isEndInput = props.activeInput === 'endInput';
+
+  if (isEndInput) {
+    return end || start || currentDate.value || todayDate.value;
+  }
+
+  return start || end || currentDate.value || todayDate.value;
 }
 
 function applyOpenAnchorDate(anchorDate) {
@@ -2820,19 +4054,89 @@ function applyOpenAnchorDate(anchorDate) {
   endQuarterYear.value = decadeStart + 9;
 }
 
+function getSingleOpenAnchorDate() {
+  let dateToUse;
+
+  if (selectedDate.value instanceof Date) dateToUse = new Date(selectedDate.value);
+  else if (props.modelValue instanceof Date) dateToUse = new Date(props.modelValue);
+  else if (currentDate.value instanceof Date) dateToUse = new Date(currentDate.value);
+  else dateToUse = new Date(todayDate.value);
+
+  // Clamp the date to min/max range for navigation purposes
+  if (props.minDateRef && dateToUse < new Date(props.minDateRef)) {
+    return new Date(props.minDateRef);
+  }
+  if (props.maxDateRef && dateToUse > new Date(props.maxDateRef)) {
+    return new Date(props.maxDateRef);
+  }
+
+  return dateToUse;
+}
+
 watch(
   () => props.menuState,
   (newValue) => {
+    const shouldAutoFocusPicker = props.openSource === 'keyboard';
+
     if (newValue) {
+      hasTimeGridActiveCell.value = false;
+    }
+
+    if (newValue) {
+      if (props.pickerType === 'single') {
+        const openAnchorDate = getSingleOpenAnchorDate();
+        currentDate.value = openAnchorDate;
+
+        if (
+          props.mode === 'date' ||
+          props.mode === 'date-time' ||
+          props.mode === 'date-time-full'
+        ) {
+          const decadeStart = findDecadeStartYear(openAnchorDate.getFullYear());
+          startYear.value = decadeStart - 1;
+          endYear.value = decadeStart + 10;
+        }
+
+        if (props.mode === 'quarters') {
+          startQuarterYear.value = findDecadeStartYear(openAnchorDate.getFullYear());
+          endQuarterYear.value = findDecadeStartYear(openAnchorDate.getFullYear()) + 9;
+        }
+      }
+
+      if (
+        props.mode === 'time' ||
+        props.mode === 'time-full' ||
+        props.mode === 'date-time' ||
+        props.mode === 'date-time-full'
+      ) {
+        initializeTimePicker();
+      }
+
       if (props.pickerType === 'range') {
-        applyOpenAnchorDate(getRangeOpenAnchorDate());
+        const rangeAnchorDate = getRangeOpenAnchorDate();
+        applyOpenAnchorDate(rangeAnchorDate);
+        activeCalendarDate.value = new Date(getRangeFocusDate());
+      } else {
+        activeCalendarDate.value = selectedDate.value || currentDate.value || todayDate.value;
       }
 
       showCalendar.value = true;
       handleLayoutDisplay();
+      if (shouldAutoFocusPicker) {
+        const initialFocusDate =
+          props.pickerType === 'range' ? getRangeFocusDate() : getActiveCalendarDate();
+        focusInitialPickerCell(initialFocusDate);
+      }
+
+      if (
+        shouldAutoFocusPicker &&
+        (props.mode === 'time' || props.mode === 'time-full') &&
+        !isMobileScreen.value
+      ) {
+        scheduleTimeRefocus('hours');
+      }
     }
 
-    // Handle missing date time parts when calendar menu closes
     if (!newValue) {
       if (props.pickerType === 'single') {
         handleSinglePickerUnmount();
@@ -2852,8 +4156,15 @@ watch(
   () => {
     if (props.mode !== 'time' && props.mode !== 'date-time') return;
 
+    if (selectedMinute.value !== null && selectedMinute.value !== undefined) {
+      currentMinuteIndex.value = resolveCadenceIndex(
+        props.cadenceOfMinutes,
+        selectedMinute.value,
+        filteredMinutes.value
+      );
+    }
+
     selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
-    updateVisibleHours();
     updateVisibleMinutes();
   },
   { immediate: true }
@@ -2863,10 +4174,15 @@ watch(
   () => props.cadenceOfSeconds,
   () => {
     if (props.mode !== 'time-full' && props.mode !== 'date-time-full') return;
+    if (selectedSecond.value !== null && selectedSecond.value !== undefined) {
+      currentSecondIndex.value = resolveCadenceIndex(
+        props.cadenceOfSeconds,
+        selectedSecond.value,
+        filteredSeconds.value
+      );
+    }
 
     selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
-    updateVisibleHours();
-    updateVisibleMinutes();
     updateVisibleSeconds();
   },
   { immediate: true }
@@ -2878,6 +4194,17 @@ watch(
     // Watch for mode change and reset everything
     clearSelectedValues();
     emits('update:modelValue', null);
+  }
+);
+
+watch(
+  () => [monthsLayout.value, yearsLayout.value, props.mode],
+  ([isMonthsOpen, isYearsOpen, mode]) => {
+    if (mode !== 'date') return;
+    if (!isMonthsOpen && !isYearsOpen) return;
+
+    activeCalendarDate.value = selectedDate.value || currentDate.value || todayDate.value;
+    focusInitialPickerCell();
   }
 );
 
@@ -2925,41 +4252,16 @@ watch(
         const cadenceS = props.cadenceOfSeconds;
         const minutesValue = newValue.getMinutes();
         const secondsValue = newValue.getSeconds();
-        let filteredMinuteIndex = -1;
-        let filteredSecondIndex = -1;
-
-        filteredMinuteIndex = checkMinutesCadence(cadenceM, filteredMinuteIndex, minutesValue);
-        filteredSecondIndex = checkSecondsCadence(cadenceS, filteredSecondIndex, secondsValue);
-
-        // Use fallback index (0) if filteredMinuteIndex is invalid
-        currentMinuteIndex.value =
-          filteredMinuteIndex !== -1
-            ? filteredMinuteIndex
-            : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
-
-        // Use fallback index (0) if filteredSecondIndex is invalid
-        currentSecondIndex.value =
-          filteredSecondIndex !== -1
-            ? filteredSecondIndex
-            : getTimeOrderIndex(filteredSeconds.value, secondsValue, props.cadenceOfSeconds);
-
-        // Ensure currentMinuteIndex is valid, otherwise default to 0
-        if (
-          currentMinuteIndex.value === null ||
-          currentMinuteIndex.value === undefined ||
-          currentMinuteIndex.value < 0
-        ) {
-          currentMinuteIndex.value = 0;
-        }
-
-        // Ensure currentSecondIndex is valid, otherwise default to 0
-        if (
-          currentSecondIndex.value === null ||
-          currentSecondIndex.value === undefined ||
-          currentSecondIndex.value < 0
-        ) {
-          currentSecondIndex.value = 0;
-        }
+        currentMinuteIndex.value = resolveCadenceIndex(
+          cadenceM,
+          minutesValue,
+          filteredMinutes.value
+        );
+        currentSecondIndex.value = resolveCadenceIndex(
+          cadenceS,
+          secondsValue,
+          filteredSeconds.value
+        );
 
         selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
         selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
@@ -2971,6 +4273,14 @@ watch(
         startYear.value = decadeStartYear - 1;
         endYear.value = decadeStartYear + 10;
 
+        if (props.mode === 'date-time' || props.mode === 'date-time-full') {
+          hasCommittedDateTimeSelection.value = true;
+        }
+
+        if (props.mode === 'date-time' || props.mode === 'date-time-full') {
+          syncTimeColumnViewportWithSelection();
+        }
+
         emits('update:modelValue', newValue);
       }
 
@@ -2979,29 +4289,18 @@ watch(
 
         const cadence = props.cadenceOfMinutes;
         const minutesValue = newValue.getMinutes();
-        let filteredIndex = -1;
-
-        filteredIndex = checkMinutesCadence(cadence, filteredIndex, minutesValue);
-
-        // Use fallback index (0) if filteredIndex is invalid
-        currentMinuteIndex.value =
-          filteredIndex !== -1
-            ? filteredIndex
-            : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
-
-        // Ensure currentMinuteIndex is valid, otherwise default to 0
-        if (
-          currentMinuteIndex.value === null ||
-          currentMinuteIndex.value === undefined ||
-          currentMinuteIndex.value < 0
-        ) {
-          currentMinuteIndex.value = 0;
-        }
+        currentMinuteIndex.value = resolveCadenceIndex(
+          cadence,
+          minutesValue,
+          filteredMinutes.value
+        );
 
         selectedHour.value = newValue.getHours();
         selectedMinute.value = newValue.getMinutes();
         selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
         selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
+
+        syncTimeColumnViewportWithSelection();
 
         emits('update:modelValue', newValue);
       }
@@ -3013,41 +4312,16 @@ watch(
         const cadenceS = props.cadenceOfSeconds;
         const minutesValue = newValue.getMinutes();
         const secondsValue = newValue.getSeconds();
-        let filteredIndexM = -1;
-        let filteredIndexS = -1;
-
-        filteredIndexM = checkMinutesCadence(cadenceM, filteredIndexM, minutesValue);
-        filteredIndexS = checkSecondsCadence(cadenceS, filteredIndexS, secondsValue);
-
-        // Use fallback index (0) if filteredIndexM is invalid
-        currentMinuteIndex.value =
-          filteredIndexM !== -1
-            ? filteredIndexM
-            : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
-
-        // Use fallback index (0) if filteredIndexS is invalid
-        currentSecondIndex.value =
-          filteredIndexS !== -1
-            ? filteredIndexS
-            : getTimeOrderIndex(filteredSeconds.value, secondsValue, props.cadenceOfSeconds);
-
-        // Ensure currentMinuteIndex is valid, otherwise default to 0
-        if (
-          currentMinuteIndex.value === null ||
-          currentMinuteIndex.value === undefined ||
-          currentMinuteIndex.value < 0
-        ) {
-          currentMinuteIndex.value = 0;
-        }
-
-        // Ensure currentSecondIndex is valid, otherwise default to 0
-        if (
-          currentSecondIndex.value === null ||
-          currentSecondIndex.value === undefined ||
-          currentSecondIndex.value < 0
-        ) {
-          currentSecondIndex.value = 0;
-        }
+        currentMinuteIndex.value = resolveCadenceIndex(
+          cadenceM,
+          minutesValue,
+          filteredMinutes.value
+        );
+        currentSecondIndex.value = resolveCadenceIndex(
+          cadenceS,
+          secondsValue,
+          filteredSeconds.value
+        );
 
         selectedHour.value = newValue.getHours();
 
@@ -3058,6 +4332,8 @@ watch(
         selectedSecond.value = newValue.getSeconds();
         selectedSecondId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
         selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
+
+        syncTimeColumnViewportWithSelection();
 
         emits('update:modelValue', newValue);
       }
@@ -3326,6 +4602,15 @@ watch(
 );
 
 onUnmounted(() => {
+  clearScheduledTimeRefocus();
+
+  if (quarterDecadeFocusTimeout.value !== null) {
+    clearTimeout(quarterDecadeFocusTimeout.value);
+    quarterDecadeFocusTimeout.value = null;
+  }
+
+  window.removeEventListener('keydown', onGlobalTimeArrowKeydown, true);
+
   if (props.pickerType === 'single' && props.variant === 'default') {
     handleSinglePickerUnmount();
     return;
@@ -3335,6 +4620,10 @@ onUnmounted(() => {
     handleRangePickerUnmount();
   }
 });
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('keydown', onGlobalTimeArrowKeydown, true);
+}
 </script>
 
 <template>
@@ -3345,6 +4634,7 @@ onUnmounted(() => {
     tabindex="-1"
     @focusout="handleFocusOut"
     @keydown.esc.prevent="handleClose"
+    @keydown.tab="handleContainerTabTrap"
   >
     <div
       class="lx-calendar-header"
@@ -3473,6 +4763,7 @@ onUnmounted(() => {
           @click.stop.prevent="debouncedPrevious"
         />
 
+        <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
         <div
           ref="calendarLayoutsRef"
           class="lx-calendar-layouts"
@@ -3493,6 +4784,7 @@ onUnmounted(() => {
           ]"
           @scroll="panelAreaScrolled"
           role="grid"
+          @keydown="handleCalendarKeydown"
         >
           <template v-for="(monthsRows, monthsRowsIdx) in monthsList" :key="monthsRowsIdx">
             <div v-if="regularLayout" class="lx-calendar-regular-layout">
@@ -3658,28 +4950,28 @@ onUnmounted(() => {
                                 "
                                 role="button"
                                 :tabindex="
-                                  isTouchMode
-                                    ? -1
-                                    : getDayTabIndex(
-                                        date,
-                                        month,
-                                        weekIndex,
-                                        firstDayOfTheWeek,
-                                        monthsList,
-                                        variant,
-                                        pickerType,
-                                        minDateRef,
-                                        maxDateRef
-                                      )
+                                  isSameMonth(date, month) && isActiveCalendarDay(date) ? 0 : -1
+                                "
+                                :ref="
+                                  (el) =>
+                                    registerCalendarCell(
+                                      el,
+                                      monthsRowsIdx * 6 + weekIndex,
+                                      monthIdx * 7 + dayIndex
+                                    )
                                 "
                                 @click.stop.prevent="
-                                  handleSelections(
-                                    date,
-                                    'date',
-                                    !canSelectDate(date, minDateRef, maxDateRef, 'date')
-                                  )
+                                  syncCalendarActiveCell(
+                                    monthsRowsIdx * 6 + weekIndex,
+                                    monthIdx * 7 + dayIndex
+                                  ),
+                                    handleSelections(
+                                      date,
+                                      'date',
+                                      !canSelectDate(date, minDateRef, maxDateRef, 'date')
+                                    )
                                 "
-                                @keyup.enter.prevent="
+                                @keyup.enter.stop.prevent="
                                   handleSelections(
                                     date,
                                     'date',
@@ -3687,7 +4979,22 @@ onUnmounted(() => {
                                     'enter'
                                   )
                                 "
-                                @focusin="hoverDate(date)"
+                                @keyup.space.stop.prevent="
+                                  handleSelections(
+                                    date,
+                                    'date',
+                                    !canSelectDate(date, minDateRef, maxDateRef, 'date'),
+                                    'space'
+                                  )
+                                "
+                                @focusin="
+                                  syncCalendarActiveCell(
+                                    monthsRowsIdx * 6 + weekIndex,
+                                    monthIdx * 7 + dayIndex
+                                  ),
+                                    setActiveCalendarDate(date),
+                                    hoverDate(date)
+                                "
                                 @mouseover="hoverDate(date)"
                               >
                                 <div
@@ -3910,31 +5217,46 @@ onUnmounted(() => {
                           ]"
                           :aria-label="`${capitalizeFirstLetter(month.fullName)}, ${month.year}`"
                           role="cell"
-                          :tabindex="
-                            mode !== 'month' &&
-                            !canSelectDate(
-                              new Date(month.year, month.orderIndex, currentDate.getDate()),
-                              minDateRef,
-                              maxDateRef,
-                              'month-year'
-                            )
-                              ? '-1'
-                              : '0'
+                          :tabindex="isTouchMode ? -1 : isActiveCalendarMonth(month) ? 0 : -1"
+                          :ref="
+                            (el) =>
+                              registerCalendarCell(
+                                el,
+                                yearIndex * (monthsInYear[0]?.length || 1) + monthsRowIndex,
+                                monthIndex
+                              )
                           "
                           @click.stop.prevent="
-                            handleSelections(
-                              month,
-                              'month',
-                              mode !== 'month' &&
-                                !canSelectDate(
-                                  new Date(month.year, month.orderIndex, currentDate.getDate()),
-                                  minDateRef,
-                                  maxDateRef,
-                                  'month-year'
-                                )
-                            )
+                            syncCalendarActiveCell(
+                              yearIndex * (monthsInYear[0]?.length || 1) + monthsRowIndex,
+                              monthIndex
+                            ),
+                              setActiveCalendarDate(
+                                new Date(month.year, month.orderIndex, 1, 0, 0, 0)
+                              ),
+                              handleSelections(
+                                month,
+                                'month',
+                                mode !== 'month' &&
+                                  !canSelectDate(
+                                    new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                    minDateRef,
+                                    maxDateRef,
+                                    'month-year'
+                                  )
+                              )
                           "
-                          @keyup.enter.prevent="
+                          @focusin="
+                            syncCalendarActiveCell(
+                              yearIndex * (monthsInYear[0]?.length || 1) + monthsRowIndex,
+                              monthIndex
+                            ),
+                              setActiveCalendarDate(
+                                new Date(month.year, month.orderIndex, 1, 0, 0, 0)
+                              ),
+                              hoverDate(new Date(month.year, month.orderIndex, 1, 0, 0, 0))
+                          "
+                          @keyup.enter.stop.prevent="
                             handleSelections(
                               month,
                               'month',
@@ -3948,7 +5270,20 @@ onUnmounted(() => {
                               'enter'
                             )
                           "
-                          @focusin="hoverDate(new Date(month.year, month.orderIndex, 1, 0, 0, 0))"
+                          @keyup.space.stop.prevent="
+                            handleSelections(
+                              month,
+                              'month',
+                              mode !== 'month' &&
+                                !canSelectDate(
+                                  new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                  minDateRef,
+                                  maxDateRef,
+                                  'month-year'
+                                ),
+                              'space'
+                            )
+                          "
                           @mouseover="hoverDate(new Date(month.year, month.orderIndex, 1, 0, 0, 0))"
                         >
                           <span class="lx-calendar-month-content">
@@ -4033,29 +5368,50 @@ onUnmounted(() => {
                         ]"
                         :aria-label="year"
                         role="cell"
-                        :tabindex="
-                          canSelectDate(
-                            new Date(year, todayDate.getMonth(), todayDate.getDate()),
-                            minDateRef,
-                            maxDateRef,
-                            'year'
-                          )
-                            ? '0'
-                            : '-1'
-                        "
+                        :tabindex="getYearCellTabIndex(year, yearsRowIndex, yearIndex)"
+                        :ref="(el) => registerCalendarCell(el, yearsRowIndex, yearIndex)"
                         @click.stop.prevent="
-                          handleSelections(
-                            year,
-                            'year',
-                            !canSelectDate(
-                              new Date(year, todayDate.getMonth(), todayDate.getDate()),
-                              minDateRef,
-                              maxDateRef,
-                              'year'
+                          syncCalendarActiveCell(yearsRowIndex, yearIndex),
+                            setActiveCalendarDate(
+                              new Date(
+                                year,
+                                selectedMonth !== null && selectedMonth !== undefined
+                                  ? selectedMonth
+                                  : todayDate.getMonth(),
+                                1,
+                                0,
+                                0,
+                                0
+                              )
+                            ),
+                            handleSelections(
+                              year,
+                              'year',
+                              !canSelectDate(
+                                new Date(year, todayDate.getMonth(), todayDate.getDate()),
+                                minDateRef,
+                                maxDateRef,
+                                'year'
+                              )
                             )
-                          )
                         "
-                        @keyup.enter.prevent="
+                        @focusin="
+                          syncCalendarActiveCell(yearsRowIndex, yearIndex),
+                            setActiveCalendarDate(
+                              new Date(
+                                year,
+                                selectedMonth !== null && selectedMonth !== undefined
+                                  ? selectedMonth
+                                  : todayDate.getMonth(),
+                                1,
+                                0,
+                                0,
+                                0
+                              )
+                            ),
+                            hoverDate(new Date(year, 1, 1, 0, 0, 0))
+                        "
+                        @keyup.enter.stop.prevent="
                           handleSelections(
                             year,
                             'year',
@@ -4068,7 +5424,19 @@ onUnmounted(() => {
                             'enter'
                           )
                         "
-                        @focusin="hoverDate(new Date(year, 1, 1, 0, 0, 0))"
+                        @keyup.space.stop.prevent="
+                          handleSelections(
+                            year,
+                            'year',
+                            !canSelectDate(
+                              new Date(year, todayDate.getMonth(), todayDate.getDate()),
+                              minDateRef,
+                              maxDateRef,
+                              'year'
+                            ),
+                            'space'
+                          )
+                        "
                         @mouseover="hoverDate(new Date(year, 1, 1, 0, 0, 0))"
                       >
                         <span class="lx-calendar-month-content">
@@ -4106,9 +5474,7 @@ onUnmounted(() => {
                             isSelectedQuarterRange(quarter.year, Number(quarterItem)),
                         },
                         {
-                          'start-quarter':
-                            Number(quarterItem) === quarterFromMonth(selectedStartMonth) &&
-                            quarter.year === Number(selectedStartYear),
+                          'start-quarter': quarter.year === Number(selectedStartYear),
                         },
                         {
                           'end-quarter':
@@ -4157,25 +5523,50 @@ onUnmounted(() => {
                         ]"
                         :aria-label="quarterItem"
                         role="cell"
-                        tabindex="0"
+                        :tabindex="
+                          isTouchMode
+                            ? -1
+                            : isQuarterValid(
+                                {
+                                  year: quarter.year,
+                                  quarter: quarterItem,
+                                },
+                                minDateRef,
+                                maxDateRef
+                              ) && isActiveCalendarQuarter(quarter.year, quarterItem)
+                            ? 0
+                            : -1
+                        "
+                        :ref="(el) => registerCalendarCell(el, quartersRowIndex, listItemIndex)"
                         @click.stop.prevent="
-                          handleSelections(
-                            {
-                              year: quarter.year,
-                              quarter: quarterItem,
-                            },
-                            'quarter',
-                            !isQuarterValid(
+                          syncCalendarActiveCell(quartersRowIndex, listItemIndex),
+                            setActiveCalendarDate(
+                              dateFromYearAndQuarter(quarter.year, quarterItem)
+                            ),
+                            handleSelections(
                               {
                                 year: quarter.year,
                                 quarter: quarterItem,
                               },
-                              minDateRef,
-                              maxDateRef
+                              'quarter',
+                              !isQuarterValid(
+                                {
+                                  year: quarter.year,
+                                  quarter: quarterItem,
+                                },
+                                minDateRef,
+                                maxDateRef
+                              )
                             )
-                          )
                         "
-                        @keyup.enter.prevent="
+                        @focusin="
+                          syncCalendarActiveCell(quartersRowIndex, listItemIndex),
+                            setActiveCalendarDate(
+                              dateFromYearAndQuarter(quarter.year, quarterItem)
+                            ),
+                            hoverDate(dateFromYearAndQuarter(quarter.year, quarterItem))
+                        "
+                        @keyup.enter.stop.prevent="
                           handleSelections(
                             {
                               year: quarter.year,
@@ -4193,7 +5584,24 @@ onUnmounted(() => {
                             'enter'
                           )
                         "
-                        @focusin="hoverDate(dateFromYearAndQuarter(quarter.year, quarterItem))"
+                        @keyup.space.stop.prevent="
+                          handleSelections(
+                            {
+                              year: quarter.year,
+                              quarter: quarterItem,
+                            },
+                            'quarter',
+                            !isQuarterValid(
+                              {
+                                year: quarter.year,
+                                quarter: quarterItem,
+                              },
+                              minDateRef,
+                              maxDateRef
+                            ),
+                            'space'
+                          )
+                        "
                         @mouseover="hoverDate(dateFromYearAndQuarter(quarter.year, quarterItem))"
                       >
                         {{ `Q${quarterItem}` }}
@@ -4230,409 +5638,65 @@ onUnmounted(() => {
             isMobileScreen &&
             mobileTimeLayout)
         "
-        class="lx-calendar-time-picker"
-        :class="[
-          {
-            'date-time-only': mode === 'time' || mode === 'time-full',
-            'date-time-full-only': mode === 'date-time-full',
-          },
-        ]"
+        class="lx-time-picker-container"
+        ref="timeContainerRef"
+        @keydown.capture="onTimeContainerKeydown"
       >
-        <!-- Hours -->
-        <div class="lx-time-picker-time-list-wrapper">
-          <LxButton
-            kind="ghost"
-            icon="caret-up"
-            variant="icon-only"
-            :disabled="disabled"
-            :label="displayTexts.scrollUp"
-            @click.stop.prevent="onScrollClick(-1, 'hours')"
-          />
+        <div class="lx-time-columns" role="group" aria-label="Time picker">
+          <template v-for="(column, columnIndex) in timeModeColumns" :key="column">
+            <div class="lx-time-column" @wheel="onTimeWheel($event, column)">
+              <LxButton
+                tabindex="-1"
+                variant="icon-only"
+                kind="ghost"
+                icon="caret-up"
+                :title="displayTexts.scrollUp"
+                @click="stepTimeColumn(column, -1, false)"
+              />
 
-          <div
-            class="time-picker-wrapper"
-            :class="[
-              {
-                'date-time-only':
-                  ((mode === 'date-time' || mode === 'date-time-full') &&
-                    isMobileScreen &&
-                    mobileTimeLayout) ||
-                  (mode === 'time' && isMobileScreen),
-              },
-            ]"
-          >
-            <TransitionGroup
-              tag="div"
-              class="lx-time-picker-time-list"
-              :class="[
-                {
-                  'date-time-only': mode === 'date-time' && isMobileScreen && mobileTimeLayout,
-                },
-              ]"
-              @wheel.prevent="onScrollWheel($event, 'hours')"
-            >
-              <div
-                v-for="(hour, index) in visibleHours"
-                :key="hour.orderIndex"
-                class="lx-time-list-item"
-                :class="[
-                  {
-                    'is-active':
-                      index >= 3 &&
-                      index <= (isMobileScreen ? 11 : 9) &&
-                      Number(hour.value) === selectedHour,
-                  },
-                  {
-                    'lx-disabled-time-unit':
-                      !canSelectTime(
-                        hour.value,
-                        minDateRef,
-                        maxDateRef,
-                        selectedDay,
-                        selectedMonth,
-                        selectedYear,
-                        'hour',
-                        selectedHour,
-                        selectedMinute,
-                        selectedSecond,
-                        mode === 'time' || mode === 'time-full'
-                      ) || disabled,
-                  },
-                ]"
-                :tabindex="
-                  index >= 3 &&
-                  index <= (isMobileScreen ? 11 : 9) &&
-                  canSelectTime(
-                    hour.value,
-                    minDateRef,
-                    maxDateRef,
-                    selectedDay,
-                    selectedMonth,
-                    selectedYear,
-                    'hour',
-                    selectedHour,
-                    selectedMinute,
-                    selectedSecond,
-                    mode === 'time' || mode === 'time-full'
-                  )
-                    ? '0'
-                    : '-1'
-                "
-                @click.stop.prevent="
-                  selectHour(
-                    hour,
-                    !canSelectTime(
-                      hour.value,
-                      minDateRef,
-                      maxDateRef,
-                      selectedDay,
-                      selectedMonth,
-                      selectedYear,
-                      'hour',
-                      selectedHour,
-                      selectedMinute,
-                      selectedSecond,
-                      mode === 'time' || mode === 'time-full'
-                    )
-                  )
-                "
-                @keyup.enter.stop.prevent="
-                  selectHour(
-                    hour,
-                    !canSelectTime(
-                      hour.value,
-                      minDateRef,
-                      maxDateRef,
-                      selectedDay,
-                      selectedMonth,
-                      selectedYear,
-                      'hour',
-                      selectedHour,
-                      selectedMinute,
-                      selectedSecond,
-                      mode === 'time' || mode === 'time-full'
-                    )
-                  )
-                "
-              >
-                {{ hour.value }}
+              <div :id="`${id}-${column}-lx-time-description`" class="lx-invisible">
+                {{ displayTexts.scrollUpDown }}
               </div>
-            </TransitionGroup>
-          </div>
-
-          <LxButton
-            kind="ghost"
-            icon="caret-down"
-            variant="icon-only"
-            :disabled="disabled"
-            :label="displayTexts.scrollDown"
-            @click.stop.prevent="onScrollClick(1, 'hours')"
-          />
-        </div>
-
-        <span class="lx-time-lists-separator">:</span>
-
-        <!-- Minutes -->
-        <div class="lx-time-picker-time-list-wrapper">
-          <LxButton
-            kind="ghost"
-            icon="caret-up"
-            variant="icon-only"
-            :disabled="disabled"
-            :label="displayTexts.scrollUp"
-            @click.stop.prevent="onScrollClick(-1, 'minutes')"
-          />
-
-          <div
-            class="time-picker-wrapper"
-            :class="[
-              {
-                'date-time-only':
-                  ((mode === 'date-time' || mode === 'date-time-full') &&
-                    isMobileScreen &&
-                    mobileTimeLayout) ||
-                  (mode === 'time' && isMobileScreen),
-              },
-            ]"
-          >
-            <TransitionGroup
-              tag="div"
-              class="lx-time-picker-time-list"
-              @wheel.prevent="onScrollWheel($event, 'minutes')"
-            >
-              <div
-                v-for="(minute, index) in visibleMinutes"
-                :key="minute.id"
-                class="lx-time-list-item"
-                :class="[
-                  {
-                    'is-active':
-                      index >= 3 &&
-                      index <= (isMobileScreen ? 11 : 9) &&
-                      minute.orderIndex === selectedMinute &&
-                      minute.id === selectedMinuteId,
-                  },
-                  {
-                    'lx-disabled-time-unit':
-                      !canSelectTime(
-                        minute.value,
-                        minDateRef,
-                        maxDateRef,
-                        selectedDay,
-                        selectedMonth,
-                        selectedYear,
-                        'minute',
-                        selectedHour,
-                        selectedMinute,
-                        selectedSecond,
-                        mode === 'time' || mode === 'time-full'
-                      ) || disabled,
-                  },
-                ]"
-                :tabindex="
-                  index >= 3 &&
-                  index <= (isMobileScreen ? 11 : 9) &&
-                  canSelectTime(
-                    minute.value,
-                    minDateRef,
-                    maxDateRef,
-                    selectedDay,
-                    selectedMonth,
-                    selectedYear,
-                    'minute',
-                    selectedHour,
-                    selectedMinute,
-                    selectedSecond,
-                    mode === 'time' || mode === 'time-full'
-                  )
-                    ? '0'
-                    : '-1'
-                "
-                @click.stop.prevent="
-                  selectMinute(
-                    minute,
-                    !canSelectTime(
-                      minute.value,
-                      minDateRef,
-                      maxDateRef,
-                      selectedDay,
-                      selectedMonth,
-                      selectedYear,
-                      'minute',
-                      selectedHour,
-                      selectedMinute,
-                      selectedSecond,
-                      mode === 'time' || mode === 'time-full'
-                    )
-                  )
-                "
-                @keyup.enter.stop.prevent="
-                  selectMinute(
-                    minute,
-                    !canSelectTime(
-                      minute.value,
-                      minDateRef,
-                      maxDateRef,
-                      selectedDay,
-                      selectedMonth,
-                      selectedYear,
-                      'minute',
-                      selectedHour,
-                      selectedMinute,
-                      selectedSecond,
-                      mode === 'time' || mode === 'time-full'
-                    )
-                  )
-                "
-              >
-                {{ minute.value }}
+              <div class="lx-time-list-viewport">
+                <TransitionGroup tag="div" class="lx-time-list" :name="timeTransitionName(column)">
+                  <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+                  <div
+                    v-for="item in getVisibleTimeItems(column)"
+                    :key="item.key"
+                    class="lx-time-list-item"
+                    :class="{
+                      'is-focused': item.active,
+                      'lx-active': isSelectedTimeValue(column, item.value),
+                      'is-disabled': !isTimeValueSelectable(column, item.value),
+                    }"
+                    :tabindex="getTimeItemTabIndex(column, item)"
+                    :disabled="!isTimeValueSelectable(column, item.value)"
+                    :data-column="column"
+                    :data-offset="item.offset"
+                    :data-value="item.value"
+                    :aria-describedby="`${id}-${column}-lx-time-description`"
+                    @focusin="activeTimeColumn = column"
+                    @click="setTimeSelected(column, item.offset)"
+                  >
+                    {{ formatTimeValue(item.value) }}
+                  </div>
+                </TransitionGroup>
               </div>
-            </TransitionGroup>
-          </div>
 
-          <LxButton
-            kind="ghost"
-            icon="caret-down"
-            variant="icon-only"
-            :disabled="disabled"
-            :label="displayTexts.scrollDown"
-            @click.stop.prevent="onScrollClick(1, 'minutes')"
-          />
-        </div>
+              <LxButton
+                tabindex="-1"
+                variant="icon-only"
+                kind="ghost"
+                icon="caret-down"
+                :title="displayTexts.scrollDown"
+                @click="stepTimeColumn(column, 1, false)"
+              />
+            </div>
 
-        <span
-          v-if="mode === 'time-full' || mode === 'date-time-full'"
-          class="lx-time-lists-separator"
-          >:</span
-        >
-
-        <!-- Seconds -->
-        <div
-          v-if="mode === 'time-full' || mode === 'date-time-full'"
-          class="lx-time-picker-time-list-wrapper"
-        >
-          <LxButton
-            kind="ghost"
-            icon="caret-up"
-            variant="icon-only"
-            :disabled="disabled"
-            :label="displayTexts.scrollUp"
-            @click.stop.prevent="onScrollClick(-1, 'seconds')"
-          />
-
-          <div
-            class="time-picker-wrapper"
-            :class="[
-              {
-                'date-time-only':
-                  (mode === 'date-time-full' && isMobileScreen && mobileTimeLayout) ||
-                  (mode === 'time-full' && isMobileScreen),
-              },
-            ]"
-          >
-            <TransitionGroup
-              tag="div"
-              class="lx-time-picker-time-list"
-              @wheel.prevent="onScrollWheel($event, 'seconds')"
+            <span v-if="columnIndex < timeModeColumns.length - 1" class="lx-time-lists-separator"
+              >:</span
             >
-              <div
-                v-for="(second, index) in visibleSeconds"
-                :key="second.id"
-                class="lx-time-list-item"
-                :class="[
-                  {
-                    'is-active':
-                      index >= 3 &&
-                      index <= (isMobileScreen ? 11 : 9) &&
-                      second.orderIndex === selectedSecond &&
-                      second.id === selectedSecondId,
-                  },
-                  {
-                    'lx-disabled-time-unit':
-                      !canSelectTime(
-                        second.value,
-                        minDateRef,
-                        maxDateRef,
-                        selectedDay,
-                        selectedMonth,
-                        selectedYear,
-                        'second',
-                        selectedHour,
-                        selectedMinute,
-                        selectedSecond,
-                        mode === 'time-full'
-                      ) || disabled,
-                  },
-                ]"
-                :tabindex="
-                  index >= 3 &&
-                  index <= (isMobileScreen ? 11 : 9) &&
-                  canSelectTime(
-                    second.value,
-                    minDateRef,
-                    maxDateRef,
-                    selectedDay,
-                    selectedMonth,
-                    selectedYear,
-                    'second',
-                    selectedHour,
-                    selectedMinute,
-                    selectedSecond,
-                    mode === 'time-full'
-                  )
-                    ? '0'
-                    : '-1'
-                "
-                @click.stop.prevent="
-                  selectSecond(
-                    second,
-                    !canSelectTime(
-                      second.value,
-                      minDateRef,
-                      maxDateRef,
-                      selectedDay,
-                      selectedMonth,
-                      selectedYear,
-                      'second',
-                      selectedHour,
-                      selectedMinute,
-                      selectedSecond,
-                      mode === 'time-full'
-                    )
-                  )
-                "
-                @keyup.enter.stop.prevent="
-                  selectSecond(
-                    second,
-                    !canSelectTime(
-                      second.value,
-                      minDateRef,
-                      maxDateRef,
-                      selectedDay,
-                      selectedMonth,
-                      selectedYear,
-                      'second',
-                      selectedHour,
-                      selectedMinute,
-                      selectedSecond,
-                      mode === 'time-full'
-                    )
-                  )
-                "
-              >
-                {{ second.value }}
-              </div>
-            </TransitionGroup>
-          </div>
-
-          <LxButton
-            kind="ghost"
-            icon="caret-down"
-            variant="icon-only"
-            :disabled="disabled"
-            :label="displayTexts.scrollDown"
-            @click.stop.prevent="onScrollClick(1, 'seconds')"
-          />
+          </template>
         </div>
       </div>
     </div>
@@ -4696,7 +5760,7 @@ onUnmounted(() => {
             : 'default'
         "
         :disabled="clearButtonDisableState"
-        @click.stop.prevent="clearSelectedValues"
+        @click="handleClearButtonClick"
       />
 
       <LxButton
