@@ -8,6 +8,7 @@ import useLx from '@/hooks/useLx';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
   id: { type: [String, Number], default: 'default' },
@@ -34,6 +35,8 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
 });
+
+const { width } = useWindowSize();
 
 const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
@@ -147,15 +150,18 @@ const expandIconTitle = computed(() => {
       { 'lx-data-block-selected': selected },
       { 'lx-data-block-busy': busy },
     ]"
+    role="group"
   >
     <div class="lx-data-block">
       <header
         class="lx-data-block-header"
         :for="id"
+        :role="expandable ? 'button' : null"
         :tabindex="expandable && !isDisabled ? 0 : null"
+        :aria-expanded="expandable ? expanded : null"
         :aria-invalid="invalid"
         :aria-label="ariaLabel"
-        :aria-describedby="`data-block-${id}-desc`"
+        :aria-describedby="width <= 500 || expanded ? null : `data-block-${id}-desc`"
         @click="toggleExpander"
         @keydown.space="handleKeyDown"
         @keyup.space="toggleExpander"
@@ -196,6 +202,7 @@ const expandIconTitle = computed(() => {
               class="lx-secondary"
               :id="`data-block-${id}-desc`"
               :title="description"
+              :aria-hidden="width <= 500 || expanded ? 'true' : null"
               v-show="description"
             >
               {{ description }}
