@@ -257,10 +257,6 @@
   border-color: var(--color-state-deleted);
 }
 
-.lx .lx-state-disabling .lx-primary {
-  color: var(--color-state-deleted);
-}
-
 .lx-state-inactive .lx-state-indicator {
   background-color: var(--color-chrome);
   border-color: var(--color-chrome);
@@ -366,10 +362,6 @@
   border-color: var(--color-disabled);
 }
 
-.lx .lx-state-disabled .lx-primary {
-  color: var(--color-disabled);
-}
-
 .lx-state-icon {
   margin-right: 0.5rem;
 }
@@ -468,7 +460,7 @@
 
 .lx-state.lx-state-disabled .lx-primary,
 .lx-state.lx-state-disabling .lx-primary {
-  color: var(--color-disabled);
+  color: var(--color-grey);
 }
 
 .lx-state.lx-state-inactive svg.lx-state-icon {
