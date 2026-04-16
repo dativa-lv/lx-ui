@@ -144,6 +144,10 @@ function getItemId(id) {
   return `${props.id}-item-${id}`;
 }
 
+function getLabelId(id) {
+  return `${id}-${props.id}-label`;
+}
+
 function openDropDownDefault() {
   if (!menuOpen.value) {
     panelWidth.value = container.value?.offsetWidth;
@@ -561,11 +565,13 @@ const getSelectedItem = computed(() =>
                         ]"
                         @click="selectSingle(item)"
                       >
-                        <template v-if="$slots.customItem">
-                          <slot name="customItem" v-bind="item"></slot>
-                        </template>
+                        <label :for="item[idAttribute]" :id="getLabelId(item[idAttribute])">
+                          <template v-if="$slots.customItem">
+                            <slot name="customItem" v-bind="item"></slot>
+                          </template>
 
-                        <template v-else> {{ item[nameAttribute] }}</template>
+                          <template v-else> {{ item[nameAttribute] }}</template>
+                        </label>
                       </div>
                     </template>
                   </template>

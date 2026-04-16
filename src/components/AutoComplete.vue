@@ -1486,7 +1486,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                               'lx-highlighted-item':
                                 highlightedItemId &&
                                 highlightedItemId === getIdAttributeString(item),
-                              'autocomplete-multiple lx-aligned-row lx-aligned-row-inverse lx-aligned-row-3':
+                              'autocomplete-multiple lx-aligned-row lx-aligned-row-inverse lx-aligned-row-2':
                                 selectionKind === 'multiple',
                               'autocomplete-default-item': !$slots.customItem,
                             },

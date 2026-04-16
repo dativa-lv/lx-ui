@@ -2273,6 +2273,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   font-weight: normal;
   height: auto;
   line-height: 1.1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /*** Number slider styles ***/
@@ -2654,6 +2656,26 @@ h2.lx-section-header + p.lx-invalidation-message,
   column-gap: 0;
 }
 
+.autocomplete-multiple.lx-value-picker-item label:not(:has(.lx-state)),
+.dropdown-multiple.lx-value-picker-item label:not(:has(.lx-state)) {
+  width: 100%;
+}
+
+.autocomplete-multiple.lx-value-picker-item label:not(.lx-checkbox-label-wrapper),
+.dropdown-multiple.lx-value-picker-item label:not(.lx-checkbox-label-wrapper) {
+  padding-right: 1rem;
+}
+
+.lx-value-picker-item label:not(:has(.lx-state)),
+.lx-value-picker-item .lx-state > .lx-primary,
+.lx-value-picker-item .lx-item-display > .lx-data,
+.lx-value-picker-item label > p,
+.lx-value-picker-item label > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2em;
+}
+
 .lx-dropdown-default[disabled='true'],
 .lx-text-area:disabled {
   opacity: 1;
@@ -2793,6 +2815,11 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-layout div.lx-dropdown-wrapper.lx-input-wrapper select > option {
   background-color: var(--color-background);
+}
+
+.lx .lx-layout div.lx-dropdown-wrapper.lx-input-wrapper select.lx-input-area {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .lx .lx-layout div.lx-dropdown-wrapper.lx-input-wrapper:not(.lx-disabled):hover select > option,

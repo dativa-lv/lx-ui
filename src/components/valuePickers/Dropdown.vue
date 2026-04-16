@@ -816,7 +816,7 @@ function countDigits(number) {
                           'lx-selected': isItemSelected(item),
                         },
                         {
-                          'dropdown-multiple lx-aligned-row-inverse lx-aligned-row-3':
+                          'dropdown-multiple lx-aligned-row-inverse lx-aligned-row-2':
                             selectionKind === 'multiple',
                         },
                       ]"
@@ -841,11 +841,10 @@ function countDigits(number) {
                           :search-string="query"
                           v-if="variant === 'dropdown'"
                         />
+                        <div v-if="variant === 'dropdown-custom'">
+                          <slot name="customItemDropdown" v-bind="item"></slot>
+                        </div>
                       </label>
-
-                      <div v-if="variant === 'dropdown-custom'">
-                        <slot name="customItemDropdown" v-bind="item"></slot>
-                      </div>
                     </div>
                   </template>
                 </div>
