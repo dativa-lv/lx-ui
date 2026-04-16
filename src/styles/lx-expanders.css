@@ -547,6 +547,14 @@
   fill: var(--contrast-foreground);
 }
 
+/* Expanded content contrast styles */
+
+.lx-theme-contrast .lx-data-block-wrapper.lx-data-block-expanded>.lx-data-block-content {
+  border: var(--data-block-border);
+  border-top: none;
+  border-radius: var(--data-block-border-radius-expanded);
+}
+
 /*** LxDataBlock icon wrapper styles ***/
 
 .lx-data-block .lx-icons,
@@ -846,7 +854,9 @@
 }
 
 .lx-value-picker-item:hover .lx-accessibility-settings-dropdown-content svg,
-.lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile:hover .lx-theme-item-content > svg {
+.lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile:hover .lx-theme-item-content > svg,
+.lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile:focus .lx-theme-item-content > svg,
+.lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile:focus-visible .lx-theme-item-content > svg {
   fill: var(--color-region-hover-foreground);
 }
 

@@ -19,7 +19,7 @@ svg .lx-shade {
   width: 100%;
 }
 
-.lx-data-block .lx-form-grid,
+.lx-data-block-content .lx-form-grid,
 .lx-filter .lx-form-grid {
   border: none;
 }

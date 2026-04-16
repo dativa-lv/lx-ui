@@ -1506,11 +1506,17 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-value-picker-tile:hover .lx-value-picker-tile-header,
-.lx-value-picker-tile:hover .lx-value-picker-description {
+.lx-value-picker-tile:hover .lx-value-picker-description,
+.lx-value-picker-tile:focus .lx-value-picker-tile-header,
+.lx-value-picker-tile:focus .lx-value-picker-description,
+.lx-value-picker-tile:focus-visible .lx-value-picker-tile-header,
+.lx-value-picker-tile:focus-visible .lx-value-picker-description {
   color: var(--color-region-hover-foreground);
 }
 
-.lx-value-picker-tile:hover .lx-value-picker-icon svg {
+.lx-value-picker-tile:hover .lx-value-picker-icon svg,
+.lx-value-picker-tile:focus .lx-value-picker-icon svg,
+.lx-value-picker-tile:focus-visible .lx-value-picker-icon svg {
   fill: var(--color-region-hover-foreground);
 }
 
