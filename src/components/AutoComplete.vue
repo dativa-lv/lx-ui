@@ -625,9 +625,12 @@ function handleMenuOpening() {
   return false;
 }
 
-function onEnter() {
-  if (handleClearButton()) return;
-  if (handleMenuOpening()) return;
+function getSelectedValue() {
+  if (highlightedItemId.value) return highlightedItemId.value;
+  if (filteredItems.value.length > 0 && query.value?.trim()) {
+    return filteredItems.value[0][props.idAttribute];
+  }
+  return null;
 }
 
 function handleEnterSelection() {
@@ -644,12 +647,13 @@ function handleEnterSelection() {
   }
 }
 
-function getSelectedValue() {
-  if (highlightedItemId.value) return highlightedItemId.value;
-  if (filteredItems.value.length > 0 && query.value?.trim()) {
-    return filteredItems.value[0][props.idAttribute];
+function onEnter() {
+  if (handleClearButton()) return;
+  if (handleMenuOpening()) return;
+  handleEnterSelection();
+  if (!highlightedItemId.value && props.selectionKind === 'single') {
+    closeMenu();
   }
-  return null;
 }
 
 function updateModel(selectedValue, isSelected) {
