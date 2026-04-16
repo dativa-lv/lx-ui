@@ -551,6 +551,20 @@ const hasPostHeaderInfoSlot = computed(
 
 const combinedFooterActions = computed(() => secondaryButtons.value.concat(tertiaryButtons.value));
 
+const allNotPrimaryButtonsDisabled = computed(() =>
+  combinedFooterActions.value.every((button) => button.disabled || button.loading || button.busy)
+);
+
+const allAdditionalButtonsDisabled = computed(() =>
+  additionalButtons.value.every((button) => button.disabled || button.loading || button.busy)
+);
+
+const additionalMenuButtonDisabled = computed(
+  () =>
+    allAdditionalButtonsDisabled.value &&
+    !(props.indexType === 'default' && props.index?.length > 0)
+);
+
 const sectionLocations = ref({});
 
 const visibilities = ref({});
@@ -1061,6 +1075,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
             tabindex="-1"
             customClass="additional-button-icon"
             :label="displayTexts?.otherActions"
+            :disabled="allAdditionalButtonsDisabled"
           />
           <LxButton
             :icon="index?.length > 0 && props.indexType === 'default' ? 'menu' : 'overflow-menu'"
@@ -1068,6 +1083,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
             variant="icon-only"
             :label="displayTexts.overflowMenu"
             customClass="additional-button-icon-menu"
+            :disabled="additionalMenuButtonDisabled"
           />
           <template #panel>
             <p
@@ -1283,6 +1299,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
             icon="overflow-menu"
             :label="displayTexts?.otherActions"
             tabindex="-1"
+            :disabled="allNotPrimaryButtonsDisabled"
           />
         </LxDropDownMenu>
 
