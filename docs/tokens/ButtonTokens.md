@@ -14,7 +14,7 @@
 | `--button-set-gap`                                 | 0.5rem                                                   |
 | `--button-dropdown-align`                          | center                                                   |
 | `--button-dropdown-border`                         | 2px solid var(--color-button-dropdown-background)        |
-| `--button-dropdown-border-radius`                  | `--radius-default`                                       |
+| `--button-dropdown-border-radius`                  | `--border-radius-default`                                |
 | `--button-dropdown-font-size`                      | inherit                                                  |
 | `--button-dropdown-font-weight`                    | `--font-weight-interactive`                              |
 | `--button-dropdown-gap`                            | 1.35rem                                                  |
@@ -35,7 +35,7 @@
 | `--button-toolbar-gap`                             | 0                                                        |
 | `--button-toolbar-primary-align`                   | center                                                   |
 | `--button-toolbar-primary-border`                  | 2px solid var(--color-button-toolbar-primary-background) |
-| `--button-toolbar-primary-border-radius`           | `--radius-default`                                       |
+| `--button-toolbar-primary-border-radius`           | `--border-radius-default`                                |
 | `--button-toolbar-primary-font-size`               | inherit                                                  |
 | `--button-toolbar-primary-font-weight`             | `--font-weight-interactive`                              |
 | `--button-toolbar-primary-gap`                     | 1.35rem                                                  |
@@ -53,7 +53,7 @@
 | `--button-toolbar-primary-width`                   | 100%                                                     |
 | `--button-toolbar-secondary-align`                 | center                                                   |
 | `--button-toolbar-secondary-border`                | 2px solid var(--color-interactive-secondary-background)  |
-| `--button-toolbar-secondary-border-radius`         | `--radius-default`                                       |
+| `--button-toolbar-secondary-border-radius`         | `--border-radius-default`                                |
 | `--button-toolbar-secondary-font-size`             | inherit                                                  |
 | `--button-toolbar-secondary-font-weight`           | `--font-weight-interactive`                              |
 | `--button-toolbar-secondary-gap`                   | 1.35rem                                                  |
@@ -71,7 +71,7 @@
 | `--button-toolbar-secondary-width`                 | auto                                                     |
 | `--button-toolbar-tertiary-align`                  | center                                                   |
 | `--button-toolbar-tertiary-border`                 | 2px solid var(--color-interactive-background)            |
-| `--button-toolbar-tertiary-border-radius`          | `--radius-default`                                       |
+| `--button-toolbar-tertiary-border-radius`          | `--border-radius-default`                                |
 | `--button-toolbar-tertiary-font-size`              | inherit                                                  |
 | `--button-toolbar-tertiary-font-weight`            | `--font-weight-interactive`                              |
 | `--button-toolbar-tertiary-gap`                    | 1.35rem                                                  |
@@ -89,7 +89,7 @@
 | `--button-toolbar-tertiary-width`                  | auto                                                     |
 | `--button-toolbar-ghost-align`                     | center                                                   |
 | `--button-toolbar-ghost-border`                    | 2px solid transparent                                    |
-| `--button-toolbar-ghost-border-radius`             | `--radius-default`                                       |
+| `--button-toolbar-ghost-border-radius`             | `--border-radius-default`                                |
 | `--button-toolbar-ghost-font-size`                 | inherit                                                  |
 | `--button-toolbar-ghost-font-weight`               | `--font-weight-interactive`                              |
 | `--button-toolbar-ghost-gap`                       | 1.35rem                                                  |
@@ -107,7 +107,7 @@
 | `--button-toolbar-ghost-width`                     | auto                                                     |
 | `--button-toolbar-selection-align`                 | center                                                   |
 | `--button-toolbar-selection-border`                | 2px solid transparent                                    |
-| `--button-toolbar-selection-border-radius`         | `--radius-default`                                       |
+| `--button-toolbar-selection-border-radius`         | `--border-radius-default`                                |
 | `--button-toolbar-selection-font-size`             | inherit                                                  |
 | `--button-toolbar-selection-font-weight`           | `--font-weight-interactive`                              |
 | `--button-toolbar-selection-gap`                   | 1.35rem                                                  |
@@ -145,7 +145,7 @@
 | `--button-toolbar-ghost-icon-only-width`           | auto                                                     |
 | `--button-nav-align`                               | center                                                   |
 | `--button-nav-border`                              | 2px solid transparent                                    |
-| `--button-nav-border-radius`                       | 0                                                        |
+| `--button-nav-border-radius`                       | `--border-radius-0`                                      |
 | `--button-nav-font-size`                           | inherit                                                  |
 | `--button-nav-font-weight`                         | `--font-weight-interactive`                              |
 | `--button-nav-gap`                                 | 1.35rem                                                  |
@@ -163,7 +163,7 @@
 | `--button-nav-width`                               | 100%                                                     |
 | `--button-nav-public-align`                        | center                                                   |
 | `--button-nav-public-border`                       | 0                                                        |
-| `--button-nav-public-border-radius`                | 0                                                        |
+| `--button-nav-public-border-radius`                | `--border-radius-0`                                      |
 | `--button-nav-public-font-size`                    | inherit                                                  |
 | `--button-nav-public-font-weight`                  | `--font-weight-interactive`                              |
 | `--button-nav-public-gap`                          | 1.35rem                                                  |
@@ -181,7 +181,7 @@
 | `--button-nav-public-width`                        | auto                                                     |
 | `--button-modal-primary-align`                     | center                                                   |
 | `--button-modal-primary-border`                    | 2px solid var(--color-button-dropdown-background)        |
-| `--button-modal-primary-border-radius`             | 0                                                        |
+| `--button-modal-primary-border-radius`             | `--border-radius-0`                                      |
 | `--button-modal-primary-font-size`                 | inherit                                                  |
 | `--button-modal-primary-font-weight`               | `--font-weight-interactive`                              |
 | `--button-modal-primary-height`                    | auto                                                     |
@@ -194,7 +194,7 @@
 | `--button-modal-primary-width`                     | auto                                                     |
 | `--button-modal-secondary-align`                   | center                                                   |
 | `--button-modal-secondary-border`                  | 2px solid var(--color-button-dropdown-background)        |
-| `--button-modal-secondary-border-radius`           | 0                                                        |
+| `--button-modal-secondary-border-radius`           | `--border-radius-0`                                      |
 | `--button-modal-secondary-font-size`               | inherit                                                  |
 | `--button-modal-secondary-font-weight`             | `--font-weight-interactive`                              |
 | `--button-modal-secondary-height`                  | auto                                                     |
@@ -214,7 +214,7 @@
 | `--button-primary-badge-inset`                     | -0.625rem -0.625rem auto auto                            |
 | `--button-primary-empty-badge-inset`               | -0.5rem -0.5rem auto auto                                |
 | `--button-primary-border`                          | 2px solid var(--color-interactive-background)            |
-| `--button-primary-border-radius`                   | `--radius-default`                                       |
+| `--button-primary-border-radius`                   | `--border-radius-default`                                |
 | `--button-primary-font-size`                       | inherit                                                  |
 | `--button-primary-font-weight`                     | `--font-weight-interactive`                              |
 | `--button-primary-gap`                             | 1.35rem                                                  |
@@ -238,7 +238,7 @@
 | `--button-secondary-badge-inset`                   | -0.625rem -0.625rem auto auto                            |
 | `--button-secondary-empty-badge-inset`             | -0.5rem -0.5rem auto auto                                |
 | `--button-secondary-border`                        | 2px solid var(--color-interactive-secondary-background)  |
-| `--button-secondary-border-radius`                 | `--radius-default`                                       |
+| `--button-secondary-border-radius`                 | `--border-radius-default`                                |
 | `--button-secondary-font-size`                     | inherit                                                  |
 | `--button-secondary-font-weight`                   | `--font-weight-interactive`                              |
 | `--button-secondary-gap`                           | 1.35rem                                                  |
@@ -262,7 +262,7 @@
 | `--button-tertiary-badge-inset`                    | -0.625rem -0.625rem auto auto                            |
 | `--button-tertiary-empty-badge-inset`              | -0.5rem -0.5rem auto auto                                |
 | `--button-tertiary-border`                         | 2px solid var(--color-interactive-background)            |
-| `--button-tertiary-border-radius`                  | `--radius-default`                                       |
+| `--button-tertiary-border-radius`                  | `--border-radius-default`                                |
 | `--button-tertiary-font-size`                      | inherit                                                  |
 | `--button-tertiary-font-weight`                    | `--font-weight-interactive`                              |
 | `--button-tertiary-gap`                            | 1.35rem                                                  |
@@ -286,7 +286,7 @@
 | `--button-ghost-badge-inset`                       | -0.125rem -0.125rem auto auto                            |
 | `--button-ghost-empty-badge-inset`                 | -0.125rem -0.125rem auto auto                            |
 | `--button-ghost-border`                            | 2px solid transparent                                    |
-| `--button-ghost-border-radius`                     | `--radius-default`                                       |
+| `--button-ghost-border-radius`                     | `--border-radius-default`                                |
 | `--button-ghost-font-size`                         | inherit                                                  |
 | `--button-ghost-font-weight`                       | `--font-weight-interactive`                              |
 | `--button-ghost-gap`                               | 1.35rem                                                  |

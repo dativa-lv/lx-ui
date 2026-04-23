@@ -27,7 +27,7 @@
 
 .lx-upper-row {
   display: flex;
-  border-bottom: 2px solid var(--color-brand-secondary);
+  border-bottom: var(--border-width-2) solid var(--color-brand-secondary);
 }
 
 .main-section {
@@ -135,7 +135,7 @@
   grid-column-end: 4;
   display: flex;
   background-color: var(--color-background);
-  border-bottom: 2px solid var(--color-chrome);
+  border-bottom: var(--border-width-2) solid var(--color-chrome);
 }
 
 .defined-buttons {
@@ -222,7 +222,7 @@
   .e-veseliba-button
   .lx-button {
   color: var(--color-interactive-hover-background);
-  border-top: 1px var(--color-chrome) solid;
+  border-top: var(--border-width-1) var(--color-chrome) solid;
 }
 
 .lx-layout.lx-layout-digives
@@ -434,7 +434,7 @@
   width: 18rem;
   grid-template-columns: 1fr 2rem;
   padding: 0.25rem 0.5rem 0.25rem 1rem;
-  border-bottom: 1px solid var(--color-data);
+  border-bottom: var(--border-width-1) solid var(--color-data);
   height: var(--row-size);
 }
 .custom-context-menu .selected-person-display svg {

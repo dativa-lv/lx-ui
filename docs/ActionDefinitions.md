@@ -39,11 +39,12 @@ The prop `actionDefinitions` is available for following components:
 | `iconSet` | String | Specifies which icon set to use. Allowed values: `cds`, `material`, `phosphor`, `brand`. |
 | `title` | String | Tooltip text shown when hovering over the action button. |
 | `kind` | String | Visual style and prominence of the action button. Allowed values: `primary`, `secondary`, `tertiary`, `ghost`, `additional`, `main`, `menuitem`, `toggle`, `slot`. |
-| `variant` | String | Display variant for the action button. Allowed values: `default`, `icon-only`. Controls whether the button shows both icon and label or just the icon. |
+| `variant` | String | Display variant for the action button. Controls whether the button shows both icon and label or just the icon. Allowed values: `default`, `icon-only`. |
 | `visibleByAttribute` | String | Attribute name from the data object. Action is only visible when this attribute evaluates to true. |
 | `enableByAttribute` | String | Attribute name from the data object. Action is only enabled when this attribute evaluates to true. |
-| `groupId` | String | Identifier for grouping related actions together. **Note:** Currently only supported in LxDropDownMenu, LxForm, LxToolbar. |
-| `area` | String | Position where the action should be placed. Allowed values: `left`, `right`. **Note:** Only supported in LxToolbar. |
+| `groupId` | String | Identifier for grouping related actions together. |
+| `nestedGroupId` | String | Identifier for turning this action into a dropdown menu trigger. Actions whose `groupId` matches this value will be rendered as items inside the dropdown menu. |
+| `area` | String | Position where the action should be placed. Allowed values: `left`, `right`. |
 | `customClass` | String | Custom CSS class name(s) to apply to the action button for additional styling. Multiple classes can be separated by spaces (e.g., `class-1 class-2`). |
 | `badge` | String | Badge text or count to display on the action button. |
 | `badgeType` | String | Visual style for the badge. Allowed values: `default`, `info`, `success`, `warning`, `error`. |
@@ -55,4 +56,5 @@ The prop `actionDefinitions` is available for following components:
 | `loading` | Boolean | Shows loading indicator on the action button and disables interaction. |
 | `active` | Boolean | Applies active/selected styling to indicate the action is currently active. |
 | `nonResponsive` | Boolean | Prevents the action from being responsive. It will not collapse into overflow menus on smaller screens. |
+| `extra` | Boolean | Reserved for internal framework use. Do not set this property manually! (When `true`, the action is treated as supplemental and placed after built-in actions.) |
 | `href` | Object | Route for navigation when the action is clicked. Converts the action into a link. Example: `{ name: 'info' }`. |

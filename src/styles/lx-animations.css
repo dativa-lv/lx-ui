@@ -530,19 +530,15 @@
   transition: 70ms cubic-bezier(0.2, 0, 0.38, 0.9) all;
 }
 
-.lx:not(.lx-no-animations) .lx-content-switcher .lx-content-switcher-item {
-  transition: background-color 0.1s ease;
+.lx:not(.lx-no-animations) .lx-content-switcher-wrapper .lx-content-switcher-item {
+  transition: color, background-color 0.1s ease;
 }
 
-.lx:not(.lx-no-animations) .lx-content-switcher .lx-content-switcher-item > div {
-  transition: color 0.1s ease;
-}
-
-.lx:not(.lx-no-animations) .lx-content-switcher .lx-content-switcher-item svg {
+.lx:not(.lx-no-animations) .lx-content-switcher-wrapper .lx-content-switcher-item svg {
   transition: fill 0.1s ease;
 }
 
-.lx:not(.lx-no-animations) .lx-content-switcher .lx-content-switcher-item::before {
+.lx:not(.lx-no-animations) .lx-content-switcher-wrapper .lx-content-switcher-item::before {
   transition: border-color 0.1s ease;
 }
 

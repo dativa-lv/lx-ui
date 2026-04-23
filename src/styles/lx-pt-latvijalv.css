@@ -32,7 +32,7 @@
   --color-toggle-border-off: #d0d5dc;
   --color-toggle-thumb-off: #6e7681;
 
-  --color-content-switcher-foreground: #565656;
+  --color-content-switcher-background-selected: #565656;
   --color-disabled-foreground: #e6e7ee;
 
   --font-family: 'UbuntuLX', 'IBM Plex Sans', sans-serif !important;
@@ -41,22 +41,23 @@
   --font-weight-extra-bold: 700;
   --data-weight: var(--font-weight-data);
   --h1-font-size: 2rem;
-  --radius-default: 100px;
-  --radius-1: 100px;
+  --border-radius-default: var(--border-radius-full);
 
   --color-cover-title: var(--color-brand);
 
   --color-button-nav-selected: #bf4e2c;
   --color-button-nav-selected-background: #f6f6f6;
 
-  --button-modal-primary-border-radius: 100px;
-  --button-modal-primary-padding: 0rem 0rem 0rem 0rem;
+  --button-modal-primary-border-radius: var(--border-radius-default);
+  --button-modal-primary-align: center;
+  --button-modal-primary-padding: 0rem;
   --button-modal-primary-height: 3rem;
   --button-modal-primary-min-width: 15rem;
   --button-modal-primary-width: auto;
 
-  --button-modal-secondary-border-radius: 100px;
-  --button-modal-secondary-padding: 0rem 0rem 0rem 0rem;
+  --button-modal-secondary-border-radius: var(--border-radius-default);
+  --button-modal-secondary-align: center;
+  --button-modal-secondary-padding: 0rem;
   --button-modal-secondary-height: 3rem;
   --button-modal-secondary-min-width: 15rem;
   --button-modal-secondary-width: auto;
@@ -125,7 +126,7 @@
   --color-toggle-background-off: #d0d5dc;
   --color-toggle-border-off: #d0d5dc;
   --color-toggle-thumb-off: #6e7681;
-  --color-content-switcher-foreground: #aaaaaa;
+  --color-content-switcher-background-selected: #aaaaaa;
   --color-disabled-foreground: #333333;
 
   --color-button-nav-selected: #bf4e2c;

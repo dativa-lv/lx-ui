@@ -23,10 +23,10 @@
 | `--toggle-thumb-height-on-m`     | 1rem                                                              |
 | `--toggle-thumb-width-on-s`      | 0.625rem                                                          |
 | `--toggle-thumb-height-on-s`     | 0.625rem                                                          |
-| `--toggle-thumb-border-radius-m` | 50%                                                               |
-| `--toggle-thumb-border-radius-s` | 50%                                                               |
-| `--toggle-border-radius-m`       | 0.75rem                                                           |
-| `--toggle-border-radius-s`       | 0.75rem                                                           |
+| `--toggle-thumb-border-radius-m` | `--border-radius-full`                                            |
+| `--toggle-thumb-border-radius-s` | `--border-radius-full`                                            |
+| `--toggle-border-radius-m`       | `--border-radius-0750`                                            |
+| `--toggle-border-radius-s`       | `--border-radius-0750`                                            |
 | `--toggle-padding-right-m`       | 0.1875rem                                                         |
 | `--toggle-padding-left-m`        | 0.1875rem                                                         |
 | `--toggle-padding-right-s`       | 0.1875rem                                                         |

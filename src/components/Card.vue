@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, shallowRef, onMounted, inject } from 'vue';
+import { computed, ref, watch, shallowRef, onMounted, inject, nextTick } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxButton from '@/components/Button.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -44,6 +44,8 @@ const cardRef = ref(null);
 const cardWrapperRef = ref(null);
 const isAnimating = ref(false);
 const hoverTilt = ref(null);
+const cardFrontRef = ref(null);
+const cardBackRef = ref(null);
 
 const cardPerspective = '--card-perspective';
 const cardRotateX = '--card-rotate-x';
@@ -110,6 +112,11 @@ watch(isFlipped, (newFlipped, oldFlipped) => {
   if (hasReducedAnimations.value) {
     applyTilt(0, newFlipped ? -180 : 0);
     emit('update:modelValue', newFlipped);
+    if (props.kind !== 'default') {
+      nextTick(() => {
+        (newFlipped ? cardBackRef : cardFrontRef).value?.focus();
+      });
+    }
     return;
   }
 
@@ -123,6 +130,11 @@ watch(isFlipped, (newFlipped, oldFlipped) => {
 
     setTimeout(() => {
       isAnimating.value = false;
+      if (props.kind !== 'default') {
+        nextTick(() => {
+          (newFlipped ? cardBackRef : cardFrontRef).value?.focus();
+        });
+      }
     }, 750);
   }, 50);
 });
@@ -162,26 +174,40 @@ onMounted(() => {
       @keyup.enter.stop.prevent="flipCard('clickable')"
       @keydown.space.prevent="flipCard('clickable')"
     >
-      <div :id="`${id}-card-front`" class="lx-card-face lx-card-front">
+      <div
+        :id="`${id}-card-front`"
+        ref="cardFrontRef"
+        class="lx-card-face lx-card-front"
+        :inert="isFlipped"
+        :aria-hidden="isFlipped || null"
+        :tabindex="kind === 'button' ? -1 : null"
+      >
         <slot></slot>
         <LxButton
           v-if="kind === 'button'"
+          ref="flipButtonFrontRef"
           kind="ghost"
           variant="icon-only"
           :label="displayTexts.flipCard"
-          :tabindex="!isFlipped ? 0 : -1"
           icon="switch"
           @click="flipCard('button')"
         />
       </div>
-      <div :id="`${id}-card-back`" class="lx-card-face lx-card-back">
+      <div
+        :id="`${id}-card-back`"
+        ref="cardBackRef"
+        class="lx-card-face lx-card-back"
+        :inert="!isFlipped"
+        :aria-hidden="!isFlipped || null"
+        :tabindex="kind === 'button' ? -1 : null"
+      >
         <slot name="reverse"></slot>
         <LxButton
           v-if="kind === 'button'"
+          ref="flipButtonBackRef"
           kind="ghost"
           variant="icon-only"
           :label="displayTexts.flipCardBack"
-          :tabindex="isFlipped ? 0 : -1"
           icon="switch"
           @click="flipCard('button')"
         />

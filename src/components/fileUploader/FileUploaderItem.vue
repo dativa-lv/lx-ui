@@ -384,7 +384,7 @@ const additionalInfoTitle = computed(() => {
             :disabled="props.disabled || props.busy || isItemBusy"
             :loading="props.loading"
             icon="info"
-            :title="displayTexts.infoButton"
+            :label="displayTexts.infoButton"
             @click="openModal(props.customItem.id)"
           />
           <LxButton
@@ -392,7 +392,7 @@ const additionalInfoTitle = computed(() => {
             kind="ghost"
             variant="icon-only"
             icon="remove"
-            :title="displayTexts.clear"
+            :label="displayTexts.clear"
             :destructive="true"
             :disabled="props.disabled || props.busy || isItemBusy"
             :loading="props.loading"

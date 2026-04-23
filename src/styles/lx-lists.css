@@ -700,12 +700,12 @@
 
 .lx-list-wrapper .lx-component-toolbar,
 .lx-appendable-list-wrapper .lx-component-toolbar {
-  border-top: 1px solid transparent;
+  border-top: var(--border-width-1) solid transparent;
 }
 
 .lx-selection-toolbar > .lx-component-toolbar .first-row {
   background-color: var(--color-brand);
-  border-bottom: 0;
+  border-bottom: var(--border-width-0);
   justify-content: space-between;
 }
 
@@ -1105,7 +1105,7 @@
   font-size: var(--small-font-size);
   min-width: 1.5rem;
   min-height: 1.5rem;
-  border-radius: 1rem;
+  border-radius: var(--border-radius-1000);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1336,6 +1336,19 @@ li .lx-list-item.lx-inactive {
 
 .lx-list-actions-hidden {
   visibility: hidden;
+}
+
+.lx-list-wrapper .lx-expander .lx-body {
+  padding: 0;
+}
+
+.lx-list-wrapper:has(.lx-expander > .lx-body > .lx-list) .lx-list:not(:empty):not(:has(.list-draggable-area:empty)),
+.lx-list-wrapper:has(.lx-expander > .lx-body > .tree-list-wrapper) .tree-list:not(:empty),
+.lx-list-wrapper:has(.lx-expander > .lx-body > .lx-list) .lx-expander > .lx-body > .lx-list,
+.lx-list-wrapper:has(.lx-expander > .lx-body > .tree-list-wrapper) .lx-expander > .lx-body .tree-list,
+.lx-list-wrapper:has(.lx-expander > .lx-body > .tree-list-wrapper) .lx-expander > .lx-body .tree-list-search,
+.lx-list-wrapper .lx-expander .lx-body:empty {
+  padding-bottom: 1.5rem;
 }
 
 @media (max-width: 1900px) {

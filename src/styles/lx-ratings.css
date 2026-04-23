@@ -122,3 +122,11 @@
 .lx-card .lx-toolbar .lx-ratings {
     padding-right: 0.5rem;
 }
+
+.lx-ratings:not(.lx-disabled):not(.lx-read-only) .lx-star-1:focus,
+.lx-ratings:not(.lx-disabled):not(.lx-read-only) .lx-star-2:focus,
+.lx-ratings:not(.lx-disabled):not(.lx-read-only) .lx-star-3:focus,
+.lx-ratings:not(.lx-disabled):not(.lx-read-only) .lx-star-4:focus,
+.lx-ratings:not(.lx-disabled):not(.lx-read-only) .lx-star-5:focus {
+    outline: 2px solid var(--color-focus-background);
+}

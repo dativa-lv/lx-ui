@@ -16,11 +16,10 @@
 
   --list-item-border: var(--border-width-1) solid var(--color-chrome);
   --region-border: var(--list-item-border);
-  --radius-default: calc(var(--row-size) / 2);
-  --radius-1: var(--radius-default);
-  --list-item-border-radius: var(--radius-default);
+  --border-radius-default: calc(var(--row-size) / 2);
+  --list-item-border-radius: var(--border-radius-default);
 
-  --input-border-radius: var(--radius-default);
+  --input-border-radius: var(--border-radius-default);
   --input-border-bottom: var(--input-border);
   --input-border-bottom-disabled: var(--input-border);
 

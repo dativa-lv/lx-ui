@@ -266,6 +266,31 @@ function handleTogglerKeyup(e) {
   }
 }
 
+function handleTabInResponsiveDatePicker(e) {
+  e.preventDefault();
+
+  const focusableElements = findFocusableElements(panelRef.value);
+
+  if (!focusableElements.length) {
+    panelRef.value?.focus();
+    return;
+  }
+
+  const currentIndex = focusableElements.indexOf(document.activeElement);
+  const lastIndex = focusableElements.length - 1;
+
+  if (currentIndex === -1) {
+    focusableElements[e.shiftKey ? lastIndex : 0].focus();
+    return;
+  }
+
+  const nextIndex = e.shiftKey
+    ? (currentIndex - 1 + focusableElements.length) % focusableElements.length
+    : (currentIndex + 1) % focusableElements.length;
+
+  focusableElements[nextIndex].focus();
+}
+
 function handlePanelKeydown(e) {
   switch (e.key) {
     case ' ':
@@ -277,44 +302,22 @@ function handlePanelKeydown(e) {
       break;
     case 'ArrowDown':
       if (props.datePickerType) {
-        return;
+        break;
       }
       e.preventDefault();
       focusNextElementInContainer(panelRef.value);
       break;
     case 'ArrowUp':
       if (props.datePickerType) {
-        return;
+        break;
       }
       e.preventDefault();
       focusPreviousElementInContainer(panelRef.value);
       break;
     case 'Tab':
       if (props.datePickerType && responsiveView.value) {
-        e.preventDefault();
-
-        const focusableElements = findFocusableElements(panelRef.value);
-        if (!focusableElements.length) {
-          panelRef.value?.focus();
-          return;
-        }
-
-        const currentIndex = focusableElements.indexOf(document.activeElement);
-        if (currentIndex === -1) {
-          if (e.shiftKey) {
-            focusableElements[focusableElements.length - 1].focus();
-          } else {
-            focusableElements[0].focus();
-          }
-          return;
-        }
-
-        const nextIndex = e.shiftKey
-          ? (currentIndex - 1 + focusableElements.length) % focusableElements.length
-          : (currentIndex + 1) % focusableElements.length;
-
-        focusableElements[nextIndex].focus();
-        return;
+        handleTabInResponsiveDatePicker(e);
+        break;
       }
       if (props.datePickerType) {
         break;

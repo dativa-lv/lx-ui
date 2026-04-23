@@ -237,7 +237,7 @@
 
 .lx .lx-layout .lx-main-header .lx-divider {
   display: block;
-  border-right: 1px solid var(--color-chrome);
+  border-right: var(--border-width-1) solid var(--color-chrome);
   margin-right: -1px;
   height: 2rem;
   width: auto;
@@ -774,7 +774,7 @@ code {
 }
 
 .lx-card .lx-expander:not(.lx-modal .lx-expander) {
-  border-top: 2px var(--color-chrome) solid;
+  border-top: var(--border-width-2) var(--color-chrome) solid;
   margin-left: var(--padding-form-negative);
   margin-right: var(--padding-form-negative);
 }
@@ -1047,7 +1047,7 @@ code {
 }
 
 .lx aside .lx-index li {
-  border-right: 0.2rem var(--color-chrome) solid;
+  border-right: var(--border-width-3) var(--color-chrome) solid;
 }
 
 .lx .lx-index li .lx-secondary {
@@ -1089,7 +1089,7 @@ code {
   flex-shrink: 0;
   background-color: var(--color-background);
   padding: 0rem;
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
 }
 
 .lx .lx-index li.lx-error .lx-warning-wrapper {
@@ -1097,7 +1097,7 @@ code {
 }
 
 .lx .lx-document .lx-form-region>header.lx-wide-toolbar.lx-sticky {
-  border-bottom: 2px var(--color-background) solid;
+  border-bottom: var(--border-width-2) var(--color-background) solid;
   margin-top: -3rem;
   display: flex;
   justify-content: space-between;

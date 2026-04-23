@@ -95,6 +95,69 @@ function setValue(value) {
   }
 }
 
+function focusStar(value) {
+  const root = infoWrapperRef.value?.$el;
+  const star = root?.querySelector(`.lx-ratings [role="radio"][data-rating="${value}"]`);
+  star?.focus();
+}
+
+function handleRadioKeydown(event, value) {
+  if (props.readOnly || props.disabled) {
+    return;
+  }
+
+  switch (event.key) {
+    case ' ':
+    case 'Enter':
+      setValue(value);
+      break;
+    case 'ArrowLeft':
+    case 'ArrowUp': {
+      const previous = value === 1 ? 5 : value - 1;
+      setValue(previous);
+      focusStar(previous);
+      break;
+    }
+    case 'ArrowRight':
+    case 'ArrowDown': {
+      const next = value === 5 ? 1 : value + 1;
+      setValue(next);
+      focusStar(next);
+      break;
+    }
+    case 'Home':
+      setValue(1);
+      focusStar(1);
+      break;
+    case 'End':
+      setValue(5);
+      focusStar(5);
+      break;
+    default:
+      return;
+  }
+
+  event.preventDefault();
+}
+
+const getTabIndex = (value) => {
+  if (props.readOnly || props.disabled) {
+    return -1;
+  }
+
+  if (!model.value) {
+    return value === 1 ? 0 : -1;
+  }
+
+  if (model.value > 5) {
+    return value === 5 ? 0 : -1;
+  }
+
+  const isActive = model.value >= value && model.value < value + 1;
+
+  return isActive ? 0 : -1;
+};
+
 const hoveredValue = ref(null);
 function hover(value) {
   if (props.disabled) {
@@ -136,6 +199,7 @@ defineExpose({ focus, scrollIntoView });
         <div
           v-if="!(readOnly && !model)"
           class="lx-ratings"
+          role="radiogroup"
           :class="[
             { 'lx-disabled': disabled },
             { 'lx-read-only': readOnly },
@@ -148,60 +212,95 @@ defineExpose({ focus, scrollIntoView });
             { 'lx-invalid': showInvalid },
           ]"
         >
-          <div class="lx-star-1" :class="[{ 'lx-selected': valueDecomposition[0] !== 'star' }]">
-            <!-- Temporary: mouse-only interaction until keyboard value selection is implemented -->
-            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-            <LxIcon
-              :value="valueDecomposition[0]"
-              :customClass="valueClass"
-              @click="setValue(1)"
-              @mouseover="hover(1)"
-              @mouseleave="reset()"
-            />
+          <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
+          <div
+            class="lx-star-1"
+            :class="[{ 'lx-selected': valueDecomposition[0] !== 'star' }]"
+            role="radio"
+            :aria-checked="model >= 1 && model < 2"
+            data-rating="1"
+            :aria-label="displayTexts.star1"
+            :tabindex="getTabIndex(1)"
+            @click="setValue(1)"
+            @keydown="handleRadioKeydown($event, 1)"
+            @mouseover="hover(1)"
+            @focus="hover(1)"
+            @mouseleave="reset()"
+            @blur="reset()"
+          >
+            <LxIcon :value="valueDecomposition[0]" :customClass="valueClass" />
           </div>
-
-          <div class="lx-star-2" :class="[{ 'lx-selected': valueDecomposition[1] !== 'star' }]">
-            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-            <LxIcon
-              :value="valueDecomposition[1]"
-              :customClass="valueClass"
-              @click="setValue(2)"
-              @mouseover="hover(2)"
-              @mouseleave="reset()"
-            />
+          <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
+          <div
+            class="lx-star-2"
+            :class="[{ 'lx-selected': valueDecomposition[1] !== 'star' }]"
+            role="radio"
+            :aria-checked="model >= 2 && model < 3"
+            data-rating="2"
+            :aria-label="displayTexts.star2"
+            :tabindex="getTabIndex(2)"
+            @click="setValue(2)"
+            @keydown="handleRadioKeydown($event, 2)"
+            @mouseover="hover(2)"
+            @focus="hover(2)"
+            @mouseleave="reset()"
+            @blur="reset()"
+          >
+            <LxIcon :value="valueDecomposition[1]" :customClass="valueClass" />
           </div>
-
-          <div class="lx-star-3" :class="[{ 'lx-selected': valueDecomposition[2] !== 'star' }]">
-            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-            <LxIcon
-              :value="valueDecomposition[2]"
-              :customClass="valueClass"
-              @click="setValue(3)"
-              @mouseover="hover(3)"
-              @mouseleave="reset()"
-            />
+          <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
+          <div
+            class="lx-star-3"
+            :class="[{ 'lx-selected': valueDecomposition[2] !== 'star' }]"
+            role="radio"
+            :aria-checked="model >= 3 && model < 4"
+            data-rating="3"
+            :aria-label="displayTexts.star3"
+            :tabindex="getTabIndex(3)"
+            @click="setValue(3)"
+            @keydown="handleRadioKeydown($event, 3)"
+            @mouseover="hover(3)"
+            @focus="hover(3)"
+            @mouseleave="reset()"
+            @blur="reset()"
+          >
+            <LxIcon :value="valueDecomposition[2]" :customClass="valueClass" />
           </div>
-
-          <div class="lx-star-4" :class="[{ 'lx-selected': valueDecomposition[3] !== 'star' }]">
-            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-            <LxIcon
-              :value="valueDecomposition[3]"
-              :customClass="valueClass"
-              @click="setValue(4)"
-              @mouseover="hover(4)"
-              @mouseleave="reset()"
-            />
+          <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
+          <div
+            class="lx-star-4"
+            :class="[{ 'lx-selected': valueDecomposition[3] !== 'star' }]"
+            role="radio"
+            :aria-checked="model >= 4 && model < 5"
+            data-rating="4"
+            :aria-label="displayTexts.star4"
+            :tabindex="getTabIndex(4)"
+            @click="setValue(4)"
+            @keydown="handleRadioKeydown($event, 4)"
+            @mouseover="hover(4)"
+            @focus="hover(4)"
+            @mouseleave="reset()"
+            @blur="reset()"
+          >
+            <LxIcon :value="valueDecomposition[3]" :customClass="valueClass" />
           </div>
-
-          <div class="lx-star-5" :class="[{ 'lx-selected': valueDecomposition[4] !== 'star' }]">
-            <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-            <LxIcon
-              :value="valueDecomposition[4]"
-              :customClass="valueClass"
-              @click="setValue(5)"
-              @mouseover="hover(5)"
-              @mouseleave="reset()"
-            />
+          <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
+          <div
+            class="lx-star-5"
+            :class="[{ 'lx-selected': valueDecomposition[4] !== 'star' }]"
+            role="radio"
+            :aria-checked="model >= 5"
+            data-rating="5"
+            :aria-label="displayTexts.star5"
+            :tabindex="getTabIndex(5)"
+            @click="setValue(5)"
+            @keydown="handleRadioKeydown($event, 5)"
+            @mouseover="hover(5)"
+            @focus="hover(5)"
+            @mouseleave="reset()"
+            @blur="reset()"
+          >
+            <LxIcon :value="valueDecomposition[4]" :customClass="valueClass" />
           </div>
         </div>
 

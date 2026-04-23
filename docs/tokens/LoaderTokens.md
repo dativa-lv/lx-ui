@@ -15,8 +15,8 @@
 | `--loader-active-width-l`                    | 10                  |
 | `--loader-bar-height-s`                      | 0.25rem             |
 | `--loader-bar-height-l`                      | 0.5rem              |
-| `--loader-bar-border-radius-s`               | 0                   |
-| `--loader-bar-border-radius-l`               | 0                   |
+| `--loader-bar-border-radius-s`               | `--border-radius-0` |
+| `--loader-bar-border-radius-l`               | `--border-radius-0` |
 | `--loader-bar-min-width`                     | `--aside-size`      |
 | `--loader-bar-indicator-height`              | `--icon-size-s`     |
 | `--loader-bar-indicator-width`               | `--icon-size-s`     |

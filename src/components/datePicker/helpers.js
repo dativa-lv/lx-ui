@@ -470,8 +470,8 @@ export function canSelectTime(
   if (timeUnit === 'hour') {
     const hasMinute = selectedMinutes !== null && selectedMinutes !== undefined;
     const selectedDate = new Date(selectedYear, selectedMonth, selectedDay);
-    const isMinDay = minDateParsed && selectedDate.toDateString() === minDateParsed.toDateString();
-    const isMaxDay = maxDateParsed && selectedDate.toDateString() === maxDateParsed.toDateString();
+    const isMinDay = selectedDate?.toDateString() === minDateParsed?.toDateString();
+    const isMaxDay = selectedDate?.toDateString() === maxDateParsed?.toDateString();
 
     // Validate when minute is selected
     if (hasMinute && minDateParsed && maxDateParsed) {
@@ -503,8 +503,8 @@ export function canSelectTime(
 
     // If no minute selected, fall back to basic min/max hour bounds
     return !(
-      (isMinDay && hourMinuteOrSecondValue < minDateParsed.getHours()) ||
-      (isMaxDay && hourMinuteOrSecondValue > maxDateParsed.getHours())
+      (isMinDay && hourMinuteOrSecondValue < minDateParsed?.getHours()) ||
+      (isMaxDay && hourMinuteOrSecondValue > maxDateParsed?.getHours())
     );
   }
 
@@ -711,14 +711,23 @@ export function getDaysInMonthGrid(date, firstDayOfWeek) {
     weeks.push(currentWeek);
   }
 
+  // Exception for February with exact 28 days starting on the first day of the week
+  const hasExactFourWeeks = weeks.length === 4;
+  const monthStartsOnGridStart = startCalendar.getTime() === startMonth.getTime();
+
+  if (hasExactFourWeeks && monthStartsOnGridStart) {
+    const previousWeekStart = addDays(startCalendar, -7);
+    const previousWeek = Array.from({ length: 7 }, (_, i) => addDays(previousWeekStart, i));
+    weeks.unshift(previousWeek);
+  }
+
   // If there are fewer than 6 weeks, fill remaining rows with days from the next month
-  const lastDay = endCalendar;
+  let lastRenderedDay = weeks[weeks.length - 1][6];
   while (weeks.length < 6) {
-    const nextWeek = [];
-    for (let i = 0; i < 7; i += 1) {
-      nextWeek.push(addDays(lastDay, i + 1));
-    }
+    const nextWeekStart = addDays(lastRenderedDay, 1);
+    const nextWeek = Array.from({ length: 7 }, (_, i) => addDays(nextWeekStart, i));
     weeks.push(nextWeek);
+    [lastRenderedDay] = nextWeek.slice(-1);
   }
 
   return weeks;

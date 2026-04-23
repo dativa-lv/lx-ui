@@ -54,7 +54,6 @@
   --color-toggle-border-off: var(--contrast-foreground);
   --color-toggle-background-off: var(--contrast-background);
 
-  --color-content-switcher-foreground: var(--contrast-interactive);
   --color-cover-title: var(--contrast-foreground);
   --color-badge-foreground: var(--contrast-background);
 

@@ -24,7 +24,8 @@ const props = defineProps({
   kind: { type: String, default: 'default' }, // default, compact
   requiredMode: { type: String, default: 'optional' }, // required, required-asterisk, optional
   canAddItems: { type: Boolean, default: true },
-  actionDefinitions: { type: Array, default: () => [] }, //
+  actionDefinitions: { type: Array, default: () => [] },
+  toolbarActionDefinitions: { type: Array, default: () => [] },
   uppercase: { type: Boolean, default: true },
   hasSelecting: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'single' }, // single, multiple
@@ -45,7 +46,12 @@ const defaultTexts = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
 
-const emits = defineEmits(['update:modelValue', 'actionClick', 'update:selectedValues']);
+const emits = defineEmits([
+  'update:modelValue',
+  'actionClick',
+  'toolbarActionClick',
+  'update:selectedValues',
+]);
 
 // Adds a unique key to each object in the model
 function addKey(object) {
@@ -210,9 +216,11 @@ function changeSelecting(value) {
   }
 }
 
-function handleToolbarActionClick(id) {
+function handleToolbarActionClick(id, value) {
   if (id === 'add-item') {
     addItem();
+  } else {
+    emits('toolbarActionClick', id, value);
   }
 }
 
@@ -225,19 +233,24 @@ function onDelete(e, itemKey) {
   e.preventDefault();
   removeItem(itemKey);
 }
-const insideForm = inject('insideForm', ref(false));
 
-const defaultToolbarArea = computed(() => (insideForm.value ? 'left' : 'right'));
+const toolbarActions = computed(() => {
+  const actionsDefault = [];
 
-const toolbarActions = computed(() => [
-  {
-    id: 'add-item',
-    name: displayTexts.value.addButtonLabel,
-    title: displayTexts.value.addItemButtonTooltip,
-    icon: 'add-item',
-    kind: 'tertiary',
-  },
-]);
+  if (!props.readOnly && props.canAddItems) {
+    actionsDefault.push({
+      id: 'add-item',
+      name: displayTexts.value.addButtonLabel,
+      title: displayTexts.value.addItemButtonTooltip,
+      icon: 'add-item',
+      kind: 'tertiary',
+    });
+  }
+
+  const actionsExtra = props.toolbarActionDefinitions.map((a) => ({ ...a, extra: true }));
+
+  return [...actionsDefault, ...actionsExtra];
+});
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
@@ -251,10 +264,8 @@ defineExpose({ clearModel });
 <template>
   <div class="lx-appendable-list-wrapper">
     <LxToolbar
-      v-if="!readOnly && canAddItems && insideForm"
       :id="`${props.id}-toolbar`"
       :actionDefinitions="toolbarActions"
-      :defaultArea="defaultToolbarArea"
       :texts="displayTexts"
       @actionClick="handleToolbarActionClick"
     />
@@ -277,6 +288,11 @@ defineExpose({ clearModel });
         <template v-if="expandable">
           <LxDataBlock
             v-model="expanded[item?.[idAttribute]]"
+            @update:model-value="
+              typeof item[props.expandedAttribute] === 'boolean'
+                ? (item[props.expandedAttribute] = $event)
+                : null
+            "
             v-model:selected="selectedValues[item?.[idAttribute]]"
             :id="item[idAttribute]"
             :name="item[nameAttribute]"
@@ -348,18 +364,6 @@ defineExpose({ clearModel });
             </div>
           </div>
         </template>
-      </div>
-
-      <div>
-        <LxButton
-          v-if="!readOnly && canAddItems && !insideForm"
-          :id="`${id}-action-add-item`"
-          kind="tertiary"
-          :label="displayTexts.addButtonLabel"
-          :title="displayTexts.addItemButtonTooltip"
-          icon="add-item"
-          @click="addItem"
-        />
       </div>
     </div>
   </div>

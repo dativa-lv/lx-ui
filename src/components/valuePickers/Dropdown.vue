@@ -689,7 +689,7 @@ function countDigits(number) {
               <div
                 v-if="model?.length > 0"
                 class="lx-tag"
-                :class="[{ ['chars-' + countDigits(model?.length)]: model?.length > 0 }]"
+                :class="[{ [`chars-${countDigits(model?.length)}`]: model?.length > 0 }]"
               >
                 <div class="lx-tag-label">{{ model?.length }}</div>
                 <div class="lx-tag-button">
@@ -742,7 +742,7 @@ function countDigits(number) {
               ref="panelRef"
               tabindex="-1"
               class="lx-dropdown-default-content"
-              :style="{ width: panelWidth + 'px' }"
+              :style="{ width: `${panelWidth}px` }"
               @keydown.esc.prevent="closeDropDownDefaultOnEsc"
               @keydown.enter.prevent="onEnter"
               @keydown.space.prevent="onEnter"

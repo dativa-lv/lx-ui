@@ -147,7 +147,7 @@
 }
 
 .lx .lx-card .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
-  border-bottom: 2px var(--color-chrome) solid;
+  border-bottom: var(--border-width-2) var(--color-chrome) solid;
   background-color: var(--color-region);
 }
 
@@ -160,9 +160,9 @@
   border-bottom: none;
   padding-left: 1rem;
   padding-top: 0px;
-  border-left: 2px transparent solid;
-  border-top: 2px transparent solid;
-  border-right: 2px transparent solid;
+  border-left: var(--border-width-2) transparent solid;
+  border-top: var(--border-width-2) transparent solid;
+  border-right: var(--border-width-2) transparent solid;
   align-items: center;
 }
 
@@ -177,9 +177,9 @@
 .lx .lx-card .lx-tab-control .lx-tab-container .lx-tab.lx-selected {
   background-color: var(--color-region);
   border-color: var(--color-chrome);
-  border-left: 2px var(--color-chrome) solid;
-  border-top: 2px var(--color-interactive-background) solid;
-  border-right: 2px var(--color-chrome) solid;
+  border-left: var(--border-width-2) var(--color-chrome) solid;
+  border-top: var(--border-width-2) var(--color-interactive-background) solid;
+  border-right: var(--border-width-2) var(--color-chrome) solid;
 }
 
 .lx .lx-card .lx-tab-control .lx-tab-container .lx-tab.lx-selected .lx-primary {

@@ -82,7 +82,8 @@
     color: inherit;
 }
 
-.lx-card-wrapper .lx-card:focus .lx-card-face {
+.lx-card-wrapper .lx-card:focus .lx-card-face,
+.lx-card-wrapper .lx-card .lx-card-face:focus {
     outline: 2px solid var(--color-focus-background);
     outline-offset: -2px;
 }

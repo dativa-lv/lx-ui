@@ -1920,7 +1920,7 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-data);
   min-width: 1.5rem;
   min-height: 1.5rem;
-  border-radius: 1rem;
+  border-radius: var(--border-radius-1000);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2132,13 +2132,13 @@ a.lx-button.lx-button-ghost svg {
 /*** Mystery styles ***/
 
 .lx-layout-default .lx-nav-panel ul li.lx-selected .lx-dropdown-panel .lx-button {
-  border-left: 0;
+  border-left: var(--border-width-0);
 }
 
 /* Skiplink styles */
 
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-divider {
-  border-bottom: 2px solid var(--color-background);
+  border-bottom: var(--border-width-2) solid var(--color-background);
   margin: 1rem;
   margin-bottom: 0.25rem;
   margin-top: 0.25rem;
@@ -2198,7 +2198,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group {
-  border-bottom: 1px solid var(--color-chrome)
+  border-bottom: var(--border-width-1) solid var(--color-chrome)
 }
 
 .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group > .lx-label {

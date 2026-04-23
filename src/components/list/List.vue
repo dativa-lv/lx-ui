@@ -158,14 +158,18 @@ const defaultListRef = ref(null);
 const defaultListScrollMargin = ref(0);
 const defaultListGap = ref(8);
 const defaultListVirtualizer = shallowRef(null);
+const defaultListScrollParent = shallowRef(null);
 
 const searchStringClient = ref(props.searchSide === 'client' ? props.searchString : '');
 const searchStringServer = ref(props.searchSide === 'server' ? props.searchString : '');
 
 let invisibleBlockTimeout;
 let observer;
+let defaultListPositionObserver = null;
 let virtualizerScope = null;
 let defaultListScrollOffsetRaf = null;
+let defaultListScrollTarget = null;
+let updateDefaultListScrollOffset = () => {};
 
 const reactiveSearchString = computed({
   get() {
@@ -242,12 +246,67 @@ const wantsDefaultListVirtualization = computed(
     normalizedListType.value === '1'
 );
 
+function resolveScrollParent(el) {
+  if (!el) return null;
+
+  const isScrollableOverflow = (overflowY) =>
+    overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay';
+
+  const isConstrainedScrollableElement = (element, style) => {
+    if (!element || !style) return false;
+    if (element.scrollHeight > element.clientHeight + 1) return true;
+
+    const hasConstrainedHeight = style.height !== 'auto' && style.height !== '';
+    const hasConstrainedMaxHeight = style.maxHeight && style.maxHeight !== 'none';
+    return hasConstrainedHeight || hasConstrainedMaxHeight;
+  };
+
+  const modalElement = el.closest('.lx-modal');
+  const modalMain = modalElement?.querySelector(':scope > .lx-main');
+  if (modalMain) {
+    const modalMainStyle = globalThis.getComputedStyle(modalMain);
+    if (isScrollableOverflow(modalMainStyle?.overflowY)) {
+      return modalMain;
+    }
+  }
+
+  let parent = el.parentElement;
+  let fallback = null;
+  while (parent && parent !== document.body && parent !== document.documentElement) {
+    const style = globalThis.getComputedStyle(parent);
+    const overflowY = style?.overflowY;
+
+    if (isScrollableOverflow(overflowY)) {
+      if (isConstrainedScrollableElement(parent, style)) {
+        return parent;
+      }
+
+      if (!fallback) fallback = parent;
+    }
+
+    parent = parent.parentElement;
+  }
+
+  return fallback;
+}
+
+function resolveDefaultListScrollTarget(scrollParent = defaultListScrollParent.value) {
+  if (scrollParent?.addEventListener) return scrollParent;
+  if (globalThis?.addEventListener) return globalThis;
+  if (typeof window !== 'undefined' && window?.addEventListener) return window;
+  return null;
+}
+
 async function loadVueVirtual() {
   const lib = await loadLibrary('vueVirtual');
   if (virtualizerScope) virtualizerScope.stop();
   virtualizerScope = effectScope();
   virtualizerScope.run(() => {
-    defaultListVirtualizer.value = lib.useWindowVirtualizer({
+    // IMPORTANT: do NOT spread this object when passing it to the virtualizer.
+    // Object spread evaluates the getters once and copies plain values, which
+    // would freeze `scrollMargin`, `count` and `gap` at their initial values
+    // and break reactivity.
+    const virtualizerOptions = {
       get count() {
         if (!wantsDefaultListVirtualization.value) return 0;
         return filteredItems.value?.length || 0;
@@ -261,8 +320,26 @@ async function loadVueVirtual() {
         return defaultListGap.value;
       },
       overscan: 6, // The number of items to render above and below the visible area
-    });
+    };
+
+    if (defaultListScrollParent.value && lib.useVirtualizer) {
+      // `getScrollElement` must only be defined for the element virtualizer.
+      // Adding it to `useWindowVirtualizer` makes it try to read a (null)
+      // element and produces zero virtual rows.
+      Object.defineProperty(virtualizerOptions, 'getScrollElement', {
+        enumerable: true,
+        value: () => defaultListScrollParent.value,
+      });
+      defaultListVirtualizer.value = lib.useVirtualizer(virtualizerOptions);
+    } else {
+      defaultListVirtualizer.value = lib.useWindowVirtualizer(virtualizerOptions);
+    }
   });
+}
+
+async function ensureDefaultListVirtualizer() {
+  if (!wantsDefaultListVirtualization.value) return;
+  await loadVueVirtual();
 }
 
 const shouldVirtualizeDefaultList = computed(
@@ -287,26 +364,78 @@ const defaultListTotalSize = computed(() => {
   return vRef.value.getTotalSize();
 });
 
-function updateDefaultListScrollOffset() {
-  if (!shouldVirtualizeDefaultList.value || !defaultListRef.value) return;
-  defaultListScrollMargin.value =
-    defaultListRef.value.getBoundingClientRect().top + globalThis.scrollY;
-}
-
-function updateDefaultListGap() {
-  if (!shouldVirtualizeDefaultList.value || !defaultListRef.value) return;
-  const computedStyle = globalThis.getComputedStyle(defaultListRef.value);
-  const rowGap = Number.parseFloat(computedStyle.rowGap || computedStyle.gap || '0');
-  defaultListGap.value = Number.isFinite(rowGap) ? rowGap : 0;
-}
-
 function scheduleDefaultListScrollOffsetUpdate() {
   if (!shouldVirtualizeDefaultList.value || isDefined(defaultListScrollOffsetRaf)) return;
 
   defaultListScrollOffsetRaf = globalThis.requestAnimationFrame(() => {
     defaultListScrollOffsetRaf = null;
     updateDefaultListScrollOffset();
+    globalThis.requestAnimationFrame(() => {
+      updateDefaultListScrollOffset();
+    });
   });
+}
+
+function setupDefaultListPositionObservers() {
+  if (!listWrapper.value) return;
+  defaultListPositionObserver?.disconnect();
+
+  const RO = globalThis.ResizeObserver;
+
+  if (RO) {
+    defaultListPositionObserver = new RO(() => {
+      scheduleDefaultListScrollOffsetUpdate();
+    });
+    defaultListPositionObserver.observe(listWrapper.value);
+    if (listWrapper.value.parentElement) {
+      defaultListPositionObserver.observe(listWrapper.value.parentElement);
+    }
+    if (defaultListScrollParent.value) {
+      defaultListPositionObserver.observe(defaultListScrollParent.value);
+    }
+  }
+}
+
+updateDefaultListScrollOffset = () => {
+  if (!shouldVirtualizeDefaultList.value || !defaultListRef.value) return;
+  const resolvedParent = resolveScrollParent(listWrapper.value);
+  if (resolvedParent !== defaultListScrollParent.value) {
+    defaultListScrollParent.value = resolvedParent;
+    const newTarget = resolveDefaultListScrollTarget(resolvedParent);
+    if (defaultListScrollTarget && defaultListScrollTarget !== newTarget) {
+      defaultListScrollTarget.removeEventListener('scroll', scheduleDefaultListScrollOffsetUpdate);
+      newTarget?.addEventListener('scroll', scheduleDefaultListScrollOffsetUpdate, {
+        passive: true,
+      });
+    }
+    defaultListScrollTarget = newTarget;
+    setupDefaultListPositionObservers();
+    if (wantsDefaultListVirtualization.value) {
+      loadVueVirtual();
+    }
+  }
+
+  const listTop = defaultListRef.value.getBoundingClientRect().top;
+  const parent = defaultListScrollParent.value;
+
+  let next;
+  if (parent) {
+    const parentTop = parent.getBoundingClientRect().top;
+    next = listTop - parentTop + parent.scrollTop;
+  } else {
+    next = listTop + globalThis.scrollY;
+  }
+
+  if (Math.abs(next - defaultListScrollMargin.value) < 0.5) return;
+  defaultListScrollMargin.value = next;
+  defaultListVirtualizer.value?.value.measure();
+};
+
+function updateDefaultListGap() {
+  if (!shouldVirtualizeDefaultList.value || !defaultListRef.value) return;
+  const computedStyle = globalThis.getComputedStyle(defaultListRef.value);
+  const rowGap = Number.parseFloat(computedStyle.rowGap || computedStyle.gap || '0');
+  defaultListGap.value = Number.isFinite(rowGap) ? rowGap : 0;
 }
 
 function handleDefaultListResize() {
@@ -933,23 +1062,19 @@ const selectionState = computed(() => {
 });
 
 function selectRows(arr = null) {
-  function filterSelectable(items) {
-    return items.filter(isSelectable);
-  }
-
   if (arr === null) {
     if (props.kind === 'treelist') {
       selectedItemsRaw.value = arrayToObject(
-        filterSelectable(treeItems.value)?.map((x) => x?.[props.idAttribute]?.toString())
+        treeItems.value?.filter(isSelectable)?.map((x) => x?.[props.idAttribute]?.toString())
       );
     } else {
       selectedItemsRaw.value = arrayToObject(
-        filterSelectable(stringifiedItems.value)?.map((x) => x?.[props.idAttribute]?.toString())
+        stringifiedItems.value?.filter(isSelectable)?.map((x) => x?.[props.idAttribute]?.toString())
       );
     }
   } else {
     selectedItemsRaw.value = arrayToObject(
-      filterSelectable(arr)?.map((x) => x?.[props.idAttribute]?.toString())
+      arr?.filter(isSelectable)?.map((x) => x?.[props.idAttribute]?.toString())
     );
   }
 }
@@ -1250,8 +1375,6 @@ function focusFirstFocusableElementAfter() {
 
 const insideForm = inject('insideForm', ref(false));
 
-const defaultToolbarArea = computed(() => (insideForm.value ? 'left' : 'right'));
-
 function handleToolbarActionClick(id) {
   emits('toolbarActionClick', id);
 }
@@ -1263,7 +1386,7 @@ const toolbarActions = computed(() => {
   return props.toolbarActionDefinitions;
 });
 
-onMounted(() => {
+onMounted(async () => {
   const val = validate();
   if (val) {
     lxDevUtils.log(val, useLx().getGlobals()?.environment, 'error');
@@ -1283,23 +1406,37 @@ onMounted(() => {
 
   observer.observe(listWrapper.value);
 
-  nextTick(() => {
-    updateDefaultListGap();
-    updateDefaultListScrollOffset();
-    defaultListVirtualizer.value?.value.measure();
+  defaultListScrollParent.value = resolveScrollParent(listWrapper.value);
+  defaultListScrollTarget = resolveDefaultListScrollTarget(defaultListScrollParent.value);
+
+  if (wantsDefaultListVirtualization.value) {
+    await ensureDefaultListVirtualizer();
+  }
+
+  await nextTick();
+  updateDefaultListGap();
+  updateDefaultListScrollOffset();
+  defaultListVirtualizer.value?.value.measure();
+
+  setupDefaultListPositionObservers();
+
+  defaultListScrollTarget?.addEventListener('scroll', scheduleDefaultListScrollOffsetUpdate, {
+    passive: true,
   });
-  globalThis.addEventListener('scroll', scheduleDefaultListScrollOffsetUpdate, { passive: true });
   globalThis.addEventListener('resize', handleDefaultListResize);
 });
 
 onBeforeUnmount(() => {
   virtualizerScope?.stop();
   observer?.disconnect();
+  defaultListPositionObserver?.disconnect();
+  defaultListPositionObserver = null;
   if (isDefined(defaultListScrollOffsetRaf)) {
     globalThis.cancelAnimationFrame(defaultListScrollOffsetRaf);
     defaultListScrollOffsetRaf = null;
   }
-  globalThis.removeEventListener('scroll', scheduleDefaultListScrollOffsetUpdate);
+  defaultListScrollTarget?.removeEventListener('scroll', scheduleDefaultListScrollOffsetUpdate);
+  defaultListScrollTarget = null;
   globalThis.removeEventListener('resize', handleDefaultListResize);
 });
 </script>
@@ -1338,7 +1475,6 @@ onBeforeUnmount(() => {
           :useSearchDebounce="true"
           :hasSelectAll="hasSelectAll"
           :selectionState="selectionState"
-          :defaultArea="defaultToolbarArea"
           :texts="displayTexts"
           @actionClick="handleToolbarActionClick"
           @search="search"

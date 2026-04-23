@@ -28,7 +28,7 @@
     --color-toggle-border-off: #d0d5dc;
     --color-toggle-thumb-off: #6e7681;
   
-    --color-content-switcher-foreground: #565656;
+    --color-content-switcher-background-selected: #565656;
     --color-disabled-foreground: #e6e7ee;
   
     --color-cover-title: var(--color-brand);
@@ -69,7 +69,7 @@
     --color-toggle-background-off: #d0d5dc;
     --color-toggle-border-off: #d0d5dc;
     --color-toggle-thumb-off: #6e7681;
-    --color-content-switcher-foreground: #aaaaaa;
+    --color-content-switcher-background-selected: #aaaaaa;
     --color-disabled-foreground: #333333;
   
     --color-button-nav-selected: #bf4e2c;

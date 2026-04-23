@@ -134,7 +134,7 @@ onMounted(() => {
       :class="{
         'lx-small': size === 's',
         'lx-checked': internalModel === true,
-        'lx-indeterminate': model === null,
+        'lx-indeterminate': internalModel === null,
         'lx-invalid': invalid,
         'lx-disabled': disabled,
       }"

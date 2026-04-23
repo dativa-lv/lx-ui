@@ -9,7 +9,7 @@
 | `--card-min-height`    | 12rem                                         |
 | `--card-border`        | 2px solid var(--color-card-background)        |
 | `--card-border-region` | 2px solid var(--color-card-background-region) |
-| `--card-border-radius` | 0                                             |
+| `--card-border-radius` | `--border-radius-0`                           |
 | `--card-padding`       | 1rem                                          |
 | `--card-width`         | auto                                          |
 

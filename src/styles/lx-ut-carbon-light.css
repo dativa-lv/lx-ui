@@ -44,7 +44,6 @@
   --color-highlight-background: var(--color-highlight);
   --color-highlight-foreground: var(--color-data);
 
-  --color-content-switcher-foreground: var(--color-data);
   --color-cover-title: var(--color-data);
   --color-checkmark-foreground: #fff;
   --color-checkmark-hover-foreground: #fff;
@@ -455,6 +454,17 @@
   --color-toggle-border-hover-off: var(--color-interactive-hover-background);
   --color-toggle-border-hover-on: transparent;
   --color-toggle-text: var(--color-data);
+
+  --color-content-switcher-container-background: transparent;
+  --color-content-switcher-item-background: transparent;
+  --color-content-switcher-icon: var(--color-data);
+  --color-content-switcher-text: var(--color-data);
+  --color-content-switcher-background-selected: var(--color-data);
+  --color-content-switcher-text-selected: var(--color-background);
+  --color-content-switcher-icon-selected: var(--color-background);
+  --color-content-switcher-item-background-hover: var(--color-region-hover-background);
+  --color-content-switcher-text-hover: var(--color-region-hover-foreground);
+  --color-content-switcher-icon-hover: var(--color-region-hover-foreground);
 
   --color-draft-background: var(--color-draft);
   --color-new-background: var(--color-new);

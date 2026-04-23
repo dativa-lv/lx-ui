@@ -49,7 +49,7 @@
     width: 100%;
     align-items: center;
     z-index: 8100;
-    border-bottom: 2px solid var(--color-chrome);
+    border-bottom: var(--border-width-2) solid var(--color-chrome);
     display: grid;
     grid-template-columns: 1fr var(--body-column-size) 1fr;
     transition: height 0.2s ease-in-out;
@@ -101,7 +101,7 @@
   .lx-layout.lx-layout-latvijalv>header .lx-header .lx-main-button .lx-badge {
     margin-left: 0.5rem;
     padding: 0.1rem 0.5rem;
-    border-radius: 1rem;
+    border-radius: var(--border-radius-1000);
     font-weight: var(--font-weight-data);
     font-size: var(--small-font-size);
     border: var(--border-width-2) solid transparent;
@@ -262,7 +262,7 @@
     z-index: 8100;
     width: 100%;
     height: var(--row-size);
-    border-bottom: 2px solid var(--color-chrome);
+    border-bottom: var(--border-width-2) solid var(--color-chrome);
     background-color: var(--color-nav-background);
     grid-template-columns: 1fr var(--body-column-size) 1fr;
   }
@@ -378,7 +378,7 @@
   .lx .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-warning .lx-latvijalv-alert-icon > svg,
   .lx .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-error .lx-latvijalv-alert-icon > svg {
     padding: 0.25rem;
-    border-radius: 50%;
+    border-radius: var(--border-radius-full);
   }
 
   .lx .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-success .lx-latvijalv-alert-icon > svg {
@@ -516,7 +516,7 @@
     position: absolute;
     content: " ";
     width: 100%;
-    border-bottom: 2px solid var(--color-chrome);
+    border-bottom: var(--border-width-2) solid var(--color-chrome);
     opacity: 1;
     transition: opacity .1s ease-out;
   }
@@ -657,7 +657,7 @@
 
     .lx-layout.lx-layout-latvijalv>header {
       grid-template-columns: 1fr 100% 1fr;
-      border-bottom: 0;
+      border-bottom: var(--border-width-0);
       z-index: 8100;
     }
   

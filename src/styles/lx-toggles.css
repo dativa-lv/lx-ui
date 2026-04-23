@@ -41,22 +41,21 @@
   border-color: var(--color-toggle-border-on);
 }
 
-.lx-modal .lx-expander .lx-toggle-appearance,
-.lx-modal .lx-data-block .lx-toggle-appearance,
-.lx-form-grid .lx-data-block .lx-toggle-appearance,
-.lx-region .lx-appendable-list .lx-toggle-appearance,
-.lx-region .lx-data-block-wrapper .lx-toggle-appearance {
-  background-color: var(--color-toggle-background-off);
-}
-
 .lx-modal .lx-toggle-appearance,
 .lx-region .lx-toggle-appearance,
 .lx-expander .lx-toggle-appearance,
 .lx-form-grid .lx-toggle-appearance,
-.lx-data-block .lx-toggle-appearance,
-.lx-dropdown-panel .lx-toggle-appearance {
+.lx-dropdown-panel .lx-toggle-appearance,
+.lx-data-block-wrapper .lx-toggle-appearance {
   --color-toggle-background-off: var(--color-region-2);
   --color-toggle-background-hover-off: var(--color-region-2);
+}
+
+.lx-modal .lx-data-block-wrapper .lx-toggle-appearance,
+.lx-region .lx-data-block-wrapper .lx-toggle-appearance,
+.lx-form-grid .lx-data-block-wrapper .lx-toggle-appearance {
+  --color-toggle-background-off: unset;
+  --color-toggle-background-hover-off: unset;
 }
 
 .lx-toggle:focus + .lx-toggle-label-wrapper .lx-toggle-appearance,
@@ -77,6 +76,18 @@
   transform: translateX(0);
 }
 
+.lx-toggle-wrapper.lx-indeterminate .lx-toggle-appearance .lx-toggle-thumb {
+  transform: translateX(
+    calc((
+      var(--toggle-width-m)
+      - var(--toggle-thumb-width-off-m)
+      - var(--toggle-padding-left-m)
+      - var(--toggle-padding-right-m)
+      - (2 * var(--toggle-border-width-m))
+    ) / 2)
+  );
+}
+
 .lx-toggle-wrapper.lx-checked .lx-toggle-appearance .lx-toggle-thumb {
   transform: translateX(
     calc(
@@ -91,18 +102,6 @@
   height: var(--toggle-thumb-height-on-m);
   background-color: var(--color-toggle-thumb-on);
   border-color: var(--color-toggle-thumb-on);
-}
-
-.lx-toggle-wrapper.lx-indeterminate .lx-toggle-appearance .lx-toggle-thumb {
-  transform: translateX(
-    calc((
-      var(--toggle-width-m)
-      - var(--toggle-thumb-width-off-m)
-      - var(--toggle-padding-left-m)
-      - var(--toggle-padding-right-m)
-      - (2 * var(--toggle-border-width-m))
-    ) / 2)
-  );
 }
 
 /*** Small toggle styles ***/

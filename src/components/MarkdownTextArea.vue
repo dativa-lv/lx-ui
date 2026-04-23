@@ -105,6 +105,9 @@ const inputLink = ref();
 const inputLinkField = ref();
 const markdownImageModal = ref();
 
+const colorDropDown = ref();
+const placeholderDropDown = ref();
+
 const isNotLink = ref(false);
 const isNotImage = ref(false);
 
@@ -142,6 +145,7 @@ let CharacterCount = null;
 let TextStyle = null;
 let Color = null;
 let Markdown = null;
+let Plugin = null;
 
 const model = computed({
   get() {
@@ -213,7 +217,12 @@ const formatActionsButtons = computed(() => {
     { name: 'bold', icon: 'text-bold', command: 'toggleBold' },
     { name: 'italic', icon: 'text-italic', command: 'toggleItalic' },
     { name: 'underline', icon: 'text-underline', command: 'toggleUnderline' },
-    { name: 'strike', icon: 'text-strikethrough', command: 'toggleStrike' },
+    {
+      name: 'strikethrough',
+      icon: 'text-strikethrough',
+      command: 'toggleStrike',
+      isActiveCheck: 'strike',
+    },
   ];
 
   return baseActions.filter(
@@ -248,11 +257,44 @@ const colorPickerColors = [
   { name: 'label', var: 'var(--color-label)' },
 ];
 
-function focus() {
-  if (!editor.value || isModalOpen.value) {
+function shouldKeepToolbarFocus(target) {
+  return target instanceof Element
+    ? Boolean(
+        target.closest('.lx-component-toolbar, .lx-dropdown-panel-wrapper, .lx-dropdown-panel')
+      )
+    : false;
+}
+
+function focus(event) {
+  if (!editor.value || isModalOpen.value || shouldKeepToolbarFocus(event?.target)) {
     return;
   }
   editor.value.commands.focus();
+}
+
+function runToolbarCommand(commandBuilder) {
+  if (!editor.value) {
+    return;
+  }
+
+  commandBuilder(editor.value.chain()).run();
+}
+
+function restoreToolbarActionFocus(actionId) {
+  nextTick(() => {
+    const wrapper = markdownWrapper.value;
+    if (!wrapper) {
+      return;
+    }
+
+    const actionButton =
+      wrapper.querySelector(`[id="${props.id}-action-${actionId}"]`) ||
+      wrapper.querySelector(`.lx-component-toolbar [id$="-action-${actionId}"]`);
+
+    if (actionButton instanceof HTMLElement) {
+      actionButton.focus();
+    }
+  });
 }
 
 function concatEscapedWords(words) {
@@ -319,9 +361,7 @@ function createEditorExtensions() {
       placeholder: props.placeholder,
     }),
 
-    CharacterCount.configure({
-      limit: props.maxlength,
-    }),
+    CharacterCount.configure({}),
   ];
 
   if (checkArrayObjectProperty(props.dictionary, 'value')) {
@@ -336,12 +376,86 @@ function createEditorExtensions() {
     );
   }
 
+  const getCharCount = (node) =>
+    editor.value?.storage?.characterCount?.characters({ node }) ?? node.textContent.length;
+
+  const plug = new Plugin({
+    filterTransaction: (transaction, state) => {
+      const max = props.maxlength;
+
+      if (!transaction.docChanged || !max) {
+        return true;
+      }
+
+      const newSize = getCharCount(transaction.doc);
+
+      if (newSize <= max) {
+        return true;
+      }
+
+      const isPaste = Boolean(transaction.getMeta('paste'));
+
+      if (isPaste) {
+        return true;
+      }
+
+      return getCharCount(state.doc) > max && newSize <= getCharCount(state.doc);
+    },
+    appendTransaction: (_, __, newState) => {
+      const max = props.maxlength;
+
+      if (!max) {
+        return null;
+      }
+
+      const currentSize = getCharCount(newState.doc);
+      if (currentSize <= max) {
+        return null;
+      }
+
+      for (let targetChars = max; targetChars >= 0; targetChars -= 1) {
+        let charCount = 0;
+        let cutPos = null;
+
+        newState.doc.descendants((node, pos) => {
+          if (cutPos !== null) return false;
+          if (node.isText) {
+            const remaining = targetChars - charCount;
+            if (remaining <= 0) {
+              cutPos = pos;
+              return false;
+            }
+            if (remaining <= node.text.length) {
+              cutPos = pos + remaining;
+              return false;
+            }
+            charCount += node.text.length;
+          }
+          return true;
+        });
+
+        if (cutPos === null) {
+          return null;
+        }
+
+        const tr = newState.tr.delete(cutPos, newState.doc.content.size);
+        if (getCharCount(tr.doc) <= max) {
+          return tr;
+        }
+      }
+
+      return null;
+    },
+  });
+
   editor.value = new Editor({
     content: model.value,
     editable: !isDisabled.value,
     extensions: ext,
     injectCSS: false,
   });
+
+  editor.value.registerPlugin(plug);
 
   loading.value = false;
 
@@ -532,6 +646,7 @@ async function loadTiptap() {
   TextStyle = lib.TextStyle;
   Color = lib.Color;
   Markdown = lib.Markdown;
+  Plugin = lib.Plugin;
 }
 
 async function updateEditorExtensions() {
@@ -569,14 +684,16 @@ function setLink() {
   // empty
   if (url.value === '' || url.value === undefined || url.value === null) {
     editUrlModal.value.close();
-    editor.value.chain().focus().extendMarkRange('link').unsetLink().run();
+    runToolbarCommand((chain) => chain.extendMarkRange('link').unsetLink());
+    restoreToolbarActionFocus('link');
     inputLink.value = '';
     return;
   }
 
   // update link
   editUrlModal.value.close();
-  editor.value.chain().focus().extendMarkRange('link').setLink({ href: formatedUrl }).run();
+  runToolbarCommand((chain) => chain.extendMarkRange('link').setLink({ href: formatedUrl }));
+  restoreToolbarActionFocus('link');
   inputLink.value = '';
 }
 
@@ -586,9 +703,6 @@ function checkIfOpen() {
   } else {
     isModalOpen.value = !isModalOpen.value;
     editUrlModal.value.open();
-    nextTick(() => {
-      inputLinkField.value.focus();
-    });
   }
 }
 
@@ -656,7 +770,15 @@ function chooseColor(color) {
 }
 
 function postPlaceholder(content) {
-  editor.value.chain().focus().deleteSelection().setPlaceholderData({ content }).run();
+  runToolbarCommand((chain) => chain.deleteSelection().setPlaceholderData({ content }));
+  placeholderDropDown.value?.closeMenu();
+  restoreToolbarActionFocus('placeholder');
+}
+
+function setColor(color) {
+  runToolbarCommand((chain) => chain.setColor(color.var));
+  colorDropDown.value?.closeMenu();
+  restoreToolbarActionFocus('color');
 }
 
 function onError(id, error) {
@@ -666,35 +788,33 @@ function onError(id, error) {
 const toolbarActions = computed(() => {
   const actionsDefault = [];
 
-  actionsDefault.push({
-    id: 'undo',
-    name: displayTexts.value.undo,
-    icon: 'undo',
-    groupId: 'undoRedo',
-    area: 'left',
-    disabled: !editor.value.can().undo(),
-  });
-
-  actionsDefault.push({
-    id: 'redo',
-    name: displayTexts.value.redo,
-    icon: 'redo',
-    groupId: 'undoRedo',
-    area: 'left',
-    disabled: !editor.value.can().redo(),
-  });
-
-  const formatButtons = formatActionsButtons.value.map((button) => ({
-    id: button.name,
-    name: displayTexts.value[button.name],
-    icon: button.icon,
-    groupId: 'format1',
-    area: 'left',
-    disabled: isSelectionEmpty.value,
-    active: editor.value.isActive(button.name),
-  }));
-
-  actionsDefault.push(...formatButtons);
+  actionsDefault.push(
+    {
+      id: 'undo',
+      name: displayTexts.value.undo,
+      icon: 'undo',
+      groupId: 'undoRedo',
+      area: 'left',
+      disabled: !editor.value.can().undo(),
+    },
+    {
+      id: 'redo',
+      name: displayTexts.value.redo,
+      icon: 'redo',
+      groupId: 'undoRedo',
+      area: 'left',
+      disabled: !editor.value.can().redo(),
+    },
+    ...formatActionsButtons.value.map((button) => ({
+      id: button.name,
+      name: displayTexts.value[button.name],
+      icon: button.icon,
+      groupId: 'format1',
+      area: 'left',
+      disabled: isSelectionEmpty.value,
+      active: editor.value.isActive(button.isActiveCheck || button.name),
+    }))
+  );
 
   if (props.showColorPicker) {
     actionsDefault.push({
@@ -784,15 +904,15 @@ function toolbarActionClick(id, value) {
   const listAction = listActionsButtons.value.find((action) => action.name === id);
 
   if (id === 'undo') {
-    editor.value.chain().focus().undo().run();
+    runToolbarCommand((chain) => chain.undo());
   } else if (id === 'redo') {
-    editor.value.chain().focus().redo().run();
+    runToolbarCommand((chain) => chain.redo());
   } else if (formatAction) {
-    editor.value.chain().focus()[formatAction.command]().run();
+    runToolbarCommand((chain) => chain[formatAction.command]());
   } else if (headingAction) {
-    editor.value.chain().focus().unsetLink().toggleHeading({ level: headingAction.level }).run();
+    runToolbarCommand((chain) => chain.unsetLink().toggleHeading({ level: headingAction.level }));
   } else if (listAction) {
-    editor.value.chain().focus()[listAction.command]().run();
+    runToolbarCommand((chain) => chain[listAction.command]());
   } else if (id === 'link') {
     checkIfOpen();
   } else if (id === 'image') {
@@ -864,7 +984,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
       class="lx-markdown-text-area-wrapper"
       :data-disabled="isDisabled ? '' : null"
       :data-invalid="invalid ? '' : null"
-      @click="focus()"
+      @click="focus($event)"
     >
       <LxToolbar
         v-if="editor"
@@ -873,8 +993,9 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
         @actionClick="toolbarActionClick"
       >
         <template #color>
-          <LxDropDownMenu :disabled="isSelectionEmpty || isDisabled">
+          <LxDropDownMenu ref="colorDropDown" :disabled="isSelectionEmpty || isDisabled">
             <LxButton
+              :id="`${props.id}-action-color`"
               icon="color"
               kind="ghost"
               variant="icon-only"
@@ -894,8 +1015,8 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
                     { 'lx-selected': editor.isActive('textStyle', { color: color.var }) },
                   ]"
                   tabindex="0"
-                  @click="editor.chain().focus().setColor(color.var).run()"
-                  @keydown.enter.prevent="editor.chain().focus().setColor(color.var).run()"
+                  @click="setColor(color)"
+                  @keydown.enter.prevent="setColor(color)"
                 >
                   <div></div>
                 </li>
@@ -904,8 +1025,12 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
           </LxDropDownMenu>
         </template>
         <template #placeholder>
-          <LxDropDownMenu :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')">
+          <LxDropDownMenu
+            ref="placeholderDropDown"
+            :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')"
+          >
             <LxButton
+              :id="`${props.id}-action-placeholder`"
               icon="tag"
               kind="ghost"
               variant="icon-only"
@@ -920,8 +1045,9 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
                 v-for="item in dictionary"
                 :key="item.id"
                 :title="item?.description"
+                tabindex="0"
                 @click="postPlaceholder(item.value)"
-                @keydown.enter="postPlaceholder(item.value)"
+                @keydown.enter.prevent="postPlaceholder(item.value)"
               >
                 <p class="lx-data">{{ item?.name }}</p>
                 <div>
@@ -1012,7 +1138,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
         <EditorContent
           v-if="EditorContent && editor"
           class="lx-markdown-text-area lx-input-area"
-          :style="{ 'min-height': rows * 2.2 + 'rem' }"
+          :style="{ 'min-height': `${rows * 2.2}rem` }"
           :editor="editor"
           :title="tooltip"
           role="textbox"

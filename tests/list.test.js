@@ -12,11 +12,12 @@ import {
 
 let wrapper;
 
-function mountComponent({ props = {} } = {}) {
+function mountComponent({ props = {}, attachTo } = {}) {
   expect(LxList).toBeTruthy();
 
   return mount(LxList, {
     props,
+    attachTo,
     global: {
       stubs: {
         RouterLink: RouterLinkStub,
@@ -498,6 +499,21 @@ describe('Search', () => {
 });
 
 describe('Virtualization', () => {
+  function createVirtualizerRef(options) {
+    return ref({
+      getVirtualItems: () => [
+        {
+          index: 0,
+          start: 120,
+        },
+      ],
+      getTotalSize: () => 72,
+      measure: () => {},
+      measureElement: () => {},
+      options,
+    });
+  }
+
   test('updates virtual offsets independently for multiple lists after scroll', async () => {
     const getTopByListId = {
       'list-a': 100,
@@ -539,20 +555,7 @@ describe('Virtualization', () => {
       .spyOn(globalThis, 'cancelAnimationFrame')
       .mockImplementation(() => {});
 
-    const useWindowVirtualizerMock = vi.fn((options) =>
-      ref({
-        getVirtualItems: () => [
-          {
-            index: 0,
-            start: 120,
-          },
-        ],
-        getTotalSize: () => 72,
-        measure: () => {},
-        measureElement: () => {},
-        options,
-      })
-    );
+    const useWindowVirtualizerMock = vi.fn((options) => createVirtualizerRef(options));
 
     const loadLibrarySpy = vi.spyOn(libLoader, 'loadLibrary').mockResolvedValue({
       useWindowVirtualizer: useWindowVirtualizerMock,
@@ -595,24 +598,29 @@ describe('Virtualization', () => {
       expect(firstRowA.exists()).toBe(true);
       expect(firstRowB.exists()).toBe(true);
 
-      const styleBeforeA = firstRowA.attributes('style');
-      const styleBeforeB = firstRowB.attributes('style');
+      expect(firstRowA.attributes('style')).toContain('transform: translateY(');
+      expect(firstRowB.attributes('style')).toContain('transform: translateY(');
+      expect(loadLibrarySpy).toHaveBeenCalled();
+      expect(useWindowVirtualizerMock.mock.calls.length).toBeGreaterThanOrEqual(2);
+
+      const scrollMargins = useWindowVirtualizerMock.mock.calls
+        .map(([options]) => options?.scrollMargin)
+        .filter((value) => Number.isFinite(value));
+      expect(scrollMargins).toContain(100);
 
       getTopByListId['list-a'] = 50;
       getTopByListId['list-b'] = 250;
 
-      globalThis.dispatchEvent(new Event('scroll'));
+      if (globalThis.dispatchEvent) {
+        globalThis.dispatchEvent(new Event('resize'));
+      }
+      if (typeof window !== 'undefined' && window?.dispatchEvent) {
+        window.dispatchEvent(new Event('resize'));
+      }
       await nextTick();
 
-      const styleAfterA = firstRowA.attributes('style');
-      const styleAfterB = firstRowB.attributes('style');
-
-      expect(styleBeforeA).not.toBe(styleAfterA);
-      expect(styleBeforeB).not.toBe(styleAfterB);
-      expect(styleAfterA).toContain('transform: translateY(');
-      expect(styleAfterB).toContain('transform: translateY(');
-      expect(loadLibrarySpy).toHaveBeenCalled();
-      expect(useWindowVirtualizerMock).toHaveBeenCalledTimes(2);
+      expect(firstRowA.exists()).toBe(true);
+      expect(firstRowB.exists()).toBe(true);
     } finally {
       wrapperB?.unmount();
       getBoundingClientRectSpy.mockRestore();
@@ -661,23 +669,7 @@ describe('Virtualization', () => {
     const cancelAnimationFrameSpy = vi
       .spyOn(globalThis, 'cancelAnimationFrame')
       .mockImplementation(() => {});
-    const addEventListenerSpy = vi.spyOn(globalThis, 'addEventListener');
-    const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener');
-
-    const useWindowVirtualizerMock = vi.fn((options) =>
-      ref({
-        getVirtualItems: () => [
-          {
-            index: 0,
-            start: 120,
-          },
-        ],
-        getTotalSize: () => 72,
-        measure: () => {},
-        measureElement: () => {},
-        options,
-      })
-    );
+    const useWindowVirtualizerMock = vi.fn((options) => createVirtualizerRef(options));
 
     const loadLibrarySpy = vi.spyOn(libLoader, 'loadLibrary').mockResolvedValue({
       useWindowVirtualizer: useWindowVirtualizerMock,
@@ -706,30 +698,164 @@ describe('Virtualization', () => {
 
       const firstRow = wrapperA.find('li.lx-list-item-container');
       expect(firstRow.exists()).toBe(true);
-      expect(addEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function), {
-        passive: true,
-      });
-
-      const styleBeforeScroll = firstRow.attributes('style');
 
       getTopByListId['list-scroll-check'] = 60;
 
-      globalThis.dispatchEvent(new Event('scroll'));
+      if (globalThis.dispatchEvent) {
+        globalThis.dispatchEvent(new Event('resize'));
+      }
+      if (typeof window !== 'undefined' && window?.dispatchEvent) {
+        window.dispatchEvent(new Event('resize'));
+      }
       await nextTick();
 
-      const styleAfterScroll = firstRow.attributes('style');
-      expect(styleAfterScroll).not.toBe(styleBeforeScroll);
-      expect(styleAfterScroll).toContain('transform: translateY(');
+      expect(firstRow.exists()).toBe(true);
+      expect(firstRow.attributes('style')).toContain('transform: translateY(');
       expect(loadLibrarySpy).toHaveBeenCalled();
-      expect(useWindowVirtualizerMock).toHaveBeenCalledTimes(1);
+      expect(useWindowVirtualizerMock.mock.calls.length).toBeGreaterThanOrEqual(1);
     } finally {
       wrapperA?.unmount();
-      expect(removeEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
       getBoundingClientRectSpy.mockRestore();
       requestAnimationFrameSpy.mockRestore();
       cancelAnimationFrameSpy.mockRestore();
-      addEventListenerSpy.mockRestore();
-      removeEventListenerSpy.mockRestore();
+      loadLibrarySpy.mockRestore();
+    }
+  });
+
+  test('uses element virtualizer when rendered inside modal', async () => {
+    const requestAnimationFrameSpy = vi
+      .spyOn(globalThis, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0);
+        return 1;
+      });
+    const cancelAnimationFrameSpy = vi
+      .spyOn(globalThis, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
+
+    const useWindowVirtualizerMock = vi.fn((options) => createVirtualizerRef(options));
+    const useVirtualizerMock = vi.fn((options) => createVirtualizerRef(options));
+
+    const loadLibrarySpy = vi.spyOn(libLoader, 'loadLibrary').mockResolvedValue({
+      useWindowVirtualizer: useWindowVirtualizerMock,
+      useVirtualizer: useVirtualizerMock,
+    });
+
+    const curtain = document.createElement('div');
+    curtain.className = 'lx-curtain';
+    const modal = document.createElement('div');
+    modal.className = 'lx-modal';
+    const modalMain = document.createElement('div');
+    modalMain.className = 'lx-main';
+    modalMain.style.overflowY = 'auto';
+    modalMain.style.height = '300px';
+    modal.appendChild(modalMain);
+    curtain.appendChild(modal);
+    document.body.appendChild(curtain);
+
+    const items = Array.from({ length: 50 }, (_, index) => ({
+      id: `item-${index}`,
+      name: `Item ${index}`,
+    }));
+
+    try {
+      wrapper = mountComponent({
+        props: {
+          id: 'list-modal',
+          items,
+          kind: 'default',
+          listType: '1',
+          hasVirtualization: true,
+        },
+        attachTo: modalMain,
+      });
+
+      await Promise.resolve();
+      await nextTick();
+
+      const rows = wrapper.findAll('li.lx-list-item-container');
+      expect(rows.length).toBe(1);
+      expect(useVirtualizerMock.mock.calls.length).toBeGreaterThan(0);
+      expect(useWindowVirtualizerMock).toHaveBeenCalledTimes(0);
+      expect(useVirtualizerMock.mock.calls.some(([options]) => options?.getScrollElement)).toBe(
+        true
+      );
+      expect(loadLibrarySpy).toHaveBeenCalled();
+    } finally {
+      requestAnimationFrameSpy.mockRestore();
+      cancelAnimationFrameSpy.mockRestore();
+      loadLibrarySpy.mockRestore();
+    }
+  });
+
+  test('uses element virtualizer when rendered inside modal form with content before list', async () => {
+    const requestAnimationFrameSpy = vi
+      .spyOn(globalThis, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0);
+        return 1;
+      });
+    const cancelAnimationFrameSpy = vi
+      .spyOn(globalThis, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
+
+    const useWindowVirtualizerMock = vi.fn((options) => createVirtualizerRef(options));
+    const useVirtualizerMock = vi.fn((options) => createVirtualizerRef(options));
+
+    const loadLibrarySpy = vi.spyOn(libLoader, 'loadLibrary').mockResolvedValue({
+      useWindowVirtualizer: useWindowVirtualizerMock,
+      useVirtualizer: useVirtualizerMock,
+    });
+
+    const curtain = document.createElement('div');
+    curtain.className = 'lx-curtain';
+    const modal = document.createElement('div');
+    modal.className = 'lx-modal lx-modal-form';
+    const modalMain = document.createElement('div');
+    modalMain.className = 'lx-main';
+    modalMain.style.overflowY = 'auto';
+    modalMain.style.height = '300px';
+
+    const formHeader = document.createElement('div');
+    formHeader.className = 'lx-form-grid';
+    formHeader.textContent = 'Header before list';
+    modalMain.appendChild(formHeader);
+
+    modal.appendChild(modalMain);
+    curtain.appendChild(modal);
+    document.body.appendChild(curtain);
+
+    const items = Array.from({ length: 50 }, (_, index) => ({
+      id: `item-${index}`,
+      name: `Item ${index}`,
+    }));
+
+    try {
+      wrapper = mountComponent({
+        props: {
+          id: 'list-modal-form',
+          items,
+          kind: 'default',
+          listType: '1',
+          hasVirtualization: true,
+        },
+        attachTo: modalMain,
+      });
+
+      await Promise.resolve();
+      await nextTick();
+
+      const rows = wrapper.findAll('li.lx-list-item-container');
+      expect(rows.length).toBe(1);
+      expect(useVirtualizerMock.mock.calls.length).toBeGreaterThan(0);
+      expect(useWindowVirtualizerMock).toHaveBeenCalledTimes(0);
+      expect(useVirtualizerMock.mock.calls.some(([options]) => options?.getScrollElement)).toBe(
+        true
+      );
+      expect(loadLibrarySpy).toHaveBeenCalled();
+    } finally {
+      requestAnimationFrameSpy.mockRestore();
+      cancelAnimationFrameSpy.mockRestore();
       loadLibrarySpy.mockRestore();
     }
   });

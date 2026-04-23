@@ -34,25 +34,25 @@
   --h3-font-size: 0.875rem;
   --h3-font-weight: 600;
 
-  --list-item-border-radius: 12px;
+  --list-item-border-radius: var(--border-radius-0750);
   --list-header-min-height: 3.5rem;
 
   --input-border: var(--border-width-1) solid var(--color-input);
-  --input-border-bottom: 1px solid var(--color-input);
-  --input-border-radius: 12px;
+  --input-border-bottom: var(--border-width-1) solid var(--color-input);
+  --input-border-radius: var(--border-radius-full);
   --input-height: 3.5rem;
 
   --button-ghost-gap: 1rem;
-  --button-primary-border-radius: 0.5rem;
-  --button-secondary-border-radius: 0.5rem;
-  --button-tertiary-border-radius: 0.5rem;
-  --button-ghost-border-radius: 0.5rem;
+  --button-primary-border-radius: var(--border-radius-0500);
+  --button-secondary-border-radius: var(--border-radius-0500);
+  --button-tertiary-border-radius: var(--border-radius-0500);
+  --button-ghost-border-radius: var(--border-radius-0500);
   --button-primary-font-weight: var(--font-weight-bold);
 
-  --button-toolbar-primary-border-radius: 0.5rem;
-  --button-toolbar-secondary-border-radius: 0.5rem;
-  --button-toolbar-tertiary-border-radius: 0.5rem;
-  --button-toolbar-ghost-border-radius: 0.5rem;
+  --button-toolbar-primary-border-radius: var(--border-radius-0500);
+  --button-toolbar-secondary-border-radius: var(--border-radius-0500);
+  --button-toolbar-tertiary-border-radius: var(--border-radius-0500);
+  --button-toolbar-ghost-border-radius: var(--border-radius-0500);
 }
 
 .lx.lx-theme-dark {

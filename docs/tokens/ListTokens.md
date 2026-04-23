@@ -6,14 +6,14 @@
 
 | Variable name                             | Default value                                                 |
 |-------------------------------------------|---------------------------------------------------------------|
-| `--list-button-border-radius`             | 0                                                             |
+| `--list-button-border-radius`             | `--border-radius-0`                                           |
 | `--list-button-max-height`                | `--row-size`                                                  |
 | `--list-button-width`                     | `--row-size`                                                  |
 | `--list-category-border-radius`           | 0                                                             |
 | `--list-category-margin`                  | 0.25rem                                                       |
 | `--list-category-width`                   | 0.25rem                                                       |
 | `--list-item-border`                      | 2px solid transparent                                         |
-| `--list-item-border-radius`               | 0                                                             |
+| `--list-item-border-radius`               | `--border-radius-0`                                           |
 | `--list-item-border-radius-inner`         | `--list-item-border-radius`                                   |
 | `--list-item-gap`                         | 0.5rem                                                        |
 | `--list-item-header-padding`              | 0.35rem 0.35rem 0.2rem 0.25rem                                |

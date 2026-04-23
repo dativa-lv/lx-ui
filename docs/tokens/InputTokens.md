@@ -24,8 +24,8 @@ The following input components share these tokens as they are visually and funct
 | `--input-border-bottom`                        | 1px solid var(--color-label)               |
 | `--input-border-disabled`                      | 2px solid transparent                      |
 | `--input-border-bottom-disabled`               | 1px solid var(--color-disabled-foreground) |
-| `--input-border-radius`                        | 0                                          |
-| `--input-button-border-radius`                 | 0                                          |
+| `--input-border-radius`                        | `--border-radius-0`                        |
+| `--input-button-border-radius`                 | `--border-radius-0`                        |
 | `--input-button-height`                        | 2.5rem                                     |
 | `--input-button-indent-left`                   | 0rem                                       |
 | `--input-button-indent-right`                  | `--input-icon-wrapper-width`               |

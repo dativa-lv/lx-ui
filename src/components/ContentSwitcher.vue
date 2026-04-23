@@ -104,14 +104,10 @@ function checkIfHighlighted(id) {
   <div class="lx-field-wrapper" v-if="readOnly">
     <p class="lx-data">{{ getName() }}</p>
   </div>
-  <div
-    class="lx-content-switcher"
-    :class="[{ 'lx-icons-content-switcher': kind === 'combo' && isWideScreen }]"
-    v-else
-  >
+  <div class="lx-content-switcher-wrapper" v-else>
     <div
-      class="lx-content-switcher-grid"
-      :class="[{ 'lx-disabled': props.disabled }]"
+      class="lx-content-switcher"
+      :class="[{ 'lx-disabled': disabled }]"
       tabindex="-1"
       role="tablist"
       :style="`grid-template-columns: repeat(${props.items.length}, 1fr)`"
@@ -126,14 +122,7 @@ function checkIfHighlighted(id) {
         :title="props.tooltip ? `${props.tooltip}: ${item.name}` : item.name"
         role="tab"
         class="lx-content-switcher-item"
-        :class="[
-          { 'lx-selected': modelValue === item[props.idAttribute] },
-          {
-            'lx-highlighted-item':
-              highlightedItemId && highlightedItemId === item[props.idAttribute],
-          },
-          { 'lx-disabled': props.disabled },
-        ]"
+        :class="[{ 'lx-selected': modelValue === item[props.idAttribute] }]"
         :aria-selected="modelValue === item[props.idAttribute]"
         @keydown.enter.prevent="selectTab"
         @keydown.space.prevent="selectTab"

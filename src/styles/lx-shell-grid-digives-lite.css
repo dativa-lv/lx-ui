@@ -20,7 +20,7 @@
   grid-template-rows: var(--nav-row-size);
   background-color: var(--color-region);
   padding: 0 1rem;
-  border-bottom: 2px solid var(--color-brand-secondary);
+  border-bottom: var(--border-width-2) solid var(--color-brand-secondary);
 }
 
 .lx-layout.lx-layout-digives-lite > header {
@@ -211,7 +211,7 @@
 
 .lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive>.lx-nav-group .e-veseliba-button .lx-button {
   color: var(--color-interactive-hover-background);
-  border-top: 1px var(--color-chrome) solid;
+  border-top: var(--border-width-1) var(--color-chrome) solid;
 }
 
 .lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive>.lx-nav-group .e-veseliba-button .lx-button>.lx-button-content-wrapper svg {
@@ -651,11 +651,11 @@
 }
 
 .lx-animations-controller {
-    border-top: 1px solid var(--color-chrome);
+    border-top: var(--border-width-1) solid var(--color-chrome);
 }
 
 .lx-touch-mode-controller {		
-    border-bottom: 1px solid var(--color-chrome);		
+    border-bottom: var(--border-width-1) solid var(--color-chrome);		
 }
 
 .lx-touch-mode .lx-animations-controller,
@@ -686,19 +686,19 @@
 
 .lx-layout-digives-lite .lx-main>.lx-digives-lite-alert-list>.lx-digives-lite-alert .lx-alert-success {
   border: var(--border-width-2) solid var(--color-green-20);
-  border-left: 4px solid var(--color-notification-success-foreground);
+  border-left: var(--border-width-4) solid var(--color-notification-success-foreground);
   background-color: var(--color-notification-success-background);
 }
 
 .lx-layout-digives-lite .lx-main>.lx-digives-lite-alert-list>.lx-digives-lite-alert .lx-alert-warning {
   border: var(--border-width-2) solid var(--color-orange-20);
-  border-left: 4px solid var(--color-notification-warning-foreground);
+  border-left: var(--border-width-4) solid var(--color-notification-warning-foreground);
   background-color: var(--color-notification-warning-background);
 }
 
 .lx-layout-digives-lite .lx-main>.lx-digives-lite-alert-list>.lx-digives-lite-alert .lx-alert-error {
   border: var(--border-width-2) solid var(--color-red-20);
-  border-left: 4px solid var(--color-notification-error-foreground);
+  border-left: var(--border-width-4) solid var(--color-notification-error-foreground);
   background-color: var(--color-notification-error-background);
 }
 
@@ -741,8 +741,8 @@
 }
 
 .lx .lx-layout.lx-layout-digives-lite .lx-nav-panel ul.nested-nav {
-    border-top: 1px solid var(--color-chrome);
-    border-bottom: 1px solid var(--color-chrome);
+    border-top: var(--border-width-1) solid var(--color-chrome);
+    border-bottom: var(--border-width-1) solid var(--color-chrome);
 }
 
 .lx-layout.lx-layout-digives-lite .lx-nav-panel ul.nested-nav .lx-button .lx-button-content {
@@ -780,7 +780,7 @@
 .nav-item-separator {
 width: 100%;
 margin-top: -1px;
-border-top: 2px solid var(--color-brand-secondary);
+border-top: var(--border-width-2) solid var(--color-brand-secondary);
 }
 
 .lx-layout.lx-layout-digives-lite .lx-nav-panel.digives-lite-nav-panel .lx-mega-menu-item.lx-special .lx-button-content {
@@ -849,7 +849,7 @@ border-top: 2px solid var(--color-brand-secondary);
 
 .lx .lx-layout .user-menu-context+.session-timeout-wrapper {
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-chrome);
+  border-bottom: var(--border-width-1) solid var(--color-chrome);
 }
 
 @media (max-width: 1800px) {
@@ -1050,7 +1050,7 @@ border-top: 2px solid var(--color-brand-secondary);
 }
 
 .lx-layout-digives-lite .lx-dropdown-panel .user-menu-panel ul.lx-group>li:first-child {
-  border-top: 1px solid var(--color-chrome);
+  border-top: var(--border-width-1) solid var(--color-chrome);
 }
 
 @media (max-width: 1260px) {

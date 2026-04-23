@@ -17,6 +17,7 @@ import {
   getMonthYearString,
   extractTimeFromDate,
   extractMonthFromDate,
+  humanizeDate,
 } from '@/utils/dateUtils';
 
 process.env.TZ = 'UTC';
@@ -233,6 +234,271 @@ describe('Date Utils', () => {
 
       const lower = extractMonthFromDate('lv-LV', '2025-11-24', false);
       expect(lower).toBe('novembris');
+    });
+  });
+
+  describe('humanizeDate', () => {
+    const unlimitedDays = 100000; // Or any other big number to get unlimited days
+
+    const toUtcDate = (isoDate) => new Date(`${isoDate}T00:00:00.000Z`);
+
+    const getDateRange = (fromIsoDate, toIsoDate) => {
+      const dates = [];
+      const current = toUtcDate(fromIsoDate);
+      const end = toUtcDate(toIsoDate);
+
+      while (current <= end) {
+        dates.push(current.toISOString().slice(0, 10));
+        current.setUTCDate(current.getUTCDate() + 1);
+      }
+
+      return dates;
+    };
+
+    const assertRows = (dateFrom, rows) => {
+      const options = { dateFrom, limitDays: unlimitedDays, locale: 'lv' };
+
+      rows.forEach(({ dates, from, to, label, labelNoun }) => {
+        const values = dates || getDateRange(from, to);
+        const expectedNoun = labelNoun || label;
+
+        values.forEach((date) => {
+          expect(humanizeDate(date, options)).toBe(label);
+          expect(humanizeDate(date, { ...options, form: 'noun' })).toBe(expectedNoun);
+        });
+      });
+    };
+
+    it('returns empty value for invalid input', () => {
+      const invalidInput = ['', '2026-13-13', 'invalid', null, undefined];
+      const emptyValue = '—';
+
+      invalidInput.forEach((input) => {
+        expect(humanizeDate(input)).toBe(emptyValue);
+      });
+    });
+
+    describe('falls back to formatted date when outside limitDays', () => {
+      const dateFrom = '2026-04-13';
+
+      it('any date (including today) if limitDays is 0', () => {
+        const options = { dateFrom, limitDays: 0 };
+
+        expect(humanizeDate(dateFrom, options)).toBe('13.04.2026.');
+        expect(humanizeDate('2026-04-14', options)).toBe('14.04.2026.');
+        expect(humanizeDate('2021-01-01', options)).toBe('01.01.2021.');
+      });
+
+      it('dates outside default limitDays (7)', () => {
+        const options = { dateFrom };
+
+        expect(humanizeDate('2026-04-20', options)).toBe('20.04.2026.');
+        expect(humanizeDate('2026-04-06', options)).toBe('06.04.2026.');
+        expect(humanizeDate('2026-04-19', options)).not.toBe('19.04.2026.');
+        expect(humanizeDate('2026-04-07', options)).not.toBe('07.04.2026.');
+      });
+    });
+
+    it('returns relative day label in en locale', () => {
+      const options = { dateFrom: '2026-04-07', locale: 'en' };
+
+      expect(humanizeDate('2026-04-05', options)).toBe('2 days ago');
+      expect(humanizeDate('2026-04-06', options)).toBe('Yesterday');
+      expect(humanizeDate('2026-04-07', options)).toBe('Today');
+      expect(humanizeDate('2026-04-08', options)).toBe('Tomorrow');
+      expect(humanizeDate('2026-04-09', options)).toBe('In 2 days');
+    });
+
+    it('returns relative day label in lv locale', () => {
+      const options = { dateFrom: '2026-04-07', locale: 'lv' };
+
+      expect(humanizeDate('2026-04-05', options)).toBe('Aizvakar');
+      expect(humanizeDate('2026-04-06', options)).toBe('Vakar');
+      expect(humanizeDate('2026-04-07', options)).toBe('Šodien');
+      expect(humanizeDate('2026-04-08', options)).toBe('Rīt');
+      expect(humanizeDate('2026-04-09', options)).toBe('Parīt');
+    });
+
+    it('returns weekday label for same-week date', () => {
+      const options = { dateFrom: '2026-04-07', locale: 'lv' };
+
+      expect(humanizeDate('2026-04-10', options)).toBe('Piektdien');
+      expect(humanizeDate('2026-04-11', options)).toBe('Sestdien');
+      expect(humanizeDate('2026-04-12', options)).toBe('Svētdien');
+    });
+
+    it('returns weekday label for next-week date', () => {
+      const options = { dateFrom: '2026-04-07', locale: 'lv' };
+
+      expect(humanizeDate('2026-04-13', options)).toBe('Nākamo pirmdien');
+      expect(humanizeDate('2026-04-14', options)).not.toBe('Nākamo otrdien');
+      expect(humanizeDate('2026-04-15', options)).not.toBe('Nākamo trešdien');
+      expect(humanizeDate('2026-04-16', options)).not.toBe('Nākamo ceturtdien');
+      expect(humanizeDate('2026-04-17', options)).not.toBe('Nākamo piektdien');
+      expect(humanizeDate('2026-04-18', options)).not.toBe('Nākamo sestdien');
+      expect(humanizeDate('2026-04-19', options)).not.toBe('Nākamo svētdien');
+    });
+
+    it('returns weekday label for previous-week date', () => {
+      const options = { dateFrom: '2026-04-07', locale: 'lv' };
+
+      expect(humanizeDate('2026-04-05', options)).not.toBe('Pagājušo svētdien');
+      expect(humanizeDate('2026-04-04', options)).toBe('Pagājušo sestdien');
+      expect(humanizeDate('2026-04-03', options)).toBe('Pagājušo piektdien');
+      expect(humanizeDate('2026-04-02', options)).toBe('Pagājušo ceturtdien');
+      expect(humanizeDate('2026-04-01', options)).toBe('Pagājušo trešdien');
+      expect(humanizeDate('2026-03-31', options)).not.toBe('Pagājušo otrdien');
+      expect(humanizeDate('2026-03-30', options)).not.toBe('Pagājušo pirmdien');
+    });
+
+    describe('matches various examples, covers every listed date/interval, includes noun form where applicable', () => {
+      it('if today is 13.04.2026. (Monday, start of week, future dates)', () => {
+        assertRows('2026-04-13', [
+          { dates: ['2026-04-13'], label: 'Šodien', labelNoun: 'Šodiena' },
+          { dates: ['2026-04-14'], label: 'Rīt', labelNoun: 'Rītdiena' },
+          { dates: ['2026-04-15'], label: 'Parīt', labelNoun: 'Parītdiena' },
+          { dates: ['2026-04-16'], label: 'Ceturtdien', labelNoun: 'Ceturtdiena' },
+          { dates: ['2026-04-17'], label: 'Piektdien', labelNoun: 'Piektdiena' },
+          { dates: ['2026-04-18'], label: 'Sestdien', labelNoun: 'Sestdiena' },
+          { dates: ['2026-04-19'], label: 'Svētdien', labelNoun: 'Svētdiena' },
+          {
+            from: '2026-04-20',
+            to: '2026-04-26',
+            label: 'Nākamajā nedēļā',
+            labelNoun: 'Nākamā nedēļa',
+          },
+          { from: '2026-04-27', to: '2026-05-03', label: 'Pēc 2 nedēļām' },
+          { from: '2026-05-04', to: '2026-05-10', label: 'Pēc 3 nedēļām' },
+          {
+            from: '2026-05-11',
+            to: '2026-05-31',
+            label: 'Nākamajā mēnesī',
+            labelNoun: 'Nākamais mēnesis',
+          },
+          { from: '2026-06-01', to: '2026-06-30', label: 'Pēc 2 mēnešiem' },
+          { from: '2026-07-01', to: '2026-07-31', label: 'Pēc 3 mēnešiem' },
+          { from: '2027-03-01', to: '2027-03-31', label: 'Pēc 11 mēnešiem' },
+          {
+            from: '2027-04-01',
+            to: '2027-12-31',
+            label: 'Nākamajā gadā',
+            labelNoun: 'Nākamais gads',
+          },
+          { from: '2028-01-01', to: '2028-12-31', label: 'Pēc 2 gadiem' },
+          { from: '2029-01-01', to: '2029-12-31', label: 'Pēc 3 gadiem' },
+        ]);
+      });
+
+      it('if today is 13.04.2026. (Monday, start of week, past dates)', () => {
+        assertRows('2026-04-13', [
+          { dates: ['2026-04-13'], label: 'Šodien', labelNoun: 'Šodiena' },
+          { dates: ['2026-04-12'], label: 'Vakar', labelNoun: 'Vakardiena' },
+          { dates: ['2026-04-11'], label: 'Aizvakar', labelNoun: 'Aizvakardiena' },
+          { dates: ['2026-04-10'], label: 'Pagājušo piektdien', labelNoun: 'Pagājušā piektdiena' },
+          {
+            dates: ['2026-04-09'],
+            label: 'Pagājušo ceturtdien',
+            labelNoun: 'Pagājušā ceturtdiena',
+          },
+          { dates: ['2026-04-08'], label: 'Pagājušo trešdien', labelNoun: 'Pagājušā trešdiena' },
+          { dates: ['2026-04-07'], label: 'Pagājušo otrdien', labelNoun: 'Pagājušā otrdiena' },
+          { dates: ['2026-04-06'], label: 'Pagājušajā nedēļā', labelNoun: 'Pagājušā nedēļa' },
+          { from: '2026-03-30', to: '2026-04-05', label: 'Pirms 2 nedēļām' },
+          { from: '2026-03-23', to: '2026-03-29', label: 'Pirms 3 nedēļām' },
+          {
+            from: '2026-03-01',
+            to: '2026-03-22',
+            label: 'Pagājušajā mēnesī',
+            labelNoun: 'Pagājušais mēnesis',
+          },
+          { from: '2026-02-01', to: '2026-02-28', label: 'Pirms 2 mēnešiem' },
+          { from: '2026-01-01', to: '2026-01-31', label: 'Pirms 3 mēnešiem' },
+          { from: '2025-12-01', to: '2025-12-31', label: 'Pirms 4 mēnešiem' },
+          { from: '2025-05-01', to: '2025-05-31', label: 'Pirms 11 mēnešiem' },
+          {
+            from: '2025-01-01',
+            to: '2025-04-30',
+            label: 'Pagājušajā gadā',
+            labelNoun: 'Pagājušais gads',
+          },
+          { from: '2024-01-01', to: '2024-12-31', label: 'Pirms 2 gadiem' },
+          { from: '2023-01-01', to: '2023-12-31', label: 'Pirms 3 gadiem' },
+        ]);
+      });
+
+      it('if today is 30.04.2026. (Thursday, end of month, future dates)', () => {
+        assertRows('2026-04-30', [
+          { dates: ['2026-04-30'], label: 'Šodien', labelNoun: 'Šodiena' },
+          { dates: ['2026-05-01'], label: 'Rīt', labelNoun: 'Rītdiena' },
+          { dates: ['2026-05-02'], label: 'Parīt', labelNoun: 'Parītdiena' },
+          { dates: ['2026-05-03'], label: 'Svētdien', labelNoun: 'Svētdiena' },
+          { dates: ['2026-05-04'], label: 'Nākamo pirmdien', labelNoun: 'Nākamā pirmdiena' },
+          { dates: ['2026-05-05'], label: 'Nākamo otrdien', labelNoun: 'Nākamā otrdiena' },
+          { dates: ['2026-05-06'], label: 'Nākamo trešdien', labelNoun: 'Nākamā trešdiena' },
+          {
+            from: '2026-05-07',
+            to: '2026-05-10',
+            label: 'Nākamajā nedēļā',
+            labelNoun: 'Nākamā nedēļa',
+          },
+          { from: '2026-05-11', to: '2026-05-17', label: 'Pēc 2 nedēļām' },
+          { from: '2026-05-18', to: '2026-05-24', label: 'Pēc 3 nedēļām' },
+          {
+            from: '2026-05-25',
+            to: '2026-05-31',
+            label: 'Nākamajā mēnesī',
+            labelNoun: 'Nākamais mēnesis',
+          },
+          { from: '2026-06-01', to: '2026-06-30', label: 'Pēc 2 mēnešiem' },
+          { from: '2026-07-01', to: '2026-07-31', label: 'Pēc 3 mēnešiem' },
+          { from: '2027-03-01', to: '2027-03-31', label: 'Pēc 11 mēnešiem' },
+          {
+            from: '2027-04-01',
+            to: '2027-12-31',
+            label: 'Nākamajā gadā',
+            labelNoun: 'Nākamais gads',
+          },
+          { from: '2028-01-01', to: '2028-12-31', label: 'Pēc 2 gadiem' },
+          { from: '2029-01-01', to: '2029-12-31', label: 'Pēc 3 gadiem' },
+        ]);
+      });
+
+      it('if today is 01.01.2026. (Thursday, start of year, past dates)', () => {
+        assertRows('2026-01-01', [
+          { dates: ['2026-01-01'], label: 'Šodien', labelNoun: 'Šodiena' },
+          { dates: ['2025-12-31'], label: 'Vakar', labelNoun: 'Vakardiena' },
+          { dates: ['2025-12-30'], label: 'Aizvakar', labelNoun: 'Aizvakardiena' },
+          { dates: ['2025-12-29'], label: 'Pirmdien', labelNoun: 'Pirmdiena' },
+          { dates: ['2025-12-28'], label: 'Pagājušo svētdien', labelNoun: 'Pagājušā svētdiena' },
+          { dates: ['2025-12-27'], label: 'Pagājušo sestdien', labelNoun: 'Pagājušā sestdiena' },
+          { dates: ['2025-12-26'], label: 'Pagājušo piektdien', labelNoun: 'Pagājušā piektdiena' },
+          {
+            from: '2025-12-22',
+            to: '2025-12-25',
+            label: 'Pagājušajā nedēļā',
+            labelNoun: 'Pagājušā nedēļa',
+          },
+          { from: '2025-12-15', to: '2025-12-21', label: 'Pirms 2 nedēļām' },
+          { from: '2025-12-08', to: '2025-12-14', label: 'Pirms 3 nedēļām' },
+          {
+            from: '2025-12-01',
+            to: '2025-12-07',
+            label: 'Pagājušajā mēnesī',
+            labelNoun: 'Pagājušais mēnesis',
+          },
+          { from: '2025-11-01', to: '2025-11-30', label: 'Pirms 2 mēnešiem' },
+          { from: '2025-10-01', to: '2025-10-31', label: 'Pirms 3 mēnešiem' },
+          { from: '2025-02-01', to: '2025-02-28', label: 'Pirms 11 mēnešiem' },
+          {
+            from: '2025-01-01',
+            to: '2025-01-31',
+            label: 'Pagājušajā gadā',
+            labelNoun: 'Pagājušais gads',
+          },
+          { from: '2024-01-01', to: '2024-12-31', label: 'Pirms 2 gadiem' },
+          { from: '2023-01-01', to: '2023-12-31', label: 'Pirms 3 gadiem' },
+        ]);
+      });
     });
   });
 });

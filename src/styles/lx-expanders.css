@@ -126,7 +126,7 @@
   display: inline-block;
   height: 0.75rem;
   width: 0.75rem;
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   margin-left: -1.1rem;
   position: absolute;
   top: 0.5rem;
@@ -186,11 +186,11 @@
 
 .lx-modal .lx-accordion .lx-expander {
   border: var(--border-width-2) var(--color-background) solid;
-  border-bottom: 2px transparent none;
+  border-bottom: var(--border-width-2) transparent none;
 }
 
 .lx-modal .lx-accordion .lx-expander.lx-expanded:last-of-type {
-  border-bottom: 2px var(--color-background) solid;
+  border-bottom: var(--border-width-2) var(--color-background) solid;
 }
 
 .lx-modal .lx-accordion .lx-expander.lx-expanded .lx-head:not(:hover) {
@@ -258,7 +258,7 @@
   height: 1rem !important;
   width: 1rem !important;
   border: var(--border-width-2) solid var(--color-region);
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   position: absolute;
   top: 0.5rem;
   left: 0.5rem;

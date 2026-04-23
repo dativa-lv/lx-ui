@@ -1,5 +1,32 @@
 # LX/UI Migration Guide
 
+## 2.1.2 → 2.1.3
+
+### Breaking changes
+
+The `--radius-2` token has been removed.
+
+**Token renames**
+
+- `--radius-1` → `--border-radius-0250`
+- `--radius-default` → `--border-radius-default`
+
+#### LxAppendableList
+
+The "Add record" button has moved from the bottom to the top of the list, now rendered inside a fully supported LxToolbar.
+
+#### LxContentSwitcher
+
+LxContentSwitcher styles have been moved to a separate file - `lx-content-switchers.css`. Import this file in your project to ensure correct content switcher appearance and behavior.
+
+The following tokens have been removed:
+- `--content-switcher-height`
+- `--color-content-switcher-foreground`
+
+**Class renames**
+- `lx-content-switcher` → `lx-content-switcher-wrapper`
+- `lx-content-switcher-grid` → `lx-content-switcher`
+
 ## 2.1.0 → 2.1.1
 
 ### Breaking changes

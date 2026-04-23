@@ -57,6 +57,7 @@ const libraryLoaders = {
       textStyle,
       color,
       markdown,
+      pmState,
     ] = await Promise.all([
       import('@tiptap/vue-3'),
       import('@tiptap/extension-heading'),
@@ -68,6 +69,7 @@ const libraryLoaders = {
       import('@tiptap/extension-text-style'),
       import('@tiptap/extension-color'),
       import('tiptap-markdown'),
+      import('@tiptap/pm/state'),
     ]);
     return {
       Editor: vue3.Editor,
@@ -81,6 +83,7 @@ const libraryLoaders = {
       TextStyle: textStyle.TextStyle,
       Color: color.Color,
       Markdown: markdown.Markdown,
+      Plugin: pmState.Plugin,
     };
   },
 

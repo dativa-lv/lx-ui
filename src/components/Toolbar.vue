@@ -668,6 +668,7 @@ defineExpose({ toggleSearch, focusAction });
             ref="searchInputDefault"
             :key="searchInputRefresh"
             role="search"
+            :aria-label="displayTexts.search"
             v-model="searchStringRaw"
             :kind="searchSide === 'server' ? 'default' : 'search'"
             :placeholder="displayTexts.placeholder"
@@ -957,6 +958,7 @@ defineExpose({ toggleSearch, focusAction });
         <LxTextInput
           ref="searchInputCompact"
           role="search"
+          :aria-label="displayTexts.search"
           v-model="searchStringRaw"
           :kind="searchSide === 'server' ? 'default' : 'search'"
           :placeholder="displayTexts.placeholder"

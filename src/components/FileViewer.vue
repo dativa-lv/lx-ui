@@ -923,36 +923,38 @@ const toolbarActions = computed(() => {
   }
 
   if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
-    actionsDefault.push({
-      id: 'grabToScroll',
-      name: dragToScrollMode.value
-        ? displayTexts.value.grabToScrollTrue
-        : displayTexts.value.grabToScrollFalse,
-      groupId: 'grabToScroll',
-      area: 'right',
-      kind: 'toggle',
-      value: dragToScrollMode.value,
-      texts: {
-        valueYes: displayTexts.value.grabToScrollTrue,
-        valueNo: displayTexts.value.grabToScrollFalse,
+    actionsDefault.push(
+      {
+        id: 'grabToScroll',
+        name: dragToScrollMode.value
+          ? displayTexts.value.grabToScrollTrue
+          : displayTexts.value.grabToScrollFalse,
+        groupId: 'grabToScroll',
+        area: 'right',
+        kind: 'toggle',
+        value: dragToScrollMode.value,
+        texts: {
+          valueYes: displayTexts.value.grabToScrollTrue,
+          valueNo: displayTexts.value.grabToScrollFalse,
+        },
       },
-    });
-    actionsDefault.push({
-      id: 'fitToHeight',
-      name: displayTexts.value.fitToHeight,
-      icon: 'fit-to-height',
-      groupId: 'fit',
-      area: 'right',
-      active: fitType.value === 'fit-to-height',
-    });
-    actionsDefault.push({
-      id: 'fitToWidth',
-      name: displayTexts.value.fitToWidth,
-      icon: 'fit-to-width',
-      groupId: 'fit',
-      area: 'right',
-      active: fitType.value === 'fit-to-width',
-    });
+      {
+        id: 'fitToHeight',
+        name: displayTexts.value.fitToHeight,
+        icon: 'fit-to-height',
+        groupId: 'fit',
+        area: 'right',
+        active: fitType.value === 'fit-to-height',
+      },
+      {
+        id: 'fitToWidth',
+        name: displayTexts.value.fitToWidth,
+        icon: 'fit-to-width',
+        groupId: 'fit',
+        area: 'right',
+        active: fitType.value === 'fit-to-width',
+      }
+    );
   }
 
   if (
@@ -961,22 +963,24 @@ const toolbarActions = computed(() => {
     supportedFileType.value === 'SVG' ||
     supportedFileType.value === 'Binary'
   ) {
-    actionsDefault.push({
-      id: 'zoomIn',
-      name: displayTexts.value.zoomIn,
-      icon: 'zoom-in',
-      groupId: 'zoom',
-      area: 'right',
-      disabled: isZoomInDisabled.value,
-    });
-    actionsDefault.push({
-      id: 'zoomOut',
-      name: displayTexts.value.zoomOut,
-      icon: 'zoom-out',
-      groupId: 'zoom',
-      area: 'right',
-      disabled: isZoomOutDisabled.value,
-    });
+    actionsDefault.push(
+      {
+        id: 'zoomIn',
+        name: displayTexts.value.zoomIn,
+        icon: 'zoom-in',
+        groupId: 'zoom',
+        area: 'right',
+        disabled: isZoomInDisabled.value,
+      },
+      {
+        id: 'zoomOut',
+        name: displayTexts.value.zoomOut,
+        icon: 'zoom-out',
+        groupId: 'zoom',
+        area: 'right',
+        disabled: isZoomOutDisabled.value,
+      }
+    );
   }
 
   if (props.showPrintButton) {

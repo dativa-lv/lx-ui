@@ -141,6 +141,15 @@ const model = computed({
 });
 
 function setActiveInput(type, id, defaultFocus = false) {
+  const shouldSkipInputFocusOnMobileTouch =
+    responsiveView.value &&
+    (isTouchSensitive.value || isTouchMode.value || openSource.value === 'touch');
+
+  if (shouldSkipInputFocusOnMobileTouch) {
+    activeInput.value = type;
+    return;
+  }
+
   if (!responsiveView.value) {
     activeInput.value = type;
   }

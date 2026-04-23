@@ -191,7 +191,7 @@
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  border-top: 2px solid var(--color-chrome);
+  border-top: var(--border-width-2) solid var(--color-chrome);
 }
 
 .lx .lx-layout .lx-dropdown-panel .lx-calendar-container .lx-calendar-footer.range-buttons {
@@ -219,7 +219,7 @@
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  border-top: 2px solid var(--color-chrome);
+  border-top: var(--border-width-2) solid var(--color-chrome);
 }
 
 
@@ -668,7 +668,7 @@
   display: flex;
   align-items: center;
   padding: 0 1rem;
-  border-left: 2px solid var(--color-chrome);
+  border-left: var(--border-width-2) solid var(--color-chrome);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-time-picker.date-time-only {
@@ -823,7 +823,7 @@
   transition: var(--day-content-transition);
   background-color: var(--bar-bg);
   border: var(--border-width-1) solid var(--color-region);
-  border-radius: 1rem;
+  border-radius: var(--border-radius-1000);
 }
 
 .lx .lx-layout  .lx-calendar-special-dates-wrapper .lx-list {
@@ -1269,7 +1269,7 @@ height: 100%;
   display: flex;
   align-items: center;
 
-  border-left: 2px solid var(--color-chrome);
+  border-left: var(--border-width-2) solid var(--color-chrome);
 }
 
 .lx .lx-region .lx-datepicker-default .lx-calendar-container .lx-time-list-viewport::before,

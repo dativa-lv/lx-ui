@@ -337,7 +337,7 @@ function isPlaceholderVisible() {
     props.modelValue === '' ||
     !props.modelValue ||
     props.modelValue.length === 0 ||
-    !props.items.some(
+    !props.items?.some(
       (item) => item[props.idAttribute]?.toString() === props.modelValue?.toString()
     )
   );
@@ -387,8 +387,8 @@ onMounted(() => {
 });
 const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.value));
 
-const getSelectedItem = computed(() =>
-  filteredItems.value.find((item) => item.id === selectedIdValue.value)
+const getSelectedItem = computed(
+  () => filteredItems.value?.find((item) => item.id === selectedIdValue.value) ?? {}
 );
 </script>
 
@@ -518,7 +518,7 @@ const getSelectedItem = computed(() =>
               ref="panelRef"
               tabindex="-1"
               class="lx-dropdown-default-content"
-              :style="{ width: panelWidth + 'px' }"
+              :style="{ width: `${panelWidth}px` }"
               @keydown.esc.prevent="closeDropDownDefaultOnEsc"
               @keydown.enter.prevent="onEnter"
               @keydown.space.prevent="onEnter"

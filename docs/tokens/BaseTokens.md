@@ -20,3 +20,15 @@
 | `--border-width-2` | 2px           |
 | `--border-width-3` | 3px           |
 | `--border-width-4` | 4px           |
+
+## Border radius tokens
+
+| Variable name          | Default value |
+|------------------------|---------------|
+| `--border-radius-0`    | 0             |
+| `--border-radius-0125` | 0.125rem      |
+| `--border-radius-0250` | 0.25rem       |
+| `--border-radius-0500` | 0.5rem        |
+| `--border-radius-0750` | 0.75rem       |
+| `--border-radius-1000` | 1rem          |
+| `--border-radius-full` | 100vh         |

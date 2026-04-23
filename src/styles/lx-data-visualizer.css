@@ -59,12 +59,12 @@
 .lx-data-visualizer .lx-bars-horizontal.show-legend,
 .lx-data-visualizer .lx-latvia-visualizer.show-legend {
   padding-bottom: 1rem;
-  border-bottom: 0.125rem solid var(--color-chrome);
+  border-bottom: var(--border-width-2) solid var(--color-chrome);
 }
 
 .lx-data-visualizer .lx-bars-vertical-container.show-legend {
   width: 100%;
-  border-bottom: 0.125rem solid var(--color-chrome);
+  border-bottom: var(--border-width-2) solid var(--color-chrome);
 }
 
 .lx-data-visualizer .bar-wrapper .bar {
@@ -176,7 +176,7 @@
 .lx-data-visualizer .legend-indicator {
   width: 0.75rem;
   height: 0.75rem;
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   background-color: var(--legend-color);
 }
 
@@ -315,7 +315,7 @@
   border: var(--border-width-2) solid var(--color-data);
   color: var(--color-data);
   background-color: var(--color-region);
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   width: 1.5rem;
   height: 1.5rem;
 }
@@ -332,7 +332,7 @@
 .lx-data-visualizer .lx-target-wrapper-multiple .target-value-multiple > .lx-info-wrapper {
   width: 1.25rem;
   height: 1.25rem;
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
 }
 
 .lx .lx-layout div.target-value-multiple-inner {
@@ -472,5 +472,5 @@
 }
 
 .lx-data-visualizer .lx-target-wrapper-multiple  .target-value-multiple .lx-info-wrapper-content{
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
 }
