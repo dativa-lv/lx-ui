@@ -169,6 +169,7 @@ let defaultListPositionObserver = null;
 let virtualizerScope = null;
 let defaultListScrollOffsetRaf = null;
 let defaultListScrollTarget = null;
+let duplicateIdsWarningSignature = '';
 let updateDefaultListScrollOffset = () => {};
 
 const reactiveSearchString = computed({
@@ -195,17 +196,22 @@ watch(
   }
 );
 
-function validate() {
-  let res = false;
-  const mapUnique = new Map();
-  stringifiedItems.value?.forEach((x) => {
-    if (mapUnique.has(x[props.idAttribute])) {
-      res = true;
-    } else {
-      mapUnique.set(x[props.idAttribute], 1);
-    }
+function getDuplicateItemIds(items) {
+  const counts = new Map();
+  (items || []).forEach((item) => {
+    const id = item?.[props.idAttribute];
+    if (id == null) return;
+    counts.set(id, (counts.get(id) || 0) + 1);
   });
-  if (res) return 'Item codes are not unique!!!';
+  return [...counts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([id]) => `${id}`)
+    .sort();
+}
+
+function validate() {
+  const duplicates = getDuplicateItemIds(stringifiedItems.value);
+  if (duplicates.length > 0) return 'LxList item codes are not unique!';
   return 0;
 }
 
@@ -230,6 +236,19 @@ const filteredItems = computed(() => {
     );
   }
   return [];
+});
+
+const filteredItemsWithVirtualKey = computed(() => {
+  const seenById = new Map();
+  return (filteredItems.value || []).map((item, index) => {
+    const baseId = item?.[props.idAttribute] ?? index;
+    const duplicateCount = (seenById.get(baseId) || 0) + 1;
+    seenById.set(baseId, duplicateCount);
+    return {
+      item,
+      virtualKey: duplicateCount === 1 ? `${baseId}` : `${baseId}__dup_${duplicateCount}`,
+    };
+  });
 });
 
 const normalizedListType = computed(() => {
@@ -311,7 +330,7 @@ async function loadVueVirtual() {
         if (!wantsDefaultListVirtualization.value) return 0;
         return filteredItems.value?.length || 0;
       },
-      getItemKey: (index) => filteredItems.value?.[index]?.[props.idAttribute] ?? index,
+      getItemKey: (index) => filteredItemsWithVirtualKey.value?.[index]?.virtualKey ?? index,
       get scrollMargin() {
         return defaultListScrollMargin.value;
       },
@@ -342,6 +361,20 @@ async function ensureDefaultListVirtualizer() {
   await loadVueVirtual();
 }
 
+function warnAboutDuplicateItemIds(items) {
+  const duplicateIds = getDuplicateItemIds(items);
+  if (duplicateIds.length === 0) {
+    duplicateIdsWarningSignature = '';
+    return;
+  }
+
+  const signature = duplicateIds.join('|');
+  if (signature === duplicateIdsWarningSignature) return;
+  duplicateIdsWarningSignature = signature;
+
+  lxDevUtils.log('LxList item codes are not unique!', useLx().getGlobals()?.environment, 'error');
+}
+
 const shouldVirtualizeDefaultList = computed(
   () => wantsDefaultListVirtualization.value && !!defaultListVirtualizer.value
 );
@@ -353,7 +386,8 @@ const defaultListRows = computed(() => {
     .getVirtualItems()
     .map((virtualRow) => ({
       virtualRow,
-      item: filteredItems.value?.[virtualRow.index],
+      item: filteredItemsWithVirtualKey.value?.[virtualRow.index]?.item,
+      virtualKey: filteredItemsWithVirtualKey.value?.[virtualRow.index]?.virtualKey,
     }))
     .filter((row) => row.item);
 });
@@ -674,6 +708,14 @@ watch(
     if (wants && !defaultListVirtualizer.value) {
       await loadVueVirtual();
     }
+  },
+  { immediate: true }
+);
+
+watch(
+  stringifiedItems,
+  (items) => {
+    warnAboutDuplicateItemIds(items);
   },
   { immediate: true }
 );
@@ -1248,8 +1290,6 @@ function toggleSearch() {
   toolbarRef.value?.toggleSearch();
 }
 
-defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
-
 const draggableButtons = ref([
   {
     id: 'move-first',
@@ -1387,10 +1427,6 @@ const toolbarActions = computed(() => {
 });
 
 onMounted(async () => {
-  const val = validate();
-  if (val) {
-    lxDevUtils.log(val, useLx().getGlobals()?.environment, 'error');
-  }
   // @ts-ignore
   itemsArray.value = fillItemsArray();
   ungroupedItemsArray.value = setByOrders(filteredItems.value);
@@ -1439,6 +1475,8 @@ onBeforeUnmount(() => {
   defaultListScrollTarget = null;
   globalThis.removeEventListener('resize', handleDefaultListResize);
 });
+
+defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
 </script>
 
 <template>
@@ -2163,7 +2201,7 @@ onBeforeUnmount(() => {
         >
           <li
             v-for="row in defaultListRows"
-            :key="row.item[idAttribute]"
+            :key="row.virtualKey"
             :data-index="row.virtualRow.index"
             class="lx-list-item-container"
             :ref="measureDefaultListRow"

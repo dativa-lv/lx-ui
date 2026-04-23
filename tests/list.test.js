@@ -4,6 +4,7 @@ import { mount, RouterLinkStub } from '@vue/test-utils';
 import { nextTick, ref } from 'vue';
 import LxList from '@/components/list/List.vue';
 import * as libLoader from '@/utils/libLoader';
+import { lxDevUtils } from '@/utils';
 import {
   actionDefinitionsCommon,
   checkActionDefinitionsButtonsSingle,
@@ -857,6 +858,70 @@ describe('Virtualization', () => {
       requestAnimationFrameSpy.mockRestore();
       cancelAnimationFrameSpy.mockRestore();
       loadLibrarySpy.mockRestore();
+    }
+  });
+
+  test('renders duplicate IDs in virtualized list and logs warning', async () => {
+    const requestAnimationFrameSpy = vi
+      .spyOn(globalThis, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0);
+        return 1;
+      });
+    const cancelAnimationFrameSpy = vi
+      .spyOn(globalThis, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
+
+    const useWindowVirtualizerMock = vi.fn((options) =>
+      ref({
+        getVirtualItems: () => [
+          { index: 0, start: 0 },
+          { index: 1, start: 72 },
+        ],
+        getTotalSize: () => 144,
+        measure: () => {},
+        measureElement: () => {},
+        options,
+      })
+    );
+
+    const loadLibrarySpy = vi.spyOn(libLoader, 'loadLibrary').mockResolvedValue({
+      useWindowVirtualizer: useWindowVirtualizerMock,
+    });
+    const logSpy = vi.spyOn(lxDevUtils, 'log').mockImplementation(() => {});
+
+    const items = [
+      { id: 'dup', name: 'Item A' },
+      { id: 'dup', name: 'Item B' },
+    ];
+
+    try {
+      wrapper = mountComponent({
+        props: {
+          id: 'list-duplicate-ids',
+          items,
+          kind: 'default',
+          listType: '1',
+          hasVirtualization: true,
+        },
+      });
+
+      await Promise.resolve();
+      await nextTick();
+
+      const rows = wrapper.findAll('li.lx-list-item-container');
+      expect(rows.length).toBe(2);
+      expect(loadLibrarySpy).toHaveBeenCalled();
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.stringContaining('item codes are not unique!'),
+        undefined,
+        'error'
+      );
+    } finally {
+      requestAnimationFrameSpy.mockRestore();
+      cancelAnimationFrameSpy.mockRestore();
+      loadLibrarySpy.mockRestore();
+      logSpy.mockRestore();
     }
   });
 });
