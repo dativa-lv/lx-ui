@@ -158,6 +158,7 @@ const endQuarterYear = ref(findDecadeStartYear(todayDate.value.getFullYear()) + 
 const DEBOUNCE_MS = 50;
 
 const tempSelectedYear = ref(null);
+const focusDayRetryTimeout = ref(null);
 
 // Hours, minutes and seconds arrays
 const hours = ref(
@@ -1162,7 +1163,7 @@ function isActiveCalendarDay(date) {
   );
 }
 
-function getDayCellCoordinates(targetDate) {
+function getDayCellCoordinates(targetDate, { allowOtherMonthFallback = true } = {}) {
   const targetDay = new Date(targetDate);
   let fallbackCoordinates = null;
 
@@ -1203,7 +1204,18 @@ function getDayCellCoordinates(targetDate) {
     }
   }
 
-  return fallbackCoordinates;
+  if (allowOtherMonthFallback) {
+    return fallbackCoordinates;
+  }
+
+  return null;
+}
+
+function clearFocusDayRetryTimeout() {
+  if (focusDayRetryTimeout.value !== null) {
+    clearTimeout(focusDayRetryTimeout.value);
+    focusDayRetryTimeout.value = null;
+  }
 }
 
 function getFirstFocusableVisibleDay() {
@@ -1234,12 +1246,16 @@ function getFirstFocusableVisibleDay() {
 }
 
 function focusInitialPickerCell(targetDate = null) {
+  clearFocusDayRetryTimeout();
+
   const tryFocusDay = (attempt = 0) => {
     const activeDate = targetDate ? new Date(targetDate) : getActiveCalendarDate();
-    const coordinates = getDayCellCoordinates(activeDate);
+    const coordinates = getDayCellCoordinates(activeDate, {
+      allowOtherMonthFallback: false,
+    });
 
     if (coordinates) {
-      syncCalendarActiveCell(coordinates.row, coordinates.col);
+      setCalendarActiveFromClick(coordinates.row, coordinates.col);
       return;
     }
 
@@ -1251,7 +1267,11 @@ function focusInitialPickerCell(targetDate = null) {
     }
 
     if (attempt < 4) {
-      setTimeout(() => tryFocusDay(attempt + 1), 20);
+      clearFocusDayRetryTimeout();
+      focusDayRetryTimeout.value = setTimeout(() => {
+        focusDayRetryTimeout.value = null;
+        tryFocusDay(attempt + 1);
+      }, 20);
     }
   };
 
@@ -2499,14 +2519,8 @@ function returnToToday() {
     setActiveCalendarDate(newDate);
 
     nextTick(() => {
-      focusInitialPickerCell();
-
       if (isTouchMode.value) return;
-
-      const todayCell = containerRef.value?.querySelector('.lx-calendar-day[tabindex="0"]');
-      if (todayCell instanceof HTMLElement) {
-        todayCell.focus({ preventScroll: true });
-      }
+      focusInitialPickerCell(newDate);
     });
   }
 }
@@ -4602,6 +4616,7 @@ watch(
 );
 
 onUnmounted(() => {
+  clearFocusDayRetryTimeout();
   clearScheduledTimeRefocus();
 
   if (quarterDecadeFocusTimeout.value !== null) {
