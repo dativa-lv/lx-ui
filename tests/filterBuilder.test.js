@@ -588,3 +588,54 @@ test('LxFilterBuilder defaultValues', async () => {
   expanderDescription = wrapper.find('.lx-filter-wrapper').find('.lx-description');
   expect(expanderDescription.text()).toBe('isActive: Jā');
 });
+
+test('LxFilterBuilder description for array type', async () => {
+  const modelValue = { dateRange: {}, languages: ['en', 'fr'] };
+  const schema = objectClone(testSchema);
+  schema.properties.languages = {
+    type: 'array',
+    title: 'Languages',
+    enum: ['lv', 'en', 'lt', 'fr'],
+  };
+
+  const wrapper = mount(LxFilterBuilder, {
+    props: {
+      schema,
+      modelValue,
+    },
+    global: {
+      components: {
+        LxFilterBuilder,
+      },
+      stubs: {
+        RouterLink: RouterLinkStub,
+      },
+    },
+  });
+
+  let expanderDescription = wrapper.find('.lx-filter-wrapper').find('.lx-description');
+  expect(expanderDescription.exists()).toBe(false);
+
+  await wrapper.setProps({
+    modelValue: { dateRange: {}, languages: ['en', 'fr', 'lt'] },
+  });
+
+  expanderDescription = wrapper.find('.lx-filter-wrapper').find('.lx-description');
+  expect(expanderDescription.exists()).toBe(true);
+  expect(expanderDescription.text()).toBe('Languages: 3');
+
+  await wrapper.setProps({
+    modelValue: { dateRange: {}, languages: ['en', 'lt'] },
+  });
+
+  expanderDescription = wrapper.find('.lx-filter-wrapper').find('.lx-description');
+  expect(expanderDescription.exists()).toBe(true);
+  expect(expanderDescription.text()).toBe('Languages: 2');
+
+  await wrapper.setProps({
+    modelValue: { ...modelValue },
+  });
+
+  expanderDescription = wrapper.find('.lx-filter-wrapper').find('.lx-description');
+  expect(expanderDescription.exists()).toBe(false);
+});
