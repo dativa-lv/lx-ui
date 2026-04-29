@@ -6,7 +6,6 @@
 }
 
 .lx-content-switcher-item {
-  display: flex;
   width: 100%;
   color: var(--color-content-switcher-text);
   background: var(--color-content-switcher-item-background);

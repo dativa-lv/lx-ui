@@ -825,6 +825,41 @@ function findQuarterCellInVisibleDecade(targetDate) {
   return null;
 }
 
+function getSelectableQuarterCellsFromRow(quarterRow, direction) {
+  if (!quarterRow || Array.isArray(quarterRow) || !Array.isArray(quarterRow.items)) {
+    return [];
+  }
+
+  const { items } = quarterRow;
+  const start = direction >= 0 ? 0 : items.length - 1;
+  const end = direction >= 0 ? items.length : -1;
+  const step = direction >= 0 ? 1 : -1;
+  const cells = [];
+
+  for (let col = start; col !== end; col += step) {
+    const quarter = items[col];
+
+    if (
+      isQuarterValid(
+        {
+          year: quarterRow.year,
+          quarter,
+        },
+        props.minDateRef,
+        props.maxDateRef
+      )
+    ) {
+      cells.push({
+        col,
+        year: quarterRow.year,
+        quarter,
+      });
+    }
+  }
+
+  return cells;
+}
+
 function getEdgeSelectableQuarterCell(direction = 1) {
   const visibleQuarterGrid = getGrid('quarters', 5, startQuarterYear.value, endQuarterYear.value);
   const rowStart = direction >= 0 ? 0 : visibleQuarterGrid.length - 1;
@@ -833,31 +868,13 @@ function getEdgeSelectableQuarterCell(direction = 1) {
 
   for (let row = rowStart; row !== rowEnd; row += rowStep) {
     const quarterRow = visibleQuarterGrid[row];
+    const selectableCells = getSelectableQuarterCellsFromRow(quarterRow, direction);
 
-    if (quarterRow && !Array.isArray(quarterRow) && Array.isArray(quarterRow.items)) {
-      const colStart = direction >= 0 ? 0 : quarterRow.items.length - 1;
-      const colEnd = direction >= 0 ? quarterRow.items.length : -1;
-      const colStep = direction >= 0 ? 1 : -1;
-
-      for (let col = colStart; col !== colEnd; col += colStep) {
-        if (
-          isQuarterValid(
-            {
-              year: quarterRow.year,
-              quarter: quarterRow.items[col],
-            },
-            props.minDateRef,
-            props.maxDateRef
-          )
-        ) {
-          return {
-            row,
-            col,
-            year: quarterRow.year,
-            quarter: quarterRow.items[col],
-          };
-        }
-      }
+    if (selectableCells.length > 0) {
+      return {
+        row,
+        ...selectableCells[0],
+      };
     }
   }
 
@@ -1162,6 +1179,31 @@ function isActiveCalendarDay(date) {
     date.getFullYear() === activeDate.getFullYear()
   );
 }
+function findDateInMonth(month, targetDay, monthsRowsIdx, monthIdx) {
+  const weeks = getDaysInMonthGrid(month, props.firstDayOfTheWeek);
+
+  for (let weekIndex = 0; weekIndex < weeks.length; weekIndex += 1) {
+    const week = weeks[weekIndex];
+
+    for (let dayIndex = 0; dayIndex < week.length; dayIndex += 1) {
+      const date = week[dayIndex];
+
+      if (isSameDay(date, targetDay)) {
+        const coordinates = {
+          row: monthsRowsIdx * 6 + weekIndex,
+          col: monthIdx * 7 + dayIndex,
+        };
+
+        return {
+          coordinates,
+          isCurrentMonth: isSameMonth(date, month),
+        };
+      }
+    }
+  }
+
+  return null;
+}
 
 function getDayCellCoordinates(targetDate, { allowOtherMonthFallback = true } = {}) {
   const targetDay = new Date(targetDate);
@@ -1171,44 +1213,21 @@ function getDayCellCoordinates(targetDate, { allowOtherMonthFallback = true } = 
     const monthsRows = monthsList.value[monthsRowsIdx];
 
     for (let monthIdx = 0; monthIdx < monthsRows.length; monthIdx += 1) {
-      const month = monthsRows[monthIdx];
-      const weeks = getDaysInMonthGrid(month, props.firstDayOfTheWeek);
+      const result = findDateInMonth(monthsRows[monthIdx], targetDay, monthsRowsIdx, monthIdx);
 
-      for (let weekIndex = 0; weekIndex < weeks.length; weekIndex += 1) {
-        const week = weeks[weekIndex];
+      if (result) {
+        if (result.isCurrentMonth) {
+          return result.coordinates;
+        }
 
-        for (let dayIndex = 0; dayIndex < week.length; dayIndex += 1) {
-          const date = week[dayIndex];
-
-          if (
-            date.getDate() === targetDay.getDate() &&
-            date.getMonth() === targetDay.getMonth() &&
-            date.getFullYear() === targetDay.getFullYear()
-          ) {
-            const coordinates = {
-              row: monthsRowsIdx * 6 + weekIndex,
-              col: monthIdx * 7 + dayIndex,
-            };
-
-            // fix for range kind, when there is more than 1 same day in calendar
-            if (isSameMonth(date, month)) {
-              return coordinates;
-            }
-
-            if (!fallbackCoordinates) {
-              fallbackCoordinates = coordinates;
-            }
-          }
+        if (!fallbackCoordinates) {
+          fallbackCoordinates = result.coordinates;
         }
       }
     }
   }
 
-  if (allowOtherMonthFallback) {
-    return fallbackCoordinates;
-  }
-
-  return null;
+  return allowOtherMonthFallback ? fallbackCoordinates : null;
 }
 
 function clearFocusDayRetryTimeout() {
@@ -1216,6 +1235,25 @@ function clearFocusDayRetryTimeout() {
     clearTimeout(focusDayRetryTimeout.value);
     focusDayRetryTimeout.value = null;
   }
+}
+
+function findFocusableDayInWeeks(weeks, month) {
+  for (let weekIndex = 0; weekIndex < weeks.length; weekIndex += 1) {
+    const week = weeks[weekIndex];
+
+    for (let dayIndex = 0; dayIndex < week.length; dayIndex += 1) {
+      const date = week[dayIndex];
+
+      if (
+        isSameMonth(date, month) &&
+        canSelectDate(date, props.minDateRef, props.maxDateRef, 'date')
+      ) {
+        return date;
+      }
+    }
+  }
+
+  return null;
 }
 
 function getFirstFocusableVisibleDay() {
@@ -1226,19 +1264,8 @@ function getFirstFocusableVisibleDay() {
       const month = monthsRows[monthIdx];
       const weeks = getDaysInMonthGrid(month, props.firstDayOfTheWeek);
 
-      for (let weekIndex = 0; weekIndex < weeks.length; weekIndex += 1) {
-        const week = weeks[weekIndex];
-
-        for (let dayIndex = 0; dayIndex < week.length; dayIndex += 1) {
-          const date = week[dayIndex];
-          if (
-            isSameMonth(date, month) &&
-            canSelectDate(date, props.minDateRef, props.maxDateRef, 'date')
-          ) {
-            return date;
-          }
-        }
-      }
+      const found = findFocusableDayInWeeks(weeks, month);
+      if (found) return found;
     }
   }
 
@@ -1593,6 +1620,87 @@ function updateEnd(date) {
   hoveredDate.value = date;
 }
 
+function handleOnlyStart(date, start, isStartInput, finalizeSelection, setRange) {
+  if (isStartInput) {
+    updateStart(date);
+    setRange(date, null);
+    props.setActiveInput('endInput', props.id);
+    return;
+  }
+
+  if (date >= start) {
+    // valid range
+    finalizeSelection(start, date);
+  } else {
+    // picked earlier date
+    updateStart(date);
+    setRange(date, null);
+  }
+
+  props.setActiveInput('endInput', props.id);
+}
+
+function handleNoDates(date, isStartInput, isEndInput, setRange) {
+  if (isStartInput) {
+    updateStart(date);
+    setRange(date, null);
+
+    nextTick(() => {
+      props.setActiveInput('endInput', props.id);
+    });
+    return;
+  }
+
+  updateEnd(date);
+  setRange(null, date);
+
+  nextTick(() => {
+    props.setActiveInput('startInput', props.id);
+  });
+}
+
+function handleOnlyEnd(date, end, isEndInput, finalizeSelection, setRange) {
+  if (isEndInput) {
+    updateEnd(date);
+    props.setActiveInput('startInput', props.id);
+    return;
+  }
+
+  if (date > end) {
+    // new start is after end
+    updateStart(date);
+    setRange(date, null, true);
+    return;
+  }
+
+  // valid earlier start
+  setStartDate(date);
+  finalizeSelection(date, end);
+  props.setActiveInput('startInput', props.id);
+}
+
+function handleBothSelected(date, start, end, isEndInput, finalizeSelection, setRange) {
+  if (isEndInput && date >= start) {
+    // updating end within valid range
+    finalizeSelection(start, date);
+    props.setActiveInput('endInput', props.id);
+    return;
+  }
+
+  if (!isEndInput && date <= end) {
+    // updating start within valid range
+    finalizeSelection(date, end);
+    props.setActiveInput('startInput', props.id);
+    return;
+  }
+
+  // invalid range
+  updateStart(date);
+  setRange(date, null, true);
+  hoveredDate.value = date;
+  props.setActiveInput('endInput', props.id);
+}
+
 function handleRangeDifferentCaseValidation(date) {
   const start = selectedStartDate.value;
   const end = selectedEndDate.value;
@@ -1612,85 +1720,23 @@ function handleRangeDifferentCaseValidation(date) {
     handleLayoutDisplay();
   };
 
-  // No dates selected
+  // no dates selected yet
   if (!start && !end) {
-    if (isStartInput) {
-      updateStart(date);
-      setRange(date, null);
-
-      nextTick(() => {
-        props.setActiveInput('endInput', props.id);
-      });
-    } else {
-      updateEnd(date);
-      setRange(isStartInput ? date : null, isEndInput ? date : null);
-      nextTick(() => {
-        props.setActiveInput('startInput', props.id);
-      });
-      return;
-    }
-    return;
+    return handleNoDates(date, isStartInput, isEndInput, setRange);
   }
 
-  // Only start selected
+  // only start date is selected
   if (start && !end) {
-    if (isStartInput) {
-      updateStart(date);
-      setRange(date, null);
-      props.setActiveInput('endInput', props.id);
-      return;
-    }
-
-    if (date >= start) {
-      finalizeSelection(start, date);
-      props.setActiveInput('endInput', props.id);
-    } else {
-      updateStart(date);
-      setRange(date, null);
-      props.setActiveInput('endInput', props.id);
-    }
-    return;
+    return handleOnlyStart(date, start, isStartInput, finalizeSelection, setRange);
   }
 
-  // Only end selected
+  // only end date is selected
   if (!start && end) {
-    if (isEndInput) {
-      updateEnd(date);
-      props.setActiveInput('startInput', props.id);
-      return;
-    }
-
-    if (date > end) {
-      updateStart(date);
-      setRange(date, null, true);
-    } else {
-      setStartDate(date);
-      finalizeSelection(date, end);
-      props.setActiveInput('startInput', props.id);
-    }
-    return;
+    return handleOnlyEnd(date, end, isEndInput, finalizeSelection, setRange);
   }
 
-  // Both selected
-  const handleBothSelected = () => {
-    if (isEndInput && date >= start) {
-      finalizeSelection(start, date);
-      props.setActiveInput('endInput', props.id);
-      return;
-    }
-    if (!isEndInput && date <= end) {
-      finalizeSelection(date, end);
-      props.setActiveInput('startInput', props.id);
-      return;
-    }
-
-    updateStart(date);
-    setRange(date, null, true);
-    hoveredDate.value = date;
-    props.setActiveInput('endInput', props.id);
-  };
-
-  handleBothSelected();
+  // both start and end dates are selected
+  return handleBothSelected(date, start, end, isEndInput, finalizeSelection, setRange);
 }
 
 function handleDateLayoutAutoScroll(date) {
@@ -1885,65 +1931,102 @@ function buildAndEmitFinalDateTime(date, baseDate, fullTime = false, triggerKey 
   }
 }
 
-function handleDateSelection(selectedValue, key) {
-  // Update selected date parts
+function shouldClearPartialSelection(clearIfNotExact) {
+  return clearIfNotExact && isPartialTimeSelection();
+}
+
+function applyTimeBounds(selectedValue, isFullTimeMode) {
+  applyHourBoundsIfNeeded(selectedValue);
+  applyMinuteBoundsIfNeeded(selectedValue);
+  if (isFullTimeMode) applySecondBoundsIfNeeded(selectedValue);
+}
+
+function syncTimeViewport() {
+  const activeEl = document.activeElement;
+
+  const shouldPreserveTimeFocus =
+    activeEl instanceof HTMLElement && timeContainerRef.value?.contains(activeEl);
+
+  syncTimeColumnViewportWithSelection({
+    preserveFocus: shouldPreserveTimeFocus,
+  });
+}
+
+function isTimeSelectionComplete(isFullTimeMode) {
+  const isComplete = isFullTimeMode ? isCompleteTimeFullSelection() : isCompleteTimeSelection();
+
+  return isComplete && hasCommittedDateTimeSelection.value;
+}
+
+function handleEnterKeyFocus(key) {
+  if (key === 'enter' && !isMobileScreen.value && !mobileTimeLayout.value) {
+    ensureTimeColumnSelectableFocus('hours');
+    scheduleTimeRefocus('hours');
+  }
+}
+
+function handleDateTimePartSelection(updatedDate, selectedValue, key, mode) {
+  const { clearIfNotExact } = props;
+  const isFullTimeMode = mode === 'date-time-full';
+
+  if (shouldClearPartialSelection(clearIfNotExact)) {
+    clearSelectedValues();
+    return;
+  }
+
+  if (mobileTimeLayout.value) return;
+
+  applyTimeBounds(selectedValue, isFullTimeMode);
+  syncTimeViewport();
+
+  if (isTimeSelectionComplete(isFullTimeMode)) {
+    buildAndEmitFinalDateTime(updatedDate, selectedValue, isFullTimeMode, key);
+  }
+
+  handleEnterKeyFocus(key);
+}
+
+function handleDateOnlySelection(updatedDate, key) {
+  const { id, setActiveInput } = props;
+
+  handleDateLayoutAutoScroll(updatedDate);
+  emits('update:modelValue', updatedDate);
+  handleLayoutDisplay();
+
+  if (key !== 'space') {
+    setActiveInput('startInput', id);
+  }
+
+  if (key === 'enter') {
+    props.closeMenu();
+  }
+}
+
+function updateSelectedDateParts(selectedValue) {
   selectedDay.value = selectedValue.getDate();
   selectedMonth.value = selectedValue.getMonth();
   selectedYear.value = selectedValue.getFullYear();
 
   const updatedDate = new Date(selectedYear.value, selectedMonth.value, selectedDay.value);
+
   selectedDate.value = updatedDate;
 
-  const { mode, id, setActiveInput, clearIfNotExact } = props;
-  const isFullTimeMode = mode === 'date-time-full';
-  const isDateOnly = mode === 'date';
-  const isDateTime = mode === 'date-time' || isFullTimeMode;
+  return updatedDate;
+}
 
-  if (isDateOnly) {
-    handleDateLayoutAutoScroll(updatedDate);
-    emits('update:modelValue', updatedDate);
-    handleLayoutDisplay();
-    if (key !== 'space') {
-      setActiveInput('startInput', id);
-    }
-    if (key === 'enter') {
-      props.closeMenu();
-    }
-    return;
+function handleDateSelection(selectedValue, key) {
+  const updatedDate = updateSelectedDateParts(selectedValue);
+
+  const { mode } = props;
+
+  if (mode === 'date') {
+    return handleDateOnlySelection(updatedDate, key);
   }
 
-  if (isDateTime) {
-    const isPartial = isPartialTimeSelection();
-
-    if (clearIfNotExact && isPartial) {
-      clearSelectedValues();
-      return;
-    }
-
-    if (mobileTimeLayout.value) return;
-
-    // Apply bounds
-    applyHourBoundsIfNeeded(selectedValue);
-    applyMinuteBoundsIfNeeded(selectedValue);
-    if (isFullTimeMode) applySecondBoundsIfNeeded(selectedValue);
-
-    const activeEl = document.activeElement;
-    const shouldPreserveTimeFocus =
-      activeEl instanceof HTMLElement && timeContainerRef.value?.contains(activeEl);
-    syncTimeColumnViewportWithSelection({ preserveFocus: shouldPreserveTimeFocus });
-
-    // Emit if full time is complete
-    const isComplete = isFullTimeMode ? isCompleteTimeFullSelection() : isCompleteTimeSelection();
-
-    if (isComplete && hasCommittedDateTimeSelection.value) {
-      buildAndEmitFinalDateTime(updatedDate, selectedValue, isFullTimeMode, key);
-    }
-
-    if (key === 'enter' && !isMobileScreen.value && !mobileTimeLayout.value) {
-      ensureTimeColumnSelectableFocus('hours');
-      scheduleTimeRefocus('hours');
-    }
+  if (mode === 'date-time' || mode === 'date-time-full') {
+    return handleDateTimePartSelection(updatedDate, selectedValue, key, mode);
   }
+  return null;
 }
 
 function focusLayoutTriggerButton(type) {
@@ -4624,7 +4707,7 @@ onUnmounted(() => {
     quarterDecadeFocusTimeout.value = null;
   }
 
-  window.removeEventListener('keydown', onGlobalTimeArrowKeydown, true);
+  globalThis.removeEventListener('keydown', onGlobalTimeArrowKeydown, true);
 
   if (props.pickerType === 'single' && props.variant === 'default') {
     handleSinglePickerUnmount();
@@ -4636,8 +4719,8 @@ onUnmounted(() => {
   }
 });
 
-if (typeof window !== 'undefined') {
-  window.addEventListener('keydown', onGlobalTimeArrowKeydown, true);
+if (typeof globalThis !== 'undefined') {
+  globalThis.addEventListener('keydown', onGlobalTimeArrowKeydown, true);
 }
 </script>
 

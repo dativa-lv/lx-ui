@@ -62,14 +62,9 @@ function install(Vue, options) {
 const plugin = { install };
 
 // Use automatically when global Vue instance detected
-let GlobalVue = null;
-if (typeof window !== 'undefined') {
-  // @ts-ignore
-  GlobalVue = globalThis.Vue;
-} else if (typeof global !== 'undefined') {
-  GlobalVue = global.Vue;
-}
-if (GlobalVue) {
+const GlobalVue = globalThis?.Vue;
+
+if (GlobalVue && typeof GlobalVue.use === 'function') {
   GlobalVue.use(plugin);
 }
 

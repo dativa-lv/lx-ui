@@ -312,7 +312,6 @@ function resolveScrollParent(el) {
 function resolveDefaultListScrollTarget(scrollParent = defaultListScrollParent.value) {
   if (scrollParent?.addEventListener) return scrollParent;
   if (globalThis?.addEventListener) return globalThis;
-  if (typeof window !== 'undefined' && window?.addEventListener) return window;
   return null;
 }
 

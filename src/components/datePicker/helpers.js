@@ -1201,7 +1201,7 @@ export const sanitizeDateInput = (e, mode) => {
   } else if (mode === 'time' || mode === 'time-full') {
     allowedChars = /[^0-9.,:]/g; // only number and colon
   } else if (mode === 'year') {
-    allowedChars = /[^0-9]/g; // only number
+    allowedChars = /\D/g; // only number
   }
 
   // Remove any disallowed characters

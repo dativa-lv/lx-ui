@@ -129,7 +129,7 @@ function recalculateIndex() {
     const selectedIndex = rotatorItemsArray.value?.findIndex(
       (item) => item[props.idAttribute] === selectedId
     );
-    currentIndex.value = selectedIndex >= 0 ? selectedIndex : 0;
+    currentIndex.value = Math.max(0, selectedIndex);
   }
 }
 
@@ -226,7 +226,7 @@ onMounted(() => {
   const initialIndex = rotatorItemsArray.value?.findIndex(
     (item) => item[props.idAttribute] === selectedId
   );
-  currentIndex.value = initialIndex >= 0 ? initialIndex : 0;
+  currentIndex.value = Math.max(0, initialIndex);
 });
 
 const keyedItemsArray = computed(() => {

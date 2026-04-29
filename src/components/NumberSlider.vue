@@ -62,7 +62,7 @@ const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
 const onMouseDown = () => {
-  window.getSelection()?.removeAllRanges();
+  globalThis.getSelection()?.removeAllRanges();
 };
 </script>
 <template>
