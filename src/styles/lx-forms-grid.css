@@ -1151,7 +1151,7 @@ svg .lx-shade {
   width: 5rem;
 }
 
-.lx-avatar-display-xl > svg {
+.lx-avatar-display.lx-avatar-display-xl > svg {
   height: 66%;
 }
 
