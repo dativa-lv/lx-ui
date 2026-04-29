@@ -122,6 +122,15 @@ const liveMessage = ref('');
 const tapStage = ref(0);
 const openSource = ref(null);
 
+// touch tracking (to prevent triggering sheet when trying to scroll)
+const touchStartX = ref(0);
+const touchStartY = ref(0);
+const touchStartTime = ref(0);
+const pendingTouchType = ref(null);
+const touchCancelled = ref(false);
+const TOUCH_MOVE_THRESHOLD = 10; // pixels
+const TOUCH_TIME_THRESHOLD = 500; // ms
+
 const windowSize = useWindowSize();
 
 const responsiveView = computed(() => windowSize.width.value <= 500);
@@ -1266,8 +1275,43 @@ function preventDefaultFocus(e) {
 }
 
 function onTouchStart(e, type) {
-  if (isTouchSensitive.value) {
-    e.preventDefault();
+  if (!isTouchSensitive.value || !responsiveView.value) return;
+  const t = e.touches && e.touches[0];
+  if (!t) return;
+
+  touchStartX.value = t.clientX;
+  touchStartY.value = t.clientY;
+  touchStartTime.value = Date.now();
+  pendingTouchType.value = type;
+  touchCancelled.value = false;
+}
+
+function onTouchMove(e) {
+  if (!pendingTouchType.value) return;
+  const t = e.touches && e.touches[0];
+  if (!t) return;
+
+  const dx = Math.abs(t.clientX - touchStartX.value);
+  const dy = Math.abs(t.clientY - touchStartY.value);
+  if (dx > TOUCH_MOVE_THRESHOLD || dy > TOUCH_MOVE_THRESHOLD) {
+    touchCancelled.value = true;
+    pendingTouchType.value = null;
+  }
+}
+
+function onTouchEnd(e, type) {
+  if (!pendingTouchType.value || pendingTouchType.value !== type) {
+    pendingTouchType.value = null;
+    return;
+  }
+
+  const duration = Date.now() - touchStartTime.value;
+  const cancelled = touchCancelled.value;
+
+  pendingTouchType.value = null;
+  touchCancelled.value = false;
+
+  if (!cancelled && duration < TOUCH_TIME_THRESHOLD) {
     toggleMenu(type, 'touch');
   }
 }
@@ -1581,6 +1625,8 @@ onMounted(async () => {
             :aria-describedby="`${id}-lx-input-description`"
             @mousedown="preventDefaultFocus"
             @touchstart="onTouchStart($event, 'startInput')"
+            @touchmove="onTouchMove($event)"
+            @touchend="onTouchEnd($event, 'startInput')"
             @click="toggleMenu('startInput', 'click')"
             @keyup.arrow-down.prevent="openMenu('startInput', 'keyboard')"
             @keyup.enter.stop="validateIfExact($event, 'startInput')"
@@ -1633,6 +1679,8 @@ onMounted(async () => {
               :aria-describedby="`${id}-lx-input-description`"
               @mousedown="preventDefaultFocus"
               @touchstart="onTouchStart($event, 'endInput')"
+              @touchmove="onTouchMove($event)"
+              @touchend="onTouchEnd($event, 'endInput')"
               @click="toggleMenu('endInput', 'click')"
               @keyup.arrow-down.prevent="openMenu('endInput', 'keyboard')"
               @keyup.enter.stop="validateIfExact($event, 'endInput')"

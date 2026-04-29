@@ -459,9 +459,9 @@
   z-index: 1;
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-day:focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-month:focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-year:focus {
+.lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-disabled-date):focus,
+.lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-disabled-month):focus,
+.lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-disabled-year):focus {
   border-color: transparent;
   outline: 2px solid var(--color-focus-background);
 }
@@ -488,14 +488,14 @@
   position: relative;
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):hover,
-.lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):hover,
-.lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):hover,
-.lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):hover,
-.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):focus {
+.lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):not(.lx-disabled-date):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):not(.lx-disabled-date):focus,
+.lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):not(.lx-disabled-month):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):not(.lx-disabled-month):focus,
+.lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):not(.lx-disabled-year):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):not(.lx-disabled-year):focus,
+.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):not(.lx-disabled-quarter):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):not(.lx-disabled-quarter):focus {
   background-color: var(--color-grid-hover-background);
   color: var(--contrast-background);
 }
@@ -1228,8 +1228,8 @@ height: 100%;
   font-weight: var(--font-weight-extra-bold);
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:focus-visible {
+.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-disabled-quarter):focus,
+.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-disabled-quarter):focus-visible {
   border: 2px solid var(--color-focus-background);
   outline: none;
 }

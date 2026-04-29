@@ -5059,10 +5059,12 @@ if (typeof globalThis !== 'undefined') {
                                     )
                                 "
                                 @click.stop.prevent="
-                                  syncCalendarActiveCell(
-                                    monthsRowsIdx * 6 + weekIndex,
-                                    monthIdx * 7 + dayIndex
-                                  ),
+                                  canSelectDate(date, minDateRef, maxDateRef, 'date') &&
+                                    !disabled &&
+                                    syncCalendarActiveCell(
+                                      monthsRowsIdx * 6 + weekIndex,
+                                      monthIdx * 7 + dayIndex
+                                    ),
                                     handleSelections(
                                       date,
                                       'date',
@@ -5086,10 +5088,12 @@ if (typeof globalThis !== 'undefined') {
                                   )
                                 "
                                 @focusin="
-                                  syncCalendarActiveCell(
-                                    monthsRowsIdx * 6 + weekIndex,
-                                    monthIdx * 7 + dayIndex
-                                  ),
+                                  canSelectDate(date, minDateRef, maxDateRef, 'date') &&
+                                    !disabled &&
+                                    syncCalendarActiveCell(
+                                      monthsRowsIdx * 6 + weekIndex,
+                                      monthIdx * 7 + dayIndex
+                                    ),
                                     setActiveCalendarDate(date),
                                     hoverDate(date)
                                 "
@@ -5325,10 +5329,18 @@ if (typeof globalThis !== 'undefined') {
                               )
                           "
                           @click.stop.prevent="
-                            syncCalendarActiveCell(
-                              yearIndex * (monthsInYear[0]?.length || 1) + monthsRowIndex,
-                              monthIndex
-                            ),
+                            (mode === 'month' ||
+                              canSelectDate(
+                                new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                minDateRef,
+                                maxDateRef,
+                                'month-year'
+                              )) &&
+                              !disabled &&
+                              syncCalendarActiveCell(
+                                yearIndex * (monthsInYear[0]?.length || 1) + monthsRowIndex,
+                                monthIndex
+                              ),
                               setActiveCalendarDate(
                                 new Date(month.year, month.orderIndex, 1, 0, 0, 0)
                               ),
@@ -5345,10 +5357,18 @@ if (typeof globalThis !== 'undefined') {
                               )
                           "
                           @focusin="
-                            syncCalendarActiveCell(
-                              yearIndex * (monthsInYear[0]?.length || 1) + monthsRowIndex,
-                              monthIndex
-                            ),
+                            (mode === 'month' ||
+                              canSelectDate(
+                                new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                minDateRef,
+                                maxDateRef,
+                                'month-year'
+                              )) &&
+                              !disabled &&
+                              syncCalendarActiveCell(
+                                yearIndex * (monthsInYear[0]?.length || 1) + monthsRowIndex,
+                                monthIndex
+                              ),
                               setActiveCalendarDate(
                                 new Date(month.year, month.orderIndex, 1, 0, 0, 0)
                               ),
@@ -5469,7 +5489,14 @@ if (typeof globalThis !== 'undefined') {
                         :tabindex="getYearCellTabIndex(year, yearsRowIndex, yearIndex)"
                         :ref="(el) => registerCalendarCell(el, yearsRowIndex, yearIndex)"
                         @click.stop.prevent="
-                          syncCalendarActiveCell(yearsRowIndex, yearIndex),
+                          canSelectDate(
+                            new Date(year, todayDate.getMonth(), todayDate.getDate()),
+                            minDateRef,
+                            maxDateRef,
+                            'year'
+                          ) &&
+                            !disabled &&
+                            syncCalendarActiveCell(yearsRowIndex, yearIndex),
                             setActiveCalendarDate(
                               new Date(
                                 year,
@@ -5494,7 +5521,14 @@ if (typeof globalThis !== 'undefined') {
                             )
                         "
                         @focusin="
-                          syncCalendarActiveCell(yearsRowIndex, yearIndex),
+                          canSelectDate(
+                            new Date(year, todayDate.getMonth(), todayDate.getDate()),
+                            minDateRef,
+                            maxDateRef,
+                            'year'
+                          ) &&
+                            !disabled &&
+                            syncCalendarActiveCell(yearsRowIndex, yearIndex),
                             setActiveCalendarDate(
                               new Date(
                                 year,
@@ -5637,7 +5671,16 @@ if (typeof globalThis !== 'undefined') {
                         "
                         :ref="(el) => registerCalendarCell(el, quartersRowIndex, listItemIndex)"
                         @click.stop.prevent="
-                          syncCalendarActiveCell(quartersRowIndex, listItemIndex),
+                          isQuarterValid(
+                            {
+                              year: quarter.year,
+                              quarter: quarterItem,
+                            },
+                            minDateRef,
+                            maxDateRef
+                          ) &&
+                            !disabled &&
+                            syncCalendarActiveCell(quartersRowIndex, listItemIndex),
                             setActiveCalendarDate(
                               dateFromYearAndQuarter(quarter.year, quarterItem)
                             ),
@@ -5658,7 +5701,16 @@ if (typeof globalThis !== 'undefined') {
                             )
                         "
                         @focusin="
-                          syncCalendarActiveCell(quartersRowIndex, listItemIndex),
+                          isQuarterValid(
+                            {
+                              year: quarter.year,
+                              quarter: quarterItem,
+                            },
+                            minDateRef,
+                            maxDateRef
+                          ) &&
+                            !disabled &&
+                            syncCalendarActiveCell(quartersRowIndex, listItemIndex),
                             setActiveCalendarDate(
                               dateFromYearAndQuarter(quarter.year, quarterItem)
                             ),
