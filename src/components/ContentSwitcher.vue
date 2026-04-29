@@ -101,10 +101,10 @@ function checkIfHighlighted(id) {
 }
 </script>
 <template>
-  <div class="lx-field-wrapper" v-if="readOnly">
+  <div :id="id" class="lx-field-wrapper" v-if="readOnly">
     <p class="lx-data">{{ getName() }}</p>
   </div>
-  <div class="lx-content-switcher-wrapper" v-else>
+  <div :id="id" class="lx-content-switcher-wrapper" v-else>
     <div
       class="lx-content-switcher"
       :class="[{ 'lx-disabled': disabled }]"
@@ -132,39 +132,33 @@ function checkIfHighlighted(id) {
       >
         <!--Fade-in strādā, fade-out vajag noņemt-->
         <Transition :name="`icon-default`">
-          <div class="index-icon" v-if="showIconsMode && !item['icon'] && icon === null">
+          <div class="index-icon" v-if="showIconsMode && !item.icon && icon === null">
             {{ index + 1 }}
           </div>
         </Transition>
 
         <LxIcon
-          :value="item['icon'] || icon"
-          :iconSet="item['iconSet'] ? item['iconSet'] : iconSet"
+          :value="item.icon || icon"
+          :iconSet="item.iconSet ? item.iconSet : iconSet"
           :title="item[props.nameAttribute]"
-          v-if="(showIconsMode && item['icon']) || (icon && showIconsMode)"
+          v-if="(showIconsMode && item.icon) || (icon && showIconsMode)"
         />
         <div v-if="(kind === 'default' || kind === 'combo') && isWideScreen">
           {{ item[props.nameAttribute] }}
         </div>
         <LxBadge
-          :icon="isWideScreen ? item['badgeIcon'] : null"
-          :icon-set="item['badgeIconSet'] ? item['badgeIconSet'] : iconSet"
-          :value="isWideScreen ? item['badge'] : ' '"
-          :tooltip="
-            isWideScreen
-              ? item['badgeTitle']
-              : item['badgeTitle']
-              ? item['badgeTitle']
-              : item['badge']
-          "
+          :icon="isWideScreen ? item.badgeIcon : null"
+          :icon-set="item.badgeIconSet ? item.badgeIconSet : iconSet"
+          :value="isWideScreen ? item.badge : ' '"
+          :tooltip="isWideScreen ? item.badgeTitle : item.badgeTitle ? item.badgeTitle : item.badge"
           :class="[
-            { 'lx-badge-empty': item['badge'] === ' ' || !isWideScreen },
-            { 'lx-badge-info': item['badgeType'] === 'default' || item['badgeType'] === 'info' },
-            { 'lx-badge-success': item['badgeType'] === 'success' },
-            { 'lx-badge-warning': item['badgeType'] === 'warning' },
-            { 'lx-badge-error': item['badgeType'] === 'error' },
+            { 'lx-badge-empty': item.badge === ' ' || !isWideScreen },
+            { 'lx-badge-info': item.badgeType === 'default' || item.badgeType === 'info' },
+            { 'lx-badge-success': item.badgeType === 'success' },
+            { 'lx-badge-warning': item.badgeType === 'warning' },
+            { 'lx-badge-error': item.badgeType === 'error' },
           ]"
-          v-if="item['badge'] || item['badgeIcon']"
+          v-if="item.badge || item.badgeIcon"
         />
       </div>
     </div>
