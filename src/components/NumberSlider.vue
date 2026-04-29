@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, inject } from 'vue';
+import { ref, computed, watch, inject, onBeforeUnmount } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 
 const props = defineProps({
@@ -43,18 +43,20 @@ watch(
 );
 
 const tooltip = computed(() => model.value.toString());
+const liveAnnouncement = ref(model.value.toString());
+let announcementTimeout;
 
 const onIncreaseMultiplier = () => {
-  model.value += props.stepMultiplier - 1;
+  model.value += Number(props.stepMultiplier);
 };
 const onDecreaseMultiplier = () => {
-  model.value -= props.stepMultiplier - 1;
+  model.value -= Number(props.stepMultiplier);
 };
 const onIncreaseStep = () => {
-  model.value += Number(props.step) - 1;
+  model.value += Number(props.step);
 };
 const onDecreaseStep = () => {
-  model.value -= Number(props.step) - 1;
+  model.value -= Number(props.step);
 };
 const fillingUp = computed(() => ((model.value - props.min) / (props.max - props.min)) * 100);
 
@@ -64,6 +66,21 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 const onMouseDown = () => {
   globalThis.getSelection()?.removeAllRanges();
 };
+
+watch(
+  model,
+  (newValue) => {
+    clearTimeout(announcementTimeout);
+    announcementTimeout = window.setTimeout(() => {
+      liveAnnouncement.value = newValue.toString();
+    }, 250);
+  },
+  { immediate: true }
+);
+
+onBeforeUnmount(() => {
+  clearTimeout(announcementTimeout);
+});
 </script>
 <template>
   <div class="lx-field-wrapper">
@@ -85,20 +102,24 @@ const onMouseDown = () => {
           :id="id"
           :min="props.min"
           :max="props.max"
+          :step="props.step"
           :aria-labelledby="labelledBy"
           :disabled
           @mousedown="onMouseDown"
-          @keydown.up="onIncreaseStep"
-          @keydown.right="onIncreaseStep"
-          @keydown.down="onDecreaseStep"
-          @keydown.left="onDecreaseStep"
-          @keydown.shift.up.exact="onIncreaseMultiplier"
-          @keydown.shift.right.exact="onIncreaseMultiplier"
-          @keydown.shift.down.exact="onDecreaseMultiplier"
-          @keydown.shift.left.exact="onDecreaseMultiplier"
+          @keydown.up.prevent="onIncreaseStep"
+          @keydown.right.prevent="onIncreaseStep"
+          @keydown.down.prevent="onDecreaseStep"
+          @keydown.left.prevent="onDecreaseStep"
+          @keydown.shift.up.exact.prevent="onIncreaseMultiplier"
+          @keydown.shift.right.exact.prevent="onIncreaseMultiplier"
+          @keydown.shift.down.exact.prevent="onDecreaseMultiplier"
+          @keydown.shift.left.exact.prevent="onDecreaseMultiplier"
         />
         <div class="input-slider-filled" :style="`width: ${fillingUp}%`" />
         <div class="input-slider-full" />
+      </div>
+      <div class="lx-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+        {{ liveAnnouncement }}
       </div>
 
       <div class="input-slider-range-label">

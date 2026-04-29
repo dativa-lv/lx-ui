@@ -20,7 +20,7 @@ import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 import { useElementSize } from '@vueuse/core';
 import { getTexts } from '@/utils/visualPickerUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, findFocusableElements } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -288,11 +288,29 @@ const selectedItems = computed(() => {
   return res;
 });
 
-function removeItem(id) {
+function removeItem(id, event) {
+  const container = document.getElementById(props.id);
+  let nextFocusEl = null;
+
+  if (container && event && event.currentTarget) {
+    const focusable = findFocusableElements(container);
+    const currentIndex = focusable.findIndex((el) => el === event.currentTarget);
+    if (currentIndex !== -1) {
+      if (currentIndex < focusable.length - 1) nextFocusEl = focusable[currentIndex + 1];
+      else if (currentIndex > 0) nextFocusEl = focusable[currentIndex - 1];
+    }
+  }
+
   const res = [...model.value];
   const index = res.findIndex((selectedItem) => selectedItem === id);
   if (index !== -1) res.splice(index, 1);
   model.value = res;
+
+  nextTick(() => {
+    if (nextFocusEl && typeof nextFocusEl.focus === 'function') {
+      nextFocusEl.focus();
+    }
+  });
 }
 
 function handleSelectionChange(selectedValue) {
@@ -385,7 +403,7 @@ defineExpose({ addTitles });
               kind="ghost"
               variant="icon-only"
               :label="displayTexts.removeCountry"
-              @click="removeItem(item?.id)"
+              @click="removeItem(item?.id, $event)"
             />
           </div>
         </div>
