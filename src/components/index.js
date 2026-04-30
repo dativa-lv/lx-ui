@@ -16,6 +16,7 @@ export const LxAppendableListSimple = defineAsyncComponent(() =>
   import('@/components/forms/AppendableListSimple.vue')
 );
 export const LxAutoComplete = defineAsyncComponent(() => import('@/components/AutoComplete.vue'));
+export const LxAvatar = defineAsyncComponent(() => import('@/components/Avatar.vue'));
 export const LxButton = defineAsyncComponent(() => import('@/components/Button.vue'));
 export const LxCamera = defineAsyncComponent(() => import('@/components/Camera.vue'));
 export const LxCard = defineAsyncComponent(() => import('@/components/Card.vue'));
