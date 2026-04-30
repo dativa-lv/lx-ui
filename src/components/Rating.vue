@@ -84,6 +84,13 @@ const valueClass = computed(() => {
   return '';
 });
 
+const accessibleLabel = computed(() => {
+  if (model.value) {
+    return `${displayTexts.value.label}: ${model.value}, ${valueDescription.value}`;
+  }
+  return `${displayTexts.value.label}: —`;
+});
+
 function setValue(value) {
   if (props.readOnly || props.disabled) {
     return;
@@ -195,11 +202,17 @@ defineExpose({ focus, scrollIntoView });
 <template>
   <div class="lx-field-wrapper">
     <div class="lx-ratings-wrapper">
-      <LxInfoWrapper ref="infoWrapperRef" :disabled="disabled && !readOnly" :focusable="focusable">
+      <LxInfoWrapper
+        ref="infoWrapperRef"
+        :disabled="disabled && !readOnly"
+        :focusable="focusable"
+        :label="accessibleLabel"
+      >
         <div
           v-if="!(readOnly && !model)"
           class="lx-ratings"
           role="radiogroup"
+          :aria-disabled="disabled"
           :class="[
             { 'lx-disabled': disabled },
             { 'lx-read-only': readOnly },
@@ -218,6 +231,7 @@ defineExpose({ focus, scrollIntoView });
             :class="[{ 'lx-selected': valueDecomposition[0] !== 'star' }]"
             role="radio"
             :aria-checked="model >= 1 && model < 2"
+            :aria-disabled="disabled"
             data-rating="1"
             :aria-label="displayTexts.star1"
             :tabindex="getTabIndex(1)"
@@ -236,6 +250,7 @@ defineExpose({ focus, scrollIntoView });
             :class="[{ 'lx-selected': valueDecomposition[1] !== 'star' }]"
             role="radio"
             :aria-checked="model >= 2 && model < 3"
+            :aria-disabled="disabled"
             data-rating="2"
             :aria-label="displayTexts.star2"
             :tabindex="getTabIndex(2)"
@@ -254,6 +269,7 @@ defineExpose({ focus, scrollIntoView });
             :class="[{ 'lx-selected': valueDecomposition[2] !== 'star' }]"
             role="radio"
             :aria-checked="model >= 3 && model < 4"
+            :aria-disabled="disabled"
             data-rating="3"
             :aria-label="displayTexts.star3"
             :tabindex="getTabIndex(3)"
@@ -272,6 +288,7 @@ defineExpose({ focus, scrollIntoView });
             :class="[{ 'lx-selected': valueDecomposition[3] !== 'star' }]"
             role="radio"
             :aria-checked="model >= 4 && model < 5"
+            :aria-disabled="disabled"
             data-rating="4"
             :aria-label="displayTexts.star4"
             :tabindex="getTabIndex(4)"
@@ -290,6 +307,7 @@ defineExpose({ focus, scrollIntoView });
             :class="[{ 'lx-selected': valueDecomposition[4] !== 'star' }]"
             role="radio"
             :aria-checked="model >= 5"
+            :aria-disabled="disabled"
             data-rating="5"
             :aria-label="displayTexts.star5"
             :tabindex="getTabIndex(5)"
