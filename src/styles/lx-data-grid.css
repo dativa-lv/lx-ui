@@ -1406,6 +1406,38 @@
   text-overflow: ellipsis;
 }
 
+.lx .lx-data-grid-wrapper .lx-cell-person-wrapper {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+.lx .lx-data-grid-wrapper .lx-cell-person-wrapper .lx-button {
+  height: 2.5rem;
+  width: 2.5rem;
+  min-width: 2.5rem;
+  margin-top: -0.75rem;
+  margin-bottom: -0.5rem;
+}
+
+.lx .lx-data-grid-wrapper .lx-main.lx-compact-sections .lx-cell-person-wrapper .lx-button {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.lx .lx-data-grid-wrapper .lx-cell-person-wrapper .lx-button svg {
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
+}
+
+.lx-theme-contrast .lx-data-grid .lx-cell-person-wrapper .lx-button:hover {
+  --color-button-ghost-hover-border: var(--contrast-background);
+}
+
+.lx-theme-contrast .lx-data-grid .lx-grid-row:hover .lx-cell-person-wrapper .lx-button svg {
+  --color-button-ghost-icon: var(--contrast-background);
+  --color-button-ghost-icon-focus: var(--contrast-background);
+}
 @media (pointer: coarse) {
   .lx .lx-data-grid .lx-cell-action .lx-toolbar {
     visibility: inherit;

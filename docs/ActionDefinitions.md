@@ -5,6 +5,7 @@ The prop `actionDefinitions` is available for following components:
 - LxCamera
 - LxDataBlock
 - LxDataGrid
+- LxDataGrid -> columnDefinitions -> options
 - LxDialog
 - LxDrawPad
 - LxDropDownMenu
@@ -26,6 +27,7 @@ The prop `actionDefinitions` is available for following components:
 - LxTreeItem
 - LxTreeList
 - LxWidget
+
 
 ### Properties
 
@@ -58,3 +60,14 @@ The prop `actionDefinitions` is available for following components:
 | `nonResponsive` | Boolean | Prevents the action from being responsive. It will not collapse into overflow menus on smaller screens. |
 | `extra` | Boolean | Reserved for internal framework use. Do not set this property manually! (When `true`, the action is treated as supplemental and placed after built-in actions.) |
 | `href` | Object | Route for navigation when the action is clicked. Converts the action into a link. Example: `{ name: 'info' }`. |
+
+### Usage Details
+
+`LxDataGrid -> columnDefinitions -> options`
+
+The `LxDataGrid` component allows you to define `options` inside the `columnDefinitions` prop. You can now also add `actionDefinitions` inside `options`, using the standard properties defined for `actionDefinitions`.
+
+Currently, this feature works only for columns of type `person`, and only the first item from the array is used. This makes it possible to add an action button to person-type columns.
+
+The event is handled via `@actionClick` and returns the same payload as regular `actionDefinitions`.
+

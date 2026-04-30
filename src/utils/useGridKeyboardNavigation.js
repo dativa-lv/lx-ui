@@ -3,10 +3,11 @@ import { ref, nextTick } from 'vue';
 export function useGridKeyboardNavigation() {
   const activeRow = ref(0);
   const activeCol = ref(0);
+  const activeItem = ref(0);
 
   const cellRefs = ref([]);
 
-  function registerCell(el, row, col) {
+  function registerCell(el, row, col, item = 0) {
     if (!el) return;
 
     let target = null;
@@ -19,12 +20,13 @@ export function useGridKeyboardNavigation() {
 
     if (target) {
       cellRefs.value[row] ??= {};
-      cellRefs.value[row][col] = target;
+      cellRefs.value[row][col] ??= [];
+      cellRefs.value[row][col][item] = target;
     }
   }
 
-  function isActiveCell(row, col) {
-    return activeRow.value === row && activeCol.value === col;
+  function isActiveCell(row, col, item = 0) {
+    return activeRow.value === row && activeCol.value === col && activeItem.value === item;
   }
 
   function isDisabledCell(target) {
@@ -43,6 +45,19 @@ export function useGridKeyboardNavigation() {
     ].some((className) => target.classList?.contains(className));
   }
 
+  function getCellTargets(row, col) {
+    const targets = cellRefs.value[row]?.[col];
+
+    if (!targets) return [];
+    if (Array.isArray(targets)) {
+      return targets
+        .map((target, item) => ({ target, item }))
+        .filter((entry) => Boolean(entry.target));
+    }
+
+    return [{ target: targets, item: 0 }];
+  }
+
   function findClosestFocusableCell(row, col) {
     return Object.entries(cellRefs.value)
       .reduce((matches, [rowKey, rowCells]) => {
@@ -50,22 +65,31 @@ export function useGridKeyboardNavigation() {
 
         return matches.concat(
           Object.entries(rowCells || {})
-            .map(([colKey, target]) => {
+            .flatMap(([colKey, targets]) => {
               const currentCol = Number(colKey);
 
-              if (isDisabledCell(target)) return null;
+              const normalizedTargets = Array.isArray(targets)
+                ? targets.map((target, item) => ({ target, item }))
+                : [{ target: targets, item: 0 }];
 
-              const rowDistance = Math.abs(currentRow - row);
-              const colDistance = Math.abs(currentCol - col);
+              return normalizedTargets
+                .map(({ target, item }) => {
+                  if (isDisabledCell(target)) return null;
 
-              return {
-                row: currentRow,
-                col: currentCol,
-                target,
-                distance: rowDistance + colDistance,
-                rowDistance,
-                colDistance,
-              };
+                  const rowDistance = Math.abs(currentRow - row);
+                  const colDistance = Math.abs(currentCol - col);
+
+                  return {
+                    row: currentRow,
+                    col: currentCol,
+                    item,
+                    target,
+                    distance: rowDistance + colDistance,
+                    rowDistance,
+                    colDistance,
+                  };
+                })
+                .filter(Boolean);
             })
             .filter(Boolean)
         );
@@ -85,16 +109,27 @@ export function useGridKeyboardNavigation() {
       }, null);
   }
 
-  function focusCell(row, col, scroll = true) {
-    const target = cellRefs.value[row]?.[col];
-    const resolvedCell = !isDisabledCell(target)
-      ? { row, col, target }
-      : findClosestFocusableCell(row, col);
+  function focusCell(row, col, scroll = true, preferredItem = 0) {
+    const targets = getCellTargets(row, col);
+    const preferredTarget = targets.find(
+      ({ item, target }) => item === preferredItem && !isDisabledCell(target)
+    );
+    const fallbackTarget = targets.find(({ target }) => !isDisabledCell(target));
+
+    let resolvedCell;
+    if (preferredTarget) {
+      resolvedCell = { row, col, item: preferredTarget.item, target: preferredTarget.target };
+    } else if (fallbackTarget) {
+      resolvedCell = { row, col, item: fallbackTarget.item, target: fallbackTarget.target };
+    } else {
+      resolvedCell = findClosestFocusableCell(row, col);
+    }
 
     if (!resolvedCell?.target) return null;
 
     activeRow.value = resolvedCell.row;
     activeCol.value = resolvedCell.col;
+    activeItem.value = resolvedCell.item ?? 0;
 
     nextTick(() => {
       resolvedCell.target.focus({ preventScroll: !scroll });
@@ -111,7 +146,7 @@ export function useGridKeyboardNavigation() {
   }
 
   function onGridFocus() {
-    return focusCell(activeRow.value, activeCol.value);
+    return focusCell(activeRow.value, activeCol.value, true, activeItem.value);
   }
 
   function onKeydown(e, rowCount, colCount, isMenuOpen = false) {
@@ -131,9 +166,22 @@ export function useGridKeyboardNavigation() {
 
     switch (e.key) {
       case 'ArrowRight':
+        if (getCellTargets(r, c).some(({ item }) => item === activeItem.value + 1)) {
+          e.preventDefault();
+          focusCell(r, c, true, activeItem.value + 1);
+          return;
+        }
         c += 1;
         break;
       case 'ArrowLeft':
+        if (
+          activeItem.value > 0 &&
+          getCellTargets(r, c).some(({ item }) => item === activeItem.value - 1)
+        ) {
+          e.preventDefault();
+          focusCell(r, c, true, activeItem.value - 1);
+          return;
+        }
         c -= 1;
         break;
       case 'ArrowDown':
@@ -151,19 +199,19 @@ export function useGridKeyboardNavigation() {
     r = Math.max(0, Math.min(r, rowCount));
     c = Math.max(0, Math.min(c, colCount));
 
-    focusCell(r, c);
+    focusCell(r, c, true, e.key === 'ArrowLeft' ? Number.MAX_SAFE_INTEGER : 0);
   }
 
-  function setActiveFromClick(row, col, scroll = true) {
-    return focusCell(row, col, scroll);
+  function setActiveFromClick(row, col, scroll = true, item = 0) {
+    return focusCell(row, col, scroll, item);
   }
 
-  function getTabIndex(row, col) {
-    return isActiveCell(row, col) ? 0 : -1;
+  function getTabIndex(row, col, item = 0) {
+    return isActiveCell(row, col, item) ? 0 : -1;
   }
 
-  function getFocusable(row, col) {
-    return !!isActiveCell(row, col);
+  function getFocusable(row, col, item = 0) {
+    return !!isActiveCell(row, col, item);
   }
 
   function isCellDelegated(col, customVal = false) {

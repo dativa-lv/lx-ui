@@ -1897,43 +1897,101 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 <span class="empty-flag-value" v-else>—</span>
               </template>
 
-              <LxPersonDisplay
-                v-if="col.type === 'person'"
-                :value="row[col.attributeName]"
-                :customAttributes="col.options?.customAttributes"
-                :texts="row[col.attributeName]?.texts || displayTexts.personDisplay"
-                size="s"
-                :customRole="col.kind === 'clickable' ? clickableRole : null"
-                :focusable="
-                  isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
-                    ? getFocusable(
+              <template v-if="col.type === 'person'">
+                <div class="lx-cell-person-wrapper">
+                  <LxPersonDisplay
+                    :value="row[col.attributeName]"
+                    :customAttributes="col.options?.customAttributes"
+                    :texts="row[col.attributeName]?.texts || displayTexts.personDisplay"
+                    size="s"
+                    :customRole="col.kind === 'clickable' ? clickableRole : null"
+                    :focusable="
+                      isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
+                        ? getFocusable(
+                            hasSorting ? rowIndex + 1 : rowIndex,
+                            hasSelecting ? colIndex + 1 : colIndex,
+                            0
+                          )
+                        : false
+                    "
+                    :ref="
+                      isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
+                        ? (el) =>
+                            registerCell(
+                              el ?? null,
+                              hasSorting ? rowIndex + 1 : rowIndex,
+                              hasSelecting ? colIndex + 1 : colIndex,
+                              0
+                            )
+                        : null
+                    "
+                    @click="
+                      defaultActionName && col.kind === 'clickable'
+                        ? defaultActionClicked(row[idAttribute], row)
+                        : null
+                    "
+                    @keyup.enter.space="
+                      defaultActionName && col.kind === 'clickable'
+                        ? defaultActionClicked(row[idAttribute], row)
+                        : null
+                    "
+                  />
+                  <LxButton
+                    v-if="col?.options?.actionDefinitions?.[0]"
+                    :id="`${id}-${row[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
+                    variant="icon-only"
+                    kind="ghost"
+                    :label="
+                      col.options.actionDefinitions[0]?.name ||
+                      col.options.actionDefinitions[0]?.label
+                    "
+                    :title="
+                      col.options.actionDefinitions[0]?.title ||
+                      col.options.actionDefinitions[0]?.tooltip
+                    "
+                    :icon="col.options.actionDefinitions[0]?.icon"
+                    :iconSet="col.options.actionDefinitions[0]?.iconSet"
+                    :loading="col.options.actionDefinitions[0]?.loading"
+                    :busy="col.options.actionDefinitions[0]?.busy"
+                    :destructive="col.options.actionDefinitions[0]?.destructive"
+                    :disabled="
+                      isDisabled ||
+                      col.options.actionDefinitions[0]?.disabled ||
+                      (col.options.actionDefinitions[0]?.enableByAttribute
+                        ? !row[col.options.actionDefinitions[0]?.enableByAttribute]
+                        : false)
+                    "
+                    :active="col.options.actionDefinitions[0]?.active"
+                    :badge="col.options.actionDefinitions[0]?.badge"
+                    :badgeType="col.options.actionDefinitions[0]?.badgeType"
+                    :badgeIcon="col.options.actionDefinitions[0]?.badgeIcon"
+                    :badgeTitle="col.options.actionDefinitions[0]?.badgeTitle"
+                    :tabindex="
+                      getTabIndex(
                         hasSorting ? rowIndex + 1 : rowIndex,
-                        hasSelecting ? colIndex + 1 : colIndex
+                        hasSelecting ? colIndex + 1 : colIndex,
+                        1
                       )
-                    : false
-                "
-                :ref="
-                  isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
-                    ? (el) =>
+                    "
+                    :ref="
+                      (el) =>
                         registerCell(
                           el ?? null,
                           hasSorting ? rowIndex + 1 : rowIndex,
-                          hasSelecting ? colIndex + 1 : colIndex
+                          hasSelecting ? colIndex + 1 : colIndex,
+                          1
                         )
-                    : null
-                "
-                @click="
-                  defaultActionName && col.kind === 'clickable'
-                    ? defaultActionClicked(row[idAttribute], row)
-                    : null
-                "
-                @keyup.enter.space="
-                  defaultActionName && col.kind === 'clickable'
-                    ? defaultActionClicked(row[idAttribute], row)
-                    : null
-                "
-              />
-
+                    "
+                    @click.stop="
+                      handleActionClick(
+                        col?.options?.actionDefinitions[0]?.id,
+                        row[idAttribute],
+                        actionAdditionalParameter
+                      )
+                    "
+                  />
+                </div>
+              </template>
               <template v-if="col.type === 'array'">
                 <LxInfoWrapper
                   v-if="
@@ -2342,25 +2400,65 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               </div>
               <span class="empty-flag-value" v-else>—</span>
             </template>
-
-            <LxPersonDisplay
-              v-else-if="col.type === 'person'"
-              :value="item[col.attributeName]"
-              :customAttributes="col.options?.customAttributes"
-              :texts="item[col.attributeName]?.texts || displayTexts.personDisplay"
-              size="s"
-              :customRole="col.kind === 'clickable' ? clickableRole : null"
-              @click="
-                defaultActionName && col.kind === 'clickable'
-                  ? defaultActionClicked(item[idAttribute], item)
-                  : null
-              "
-              @keydown.enter="
-                defaultActionName && col.kind === 'clickable'
-                  ? defaultActionClicked(item[idAttribute], item)
-                  : null
-              "
-            />
+            <template v-else-if="col.type === 'person'">
+              <div class="lx-cell-person-wrapper">
+                <LxPersonDisplay
+                  :value="item[col.attributeName]"
+                  :customAttributes="col.options?.customAttributes"
+                  :texts="item[col.attributeName]?.texts || displayTexts.personDisplay"
+                  size="s"
+                  :customRole="col.kind === 'clickable' ? clickableRole : null"
+                  @click="
+                    defaultActionName && col.kind === 'clickable'
+                      ? defaultActionClicked(item[idAttribute], item)
+                      : null
+                  "
+                  @keydown.enter="
+                    defaultActionName && col.kind === 'clickable'
+                      ? defaultActionClicked(item[idAttribute], item)
+                      : null
+                  "
+                />
+                <LxButton
+                  v-if="col?.options?.actionDefinitions?.[0]"
+                  :id="`${id}-${item[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
+                  variant="icon-only"
+                  kind="ghost"
+                  :label="
+                    col.options.actionDefinitions[0]?.name ||
+                    col.options.actionDefinitions[0]?.label
+                  "
+                  :title="
+                    col.options.actionDefinitions[0]?.title ||
+                    col.options.actionDefinitions[0]?.tooltip
+                  "
+                  :icon="col.options.actionDefinitions[0]?.icon"
+                  :iconSet="col.options.actionDefinitions[0]?.iconSet"
+                  :loading="col.options.actionDefinitions[0]?.loading"
+                  :busy="col.options.actionDefinitions[0]?.busy"
+                  :destructive="col.options.actionDefinitions[0]?.destructive"
+                  :disabled="
+                    isDisabled ||
+                    col.options.actionDefinitions[0]?.disabled ||
+                    (col.options.actionDefinitions[0]?.enableByAttribute
+                      ? !item[col.options.actionDefinitions[0]?.enableByAttribute]
+                      : false)
+                  "
+                  :active="col.options.actionDefinitions[0]?.active"
+                  :badge="col.options.actionDefinitions[0]?.badge"
+                  :badgeType="col.options.actionDefinitions[0]?.badgeType"
+                  :badgeIcon="col.options.actionDefinitions[0]?.badgeIcon"
+                  :badgeTitle="col.options.actionDefinitions[0]?.badgeTitle"
+                  @click.stop="
+                    handleActionClick(
+                      col?.options?.actionDefinitions[0]?.id,
+                      item[idAttribute],
+                      actionAdditionalParameter
+                    )
+                  "
+                />
+              </div>
+            </template>
           </LxRow>
 
           <LxRow
