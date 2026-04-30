@@ -27,6 +27,15 @@ const textsDefault = {
   paintbrush: 'Ota',
   color: 'Krāsas izvēle',
   clear: 'Notīrīt visu',
+  black: 'Noklusētā krāsa',
+  red: 'Sarkans',
+  orange: 'Oranžs',
+  yellow: 'Dzeltens',
+  green: 'Zaļš',
+  teal: 'Zilganzaļš',
+  blue: 'Zils',
+  purple: 'Violets',
+  grey: 'Pelēks',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -47,7 +56,7 @@ const colorsList = ref([
   { id: 6, label: 'teal', value: '#00b8d9', variable: '--color-teal' },
   { id: 7, label: 'blue', value: '#2684ff', variable: '--color-blue' },
   { id: 8, label: 'purple', value: '#6554c0', variable: '--color-purple' },
-  { id: 9, label: 'label', value: '#6c6c6c', variable: '--color-label' },
+  { id: 9, label: 'grey', value: '#6c6c6c', variable: '--color-grey' },
 ]);
 
 const canvas = ref(null);
@@ -402,6 +411,7 @@ defineExpose({ getPng });
                     },
                     color.label,
                   ]"
+                  :title="displayTexts[color.label]"
                   tabindex="0"
                   @click="updateColor(color.value, color.label, color.variable)"
                   @keydown.enter.prevent="updateColor(color.value, color.label, color.variable)"

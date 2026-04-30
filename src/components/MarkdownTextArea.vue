@@ -83,6 +83,15 @@ const textsDefault = {
   inputTypeUrl: 'Saite',
   inputTypeFile: 'Datne',
   invalidLinkMessage: 'Saite tika ievadīta nekorektā formā!',
+  black: 'Noklusētā krāsa',
+  red: 'Sarkans',
+  orange: 'Oranžs',
+  yellow: 'Dzeltens',
+  green: 'Zaļš',
+  teal: 'Zilganzaļš',
+  blue: 'Zils',
+  purple: 'Violets',
+  grey: 'Pelēks',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -254,7 +263,7 @@ const colorPickerColors = [
   { name: 'teal', var: 'var(--color-teal)' },
   { name: 'blue', var: 'var(--color-blue)' },
   { name: 'purple', var: 'var(--color-purple)' },
-  { name: 'label', var: 'var(--color-label)' },
+  { name: 'grey', var: 'var(--color-grey)' },
 ];
 
 function shouldKeepToolbarFocus(target) {
@@ -1014,6 +1023,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
                     color.name,
                     { 'lx-selected': editor.isActive('textStyle', { color: color.var }) },
                   ]"
+                  :title="displayTexts[color.name]"
                   tabindex="0"
                   @click="setColor(color)"
                   @keydown.enter.prevent="setColor(color)"
