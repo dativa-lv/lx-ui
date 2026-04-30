@@ -160,7 +160,7 @@
   border-left: var(--content-switcher-divider-border);
   height: var(--content-switcher-divider-height);
   content: '';
-  left: 0;
+  left: var(--space-0);
   align-self: center;
 }
 
@@ -184,7 +184,7 @@
 
 .lx-content-switcher-wrapper .lx-badge {
   margin-left: auto;
-  margin-right: 0;
+  margin-right: var(--space-0);
   line-height: 1.2em;
   flex-shrink: 0;
   max-width: calc(100% - 1.75rem); /* icon size + gap */

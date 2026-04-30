@@ -32,12 +32,17 @@ const isValueNumber = computed(() => {
   if (props.type === 'auto') return !Number.isNaN(Number(String(props.value)?.trim()));
   return props.type === 'number';
 });
+
+const isIconOnly = computed(() => !!props.icon && !props.value);
 </script>
 <template>
   <div
     v-if="icon || value"
     class="lx-badge lx-aligned-row"
-    :class="{ 'with-gap': icon && value }"
+    :class="{
+      'with-gap': icon && value,
+      'lx-badge-icon-only': isIconOnly,
+    }"
     :title="tooltip"
     :id="id"
     :aria-label="tooltip"

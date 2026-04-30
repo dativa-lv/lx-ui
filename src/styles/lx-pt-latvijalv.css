@@ -50,19 +50,19 @@
 
   --button-modal-primary-border-radius: var(--border-radius-default);
   --button-modal-primary-align: center;
-  --button-modal-primary-padding: 0rem;
+  --button-modal-primary-padding: var(--space-0);
   --button-modal-primary-height: 3rem;
   --button-modal-primary-min-width: 15rem;
   --button-modal-primary-width: auto;
 
   --button-modal-secondary-border-radius: var(--border-radius-default);
   --button-modal-secondary-align: center;
-  --button-modal-secondary-padding: 0rem;
+  --button-modal-secondary-padding: var(--space-0);
   --button-modal-secondary-height: 3rem;
   --button-modal-secondary-min-width: 15rem;
   --button-modal-secondary-width: auto;
 
-  --button-modal-set-margin: 1rem 8rem 1rem 0rem;
+  --button-modal-set-margin: var(--space-1000) 8rem var(--space-1000) var(--space-0);
 
   --button-modal-secondary-text-align: center;
   --button-modal-primary-text-align: center;
@@ -83,6 +83,9 @@
   --button-ghost-grid-template-columns: auto 1fr;
 
   --input-container-height: 3rem;
+
+  --content-switcher-outer-border-radius: calc(var(--content-switcher-item-height) / 2);
+  --content-switcher-outer-border-radius-selected: calc(var(--content-switcher-item-height) / 2);
 }
 
 .lx-button-content-wrapper .lx-button-icon {
@@ -136,8 +139,9 @@
 .lx .lx-notifications-list .lx-notification p.lx-title {
   font-weight: var(--font-weight-data) !important;
 }
+
 .lx .lx-notifications-list {
-  top: calc(var(--row-size) * 3 + 0.5rem) !important;
+  top: calc(var(--space-3000) * 3 + var(--space-0500)) !important;
 }
 .lx-button .lx-loader.lx-small,
 .patient-data .lx-loader.lx-small {

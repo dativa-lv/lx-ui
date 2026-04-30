@@ -42,7 +42,7 @@
   --input-border-radius: var(--border-radius-full);
   --input-height: 3.5rem;
 
-  --button-ghost-gap: 1rem;
+  --button-ghost-gap: var(--space-1000);
   --button-primary-border-radius: var(--border-radius-0500);
   --button-secondary-border-radius: var(--border-radius-0500);
   --button-tertiary-border-radius: var(--border-radius-0500);

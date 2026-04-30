@@ -43,7 +43,7 @@
 .lx-form-grid .lx-row .lx-card-wrapper.lx-card-interactive,
 .lx-form-grid .lx-row .lx-card-wrapper.lx-card-has-button,
 .lx-form-grid .lx-row .lx-card-wrapper.lx-card-clickable {
-    margin: 1.15rem 0.5rem;
+    margin: var(--space-1000) var(--space-0500);
 }
 
 .lx-card-wrapper.lx-card-interactive .lx-card {
@@ -94,6 +94,6 @@
 
 .lx-card-wrapper .lx-card-face > .lx-button {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: var(--space-0);
+    right: var(--space-0);
 }

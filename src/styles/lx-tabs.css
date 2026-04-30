@@ -48,7 +48,7 @@
 }
 
 .lx-modal .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-dropdown-input-wrapper > .lx-dropdown-default-panel .lx-input-text {
-  margin-left: 0;
+  margin-left: var(--space-0);
 }
 
 .lx-tab-control header.lx-toolbar .lx-group {
@@ -61,12 +61,12 @@
   background-color: var(--color-region);
   overflow-x: auto;
   overflow-y: hidden;
-  padding-left: 1.5rem;
+  padding-left: var(--space-1500);
   width: 100%;
 }
 
 .lx-modal .lx-tab-control .lx-tab-container {
-  top: -2rem;
+  top: calc(var(--space-2000) * -1);
 }
 
 .lx-tab-control .lx-tab-body {
@@ -76,11 +76,11 @@
 .lx-tab-control .lx-tab-container .lx-tab {
   min-height: var(--row-size);
   display: flex;
-  padding: var(--padding);
+  padding: var(--space-0500);
   align-items: flex-end;
   justify-content: flex-start;
-  margin-right: 0.5rem;
-  margin-bottom: 0px;
+  margin-right: var(--space-0500);
+  margin-bottom: var(--space-0);
   cursor: pointer;
   border-bottom: var(--tab-border);
   max-width: 14rem;
@@ -96,8 +96,8 @@
   height: var(--icon-size-s);
   flex-shrink: 0;
   flex-grow: 0;
-  margin-bottom: 0.2rem;
-  margin-left: 0.5rem;
+  margin-bottom: var(--space-0250);
+  margin-left: var(--space-0500);
 }
 
 .lx-tab-control .lx-tab-container .lx-tab svg.invalid {
@@ -152,14 +152,14 @@
 }
 
 .lx .lx-card .lx-tab-control .lx-tab-container {
-  margin-bottom: -4px;
+  margin-bottom: calc(var(--space-0250) * -1);
   background-color: transparent;
 }
 
 .lx .lx-card .lx-tab-control .lx-tab-container .lx-tab {
-  border-bottom: none;
-  padding-left: 1rem;
-  padding-top: 0px;
+  border-bottom: var(--border-width-0);
+  padding-left: var(--space-1000);
+  padding-top: var(--space-0);
   border-left: var(--border-width-2) transparent solid;
   border-top: var(--border-width-2) transparent solid;
   border-right: var(--border-width-2) transparent solid;
@@ -167,11 +167,11 @@
 }
 
 .lx .lx-card .lx-tab-control .lx-tab-body {
-  padding-top: 2rem;
+  padding-top: var(--space-2000);
 }
 
 .lx .lx-card .lx-tab-control .lx-tab-container .lx-tab .lx-primary {
-  margin-top: 0.25rem;
+  margin-top: var(--space-0250);
 }
 
 .lx .lx-card .lx-tab-control .lx-tab-container .lx-tab.lx-selected {
@@ -194,19 +194,19 @@
   position: absolute;
   top: var(--row-size);
   top: var(--tab-control-header-size);
-  left: 0;
-  right: 0;
+  left: var(--space-0);
+  right: var(--space-0);
   opacity: 0;
   opacity: var(--tab-control-shadow-opacity);
   pointer-events: none;
 }
 
 .lx-tab-control header.lx-toolbar .lx-tab-container .lx-tab svg{
-  padding-right: 0;
+  padding-right: var(--space-0);
 }
 
 .lx-tab-control .lx-tab svg.item-icon{
-  padding-right: 0.25rem;
+  padding-right: var(--space-0250);
   fill: var(--color-label)
 }
 

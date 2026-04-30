@@ -21,7 +21,7 @@
   grid-template-columns: subgrid;
   grid-column: var(--list-grid-outer-column-span);
   background-color: transparent !important;
-  border: none;
+  border: var(--border-width-0);
   overflow: visible;
 }
 
@@ -124,12 +124,12 @@
 .lx-empty-state {
   height: calc(var(--row-size) * 2);
   border: var(--border-width-2) solid var(--color-chrome);
-  padding: var(--row-size);
+  padding: var(--space-3000);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-label);
-  margin-top: 1rem;
+  margin-top: var(--space-1000);
 }
 
 .lx-list > li > .selecting-block > .lx-checkbox-placeholder {
@@ -154,8 +154,8 @@
 
 .lx a.lx-list-item:hover {
   background-color: transparent;
-  margin: 0;
-  padding: 0;
+  margin: var(--space-0);
+  padding: var(--space-0);
 }
 
 .lx .lx-draggable-group-list-item:has(.lx-list-item.lx-selected) .lx-handle,
@@ -225,21 +225,30 @@
 /*** Checkbox + radio button styles ***/
 
 .selecting-block > .lx-checkbox-wrapper {
-  margin: 0.1rem 0 0 0;
+  margin: var(--space-0);
 }
+
 .selecting-block > .lx-radio-button-wrapper {
-  margin: 0 -0.1rem 0 -0.1rem;
+  margin: calc(var(--space-0125) * -1) 0 0 0;
 }
 
 .lx-list-wrapper .selecting-block {
+  display: flex;
+  justify-content: center;
   padding: var(--list-item-selecting-block-padding);
+  min-width: 3rem; /* TODO: replace with token */
   background-color: transparent;
   grid-area: selecting;
 }
 
+.lx-list-wrapper .selecting-block > .lx-checkbox-wrapper .lx-checkbox-label-wrapper,
+.lx-list-wrapper .selecting-block > .lx-radio-button-wrapper .lx-radio-button-label-wrapper {
+  column-gap: var(--space-0);
+}
+
 .selecting-block > .lx-checkbox-wrapper .lx-checkbox-appearance,
 .selecting-block > .lx-radio-button-wrapper .lx-radio-button-appearance {
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .selecting-block > .lx-checkbox-wrapper .lx-checkbox-label,
@@ -711,7 +720,7 @@
 
 .lx-component-toolbar .left-area .lx-group > p,
 .lx-component-toolbar .right-area .lx-group > p {
-  padding-left: 1rem;
+  padding-left: var(--space-1000);
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -741,7 +750,7 @@
 }
 
 .lx-list-wrapper .lx-component-toolbar:has(.toolbar-search-button.is-expanded) {
-  gap: 0.15rem;
+  gap: var(--space-01250);
 }
 
 .lx-list-wrapper .lx-selection-toolbar > .lx-component-toolbar p {
@@ -753,7 +762,7 @@
 }
 
 .lx-list-wrapper.list-inside-form .lx-selection-toolbar > .lx-component-toolbar p {
-  padding-right: 1rem;
+  padding-right: var(--space-1000);
 }
 
 .lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button {
@@ -801,13 +810,13 @@
 .lx-list-wrapper .lx-load-more-button {
   display: flex;
   justify-content: center;
-  padding-top: 0.5rem;
+  padding-top: var(--space-0500);
 }
 
 .lx-list-wrapper > .lx-list-loader {
   display: flex;
   justify-content: center;
-  padding: 2rem 0rem;
+  padding: var(--space-2000) var(--space-0);
 }
 
 .lx-list-wrapper .lx-load-more-button > .lx-button {
@@ -827,6 +836,7 @@
 
 .lx-list-item-wrapper > .lx-list-item-loader {
   padding: var(--list-item-loader-padding);
+  min-width: 3rem; /* TODO: replace with token */
   height: 100%;
   background-color: transparent;
   grid-area: loader;
@@ -859,7 +869,7 @@
 }
 
 .lx-handle .lx-icon {
-  margin-top: 0.5rem;
+  margin-top: var(--space-0500);
   width: var(--list-draggable-handle-icon-size);
   height: var(--list-draggable-handle-icon-size);
   fill: var(--color-list-handle-icon);
@@ -879,7 +889,7 @@
   grid-template-columns: inherit;
   display: grid;
   align-items: stretch;
-  gap: 0.5rem;
+  gap: var(--space-0500);
 }
 
 .lx-list > .list-draggable-area {
@@ -931,7 +941,7 @@
 .lx .list-draggable-area {
   list-style-type: none;
   margin-block: 0;
-  padding-left: 0;
+  padding-left: var(--space-0);
 }
 
 /*** LxTile styles ***/
@@ -1030,7 +1040,7 @@
 .lx-tile-wrapper > .lx-tile > .lx-tile-icon-wrapper,
 .lx-tile-wrapper > .lx-tile > .lx-tile-item-loader {
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--space-1000);
   overflow: hidden;
   align-items: start;
 }
@@ -1111,7 +1121,7 @@
   align-items: center;
   line-height: 1em;
   text-align: center;
-  margin-top: 0;
+  margin-top: var(--space-0);
   opacity: 1;
 }
 
@@ -1123,14 +1133,13 @@
 
 .lx-tile-wrapper > .lx-tile.lx-mini .badge-wrapper {
   position: absolute;
-  left: 1rem;
-  top: -0.5rem;
+  left: var(--space-1000);
+  top: calc(var(--space-0500) * -1);
 }
 
 .lx-tile-wrapper > .lx-tile.lx-mini .badge-wrapper:has(.lx-badge-empty) {
-  left: 1.5rem;
+  left: var(--space-1500);
 }
-
 
 .lx-list-item,
 .lx-tile {
@@ -1163,7 +1172,7 @@
 
 .lx-tile:hover,
 a.lx-tile:hover {
-  margin: 0;
+  margin: var(--space-0);
   padding: var(--tile-padding);
 }
 
@@ -1173,7 +1182,7 @@ a.lx-tile:not(.lx-disabled):hover {
 }
 
 .lx-tile > header .lx-description {
-  margin-top: 1.2rem;
+  margin-top: var(--space-1250);
   color: var(--color-label);
   font-size: var(--small-font-size);
   line-height: 1.1em;
@@ -1270,11 +1279,11 @@ a.lx-tile:not(.lx-disabled):hover {
 }
 
 .lx-list-wrapper .lx-component-toolbar .left-area .lx-group {
-  border-right: none;
+  border-right: var(--border-width-0);
 }
 
 .lx-list-wrapper .right-area .lx-group {
-  border-left: none;
+  border-left: var(--border-width-0);
 }
 
 .lx-component-toolbar .lx-field-wrapper .lx-text-input {
@@ -1299,11 +1308,11 @@ li .lx-list-item.lx-inactive {
 }
 
 .lx-list-item.lx-list-item-tile p.lx-primary {
-  margin-top: 0.5rem;
+  margin-top: var(--space-0500);
 }
 
 .lx-list-item.lx-list-item-tile p.lx-secondary {
-  margin-top: 1rem;
+  margin-top: var(--space-1000);
 }
 
 .lx-list-wrapper .lx-list-item-wrapper .compact-actions {
@@ -1326,8 +1335,8 @@ li .lx-list-item.lx-inactive {
 
 .lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions > svg{
   align-self: flex-end;
-  margin-right: .7rem;
-  margin-bottom: 0.75rem;
+  margin-right: var(--space-0750);
+  margin-bottom: var(--space-0750);
 }
 
 .lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions .lx-button-content-wrapper svg{

@@ -41,8 +41,8 @@
   font-size: 3.3rem;
   line-height: 1.1em;
   color: var(--color-brand);
-  margin-bottom: 0.75rem;
-  margin-top: 1.5rem;
+  margin-bottom: var(--space-0750);
+  margin-top: var(--space-1500);
 }
 
 .lx-cover .lx-description {
@@ -50,9 +50,9 @@
   line-height: 1.1em;
   color: var(--color-label);
   font-weight: bold;
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-2000);
   width: 50%;
-  padding-left: 0.25rem;
+  padding-left: var(--space-0250);
 }
 
 .lx .lx-cover .lx-logo {
@@ -79,11 +79,11 @@
   display: flex;
   list-style: none;
   padding-inline-start: 0;
-  margin-top: 0.75rem;
+  margin-top: var(--space-0750);
 }
 
 .lx-breadcrumbs .lx-breadcrumb {
-  margin-left: 0.5rem;
+  margin-left: var(--space-0500);
 }
 
 .lx-breadcrumbs .lx-breadcrumb a {
@@ -92,11 +92,11 @@
 }
 
 .lx-breadcrumbs .lx-breadcrumb:first-of-type {
-  margin-left: 0.25rem;
+  margin-left: var(--space-0250);
 }
 
 .lx-breadcrumbs .lx-breadcrumb::after {
-  margin-left: 0.5rem;
+  margin-left: var(--space-0500);
   content: '/';
   color: var(--color-label);
   font-size: var(--small-font-size);
@@ -138,8 +138,8 @@
 
 .lx-layout-default .lx-nav-panel ul {
   list-style: none;
-  padding: 0;
-  margin: 0;
+  padding: var(--space-0);
+  margin: var(--space-0);
   flex-grow: 0;
   height: auto;
 }
@@ -155,7 +155,7 @@
 }
 
 .lx-layout-default .lx-nav-panel .lx-sub-nav {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-1000);
 }
 
 .lx-layout-default .lx-content {
@@ -181,9 +181,9 @@
   display: flex;
   flex-grow: 1;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 3rem;
-  margin-bottom: 3rem;
+  gap: var(--space-1000);
+  margin-top: var(--space-3000);
+  margin-bottom: var(--space-3000);
 }
 
 .lx-block {
@@ -238,15 +238,15 @@
 .lx .lx-layout .lx-main-header .lx-divider {
   display: block;
   border-right: var(--border-width-1) solid var(--color-chrome);
-  margin-right: -1px;
+  margin-right: calc(var(--space-0125) * -1);
   height: 2rem;
   width: auto;
   opacity: 0.2;
 }
 
 code {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
+  margin-bottom: var(--space-1000);
+  padding: var(--space-0500);
   display: block;
   background: var(--color-region);
   word-wrap: break-word;
@@ -261,8 +261,8 @@ code {
 }
 
 .lx-main .lx-header {
-  margin-top: 2rem;
-  margin-bottom: 3rem;
+  margin-top: var(--space-2000);
+  margin-bottom: var(--space-3000);
 }
 
 .lx-main h1,
@@ -278,8 +278,8 @@ code {
   font-size: var(--h2-font-size);
   font-weight: var(--h2-font-weight);
   color: var(--color-data);
-  margin-bottom: 1em;
-  margin-top: 2em;
+  margin-bottom: var(--space-1000);
+  margin-top: var(--space-2000);
   line-height: 1.1em;
 }
 
@@ -294,26 +294,26 @@ code {
   fill: var(--color-bad);
   width: var(--icon-size-xs);
   height: var(--icon-size-xs);
-  margin-bottom: 0;
-  margin-right: 0;
+  margin-bottom: var(--space-0);
+  margin-right: var(--space-0);
 }
 
 .lx-main h2:not(.lx-section-header):first-of-type,
 .lx-main .heading-2:not(.lx-section-header):first-of-type {
-  margin-top: 0em;
+  margin-top: var(--space-0);
 }
 
 .lx-main h2.lx-section-header,
 .lx-main .heading-2.lx-section-header {
-  margin-bottom: 0em;
+  margin-bottom: var(--space-0);
 }
 
 .lx-main h2 svg,
 .lx-main .heading-2 svg {
   width: var(--icon-size-s);
   height: var(--icon-size-s);
-  margin-right: 0.5rem;
-  margin-bottom: -0.45rem;
+  margin-right: var(--space-0500);
+  margin-bottom: calc(var(--space-0500) * -1);
   fill: var(--color-label);
 }
 
@@ -325,7 +325,7 @@ code {
 
 .lx-header .lx-description {
   font-size: var(--small-font-size);
-  margin-top: 1rem;
+  margin-top: var(--space-1000);
 }
 
 .lx-main .lx-toolbar {
@@ -388,7 +388,7 @@ code {
 
 .lx-context-container .lx-dropdown-panel.lx-position-rb {
   top: var(--nav-row-size);
-  left: 0;
+  left: var(--space-0);
   right: auto;
   bottom: auto;
 }
@@ -396,13 +396,13 @@ code {
 .lx-context-container .lx-dropdown-panel.lx-position-lb {
   top: var(--nav-row-size);
   left: auto;
-  right: 0;
+  right: var(--space-0);
   bottom: auto;
 }
 
 .lx-context-container .lx-dropdown-panel.lx-position-rt {
   top: auto;
-  left: 0;
+  left: var(--space-0);
   right: auto;
   bottom: var(--nav-row-size);
 }
@@ -410,14 +410,14 @@ code {
 .lx-context-container .lx-dropdown-panel.lx-position-lt {
   top: auto;
   left: auto;
-  right: 0;
+  right: var(--space-0);
   bottom: var(--nav-row-size);
 }
 
 .lx-context-container .lx-dropdown-panel .lx-region {
   background-color: var(--color-background);
-  margin-bottom: 1rem;
-  padding: var(--padding);
+  margin-bottom: var(--space-1000);
+  padding: var(--space-0500);
   min-height: var(--row-size);
   display: flex;
   justify-items: center;
@@ -431,14 +431,14 @@ code {
 }
 
 .lx .lx-layout .popper .lx-dropdown-panel {
-  padding: 0.5rem;
+  padding: var(--space-0500);
   position: static;
   box-shadow: var(--shadow-dropdown);
   overflow-y: auto;
 }
 
 .lx-dropdown-panel #userInfo {
-  padding: 1rem 1.5rem;
+  padding: var(--space-1000) var(--space-1500);
   display: none;
 }
 
@@ -458,13 +458,13 @@ code {
 
 .lx-tile-set {
   display: flex;
-  gap: 1rem;
+  gap: var(--space-1000);
   flex-wrap: wrap;
 }
 
 .lx .lx-tile:hover,
 .lx a.lx-tile:hover {
-  margin: 0;
+  margin: var(--space-0);
   padding: var(--tile-padding);
   background-color: var(--color-tile-hover-background);
   border-color: var(--color-interactive-hover-background);
@@ -485,13 +485,12 @@ code {
 .lx .lx-tile header .lx-primary {
   color: var(--color-data);
   text-decoration: var(--button-text-decoration);
-
   font-weight: bold;
-  margin-top: 0.75rem;
+  margin-top: var(--space-0750);
 }
 
 .lx-tile header .lx-description {
-  margin-top: 0.5rem;
+  margin-top: var(--space-0500);
   color: var(--color-label);
   font-size: var(--small-font-size);
   line-height: 1.1em;
@@ -564,7 +563,7 @@ code {
   height: 7rem;
   width: 7rem;
   fill: var(--color-chrome);
-  margin-bottom: 3rem;
+  margin-bottom: var(--space-3000);
 }
 
 .lx-widget>header {
@@ -588,7 +587,7 @@ code {
 .lx-widget-toolbar-button {
   position: relative;
   display: flex;
-  left: 1rem;
+  left: var(--space-1000);
 }
 
 .lx-widget header p {
@@ -622,14 +621,14 @@ code {
 }
 
 .lx-error .lx-illustration {
-  margin-bottom: var(--row-size);
+  margin-bottom: var(--space-3000);
   fill: var(--color-bad);
 }
 
 .lx-error h1,
 .lx-error .heading-1 {
   color: var(--color-bad);
-  margin-bottom: var(--row-size);
+  margin-bottom: var(--space-3000);
 }
 
 .lx-error .lx-description {
@@ -647,7 +646,7 @@ code {
 }
 
 .lx-plate .lx-description {
-  margin-top: var(--row-size);
+  margin-top: var(--space-3000);
   font-weight: bold;
 }
 
@@ -655,7 +654,7 @@ code {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--space-1000);
 }
 
 .lx-dashboard .lx-dashboard-column {
@@ -664,7 +663,7 @@ code {
   align-content: flex-start;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--space-1000);
 }
 
 .lx-dashboard .lx-dashboard-column-m {
@@ -691,17 +690,17 @@ code {
 }
 
 .lx-article .lx-button-set {
-  margin-top: 3rem;
-  margin-bottom: 3rem;
+  margin-top: var(--space-3000);
+  margin-bottom: var(--space-3000);
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: var(--space-0500);
 }
 
 .lx-article p,
 .lx-article li {
-  margin-bottom: 1.3em;
-  line-height: 1.3em;
+  margin-bottom: var(--space-1250);
+  line-height: var(--space-1250);
 }
 
 .lx-error-landing {
@@ -714,25 +713,25 @@ code {
 .lx-empty-state {
   height: calc(var(--row-size) * 4);
   border: var(--border-width-2) solid var(--color-chrome);
-  padding: var(--row-size);
+  padding: var(--space-3000);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-label);
-  margin-top: 1rem;
+  margin-top: var(--space-1000);
 }
 
 .lx-info-box {
   min-height: var(--row-size);
   border: var(--border-width-2) solid var(--color-region);
-  padding: var(--row-size);
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  padding: var(--space-3000);
+  padding-top: var(--space-1500);
+  padding-bottom: var(--space-1500);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-label);
-  margin-top: 1rem;
+  margin-top: var(--space-1000);
 }
 
 .lx-region .lx-info-box,
@@ -754,7 +753,7 @@ code {
 }
 
 .lx-layout-read-only .lx-toolbar.lx-sticky {
-  top: 0;
+  top: var(--space-0);
 }
 
 .lx-card header.lx-toolbar {
@@ -762,7 +761,7 @@ code {
 }
 
 .lx .lx-form.lx-form-region.lx-card {
-  padding-top: 0;
+  padding-top: var(--space-0);
 }
 
 .lx-card footer {
@@ -770,7 +769,7 @@ code {
 }
 
 .lx .lx-form.lx-card {
-  gap: 0px;
+  gap: var(--space-0);
 }
 
 .lx-card .lx-expander:not(.lx-modal .lx-expander) {
@@ -780,28 +779,28 @@ code {
 }
 
 .lx-card .lx-expander .lx-head {
-  padding-left: 2rem;
+  padding-left: var(--space-2000);
 }
 
 .lx-card .lx-expander .lx-body {
-  margin-top: 1rem;
-  margin-left: 2rem;
-  margin-right: 2rem;
-  margin-bottom: 1rem;
+  margin-top: var(--space-1000);
+  margin-left: var(--space-2000);
+  margin-right: var(--space-2000);
+  margin-bottom: var(--space-1000);
 }
 
 .lx-card .lx-button-set:not(.lx-modal .lx-button-set):not(.lx-dropdown-panel .lx-button-set) {
   margin-left: var(--padding-form-negative) !important;
   margin-right: var(--padding-form-negative) !important;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: var(--space-2000);
+  padding-right: var(--space-2000);
   width: var(--body-column-size) !important;
 }
 
 .lx-toolbar .lx-toolbar-chip {
   display: flex;
   align-items: center;
-  padding: 0.5rem 1rem;
+  padding: var(--space-0500) var(--space-1000);
   line-height: 1em;
   height: var(--row-size);
 }
@@ -833,23 +832,23 @@ code {
 .lx-toolbar .lx-toolbar-chip svg {
   height: var(--icon-size-s);
   width: var(--icon-size-s);
-  margin-left: 0.5rem;
-  margin-top: -0.05rem;
+  margin-left: var(--space-0500);
+  margin-top: var(--space-0);
 }
 
 .lx-toolbar .lx-toolbar-chip span {
-  margin-left: 1rem;
+  margin-left: var(--space-1000);
 }
 
 .lx-toolbar .lx-toolbar-chip span:first-of-type {
-  margin-left: 0rem;
+  margin-left: var(--space-0);
 }
 
 .lx-toolbar .lx-toolbar-chip span svg {
   width: var(--icon-size-xs);
   height: var(--icon-size-xs);
-  margin-left: 0.25rem;
-  margin-bottom: -0.1rem;
+  margin-left: var(--space-0250);
+  margin-bottom: calc(var(--space-0125) * -1);
 }
 
 .lx-toolbar .lx-toolbar-chip.lx-secondary svg {
@@ -875,21 +874,21 @@ code {
   background-color: var(--color-tooltip-background);
 
   color: var(--color-tooltip-foreground);
-  left: 0;
+  left: var(--space-0);
   width: auto;
-  padding: 0.5rem 1rem;
+  padding: var(--space-0500) var(--space-1000);
   z-index: 1000;
   pointer-events: none;
-  margin-top: 0.5rem;
+  margin-top: var(--space-0500);
 }
 
 .lx-info-wrapper .lx-tooltip .lx-tooltip-indicator {
   height: 0.75rem;
   width: 0.75rem;
   background-color: var(--color-tooltip-background);
-  margin-top: -0.25rem;
+  margin-top: calc(var(--space-0250) * -1);
   position: absolute;
-  top: 0.1rem;
+  top: var(--space-0125);
   transform: rotate(45deg);
 }
 
@@ -915,7 +914,7 @@ code {
 
 .lx-info-wrapper .lx-tooltip.lx-position-lb,
 .lx-info-wrapper .lx-tooltip.lx-position-lt {
-  right: 0;
+  right: var(--space-0);
   left: inherit;
 }
 
@@ -927,7 +926,7 @@ code {
 
 .lx-info-wrapper .lx-tooltip.lx-position-lb .lx-tooltip-indicator,
 .lx-info-wrapper .lx-tooltip.lx-position-lt .lx-tooltip-indicator {
-  right: 1rem;
+  right: var(--space-1000);
 }
 
 .lx-info-wrapper .lx-tooltip.lx-position-lt .lx-tooltip-indicator,
@@ -937,35 +936,35 @@ code {
 }
 
 .lx-info-wrapper .lx-tooltip-rb .lx-tooltip-indicator {
-  right: 1rem;
+  right: var(--space-1000);
 }
 
 .lx aside .lx-index {
   position: sticky;
   top: var(--nav-row-size);
   width: var(--aside-size);
-  margin-left: calc(-2rem - var(--aside-size));
-  margin-right: 2rem;
+  margin-left: calc(calc(var(--space-2000) * -1) - var(--aside-size));
+  margin-right: var(--space-2000);
 }
 
 .lx aside.responsive-nav .lx-index {
   position: static;
-  top: 0;
+  top: var(--space-0);
   width: calc(var(--aside-size));
-  margin-left: 0;
-  margin-right: 0;
+  margin-left: var(--space-0);
+  margin-right: var(--space-0);
   flex-shrink: 0;
 }
 
 .lx aside.responsive-nav .lx-index ol {
-  padding-top: 0;
+  padding-top: var(--space-0);
   padding-inline-start: 0;
 }
 
 .lx aside.responsive-nav .lx-index li {
   border-color: transparent;
   width: 100%;
-  padding-left: 0;
+  padding-left: var(--space-0);
 }
 
 .lx aside.responsive-nav .lx-index li .num span {
@@ -1030,7 +1029,7 @@ code {
 }
 
 .lx aside .lx-index ol {
-  padding-top: var(--row-size);
+  padding-top: var(--space-3000);
   padding-inline-start: 2rem;
 }
 
@@ -1041,9 +1040,9 @@ code {
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  padding: 0.25rem;
-  padding-left: 1rem;
-  padding-right: 1.3rem;
+  padding: var(--space-0250);
+  padding-left: var(--space-1000);
+  padding-right: var(--space-1250);
 }
 
 .lx aside .lx-index li {
@@ -1085,10 +1084,10 @@ code {
   height: 1.1rem;
   width: 1.1rem;
   opacity: 0;
-  margin-right: -0.8rem;
+  margin-right: calc(var(--space-0750) * -1);
   flex-shrink: 0;
   background-color: var(--color-background);
-  padding: 0rem;
+  padding: var(--space-0);
   border-radius: var(--border-radius-full);
 }
 
@@ -1098,7 +1097,7 @@ code {
 
 .lx .lx-document .lx-form-region>header.lx-wide-toolbar.lx-sticky {
   border-bottom: var(--border-width-2) var(--color-background) solid;
-  margin-top: -3rem;
+  margin-top: calc(var(--row-size) * -1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1106,12 +1105,12 @@ code {
 }
 
 .lx .lx-document .lx-form-region>footer {
-  margin-left: -2rem;
-  margin-right: -2rem;
-  margin-top: 0;
+  margin-left: calc(var(--space-2000) * -1);
+  margin-right: calc(var(--space-2000) * -1);
+  margin-top: var(--space-0);
   width: calc(100% + 4rem) !important;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: var(--space-2000);
+  padding-right: var(--space-2000);
   z-index: 10;
 }
 
@@ -1129,8 +1128,8 @@ code {
   flex-shrink: 0;
   fill: var(--color-label);
   align-self: flex-start;
-  margin-right: 1.5rem;
-  margin-left: -1.5rem;
+  margin-right: var(--space-1500);
+  margin-left: calc(var(--space-1500) * -1);
 }
 
 .lx .lx-info-box:hover svg {
@@ -1142,7 +1141,7 @@ code {
 }
 
 .lx .lx-info-box ol li {
-  margin-bottom: 1em;
+  margin-bottom: var(--space-1000);
 }
 
 .lx .lx-document>.lx-form {
@@ -1150,7 +1149,7 @@ code {
 }
 
 .lx .lx-toolbar .lx-data+.lx-secondary {
-  margin-top: -0.5rem;
+  margin-top: calc(var(--space-0500) * -1);
   line-height: 1.2em;
 }
 
@@ -1170,15 +1169,13 @@ code {
 
 .lx .lx-layout .popper  .lx-info-wrapper-panel {
   background-color: var(--color-tooltip-background);
-  padding: 0.5rem 1rem;
+  padding: var(--space-0500) var(--space-1000);
   color: var(--color-tooltip-foreground);
 }
 
 .lx .lx-layout .lx-info-wrapper-panel .lx-row {
   width: var(--aside-size);
 }
-
-
 
 .lx .lx-form .lx-row .popper .lx-info-wrapper-panel .lx-data,
 .lx .popper .lx-info-wrapper-panel .lx-data,
@@ -1203,8 +1200,8 @@ code {
 
 @media (max-width: 1900px) {
   .lx-main .lx-header {
-    margin-top: 1rem;
-    margin-bottom: 2rem;
+    margin-top: var(--space-1000);
+    margin-bottom: var(--space-2000);
   }
 
   .lx-layout-default .lx-nav-panel {
@@ -1222,25 +1219,25 @@ code {
 
 @media (max-width: 1584px) {
   .lx-main .lx-header {
-    margin-top: 1rem;
-    margin-bottom: 2rem;
+    margin-top: var(--space-1000);
+    margin-bottom: var(--space-2000);
   }
 
   .lx-layout-default .lx-content .lx-main {
     width: 100%;
     max-width: calc(100vw - 2 * var(--row-size));
-    margin-left: var(--row-size);
-    margin-right: var(--row-size);
-    padding-left: var(--row-size);
-    padding-right: var(--row-size);
+    margin-left: var(--space-3000);
+    margin-right: var(--space-3000);
+    padding-left: var(--space-3000);
+    padding-right: var(--space-3000);
   }
 
   .lx-cover>div {
     width: 100%;
-    margin-left: var(--row-size);
-    margin-right: var(--row-size);
-    padding-left: var(--row-size);
-    padding-right: var(--row-size);
+    margin-left: var(--space-3000);
+    margin-right: var(--space-3000);
+    padding-left: var(--space-3000);
+    padding-right: var(--space-3000);
   }
 
   .lx-cover .lx-description {
@@ -1271,8 +1268,8 @@ code {
   }
 
   .lx-main .lx-header {
-    margin-top: 1rem;
-    margin-bottom: 2rem;
+    margin-top: var(--space-1000);
+    margin-bottom: var(--space-2000);
   }
 
   .lx-main h1,
@@ -1289,18 +1286,18 @@ code {
   .lx-layout-default .lx-content .lx-main {
     width: 100%;
     max-width: 100vw;
-    margin-left: var(--padding-min);
-    margin-right: var(--padding-min);
-    padding-left: 0;
-    padding-right: 0;
+    margin-left: var(--space-1000);
+    margin-right: var(--space-1000);
+    padding-left: var(--space-0);
+    padding-right: var(--space-0);
   }
 
   .lx-cover>div {
     width: 100%;
-    margin-left: var(--row-size);
-    margin-right: var(--row-size);
-    padding-left: 0;
-    padding-right: 0;
+    margin-left: var(--space-3000);
+    margin-right: var(--space-3000);
+    padding-left: var(--space-0);
+    padding-right: var(--space-0);
   }
 
   .lx-layout-default .lx-content .lx-main+.lx-divider {

@@ -1089,7 +1089,7 @@ const fullBleedMargin = computed(() => {
     dataGridWrapperRef.value?.closest('.lx-form-grid') ||
     width.value <= 1920
   ) {
-    return `--grid-left-margin: 0; --grid-right-margin: 0;`;
+    return `--grid-left-margin: var(--space-0); --grid-right-margin: var(--space-0);`;
   }
 
   const bodyColWidth = Number.parseFloat(

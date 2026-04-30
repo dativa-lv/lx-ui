@@ -4,308 +4,307 @@
 
 ## Layout
 
-| Variable name                                      | Default value                                            |
-|----------------------------------------------------|----------------------------------------------------------|
-| `--button-cursor`                                  | pointer                                                  |
-| `--button-badge-padding`                           | 0 0.25rem 0 0.25rem                                      |
-| `--button-icon-justify`                            | center                                                   |
-| `--button-icon-margin`                             | 0 -0.4rem                                                |
-| `--button-loader-margin`                           | 0 -0.25rem                                               |
-| `--button-set-gap`                                 | 0.5rem                                                   |
-| `--button-dropdown-align`                          | center                                                   |
-| `--button-dropdown-border`                         | 2px solid var(--color-button-dropdown-background)        |
-| `--button-dropdown-border-radius`                  | `--border-radius-default`                                |
-| `--button-dropdown-font-size`                      | inherit                                                  |
-| `--button-dropdown-font-weight`                    | `--font-weight-interactive`                              |
-| `--button-dropdown-gap`                            | 1.35rem                                                  |
-| `--button-dropdown-grid-areas`                     | 'content icon'                                           |
-| `--button-dropdown-grid-template-columns`          | 1fr auto                                                 |
-| `--button-dropdown-grid-template-rows`             | 1fr                                                      |
-| `--button-dropdown-height`                         | `--row-size-dynamic`                                     |
-| `--button-dropdown-icon-size`                      | `--icon-size-m`                                          |
-| `--button-dropdown-margin`                         | 0                                                        |
-| `--button-dropdown-min-width`                      | `--row-size`                                             |
-| `--button-dropdown-outline-offset`                 | -2px                                                     |
-| `--button-dropdown-padding`                        | 0 1rem                                                   |
-| `--button-dropdown-set-gap`                        | 0.1rem                                                   |
-| `--button-dropdown-text-align`                     | left                                                     |
-| `--button-dropdown-text-decoration`                | none                                                     |
-| `--button-dropdown-width`                          | 100%                                                     |
-| `--button-toolbar-group-gap`                       | 0                                                        |
-| `--button-toolbar-gap`                             | 0                                                        |
-| `--button-toolbar-primary-align`                   | center                                                   |
-| `--button-toolbar-primary-border`                  | 2px solid var(--color-button-toolbar-primary-background) |
-| `--button-toolbar-primary-border-radius`           | `--border-radius-default`                                |
-| `--button-toolbar-primary-font-size`               | inherit                                                  |
-| `--button-toolbar-primary-font-weight`             | `--font-weight-interactive`                              |
-| `--button-toolbar-primary-gap`                     | 1.35rem                                                  |
-| `--button-toolbar-primary-grid-areas`              | 'content icon'                                           |
-| `--button-toolbar-primary-grid-template-columns`   | minmax(max-content, 1fr) auto                            |
-| `--button-toolbar-primary-grid-template-rows`      | 1fr                                                      |
-| `--button-toolbar-primary-height`                  | `--row-size`                                             |
-| `--button-toolbar-primary-icon-size`               | `--icon-size-m`                                          |
-| `--button-toolbar-primary-margin`                  | 0                                                        |
-| `--button-toolbar-primary-min-width`               | `--row-size`                                             |
-| `--button-toolbar-primary-outline-offset`          | 0                                                        |
-| `--button-toolbar-primary-padding`                 | 0 1rem                                                   |
-| `--button-toolbar-primary-text-align`              | left                                                     |
-| `--button-toolbar-primary-text-decoration`         | none                                                     |
-| `--button-toolbar-primary-width`                   | 100%                                                     |
-| `--button-toolbar-secondary-align`                 | center                                                   |
-| `--button-toolbar-secondary-border`                | 2px solid var(--color-interactive-secondary-background)  |
-| `--button-toolbar-secondary-border-radius`         | `--border-radius-default`                                |
-| `--button-toolbar-secondary-font-size`             | inherit                                                  |
-| `--button-toolbar-secondary-font-weight`           | `--font-weight-interactive`                              |
-| `--button-toolbar-secondary-gap`                   | 1.35rem                                                  |
-| `--button-toolbar-secondary-grid-areas`            | 'content icon'                                           |
-| `--button-toolbar-secondary-grid-template-columns` | minmax(max-content, 1fr) auto                            |
-| `--button-toolbar-secondary-grid-template-rows`    | 1fr                                                      |
-| `--button-toolbar-secondary-height`                | `--row-size`                                             |
-| `--button-toolbar-secondary-icon-size`             | `--icon-size-m`                                          |
-| `--button-toolbar-secondary-margin`                | 0                                                        |
-| `--button-toolbar-secondary-min-width`             | `--row-size`                                             |
-| `--button-toolbar-secondary-outline-offset`        | 0                                                        |
-| `--button-toolbar-secondary-padding`               | 0 1rem                                                   |
-| `--button-toolbar-secondary-text-align`            | left                                                     |
-| `--button-toolbar-secondary-text-decoration`       | none                                                     |
-| `--button-toolbar-secondary-width`                 | auto                                                     |
-| `--button-toolbar-tertiary-align`                  | center                                                   |
-| `--button-toolbar-tertiary-border`                 | 2px solid var(--color-interactive-background)            |
-| `--button-toolbar-tertiary-border-radius`          | `--border-radius-default`                                |
-| `--button-toolbar-tertiary-font-size`              | inherit                                                  |
-| `--button-toolbar-tertiary-font-weight`            | `--font-weight-interactive`                              |
-| `--button-toolbar-tertiary-gap`                    | 1.35rem                                                  |
-| `--button-toolbar-tertiary-grid-areas`             | 'content icon'                                           |
-| `--button-toolbar-tertiary-grid-template-columns`  | 1fr auto                                                 |
-| `--button-toolbar-tertiary-grid-template-rows`     | 1fr                                                      |
-| `--button-toolbar-tertiary-height`                 | `--row-size`                                             |
-| `--button-toolbar-tertiary-icon-size`              | `--icon-size-m`                                          |
-| `--button-toolbar-tertiary-margin`                 | 0                                                        |
-| `--button-toolbar-tertiary-min-width`              | `--row-size`                                             |
-| `--button-toolbar-tertiary-outline-offset`         | 0                                                        |
-| `--button-toolbar-tertiary-padding`                | 0 1rem                                                   |
-| `--button-toolbar-tertiary-text-align`             | left                                                     |
-| `--button-toolbar-tertiary-text-decoration`        | none                                                     |
-| `--button-toolbar-tertiary-width`                  | auto                                                     |
-| `--button-toolbar-ghost-align`                     | center                                                   |
-| `--button-toolbar-ghost-border`                    | 2px solid transparent                                    |
-| `--button-toolbar-ghost-border-radius`             | `--border-radius-default`                                |
-| `--button-toolbar-ghost-font-size`                 | inherit                                                  |
-| `--button-toolbar-ghost-font-weight`               | `--font-weight-interactive`                              |
-| `--button-toolbar-ghost-gap`                       | 1.35rem                                                  |
-| `--button-toolbar-ghost-grid-areas`                | 'content icon'                                           |
-| `--button-toolbar-ghost-grid-template-columns`     | 1fr auto                                                 |
-| `--button-toolbar-ghost-grid-template-rows`        | 1fr                                                      |
-| `--button-toolbar-ghost-height`                    | `--row-size`                                             |
-| `--button-toolbar-ghost-icon-size`                 | `--icon-size-m`                                          |
-| `--button-toolbar-ghost-margin`                    | 0                                                        |
-| `--button-toolbar-ghost-min-width`                 | `--row-size`                                             |
-| `--button-toolbar-ghost-outline-offset`            | -2px                                                     |
-| `--button-toolbar-ghost-padding`                   | 0 1rem                                                   |
-| `--button-toolbar-ghost-text-align`                | left                                                     |
-| `--button-toolbar-ghost-text-decoration`           | none                                                     |
-| `--button-toolbar-ghost-width`                     | auto                                                     |
-| `--button-toolbar-selection-align`                 | center                                                   |
-| `--button-toolbar-selection-border`                | 2px solid transparent                                    |
-| `--button-toolbar-selection-border-radius`         | `--border-radius-default`                                |
-| `--button-toolbar-selection-font-size`             | inherit                                                  |
-| `--button-toolbar-selection-font-weight`           | `--font-weight-interactive`                              |
-| `--button-toolbar-selection-gap`                   | 1.35rem                                                  |
-| `--button-toolbar-selection-grid-areas`            | 'content icon'                                           |
-| `--button-toolbar-selection-grid-template-columns` | minmax(max-content, 1fr) auto                            |
-| `--button-toolbar-selection-grid-template-rows`    | 1fr                                                      |
-| `--button-toolbar-selection-height`                | `--row-size`                                             |
-| `--button-toolbar-selection-icon-size`             | `--icon-size-m`                                          |
-| `--button-toolbar-selection-margin`                | 0                                                        |
-| `--button-toolbar-selection-min-width`             | `--row-size`                                             |
-| `--button-toolbar-selection-outline-offset`        | -2px                                                     |
-| `--button-toolbar-selection-padding`               | 0 1rem                                                   |
-| `--button-toolbar-selection-text-align`            | left                                                     |
-| `--button-toolbar-selection-text-decoration`       | none                                                     |
-| `--button-toolbar-selection-width`                 | auto                                                     |
-| `--button-toolbar-selection-icon-only-height`      | `--button-toolbar-selection-height`                      |
-| `--button-toolbar-selection-icon-only-min-width`   | `--button-toolbar-selection-min-width`                   |
-| `--button-toolbar-selection-icon-only-padding`     | 0                                                        |
-| `--button-toolbar-selection-icon-only-width`       | auto                                                     |
-| `--button-toolbar-primary-icon-only-height`        | `--button-toolbar-primary-height`                        |
-| `--button-toolbar-primary-icon-only-min-width`     | `--button-toolbar-primary-min-width`                     |
-| `--button-toolbar-primary-icon-only-padding`       | 0                                                        |
-| `--button-toolbar-primary-icon-only-width`         | auto                                                     |
-| `--button-toolbar-secondary-icon-only-height`      | `--button-toolbar-secondary-height`                      |
-| `--button-toolbar-secondary-icon-only-min-width`   | `--button-toolbar-secondary-min-width`                   |
-| `--button-toolbar-secondary-icon-only-padding`     | 0                                                        |
-| `--button-toolbar-secondary-icon-only-width`       | auto                                                     |
-| `--button-toolbar-tertiary-icon-only-height`       | `--button-toolbar-tertiary-height`                       |
-| `--button-toolbar-tertiary-icon-only-min-width`    | `--button-toolbar-tertiary-min-width`                    |
-| `--button-toolbar-tertiary-icon-only-padding`      | 0                                                        |
-| `--button-toolbar-tertiary-icon-only-width`        | auto                                                     |
-| `--button-toolbar-ghost-icon-only-height`          | `--button-toolbar-ghost-height`                          |
-| `--button-toolbar-ghost-icon-only-min-width`       | `--button-toolbar-ghost-min-width`                       |
-| `--button-toolbar-ghost-icon-only-padding`         | 0                                                        |
-| `--button-toolbar-ghost-icon-only-width`           | auto                                                     |
-| `--button-nav-align`                               | center                                                   |
-| `--button-nav-border`                              | 2px solid transparent                                    |
-| `--button-nav-border-radius`                       | `--border-radius-0`                                      |
-| `--button-nav-font-size`                           | inherit                                                  |
-| `--button-nav-font-weight`                         | `--font-weight-interactive`                              |
-| `--button-nav-gap`                                 | 1.35rem                                                  |
-| `--button-nav-grid-areas`                          | 'icon content'                                           |
-| `--button-nav-grid-template-columns`               | auto 1fr                                                 |
-| `--button-nav-grid-template-rows`                  | 1fr                                                      |
-| `--button-nav-height`                              | `--row-size`                                             |
-| `--button-nav-icon-size`                           | `--icon-size-m`                                          |
-| `--button-nav-margin`                              | 0                                                        |
-| `--button-nav-min-width`                           | `--row-size`                                             |
-| `--button-nav-outline-offset`                      | -2px                                                     |
-| `--button-nav-padding`                             | 0 1rem                                                   |
-| `--button-nav-text-align`                          | left                                                     |
-| `--button-nav-text-decoration`                     | none                                                     |
-| `--button-nav-width`                               | 100%                                                     |
-| `--button-nav-public-align`                        | center                                                   |
-| `--button-nav-public-border`                       | 0                                                        |
-| `--button-nav-public-border-radius`                | `--border-radius-0`                                      |
-| `--button-nav-public-font-size`                    | inherit                                                  |
-| `--button-nav-public-font-weight`                  | `--font-weight-interactive`                              |
-| `--button-nav-public-gap`                          | 1.35rem                                                  |
-| `--button-nav-public-grid-areas`                   | 'content'                                                |
-| `--button-nav-public-grid-template-columns`        | 1fr                                                      |
-| `--button-nav-public-grid-template-rows`           | 1fr                                                      |
-| `--button-nav-public-height`                       | calc(var(--row-size) - 1.35px)                           |
-| `--button-nav-public-icon-size`                    | `--icon-size-m`                                          |
-| `--button-nav-public-margin`                       | 0                                                        |
-| `--button-nav-public-min-width`                    | `--row-size`                                             |
-| `--button-nav-public-outline-offset`               | -2px                                                     |
-| `--button-nav-public-padding`                      | 0 1rem                                                   |
-| `--button-nav-public-text-align`                   | center                                                   |
-| `--button-nav-public-text-decoration`              | none                                                     |
-| `--button-nav-public-width`                        | auto                                                     |
-| `--button-modal-primary-align`                     | center                                                   |
-| `--button-modal-primary-border`                    | 2px solid var(--color-button-dropdown-background)        |
-| `--button-modal-primary-border-radius`             | `--border-radius-0`                                      |
-| `--button-modal-primary-font-size`                 | inherit                                                  |
-| `--button-modal-primary-font-weight`               | `--font-weight-interactive`                              |
-| `--button-modal-primary-height`                    | auto                                                     |
-| `--button-modal-primary-margin`                    | 0                                                        |
-| `--button-modal-primary-min-width`                 | `--row-size`                                             |
-| `--button-modal-primary-outline-offset`            | 0                                                        |
-| `--button-modal-primary-padding`                   | 1rem 1rem 2rem 1rem                                      |
-| `--button-modal-primary-text-align`                | left                                                     |
-| `--button-modal-primary-text-decoration`           | none                                                     |
-| `--button-modal-primary-width`                     | auto                                                     |
-| `--button-modal-secondary-align`                   | center                                                   |
-| `--button-modal-secondary-border`                  | 2px solid var(--color-button-dropdown-background)        |
-| `--button-modal-secondary-border-radius`           | `--border-radius-0`                                      |
-| `--button-modal-secondary-font-size`               | inherit                                                  |
-| `--button-modal-secondary-font-weight`             | `--font-weight-interactive`                              |
-| `--button-modal-secondary-height`                  | auto                                                     |
-| `--button-modal-secondary-margin`                  | 0                                                        |
-| `--button-modal-secondary-min-width`               | `--row-size`                                             |
-| `--button-modal-secondary-outline-offset`          | 0                                                        |
-| `--button-modal-secondary-padding`                 | 1rem 1rem 2rem 1rem                                      |
-| `--button-modal-secondary-text-align`              | left                                                     |
-| `--button-modal-secondary-text-decoration`         | none                                                     |
-| `--button-modal-secondary-width`                   | 100%                                                     |
-| `--button-modal-set-flex-direction`                | row-reverse                                              |
-| `--button-modal-set-gap`                           | 0                                                        |
-| `--button-modal-set-justify`                       | stretch                                                  |
-| `--button-modal-set-margin`                        | 0                                                        |
-| `--button-modal-set-padding`                       | 0                                                        |
-| `--button-primary-align`                           | center                                                   |
-| `--button-primary-badge-inset`                     | -0.625rem -0.625rem auto auto                            |
-| `--button-primary-empty-badge-inset`               | -0.5rem -0.5rem auto auto                                |
-| `--button-primary-border`                          | 2px solid var(--color-interactive-background)            |
-| `--button-primary-border-radius`                   | `--border-radius-default`                                |
-| `--button-primary-font-size`                       | inherit                                                  |
-| `--button-primary-font-weight`                     | `--font-weight-interactive`                              |
-| `--button-primary-gap`                             | 1.35rem                                                  |
-| `--button-primary-grid-areas`                      | 'content icon'                                           |
-| `--button-primary-grid-template-columns`           | 1fr auto                                                 |
-| `--button-primary-grid-template-rows`              | 1fr                                                      |
-| `--button-primary-height`                          | `--row-size`                                             |
-| `--button-primary-icon-size`                       | `--icon-size-m`                                          |
-| `--button-primary-margin`                          | 0                                                        |
-| `--button-primary-min-width`                       | `--row-size`                                             |
-| `--button-primary-outline-offset`                  | 0                                                        |
-| `--button-primary-padding`                         | 0 1rem                                                   |
-| `--button-primary-text-align`                      | left                                                     |
-| `--button-primary-text-decoration`                 | none                                                     |
-| `--button-primary-width`                           | auto                                                     |
-| `--button-primary-icon-only-height`                | `--button-primary-height`                                |
-| `--button-primary-icon-only-min-width`             | `--button-primary-min-width`                             |
-| `--button-primary-icon-only-padding`               | 0                                                        |
-| `--button-primary-icon-only-width`                 | auto                                                     |
-| `--button-secondary-align`                         | center                                                   |
-| `--button-secondary-badge-inset`                   | -0.625rem -0.625rem auto auto                            |
-| `--button-secondary-empty-badge-inset`             | -0.5rem -0.5rem auto auto                                |
-| `--button-secondary-border`                        | 2px solid var(--color-interactive-secondary-background)  |
-| `--button-secondary-border-radius`                 | `--border-radius-default`                                |
-| `--button-secondary-font-size`                     | inherit                                                  |
-| `--button-secondary-font-weight`                   | `--font-weight-interactive`                              |
-| `--button-secondary-gap`                           | 1.35rem                                                  |
-| `--button-secondary-grid-areas`                    | 'content icon'                                           |
-| `--button-secondary-grid-template-columns`         | 1fr auto                                                 |
-| `--button-secondary-grid-template-rows`            | 1fr                                                      |
-| `--button-secondary-height`                        | `--row-size`                                             |
-| `--button-secondary-icon-size`                     | `--icon-size-m`                                          |
-| `--button-secondary-margin`                        | 0                                                        |
-| `--button-secondary-min-width`                     | `--row-size`                                             |
-| `--button-secondary-outline-offset`                | 0                                                        |
-| `--button-secondary-padding`                       | 0 1rem                                                   |
-| `--button-secondary-text-align`                    | left                                                     |
-| `--button-secondary-text-decoration`               | none                                                     |
-| `--button-secondary-width`                         | auto                                                     |
-| `--button-secondary-icon-only-height`              | `--button-secondary-height`                              |
-| `--button-secondary-icon-only-min-width`           | `--button-secondary-min-width`                           |
-| `--button-secondary-icon-only-padding`             | 0                                                        |
-| `--button-secondary-icon-only-width`               | auto                                                     |
-| `--button-tertiary-align`                          | center                                                   |
-| `--button-tertiary-badge-inset`                    | -0.625rem -0.625rem auto auto                            |
-| `--button-tertiary-empty-badge-inset`              | -0.5rem -0.5rem auto auto                                |
-| `--button-tertiary-border`                         | 2px solid var(--color-interactive-background)            |
-| `--button-tertiary-border-radius`                  | `--border-radius-default`                                |
-| `--button-tertiary-font-size`                      | inherit                                                  |
-| `--button-tertiary-font-weight`                    | `--font-weight-interactive`                              |
-| `--button-tertiary-gap`                            | 1.35rem                                                  |
-| `--button-tertiary-grid-areas`                     | 'content icon'                                           |
-| `--button-tertiary-grid-template-columns`          | 1fr auto                                                 |
-| `--button-tertiary-grid-template-rows`             | 1fr                                                      |
-| `--button-tertiary-height`                         | `--row-size`                                             |
-| `--button-tertiary-icon-size`                      | `--icon-size-m`                                          |
-| `--button-tertiary-margin`                         | 0                                                        |
-| `--button-tertiary-min-width`                      | `--row-size`                                             |
-| `--button-tertiary-outline-offset`                 | 0                                                        |
-| `--button-tertiary-padding`                        | 0 1rem                                                   |
-| `--button-tertiary-text-align`                     | left                                                     |
-| `--button-tertiary-text-decoration`                | none                                                     |
-| `--button-tertiary-width`                          | auto                                                     |
-| `--button-tertiary-icon-only-height`               | `--button-tertiary-height`                               |
-| `--button-tertiary-icon-only-min-width`            | `--button-tertiary-min-width`                            |
-| `--button-tertiary-icon-only-padding`              | 0                                                        |
-| `--button-tertiary-icon-only-width`                | auto                                                     |
-| `--button-ghost-align`                             | center                                                   |
-| `--button-ghost-badge-inset`                       | -0.125rem -0.125rem auto auto                            |
-| `--button-ghost-empty-badge-inset`                 | -0.125rem -0.125rem auto auto                            |
-| `--button-ghost-border`                            | 2px solid transparent                                    |
-| `--button-ghost-border-radius`                     | `--border-radius-default`                                |
-| `--button-ghost-font-size`                         | inherit                                                  |
-| `--button-ghost-font-weight`                       | `--font-weight-interactive`                              |
-| `--button-ghost-gap`                               | 1.35rem                                                  |
-| `--button-ghost-grid-areas`                        | 'content icon'                                           |
-| `--button-ghost-grid-template-columns`             | 1fr auto                                                 |
-| `--button-ghost-grid-template-rows`                | 1fr                                                      |
-| `--button-ghost-height`                            | `--row-size`                                             |
-| `--button-ghost-icon-size`                         | `--icon-size-m`                                          |
-| `--button-ghost-margin`                            | 0                                                        |
-| `--button-ghost-min-width`                         | `--row-size`                                             |
-| `--button-ghost-outline-offset`                    | -2px                                                     |
-| `--button-ghost-padding`                           | 0 1rem                                                   |
-| `--button-ghost-text-align`                        | left                                                     |
-| `--button-ghost-text-decoration`                   | none                                                     |
-| `--button-ghost-width`                             | auto                                                     |
-| `--button-ghost-icon-only-height`                  | `--button-ghost-height`                                  |
-| `--button-ghost-icon-only-min-width`               | `--button-ghost-min-width`                               |
-| `--button-ghost-icon-only-padding`                 | 0                                                        |
-| `--button-ghost-icon-only-width`                   | auto                                                     |
+| Variable name                                      | Default value                                                              |
+|----------------------------------------------------|----------------------------------------------------------------------------|
+| `--button-cursor`                                  | pointer                                                                    |
+| `--button-badge-padding`                           | var(--space-0) var(--space-0250)                                           |
+| `--button-icon-justify`                            | center                                                                     |
+| `--button-loader-margin`                           | `--space-0`                                                                |
+| `--button-set-gap`                                 | `--space-0500`                                                             |
+| `--button-dropdown-align`                          | center                                                                     |
+| `--button-dropdown-border`                         | var(--border-width-2) solid var(--color-button-dropdown-background)        |
+| `--button-dropdown-border-radius`                  | `--border-radius-default`                                                  |
+| `--button-dropdown-font-size`                      | inherit                                                                    |
+| `--button-dropdown-font-weight`                    | `--font-weight-interactive`                                                |
+| `--button-dropdown-gap`                            | `--space-0750`                                                             |
+| `--button-dropdown-grid-areas`                     | 'content icon'                                                             |
+| `--button-dropdown-grid-template-columns`          | 1fr auto                                                                   |
+| `--button-dropdown-grid-template-rows`             | 1fr                                                                        |
+| `--button-dropdown-height`                         | `--row-size-dynamic`                                                       |
+| `--button-dropdown-icon-size`                      | `--icon-size-m`                                                            |
+| `--button-dropdown-margin`                         | `--space-0`                                                                |
+| `--button-dropdown-min-width`                      | `--row-size`                                                               |
+| `--button-dropdown-outline-offset`                 | -2px                                                                       |
+| `--button-dropdown-padding`                        | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-dropdown-set-gap`                        | `--space-0125`                                                             |
+| `--button-dropdown-text-align`                     | left                                                                       |
+| `--button-dropdown-text-decoration`                | none                                                                       |
+| `--button-dropdown-width`                          | 100%                                                                       |
+| `--button-toolbar-group-gap`                       | `--space-0`                                                                |
+| `--button-toolbar-gap`                             | `--space-0`                                                                |
+| `--button-toolbar-primary-align`                   | center                                                                     |
+| `--button-toolbar-primary-border`                  | var(--border-width-2) solid var(--color-button-toolbar-primary-background) |
+| `--button-toolbar-primary-border-radius`           | `--border-radius-default`                                                  |
+| `--button-toolbar-primary-font-size`               | inherit                                                                    |
+| `--button-toolbar-primary-font-weight`             | `--font-weight-interactive`                                                |
+| `--button-toolbar-primary-gap`                     | `--space-0750`                                                             |
+| `--button-toolbar-primary-grid-areas`              | 'content icon'                                                             |
+| `--button-toolbar-primary-grid-template-columns`   | minmax(max-content, 1fr) auto                                              |
+| `--button-toolbar-primary-grid-template-rows`      | 1fr                                                                        |
+| `--button-toolbar-primary-height`                  | `--row-size`                                                               |
+| `--button-toolbar-primary-icon-size`               | `--icon-size-m`                                                            |
+| `--button-toolbar-primary-margin`                  | `--space-0`                                                                |
+| `--button-toolbar-primary-min-width`               | `--row-size`                                                               |
+| `--button-toolbar-primary-outline-offset`          | 0                                                                          |
+| `--button-toolbar-primary-padding`                 | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-toolbar-primary-text-align`              | left                                                                       |
+| `--button-toolbar-primary-text-decoration`         | none                                                                       |
+| `--button-toolbar-primary-width`                   | 100%                                                                       |
+| `--button-toolbar-secondary-align`                 | center                                                                     |
+| `--button-toolbar-secondary-border`                | var(--border-width-2) solid var(--color-interactive-secondary-background)  |
+| `--button-toolbar-secondary-border-radius`         | `--border-radius-default`                                                  |
+| `--button-toolbar-secondary-font-size`             | inherit                                                                    |
+| `--button-toolbar-secondary-font-weight`           | `--font-weight-interactive`                                                |
+| `--button-toolbar-secondary-gap`                   | `--space-0750`                                                             |
+| `--button-toolbar-secondary-grid-areas`            | 'content icon'                                                             |
+| `--button-toolbar-secondary-grid-template-columns` | minmax(max-content, 1fr) auto                                              |
+| `--button-toolbar-secondary-grid-template-rows`    | 1fr                                                                        |
+| `--button-toolbar-secondary-height`                | `--row-size`                                                               |
+| `--button-toolbar-secondary-icon-size`             | `--icon-size-m`                                                            |
+| `--button-toolbar-secondary-margin`                | `--space-0`                                                                |
+| `--button-toolbar-secondary-min-width`             | `--row-size`                                                               |
+| `--button-toolbar-secondary-outline-offset`        | 0                                                                          |
+| `--button-toolbar-secondary-padding`               | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-toolbar-secondary-text-align`            | left                                                                       |
+| `--button-toolbar-secondary-text-decoration`       | none                                                                       |
+| `--button-toolbar-secondary-width`                 | auto                                                                       |
+| `--button-toolbar-tertiary-align`                  | center                                                                     |
+| `--button-toolbar-tertiary-border`                 | var(--border-width-2) solid var(--color-interactive-background)            |
+| `--button-toolbar-tertiary-border-radius`          | `--border-radius-default`                                                  |
+| `--button-toolbar-tertiary-font-size`              | inherit                                                                    |
+| `--button-toolbar-tertiary-font-weight`            | `--font-weight-interactive`                                                |
+| `--button-toolbar-tertiary-gap`                    | `--space-0750`                                                             |
+| `--button-toolbar-tertiary-grid-areas`             | 'content icon'                                                             |
+| `--button-toolbar-tertiary-grid-template-columns`  | 1fr auto                                                                   |
+| `--button-toolbar-tertiary-grid-template-rows`     | 1fr                                                                        |
+| `--button-toolbar-tertiary-height`                 | `--row-size`                                                               |
+| `--button-toolbar-tertiary-icon-size`              | `--icon-size-m`                                                            |
+| `--button-toolbar-tertiary-margin`                 | `--space-0`                                                                |
+| `--button-toolbar-tertiary-min-width`              | `--row-size`                                                               |
+| `--button-toolbar-tertiary-outline-offset`         | 0                                                                          |
+| `--button-toolbar-tertiary-padding`                | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-toolbar-tertiary-text-align`             | left                                                                       |
+| `--button-toolbar-tertiary-text-decoration`        | none                                                                       |
+| `--button-toolbar-tertiary-width`                  | auto                                                                       |
+| `--button-toolbar-ghost-align`                     | center                                                                     |
+| `--button-toolbar-ghost-border`                    | var(--border-width-2) solid transparent                                    |
+| `--button-toolbar-ghost-border-radius`             | `--border-radius-default`                                                  |
+| `--button-toolbar-ghost-font-size`                 | inherit                                                                    |
+| `--button-toolbar-ghost-font-weight`               | `--font-weight-interactive`                                                |
+| `--button-toolbar-ghost-gap`                       | `--space-0750`                                                             |
+| `--button-toolbar-ghost-grid-areas`                | 'content icon'                                                             |
+| `--button-toolbar-ghost-grid-template-columns`     | 1fr auto                                                                   |
+| `--button-toolbar-ghost-grid-template-rows`        | 1fr                                                                        |
+| `--button-toolbar-ghost-height`                    | `--row-size`                                                               |
+| `--button-toolbar-ghost-icon-size`                 | `--icon-size-m`                                                            |
+| `--button-toolbar-ghost-margin`                    | `--space-0`                                                                |
+| `--button-toolbar-ghost-min-width`                 | `--row-size`                                                               |
+| `--button-toolbar-ghost-outline-offset`            | -2px                                                                       |
+| `--button-toolbar-ghost-padding`                   | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-toolbar-ghost-text-align`                | left                                                                       |
+| `--button-toolbar-ghost-text-decoration`           | none                                                                       |
+| `--button-toolbar-ghost-width`                     | auto                                                                       |
+| `--button-toolbar-selection-align`                 | center                                                                     |
+| `--button-toolbar-selection-border`                | var(--border-width-2) solid transparent                                    |
+| `--button-toolbar-selection-border-radius`         | `--border-radius-default`                                                  |
+| `--button-toolbar-selection-font-size`             | inherit                                                                    |
+| `--button-toolbar-selection-font-weight`           | `--font-weight-interactive`                                                |
+| `--button-toolbar-selection-gap`                   | `--space-0750`                                                             |
+| `--button-toolbar-selection-grid-areas`            | 'content icon'                                                             |
+| `--button-toolbar-selection-grid-template-columns` | minmax(max-content, 1fr) auto                                              |
+| `--button-toolbar-selection-grid-template-rows`    | 1fr                                                                        |
+| `--button-toolbar-selection-height`                | `--row-size`                                                               |
+| `--button-toolbar-selection-icon-size`             | `--icon-size-m`                                                            |
+| `--button-toolbar-selection-margin`                | `--space-0`                                                                |
+| `--button-toolbar-selection-min-width`             | `--row-size`                                                               |
+| `--button-toolbar-selection-outline-offset`        | -2px                                                                       |
+| `--button-toolbar-selection-padding`               | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-toolbar-selection-text-align`            | left                                                                       |
+| `--button-toolbar-selection-text-decoration`       | none                                                                       |
+| `--button-toolbar-selection-width`                 | auto                                                                       |
+| `--button-toolbar-selection-icon-only-height`      | `--button-toolbar-selection-height`                                        |
+| `--button-toolbar-selection-icon-only-min-width`   | `--button-toolbar-selection-min-width`                                     |
+| `--button-toolbar-selection-icon-only-padding`     | `--space-0`                                                                |
+| `--button-toolbar-selection-icon-only-width`       | auto                                                                       |
+| `--button-toolbar-primary-icon-only-height`        | `--button-toolbar-primary-height`                                          |
+| `--button-toolbar-primary-icon-only-min-width`     | `--button-toolbar-primary-min-width`                                       |
+| `--button-toolbar-primary-icon-only-padding`       | `--space-0`                                                                |
+| `--button-toolbar-primary-icon-only-width`         | auto                                                                       |
+| `--button-toolbar-secondary-icon-only-height`      | `--button-toolbar-secondary-height`                                        |
+| `--button-toolbar-secondary-icon-only-min-width`   | `--button-toolbar-secondary-min-width`                                     |
+| `--button-toolbar-secondary-icon-only-padding`     | `--space-0`                                                                |
+| `--button-toolbar-secondary-icon-only-width`       | auto                                                                       |
+| `--button-toolbar-tertiary-icon-only-height`       | `--button-toolbar-tertiary-height`                                         |
+| `--button-toolbar-tertiary-icon-only-min-width`    | `--button-toolbar-tertiary-min-width`                                      |
+| `--button-toolbar-tertiary-icon-only-padding`      | `--space-0`                                                                |
+| `--button-toolbar-tertiary-icon-only-width`        | auto                                                                       |
+| `--button-toolbar-ghost-icon-only-height`          | `--button-toolbar-ghost-height`                                            |
+| `--button-toolbar-ghost-icon-only-min-width`       | `--button-toolbar-ghost-min-width`                                         |
+| `--button-toolbar-ghost-icon-only-padding`         | `--space-0`                                                                |
+| `--button-toolbar-ghost-icon-only-width`           | auto                                                                       |
+| `--button-nav-align`                               | center                                                                     |
+| `--button-nav-border`                              | var(--border-width-2) solid transparent                                    |
+| `--button-nav-border-radius`                       | `--border-radius-0`                                                        |
+| `--button-nav-font-size`                           | inherit                                                                    |
+| `--button-nav-font-weight`                         | `--font-weight-interactive`                                                |
+| `--button-nav-gap`                                 | `--space-0750`                                                             |
+| `--button-nav-grid-areas`                          | 'icon content'                                                             |
+| `--button-nav-grid-template-columns`               | auto 1fr                                                                   |
+| `--button-nav-grid-template-rows`                  | 1fr                                                                        |
+| `--button-nav-height`                              | `--row-size`                                                               |
+| `--button-nav-icon-size`                           | `--icon-size-m`                                                            |
+| `--button-nav-margin`                              | `--space-0`                                                                |
+| `--button-nav-min-width`                           | `--row-size`                                                               |
+| `--button-nav-outline-offset`                      | -2px                                                                       |
+| `--button-nav-padding`                             | var(--space-0) calc(var(--space-0750) - var(--border-width-2))             |
+| `--button-nav-text-align`                          | left                                                                       |
+| `--button-nav-text-decoration`                     | none                                                                       |
+| `--button-nav-width`                               | 100%                                                                       |
+| `--button-nav-public-align`                        | center                                                                     |
+| `--button-nav-public-border`                       | `--border-width-0`                                                         |
+| `--button-nav-public-border-radius`                | `--border-radius-0`                                                        |
+| `--button-nav-public-font-size`                    | inherit                                                                    |
+| `--button-nav-public-font-weight`                  | `--font-weight-interactive`                                                |
+| `--button-nav-public-gap`                          | `--space-0750`                                                             |
+| `--button-nav-public-grid-areas`                   | 'content'                                                                  |
+| `--button-nav-public-grid-template-columns`        | 1fr                                                                        |
+| `--button-nav-public-grid-template-rows`           | 1fr                                                                        |
+| `--button-nav-public-height`                       | calc(var(--row-size) - 1.35px)                                             |
+| `--button-nav-public-icon-size`                    | `--icon-size-m`                                                            |
+| `--button-nav-public-margin`                       | `--space-0`                                                                |
+| `--button-nav-public-min-width`                    | `--row-size`                                                               |
+| `--button-nav-public-outline-offset`               | -2px                                                                       |
+| `--button-nav-public-padding`                      | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-nav-public-text-align`                   | center                                                                     |
+| `--button-nav-public-text-decoration`              | none                                                                       |
+| `--button-nav-public-width`                        | auto                                                                       |
+| `--button-modal-primary-align`                     | center                                                                     |
+| `--button-modal-primary-border`                    | var(--border-width-2) solid var(--color-button-dropdown-background)        |
+| `--button-modal-primary-border-radius`             | `--border-radius-0`                                                        |
+| `--button-modal-primary-font-size`                 | inherit                                                                    |
+| `--button-modal-primary-font-weight`               | `--font-weight-interactive`                                                |
+| `--button-modal-primary-height`                    | auto                                                                       |
+| `--button-modal-primary-margin`                    | `--space-0`                                                                |
+| `--button-modal-primary-min-width`                 | `--row-size`                                                               |
+| `--button-modal-primary-outline-offset`            | 0                                                                          |
+| `--button-modal-primary-padding`                   | var(--space-1000)  calc(var(--space-1000) - var(--border-width-2))         |
+| `--button-modal-primary-text-align`                | left                                                                       |
+| `--button-modal-primary-text-decoration`           | none                                                                       |
+| `--button-modal-primary-width`                     | auto                                                                       |
+| `--button-modal-secondary-align`                   | center                                                                     |
+| `--button-modal-secondary-border`                  | var(--border-width-2) solid var(--color-button-dropdown-background)        |
+| `--button-modal-secondary-border-radius`           | `--border-radius-0`                                                        |
+| `--button-modal-secondary-font-size`               | inherit                                                                    |
+| `--button-modal-secondary-font-weight`             | `--font-weight-interactive`                                                |
+| `--button-modal-secondary-height`                  | auto                                                                       |
+| `--button-modal-secondary-margin`                  | `--space-0`                                                                |
+| `--button-modal-secondary-min-width`               | `--row-size`                                                               |
+| `--button-modal-secondary-outline-offset`          | 0                                                                          |
+| `--button-modal-secondary-padding`                 | var(--space-1000)  calc(var(--space-1000) - var(--border-width-2))         |
+| `--button-modal-secondary-text-align`              | left                                                                       |
+| `--button-modal-secondary-text-decoration`         | none                                                                       |
+| `--button-modal-secondary-width`                   | 100%                                                                       |
+| `--button-modal-set-flex-direction`                | row-reverse                                                                |
+| `--button-modal-set-gap`                           | `--space-0`                                                                |
+| `--button-modal-set-justify`                       | stretch                                                                    |
+| `--button-modal-set-margin`                        | `--space-0`                                                                |
+| `--button-modal-set-padding`                       | `--space-0`                                                                |
+| `--button-primary-align`                           | center                                                                     |
+| `--button-primary-badge-inset`                     | -0.625rem -0.625rem auto auto                                              |
+| `--button-primary-empty-badge-inset`               | calc(var(--space-0500) * -1) calc(var(--space-0500) * -1) auto auto        |
+| `--button-primary-border`                          | var(--border-width-2) solid var(--color-interactive-background)            |
+| `--button-primary-border-radius`                   | `--border-radius-default`                                                  |
+| `--button-primary-font-size`                       | inherit                                                                    |
+| `--button-primary-font-weight`                     | `--font-weight-interactive`                                                |
+| `--button-primary-gap`                             | `--space-0750`                                                             |
+| `--button-primary-grid-areas`                      | 'content icon'                                                             |
+| `--button-primary-grid-template-columns`           | 1fr auto                                                                   |
+| `--button-primary-grid-template-rows`              | 1fr                                                                        |
+| `--button-primary-height`                          | `--row-size`                                                               |
+| `--button-primary-icon-size`                       | `--icon-size-m`                                                            |
+| `--button-primary-margin`                          | `--space-0`                                                                |
+| `--button-primary-min-width`                       | `--row-size`                                                               |
+| `--button-primary-outline-offset`                  | 0                                                                          |
+| `--button-primary-padding`                         | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-primary-text-align`                      | left                                                                       |
+| `--button-primary-text-decoration`                 | none                                                                       |
+| `--button-primary-width`                           | auto                                                                       |
+| `--button-primary-icon-only-height`                | `--button-primary-height`                                                  |
+| `--button-primary-icon-only-min-width`             | `--button-primary-min-width`                                               |
+| `--button-primary-icon-only-padding`               | `--space-0`                                                                |
+| `--button-primary-icon-only-width`                 | auto                                                                       |
+| `--button-secondary-align`                         | center                                                                     |
+| `--button-secondary-badge-inset`                   | -0.625rem -0.625rem auto auto                                              |
+| `--button-secondary-empty-badge-inset`             | calc(var(--space-0500) * -1) calc(var(--space-0500) * -1) auto auto        |
+| `--button-secondary-border`                        | var(--border-width-2) solid var(--color-interactive-secondary-background)  |
+| `--button-secondary-border-radius`                 | `--border-radius-default`                                                  |
+| `--button-secondary-font-size`                     | inherit                                                                    |
+| `--button-secondary-font-weight`                   | `--font-weight-interactive`                                                |
+| `--button-secondary-gap`                           | `--space-0750`                                                             |
+| `--button-secondary-grid-areas`                    | 'content icon'                                                             |
+| `--button-secondary-grid-template-columns`         | 1fr auto                                                                   |
+| `--button-secondary-grid-template-rows`            | 1fr                                                                        |
+| `--button-secondary-height`                        | `--row-size`                                                               |
+| `--button-secondary-icon-size`                     | `--icon-size-m`                                                            |
+| `--button-secondary-margin`                        | `--space-0`                                                                |
+| `--button-secondary-min-width`                     | `--row-size`                                                               |
+| `--button-secondary-outline-offset`                | 0                                                                          |
+| `--button-secondary-padding`                       | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-secondary-text-align`                    | left                                                                       |
+| `--button-secondary-text-decoration`               | none                                                                       |
+| `--button-secondary-width`                         | auto                                                                       |
+| `--button-secondary-icon-only-height`              | `--button-secondary-height`                                                |
+| `--button-secondary-icon-only-min-width`           | `--button-secondary-min-width`                                             |
+| `--button-secondary-icon-only-padding`             | `--space-0`                                                                |
+| `--button-secondary-icon-only-width`               | auto                                                                       |
+| `--button-tertiary-align`                          | center                                                                     |
+| `--button-tertiary-badge-inset`                    | -0.625rem -0.625rem auto auto                                              |
+| `--button-tertiary-empty-badge-inset`              | calc(var(--space-0500) * -1) calc(var(--space-0500) * -1) auto auto        |
+| `--button-tertiary-border`                         | var(--border-width-2) solid var(--color-interactive-background)            |
+| `--button-tertiary-border-radius`                  | `--border-radius-default`                                                  |
+| `--button-tertiary-font-size`                      | inherit                                                                    |
+| `--button-tertiary-font-weight`                    | `--font-weight-interactive`                                                |
+| `--button-tertiary-gap`                            | `--space-0750`                                                             |
+| `--button-tertiary-grid-areas`                     | 'content icon'                                                             |
+| `--button-tertiary-grid-template-columns`          | 1fr auto                                                                   |
+| `--button-tertiary-grid-template-rows`             | 1fr                                                                        |
+| `--button-tertiary-height`                         | `--row-size`                                                               |
+| `--button-tertiary-icon-size`                      | `--icon-size-m`                                                            |
+| `--button-tertiary-margin`                         | `--space-0`                                                                |
+| `--button-tertiary-min-width`                      | `--row-size`                                                               |
+| `--button-tertiary-outline-offset`                 | 0                                                                          |
+| `--button-tertiary-padding`                        | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-tertiary-text-align`                     | left                                                                       |
+| `--button-tertiary-text-decoration`                | none                                                                       |
+| `--button-tertiary-width`                          | auto                                                                       |
+| `--button-tertiary-icon-only-height`               | `--button-tertiary-height`                                                 |
+| `--button-tertiary-icon-only-min-width`            | `--button-tertiary-min-width`                                              |
+| `--button-tertiary-icon-only-padding`              | `--space-0`                                                                |
+| `--button-tertiary-icon-only-width`                | auto                                                                       |
+| `--button-ghost-align`                             | center                                                                     |
+| `--button-ghost-badge-inset`                       | calc(var(--space-0125) * -1) calc(var(--space-0125) * -1) auto auto        |
+| `--button-ghost-empty-badge-inset`                 | calc(var(--space-0125) * -1) calc(var(--space-0125) * -1) auto auto        |
+| `--button-ghost-border`                            | var(--border-width-2) solid transparent                                    |
+| `--button-ghost-border-radius`                     | `--border-radius-default`                                                  |
+| `--button-ghost-font-size`                         | inherit                                                                    |
+| `--button-ghost-font-weight`                       | `--font-weight-interactive`                                                |
+| `--button-ghost-gap`                               | `--space-0750`                                                             |
+| `--button-ghost-grid-areas`                        | 'content icon'                                                             |
+| `--button-ghost-grid-template-columns`             | 1fr auto                                                                   |
+| `--button-ghost-grid-template-rows`                | 1fr                                                                        |
+| `--button-ghost-height`                            | `--row-size`                                                               |
+| `--button-ghost-icon-size`                         | `--icon-size-m`                                                            |
+| `--button-ghost-margin`                            | `--space-0`                                                                |
+| `--button-ghost-min-width`                         | `--row-size`                                                               |
+| `--button-ghost-outline-offset`                    | -2px                                                                       |
+| `--button-ghost-padding`                           | var(--space-0) calc(var(--space-1000) - var(--border-width-2))             |
+| `--button-ghost-text-align`                        | left                                                                       |
+| `--button-ghost-text-decoration`                   | none                                                                       |
+| `--button-ghost-width`                             | auto                                                                       |
+| `--button-ghost-icon-only-height`                  | `--button-ghost-height`                                                    |
+| `--button-ghost-icon-only-min-width`               | `--button-ghost-min-width`                                                 |
+| `--button-ghost-icon-only-padding`                 | `--space-0`                                                                |
+| `--button-ghost-icon-only-width`                   | auto                                                                       |
 
 ## Color
 

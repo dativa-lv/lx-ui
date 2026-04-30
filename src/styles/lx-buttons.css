@@ -10,8 +10,6 @@
 .lx a:hover {
   color: var(--color-interactive-hover-foreground);
   background-color: var(--color-interactive-hover-background);
-  padding: 0 0.0625rem;
-  margin: 0 -0.0625rem;
 }
 
 .lx-link-wrapper a,
@@ -232,7 +230,6 @@ a.lx-sitemap-link {
   height: var(--button-primary-icon-size);
   width: var(--button-primary-icon-size);
   fill: var(--color-button-primary-icon);
-  margin: var(--button-icon-margin);
   justify-self: var(--button-icon-justify);
   flex-shrink: 0;
   pointer-events: none;
@@ -743,9 +740,9 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-layout-default .lx-nav-panel ul li .lx-nested-nav {
   list-style: none;
-  padding: 0;
-  --button-nav-gap: 0;
-  --button-nav-padding: 0 1rem 0 calc(1.55rem + var(--button-nav-icon-size));
+  padding: var(--space-0);
+  --button-nav-gap: var(--space-0);
+  --button-nav-padding: var(--space-0) var(--space-1000) var(--space-0) var(--space-3000);
 }
 
 .lx-layout-default .lx-nested-nav {
@@ -856,7 +853,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-component-toolbar > .first-row > .right-area > .lx-group:only-child,
 .lx-selection-toolbar > .lx-component-toolbar > .first-row > .left-area > .lx-group:only-child {
-  padding-left: 0;
+  padding-left: var(--space-0);
 }
 
 .lx-component-toolbar .first-row .right-area .lx-group,
@@ -1248,7 +1245,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-icon-only .lx-button-content-wrapper {
-  gap: 0;
+  gap: var(--space-0);
   --button-toolbar-primary-grid-areas: 'icon';
   --button-toolbar-primary-grid-template-columns: 1fr;
 }
@@ -1324,7 +1321,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-text-only {
   --button-dropdown-grid-template-columns: 1fr;
   --button-dropdown-grid-template-rows: 1fr;
-  --button-dropdown-gap: 0;
+  --button-dropdown-gap: var(--space-0);
 }
 
 .lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-icon-only {
@@ -1433,7 +1430,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) .lx-button-content-wrapper {
   align-items: var(--button-modal-primary-align);
-  --button-primary-gap: 0;
+  --button-primary-gap: var(--space-0);
   --button-primary-grid-areas: 'content';
   --button-primary-grid-template-columns: 1fr auto auto;
   --button-primary-grid-template-rows: 1fr;
@@ -1441,7 +1438,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button) .lx-button-content-wrapper {
   align-items: var(--button-modal-secondary-align);
-  --button-secondary-gap: 0;
+  --button-secondary-gap: var(--space-0);
   --button-secondary-grid-areas: 'content';
   --button-secondary-grid-template-columns: 1fr auto auto;
   --button-secondary-grid-template-rows: 1fr;
@@ -1554,7 +1551,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-layout .lx-button.lx-button-icon-only .lx-button-content-wrapper {
-  gap: 0;
+  gap: var(--space-0);
   --button-primary-grid-areas: 'icon';
   --button-primary-grid-template-columns: 1fr;
 }
@@ -1577,7 +1574,7 @@ a.lx-button.lx-button-ghost svg {
 /*** Text-only styles ***/
 
 .lx-layout .lx-button.lx-button-text-only .lx-button-content-wrapper {
-  gap: 0;
+  gap: var(--space-0);
   --button-primary-grid-areas: 'content';
   --button-primary-grid-template-columns: 1fr;
 }
@@ -1867,7 +1864,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx #userMenuButton svg {
-  margin-right: 0.66rem;
+  margin-right: 0.66rem; /* TODO: figure out what this is */
 }
 
 .lx .lx-layout-cover #userMenuButton,
@@ -1906,7 +1903,6 @@ a.lx-button.lx-button-ghost svg {
   text-align: right;
   line-height: 1em;
   opacity: 0.75;
-  margin-top: -0.1rem;
   inset: var(--button-primary-badge-inset);
 }
 
@@ -1928,14 +1924,18 @@ a.lx-button.lx-button-ghost svg {
   line-height: 1em;
   border: var(--border-width-2) solid var(--color-background);
   text-align: center;
-  margin-top: 0;
+  margin-top: var(--space-0);
   opacity: 1;
+}
+
+.lx-button:not(#userMenuButton) .lx-badge.lx-badge-icon-only {
+  padding: var(--space-0);
 }
 
 .lx-button:not(#userMenuButton) .lx-badge .lx-badge-icon {
   width: var(--icon-size-xs);
   height: unset;
-  margin: 0;
+  margin: var(--space-0);
   fill: var(--color-badge-foreground);
 }
 
@@ -2017,7 +2017,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-main-header .lx-button.lx-button-icon-only svg {
-  margin: 0;
+  margin: var(--space-0);
 }
 
 /*** Loader styles ***/
@@ -2048,16 +2048,16 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-button.lx-button-icon-only .lx-loader-container {
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .lx-button .lx-loader-container .lx-loader {
-  margin: 0;
+  margin: var(--space-0);
   margin: var(--button-loader-margin);
 }
 
 .lx .lx-button .lx-loader-container .lx-loader svg {
-  margin: 0;
+  margin: var(--space-0);
   height: var(--icon-size-s);
   width: var(--icon-size-s);
   fill: transparent !important;
@@ -2079,14 +2079,14 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-sitemap-wrapper {
  display: grid;
- row-gap: 0.25rem;
+ row-gap: var(--space-0250);
  grid-template-rows: auto 1fr;
 }
 
 .lx-sitemap-wrapper .lx-sitemap {
   list-style-type: none;
-  padding: 0;
-  margin: 0;
+  padding: var(--space-0);
+  margin: var(--space-0);
 }
 
 .lx-layout > footer .lx-sitemap-wrapper .lx-sitemap-label {
@@ -2094,7 +2094,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-sitemap-wrapper .lx-sitemap .lx-sitemap-item {
-  margin: 0.25rem 0;
+  margin: var(--space-0250) var(--space-0);
 }
 
 .lx-sitemap-wrapper .lx-sitemap .lx-sitemap-link {
@@ -2117,7 +2117,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-button#back-button {
-  margin-right: 1rem;
+  margin-right: var(--space-1000);
 }
 
 .lx-button.lx-busy {
@@ -2126,7 +2126,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button-set>.lx-error-action-definitions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-0500);
 }
 
 /*** Mystery styles ***/
@@ -2139,14 +2139,13 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-divider {
   border-bottom: var(--border-width-2) solid var(--color-background);
-  margin: 1rem;
-  margin-bottom: 0.25rem;
-  margin-top: 0.25rem;
+  margin: var(--space-0250) var(--space-1000);
   height: auto;
   width: calc(100% - 2rem);
 }
-.lx-layout>.lx-skip-link-wrapper {
-    z-index: 9999;
+
+.lx-layout > .lx-skip-link-wrapper {
+  z-index: 9999;
 }
 
 .lx-skip-link-wrapper {
@@ -2160,13 +2159,13 @@ a.lx-button.lx-button-ghost svg {
   visibility: visible;
   clip: rect(0,0,0,0);
   block-size: 1px;
-  border: none;
+  border: var(--border-width-0);
   inline-size: 1px;
   position: absolute;
 }
 
 .lx .lx-layout>.lx-skip-link-wrapper .lx-button {
-  border: none;
+  border: var(--border-width-0);
 }
 
 .lx .lx-skip-link-wrapper .lx-button div {
@@ -2202,23 +2201,23 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group > .lx-label {
-  margin-top: 0.5rem;
-  margin-bottom: 0.25rem;
+  margin-top: var(--space-0500);
+  margin-bottom: var(--space-0250);
 }
 
 .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group:first-of-type > .lx-label {
-  margin-top: 0.25rem;
+  margin-top: var(--space-0250);
 }
 
 .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group.lx-dropdown-menu-no-panel:last-child {
-  border-bottom: none;
+  border-bottom: var(--border-width-0);
 }
 
 .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  padding: var(--space-0500) var(--space-0500) var(--space-0500) var(--space-1000);
   cursor: pointer;
 }
 
@@ -2226,7 +2225,7 @@ a.lx-button.lx-button-ghost svg {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding-right: 0.5rem;
+  padding-right: var(--space-0500);
   color: var(--color-data);
   cursor: pointer;
 }
@@ -2239,28 +2238,28 @@ a.lx-button.lx-button-ghost svg {
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag-set {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  margin: 1rem 0;
-  gap: 0.5rem;
+  margin-right: var(--space-1000) var(--space-0);
+  gap: var(--space-0500);
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-group:only-child .lx-dropdown-menu-tag-wrapper .lx-tag-set {
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-group .lx-label + .lx-dropdown-menu-tag-wrapper .lx-tag-set,
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-group:first-of-type .lx-dropdown-menu-tag-wrapper:first-child .lx-tag-set {
-  margin-top: 0;
+  margin-top: var(--space-0);
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-group:last-of-type .lx-dropdown-menu-tag-wrapper:last-child .lx-tag-set {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag {
   height: 4rem;
   justify-content: start;
-  padding: 0.5rem;
-  gap: 0.5rem;
+  padding: var(--space-0500);
+  gap: var(--space-0500);
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag:not(:has(svg)) {
@@ -2269,7 +2268,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-dropdown-menu-tag-content-wrapper {
   display: grid;
-  row-gap: 0.25rem;
+  row-gap: var(--space-0250);
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag .lx-dropdown-menu-tag-label {
@@ -2345,14 +2344,14 @@ a.lx-button.lx-button-ghost svg {
 
 @media (max-width: 800px) {
   .lx #userMenuButton {
-    padding: 0;
+    padding: var(--space-0);
     justify-content: center;
     align-items: center;
     flex-grow: 0;
   }
 
   .lx #userMenuButton svg {
-    margin: 0;
+    margin: var(--space-0);
   }
 
   #userMenuButton label {

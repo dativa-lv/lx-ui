@@ -1,19 +1,20 @@
 .lx-toggle-wrapper {
   display: flex;
   width: fit-content;
-  margin: 0;
+  margin: var(--space-0);
   cursor: default;
   column-gap: var(--toggle-gap);
 }
 
+/* Check out why -1px */
 .lx-layout .lx-toggle-wrapper input[type="checkbox"].lx-toggle {
   position: absolute;
   overflow: hidden;
   height: 0;
   width: 0;
-  padding: 0;
-  border: none;
-  margin: -1px;
+  padding: var(--space-0);
+  border: var(--border-width-0);
+  margin: calc(var(--space-0125) * -1);
   clip: rect(0, 0, 0, 0);
   visibility: inherit;
   white-space: nowrap;
@@ -107,11 +108,11 @@
 /*** Small toggle styles ***/
 
 .lx-form-grid .lx-small .lx-toggle-label-wrapper {
-  margin: 0.75rem 0; /* TODO: replace with spacing token. --toggle-height-s + 0.75 * 2 = --input-container-height */ 
+  margin: var(--space-0750) var(--space-0); /* --toggle-height-s + 0.75 * 2 = --input-container-height */ 
 }
 
 .lx-form-grid .lx-row-header .lx-small .lx-toggle-label-wrapper {
-  margin: 0.25rem 0; /* TODO: replace with spacing token */ 
+  margin: var(--space-0250) var(--space-0);
 }
 
 .lx-toggle-wrapper.lx-small .lx-toggle-appearance {
@@ -249,7 +250,7 @@
   font-size: var(--toggle-text-font-size);
   line-height: var(--toggle-text-line-height);
   color: var(--color-toggle-text);
-  margin: 0.5rem 0; /* TODO: replace with spacing token. --toggle-height-m + 0.5 * 2 = --input-container-height */ 
+  margin: var(--space-0500) var(--space-0); /* --toggle-height-m + 0.5 * 2 = --input-container-height */ 
 }
 
 .lx-toggle-appearance ~ .lx-toggle-text {

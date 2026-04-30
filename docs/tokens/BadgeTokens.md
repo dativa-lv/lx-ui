@@ -4,15 +4,15 @@
 
 ## Layout
 
-| Variable name           | Default value          |
-|-------------------------|------------------------|
-| `--badge-line-height`   | 1rem                   |
-| `--badge-border-radius` | `--border-radius-1000` |
-| `--badge-padding`       | 0.25rem 0.375rem       |
-| `--badge-min-width`     | 1.5rem                 |
-| `--badge-min-height`    | 1.5rem                 |
-| `--badge-gap`           | 0.25rem                |
-| `--badge-icon-size`     | `--icon-size-xs`       |
+| Variable name           | Default value                       |
+|-------------------------|-------------------------------------|
+| `--badge-line-height`   | 1rem                                |
+| `--badge-border-radius` | `--border-radius-1000`              |
+| `--badge-padding`       | var(--space-0250) var(--space-0375) |
+| `--badge-min-width`     | 1.5rem                              |
+| `--badge-min-height`    | 1.5rem                              |
+| `--badge-gap`           | `--space-0250`                      |
+| `--badge-icon-size`     | `--icon-size-xs`                    |
 
 ## Color
 

@@ -4,14 +4,14 @@
 
 ## Layout
 
-| Variable name          | Default value                                 |
-|------------------------|-----------------------------------------------|
-| `--card-min-height`    | 12rem                                         |
-| `--card-border`        | 2px solid var(--color-card-background)        |
-| `--card-border-region` | 2px solid var(--color-card-background-region) |
-| `--card-border-radius` | `--border-radius-0`                           |
-| `--card-padding`       | 1rem                                          |
-| `--card-width`         | auto                                          |
+| Variable name          | Default value                                                   |
+|------------------------|-----------------------------------------------------------------|
+| `--card-min-height`    | 12rem                                                           |
+| `--card-border`        | var(--border-width-2) solid var(--color-card-background)        |
+| `--card-border-region` | var(--border-width-2) solid var(--color-card-background-region) |
+| `--card-border-radius` | `--border-radius-0`                                             |
+| `--card-padding`       | `--space-1000`                                                  |
+| `--card-width`         | auto                                                            |
 
 ## Color
 

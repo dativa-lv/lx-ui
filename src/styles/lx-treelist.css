@@ -15,8 +15,8 @@
 }
 
 .lx-list-wrapper .tree-list>.tree-item {
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: var(--space-0);
+    padding-right: var(--space-0);
 }
 
 .lx-list-wrapper .tree-list .tree-item .tree-item-body,
@@ -56,8 +56,8 @@
 .tree-list-small>.tree-item-invalid {
     border: var(--border-width-2) solid var(--color-red);
     height: var(--row-size);
-    margin-left: calc(2 * var(--row-size));
-    margin-top: 0.5rem;
+    margin-left: calc(2 * var(--space-3000));
+    margin-top: var(--space-0500);
     color: var(--color-red);
     display: flex;
     align-items: center;
@@ -75,16 +75,16 @@
 }
 
 .tree-list-small>.tree-item-invalid {
-    margin-left: var(--row-size);
+    margin-left: var(--space-3000);
 }
 
 .tree-list .tree-item .tree-item-invalid>.invalid-text,
 .tree-list-small>.tree-item-invalid>.invalid-text {
-    padding-left: 1rem;
+    padding-left: var(--space-1000);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem
+    gap: var(--space-0500);
 }
 
 .tree-list .tree-item .tree-item-invalid>.invalid-text>svg,
@@ -155,7 +155,7 @@
 .tree-list-search {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--space-0500);
 }
 
 .lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children>.lx-button {
@@ -171,7 +171,7 @@
 }
 
 .lx-list-wrapper .tree-list .tree-item:first-child {
-    padding-top: 0rem;
+    padding-top: var(--space-0);
 }
 
 @media (max-width: 800px) {
@@ -183,6 +183,6 @@
     .lx-list-wrapper .tree-list-small {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: var(--space-0500);
     }
 }

@@ -4,7 +4,7 @@
     --color-header-hover-background: var(--color-region-2);
     --color-header-hover-foreground: var(--color-data);
     display: grid;
-    column-gap: var(--gap);
+    column-gap: var(--space-1000);
     grid-template-columns: 1fr var(--body-column-size) 1fr;
     grid-template-rows: var(--nav-row-size) var(--row-size) auto 1fr auto;
     grid-template-areas: 'header header header' 
@@ -45,7 +45,7 @@
     color: var(--color-nav-foreground);
     height: var(--nav-row-size);
     position: fixed;
-    top: 0;
+    top: var(--space-0);
     width: 100%;
     align-items: center;
     z-index: 8100;
@@ -60,21 +60,21 @@
     display: grid;
     grid-template-columns: auto 1fr auto;
     width: 100%;
-    padding: 0;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: var(--space-0);
+    padding-left: var(--space-1000);
+    padding-right: var(--space-1000);
     height: var(--nav-row-size);
     align-items: center;
   }
   
   .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-main-button {
     display: grid;
-    gap: var(--gap);
+    gap: var(--space-1000);
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    padding: 0.25rem;
+    padding: var(--space-0250);
     height: var(--nav-row-size);
-    padding-right: var(--gap);
+    padding-right: var(--space-1000);
     outline: 2px solid transparent;
     outline-offset: -2px;
   }
@@ -99,8 +99,8 @@
   }
   
   .lx-layout.lx-layout-latvijalv>header .lx-header .lx-main-button .lx-badge {
-    margin-left: 0.5rem;
-    padding: 0.1rem 0.5rem;
+    margin-left: var(--space-0500);
+    padding: var(--space-0125) var(--space-0500);
     border-radius: var(--border-radius-1000);
     font-weight: var(--font-weight-data);
     font-size: var(--small-font-size);
@@ -114,8 +114,8 @@
   .lx .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-main-button svg {
     fill: var(--color-brand);
     height: calc(var(--icon-size-l) * 1.5);
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: var(--space-0);
+    padding-right: var(--space-0);
     transition: height 0.2s ease-in-out;
   }
   
@@ -127,7 +127,7 @@
     font-size: var(--h2-font-size);
     font-weight: var(--font-weight-bold);
     color: var(--color-brand);
-    margin-left: 0;
+    margin-left: var(--space-0);
     line-height: 1em;
     cursor: pointer;
     transition: font-size 0.2s ease-in-out;
@@ -148,7 +148,7 @@
     font-size: var(--small-font-size);
     font-weight: var(--font-weight-bold);
     color: var(--color-label);
-    margin-left: 0;
+    margin-left: var(--space-0);
     line-height: 1em;
     cursor: pointer;
   }
@@ -160,7 +160,7 @@
   .lx-layout.lx-layout-latvijalv>header>.lx-header>.lx-group:last-of-type,
   .lx-layout.lx-layout-latvijalv>header>.lx-header>.lx-right-group>.lx-group {
     display: flex;
-    gap: 0.5rem;
+    gap: var(--space-0500);
     height: var(--row-size);
   }
   
@@ -200,7 +200,7 @@
   .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-user-button .lx-user-info {
     display: grid;
     grid-template-columns: 1fr;
-    margin-right: 0.75rem;
+    margin-right: var(--space-0750);
     max-width: var(--aside-size);
   }
   
@@ -221,8 +221,8 @@
   .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-user-button .lx-avatar {
     display: flex;
     align-items: center;
-    margin-right: 0.75rem;
-    margin-left: 0.75rem;
+    margin-right: var(--space-0750);
+    margin-left: var(--space-0750);
   }
   
   .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-user-button .lx-user-info .lx-secondary {
@@ -246,8 +246,8 @@
   }
   
   .lx-layout.lx-layout-latvijalv .lx-page-header {
-    margin-top: var(--gap);
-    margin-bottom: var(--gap);
+    margin-top: var(--space-1000);
+    margin-bottom: var(--space-1000);
   }
   
   .lx-layout.lx-layout-latvijalv>header .lx-group.lx-right-group #nav-toggle {
@@ -272,7 +272,7 @@
     justify-content: flex-start;
     grid-template-columns: 1fr;
     grid-column: 2/3;
-    padding: 0 1rem;
+    padding: var(--space-0) var(--space-1000);
     width: auto;
   }
   
@@ -309,8 +309,8 @@
     width: 100%;
     grid-area: alerts;
     list-style: none;
-    margin: 0;
-    padding: 0;
+    margin: var(--space-0);
+    padding: var(--space-0);
   }
 
   .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert {
@@ -318,7 +318,7 @@
     grid-column: 1 / span 3;
     grid-template-columns: subgrid;
     border: var(--border-width-2) solid transparent;
-    border-top: none;
+    border-top: var(--border-width-0);
   }
 
   .lx-theme-contrast .lx-layout-latvijalv .lx-latvijalv-alert {
@@ -329,14 +329,14 @@
     display: grid;
     grid-column: 2 / span 1;
     grid-template-columns: auto 1fr auto;
-    padding: 0.5rem 1rem;
-    column-gap: 0.5rem;
+    padding: var(--space-0500) var(--space-1000);
+    column-gap: var(--space-0500);
   }
   
   .lx-layout.lx-layout-latvijalv>main {
     grid-area: main;
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin-left: var(--space-1000);
+    margin-right: var(--space-1000);
     /* 100dvh - publicHeaderHeight - footerMarginTop */
     min-height: calc(100dvh - var(--public-nav-header-size) - 5rem);
   }
@@ -351,7 +351,7 @@
   }
   
   .lx-layout.lx-layout-latvijalv>footer p {
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-1000);
   }
   
   .lx-layout.lx-layout-latvijalv .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-button-content-wrapper .lx-badge,
@@ -377,12 +377,12 @@
   .lx .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-success .lx-latvijalv-alert-icon > svg,
   .lx .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-warning .lx-latvijalv-alert-icon > svg,
   .lx .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-error .lx-latvijalv-alert-icon > svg {
-    padding: 0.25rem;
+    padding: var(--space-0250);
     border-radius: var(--border-radius-full);
   }
 
   .lx .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-success .lx-latvijalv-alert-icon > svg {
-    padding: 0.1rem;
+    padding: var(--space-0125);
   }
 
   .lx:not(.lx-theme-contrast) .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-success .lx-latvijalv-alert-icon > svg {
@@ -492,7 +492,7 @@
 
   .lx-layout.lx-layout-latvijalv .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar), 
   .lx-layout.lx-layout-latvijalv .lx-form-grid:not(:has(>header))>.lx-wizard header.lx-toolbar.lx-sticky {
-      top: calc(var(--public-nav-header-size) );
+      top: calc(var(--public-nav-header-size));
   }
 
   .lx-layout.lx-layout-latvijalv.no-nav-items .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar),
@@ -526,8 +526,8 @@
   }
 
   .lx-layout.lx-layout-latvijalv > .lx-main .lx-error-landing .lx-header {
-    margin-top: var(--row-size);
-    margin-bottom: var(--gap);
+    margin-top: var(--space-3000);
+    margin-bottom: var(--space-1000);
   }
 
   .lx-layout.lx-layout-latvijalv .lx-nav-panel .lx-spotlight-button .lx-button:not(#userMenuButton)>.lx-button-content-wrapper .lx-badge {
@@ -538,25 +538,25 @@
     border-color: var(--color-region);
   }
 
-.lx-layout-latvijalv header .lx-header .lx-login-button .lx-button:not(.lx-disabled) .lx-button-content {
-  color: var(--color-data);
-  transition: color .1s ease-in;
-}
+  .lx-layout-latvijalv header .lx-header .lx-login-button .lx-button:not(.lx-disabled) .lx-button-content {
+    color: var(--color-data);
+    transition: color .1s ease-in;
+  }
 
-.lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:not(.lx-context-container .popper .lx-button):not(.lx-disabled):hover {
-  background-color: var(--color-button-primary-hover-background);
-  color: var(--color-button-primary-hover);
-  border-color: var(--color-button-primary-hover-border);
-}
+  .lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:not(.lx-context-container .popper .lx-button):not(.lx-disabled):hover {
+    background-color: var(--color-button-primary-hover-background);
+    color: var(--color-button-primary-hover);
+    border-color: var(--color-button-primary-hover-border);
+  }
 
-.lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:not(.lx-disabled):hover .lx-button-content {
-  color: var(--color-button-primary-hover);
+  .lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:not(.lx-disabled):hover .lx-button-content {
+    color: var(--color-button-primary-hover);
 
-}
+  }
 
-.lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:not(.lx-disabled):hover .lx-button-content-wrapper > svg{
-  fill: var(--color-button-primary-icon-hover);
-}
+  .lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:not(.lx-disabled):hover .lx-button-content-wrapper > svg{
+    fill: var(--color-button-primary-icon-hover);
+  }
     
   /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
   @media (max-height: calc(8rem * 5)) {
@@ -568,7 +568,7 @@
     .lx-layout-latvijalv.no-nav-items .lx-data-grid-wrapper > .lx-grid-toolbar,
     .lx .lx-layout-latvijalv.no-nav-items .lx-data-grid-wrapper > .lx-grid-header-wrapper,
     .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid>header.lx-sticky {
-      top: 0;
+      top: var(--space-0);
     }
   
     .lx-layout.lx-layout-latvijalv .lx-toolbar.lx-sticky,
@@ -601,7 +601,7 @@
       .lx .lx-layout-latvijalv .lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar,
       .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>header.lx-sticky,
       .lx .lx-layout-latvijalv .lx-data-grid-wrapper > .lx-grid-header-wrapper {
-        top: 0;
+        top: var(--space-0);
       }
   
       .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>aside.lx-index>ul,
@@ -640,7 +640,7 @@
   
   @media (max-width: 900px) {
     .lx-layout.lx-layout-latvijalv {
-      column-gap: 0;
+      column-gap: var(--space-0);
       --nav-row-size: 3rem;
       grid-template-rows: var(--nav-row-size) auto 1fr var(--nav-row-size);
       grid-template-areas:
@@ -662,8 +662,8 @@
     }
   
     .lx-layout.lx-layout-latvijalv>header>.lx-header {
-      padding-left: 0;
-      padding-right: 0;
+      padding-left: var(--space-0);
+      padding-right: var(--space-0);
     }
   
     .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-user-button .lx-user-info {
@@ -672,7 +672,7 @@
   
     .lx .lx-layout.lx-layout-latvijalv>header>.lx-header>.lx-right-group .lx-group,
     .lx .lx-layout.lx-layout-latvijalv>header>.lx-header>.lx-group:last-of-type {
-      gap: 0;
+      gap: var(--space-0);
     }
   
     .lx .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-main-button svg {
@@ -700,18 +700,18 @@
       z-index: 1000;
       top: var(--nav-row-size);
       position: fixed;
-      right: 0;
+      right: var(--space-0);
       transition: width .1s ease-out, margin-right .1s ease-out;
     }
   
     .lx .lx-layout.lx-layout-latvijalv.lx-collapsed > nav {
       width: auto;
-      margin-left: calc(0px - var(--row-size));
+      margin-left: calc(var(--space-0) - var(--space-3000));
     }
   
     .lx .lx-layout.lx-layout-latvijalv.lx-collapsed .lx-nav-panel {
       width: var(--row-size);
-      right: calc(0px - var(--row-size));
+      right: calc(var(--space-0) - var(--space-3000));
     }
   
     .lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button,
@@ -731,8 +731,8 @@
       height: calc(100% - var(--nav-row-size));
       z-index: 900;
       box-shadow: var(--shadow-dropdown);
-      padding: 0;
-      right: 0;
+      padding: var(--space-0);
+      right: var(--space-0);
       overflow-x: hidden;
     }
   

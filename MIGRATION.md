@@ -1,5 +1,19 @@
 # LX/UI Migration Guide
 
+## 2.1.5 → 2.1.6
+
+### Breaking changes
+
+The following tokens have been removed:
+- `--gap`
+- `--content-padding`
+- `--content-padding-s`
+- `--content-padding-l`
+- `--padding`
+- `--padding-default`
+- `--margin-default`
+- `--button-icon-margin`
+
 ## 2.1.2 → 2.1.3
 
 ### Breaking changes

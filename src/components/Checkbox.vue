@@ -84,7 +84,7 @@ defineExpose({ focus, scrollIntoView });
     />
     <label
       :for="idValue"
-      class="lx-checkbox-label-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-1"
+      class="lx-checkbox-label-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-2"
     >
       <span class="lx-checkbox-appearance">
         <span class="lx-checkbox-thumb">

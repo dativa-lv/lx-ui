@@ -3,12 +3,12 @@
 /*LxShell*/
 
 .lx-layout-digimaks > .lx-main {
-  padding: 0 1rem;
+  padding: var(--space-0) var(--space-1000);
 }
 
 .lx-layout-digimaks > header {
   position: fixed;
-  top: 0;
+  top: var(--space-0);
   background-color: var(--color-background);
   width: 100%;
   z-index: 8100;
@@ -16,12 +16,12 @@
 
 .lx-layout-digimaks .nav-toggle {
   opacity: 1;
-  margin-left: 0;
+  margin-left: var(--space-0);
 }
 
 .lx-layout-digimaks header .lx-header button.lx-button.nav-toggle:not(#userMenuButton) .lx-badge,
 .lx-layout-digimaks nav .lx-nav-panel .lx-button:not(#userMenuButton) .lx-badge {
-  inset: 0rem 0rem auto auto;
+  inset: var(--space-0) var(--space-0) auto auto;
 }
 
 .lx-layout-digimaks .nav-toggle svg {
@@ -41,8 +41,8 @@
   height: 100%;
   width: 0;
   position: fixed;
-  top: 0;
-  left: 0;
+  top: var(--space-0);
+  left: var(--space-0);
 }
 
 .lx:not(.lx-no-animations) .lx-layout-digimaks nav .lx-nav-panel {
@@ -150,8 +150,8 @@
   background-color: var(--color-region);
   color: green;
   width: 100%;
-  padding-left: 0;
-  margin-top: 0;
+  padding-left: var(--space-0);
+  margin-top: var(--space-0);
   overflow: hidden;
   left: 100vw;
   top: var(--nav-row-size);
@@ -162,7 +162,7 @@
 }
 
 .lx-layout-digimaks .lx-user-menu.lx-user-menu-expanded {
-  left: 0;
+  left: var(--space-0);
   top: var(--nav-row-size);
   height: calc(100% - var(--nav-row-size));
 }
@@ -183,13 +183,13 @@
   height: var(--nav-row-size);
   display: flex;
   justify-content: space-between;
-  padding: 0 0.75rem;
+  padding: var(--space-0) var(--space-0750);
   align-items: center;
 }
 
 .lx-layout-digimaks .lx-nav-panel .lx-nav-panel-group .lx-nav-group > .lx-user-button > div {
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-1000);
   display: grid;
   grid-template-columns: 2rem 1fr 2rem;
   width: 100%;
@@ -228,12 +228,12 @@
 .lx-layout-digimaks .lx-nav-panel .lx-user-menu > ul {
   border-bottom: var(--border-width-1) solid var(--color-chrome);
   list-style-type: none;
-  padding: 0;
-  margin: 0;
+  padding: var(--space-0);
+  margin: var(--space-0);
   width: 100%;
 }
 .lx-layout-digimaks .lx-nav-panel .lx-user-menu > ul:last-child {
-  border-bottom: none;
+  border-bottom: var(--border-width-0);
 }
 .lx-layout-digimaks .lx-nav-panel .lx-user-menu > ul:first-child {
   border-bottom: var(--border-width-1) solid var(--color-chrome);
@@ -277,9 +277,9 @@
   display: flex;
   flex-direction: column;
   height: calc(4 * var(--nav-row-size));
-  padding-top: 1rem;
+  padding-top: var(--space-1000);
   align-items: center;
-  gap: 0.25rem;
+  gap: var(--space-0250);
 }
 
 .lx-layout-digimaks .lx-nav-panel .lx-user-menu .lx-user-menu-display :not(.lx-avatar-display) {

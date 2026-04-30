@@ -32,3 +32,22 @@
 | `--border-radius-0750` | 0.75rem       |
 | `--border-radius-1000` | 1rem          |
 | `--border-radius-full` | 100vh         |
+
+## Spacing tokens
+
+| Variable name  | Default value |
+|----------------|---------------|
+| `--space-0`    | 0rem          |
+| `--space-0125` | 0.125rem      |
+| `--space-0250` | 0.25rem       |
+| `--space-0375` | 0.375rem      |
+| `--space-0500` | 0.5rem        |
+| `--space-0750` | 0.75rem       |
+| `--space-1000` | 1rem          |
+| `--space-1250` | 1.25rem       |
+| `--space-1500` | 1.5rem        |
+| `--space-2000` | 2rem          |
+| `--space-2500` | 2.5rem        |
+| `--space-3000` | 3rem          |
+| `--space-4000` | 4rem          |
+| `--space-5000` | 5rem          |

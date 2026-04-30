@@ -16,7 +16,7 @@ figure,
 blockquote,
 dl,
 dd {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-data);
 }
 
@@ -81,7 +81,7 @@ select {
   display: block;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
-  margin: 0;
+  margin: var(--space-0);
   font-weight: bold;
   unicode-bidi: isolate;
 }

@@ -4,7 +4,7 @@
   --color-header-hover-background: var(--color-region-2);
   --color-header-hover-foreground: var(--color-data);
   display: grid;
-  column-gap: var(--gap);
+  column-gap: var(--space-1000);
   grid-template-columns: 1fr var(--body-column-size) 1fr;
   grid-template-rows: var(--nav-row-size) var(--row-size) 1fr auto;
   grid-template-areas: 'header header header' 'nav nav nav' '. main aside' 'footer footer footer';
@@ -37,7 +37,7 @@
   color: var(--color-nav-foreground);
   height: var(--nav-row-size);
   position: fixed;
-  top: 0;
+  top: var(--space-0);
   width: 100%;
   align-items: center;
   z-index: 8100;
@@ -52,19 +52,19 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   width: 100%;
-  padding: 0;
+  padding: var(--space-0);
   height: var(--nav-row-size);
   align-items: center;
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-main-button {
   display: grid;
-  gap: var(--gap);
+  gap: var(--space-1000);
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  padding: 0.25rem;
+  padding: var(--space-0250);
   height: var(--nav-row-size);
-  padding-right: var(--gap);
+  padding-right: var(--space-1000);
   outline: 2px solid transparent;
   outline-offset: -2px;
 }
@@ -89,8 +89,8 @@
 }
 
 .lx-layout.lx-layout-public>header .lx-header .lx-main-button .lx-badge {
-  margin-left: 0.5rem;
-  padding: 0.1rem 0.5rem;
+  margin-left: var(--space-0500);
+  padding: var(--space-0125) var(--space-0500);
   border-radius: var(--border-radius-1000);
   font-weight: var(--font-weight-data);
   font-size: var(--small-font-size);
@@ -104,8 +104,8 @@
 .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button svg {
   fill: var(--color-brand);
   height: calc(var(--icon-size-l) * 1.5);
-  padding-left: 0;
-  padding-right: 0;
+  padding-left: var(--space-0);
+  padding-right: var(--space-0);
   transition: height 0.2s ease-in-out;
 }
 
@@ -117,7 +117,7 @@
   font-size: var(--h2-font-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-brand);
-  margin-left: 0;
+  margin-left: var(--space-0);
   line-height: 1em;
   cursor: pointer;
   transition: font-size 0.2s ease-in-out;
@@ -138,7 +138,7 @@
   font-size: var(--small-font-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-label);
-  margin-left: 0;
+  margin-left: var(--space-0);
   line-height: 1em;
   cursor: pointer;
 }
@@ -150,7 +150,7 @@
 .lx-layout.lx-layout-public>header>.lx-header>.lx-group:last-of-type,
 .lx-layout.lx-layout-public>header>.lx-header>.lx-right-group>.lx-group {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-0500);
   height: var(--row-size);
 }
 
@@ -190,7 +190,7 @@
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info {
   display: grid;
   grid-template-columns: 1fr;
-  margin-right: 0.75rem;
+  margin-right: var(--space-0750);
   max-width: var(--aside-size);
 }
 
@@ -211,8 +211,8 @@
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-avatar {
   display: flex;
   align-items: center;
-  margin-right: 0.75rem;
-  margin-left: 0.75rem;
+  margin-right: var(--space-0750);
+  margin-left: var(--space-0750);
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info .lx-secondary {
@@ -241,8 +241,8 @@
 }
 
 .lx-layout.lx-layout-public .lx-page-header {
-  margin-top: var(--gap);
-  margin-bottom: var(--gap);
+  margin-top: var(--space-1000);
+  margin-bottom: var(--space-1000);
 }
 
 .lx-layout.lx-layout-public>header .lx-group.lx-right-group #nav-toggle {
@@ -397,7 +397,7 @@
   width: var(--icon-size-l);
   height: var(--icon-size-l);
   position: absolute;
-  margin-top: 0.5rem;
+  margin-top: var(--space-0500);
 }
 
 .lx-info-wrapper-responsive-toolbar .handle-wrapper {
@@ -411,14 +411,13 @@
 }
 
 .lx .lx-dropdown-panel-wrapper .lx-info-wrapper-responsive-toolbar>.lx-button {
-  margin-top: 1rem;
+  margin-top: var(--space-1000);
 }
 
 .lx .handle-wrapper>.lx-button {
-  margin-left: 3rem;
-  margin-top: 1rem;
+  margin-left: var(--space-3000);
+  margin-top: var(--space-1000);
 }
-
 
 .lx-layout.lx-layout-public.no-nav-items>nav{
   display: none;
@@ -448,8 +447,8 @@
 }
 
 .lx-layout.lx-layout-public > .lx-main .lx-error-landing .lx-header {
-  margin-top: var(--row-size);
-  margin-bottom: var(--gap);
+  margin-top: var(--space-3000);
+  margin-bottom: var(--space-1000);
 }
 
 .lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button {
@@ -467,7 +466,7 @@
 .lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-info-wrapper-responsive-toolbar>.lx-button,
 .lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month-year .lx-info-wrapper-responsive-toolbar>.lx-button,
 .lx .lx-dropdown-panel-wrapper.date-picker-type.mode-quarters .lx-info-wrapper-responsive-toolbar>.lx-button {
-  margin-top: 0rem;
+  margin-top: var(--space-0);
 }
 
 .lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-info-wrapper-responsive-toolbar,
@@ -489,9 +488,8 @@
 }
 
 .lx .lx-layout .popper.fullscreen-popper .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-calendar-layouts-wrapper .lx-calendar-layouts {
-  margin: 1rem auto 0;
+  margin: var(--space-1000) auto var(--space-0);
 }
-
 
 /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
 @media (max-height: calc(8rem * 5)) {
@@ -504,7 +502,7 @@
   .lx .lx-layout-public.no-nav-items .lx-data-grid-wrapper > .lx-grid-header-wrapper,
   .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-sticky,
   .lx-layout.lx-layout-public.no-nav-items .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
-    top: 0;
+    top: var(--space-0);
   }
 
   .lx-layout.lx-layout-public .lx-toolbar.lx-sticky,
@@ -539,7 +537,7 @@
     .lx .lx-layout.lx-layout-public .lx-form-grid>header.lx-sticky,
     .lx .lx-layout-public .lx-data-grid-wrapper > .lx-grid-header-wrapper,
     .lx .lx-layout-public .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
-      top: 0;
+      top: var(--space-0);
     }
 
     .lx .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul,
@@ -577,7 +575,7 @@
 
 @media (max-width: 900px) {
   .lx-layout.lx-layout-public {
-    column-gap: 0;
+    column-gap: var(--space-0);
     --nav-row-size: 3rem;
     grid-template-rows: var(--nav-row-size) 1fr auto;
     grid-template-areas:
@@ -599,7 +597,7 @@
 
   .lx .lx-layout.lx-layout-public>header>.lx-header>.lx-right-group .lx-group,
   .lx .lx-layout.lx-layout-public>header>.lx-header>.lx-group:last-of-type {
-    gap: 0;
+    gap: var(--space-0);
   }
 
   .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button svg {
@@ -623,7 +621,7 @@
     z-index: 999;
     top: var(--nav-row-size);
     position: fixed;
-    right: 0;
+    right: var(--space-0);
     transition: width .1s ease-out, margin-right .1s ease-out;
   }
 
@@ -633,12 +631,12 @@
 
   .lx .lx-layout.lx-layout-public.lx-collapsed > nav {
     width: auto;
-    margin-left: calc(0px - var(--row-size));
+    margin-left: calc(var(--space-0) - var(--space-3000));
   }
 
   .lx .lx-layout.lx-layout-public.lx-collapsed .lx-nav-panel {
     width: var(--row-size);
-    right: calc(0px - var(--row-size));
+    right: calc(var(--space-0) - var(--space-3000));
   }
 
   .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button,
@@ -658,8 +656,8 @@
     height: calc(100% - var(--nav-row-size));
     z-index: 900;
     box-shadow: var(--shadow-dropdown);
-    padding: 0;
-    right: 0;
+    padding: var(--space-0);
+    right: var(--space-0);
     overflow-x: hidden;
   }
 

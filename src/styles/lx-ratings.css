@@ -4,8 +4,8 @@
     width: auto;
     border: var(--border-width-2) solid transparent;
     align-items: center;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: var(--space-0500);
+    padding-right: var(--space-0500);
 }
 .lx-ratings > div {
     height: 2rem;
@@ -77,25 +77,30 @@
 
 .lx-grid-row .lx-ratings {
     height: auto;
-    margin-top:0rem;
-    margin-bottom: 0rem;
+    margin-top: var(--space-0);
+    margin-bottom: var(--space-0);
 }
+
 .lx-grid-row .lx-ratings > div {
     height: 1.1rem;
     width: 1.1rem;
 }
+
 .lx-grid-row .lx-ratings svg {
     width: var(--icon-size-xs);
     height: var(--icon-size-xs);
 }
+
 .lx-grid-row .lx-cell-primary .lx-ratings svg.lx-category-green,
 .lx-ratings.lx-colorful svg.lx-category-green  {
     fill: var(--color-green);
 }
+
 .lx-grid-row .lx-cell-primary .lx-ratings svg.lx-category-orange,
 .lx-ratings.lx-colorful svg.lx-category-orange  {
     fill: var(--color-orange);
 }
+
 .lx-grid-row .lx-cell-primary .lx-ratings svg.lx-category-red,
 .lx-ratings.lx-colorful svg.lx-category-red  {
     fill: var(--color-red);
@@ -120,7 +125,7 @@
 }
 
 .lx-card .lx-toolbar .lx-ratings {
-    padding-right: 0.5rem;
+    padding-right: var(--space-0500);
 }
 
 .lx-ratings:not(.lx-disabled):not(.lx-read-only) .lx-star-1:focus,

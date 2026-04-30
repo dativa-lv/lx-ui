@@ -34,7 +34,7 @@
 | `--toggle-text-font-weight`      | `--font-weight`                                                   |
 | `--toggle-text-font-size`        | `--small-font-size`                                               |
 | `--toggle-text-line-height`      | 1.5                                                               |
-| `--toggle-gap`                   | 0.5rem                                                            |
+| `--toggle-gap`                   | `--space-0500`                                                    |
 
 ### Color
 
