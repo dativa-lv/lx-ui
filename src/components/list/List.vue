@@ -161,6 +161,7 @@ const defaultListVirtualizer = shallowRef(null);
 const defaultListScrollParent = shallowRef(null);
 
 const searchStringClient = ref(props.searchSide === 'client' ? props.searchString : '');
+const searchStringClientRaw = ref('');
 const searchStringServer = ref(props.searchSide === 'server' ? props.searchString : '');
 
 let invisibleBlockTimeout;
@@ -666,7 +667,7 @@ function clientSideSearch() {
     showInvisibleBlock.value = true;
   }, 1000);
 
-  emits('update:searchString', searchStringClient.value);
+  emits('update:searchString', searchStringClientRaw.value);
 }
 
 function serverSideSearch() {
@@ -674,6 +675,10 @@ function serverSideSearch() {
 }
 
 function search(string) {
+  if (string == null || string === '') {
+    searchStringClientRaw.value = '';
+  }
+
   if (props.searchSide === 'client') {
     searchStringClient.value = string;
     clientSideSearch();
@@ -1515,6 +1520,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           :texts="displayTexts"
           @actionClick="handleToolbarActionClick"
           @search="search"
+          @update:searchString="(searchString) => (searchStringClientRaw = searchString)"
           @selectAll="selectRows"
           @deselectAll="cancelSelection"
         >
@@ -2661,7 +2667,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
       </div>
 
       <LxEmptyState
-        v-if="items?.length === 0 && !(loading || busy) && !searchStringClient"
+        v-if="items?.length === 0 && !(loading || busy) && !searchStringClientRaw"
         :label="displayTexts?.noItems"
         :description="displayTexts?.noItemsDescription"
         :icon="emptyStateIcon"
@@ -2670,12 +2676,12 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
       />
       <LxEmptyState
         v-if="
-          searchStringClient &&
+          searchStringClientRaw &&
           filteredItems &&
           ((props.kind !== 'treelist' && filteredItems.length === 0) ||
             (props.kind === 'treelist' && filteredTreeItems?.length === 0))
         "
-        :label="`${displayTexts.notFoundSearch} ${JSON.stringify(searchStringClient)}`"
+        :label="`${displayTexts.notFoundSearch} ${JSON.stringify(searchStringClientRaw)}`"
         :announce="showInvisibleBlock"
       />
       <div class="lx-load-more-button" v-if="showLoadMore">
