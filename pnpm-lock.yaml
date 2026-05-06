@@ -81,13 +81,13 @@ importers:
         version: 14.0.0(vue@3.5.17(typescript@5.8.2))
       '@vueuse/integrations':
         specifier: 14.0.0
-        version: 14.0.0(axios@1.15.0)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))
+        version: 14.0.0(axios@1.15.2)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))
       avvvatars-vue:
         specifier: ^1.0.2
         version: 1.1.1(vue@3.5.17(typescript@5.8.2))
       axios:
-        specifier: 1.15.0
-        version: 1.15.0
+        specifier: 1.15.2
+        version: 1.15.2
       c2pa:
         specifier: ^0.22.3
         version: 0.22.6
@@ -1649,8 +1649,8 @@ packages:
     resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
     engines: {node: '>=4'}
 
-  axios@1.15.0:
-    resolution: {integrity: sha512-wWyJDlAatxk30ZJer+GeCWS209sA42X+N5jU2jy6oHTp7ufw8uzUTVFBX9+wTfAlhiJXGS0Bq7X6efruWjuK9Q==}
+  axios@1.15.2:
+    resolution: {integrity: sha512-wLrXxPtcrPTsNlJmKjkPnNPK2Ihe0hn0wGSaTEiHRPxwjvJwT3hKmXF4dpqxmPO9SoNb2FsYXj/xEo0gHN+D5A==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -5260,13 +5260,13 @@ snapshots:
       '@vueuse/shared': 14.0.0(vue@3.5.17(typescript@5.8.2))
       vue: 3.5.17(typescript@5.8.2)
 
-  '@vueuse/integrations@14.0.0(axios@1.15.0)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))':
+  '@vueuse/integrations@14.0.0(axios@1.15.2)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))':
     dependencies:
       '@vueuse/core': 14.0.0(vue@3.5.17(typescript@5.8.2))
       '@vueuse/shared': 14.0.0(vue@3.5.17(typescript@5.8.2))
       vue: 3.5.17(typescript@5.8.2)
     optionalDependencies:
-      axios: 1.15.0
+      axios: 1.15.2
       focus-trap: 7.6.4
       sortablejs: 1.14.0
 
@@ -5436,7 +5436,7 @@ snapshots:
 
   axe-core@4.10.3: {}
 
-  axios@1.15.0:
+  axios@1.15.2:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.5
