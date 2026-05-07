@@ -364,7 +364,9 @@ onMounted(async () => {
   context.value = canvas.value.getContext('2d');
 
   observer = new ResizeObserver(() => {
-    resizeCanvas();
+    globalThis.requestAnimationFrame(() => {
+      resizeCanvas();
+    });
   });
 
   if (container.value) {

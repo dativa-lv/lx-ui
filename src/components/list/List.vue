@@ -1438,10 +1438,12 @@ onMounted(async () => {
   if (!listWrapper.value) return;
 
   observer = new ResizeObserver(([entry]) => {
-    const actionCount = props.selectionActionDefinitions.length;
-    const breakpoint = BASE_WIDTH + actionCount * WIDTH_PER_ACTION;
+    globalThis.requestAnimationFrame(() => {
+      const actionCount = props.selectionActionDefinitions.length;
+      const breakpoint = BASE_WIDTH + actionCount * WIDTH_PER_ACTION;
 
-    isNarrow.value = entry.contentRect.width <= breakpoint;
+      isNarrow.value = entry.contentRect.width <= breakpoint;
+    });
   });
 
   observer.observe(listWrapper.value);
