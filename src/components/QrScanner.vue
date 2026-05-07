@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick, computed, watch, inject } from 'vue';
+import { ref, onMounted, nextTick, computed, watch, inject, getCurrentInstance } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
@@ -8,18 +8,40 @@ import LxToolbar from '@/components/Toolbar.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  formats: { type: Array, default: () => ['qr_code'] },
-  hasFileUploader: { type: Boolean, default: true },
-  selectionKind: { type: String, default: 'single' }, // single, multiple
-  cameraSwitcherMode: { type: String, default: 'list' }, // list, toggle
-  hasFlashlightToggle: { type: Boolean, default: false },
-  showAlerts: { type: Boolean, default: true },
+  formats: { type: Array, default: () => ['qr_code'], group: 'additional', sequence: 1 }, // TODO: add format values
+  hasFileUploader: { type: Boolean, default: true, group: 'main', sequence: 2 },
+  selectionKind: {
+    type: String,
+    default: 'single',
+    options: ['single', 'multiple'],
+    group: 'main',
+    sequence: 1,
+  }, // single, multiple
+  cameraSwitcherMode: {
+    type: String,
+    default: 'list',
+    options: ['list', 'toggle'],
+    group: 'main',
+    sequence: 5,
+  }, // list, toggle
+  hasFlashlightToggle: { type: Boolean, default: false, group: 'main', sequence: 3 },
+  showAlerts: { type: Boolean, default: true, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -272,6 +294,19 @@ onMounted(async () => {
   await loadQrReader();
   switchCamera(camerasList.value?.[0]);
 });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxQrScanner',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxQrScanner' },
+    ]),
+  });
+}
 </script>
 
 <template>
@@ -279,6 +314,7 @@ onMounted(async () => {
     class="lx-qr-scanner-wrapper"
     :class="{ 'drag-over': dragOver }"
     :aria-labelledby="labelledBy"
+    :data-id="id"
   >
     <LxToolbar
       v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"
@@ -289,15 +325,15 @@ onMounted(async () => {
     <div class="lx-qr-scanner">
       <Transition name="fade">
         <QrcodeStream
-          @detect="onDetect"
-          @error="onError"
+          v-if="showPreview"
           :torch="torch && !torchNotSupported"
           :formats="formats"
           v-show="showScanner"
           :constraints="selectedCamera"
           :paused="selectionKind === 'single' ? error || accepted : false"
           @camera-on="cameraOn"
-          v-if="showPreview"
+          @detect="onDetect"
+          @error="onError"
         >
           <div class="lx-qr-center" v-show="showScanner">
             <svg

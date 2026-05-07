@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, nextTick, watch, inject } from 'vue';
+import { ref, computed, onMounted, nextTick, watch, inject, getCurrentInstance } from 'vue';
 import { onClickOutside, useDebounceFn, useWindowSize } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
@@ -23,6 +23,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -31,26 +32,47 @@ const props = defineProps({
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   groupId: { type: String, default: null },
-  queryMinLength: { type: Number, default: 0 },
-  queryMaxLength: { type: Number, default: null },
-  queryDebounce: { type: [String, Number], default: 200 },
-  placeholder: { type: String, default: null },
-  tooltip: { type: String, default: null },
-  tooltipAttribute: { type: String, default: null },
-  readOnly: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  invalid: { type: Boolean, default: false },
-  invalidationMessage: { type: String, default: null },
-  loading: { type: Boolean, default: false },
-  hasDetails: { type: Boolean, default: false },
-  selectionKind: { type: String, default: 'single' }, // 'single' or 'multiple'
-  detailMode: { type: String, default: 'simple' }, // 'simple' or 'detailed'
+  queryMinLength: { type: Number, default: 0, group: 'main', sequence: 8 },
+  queryMaxLength: { type: Number, default: null, group: 'main', sequence: 9 },
+  queryDebounce: { type: [String, Number], default: 200, group: 'additional', sequence: 3 },
+  placeholder: { type: String, default: null, group: 'main', sequence: 6 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 7 },
+  tooltipAttribute: { type: String, default: null, group: 'additional', sequence: 4 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  invalid: { type: Boolean, default: false, sequence: 1 },
+  invalidationMessage: { type: String, default: null, sequence: 2 },
+  loading: { type: Boolean, default: false, group: 'mode', sequence: 3 },
+  hasDetails: { type: Boolean, default: false, group: 'main', sequence: 3 },
+  selectionKind: {
+    type: String,
+    default: 'single',
+    options: ['single', 'multiple'],
+    group: 'main',
+    sequence: 1,
+  }, // 'single' or 'multiple'
+  detailMode: {
+    type: String,
+    default: 'simple',
+    options: ['simple', 'detailed'],
+    group: 'main',
+    sequence: 4,
+  }, // 'simple' or 'detailed'
   preloadedItems: { type: Array, default: null }, // used for preloading items if items is a function and there is need to show items before user starts typing
   labelId: { type: String, default: null },
-  hasSelectAll: { type: Boolean, default: false },
+  hasSelectAll: { type: Boolean, default: false, group: 'main', sequence: 2 },
   texts: { type: Object, default: () => ({}) },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
-  enableAdditionalText: { type: Boolean, default: false },
+  enableAdditionalText: { type: Boolean, default: false, group: 'main', sequence: 5 },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -1160,11 +1182,24 @@ function clearFilteredItems() {
   }
 }
 
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxAutoComplete',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxAutoComplete' },
+    ]),
+  });
+}
+
 defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
 </script>
 
 <template>
-  <div class="lx-field-wrapper" ref="refRoot">
+  <div class="lx-field-wrapper" ref="refRoot" :data-id="id">
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
       <template v-if="$slots.customItem">
         <slot name="customItem" v-bind="selectedItem"></slot>
@@ -1232,7 +1267,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     <div
                       v-if="selectionKind === 'multiple' && model?.length > 0"
                       class="lx-tag"
-                      :class="[{ ['chars-' + countDigits(model?.length)]: model?.length > 0 }]"
+                      :class="[{ [`chars-${countDigits(model?.length)}`]: model?.length > 0 }]"
                     >
                       <div class="lx-tag-label">{{ model?.length }}</div>
                       <div class="lx-tag-button">
@@ -1388,7 +1423,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
               tabindex="-1"
               :aria-labelledby="labelledBy"
               class="lx-dropdown-default-content"
-              :style="{ width: panelWidth + 'px' }"
+              :style="{ width: `${panelWidth}px` }"
               @keydown.esc.prevent="closeDropDownDefaultOnEsc"
               @keydown.enter.prevent="handleEnterSelection"
               @keydown.space.prevent="handleEnterSelection"
@@ -1511,6 +1546,9 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                             :value="item[idAttribute]"
                             tabindex="-1"
                             :labelId="getLabelId(item[idAttribute])"
+                            :builderOptions="{
+                              innerComponent: true,
+                            }"
                             @click="selectMultiple(item)"
                           />
 
@@ -1581,7 +1619,14 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
 
       <LxModal ref="detailedModeModal" :label="displayTexts.detailsModalLabel" size="m">
         <template v-if="$slots.details && selectionKind === 'multiple'">
-          <LxContentSwitcher :items="detailsSwitchTypes" v-model="detailsSwitchType" kind="combo" />
+          <LxContentSwitcher
+            :items="detailsSwitchTypes"
+            v-model="detailsSwitchType"
+            kind="combo"
+            :builderOptions="{
+              innerComponent: true,
+            }"
+          />
         </template>
 
         <template
@@ -1589,7 +1634,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
             $slots.details && detailMode === 'detailed' && detailsSwitchType === 'advanced-search'
           "
         >
-          <slot name="details"></slot>
+          <slot name="details" />
         </template>
 
         <template

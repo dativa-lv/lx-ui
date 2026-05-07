@@ -1,5 +1,6 @@
+, group: 'main'
 <script setup>
-import { ref, computed, onMounted, watch, inject } from 'vue';
+import { ref, computed, onMounted, watch, inject, getCurrentInstance } from 'vue';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { generateUUID } from '@/utils/stringUtils';
@@ -13,35 +14,75 @@ import FileUploaderItem from '@/components/fileUploader/FileUploaderItem.vue';
 import LxCamera from '@/components/Camera.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: Array, default: null },
-  selectionKind: { type: String, default: 'single' }, //  single, multiple
-  mode: { type: String, default: 'default' }, // default, compact
-  maxlength: { type: Number, default: null },
-  draggable: { type: Boolean, default: false },
-  dataType: { type: String, default: 'meta' }, // content, meta
-  hasSearch: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  loading: { type: Boolean, default: false },
-  busy: { type: Boolean, default: false },
-  readOnly: { type: Boolean, default: false },
+  selectionKind: {
+    type: String,
+    default: 'single',
+    options: ['single', 'multiple'],
+    group: 'main',
+    sequence: 1,
+  }, //  single, multiple
+  mode: {
+    type: String,
+    default: 'default',
+    options: ['default', 'compact'],
+    group: 'main',
+    sequence: 3,
+  }, // default, compact
+  maxlength: { type: Number, default: null, group: 'additional', sequence: 5 },
+  draggable: { type: Boolean, default: false, group: 'main', sequence: 2 },
+  dataType: {
+    type: String,
+    default: 'meta',
+    options: ['content', 'meta'],
+    group: 'additional',
+    sequence: 4,
+  }, // content, meta
+  hasSearch: { type: Boolean, default: false, group: 'main', sequence: 5 },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  loading: { type: Boolean, default: false, group: 'mode', sequence: 4 },
+  busy: { type: Boolean, default: false, group: 'mode', sequence: 3 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   allowedFileExtensions: { type: Array, default: () => [] },
-  maxFileSize: { type: Number, default: 30000000 },
-  hasDownloadButton: { type: Boolean, default: false },
-  showMeta: { type: Boolean, default: true },
-  maxSizeForMeta: { type: Number, default: 30000000 },
-  hasCamera: { type: Boolean, default: false },
-  cameraSwitcherMode: { type: String, default: 'toggle' }, // toggle || list
-  hasFlashlightToggle: { type: Boolean, default: false },
-  imageSize: { type: String, default: 'default' }, // default || max
+  maxFileSize: { type: Number, default: 30000000, group: 'additional', sequence: 6 },
+  hasDownloadButton: { type: Boolean, default: false, group: 'main', sequence: 6 },
+  showMeta: { type: Boolean, default: true, group: 'main', sequence: 7 },
+  maxSizeForMeta: { type: Number, default: 30000000, group: 'additional', sequence: 7 },
+  hasCamera: { type: Boolean, default: false, group: 'main', sequence: 4 },
+  cameraSwitcherMode: {
+    type: String,
+    default: 'toggle',
+    options: ['toggle', 'list'],
+    group: 'additional',
+    sequence: 1,
+  }, // toggle || list
+  hasFlashlightToggle: { type: Boolean, default: false, group: 'additional', sequence: 2 },
+  imageSize: {
+    type: String,
+    default: 'default',
+    options: ['default', 'max'],
+    group: 'additional',
+    sequence: 3,
+  }, // default || max
   preferencesId: { type: String, default: 'lx-camera-settings' },
   itemsStates: { type: Object, default: () => {} },
   labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({}),
+  },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
   },
 });
 
@@ -664,6 +705,19 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 // Exposed variant of setting states will be deprecated in next LX major release
 
 defineExpose({ changeState, getFiles, isUploading });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxFileUploader',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props.id, name: 'LxFileUploader' },
+    ]),
+  });
+}
 </script>
 <template>
   <div
@@ -677,6 +731,7 @@ defineExpose({ changeState, getFiles, isUploading });
     ]"
     :aria-labelledBy="labelledBy"
     role="group"
+    :data-id="id"
   >
     <template v-if="selectionKind === 'single' && !readOnly">
       <input
@@ -772,10 +827,10 @@ defineExpose({ changeState, getFiles, isUploading });
           :label="displayTexts.buttonLabel"
           kind="tertiary"
           icon="upload"
-          @click="triggerFileUpload"
           :disabled="disabled || isAtMaxLength"
           :loading="loading"
           :busy="busy"
+          @click="triggerFileUpload"
         />
         <LxButton
           v-if="showCameraButton"
@@ -926,6 +981,9 @@ defineExpose({ changeState, getFiles, isUploading });
       :hasFlashlightToggle="hasFlashlightToggle"
       :imageSize="imageSize"
       :preferencesId="preferencesId"
+      :builderOptions="{
+        innerComponent: true,
+      }"
       :texts="displayTexts"
     />
   </LxModal>

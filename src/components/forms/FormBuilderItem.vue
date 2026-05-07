@@ -63,6 +63,14 @@ const props = defineProps({
   parentName: { type: String, default: null },
   validations: { type: Object, default: null },
   texts: { type: Object, default: () => {} },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      schemaPath: null,
+      componentStack: [],
+      useRegistry: false,
+    }),
+  },
 });
 
 const emits = defineEmits(['update:modelValue', 'rowActionClick', 'emit', 'filterBuilderFilter']);
@@ -378,6 +386,17 @@ function handleModalActionClick(action, name) {
     saveNewElement(name);
   }
 }
+
+const builderNameComputed = computed(() => {
+  if (props.builderOptions?.schemaPath) return `${props.builderOptions?.schemaPath}.${props.name}`;
+  return props.name;
+});
+
+const builderOptions = computed(() => ({
+  componentStack: props.builderOptions?.componentStack,
+  schemaPath: builderNameComputed.value,
+  useRegistry: props.builderOptions?.useRegistry,
+}));
 </script>
 <template>
   <!-- TODO: if type number / decimal / integer then conferToString - false -->
@@ -404,6 +423,7 @@ function handleModalActionClick(action, name) {
     :invalidation-message="invalidMessage"
     :custom-mask-value="displaySchema?.properties[name]?.lx?.customMaskValue"
     v-model="model[name]"
+    :builderOptions="builderOptions"
     @keyup.enter="emits('filterBuilderFilter')"
   />
   <LxTextArea
@@ -419,6 +439,7 @@ function handleModalActionClick(action, name) {
     :invalid="isInvalid"
     :invalidation-message="invalidMessage"
     v-model="model[name]"
+    :builderOptions="builderOptions"
     @keyup.enter="emits('filterBuilderFilter')"
   />
   <LxDateTimePicker
@@ -442,9 +463,12 @@ function handleModalActionClick(action, name) {
     :special-dates="displaySchema?.properties[name]?.lx?.specialDates"
     :dictionary="displaySchema?.properties[name]?.lx?.dictionary"
     :variant="displaySchema?.properties[name]?.lx?.variant"
+    :cadenceOfMinutes="displaySchema?.properties[name]?.lx?.cadenceOfMinutes"
+    :cadenceOfSeconds="displaySchema?.properties[name]?.lx?.cadenceOfSeconds"
     :readOnly="isReadOnly(row)"
     :invalid="isInvalid"
     :invalidation-message="invalidMessage"
+    :builderOptions="builderOptions"
     v-model="model[name]"
   />
   <LxTextInput
@@ -463,6 +487,7 @@ function handleModalActionClick(action, name) {
     :invalid="isInvalid"
     :invalidation-message="invalidMessage"
     v-model="model[name]"
+    :builderOptions="builderOptions"
     @keyup.enter="emits('filterBuilderFilter')"
   />
   <LxToggle
@@ -474,6 +499,7 @@ function handleModalActionClick(action, name) {
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :invalid="isInvalid"
     :invalidation-message="invalidMessage"
+    :builderOptions="builderOptions"
     v-model="model[name]"
   >
     <template #on>
@@ -519,6 +545,7 @@ function handleModalActionClick(action, name) {
     :read-only-render-type="displaySchema?.properties[name]?.lx?.readOnlyRenderType"
     :invalid="isInvalid"
     :invalidation-message="invalidMessage"
+    :builderOptions="builderOptions"
     v-model="model[name]"
   >
     <template
@@ -706,6 +733,8 @@ function handleModalActionClick(action, name) {
             :special-dates="item?.lx?.specialDates"
             :dictionary="item?.lx?.dictionary"
             :variant="item?.lx?.variant"
+            :cadenceOfMinutes="item?.lx?.cadenceOfMinutes"
+            :cadenceOfSeconds="item?.lx?.cadenceOfSeconds"
             :texts="item?.lx?.texts"
             :readOnly="isReadOnly(item)"
             v-model="model[name][itemName]"
@@ -930,6 +959,8 @@ function handleModalActionClick(action, name) {
               :special-dates="item?.lx?.specialDates"
               :dictionary="item?.lx?.dictionary"
               :variant="item?.lx?.variant"
+              :cadenceOfMinutes="item?.lx?.cadenceOfMinutes"
+              :cadenceOfSeconds="item?.lx?.cadenceOfSeconds"
               :texts="item?.lx?.texts"
               :readOnly="isReadOnly(item)"
               v-model="model[name][itemName]"
@@ -1382,6 +1413,8 @@ function handleModalActionClick(action, name) {
               :special-dates="itemValue?.lx?.specialDates"
               :dictionary="itemValue?.lx?.dictionary"
               :variant="itemValue?.lx?.variant"
+              :cadenceOfMinutes="itemValue?.lx?.cadenceOfMinutes"
+              :cadenceOfSeconds="itemValue?.lx?.cadenceOfSeconds"
               :texts="itemValue?.lx?.texts"
               :readOnly="isReadOnly(itemValue)"
               v-model="arrayModelValue[`${id}-${name}`][itemName]"
@@ -1572,6 +1605,8 @@ function handleModalActionClick(action, name) {
                       :special-dates="appendableItem?.lx?.specialDates"
                       :dictionary="appendableItem?.lx?.dictionary"
                       :variant="appendableItem?.lx?.variant"
+                      :cadenceOfMinutes="appendableItem?.lx?.cadenceOfMinutes"
+                      :cadenceOfSeconds="appendableItem?.lx?.cadenceOfSeconds"
                       :texts="appendableItem?.lx?.texts"
                       :readOnly="isReadOnly(appendableItem)"
                       v-model="item[appendableItemName]"
@@ -1906,6 +1941,8 @@ function handleModalActionClick(action, name) {
               :special-dates="itemValue?.lx?.specialDates"
               :dictionary="itemValue?.lx?.dictionary"
               :variant="itemValue?.lx?.variant"
+              :cadenceOfMinutes="itemValue?.lx?.cadenceOfMinutes"
+              :cadenceOfSeconds="itemValue?.lx?.cadenceOfSeconds"
               :texts="itemValue?.lx?.texts"
               :readOnly="isReadOnly(itemValue)"
               v-model="arrayModelValue[`${id}-${name}`][itemName]"
@@ -2096,6 +2133,8 @@ function handleModalActionClick(action, name) {
                       :special-dates="appendableItem?.lx?.specialDates"
                       :dictionary="appendableItem?.lx?.dictionary"
                       :variant="appendableItem?.lx?.variant"
+                      :cadenceOfMinutes="appendableItem?.lx?.cadenceOfMinutes"
+                      :cadenceOfSeconds="appendableItem?.lx?.cadenceOfSeconds"
                       :texts="appendableItem?.lx?.texts"
                       :readOnly="isReadOnly(appendableItem)"
                       v-model="item[appendableItemName]"
@@ -2339,6 +2378,8 @@ function handleModalActionClick(action, name) {
             :special-dates="appendableItem?.lx?.specialDates"
             :dictionary="appendableItem?.lx?.dictionary"
             :variant="appendableItem?.lx?.variant"
+            :cadenceOfMinutes="appendableItem?.lx?.cadenceOfMinutes"
+            :cadenceOfSeconds="appendableItem?.lx?.cadenceOfSeconds"
             :texts="appendableItem?.lx?.texts"
             :readOnly="isReadOnly(appendableItem)"
             v-model="item[appendableItemName]"
@@ -2582,6 +2623,8 @@ function handleModalActionClick(action, name) {
           :locale="row?.items?.lx?.locale"
           :special-dates="row?.items?.lx?.specialDates"
           :dictionary="row?.items?.lx?.dictionary"
+          :cadenceOfMinutes="row?.items?.lx?.cadenceOfMinutes"
+          :cadenceOfSeconds="row?.items?.lx?.cadenceOfSeconds"
           :variant="row?.items?.lx?.variant"
           :texts="row?.items?.lx?.texts"
           :readOnly="isReadOnly(row?.items)"
@@ -2617,7 +2660,9 @@ function handleModalActionClick(action, name) {
     :hasSelectAll="displaySchema?.properties[name]?.lx?.hasSelectAll"
     :texts="displaySchema?.properties[name]?.lx?.texts"
     :searchAttributes="displaySchema?.properties[name]?.lx?.searchAttributes"
+    :enableAdditionalText="displaySchema?.properties[name]?.lx?.enableAdditionalText"
     v-model="model[name]"
+    :builderOptions="builderOptions"
     @openDetails="(a) => componentEmit('openDetails', name, a)"
   />
   <LxButton
@@ -2731,6 +2776,7 @@ function handleModalActionClick(action, name) {
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"
     v-model="model[name]"
+    :builderOptions="builderOptions"
   />
   <LxCheckbox
     v-else-if="selectedComponent === 'checkbox'"
@@ -2742,6 +2788,7 @@ function handleModalActionClick(action, name) {
     :tabindex="displaySchema?.properties[name]?.lx?.tabindex"
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     v-model="model[name]"
+    :builderOptions="builderOptions"
     @click="() => componentEmit('click', name)"
   />
   <LxContentSwitcher
@@ -2758,6 +2805,7 @@ function handleModalActionClick(action, name) {
     :tooltip="displaySchema?.properties[name]?.lx?.tooltip"
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     v-model="model[name]"
+    :builderOptions="builderOptions"
   />
   <LxDataVisualizer
     v-else-if="selectedComponent === 'dataVisualizer'"
@@ -2850,6 +2898,7 @@ function handleModalActionClick(action, name) {
     :clearIfNotExact="displaySchema?.properties[name]?.lx?.clearIfNotExact"
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"
+    :builderOptions="builderOptions"
   />
   <LxDropDownMenu
     v-else-if="selectedComponent === 'dropDownMenu'"
@@ -3008,6 +3057,7 @@ function handleModalActionClick(action, name) {
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"
     v-model="model[name]"
+    :builderOptions="builderOptions"
     @onError="(a, b) => componentEmit('onError', name, a, b)"
     @downloadFile="(a) => componentEmit('downloadFile', name, a)"
   />
@@ -3159,7 +3209,9 @@ function handleModalActionClick(action, name) {
     :hasInput="displaySchema?.properties[name]?.lx?.hasInput"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
+    :disabled="displaySchema?.properties[name]?.lx?.disabled"
     v-model="model[name]"
+    :builderOptions="builderOptions"
   />
   <LxPersonDisplay
     v-else-if="selectedComponent === 'personDisplay'"
@@ -3219,6 +3271,7 @@ function handleModalActionClick(action, name) {
     :showAlerts="model?.[name]?.showAlerts || displaySchema?.properties[name]?.lx?.showAlerts"
     :labelId="model?.[name]?.labelId || displaySchema?.properties[name]?.lx?.labelId"
     :texts="model?.[name]?.texts || displaySchema?.properties[name]?.lx?.texts"
+    :builderOptions="builderOptions"
     @value="(a) => componentEmit('value', name, a)"
     @error="(a) => componentEmit('error', name, a)"
   />
@@ -3274,6 +3327,7 @@ function handleModalActionClick(action, name) {
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"
     v-model="model[name]"
+    :builderOptions="builderOptions"
   />
 
   <LxDayInput
@@ -3287,9 +3341,11 @@ function handleModalActionClick(action, name) {
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"
     v-model="model[name]"
+    :builderOptions="builderOptions"
   />
   <LxDrawPad
     v-else-if="selectedComponent === 'drawPad'"
+    :id="`${id}-${name}`"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
     :width="displaySchema?.properties[name]?.lx?.width"
     :height="displaySchema?.properties[name]?.lx?.height"
@@ -3301,6 +3357,7 @@ function handleModalActionClick(action, name) {
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"
     v-model="model[name]"
+    :builderOptions="builderOptions"
   />
   <LxLogoDisplay
     v-else-if="selectedComponent === 'logoDisplay'"

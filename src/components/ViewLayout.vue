@@ -1,17 +1,42 @@
 <script setup>
+import { getCurrentInstance } from 'vue';
 import LxButton from '@/components/Button.vue';
+import { generateUUID } from '@/utils/stringUtils';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
-defineProps({
-  kind: { type: String, default: 'default' }, // default | form | list
+const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
+  kind: { type: String, default: 'default', group: 'main', options: ['default', 'form', 'list'] }, // default | form | list
   layout: { type: String, default: 'default' }, // default
   actionDefinitions: { type: Array, default: () => [] },
   customClass: { type: String, default: '' },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      schemaPath: null,
+      componentStack: [],
+      useRegistry: false,
+    }),
+  },
 });
 
 const emits = defineEmits(['actionClick']);
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxViewLayout',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxViewLayout' },
+    ]),
+  });
+}
 </script>
 <template>
-  <div class="lx-view-layout" :class="[{ customClass }]">
+  <div class="lx-view-layout" :class="[{ customClass }]" :data-id="id">
     <div class="header-container" v-if="actionDefinitions?.length > 0">
       <LxButton
         v-for="action in actionDefinitions"

@@ -1,27 +1,43 @@
 <script setup>
-import { computed, ref, onMounted, inject } from 'vue';
+import { computed, ref, onMounted, inject, getCurrentInstance } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import useLx from '@/hooks/useLx';
 import { useWindowSize } from '@vueuse/core';
 import { lxDevUtils, lxStringUtils } from '@/utils';
 import LxBadge from '@/components/Badge.vue';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => lxStringUtils.generateUUID() },
   modelValue: { type: String, default: null },
-  items: { type: Array, default: () => [] },
+  items: { type: Array, default: () => [], group: 'main', sequence: 1 },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
-  readOnly: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  kind: { type: String, default: 'default' }, // default, icon-only, combo
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  kind: {
+    type: String,
+    default: 'default',
+    options: ['default', 'icon-only', 'combo'],
+    group: 'main',
+    sequence: 1,
+  }, // default, icon-only, combo
   icon: { type: String, default: null },
   iconSet: {
     type: String,
     default: () => useLx().getGlobals()?.iconSet,
   },
-  tooltip: { type: String, default: null },
+  tooltip: { type: String, default: null, group: 'main', sequence: 3 },
   labelId: { type: String, default: null },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -99,12 +115,25 @@ function checkIfHighlighted(id) {
   }
   return -1;
 }
+
+if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxContentSwitcher',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxContentSwitcher' },
+    ]),
+  });
+}
 </script>
 <template>
-  <div :id="id" class="lx-field-wrapper" v-if="readOnly">
+  <div :id="id" class="lx-field-wrapper" v-if="readOnly" :data-id="id">
     <p class="lx-data">{{ getName() }}</p>
   </div>
-  <div :id="id" class="lx-content-switcher-wrapper" v-else>
+  <div :id="id" class="lx-content-switcher-wrapper" :data-id="id" v-else>
     <div
       class="lx-content-switcher"
       :class="[{ 'lx-disabled': disabled }]"

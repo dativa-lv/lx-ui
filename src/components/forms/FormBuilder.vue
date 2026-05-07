@@ -87,6 +87,14 @@ const props = defineProps({
    * @since 1.1.0
    */
   texts: { type: Object, default: () => {} },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -715,14 +723,22 @@ defineExpose({ validateModel, clearValidations, componentSelect });
         :rowSpan="displaySchema?.properties[name]?.lx?.rowSpan"
         :columnSpan="displaySchema?.properties[name]?.lx?.columnSpan"
         :required="isRequiredRow(name)"
-        :inputId="id + '-' + name"
+        :inputId="`${id}-${name}`"
+        :id="`${id}-${name}-wrapper`"
         :actionDefinitions="displaySchema?.properties[name]?.lx?.rowActionDefinitions"
+        :builderOptions="{
+          schemaPath: `${builderOptions?.schemaPath}.${name}`,
+          componentStack: builderOptions?.componentStack?.concat([
+            { id: `${id}-${name}-wrapper`, name: 'LxRow' },
+          ]),
+          useRegistry: builderOptions?.useRegistry,
+        }"
         @actionClick="(a, b, c) => rowActionClicked(b, c, name, undefined)"
       >
         <template #info v-if="row?.description">{{ row?.description }}</template>
         <LxStack
           v-if="componentSelect(row, name) === 'stack'"
-          :id="id + '-' + name"
+          :id="`${id}-${name}`"
           :orientation="row?.lx?.orientation"
           :kind="row?.lx?.kind"
           :mode="row?.lx?.mode"
@@ -737,7 +753,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
           >
             <LxStack
               v-if="componentSelect(item, itemName) === 'stack'"
-              :id="id + '-' + itemName"
+              :id="`${id}-${itemName}`"
               :orientation="item?.lx?.orientation"
               :kind="item?.lx?.kind"
               :mode="item?.lx?.mode"
@@ -754,7 +770,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
               >
                 <LxFormBuilderItem
                   v-if="model[name]"
-                  :id="id + '-' + nestedItemName"
+                  :id="`${id}-${nestedItemName}`"
                   v-model="model[name][itemName]"
                   :readOnly="readOnly"
                   :row="nestedItem"
@@ -803,6 +819,13 @@ defineExpose({ validateModel, clearValidations, componentSelect });
           :orderedObject="orderedObject"
           :texts="displayTexts"
           :validations="validations"
+          :builderOptions="{
+            componentStack: builderOptions?.componentStack?.concat([
+              { id: `${id}-${name}-wrapper`, name: 'LxRow' },
+            ]),
+            useRegistry: builderOptions?.useRegistry,
+            schemaPath: `${builderOptions?.schemaPath}`,
+          }"
           @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
           @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
           @filterBuilderFilter="emits('filterBuilderFilter')"

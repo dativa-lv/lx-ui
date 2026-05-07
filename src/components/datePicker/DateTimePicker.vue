@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, ref } from 'vue';
+import { computed, inject, ref, getCurrentInstance } from 'vue';
 import {
   parseDate,
   formatJSON,
@@ -26,28 +26,45 @@ import {
 import { generateUUID } from '@/utils/stringUtils';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: [String, Date], default: null },
-  kind: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'
-  placeholder: { type: String, default: null },
-  tooltip: { type: String, default: null },
-  minDate: { type: Date, default: null },
-  maxDate: { type: Date, default: null },
-  required: { type: Boolean, default: false },
-  readOnly: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  invalid: { type: Boolean, default: false },
-  invalidationMessage: { type: String, default: null },
-  clearIfNotExact: { type: Boolean, default: false },
+  kind: {
+    type: String,
+    default: 'date',
+    options: ['date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'],
+    group: 'main',
+    sequence: 1,
+  }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'
+  placeholder: { type: String, default: null, group: 'main', sequence: 8 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 7 },
+  minDate: { type: Date, default: null, group: 'main', sequence: 3 },
+  maxDate: { type: Date, default: null, group: 'main', sequence: 4 },
+  required: { type: Boolean, default: false, group: 'additional', sequence: 4 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  invalid: { type: Boolean, default: false, sequence: 1 },
+  invalidationMessage: { type: String, default: null, sequence: 2 },
+  clearIfNotExact: { type: Boolean, default: false, group: 'additional', sequence: 3 },
   locale: { type: Object, default: () => useLx().getGlobals()?.locale },
   specialDates: { type: Array, default: () => [] },
   dictionary: { type: Array, default: () => [] },
-  variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
-  cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
-  cadenceOfSeconds: { type: Number, default: 1 }, // 1, 5, 15
+  variant: {
+    type: String,
+    default: 'default',
+    options: ['default', 'picker', 'full', 'full-rows', 'full-columns'],
+    group: 'main',
+    sequence: 2,
+  }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
+  cadenceOfMinutes: { type: Number, default: 1, options: [1, 5, 15], group: 'main', sequence: 5 }, // 1, 5, 15
+  cadenceOfSeconds: { type: Number, default: 1, options: [1, 5, 15], group: 'main', sequence: 6 }, // 1, 5, 15
   labelId: { type: String, default: null },
+  builderOptions: {
+    type: Object,
+    default: () => ({ schemaPath: null, componentStack: null, useRegistry: false }),
+  },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -363,10 +380,23 @@ const mode = computed(() => {
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxDateTimePicker',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxDateTimePicker' },
+    ]),
+  });
+}
 </script>
 
 <template>
-  <div class="lx-field-wrapper">
+  <div class="lx-field-wrapper" :data-id="id">
     <template v-if="readOnly">
       <p class="lx-data" :aria-labelledby="labelledBy">
         <time class="date-time-readonly" :datetime="modelValueIso">

@@ -1,5 +1,20 @@
 # LX/UI Migration Guide
 
+## 2.1.6 → 2.1.7
+
+### Breaking changes
+
+#### ViewBuilder changes
+
+LxViewBuilder form section behavior has been unified.
+
+You must now explicitly define the default section - it is no longer created automatically.
+The first defined section will be treated as the default.
+
+See the [ViewBuilder guide](/docs/ViewBuilder.md)  for updated schema examples.
+
+The schema and logic for LxFormBuilder and LxFilterBuilder have remained the same.
+
 ## 2.1.5 → 2.1.6
 
 ### Breaking changes

@@ -1,23 +1,43 @@
 <script setup>
-import { computed, ref, watch, onMounted, useSlots, inject, nextTick } from 'vue';
+import {
+  computed,
+  ref,
+  watch,
+  onMounted,
+  useSlots,
+  inject,
+  nextTick,
+  getCurrentInstance,
+} from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import { formatValueBool } from '@/utils/formatUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: Boolean, default: null },
-  size: { type: String, default: 'm' }, // 's' (small) or 'm' (medium)
-  disabled: { type: Boolean, default: false },
-  invalid: { type: Boolean, default: false },
-  invalidationMessage: { type: String, default: null },
-  readOnly: { type: Boolean, default: false },
-  tooltip: { type: String, default: null },
+  size: { type: String, default: 'm', options: ['s', 'm'], group: 'main', sequence: 1 }, // 's' (small) or 'm' (medium)
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  invalid: { type: Boolean, default: false, sequence: 1 },
+  invalidationMessage: { type: String, default: null, sequence: 2 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 2 },
   label: { type: String, default: null },
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
   role: { type: String, default: 'switch' },
+
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: true,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const slots = useSlots();
@@ -102,10 +122,23 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 onMounted(() => {
   checkModelState();
 });
+
+if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxToggle',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxToggle' },
+    ]),
+  });
+}
 </script>
 
 <template>
-  <div class="lx-field-wrapper">
+  <div class="lx-field-wrapper" :data-id="id">
     <div v-if="readOnly" class="lx-toggle-label-wrapper lx-toggle-read-only">
       <span
         class="lx-toggle-text"

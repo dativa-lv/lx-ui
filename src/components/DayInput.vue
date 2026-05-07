@@ -1,22 +1,33 @@
 <script setup>
-import { computed, ref, watch, inject } from 'vue';
+import { computed, ref, watch, inject, getCurrentInstance } from 'vue';
 
 import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
-import { capitalizeFirstLetter } from '@/utils/stringUtils';
+import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Number, Object], default: null },
-  disabled: { type: Boolean, default: false },
-  readOnly: { type: Boolean, default: false },
-  kind: { type: String, default: 'label' }, // result kind: label, icon
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  kind: { type: String, default: 'label', options: ['label', 'icon'], group: 'main', sequence: 1 }, // result kind: label, icon
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -229,10 +240,23 @@ watch(
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxDayInput',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxDayInput' },
+    ]),
+  });
+}
 </script>
 
 <template>
-  <div class="lx-field-wrapper">
+  <div class="lx-field-wrapper" :data-id="id">
     <div
       :class="[
         { 'lx-day-input-wrapper': !readOnly },
@@ -259,6 +283,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :invalid="invalid"
           :invalidationMessage="invalidationMessage"
           :labelId="labelledBy"
+          :builderOptions="{ innerComponent: true }"
         />
 
         <LxDropDown

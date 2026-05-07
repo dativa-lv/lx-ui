@@ -90,6 +90,8 @@ For more LX features, use custom schema attribute `lx` with these parameters:
 - `specialDates` LxDateTimePicker `specialDates` prop
 - `dictionary` LxDateTimePicker `dictionary` prop
 - `variant` - LxDateTimePicker `variant` prop
+- `cadenceOfMinutes` - LxDateTimePicker `cadenceOfMinutes` prop
+- `cadenceOfSeconds` - LxDateTimePicker `cadenceOfSeconds` prop
 ### `type="array"`
 - `items` - LxValuePicker `items` prop
 - `variant` - LxValuePicker `variant` prop
@@ -1027,7 +1029,8 @@ In this example in form there is going to be 3 input fields:
       preloadedItems: null,
       labelId: null,
       hasSelectAll: false,
-      searchAttributes: null
+      searchAttributes: null,
+      enableAdditionalText: false,
     }
   }
 }
@@ -1635,6 +1638,7 @@ modelValue:
       stepMultiplier: 5,
       hasInput: false,
       labelId: null,
+      disabled: false,
     }
   }
 }

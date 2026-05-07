@@ -1,6 +1,16 @@
 <!-- eslint-disable no-param-reassign -->
-<script setup>
-import { computed, useSlots, ref, watch, onMounted, nextTick, provide, onUnmounted } from 'vue';
+<script setup lang="ts">
+import {
+  computed,
+  useSlots,
+  ref,
+  watch,
+  onMounted,
+  nextTick,
+  provide,
+  onUnmounted,
+  getCurrentInstance,
+} from 'vue';
 import { useElementBounding, useElementSize, useWindowSize } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -12,6 +22,7 @@ import LxIcon from '@/components/Icon.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxSkipLink from '@/components/SkipLink.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const slots = useSlots();
 const emits = defineEmits(['actionClick', 'update:index']);
@@ -102,6 +113,7 @@ const props = defineProps({
   columnCount: {
     type: Number,
     default: 1,
+    options: [1, 2, 3, 4, 8],
   },
   /**
    * Determines whether to show the header of the form.
@@ -112,6 +124,7 @@ const props = defineProps({
   showHeader: {
     type: Boolean,
     default: true,
+    group: 'main',
   },
   /**
    * Determines whether the header should be sticky or not.
@@ -122,6 +135,7 @@ const props = defineProps({
   stickyHeader: {
     type: Boolean,
     default: true,
+    group: 'main',
   },
   /**
    * Determines whether to show the footer of the form.
@@ -132,6 +146,7 @@ const props = defineProps({
   showFooter: {
     type: Boolean,
     default: true,
+    group: 'main',
   },
   /**
    * Determines whether the footer should be sticky or not.
@@ -142,6 +157,7 @@ const props = defineProps({
   stickyFooter: {
     type: Boolean,
     default: true,
+    group: 'main',
   },
   /**
    * Determines whether to show preHeader information slot.
@@ -152,6 +168,7 @@ const props = defineProps({
   showPreHeaderInfo: {
     type: Boolean,
     default: true,
+    group: 'main',
   },
   /**
    * Determines whether to show postHeader information slot.
@@ -162,6 +179,7 @@ const props = defineProps({
   showPostHeaderInfo: {
     type: Boolean,
     default: true,
+    group: 'main',
   },
   /**
    * The array of sections in the form.
@@ -172,6 +190,7 @@ const props = defineProps({
   index: {
     type: Array,
     default: () => [],
+    group: 'main',
   },
   /**
    * The type of index for the form.
@@ -181,7 +200,9 @@ const props = defineProps({
    */
   indexType: {
     type: String,
-    default: 'default', // 'default' or 'tabs' or 'expanders' or 'wizard'
+    default: 'default', // 'default' or 'tabs' or 'expanders' or 'wizard' or 'none'
+    options: ['none', 'default', 'tabs', 'expanders', 'wizard'],
+    group: 'main',
   },
   /**
    * An array of buttons for the form.
@@ -192,6 +213,7 @@ const props = defineProps({
   actionDefinitions: {
     type: Array,
     default: () => [], // { actionName: '', name: '', icon: '', kind: 'primary'/'secondary'/'tertiary'/'additional' }
+    group: 'additional',
   },
   /**
    * The required mode for the form.
@@ -199,28 +221,46 @@ const props = defineProps({
    * @default 'optional'
    * @since 0.3.11
    */
-  requiredMode: { type: String, default: 'none' }, // none || required || required-asterisk || optional
+  requiredMode: {
+    type: String,
+    default: 'none',
+    options: ['none', 'required', 'required-asterisk', 'optional'],
+    group: 'main',
+  }, // none || required || required-asterisk || optional
   /**
    * Determines spacings between, before, after rows and sections in form.
    * @type {String}
    * @default 'default'
    * @since 0.3.11
    */
-  kind: { type: String, default: 'default' }, // default || compact || stripped
+  kind: {
+    type: String,
+    default: 'default',
+    options: ['default', 'compact', 'stripped'],
+    group: 'main',
+  }, // default || compact || stripped
   /**
    * The orientation of the forms rows
    * @type {String}
    * @default null
    * @since 1.7.0-beta.13
    */
-  orientation: { type: String, default: null }, // vertical || horizontal
+  orientation: {
+    type: String,
+    default: null,
+    options: ['vertical', 'horizontal'],
+  }, // vertical || horizontal
   /**
    * Show skip link to skip form
    * @type {Boolean}
    * @default false
    * @since 1.8.0-beta.10
    */
-  hasSkipLink: { type: Boolean, default: false },
+  hasSkipLink: {
+    type: Boolean,
+    default: false,
+    group: 'additional',
+  },
   /**
    * The object containing text translations for the form.
    * @type {Object}
@@ -228,6 +268,15 @@ const props = defineProps({
    */
   texts: { type: Object, default: () => {} },
   role: { type: String, default: 'form' }, // form || group
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+      defaultSectionSchemaPath: null,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -610,7 +659,7 @@ function hideAll() {
   } else if (props.indexType === 'wizard') {
     allElements = idValue.querySelectorAll(`.lx-wizard-body > div.lx-main > .lx-form-section`);
   }
-  allElements.forEach((element) => {
+  allElements?.forEach((element) => {
     // eslint-disable-next-line no-param-reassign
     element.style.display = 'none';
   });
@@ -878,10 +927,22 @@ onMounted(() => {
 });
 
 defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
+
+if (props.builderOptions.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxForm',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack,
+  });
+}
 </script>
 <template>
   <article
     :id="props.id"
+    :data-id="id"
     class="lx-form-grid"
     :role="role"
     :class="[{ 'lx-form-grid-stripped': kind === 'stripped' }]"
@@ -964,7 +1025,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
       ref="formHeader"
       :class="[
         { 'lx-sticky': stickyHeader },
-        { 'lx-simple': slots['preHeader'] === undefined },
+        { 'lx-simple': slots.preHeader === undefined },
         { 'lx-form-with-tabs': props.indexType === 'tabs' },
         { 'lx-form-with-steps': props.indexType === 'wizard' },
         { 'lx-form-with-aside': props.indexType === 'default' && index?.length > 0 },
@@ -1009,19 +1070,19 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
 
       <div class="responsive-overflow-header">
         <div class="overflow-icon-container">
-          <LxInfoWrapper v-if="slots['preHeader'] || slots['postHeader']">
+          <LxInfoWrapper v-if="slots.preHeader || slots.postHeader">
             <LxIcon value="info" />
             <template #panel>
-              <div class="responsive-slot pre-header" v-if="slots['preHeader']">
+              <div class="responsive-slot pre-header" v-if="slots.preHeader">
                 <slot name="preHeader" />
               </div>
-              <div class="responsive-slot pre-header-info" v-if="slots['preHeaderInfo']">
+              <div class="responsive-slot pre-header-info" v-if="slots.preHeaderInfo">
                 <slot name="preHeaderInfo" />
               </div>
-              <div class="responsive-slot post-header" v-if="slots['postHeader']">
+              <div class="responsive-slot post-header" v-if="slots.postHeader">
                 <slot name="postHeader" />
               </div>
-              <div class="responsive-slot post-header-info" v-if="slots['postHeaderInfo']">
+              <div class="responsive-slot post-header-info" v-if="slots.postHeaderInfo">
                 <slot name="postHeaderInfo" />
               </div>
             </template>
@@ -1217,7 +1278,17 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           class="lx-main"
           :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
         >
-          <LxSection id="default" :column-count="columnCount">
+          <LxSection
+            id="default"
+            :columnCount="columnCount"
+            :builderOptions="{
+              schemaPath: builderOptions?.defaultSectionSchemaPath
+                ? `${builderOptions?.schemaPath}.${builderOptions?.defaultSectionSchemaPath}`
+                : builderOptions?.schemaPath,
+              componentStack: builderOptions?.componentStack,
+              useRegistry: builderOptions?.useRegistry,
+            }"
+          >
             <slot />
           </LxSection>
           <slot name="sections" />
@@ -1237,7 +1308,17 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           class="lx-main"
           :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
         >
-          <LxSection id="default" :column-count="columnCount">
+          <LxSection
+            id="default"
+            :columnCount="columnCount"
+            :builderOptions="{
+              schemaPath: builderOptions?.defaultSectionSchemaPath
+                ? `${builderOptions?.schemaPath}.${builderOptions?.defaultSectionSchemaPath}`
+                : builderOptions?.schemaPath,
+              componentStack: builderOptions?.componentStack,
+              useRegistry: builderOptions?.useRegistry,
+            }"
+          >
             <slot />
           </LxSection>
           <slot name="sections" />
@@ -1250,7 +1331,17 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
       v-else
       :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
     >
-      <LxSection id="default" :column-count="columnCount">
+      <LxSection
+        id="default"
+        :columnCount="columnCount"
+        :builderOptions="{
+          schemaPath: builderOptions?.defaultSectionSchemaPath
+            ? `${builderOptions?.schemaPath}.${builderOptions?.defaultSectionSchemaPath}`
+            : builderOptions?.schemaPath,
+          componentStack: builderOptions?.componentStack,
+          useRegistry: builderOptions?.useRegistry && builderOptions?.defaultSectionSchemaPath,
+        }"
+      >
         <slot />
       </LxSection>
       <slot name="sections" />

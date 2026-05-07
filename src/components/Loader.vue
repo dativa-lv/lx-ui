@@ -138,7 +138,7 @@ const loaderAriaHidden = computed(() => {
             :style="
               kind === 'progress'
                 ? [
-                    { width: Number(model) * 100 + '%' },
+                    { width: `${Number(model) * 100}%` },
                     props.faked
                       ? {
                           transition: `width ${props.fakedDuration}ms cubic-bezier(0.22,0.05,0,0.87)`,

@@ -517,6 +517,9 @@ defineExpose({ toggleSearch, focusAction });
                 v-model="action.value"
                 :texts="action?.texts"
                 :tooltip="action?.title || action?.tooltip"
+                :builderOptions="{
+                  innerComponent: true,
+                }"
                 @update:modelValue="(value) => handleActionClick(action?.id, { value })"
               />
               <LxDropDownMenu
@@ -618,6 +621,9 @@ defineExpose({ toggleSearch, focusAction });
                 v-model="item.value"
                 :texts="item?.texts"
                 :tooltip="item?.title || item?.tooltip"
+                :builderOptions="{
+                  innerComponent: true,
+                }"
                 @update:modelValue="(value) => handleActionClick(item?.id, { value })"
               />
               <slot v-else-if="item?.kind === 'slot'" :name="item?.id" />
@@ -656,6 +662,9 @@ defineExpose({ toggleSearch, focusAction });
               v-model="leftActionsResponsive[0].value"
               :texts="leftActionsResponsive?.[0]?.texts"
               :tooltip="leftActionsResponsive?.[0]?.title || leftActionsResponsive?.[0]?.tooltip"
+              :builderOptions="{
+                innerComponent: true,
+              }"
               @update:modelValue="
                 (value) => handleActionClick(leftActionsResponsive?.[0]?.id, { value })
               "
@@ -673,6 +682,9 @@ defineExpose({ toggleSearch, focusAction });
             :kind="searchSide === 'server' ? 'default' : 'search'"
             :placeholder="displayTexts.placeholder"
             :disabled="disabled || loading || busy"
+            :builderOptions="{
+              innerComponent: true,
+            }"
             @keydown.enter="serverSideSearch"
           />
           <LxButton
@@ -757,6 +769,9 @@ defineExpose({ toggleSearch, focusAction });
                 v-model="action.value"
                 :texts="action?.texts"
                 :tooltip="action?.title || action?.tooltip"
+                :builderOptions="{
+                  innerComponent: true,
+                }"
                 @update:modelValue="(value) => handleActionClick(action?.id, { value })"
               />
               <LxDropDownMenu
@@ -850,6 +865,9 @@ defineExpose({ toggleSearch, focusAction });
                 v-model="item.value"
                 :texts="item?.texts"
                 :tooltip="item?.title || item?.tooltip"
+                :builderOptions="{
+                  innerComponent: true,
+                }"
                 @update:modelValue="(value) => handleActionClick(item?.id, { value })"
               />
               <slot v-else-if="item?.kind === 'slot'" :name="item?.id" />
@@ -891,6 +909,9 @@ defineExpose({ toggleSearch, focusAction });
               v-model="rightActionsResponsive[0].value"
               :texts="rightActionsResponsive?.[0]?.texts"
               :tooltip="rightActionsResponsive?.[0]?.title || rightActionsResponsive?.[0]?.tooltip"
+              :builderOptions="{
+                innerComponent: true,
+              }"
               @update:modelValue="
                 (value) => handleActionClick(rightActionsResponsive?.[0]?.id, { value })
               "
@@ -963,6 +984,9 @@ defineExpose({ toggleSearch, focusAction });
           :kind="searchSide === 'server' ? 'default' : 'search'"
           :placeholder="displayTexts.placeholder"
           :disabled="disabled || loading || busy"
+          :builderOptions="{
+            innerComponent: true,
+          }"
           @keydown.enter="serverSideSearch"
         />
 

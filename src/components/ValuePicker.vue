@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, inject } from 'vue';
+import { computed, onMounted, ref, inject, getCurrentInstance } from 'vue';
 import { generateUUID, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
@@ -9,34 +9,76 @@ import LxValuePickerTileTag from '@/components/valuePickers/TileTag.vue';
 import LxValuePickerRotator from '@/components/valuePickers/Rotator.vue';
 import LxValuePickerIndicator from '@/components/valuePickers/Indicator.vue';
 import LxValuePickerHorizontal from '@/components/valuePickers/Horizontal.vue';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Array, String, Number], default: () => [] },
-  items: { type: Array, default: () => [] },
+  items: { type: Array, default: () => [], group: 'main', sequence: 1 },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
-  iconAttribute: { type: String, default: 'icon' },
+  iconAttribute: { type: String, default: 'icon', group: 'additional', sequence: 4 },
   iconSetAttribute: { type: String, default: 'iconSet' },
   categoryAttribute: { type: String, default: 'category' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: () => generateUUID() },
-  variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'rotator' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'|| 'rotator-custom' || 'indicator' || 'horizontal' || 'horizontal-custom'
-  selectionKind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
-  nullable: { type: Boolean, default: false }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
-  placeholder: { type: String, default: null },
-  hasSearch: { type: Boolean, default: false },
-  tooltip: { type: String, default: null },
-  readOnly: { type: Boolean, default: false },
-  readOnlyRenderType: { type: String, default: 'row' }, // 'row' || 'column'
-  alwaysAsArray: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  invalid: { type: Boolean, default: false },
-  invalidationMessage: { type: String, default: null },
+  variant: {
+    type: String,
+    default: 'default',
+    options: [
+      'default',
+      'dropdown',
+      'tiles',
+      'tags',
+      'rotator',
+      'default-custom',
+      'dropdown-custom',
+      'tiles-custom',
+      'tags-custom',
+      'rotator-custom',
+      'indicator',
+      'horizontal',
+      'horizontal-custom',
+    ],
+    group: 'main',
+    sequence: 2,
+  }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'rotator' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'|| 'rotator-custom' || 'indicator' || 'horizontal' || 'horizontal-custom'
+  selectionKind: {
+    type: String,
+    default: 'single',
+    options: ['single', 'multiple'],
+    group: 'main',
+    sequence: 3,
+  }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
+  nullable: { type: Boolean, default: false, group: 'main', sequence: 5 }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  placeholder: { type: String, default: null, group: 'main', sequence: 7 },
+  hasSearch: { type: Boolean, default: false, group: 'main', sequence: 6 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 8 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  readOnlyRenderType: {
+    type: String,
+    default: 'row',
+    options: ['row', 'column'],
+    group: 'mode',
+    sequence: 3,
+  }, // 'row' || 'column'
+  alwaysAsArray: { type: Boolean, default: false, group: 'additional', sequence: 3 },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  invalid: { type: Boolean, default: false, sequence: 1 },
+  invalidationMessage: { type: String, default: null, sequence: 2 },
   searchAttributes: { type: Array, default: null },
-  hasSelectAll: { type: Boolean, default: false },
+  hasSelectAll: { type: Boolean, default: false, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -126,11 +168,24 @@ onMounted(() => {
     updateModelValue(null);
   }
 });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxValuePicker',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxValuePicker' },
+    ]),
+  });
+}
 </script>
 
 <template>
   <div class="lx-field-wrapper" ref="refRoot">
-    <div class="lx-value-picker-wrapper">
+    <div class="lx-value-picker-wrapper" :data-id="id">
       <LxValuePickerDefault
         v-if="variant === 'default' || variant === 'default-custom'"
         :role="selectionKind === 'single' ? 'radiogroup' : 'group'"

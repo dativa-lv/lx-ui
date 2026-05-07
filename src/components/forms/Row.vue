@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, ref, provide, useSlots } from 'vue';
+import { computed, inject, ref, provide, useSlots, getCurrentInstance } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -8,6 +8,7 @@ import LxToggle from '@/components/Toggle.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 /**
  * Represents a row component used in forms.
@@ -59,6 +60,8 @@ const props = defineProps({
   label: {
     type: String,
     default: '',
+    group: 'main',
+    sequence: 1,
   },
   /**
    * Description of the component.
@@ -90,6 +93,9 @@ const props = defineProps({
   columnSpan: {
     type: [Number, String],
     default: 1,
+    options: [1, 2, 3, 4, 8],
+    group: 'main',
+    sequence: 2,
   },
   /**
    * The number of rows that the component should take up.
@@ -100,6 +106,9 @@ const props = defineProps({
   rowSpan: {
     type: [Number, String],
     default: 1,
+    options: [1, 2, 3, 4, 8],
+    group: 'main',
+    sequence: 3,
   },
   /**
    * The orientation of the row.
@@ -110,6 +119,7 @@ const props = defineProps({
   orientation: {
     type: String,
     default: null,
+    options: [null, 'vertical', 'horizontal'],
   },
   /**
    * Determines whether the row is required.
@@ -117,7 +127,7 @@ const props = defineProps({
    * @default null
    * @since 0.3.11
    */
-  required: { type: Boolean, default: null },
+  required: { type: Boolean, default: null, group: 'main', sequence: 4 },
   /**
    * The unique identifier for the input element.
    * @type {String}
@@ -132,6 +142,14 @@ const props = defineProps({
    * @since 1.5.0
    */
   actionDefinitions: { type: Array, default: () => [] },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const emits = defineEmits(['actionClick']);
@@ -155,7 +173,7 @@ const requiredTexts = inject(
     overflowMenu: 'Atvērt papildu iespējas',
   })
 );
-const sectionColumnCount = inject('sectionColumnCount', 1);
+const sectionColumnCount = inject('sectionColumnCount', ref(1));
 const formOrientation = inject('formOrientation', ref(null));
 const sectionOrientation = inject('sectionOrientation', ref(null));
 
@@ -178,13 +196,13 @@ function handleActionClick(id, actionId, value = undefined) {
 
 const validatedColumnSpan = computed(() => {
   let res = Number(props.columnSpan);
-  if (sectionColumnCount && Number(props.columnSpan) > sectionColumnCount) {
+  if (sectionColumnCount.value && Number(props.columnSpan) > sectionColumnCount.value) {
     lxDevUtils.log(
       `LxRow ${props.id} column span is greater than the section column count.`,
       useLx().getGlobals()?.environment,
       'warn'
     );
-    res = sectionColumnCount;
+    res = sectionColumnCount.value;
   }
   return res;
 });
@@ -208,6 +226,17 @@ const showHeaderWithoutInfo = computed(
 
 const idComputed = computed(() => props.id);
 provide('rowId', idComputed);
+
+if (props.builderOptions.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxRow',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack,
+  });
+}
 </script>
 <template>
   <div

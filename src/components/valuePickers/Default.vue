@@ -473,6 +473,7 @@ function getTabIndex(id) {
           :disabled="disabled"
           :value="item[idAttribute]?.toString()"
           :label-id="`${getLabelId(item[idAttribute])}`"
+          :builderOptions="{ innerComponent: true }"
           @click="selectMultiple(item[idAttribute])"
           @keydown.space.prevent="selectMultiple(item[idAttribute])"
         >

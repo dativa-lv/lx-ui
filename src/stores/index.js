@@ -5,5 +5,7 @@ export { default as LxAppStore } from '@/stores/useAppStore';
 export { default as LxAuthStore } from '@/stores/useAuthStore';
 export { default as LxConfirmStore } from '@/stores/useConfirmStore';
 
+export { builderRegistry } from '@/stores/builderRegistry';
+
 export { default as LxAuthService } from '@/services/authService';
 // Other components you plan to publish go here

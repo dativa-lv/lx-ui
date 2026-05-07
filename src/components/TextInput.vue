@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, watch, ref, inject, nextTick } from 'vue';
+import { computed, onMounted, watch, ref, inject, nextTick, getCurrentInstance } from 'vue';
 import { IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
 import { computedAsync } from '@vueuse/core';
@@ -13,19 +13,20 @@ import { loadLibrary } from '@/utils/libLoader';
 import LxIcon from '@/components/Icon.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxButton from '@/components/Button.vue';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Number, String], default: null },
-  placeholder: { type: String, default: null },
-  readOnly: { type: Boolean, default: false },
-  convertToString: { type: Boolean, default: true },
-  disabled: { type: Boolean, default: false },
-  uppercase: { type: Boolean, default: false },
-  invalid: { type: Boolean, default: false },
-  invalidationMessage: { type: String, default: null },
-  maxlength: { type: [Number, String], default: null },
-  tooltip: { type: String, default: null },
+  placeholder: { type: String, default: null, group: 'main', sequence: 4 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  convertToString: { type: Boolean, default: true, group: 'additional', sequence: 2 },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  uppercase: { type: Boolean, default: false, group: 'additional', sequence: 3 },
+  invalid: { type: Boolean, default: false, sequence: 1 },
+  invalidationMessage: { type: String, default: null, sequence: 2 },
+  maxlength: { type: [Number, String], default: null, group: 'main', sequence: 3 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 6 },
   mask: {
     type: String,
     default: null,
@@ -50,19 +51,54 @@ const props = defineProps({
           ].includes(value)
         : true;
     },
+    options: [
+      'default',
+      'integer',
+      'decimal',
+      'gpslat',
+      'time',
+      'gpslon',
+      'personCodeLv',
+      'person-code-lv',
+      'newbornId',
+      'newborn-id',
+      'currency',
+      'email',
+      'numeric',
+      'custom',
+    ],
+    group: 'main',
+    sequence: 2,
   },
   customMaskValue: {
     type: RegExp,
     default: /./,
   },
-  scale: { type: [Number, String], default: 2 },
-  signed: { type: Boolean, default: false },
-  kind: { type: String, default: 'default' }, // default, password, search, phone
+  scale: { type: [Number, String], default: 2, group: 'additional', sequence: 1 },
+  signed: { type: Boolean, default: false, group: 'additional', sequence: 4 },
+  kind: {
+    type: String,
+    default: 'default',
+    options: ['default', 'search', 'password', 'phone'],
+    group: 'main',
+    sequence: 1,
+  },
   labelId: { type: String, default: null },
-  autocomplete: { type: String, default: 'off' },
+  autocomplete: { type: String, default: 'off', group: 'additional', sequence: 5 },
   options: {
     type: Object,
     default: () => ({ phone: 'lv', locale: null }),
+    // TODO: add group as well
+  },
+
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+    }),
   },
   texts: { type: Object, default: () => ({}) },
 });
@@ -543,10 +579,23 @@ onMounted(() => {
   }
 });
 
+if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxTextInput',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxTextInput' },
+    ]),
+  });
+}
+
 defineExpose({ focus });
 </script>
 <template>
-  <div class="lx-field-wrapper">
+  <div class="lx-field-wrapper" :data-id="id">
     <p
       v-if="readOnly && props.kind !== 'password'"
       class="lx-data"

@@ -1,5 +1,14 @@
 <script setup>
-import { ref, onMounted, watch, computed, onUnmounted, inject, nextTick } from 'vue';
+import {
+  ref,
+  onMounted,
+  watch,
+  computed,
+  onUnmounted,
+  inject,
+  getCurrentInstance,
+  nextTick,
+} from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
@@ -8,17 +17,39 @@ import { lxDevUtils } from '@/utils';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
-  cameraSwitcherMode: { type: String, default: 'toggle' }, // toggle || list
-  hasFlashlightToggle: { type: Boolean, default: false },
-  imageSize: { type: String, default: 'default' }, // default || max
+  cameraSwitcherMode: {
+    type: String,
+    default: 'toggle',
+    options: ['toggle', 'list'],
+    group: 'main',
+    sequence: 1,
+  }, // toggle || list
+  hasFlashlightToggle: { type: Boolean, default: false, group: 'main', sequence: 2 },
+  imageSize: {
+    type: String,
+    default: 'default',
+    options: ['default', 'max'],
+    group: 'main',
+    sequence: 3,
+  }, // default || max
   preferencesId: { type: String, default: 'lx-camera-settings' },
   labelId: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -370,10 +401,23 @@ onMounted(async () => {
 onUnmounted(() => {
   stopStream();
 });
+
+if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxCamera',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxCamera' },
+    ]),
+  });
+}
 </script>
 
 <template>
-  <div class="lx-camera" :aria-labelledby="labelledBy">
+  <div class="lx-camera" :aria-labelledby="labelledBy" :data-id="id">
     <div
       :id="`${id}-announce`"
       class="lx-invisible"
@@ -410,17 +454,17 @@ onUnmounted(() => {
     </div>
     <div class="lx-camera-buttons" v-if="!error && !loading">
       <LxButton
-        @click="captureImage"
+        v-if="!modelValue"
         icon="camera"
         :label="displayTexts.takePhoto"
-        v-if="!modelValue"
+        @click="captureImage"
       />
       <LxButton
+        v-else
         icon="cancel"
         :label="displayTexts.deletePhoto"
-        @click="deleteImage"
         kind="tertiary"
-        v-else
+        @click="deleteImage"
       />
     </div>
   </div>

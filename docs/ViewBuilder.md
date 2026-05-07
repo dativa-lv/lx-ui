@@ -22,7 +22,6 @@ const schema = {
       title: 'Form header',
       lx: {
         displayType: 'form',
-        columnCount: 2,
         actionDefinitions: [
           { id: 'save', name: 'Save', kind: 'primary', icon: 'save' },
           { id: 'cancel', name: 'Cancel', kind: 'secondary', icon: 'cancel' },
@@ -41,13 +40,22 @@ const schema = {
         hasSkipLink: false,
       },
       properties: {
-        firstName: {
-          type: 'string',
-          title: 'First name',
-        },
-        lastName: {
-          type: 'string',
-          title: 'Last name',
+        section: {
+          type: 'object',
+          lx: {
+            displayType: 'section',
+              columnCount: 2,
+          },
+          properties: {
+            firstName: {
+              type: 'string',
+              title: 'First name',
+            },
+            lastName: {
+              type: 'string',
+              title: 'Last name',
+            },
+          }
         },
         measurements: {
           type: 'object',
@@ -259,23 +267,31 @@ const schema = {
         },
       },
       properties: {
-        title: {
-          type: 'string',
-          title: 'Title',
-        },
-        date: {
-          type: 'string',
-          format: 'date',
-          title: 'Date from',
-        },
-        state: {
-          type: 'array',
-          title: 'State',
-          enum: ['draft', 'published', 'deleted'],
+        section: {
+          type: 'object',
           lx: {
-            variant: 'tags',
+            displayType: 'section',
           },
-        },
+          properties: {
+          title: {
+              type: 'string',
+              title: 'Title',
+            },
+            date: {
+              type: 'string',
+              format: 'date',
+              title: 'Date from',
+            },
+            state: {
+              type: 'array',
+              title: 'State',
+              enum: ['draft', 'published', 'deleted'],
+              lx: {
+                variant: 'tags',
+              },
+            },
+          }
+        }
       },
     },
   },

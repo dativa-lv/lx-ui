@@ -1,21 +1,31 @@
 <script setup>
-import { ref, computed, watch, nextTick, inject } from 'vue';
+import { ref, computed, watch, nextTick, inject, getCurrentInstance } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: null },
   modelValue: { type: String, default: null },
-  placeholder: { type: String, default: null },
-  rows: { type: Number, default: 3 },
-  readOnly: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  invalid: { type: Boolean, default: false },
-  invalidationMessage: { type: String, default: null },
-  maxlength: { type: Number, default: null },
-  dynamicHeight: { type: Boolean, default: false },
-  tooltip: { type: String, default: null },
+  placeholder: { type: String, default: null, group: 'main', sequence: 4 },
+  rows: { type: Number, default: 3, group: 'main', sequence: 2 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  invalid: { type: Boolean, default: false, sequence: 1 },
+  invalidationMessage: { type: String, default: null, sequence: 2 },
+  maxlength: { type: Number, default: null, group: 'main', sequence: 1 },
+  dynamicHeight: { type: Boolean, default: false, group: 'main', sequence: 3 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 5 },
   labelId: { type: String, default: null },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -77,10 +87,23 @@ useResizeObserver(wrapperRef, (entries) => {
 });
 
 defineExpose({ focus });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxTextArea',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxTextArea' },
+    ]),
+  });
+}
 </script>
 
 <template>
-  <div class="lx-field-wrapper" ref="wrapperRef">
+  <div class="lx-field-wrapper" ref="wrapperRef" :data-id="id">
     <p v-if="props.readOnly" class="lx-data" :aria-labelledby="labelledBy">
       {{ model }} <span v-if="!model">—</span>
     </p>

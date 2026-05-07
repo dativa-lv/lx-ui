@@ -1,18 +1,28 @@
 <script setup>
-import { ref, computed, watch, inject, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, inject, onBeforeUnmount, getCurrentInstance } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: null },
   modelValue: { type: Number, default: 0 },
-  min: { type: Number, default: 0 },
-  max: { type: Number, default: 9999 },
-  step: { type: Number, default: 1 },
-  stepMultiplier: { type: Number, default: 5 },
-  hasInput: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  readOnly: { type: Boolean, default: false },
+  min: { type: Number, default: 0, group: 'main', sequence: 2 },
+  max: { type: Number, default: 9999, group: 'main', sequence: 3 },
+  step: { type: Number, default: 1, group: 'additional' },
+  stepMultiplier: { type: Number, default: 5, group: 'additional' },
+  hasInput: { type: Boolean, default: false, group: 'main', sequence: 1 },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   labelId: { type: String, default: null },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -81,9 +91,22 @@ watch(
 onBeforeUnmount(() => {
   clearTimeout(announcementTimeout);
 });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxNumberSlider',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxNumberSlider' },
+    ]),
+  });
+}
 </script>
 <template>
-  <div class="lx-field-wrapper">
+  <div class="lx-field-wrapper" :data-id="id">
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">{{ model }}</p>
     <div
       v-if="!readOnly"
@@ -126,7 +149,14 @@ onBeforeUnmount(() => {
         <p>{{ props.max }}</p>
       </div>
       <div class="input-slider-range-text" v-show="hasInput">
-        <LxTextInput type="text" v-model="model" mask="integer" :labelId="labelledBy" :disabled />
+        <LxTextInput
+          type="text"
+          v-model="model"
+          mask="integer"
+          :labelId="labelledBy"
+          :disabled
+          :builderOptions="{ innerComponent: true }"
+        />
       </div>
     </div>
   </div>

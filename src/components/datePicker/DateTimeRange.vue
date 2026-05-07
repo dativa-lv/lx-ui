@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeMount, ref, inject } from 'vue';
+import { computed, onBeforeMount, ref, inject, getCurrentInstance } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import useLx from '@/hooks/useLx';
 import {
@@ -22,28 +22,50 @@ import {
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { DATE_VALIDATION_RESULT } from '@/constants';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   startDate: { type: String, default: null },
   endDate: { type: String, default: null },
-  kind: { type: String, default: 'date' }, // 'date', 'month', 'year', 'month-year', 'quarters'
-  placeholder: { type: String, default: null },
-  tooltip: { type: String, default: null },
-  minDate: { type: String, default: null },
-  maxDate: { type: String, default: null },
+  kind: {
+    type: String,
+    default: 'date',
+    options: ['date', 'month', 'year', 'month-year', 'quarters'],
+    group: 'main',
+    sequence: 1,
+  }, // 'date', 'month', 'year', 'month-year', 'quarters'
+  placeholder: { type: String, default: null, group: 'main', sequence: 2 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 3 },
+  minDate: { type: String, default: null, group: 'main', sequence: 4 },
+  maxDate: { type: String, default: null, group: 'main', sequence: 5 },
   maxRangeLength: { type: Number, default: null },
-  required: { type: Boolean, default: false },
-  readOnly: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  invalid: { type: Boolean, default: false },
-  invalidationMessage: { type: String, default: null },
+  required: { type: Boolean, default: false, group: 'additional', sequence: 4 },
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  invalid: { type: Boolean, default: false, sequence: 1 },
+  invalidationMessage: { type: String, default: null, sequence: 2 },
   timeAdjust: { type: String, default: null },
   locale: { type: Object, default: () => useLx().getGlobals()?.locale },
-  rangeMonth: { type: String, default: 'next' }, // next, previous
-  clearIfNotExact: { type: Boolean, default: false },
+  rangeMonth: {
+    type: String,
+    default: 'next',
+    options: ['next', 'previous'],
+    group: 'additional',
+    sequence: 5,
+  }, // next, previous
+  clearIfNotExact: { type: Boolean, default: false, group: 'additional', sequence: 3 },
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -442,6 +464,19 @@ onBeforeMount(() => {
     };
   }
 });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxDateTimeRange',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxDateTimeRange' },
+    ]),
+  });
+}
 </script>
 
 <template>
@@ -449,6 +484,7 @@ onBeforeMount(() => {
     ref="rangeWrapper"
     class="lx-field-wrapper"
     :class="[{ 'lx-date-time-range-column-view': useColumnView }]"
+    :data-id="id"
   >
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
       <span v-if="!startDate && !endDate">—</span>
@@ -499,7 +535,7 @@ onBeforeMount(() => {
 
         <div v-if="kind === 'legacy'" class="legacy-pickers-wrapper" :aria-labelledby="labelledBy">
           <LxDatePicker
-            :id="'from-' + id"
+            :id="`from-${id}`"
             v-model="modelStart"
             mode="date"
             :masks="localeMasks"
@@ -521,7 +557,7 @@ onBeforeMount(() => {
           <span class="lx-date-time-range-separator">–</span>
 
           <LxDatePicker
-            :id="'till-' + id"
+            :id="`till-${id}`"
             v-model="modelEnd"
             mode="date"
             :masks="localeMasks"

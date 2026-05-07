@@ -832,6 +832,9 @@ function countDigits(number) {
                         :disabled="disabled"
                         :value="item[idAttribute]?.toString()"
                         :labelId="getLabelId(item[idAttribute])"
+                        :builderOptions="{
+                          innerComponent: true,
+                        }"
                         @click="selectMultiple(item[idAttribute])"
                       />
 

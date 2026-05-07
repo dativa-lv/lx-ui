@@ -8,6 +8,7 @@ import {
   defineAsyncComponent,
   nextTick,
   inject,
+  getCurrentInstance,
 } from 'vue';
 import { generateUUID, kebabToCamel } from '@/utils/stringUtils';
 import LxFlag from '@/components/Flag.vue';
@@ -21,16 +22,53 @@ import useLx from '@/hooks/useLx';
 import { useElementSize } from '@vueuse/core';
 import { getTexts } from '@/utils/visualPickerUtils';
 import { getDisplayTexts, findFocusableElements } from '@/utils/generalUtils';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  kind: { type: String, default: 'europe' }, // europe, skeleton, spine, arms, left-hand, right-hand, latvia, latvia2024
+  kind: {
+    type: String,
+    default: 'europe',
+    options: [
+      'europe',
+      'skeleton',
+      'spine',
+      'arms',
+      'left-hand',
+      'right-hand',
+      'latvia',
+      'latvia2024',
+    ],
+    group: 'main',
+    sequence: 1,
+  }, // europe, skeleton, spine, arms, left-hand, right-hand, latvia, latvia2024
   modelValue: { type: [Array, String], default: () => [] },
-  readOnly: { type: Boolean, default: false },
-  mode: { type: String, default: 'default' }, // default, compact
-  selectionKind: { type: String, default: 'multiple' }, // single, multiple
+  readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  mode: {
+    type: String,
+    default: 'default',
+    options: ['default', 'compact'],
+    group: 'main',
+    sequence: 2,
+  }, // default, compact
+  selectionKind: {
+    type: String,
+    default: 'multiple',
+    options: ['single', 'multiple'],
+    group: 'main',
+    sequence: 3,
+  }, // single, multiple
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = ref({
@@ -360,6 +398,19 @@ const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
 defineExpose({ addTitles });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxVisualPicker',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxVisualPicker' },
+    ]),
+  });
+}
 </script>
 <template>
   <div
@@ -367,14 +418,16 @@ defineExpose({ addTitles });
     :class="{ 'read-only': readOnly }"
     ref="image"
     :id="id"
+    :data-id="id"
     :aria-labelledby="labelledBy"
   >
     <LxContentSwitcher
+      v-if="isImageVisible && mode === 'default'"
       :items="contentSwitcherItems"
       v-model="contentSwitcherModel"
       kind="combo"
       :disabled="loading || errorState"
-      v-if="isImageVisible && mode === 'default'"
+      :builderOptions="{ innerComponent: true }"
     />
     <div
       class="lx-visual-view-content"
@@ -418,7 +471,7 @@ defineExpose({ addTitles });
           :hasSelecting="!readOnly"
           :selectionKind="selectionKind"
           listType="1"
-          :has-search="true"
+          :hasSearch="true"
           @selectionChange="handleSelectionChange"
         >
           <template #customItem="{ id, name }" v-if="kind === 'europe'">

@@ -1,5 +1,6 @@
+, group: 'main'
 <script setup>
-import { ref, onMounted, onUnmounted, watch, computed, inject } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed, inject, getCurrentInstance } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
 import { logError, logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
@@ -7,20 +8,44 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import { registerBuilderInstance } from '@/utils/builderUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
-  disabled: { type: Boolean, default: false },
-  width: { type: String, default: '500' },
-  height: { type: String, default: '400' },
-  instrument: { type: String, default: 'brush' }, // "brush"
-  color: { type: String, default: 'black' }, // "black", "red", "orange", "yellow", "green", "teal", "blue", "purple", "label"
-  showInstruments: { type: Boolean, default: false },
-  showColorPicker: { type: Boolean, default: false },
-  showClearAll: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  width: { type: String, default: '500', group: 'additional', sequence: 2 },
+  height: { type: String, default: '400', group: 'additional', sequence: 3 },
+  instrument: {
+    type: String,
+    default: 'brush',
+    options: ['brush'],
+    group: 'additional',
+    sequence: 1,
+  }, // "brush"
+  color: {
+    type: String,
+    default: 'black',
+    options: ['black', 'red', 'orange', 'yellow', 'green', 'teal', 'blue', 'purple', 'label'],
+    group: 'main',
+    sequence: 1,
+  }, // "black", "red", "orange", "yellow", "green", "teal", "blue", "purple", "label"
+  showInstruments: { type: Boolean, default: false, group: 'main', sequence: 2 },
+  showColorPicker: { type: Boolean, default: false, group: 'main', sequence: 3 },
+  showClearAll: { type: Boolean, default: false, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -381,10 +406,23 @@ onUnmounted(() => {
 });
 
 defineExpose({ getPng });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxDrawPad',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxDrawPad' },
+    ]),
+  });
+}
 </script>
 
 <template>
-  <div class="lx-field-wrapper">
+  <div class="lx-field-wrapper" :data-id="id">
     <div ref="container" class="lx-drawpad-wrapper">
       <LxToolbar
         :disabled="props.disabled"
@@ -437,8 +475,7 @@ defineExpose({ getPng });
           @pointerleave.prevent="stopDrawing"
           @pointercancel.prevent="stopDrawing"
           @contextmenu.prevent
-        >
-        </canvas>
+        />
       </div>
     </div>
   </div>

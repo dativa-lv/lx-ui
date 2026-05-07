@@ -1,5 +1,14 @@
 <script setup>
-import { provide, inject, computed, onMounted, ref } from 'vue';
+import {
+  provide,
+  inject,
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  getCurrentInstance,
+  watch,
+} from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxExpander from '@/components/Expander.vue';
 import { lxDevUtils } from '@/utils';
@@ -7,6 +16,9 @@ import useLx from '@/hooks/useLx';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { registerBuilderInstance } from '@/utils/builderUtils';
+import { builderRegistry } from '@/stores';
+
 /**
  * Represents a section component that can be used inside form.
  *
@@ -37,6 +49,9 @@ const props = defineProps({
   columnCount: {
     type: Number,
     default: 1,
+    options: [1, 2, 3, 4, 8],
+    group: 'main',
+    sequence: 1,
   },
   /**
    * The label of the section.
@@ -47,6 +62,8 @@ const props = defineProps({
   label: {
     type: String,
     default: null,
+    group: 'main',
+    sequence: 2,
   },
   /**
    * The description of the section.
@@ -57,6 +74,8 @@ const props = defineProps({
   description: {
     type: String,
     default: null,
+    group: 'main',
+    sequence: 3,
   },
   /**
    * The unique identifier of the section.
@@ -74,14 +93,20 @@ const props = defineProps({
    * @default 'optional'
    * @since 0.3.11
    */
-  requiredMode: { type: String, default: 'none' }, // none || required || required-asterisk || optional
+  requiredMode: {
+    type: String,
+    default: 'none',
+    options: ['none', 'required', 'required-asterisk', 'optional'],
+    group: 'main',
+    sequence: 4,
+  }, // none || required || required-asterisk || optional
   /**
    * The icon at start of section header.
    * @type {String}
    * @default null
    * @since 1.6.0-beta.5
    */
-  icon: { type: String, default: null },
+  icon: { type: String, default: null, group: 'main', sequence: 5 },
   /**
    * The icon set for icon at start of section header.
    * @type {String}
@@ -91,6 +116,9 @@ const props = defineProps({
   iconSet: {
     type: String,
     default: () => useLx().getGlobals()?.iconSet,
+    options: ['cds', 'material', 'phosphor'],
+    group: 'main',
+    sequence: 6,
   },
   /**
    * The custom css class for expander.
@@ -101,6 +129,8 @@ const props = defineProps({
   customClass: {
     type: String,
     default: '',
+    group: 'additional',
+    sequence: 2,
   },
   /**
    * The badge for header section.
@@ -108,7 +138,7 @@ const props = defineProps({
    * @default
    * @since 1.6.0-beta.5
    */
-  badge: { type: String, default: '' },
+  badge: { type: String, default: '', group: 'main', sequence: 7 },
   /**
    * The badge icon for header section.
    * @type {String}
@@ -122,7 +152,11 @@ const props = defineProps({
    * @default
    * @since 1.9.0-beta.8
    */
-  badgeType: { type: String, default: 'default' }, // default, info, success, warning, error
+  badgeType: {
+    type: String,
+    default: 'default',
+    options: ['default', 'info', 'success', 'warning', 'error'],
+  }, // default, info, success, warning, error
   /**
    * The badge title for header section if badge is provided.
    * @type {String}
@@ -154,6 +188,8 @@ const props = defineProps({
   actionDefinitions: {
     type: Array,
     default: () => [],
+    group: 'additional',
+    sequence: 1,
   },
   /**
    * The orientation of the sections rows
@@ -161,13 +197,19 @@ const props = defineProps({
    * @default null
    * @since 1.7.0-beta.13
    */
-  orientation: { type: String, default: null }, // vertical || horizontal
+  orientation: {
+    type: String,
+    default: null,
+    options: [null, 'vertical', 'horizontal'],
+    group: 'main',
+    sequence: 8,
+  }, // vertical || horizontal
   /**
    * The rendering mode for expander.
    * @type {String}
    * @since 1.9.0
    */
-  expanderRenderMode: { type: String, default: 'default' }, // 'default' or 'dynamic'
+  expanderRenderMode: { type: String, default: 'default', options: ['default', 'dynamic'] }, // 'default' or 'dynamic'
   /**
    * The object containing text translations for the section.
    * @type {Object}
@@ -176,6 +218,15 @@ const props = defineProps({
   texts: {
     type: Object,
     default: () => ({}),
+  },
+
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+    }),
   },
 });
 
@@ -289,10 +340,47 @@ onMounted(() => {
   checkElements();
 });
 
+const columnCountResolved = computed(() => props.columnCount);
+
 provide('sectionMode', requiredModeValue);
 provide('rowRequiredTexts', rowRequiredTexts);
-provide('sectionColumnCount', props.columnCount);
+provide('sectionColumnCount', columnCountResolved);
 provide('sectionOrientation', sectionOrientation);
+
+const instance = getCurrentInstance();
+
+function registerCurrentInstance() {
+  registerBuilderInstance({
+    name: 'LxSection',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxSection' },
+    ]),
+    id: sectionUUID.value,
+  });
+}
+
+function unregisterCurrentInstance() {
+  builderRegistry.unregister(sectionUUID.value);
+}
+
+watch(
+  () => props.builderOptions?.useRegistry,
+  (useRegistry) => {
+    if (useRegistry) {
+      registerCurrentInstance();
+      return;
+    }
+    unregisterCurrentInstance();
+  },
+  { immediate: true }
+);
+
+onUnmounted(() => {
+  unregisterCurrentInstance();
+});
 </script>
 <template>
   <LxExpander
@@ -309,9 +397,11 @@ provide('sectionOrientation', sectionOrientation);
     :badge-title="badgeTitle"
     :customClass="customClass"
     :render-mode="expanderRenderMode"
+    :id="id"
   >
     <section
       :id="sectionUUID"
+      :data-id="sectionUUID"
       class="lx-form-section"
       :class="[
         { 'lx-form-section-1': columnCountComputed === 1 },
@@ -346,6 +436,7 @@ provide('sectionOrientation', sectionOrientation);
     :role="ariaRole"
     :aria-labelledby="label ? `${sectionUUID}-label` : null"
     :aria-describedby="description ? `${sectionUUID}-desc` : null"
+    :data-id="sectionUUID"
   >
     <header v-if="label || description || actionDefinitions?.length > 0">
       <div>

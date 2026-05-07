@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, getCurrentInstance } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import LxExpander from '@/components/Expander.vue';
 import LxButton from '@/components/Button.vue';
@@ -8,6 +8,7 @@ import LxForm from '@/components/forms/Form.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
+import { registerBuilderInstance } from '@/utils/builderUtils';
 
 const emits = defineEmits([
   'filter',
@@ -20,18 +21,24 @@ const emits = defineEmits([
 
 const props = defineProps({
   id: { type: String, default: null },
-  label: { type: String, default: null },
-  description: { type: String, default: null },
-  usesFilters: { type: Boolean, default: false },
-  filterButtonKind: { type: String, default: 'tertiary' },
+  label: { type: String, default: null, group: 'main', sequence: 1 },
+  description: { type: String, default: null, group: 'main', sequence: 2 },
+  usesFilters: { type: Boolean, default: false, group: 'additional', sequence: 1 },
+  filterButtonKind: {
+    type: String,
+    default: 'tertiary',
+    group: 'main',
+    sequence: 4,
+    options: ['primary', 'secondary', 'tertiary'],
+  },
   columnCount: { type: Number, default: 1 },
   expanded: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   fastFilters: { type: Array, default: () => [] },
-  enableFilterEditing: { type: Boolean, default: false },
+  enableFilterEditing: { type: Boolean, default: false, group: 'additional', sequence: 2 },
   fastIdAttribute: { type: String, default: 'id' },
   fastNameAttribute: { type: String, default: 'name' },
-  hasShortlistReset: { type: Boolean, default: false },
+  hasShortlistReset: { type: Boolean, default: false, group: 'main', sequence: 5 },
   badge: { type: String, default: '' },
   badgeIcon: { type: String, default: null },
   badgeType: { type: String, default: 'default' }, // default, info, success, warning, error
@@ -54,6 +61,14 @@ const props = defineProps({
   texts: {
     type: Object,
     default: () => ({}),
+  },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+    }),
   },
 });
 
@@ -184,9 +199,20 @@ const fastFilterDisplay = computed(() => {
 });
 
 defineExpose({ toggleExpander, focus });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxFilters',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack,
+  });
+}
 </script>
 <template>
-  <div class="lx-filter-wrapper">
+  <div class="lx-filter-wrapper" :data-id="id">
     <LxExpander
       ref="expander"
       :id="id"
@@ -208,7 +234,20 @@ defineExpose({ toggleExpander, focus });
       @resetFilters="filterReset"
     >
       <div ref="filterBody" class="lx-form lx-form-region">
-        <LxForm :columnCount="columnCount" kind="stripped">
+        <LxForm
+          :id="`${id}-form`"
+          :columnCount="columnCount"
+          kind="stripped"
+          :builderOptions="{
+            schemaPath: builderOptions?.schemaPath,
+            componentStack: builderOptions?.componentStack?.concat({
+              id: `${id}-form`,
+              name: 'LxForm',
+            }),
+            useRegistry: builderOptions?.useRegistry,
+            defaultSectionSchemaPath: builderOptions?.defaultSectionSchemaPath,
+          }"
+        >
           <slot />
         </LxForm>
 
