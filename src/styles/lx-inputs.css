@@ -1016,6 +1016,9 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-checkbox-appearance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 1rem;
   height: 1rem;
   position: relative;
@@ -1033,9 +1036,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-checkbox-appearance .lx-checkbox-thumb svg {
   height: var(--icon-size-m);
   width: var(--icon-size-m);
-  margin-left: calc(var(--space-0250) * -1);
-  margin-right: calc(var(--space-0250) * -1);
-  margin-top: calc(var(--space-0250) * -1);
   fill: var(--color-region);
 }
 
