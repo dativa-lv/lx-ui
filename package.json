@@ -44,7 +44,7 @@
     "dev": "vite --host",
     "build:lib": "pnpm vite build --mode lib",
     "build:css": "pnpm vite build --mode css",
-    "build:bundles": "pnpm vite build --mode bundles",
+    "build:bundles": "node scripts/build-bundles.mjs",
     "build:fonts": "pnpm vite build --mode fonts",
     "build:assets": "pnpm build:css && pnpm build:bundles && pnpm build:fonts",
     "build:vite": "vite build --mode vite",

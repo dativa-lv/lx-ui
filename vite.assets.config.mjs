@@ -1,41 +1,19 @@
+/* eslint-disable import/extensions */
+/* eslint-disable no-restricted-imports */
+/* eslint-disable no-param-reassign */
 /* eslint-disable import/no-extraneous-dependencies */
 import { defineConfig } from 'vite';
 import path from 'path';
 import fs from 'fs';
+import { commonStyles, bundles, bundlesWithoutCommonStyles } from './bundles.config.js';
 
 function generateStylesRollupInput() {
   const input = {};
   const stylesDir = path.resolve(__dirname, 'src/styles');
   const files = fs.readdirSync(stylesDir);
 
-  const excludedFiles = [
-    'lx-bt-digives.css',
-    'lx-bt-digives-lite.css',
-    'lx-bt-eikis.css',
-    'lx-bt-visvaris-social.css',
-    'lx-bt-visvaris-misc.css',
-    'lx-bt-visvaris-client.css',
-    'lx-bt-visvaris-data.css',
-    'lx-bt-visvaris-filing.css',
-    'lx-bt-visvaris-finance.css',
-    'lx-bt-visvaris-personnel.css',
-    'lx-bt-visvaris-property.css',
-    'lx-bt-visvaris-education.css',
-    'lx-bt-lvas.css',
-    'lx-bt-digimaks.css',
-    'lx-bt-nobid.css',
-    'lx-bt-droni.css',
-    'lx-bt-shell-widget.css',
-    'lx-bt-riga.css',
-    'lx-bt-skudra.css',
-    'lx-bt-pro-is.css',
-    'lx-bt-dorvis.css',
-    'lx-bt-avis.css',
-    'lx-bt-bvkb-insurance.css',
-    'lx-bt-lasis.css',
-    'lx-bt-viddis.css',
-    // add new bundle names here to exclude them from styles folder
-  ];
+  // Dynamically generate excluded files list from bundles config
+  const excludedFiles = [...Object.keys(bundles).map((name) => `${name}.css`)];
 
   files.forEach((file) => {
     if (!excludedFiles.includes(file)) {
@@ -47,41 +25,111 @@ function generateStylesRollupInput() {
   return input;
 }
 
-function generateBundlesRollupInput(baseDir, extension = '.css') {
-  const cssBundles = [
-    'lx-bt-digives',
-    'lx-bt-digives-lite',
-    'lx-bt-eikis',
-    'lx-bt-visvaris-social',
-    'lx-bt-visvaris-misc',
-    'lx-bt-visvaris-client',
-    'lx-bt-visvaris-data',
-    'lx-bt-visvaris-filing',
-    'lx-bt-visvaris-finance',
-    'lx-bt-visvaris-personnel',
-    'lx-bt-visvaris-property',
-    'lx-bt-visvaris-education',
-    'lx-bt-lvas',
-    'lx-bt-oots',
-    'lx-bt-digimaks',
-    'lx-bt-nobid',
-    'lx-bt-droni',
-    'lx-bt-shell-widget',
-    'lx-bt-riga',
-    'lx-bt-skudra',
-    'lx-bt-pro-is',
-    'lx-bt-dorvis',
-    'lx-bt-avis',
-    'lx-bt-bvkb-insurance',
-    'lx-bt-lasis',
-    'lx-bt-viddis',
-    // add new bundle names here
-  ];
+const BUNDLE_PREFIX = 'virtual:bundle:';
+const BUNDLE_RESOLVED_PREFIX = `\0${BUNDLE_PREFIX}`;
 
-  return cssBundles.reduce((input, fileName) => {
-    input[fileName] = path.resolve(baseDir, `${fileName}${extension}`);
-    return input;
-  }, {});
+function splitBundleEntries(allBundles, chunkIndex = 0, chunkCount = 1) {
+  const names = Object.keys(allBundles).sort();
+  const withoutCommon = new Set(bundlesWithoutCommonStyles || []);
+  const safeChunkCount = Math.max(1, Number(chunkCount) || 1);
+  const safeChunkIndex = Math.min(Math.max(0, Number(chunkIndex) || 0), safeChunkCount - 1);
+  const chunks = Array.from({ length: safeChunkCount }, () => ({}));
+  const signatureCount = new Map();
+
+  names.forEach((bundleName) => {
+    const bundleSpecificStyles = allBundles[bundleName] || [];
+    const baseStyles = withoutCommon.has(bundleName) ? [] : commonStyles;
+    const signature = [...new Set([...baseStyles, ...bundleSpecificStyles])].join('|');
+
+    // Spread identical CSS bundles across different chunks to avoid same-run deduplication.
+    const seen = signatureCount.get(signature) || 0;
+    const preferredChunk = seen % safeChunkCount;
+    signatureCount.set(signature, seen + 1);
+
+    // Keep chunks relatively balanced by choosing the smallest among candidates.
+    let targetChunk = preferredChunk;
+    for (let idx = 0; idx < safeChunkCount; idx += 1) {
+      const candidate = (preferredChunk + idx) % safeChunkCount;
+      if (Object.keys(chunks[candidate]).length < Object.keys(chunks[targetChunk]).length) {
+        targetChunk = candidate;
+      }
+    }
+
+    chunks[targetChunk][bundleName] = allBundles[bundleName];
+  });
+
+  return chunks[safeChunkIndex];
+}
+
+function createBundlePlugin(bundlesMap) {
+  const withoutCommonStyles = new Set(bundlesWithoutCommonStyles || []);
+  const stylesDir = path.resolve(__dirname, 'src/styles');
+
+  return {
+    name: 'lx-css-bundles',
+    resolveId(id) {
+      if (id.startsWith(BUNDLE_PREFIX)) return `\0${id}`;
+      return undefined;
+    },
+    load(id) {
+      if (!id.startsWith(BUNDLE_RESOLVED_PREFIX)) return undefined;
+      const bundleName = id.slice(BUNDLE_RESOLVED_PREFIX.length).replace(/\.css$/, '');
+      const bundleSpecificStyles = bundlesMap[bundleName];
+      if (!bundleSpecificStyles) return undefined;
+      const baseStyles = withoutCommonStyles.has(bundleName) ? [] : commonStyles;
+      const allStyles = [...new Set([...baseStyles, ...bundleSpecificStyles])];
+      // Use absolute paths so postcss-import resolves correctly without a real file location
+      return allStyles
+        .map((style) => `@import '${path.resolve(stylesDir, `${style}.css`)}';`)
+        .join('\n');
+    },
+  };
+}
+
+function generateBundlesRollupInput(bundlesMap) {
+  const input = {};
+  // Use virtual modules for bundle generation
+  Object.keys(bundlesMap).forEach((bundleName) => {
+    input[bundleName] = `${BUNDLE_PREFIX}${bundleName}.css`;
+  });
+  return input;
+}
+
+function createCssBundlesConfig(bundlesMap, emptyOutDir = true) {
+  return defineConfig({
+    base: './',
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
+    },
+    plugins: [createBundlePlugin(bundlesMap)],
+    build: {
+      outDir: 'dist/bundles',
+      rollupOptions: {
+        input: generateBundlesRollupInput(bundlesMap),
+        output: {
+          inlineDynamicImports: false,
+          assetFileNames: '[name][extname]',
+        },
+      },
+      cssCodeSplit: true,
+      copyPublicDir: false,
+      emptyOutDir,
+    },
+  });
+}
+
+export function getCssBundlesChunkConfig(options = {}) {
+  const { chunkIndex = 0, chunkCount = 1, emptyOutDir = true } = options;
+  const chunkBundles = splitBundleEntries(bundles, chunkIndex, chunkCount);
+  return createCssBundlesConfig(chunkBundles, emptyOutDir);
+}
+
+export function getCssBundlesChunkNames(options = {}) {
+  const { chunkIndex = 0, chunkCount = 1 } = options;
+  const chunkBundles = splitBundleEntries(bundles, chunkIndex, chunkCount);
+  return Object.keys(chunkBundles).sort();
 }
 
 function generateFontsRollupInput(baseDir) {
@@ -133,26 +181,7 @@ export const cssConfig = defineConfig({
 });
 
 /** @type {import('vite').UserConfig} */
-export const cssBundlesConfig = defineConfig({
-  base: './',
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src'),
-    },
-  },
-  build: {
-    outDir: 'dist/bundles',
-    rollupOptions: {
-      input: generateBundlesRollupInput(path.resolve(__dirname, 'src/styles')),
-      output: {
-        inlineDynamicImports: false,
-        assetFileNames: '[name][extname]',
-      },
-    },
-    cssCodeSplit: true,
-    copyPublicDir: false,
-  },
-});
+export const cssBundlesConfig = createCssBundlesConfig(bundles, true);
 
 /** @type {import('vite').UserConfig} */
 export const fontsConfig = defineConfig({
