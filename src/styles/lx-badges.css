@@ -1,0 +1,108 @@
+.lx .lx-badge {
+  display: grid;
+  align-items: start;
+  justify-content: center;
+  width: var(--badge-width-s);
+  height: var(--badge-height-s);
+  min-width: var(--badge-min-width-s);
+  min-height: var(--badge-min-height-s);
+  padding: var(--badge-padding-s);
+  color: var(--color-badge-text);
+  background: var(--color-badge-background);
+  column-gap: var(--badge-gap-s);
+  border-radius: var(--badge-border-radius-s);
+  border: var(--badge-border-s);
+  line-height: var(--badge-text-line-height);
+  font-weight: var(--badge-text-font-weight);
+  font-size: var(--badge-text-font-size);
+  grid-template-columns: var(--badge-grid-template-columns);
+  grid-template-areas: var(--badge-grid-areas);
+  cursor: help;
+}
+
+.lx .lx-badge.lx-badge-empty {
+  min-height: var(--badge-height-empty);
+  min-width: var(--badge-width-empty);
+  height: var(--badge-height-empty);
+  width: var(--badge-width-empty);
+  --badge-gap-s: var(--space-0);
+  --badge-padding-s: var(--space-0);
+}
+
+.lx .lx-badge.lx-badge-icon-only {
+  padding: var(--badge-padding-icon-only-s);
+  align-items: center;
+  justify-items: center;
+  --badge-grid-template-columns: 1fr;
+  --badge-grid-areas: 'icon';
+}
+
+.lx .lx-badge.lx-badge-text-only {
+  --badge-grid-template-columns: 1fr;
+  --badge-grid-areas: 'text';
+}
+
+.lx-badge .lx-badge-icon {
+  grid-area: icon;
+  width: var(--badge-icon-size-s);
+  height: var(--badge-icon-size-s);
+  fill: var(--color-badge-icon);
+}
+
+.lx-badge .lx-badge-text {
+  grid-area: text;
+  align-self: center;
+  justify-self: center;
+}
+
+.lx-tile .lx-badge,
+.lx-modal .lx-badge,
+.lx-region .lx-badge,
+.lx-form-grid .lx-badge,
+.lx-data-block .lx-badge,
+.lx-list-item-wrapper .lx-badge,
+.lx-modal .lx-expander .lx-head .lx-badge,
+.lx-region .lx-expander .lx-head .lx-badge,
+.lx-form-grid .lx-expander .lx-head .lx-badge {
+  --color-badge-background: var(--color-region-2);
+}
+
+.lx-modal .lx-form-grid .lx-badge,
+.lx-region .lx-form-grid .lx-badge,
+.lx-modal .lx-data-block-wrapper .lx-badge,
+.lx-region .lx-data-block-wrapper .lx-badge,
+.lx-form-grid .lx-data-block-wrapper .lx-badge,
+.lx-modal .lx-list-item-wrapper .lx-badge,
+.lx-region .lx-list-item-wrapper .lx-badge,
+.lx-form-grid .lx-list-item-wrapper .lx-badge {
+  --color-badge-background: unset;
+}
+
+.lx-badge .lx-badge-text.lx-badge-type-number {
+  font-family: var(--font-family-mono);
+  font-feature-settings: var(--font-features-mono);
+}
+
+.lx .lx-layout .lx-badge.lx-badge-info {
+  --color-badge-background: var(--color-blue);
+  --color-badge-text: var(--color-region);
+  --color-badge-icon: var(--color-region);
+}
+
+.lx .lx-layout .lx-badge.lx-badge-success {
+  --color-badge-background: var(--color-green);
+  --color-badge-text: var(--color-region);
+  --color-badge-icon: var(--color-region);
+}
+
+.lx .lx-layout .lx-badge.lx-badge-warning {
+  --color-badge-background: var(--color-orange);
+  --color-badge-text: var(--color-region);
+  --color-badge-icon: var(--color-region);
+}
+
+.lx .lx-layout .lx-badge.lx-badge-error {
+  --color-badge-background: var(--color-red);
+  --color-badge-text: var(--color-region);
+  --color-badge-icon: var(--color-region);
+}

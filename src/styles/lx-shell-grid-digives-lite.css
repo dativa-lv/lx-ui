@@ -586,8 +586,9 @@
   grid-template-rows: var(--button-primary-grid-template-rows);
 }
 
-.lx-layout.lx-layout-digives-lite .lx-alert-menu .lx-button:not(#userMenuButton)>.lx-button-content-wrapper .lx-badge {
-    border-color: var(--color-region);
+.lx-layout-digives-lite .lx-alert-menu .lx-button > .lx-button-content-wrapper .lx-badge,
+.lx-layout-digives-lite .lx-shell-custom-button .lx-button > .lx-button-content-wrapper .lx-badge {
+  border-color: var(--color-region);
 }
 
 .lx-layout.lx-layout-digives-lite .lx-alert-menu ol {
@@ -801,36 +802,30 @@ border-top: var(--border-width-2) solid var(--color-brand-secondary);
 /* Session timeout badge */
 
 .lx-layout .lx-header-digives-lite .lx-user-menu,
-.lx-layout .digives-lite-nav-panel .lx-user-menu{
+.lx-layout .digives-lite-nav-panel .lx-user-menu {
   position: relative;
 }
 
-.lx-layout .lx-header-digives-lite .lx-user-menu .lx-timeout-badge,
-.lx-layout .digives-lite-nav-panel .lx-user-menu .lx-timeout-badge {
+.lx-header-digives-lite .lx-user-menu .lx-timeout-badge,
+.digives-lite-nav-panel .lx-user-menu .lx-timeout-badge {
   position: absolute;
   top: var(--space-0125);
   right: calc(var(--space-1250) * -1);
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
-  font-size: var(--small-font-size);
-  background: var(--color-warning);
-  color: var(--color-badge-foreground);
   z-index: 1;
-  font-weight: 700;
-  padding: var(--button-badge-padding);
-  border: var(--border-width-2) solid var(--color-region);
-}
-
-.lx-layout .lx-header-digives-lite .lx-user-menu .lx-timeout-badge .lx-badge-text,
-.lx-layout .digives-lite-nav-panel .lx-user-menu .lx-timeout-badge .lx-badge-text {
-    color: var(--color-badge-foreground);
+  --badge-text-font-size: var(--small-font-size);
+  --color-badge-background: var(--color-warning);
+  --color-badge-text: var(--color-region);
+  --badge-text-font-weight: 700;
+  border-color: var(--color-region);
 }
 
 .lx-layout .digives-lite-nav-panel .lx-user-menu .lx-timeout-badge {
   right: calc(var(--space-0500) * -1);
 }
 
-.lx-layout.lx-layout-cover-digives-lite .lx-header .lx-user-menu .lx-timeout-badge{
+.lx-layout.lx-layout-cover-digives-lite .lx-header .lx-user-menu .lx-timeout-badge {
   left: auto;
   right: var(--space-0);
   border-color: var(--color-background);

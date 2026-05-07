@@ -521,7 +521,7 @@ header.lx.lx-layout-public>.lx-header .lx-right-group #nav-toggle:hover {
   border-color: var(--color-header-hover-background);
 }
 
-header.lx.lx-layout-public>.lx-header .lx-button:not(#userMenuButton):hover>.lx-badge {
+header.lx.lx-layout-public>.lx-header .lx-button:hover>.lx-badge {
   border-color: var(--color-header-hover-background);
 }
 
@@ -789,11 +789,11 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
   color: var(--color-region);
 }
 
-.lx.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-button-content-wrapper .lx-badge {
+.lx.lx-layout-public .lx-alert-menu .lx-button > .lx-button-content-wrapper .lx-badge {
   border-color: var(--color-region);
 }
 
-.lx.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton):hover > .lx-button-content-wrapper.lx-badge {
+.lx.lx-layout-public .lx-alert-menu .lx-button:hover > .lx-button-content-wrapper.lx-badge {
   border-color: var(--color-interactive-hover-background);
 }
 
@@ -1111,11 +1111,11 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   min-height: var(--icon-size-m);
 }
 
-.lx-button:not(#userMenuButton) .lx-badge {
+.lx-button .lx-badge {
   position: absolute;
   font-family: var(--font-family-mono);
   font-size: var(--small-font-size);
-  color: var(--color-badge-foreground);
+  color: var(--color-region);
   font-weight: bold;
   background: var(--color-data);
   min-width: 1.5rem;
@@ -1124,7 +1124,6 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--button-badge-padding);
   line-height: 1em;
   border: var(--border-width-2) solid var(--color-background);
   text-align: center;
@@ -1132,17 +1131,13 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   opacity: 1;
 }
 
-.lx-alert-menu .lx-button:not(#userMenuButton) > .lx-button-content-wrapper .lx-badge {
+.lx-alert-menu .lx-button > .lx-button-content-wrapper .lx-badge {
   border-color: var(--color-nav-background);
   inset: -0.1rem -0.1rem auto auto;
   overflow: visible;
 }
 
-.lx-alert-menu .lx-button:not(#userMenuButton):hover > .lx-button-content-wrapper .lx-badge {
-  border-color: var(--color-nav-hover-background);
-}
-
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-error {
+.lx-button .lx-badge.lx-badge-error {
   background: var(--color-red);
 }
 
@@ -1288,7 +1283,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 }
 
 .lx:not(.lx-no-animations) .lx-button,
-.lx:not(.lx-no-animations) .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-badge {
+.lx:not(.lx-no-animations) .lx-alert-menu .lx-button > .lx-badge {
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
 

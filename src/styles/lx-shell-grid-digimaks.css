@@ -19,8 +19,8 @@
   margin-left: var(--space-0);
 }
 
-.lx-layout-digimaks header .lx-header button.lx-button.nav-toggle:not(#userMenuButton) .lx-badge,
-.lx-layout-digimaks nav .lx-nav-panel .lx-button:not(#userMenuButton) .lx-badge {
+.lx-layout-digimaks header .lx-header button.lx-button.nav-toggle .lx-badge,
+.lx-layout-digimaks nav .lx-nav-panel .lx-button .lx-badge {
   inset: var(--space-0) var(--space-0) auto auto;
 }
 

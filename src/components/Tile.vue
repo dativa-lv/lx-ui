@@ -118,8 +118,7 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
             :value="badge"
             :tooltip="badgeTitle"
             :class="[
-              { 'lx-badge-empty': badge === ' ' && !badgeIcon },
-              { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
+              { 'lx-badge-info': badgeType === 'info' },
               { 'lx-badge-success': badgeType === 'success' },
               { 'lx-badge-warning': badgeType === 'warning' },
               { 'lx-badge-error': badgeType === 'error' },
@@ -138,8 +137,7 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
             :value="badge"
             :tooltip="badgeTitle"
             :class="[
-              { 'lx-badge-empty': badge === ' ' && !badgeIcon },
-              { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
+              { 'lx-badge-info': badgeType === 'info' },
               { 'lx-badge-success': badgeType === 'success' },
               { 'lx-badge-warning': badgeType === 'warning' },
               { 'lx-badge-error': badgeType === 'error' },

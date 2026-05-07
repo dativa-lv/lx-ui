@@ -47,7 +47,6 @@
   --color-cover-title: var(--color-data);
   --color-checkmark-foreground: #111;
   --color-checkmark-hover-foreground: #fff;
-  --color-badge-foreground: #020202;
 
   --color-background: #18181a;
   --color-background-overlay: rgba(24, 24, 26, 0.75);
@@ -406,10 +405,6 @@
   --color-button-ghost-icon-focus: var(--color-interactive-background);
   --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 
-  --color-badge-background: var(--color-region);
-  --color-badge-region-background: var(--color-region-2);
-  --color-badge-text-color: var(--color-data);
-
   --color-data-block-primary: var(--color-data);
   --color-data-block-secondary: var(--color-label);
   --color-data-block-background: var(--color-region);
@@ -453,6 +448,10 @@
   --color-content-switcher-item-background-hover: var(--color-region-hover-background);
   --color-content-switcher-text-hover: var(--color-region-hover-foreground);
   --color-content-switcher-icon-hover: var(--color-region-hover-foreground);
+
+  --color-badge-background: var(--color-region);
+  --color-badge-text: var(--color-data);
+  --color-badge-icon: var(--color-data);
 
   --color-draft-background: var(--color-draft);
   --color-new-background: var(--color-new);

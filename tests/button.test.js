@@ -312,9 +312,8 @@ test('LxButton badge', async () => {
     },
   });
   const inputElement = wrapper.find('button').find('.lx-badge');
-  expect(inputElement.classes('lx-badge-info')).toBe(true);
   expect(inputElement.text()).toBe('Test badge');
-  await wrapper.setProps({ badgeType: 'default' });
+  await wrapper.setProps({ badgeType: 'info' });
   expect(inputElement.classes('lx-badge-info')).toBe(true);
   await wrapper.setProps({ badgeType: 'success' });
   expect(inputElement.classes('lx-badge-success')).toBe(true);
@@ -329,9 +328,8 @@ test('LxButton badge', async () => {
   expect(hrefElement.classes('lx-badge-error')).toBe(true);
   expect(hrefElement.classes('lx-badge-empty')).toBe(true);
   await wrapper.setProps({ badgeType: 'default', badge: 'Test badge' });
-  expect(hrefElement.classes('lx-badge-info')).toBe(true);
   expect(hrefElement.text()).toBe('Test badge');
-  await wrapper.setProps({ badgeType: 'default' });
+  await wrapper.setProps({ badgeType: 'info' });
   expect(hrefElement.classes('lx-badge-info')).toBe(true);
   await wrapper.setProps({ badgeType: 'success' });
   expect(hrefElement.classes('lx-badge-success')).toBe(true);

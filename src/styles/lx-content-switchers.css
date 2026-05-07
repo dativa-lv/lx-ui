@@ -182,62 +182,25 @@
 
 /* LxBadge styles */
 
-.lx-content-switcher-wrapper .lx-badge {
+.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge {
   margin-left: auto;
   margin-right: var(--space-0);
-  line-height: 1.2em;
   flex-shrink: 0;
-  max-width: calc(100% - 1.75rem); /* icon size + gap */
-}
-
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge {
-  align-items: center;
+  max-width: calc(100% - calc(var(--content-switcher-icon-size) + var(--content-switcher-content-gap)));
+  --color-badge-text: var(--color-data);
+  --color-badge-icon: var(--color-data);
 }
 
 .lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge-text {
-  color: var(--color-data);
   text-wrap: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.lx-content-switcher-wrapper .lx-content-switcher-item.lx-disabled .lx-badge-text {
+.lx-content-switcher-wrapper .lx-content-switcher-item.lx-disabled {
   color: var(--color-disabled-foreground);
 }
 
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge-icon {
-  fill: var(--color-data);
-}
-
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-success {
-  background: var(--color-green);
-}
-
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-warning {
-  background: var(--color-orange);
-}
-
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-error {
-  background: var(--color-red);
-}
-
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-empty {
-  min-height: 1rem;
-  min-width: 1rem;
-}
-
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-success .lx-badge-text,
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-warning .lx-badge-text,
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-error .lx-badge-text {
-  color: var(--color-badge-foreground);
-}
-
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-success .lx-badge-icon,
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-warning .lx-badge-icon,
-.lx-content-switcher-wrapper .lx-content-switcher-item .lx-badge.lx-badge-error .lx-badge-icon {
-  fill: var(--color-badge-foreground);
-}
-
 .lx-theme-contrast .lx-content-switcher-wrapper .lx-content-switcher-item.lx-selected .lx-badge {
-  border: var(--border-width-2) solid var(--color-region);
+  --badge-border-s: var(--badge-border-width-s) solid var(--contrast-background);
 }

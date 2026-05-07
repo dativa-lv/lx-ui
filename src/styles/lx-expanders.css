@@ -62,6 +62,15 @@
   cursor: not-allowed;
 }
 
+.lx-expander .lx-head .lx-badge {
+  font-family: var(--font-family-mono);
+  font-feature-settings: var(--font-features-mono);
+  --badge-text-font-size: var(--small-font-size);
+  --badge-text-font-weight: bold;
+  --badge-padding-s: var(--space-0125) var(--space-0500);
+  --badge-padding-icon-only-s: var(--space-0);
+}
+
 .lx-expander .lx-body {
   padding: var(--space-0);
   padding-bottom: var(--space-1500);

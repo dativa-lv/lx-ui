@@ -3451,17 +3451,12 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: calc(var(--row-size) * 3);
   aspect-ratio: 1;
   position: relative;
+  --badge-icon-size-s: var(--icon-size-l);
 }
 
 .lx-uploaded-file-preview-wrapper > .lx-file-preview-wrapper img {
   max-height: calc(var(--row-size) * 3);
   object-fit: cover;
-}
-
-.lx-uploaded-file-preview-wrapper > .lx-file-preview-wrapper svg {
-  width: var(--icon-size-l);
-  height: var(--icon-size-l);
-  margin: var(--space-0);
 }
 
 .lx-file-wrapper .lx-list-item {
@@ -3525,21 +3520,14 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge {
   position: absolute;
-  background: var(--color-data);
-  min-width: 1.5rem;
-  min-height: 1.5rem;
-  border-radius: var(--border-radius-1000);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: var(--space-0250);
-  line-height: 1em;
-  border: var(--border-width-2) solid var(--color-background);
-  text-align: center;
-  margin-top: var(--space-0);
-  opacity: 1;
   right: var(--space-0500);
-  font-size: var(--small-font-size);
+  --badge-text-font-size: var(--small-font-size);
+}
+
+.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge,
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge {
+  --color-badge-icon: var(--color-interactive-foreground);
+  --badge-icon-size-s: var(--icon-size-xs);
 }
 
 .lx-uploaded-file-preview-wrapper > .lx-file-preview-wrapper .lx-badge {
@@ -3554,81 +3542,55 @@ h2.lx-section-header + p.lx-invalidation-message,
   right: calc(var(--space-3000) + var(--space-1500)); /* 2 badges + 3 * 0.5rem gaps */
 }
 
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge {
-  background: var(--color-data);
-  max-width: 1.5rem;
-  max-height: 1.5rem;
-  border-radius: var(--border-radius-1000);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: var(--space-0) var(--space-0250);
-  line-height: 1em;
-  border: var(--border-width-2) solid var(--color-background);
-  text-align: center;
-  margin-top: var(--space-0);
-  opacity: 1;
-}
-
-.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge svg,
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge svg {
-  width: var(--icon-size-xs);
-  height: var(--icon-size-xs);
-  fill: var(--color-interactive-foreground);
-  margin: var(--space-0);
-}
-
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge {
   margin-right: var(--space-0500);
-  padding: var(--space-0);
-  border: var(--border-width-0);
+  --badge-padding-s: var(--space-0);
+  --badge-padding-icon-only-s: var(--space-0);
+  --badge-border-s: var(--border-width-0);
 }
 
 .lx-file-wrapper
   .lx-file-name-main-data-wrapper
   .lx-badge.lx-compact-badge.lx-pass-protected-badge {
-  border: var(--border-width-2) solid var(--color-orange);
+  border-color: var(--color-orange);
 }
 
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge.lx-esign-badge {
-  border: var(--border-width-2) solid var(--color-blue);
+  border-color: var(--color-blue);
 }
 
 .lx-file-wrapper
   .lx-file-name-main-data-wrapper
   .lx-badge.lx-compact-badge.lx-created-using-ai-badge {
-  border: var(--border-width-2) solid var(--color-purple);
+  border-color: var(--color-purple);
 }
 
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge svg {
-  width: var(--icon-size-xs);
-  height: var(--icon-size-xs);
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge {
+  --badge-icon-size-s: var(--icon-size-xs);
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-esign-badge,
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-esign-badge {
-  background: var(--color-blue);
+  --color-badge-background: var(--color-blue);
+  border-color: var(--color-blue);
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-pass-protected-badge,
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-pass-protected-badge {
-  background: var(--color-orange);
+  --color-badge-background: var(--color-orange);
+  border-color: var(--color-orange);
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-c2pa-sign-badge,
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-c2pa-sign-badge {
-  background: var(--color-region);
-  border: var(--border-width-2) solid var(--color-blue);
+  --color-badge-background: var(--color-region);
+  --color-badge-icon: var(--color-blue);
+  border-color: var(--color-blue);
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-created-using-ai-badge,
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-created-using-ai-badge {
-  background: var(--color-purple);
-}
-
-.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-c2pa-sign-badge svg,
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-c2pa-sign-badge svg {
-  fill: var(--color-blue);
+  --color-badge-background:: var(--color-purple);
 }
 
 .lx-file-name-wrapper {
@@ -4347,80 +4309,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-qr-wrapper:not(.lx-ignore-theme) > svg > path{
   fill: var(--color-data); 
-}
-
-/* LxBadge */
-
-.lx-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  min-width: var(--badge-min-width);
-  min-height: var(--badge-min-height);
-  padding: var(--badge-padding);
-  line-height: var(--badge-line-height);
-  color: var(--color-data);
-  background-color: var(--color-badge-background);
-  border-radius: var(--badge-border-radius);
-  border: var(--region-border);
-  cursor: help;
-}
-
-.lx-badge.lx-badge-icon-only {
-  padding: var(--space-0);
-}
-
-.lx .lx-badge.lx-aligned-row {
-  column-gap: var(--space-0);
-}
-
-.lx .lx-badge.with-gap {
-  column-gap: var(--badge-gap);
-}
-
-.lx .lx-badge-icon {
-  width: var(--badge-icon-size);
-  height: var(--badge-icon-size);
-}
-
-.lx-region .lx-badge,
-.lx-modal .lx-badge,
-.lx-form-grid .lx-badge,
-.lx-list-item-wrapper .lx-badge,
-.lx-appendable-list .lx-badge {
-  background-color: var(--color-badge-region-background);
-}
-
-.lx-form-grid .lx-list-item-wrapper .lx-badge,
-.lx-region .lx-appendable-list .lx-badge,
-.lx-region .lx-list-item-wrapper .lx-badge,
-.lx-modal .lx-list-item-wrapper .lx-badge {
-  background-color: var(--color-badge-background);
-}
-
-.lx-form-grid .lx-expander .lx-list-item .lx-badge .lx-badge-text {
-  color: var(--color-data);
-}
-
-.lx-form-grid .lx-expander .lx-list-item .lx-badge .lx-badge-icon {
-  fill: var(--color-data);
-}
-
-.lx-badge .lx-badge-text.lx-badge-type-number{
-  font-family: var(--font-family-mono);
-  font-feature-settings: var(--font-features-mono);
-}
-
-.lx-modal > footer.lx-button-set > .lx-button:not(#userMenuButton) .lx-badge {
-  position: static;
-  margin-left: var(--space-0500);
-}
-
-.lx-modal > footer.lx-button-set > .lx-button .lx-badge .lx-badge-text {
-  max-width: 6ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 @media (max-height: 499px) {

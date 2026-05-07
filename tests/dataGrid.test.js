@@ -186,9 +186,7 @@ describe('Badge definitions', () => {
 
   test('renders two badges', () => {
     wrapper = mountComponent({ props: { ...props, badgeDefinitions } });
-    const badges = wrapper.findAll(
-      '.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper > .lx-badge'
-    );
+    const badges = wrapper.findAll('.lx-data-grid-wrapper .lx-grid-badge-wrapper > .lx-badge');
 
     expect(badges.length).toBe(badgeDefinitions.length);
   });
@@ -197,9 +195,7 @@ describe('Badge definitions', () => {
     const propsOverride = { ...props, showHeader: false };
 
     wrapper = mountComponent({ props: { ...propsOverride, badgeDefinitions } });
-    const badges = wrapper.findAll(
-      '.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper > .lx-badge'
-    );
+    const badges = wrapper.findAll('.lx-data-grid-wrapper .lx-grid-badge-wrapper > .lx-badge');
 
     expect(badges.length).toBe(0);
   });
@@ -207,9 +203,7 @@ describe('Badge definitions', () => {
   test('badge labels', () => {
     wrapper = mountComponent({ props: { ...props, badgeDefinitions } });
 
-    const badges = wrapper.findAll(
-      '.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper > .lx-badge'
-    );
+    const badges = wrapper.findAll('.lx-data-grid-wrapper .lx-grid-badge-wrapper > .lx-badge');
 
     expect(badges.length).toBe(badgeDefinitions.length);
     expect(badges[0].find('.lx-badge-text').text()).toBe(badgeDefinitions[0].name);
@@ -221,9 +215,7 @@ describe('Badge definitions', () => {
     badgeDef[0].icon = null;
 
     wrapper = mountComponent({ props: { ...props, badgeDefinitions: badgeDef } });
-    const badges = wrapper.findAll(
-      '.lx-data-grid-wrapper > header > .lx-grid-badge-wrapper > .lx-badge'
-    );
+    const badges = wrapper.findAll('.lx-data-grid-wrapper .lx-grid-badge-wrapper > .lx-badge');
 
     expect(badges.length).toBe(badgeDefinitions.length);
     expect(badges[0].find('desc').exists()).toBe(false);

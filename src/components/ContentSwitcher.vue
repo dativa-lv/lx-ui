@@ -172,7 +172,12 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
           :title="item[props.nameAttribute]"
           v-if="(showIconsMode && item.icon) || (icon && showIconsMode)"
         />
-        <div v-if="(kind === 'default' || kind === 'combo') && isWideScreen">
+        <div
+          class="lx-content-switcher-text"
+          v-if="
+            (kind === 'default' || kind === 'combo') && isWideScreen && item[props.nameAttribute]
+          "
+        >
           {{ item[props.nameAttribute] }}
         </div>
         <LxBadge
@@ -181,8 +186,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
           :value="isWideScreen ? item.badge : ' '"
           :tooltip="isWideScreen ? item.badgeTitle : item.badgeTitle ? item.badgeTitle : item.badge"
           :class="[
-            { 'lx-badge-empty': item.badge === ' ' || !isWideScreen },
-            { 'lx-badge-info': item.badgeType === 'default' || item.badgeType === 'info' },
+            { 'lx-badge-info': item.badgeType === 'info' },
             { 'lx-badge-success': item.badgeType === 'success' },
             { 'lx-badge-warning': item.badgeType === 'warning' },
             { 'lx-badge-error': item.badgeType === 'error' },

@@ -34,14 +34,21 @@ const isValueNumber = computed(() => {
 });
 
 const isIconOnly = computed(() => !!props.icon && !props.value);
+
+const isTextOnly = computed(() => !!props.value && !props.icon);
+
+const isEmpty = computed(
+  () => props.value != null && String(props.value).trim() === '' && !props.icon
+);
 </script>
 <template>
   <div
     v-if="icon || value"
     class="lx-badge lx-aligned-row"
     :class="{
-      'with-gap': icon && value,
       'lx-badge-icon-only': isIconOnly,
+      'lx-badge-text-only': isTextOnly,
+      'lx-badge-empty': isEmpty,
     }"
     :title="tooltip"
     :id="id"
@@ -55,7 +62,6 @@ const isIconOnly = computed(() => !!props.icon && !props.value);
       :title="tooltip"
       :aria-hidden="true"
     />
-
     <template v-if="icon || value">
       <div
         v-if="tooltip && (icon || value)"
@@ -65,7 +71,6 @@ const isIconOnly = computed(() => !!props.icon && !props.value);
       >
         ({{ tooltip }}):
       </div>
-
       <div
         v-if="value"
         class="lx-data lx-badge-text"

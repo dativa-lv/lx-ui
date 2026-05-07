@@ -206,8 +206,12 @@
 .lx:not(.lx-no-animations) .lx-override input[type="reset"],
 .lx:not(.lx-no-animations) .lx-override input[type="file"]::file-selector-button,
 .lx-layout-latvijalv .lx-latvijalv-alert-list .lx-alert-clickable,
-.lx:not(.lx-no-animations) .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-badge {
+.lx:not(.lx-no-animations) .lx-alert-menu .lx-button > .lx-badge {
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
+}
+
+.lx:not(.lx-no-animations) .lx-header .lx-badge {
+  transition: border-color 0.1s ease-in;
 }
 
 .lx:not(.lx-no-animations) .lx-button svg,
@@ -774,7 +778,7 @@
 
 @keyframes blink-icon-animation {
   50% {
-      fill: var(--color-badge-foreground);
+      fill: var(--color-region);
   }
 }
 
@@ -785,6 +789,7 @@
 .lx:not(.lx-no-animations) .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-blink svg {
   animation: blink-icon-animation 1s ease-in-out infinite;
 }
+
 .lx:not(.lx-no-animations) .lx-layout.lx-layout-default > header .lx-header .lx-additional-nav-menu {
   transition: transform 0.2s ease-out;
 }

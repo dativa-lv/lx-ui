@@ -96,7 +96,7 @@
   --padding-grid-header: var(--space-1000);
   --padding-form: var(--space-3000) var(--space-2000);
   --padding-default: var(--space-1000);
-  --padding-modal:  var(--space-1000)  var(--space-1000) var(--space-2000) var(--space-1000);
+  --padding-modal: var(--space-1000) var(--space-1000) var(--space-2000) var(--space-1000);
   --padding-form-negative: -2rem;
   --padding-tab-body: var(--space-1000) var(--space-2000);
 
@@ -299,7 +299,6 @@
   --input-text-font-weight: 400;
 
   --button-cursor: pointer;
-  --button-badge-padding: var(--space-0) var(--space-0250);
   --button-icon-justify: center;
   --button-loader-margin: var(--space-0);
   --button-set-gap: var(--space-0500);
@@ -602,13 +601,24 @@
   --stack-gap: var(--gap-buttons);
   --stack-gap-compact: var(--space-0);
 
-  --badge-line-height: 1rem;
-  --badge-border-radius: var(--border-radius-1000);
-  --badge-padding: var(--space-0250) var(--space-0375);
-  --badge-min-width: 1.5rem;
-  --badge-min-height: 1.5rem;
-  --badge-gap: var(--space-0250);
-  --badge-icon-size: var(--icon-size-xs);
+  --badge-border-width-s: var(--border-width-2);
+  --badge-text-line-height: 1;
+  --badge-text-font-size: var(--font-size);
+  --badge-text-font-weight: var(--font-weight);
+  --badge-border-s: var(--badge-border-width-s) solid transparent;
+  --badge-border-radius-s: var(--border-radius-1000);
+  --badge-padding-s: var(--space-0125) var(--space-0375);
+  --badge-padding-icon-only-s: var(--space-0125);
+  --badge-width-s: fit-content;
+  --badge-height-s: auto;
+  --badge-height-empty: 1rem;
+  --badge-width-empty: 1rem;
+  --badge-min-width-s: 1.5rem;
+  --badge-min-height-s: 1.5rem;
+  --badge-gap-s: var(--space-0250);
+  --badge-icon-size-s: var(--icon-size-xs);
+  --badge-grid-template-columns: auto 1fr;
+  --badge-grid-areas: 'icon text';
 
   --loader-height-l: 5.5rem;
   --loader-width-l: 5.5rem;

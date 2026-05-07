@@ -250,3 +250,16 @@ dialog {
     position: sticky;
   }
 }
+
+/* LxBadge */
+
+.lx-modal > footer.lx-button-set > .lx-button .lx-badge {
+  position: static;
+  margin-left: 0.5rem;
+}
+
+.lx-modal > footer.lx-button-set > .lx-button .lx-badge .lx-badge-text {
+  max-width: 6ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

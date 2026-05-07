@@ -1286,6 +1286,10 @@ a.lx-button.lx-button-ghost svg {
   gap: var(--button-dropdown-set-gap);
 }
 
+.lx .lx-layout .lx-dropdown-panel .lx-button .lx-badge {
+  border-color: var(--color-region);
+}
+
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button,
@@ -1859,38 +1863,6 @@ a.lx-button.lx-button-ghost svg {
   border-color: var(--color-interactive-hover-background);
 }
 
-.lx #userMenuButton div {
-  pointer-events: none;
-}
-
-.lx #userMenuButton svg {
-  margin-right: 0.66rem; /* TODO: figure out what this is */
-}
-
-.lx .lx-layout-cover #userMenuButton,
-.lx .lx-layout-cover-digives-lite #userMenuButton {
-  background-color: transparent;
-  backdrop-filter: blur(1rem);
-  color: var(--color-interactive-background);
-  border-color: transparent;
-}
-
-.lx .lx-layout-cover #userMenuButton:hover,
-.lx .lx-layout-cover-digives-lite #userMenuButton:hover {
-  background-color: var(--color-region-hover);
-  color: var(--color-interactive-hover-background);
-}
-
-.lx .lx-layout-cover #userMenuButton svg,
-.lx .lx-layout-cover-digives-lite #userMenuButton svg {
-  fill: var(--color-interactive-background);
-}
-
-.lx .lx-layout-cover #userMenuButton:hover svg,
-.lx .lx-layout-cover-digives-lite #userMenuButton:hover svg {
-  fill: var(--color-interactive-hover-background);
-}
-
 .lx-user-button .lx-avatar .lx-icon {
   width: var(--icon-size-m) !important;
   height: var(--icon-size-m) !important;
@@ -1898,50 +1870,31 @@ a.lx-button.lx-button-ghost svg {
 
 /*** Badge styles ***/
 
-.lx-button .lx-badge {
-  font-size: var(--small-font-size);
-  text-align: right;
-  line-height: 1em;
-  opacity: 0.75;
-  inset: var(--button-primary-badge-inset);
-}
-
-.lx-button:not(#userMenuButton) .lx-badge {
+.lx .lx-button .lx-badge {
   position: absolute;
+  inset: var(--button-primary-badge-inset);
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
-  font-size: var(--small-font-size);
-  font-weight: bold;
-  background: var(--color-data);
-  color: var(--color-data);
-  min-width: 1.5rem;
-  min-height: 1.5rem;
-  border-radius: var(--border-radius-1000);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: var(--button-badge-padding);
-  line-height: 1em;
-  border: var(--border-width-2) solid var(--color-background);
-  text-align: center;
-  margin-top: var(--space-0);
-  opacity: 1;
+  border-color: var(--color-background);
+  --badge-text-font-size: var(--small-font-size);
+  --badge-text-font-weight: bold;
+  --color-badge-background: var(--color-blue);
+  --color-badge-text: var(--color-region);
+  --color-badge-icon: var(--color-region);
 }
 
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-icon-only {
-  padding: var(--space-0);
+.lx-modal .lx-button .lx-badge,
+.lx-region .lx-button .lx-badge,
+.lx-form-grid .lx-button .lx-badge,
+.lx-data-block-wrapper .lx-button .lx-badge {
+  border-color: var(--color-region);
 }
 
-.lx-button:not(#userMenuButton) .lx-badge .lx-badge-icon {
+.lx .lx-button .lx-button-content-wrapper .lx-badge .lx-badge-icon {
   width: var(--icon-size-xs);
-  height: unset;
-  margin: var(--space-0);
-  fill: var(--color-badge-foreground);
+  height: var(--icon-size-xs);
+  fill: var(--color-badge-icon);
 }
-
-.lx-button:not(#userMenuButton) .lx-badge .lx-badge-text {
-  color: var(--color-badge-foreground);
-} 
 
 .lx-button.lx-button-secondary .lx-badge {
   inset: var(--button-secondary-badge-inset);
@@ -1951,7 +1904,7 @@ a.lx-button.lx-button-ghost svg {
   inset: var(--button-tertiary-badge-inset);
 }
 
-.lx-button.lx-button-ghost:not(#userMenuButton) .lx-badge {
+.lx-button.lx-button-ghost .lx-badge {
   inset: var(--button-ghost-badge-inset);
 }
 
@@ -1967,33 +1920,8 @@ a.lx-button.lx-button-ghost svg {
   inset: var(--button-tertiary-empty-badge-inset);
 }
 
-.lx-button.lx-button-ghost:not(#userMenuButton) .lx-badge.lx-badge-empty {
+.lx-button.lx-button-ghost .lx-badge.lx-badge-empty {
   inset: var(--button-ghost-empty-badge-inset);
-}
-
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-empty {	
-  min-width: 1rem;
-  min-height: 1rem;
-}
-
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-info {
-  background: var(--color-blue);
-}
-
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-warning {
-  background: var(--color-orange);
-}
-
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-success {
-  background: var(--color-green);
-}
-
-.lx-button:not(#userMenuButton) .lx-badge.lx-badge-error {
-  background: var(--color-red);
-}
-
-.lx .lx-region .lx-button:not(#userMenuButton) .lx-badge {
-  border: var(--border-width-2) solid var(--color-region);
 }
 
 /*** Main header styles ***/
@@ -2343,25 +2271,6 @@ a.lx-button.lx-button-ghost svg {
 }
 
 @media (max-width: 800px) {
-  .lx #userMenuButton {
-    padding: var(--space-0);
-    justify-content: center;
-    align-items: center;
-    flex-grow: 0;
-  }
-
-  .lx #userMenuButton svg {
-    margin: var(--space-0);
-  }
-
-  #userMenuButton label {
-    display: none;
-  }
-
-  #userMenuButton .lx-badge {
-    display: none;
-  }
-
   .lx-component-toolbar .first-row .left-area .action-definitions-small {
     display: flex;
   }

@@ -4,6 +4,26 @@
 
 ### Breaking changes
 
+The `#userMenuButton` selector has been removed. Update any scripts, tests, or styles that depend on this ID.
+
+#### LxBadge
+
+Some LxBadge styles have been moved to a separate file - `lx-badges.css`. Import this file in your project to ensure correct badge appearance and behavior.
+
+The 'with-gap' class, as well as the following tokens have been removed:
+- `--color-badge-foreground`
+- `--color-badge-region-background`
+
+**Token renames**
+
+- `--color-badge-text-color` → `--color-badge-text`
+- `--badge-line-height` → `--badge-text-line-height`
+- `--badge-border-radius` → `--badge-border-radius-s`
+- `--badge-padding` → `--badge-padding-s`
+- `--badge-min-width` → `--badge-min-width-s`
+- `--badge-min-height` → `--badge-min-height-s`
+- `--badge-gap` → `--badge-gap-s`
+
 #### ViewBuilder changes
 
 LxViewBuilder form section behavior has been unified.

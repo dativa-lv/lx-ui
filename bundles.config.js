@@ -41,6 +41,7 @@ export const commonStyles = [
   'lx-cards',
   'lx-toggles',
   'lx-content-switchers',
+  'lx-badges',
   // add new style file names here (without .css extension)
 ];
 

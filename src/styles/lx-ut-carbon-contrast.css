@@ -55,7 +55,6 @@
   --color-toggle-background-off: var(--contrast-background);
 
   --color-cover-title: var(--contrast-foreground);
-  --color-badge-foreground: var(--contrast-background);
 
   --color-button-active-mode: var(--contrast-background);
   --color-background: var(--contrast-background);
@@ -143,4 +142,6 @@
   --color-button-nav-public-icon-hover: var(--contrast-background);
 
   --color-loader-track: var(--contrast-background);
+
+  --badge-border-s: var(--badge-border-width-s) solid var(--contrast-foreground);
 }

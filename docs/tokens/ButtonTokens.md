@@ -7,7 +7,6 @@
 | Variable name                                      | Default value                                                              |
 |----------------------------------------------------|----------------------------------------------------------------------------|
 | `--button-cursor`                                  | pointer                                                                    |
-| `--button-badge-padding`                           | var(--space-0) var(--space-0250)                                           |
 | `--button-icon-justify`                            | center                                                                     |
 | `--button-loader-margin`                           | `--space-0`                                                                |
 | `--button-set-gap`                                 | `--space-0500`                                                             |

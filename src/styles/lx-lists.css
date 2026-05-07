@@ -457,7 +457,7 @@
   fill: var(--color-list-icon);
 }
 
-.lx .lx-list-item-wrapper .lx-list-item-actions .lx-button-ghost svg {
+.lx .lx-list-item-wrapper .lx-list-item-actions .lx-button-ghost {
   --color-button-ghost-icon: var(--color-list-icon);
   --color-button-ghost-icon-focus: var(--color-list-icon);
   --color-button-ghost-icon-disabled: var(--color-list-disabled-foreground);
@@ -1050,9 +1050,15 @@
   width: var(--icon-size-l);
 }
 
-.lx-tile-wrapper > .lx-tile .lx-badge {
-  --color-badge-background: var(--color-badge-region-background);
-  border: var(--border-width-2) solid var(--color-region);
+.lx-tile-wrapper .lx-tile .lx-badge {
+  font-family: var(--font-family-mono);
+  font-feature-settings: var(--font-features-mono);
+  --badge-text-font-size: var(--small-font-size);
+  --badge-width-s: max-content;
+}
+
+.lx-tile-wrapper .lx-tile.lx-mini .lx-badge {
+  max-width: 12rem;
 }
 
 .lx-tile-wrapper > .lx-tile .lx-badge .lx-badge-text {
@@ -1062,73 +1068,11 @@
   text-overflow: ellipsis;
 }
 
-.lx-tile-wrapper > .lx-tile .lx-badge:has(.lx-badge-icon) .lx-badge-text {
-  width: calc(100% - var(--badge-icon-size) - var(--badge-gap));
-}
-
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-empty {
-  min-width: 1rem;
-  min-height: 1rem;
-  width: 1rem;
-  height: 1rem;
-}
-
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-success {
-  --color-badge-background: var(--color-green);
-}
-
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-warning {
-  --color-badge-background: var(--color-orange);
-}
-
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-error {
-  --color-badge-background: var(--color-red);
-}
-
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-info.lx-badge-empty {
-  --color-badge-background: var(--color-blue);
-}
-
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-success .lx-badge-text,
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-warning .lx-badge-text,
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-error .lx-badge-text {
-  color: var(--color-badge-foreground);
-}
-
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-success .lx-badge-icon,
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-warning .lx-badge-icon,
-.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-error .lx-badge-icon {
-  fill: var(--color-badge-foreground);
-}
-
 .lx-tile-wrapper > .lx-tile .badge-wrapper {
   overflow: hidden;
   text-overflow: ellipsis;
   display: flex;
   justify-content: flex-end;
-}
-
-.lx-tile .lx-badge {
-  position: static;
-  font-family: var(--font-family-mono);
-  font-feature-settings: var(--font-features-mono);
-  font-size: var(--small-font-size);
-  min-width: 1.5rem;
-  min-height: 1.5rem;
-  border-radius: var(--border-radius-1000);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  line-height: 1em;
-  text-align: center;
-  margin-top: var(--space-0);
-  opacity: 1;
-}
-
-.lx-tile-wrapper > .lx-tile.lx-mini > .lx-tile-icon-wrapper,
-.lx-tile-wrapper > .lx-tile.lx-mini > .lx-tile-item-loader {
-  position: relative;
-  overflow: visible;
 }
 
 .lx-tile-wrapper > .lx-tile.lx-mini .badge-wrapper {
@@ -1139,6 +1083,12 @@
 
 .lx-tile-wrapper > .lx-tile.lx-mini .badge-wrapper:has(.lx-badge-empty) {
   left: var(--space-1500);
+}
+
+.lx-tile-wrapper > .lx-tile.lx-mini > .lx-tile-icon-wrapper,
+.lx-tile-wrapper > .lx-tile.lx-mini > .lx-tile-item-loader {
+  position: relative;
+  overflow: visible;
 }
 
 .lx-list-item,
@@ -1319,6 +1269,17 @@ li .lx-list-item.lx-inactive {
   grid-area: icon;
 }
 
+.lx-list-item-wrapper .lx-list-item-actions .lx-button .lx-badge {
+  border-color: var(--color-list-background);
+}
+
+.lx-modal .lx-list-item-actions .lx-button .lx-badge,
+.lx-region .lx-list-item-actions .lx-button .lx-badge,
+.lx-form-grid .lx-list-item-actions .lx-button .lx-badge,
+.lx-data-block-wrapper .lx-list-item-actions .lx-button .lx-badge {
+  border-color: var(--color-list-region-background);
+}
+
 .lx-list-item-wrapper .compact-actions .lx-list-item-actions .lx-button,
 .lx-list-item-wrapper .compact-actions:has(.lx-list-item-actions) .lx-list-icon-wrapper {
   height: var(--list-button-max-height);
@@ -1348,7 +1309,7 @@ li .lx-list-item.lx-inactive {
 }
 
 .lx-list-wrapper .lx-expander .lx-body {
-  padding: 0;
+  padding: var(--space-0);
 }
 
 .lx-list-wrapper:has(.lx-expander > .lx-body > .lx-list) .lx-list:not(:empty):not(:has(.list-draggable-area:empty)),

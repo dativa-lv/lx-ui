@@ -345,23 +345,27 @@ svg .lx-shade {
 }
 
 .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge {
-  padding-right: var(--space-0);
-  padding-left: var(--space-0);
   margin-right: var(--space-0500);
+  --color-badge-icon: var(--color-interactive-foreground);
+  --badge-icon-size-s: var(--icon-size-xs);
 }
 
 .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge.lx-pass-protected-badge {
-  background: var(--color-orange);
+  --color-badge-background: var(--color-orange);
+}
+
+.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge.lx-esign-badge {
+  --color-badge-background: var(--color-blue);
 }
 
 .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge.lx-created-using-ai-badge {
-  background: var(--color-purple);
+  --color-badge-background: var(--color-purple);
 }
 
-.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge svg {
-  fill: var(--color-interactive-foreground);
-  height: var(--icon-size-xs);
-  width: var(--icon-size-xs);
+.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge.lx-c2pa-sign-badge {
+  --color-badge-background: var(--color-region);
+  --color-badge-icon: var(--color-blue);
+  border-color: var(--color-blue);
 }
 
 .lx-form-grid>.lx-main>.lx-form-section:first-of-type,
