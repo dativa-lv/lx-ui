@@ -1261,6 +1261,10 @@
   width: 16rem;
 }
 
+.lx-calendar-quarter-inner-wrapper.hovering-range.start-quarter:not(.lx-selected-start-quarter-wrapper)::before {
+  background-color: var(--color-input-selected-range-background);
+}
+
 
 @media (max-width: 640px) {
   .lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.mobile-quarters {

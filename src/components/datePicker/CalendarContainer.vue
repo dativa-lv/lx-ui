@@ -4806,6 +4806,7 @@ if (typeof globalThis !== 'undefined') {
         variant="icon-only"
         :label="displayTexts.todayButton"
         :disabled="disabled || outsideOfToday || onToday"
+        :aria-hidden="disabled || outsideOfToday || onToday"
         @click.stop.prevent="returnToToday"
       />
     </div>
@@ -4858,6 +4859,7 @@ if (typeof globalThis !== 'undefined') {
           :icon="variant === 'full-rows' ? 'caret-up' : 'previous-page'"
           variant="icon-only"
           :disabled="!canSelectPrevious"
+          :aria-hidden="!canSelectPrevious"
           @click.stop.prevent="debouncedPrevious"
         />
 
@@ -5002,6 +5004,11 @@ if (typeof globalThis !== 'undefined') {
                               <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
                               <div
                                 class="lx-calendar-day"
+                                :aria-hidden="
+                                  !isSameMonth(date, month) ||
+                                  !canSelectDate(date, minDateRef, maxDateRef, 'date') ||
+                                  disabled
+                                "
                                 :class="[
                                   { 'lx-other-month': !isSameMonth(date, month) },
                                   {
@@ -5119,7 +5126,7 @@ if (typeof globalThis !== 'undefined') {
                                       <span
                                         v-if="checkForSpecialDate(date, attr.dates)"
                                         class="lx-day-layer-bar"
-                                        :class="['bar-' + attr.barColor]"
+                                        :class="[`bar-${attr.barColor}`]"
                                       ></span>
                                     </template>
                                   </div>
@@ -5141,7 +5148,7 @@ if (typeof globalThis !== 'undefined') {
                                         <li v-if="checkForSpecialDate(date, attr.dates)">
                                           <span
                                             class="lx-day-layer-popper-bar"
-                                            :class="['bar-' + attr.barColor]"
+                                            :class="[`bar-${attr.barColor}`]"
                                           ></span>
 
                                           <div class="lx-row">
@@ -5175,7 +5182,7 @@ if (typeof globalThis !== 'undefined') {
                     <li>
                       <span
                         class="lx-day-layer-popper-bar"
-                        :class="['bar-' + attr.barColor]"
+                        :class="[`bar-${attr.barColor}`]"
                       ></span>
 
                       <div class="lx-row">
@@ -5317,6 +5324,16 @@ if (typeof globalThis !== 'undefined') {
                                 isHoveringMonthRange(month) || isSelectedMonthRange(month),
                             },
                           ]"
+                          :aria-hidden="
+                            (mode !== 'month' &&
+                              !canSelectDate(
+                                new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                minDateRef,
+                                maxDateRef,
+                                'month-year'
+                              )) ||
+                            disabled
+                          "
                           :aria-label="`${capitalizeFirstLetter(month.fullName)}, ${month.year}`"
                           role="cell"
                           :tabindex="isTouchMode ? -1 : isActiveCalendarMonth(month) ? 0 : -1"
@@ -5452,6 +5469,7 @@ if (typeof globalThis !== 'undefined') {
                         class="lx-calendar-year"
                         :class="[
                           { 'other-decade-year': isStartOrEndYear(year, startYear, endYear) },
+
                           {
                             'lx-today': todayDate.getFullYear() === year,
                           },
@@ -5484,6 +5502,22 @@ if (typeof globalThis !== 'undefined') {
                               isHoveringYearRange(year) || isSelectedYearRange(year),
                           },
                         ]"
+                        :aria-hidden="
+                          isStartOrEndYear(year, startYear, endYear) ||
+                          !canSelectDate(
+                            new Date(
+                              year,
+                              selectedMonth !== null && selectedMonth !== undefined
+                                ? selectedMonth
+                                : todayDate.getMonth(),
+                              1
+                            ),
+                            minDateRef,
+                            maxDateRef,
+                            'year'
+                          ) ||
+                          disabled
+                        "
                         :aria-label="year"
                         role="cell"
                         :tabindex="getYearCellTabIndex(year, yearsRowIndex, yearIndex)"
@@ -5613,6 +5647,11 @@ if (typeof globalThis !== 'undefined') {
                             Number(quarterItem) === quarterFromMonth(selectedEndMonth) &&
                             quarter.year === Number(selectedEndYear),
                         },
+                        {
+                          'lx-selected-start-quarter-wrapper':
+                            Number(quarterItem) === quarterFromMonth(selectedStartMonth) &&
+                            quarter.year === Number(selectedStartYear),
+                        },
                       ]"
                     >
                       <div
@@ -5653,6 +5692,16 @@ if (typeof globalThis !== 'undefined') {
                               isSelectedQuarterRange(quarter.year, Number(quarterItem)),
                           },
                         ]"
+                        :aria-hidden="
+                          !isQuarterValid(
+                            {
+                              year: quarter.year,
+                              quarter: quarterItem,
+                            },
+                            minDateRef,
+                            maxDateRef
+                          )
+                        "
                         :aria-label="quarterItem"
                         role="cell"
                         :tabindex="
@@ -5772,6 +5821,7 @@ if (typeof globalThis !== 'undefined') {
           :icon="variant === 'full-rows' ? 'caret-down' : 'next-page'"
           variant="icon-only"
           :disabled="!canSelectNext"
+          :aria-hidden="!canSelectNext"
           @click.stop.prevent="debouncedNext"
         />
       </div>
@@ -5819,6 +5869,7 @@ if (typeof globalThis !== 'undefined') {
                       'lx-active': isSelectedTimeValue(column, item.value),
                       'is-disabled': !isTimeValueSelectable(column, item.value),
                     }"
+                    :aria-hidden="!isTimeValueSelectable(column, item.value)"
                     :tabindex="getTimeItemTabIndex(column, item)"
                     :disabled="!isTimeValueSelectable(column, item.value)"
                     :data-column="column"
@@ -5896,6 +5947,7 @@ if (typeof globalThis !== 'undefined') {
             : 'default'
         "
         :disabled="doNotIndicateStartDisableState"
+        :aria-hidden="doNotIndicateStartDisableState"
         @click.stop.prevent="handleDoNotIndicateStart"
       />
 
@@ -5910,6 +5962,7 @@ if (typeof globalThis !== 'undefined') {
             : 'default'
         "
         :disabled="clearButtonDisableState"
+        :aria-hidden="clearButtonDisableState"
         @click="handleClearButtonClick"
       />
 
@@ -5925,6 +5978,7 @@ if (typeof globalThis !== 'undefined') {
             : 'default'
         "
         :disabled="doNotIndicateEndDisableState"
+        :aria-hidden="doNotIndicateEndDisableState"
         @click.stop.prevent="handleDoNotIndicateEnd"
       />
     </div>
