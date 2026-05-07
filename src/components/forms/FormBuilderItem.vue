@@ -383,7 +383,7 @@ function handleModalActionClick(action, name) {
   <!-- TODO: if type number / decimal / integer then conferToString - false -->
   <LxTextInput
     v-if="selectedComponent === 'textInputDefault'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :mask="
       stringNumberMask(
         displaySchema?.properties[name]?.lx?.mask,
@@ -408,7 +408,7 @@ function handleModalActionClick(action, name) {
   />
   <LxTextArea
     v-else-if="selectedComponent === 'textArea'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :maxlength="displaySchema?.properties[name]?.maxLength"
     :placeholder="examplesValue(displaySchema?.properties[name])"
     :rows="displaySchema?.properties[name]?.lx?.rows"
@@ -423,7 +423,7 @@ function handleModalActionClick(action, name) {
   />
   <LxDateTimePicker
     v-else-if="selectedComponent === 'dateTimePicker'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :kind="
       displaySchema?.properties[name]?.format === 'date-time'
         ? 'dateTime'
@@ -449,7 +449,7 @@ function handleModalActionClick(action, name) {
   />
   <LxTextInput
     v-else-if="selectedComponent === 'textInputInteger'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     mask="integer"
     :maxlength="displaySchema?.properties[name]?.maxLength"
     :kind="displaySchema?.properties[name]?.lx?.kind"
@@ -467,7 +467,7 @@ function handleModalActionClick(action, name) {
   />
   <LxToggle
     v-else-if="selectedComponent === 'toggle'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :size="displaySchema?.properties[name]?.lx?.size"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
     :tooltip="displaySchema?.properties[name]?.lx?.tooltip"
@@ -494,7 +494,7 @@ function handleModalActionClick(action, name) {
   </LxToggle>
   <LxValuePicker
     v-else-if="selectedComponent === 'valuePicker'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :selectionKind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
     :items="
       displaySchema?.properties[name]?.lx?.items || enumToObject(displaySchema?.properties[name])
@@ -835,7 +835,7 @@ function handleModalActionClick(action, name) {
         { id: 'remove', name: 'remove', icon: 'remove-item', destructive: true },
       ]"
       @action-click="deleteObject(name)"
-      @click="openObjectModal(id + '-' + name, name)"
+      @click="openObjectModal(`${id}-${name}`, name)"
     />
 
     <LxButton
@@ -843,9 +843,9 @@ function handleModalActionClick(action, name) {
       :label="texts?.addObject"
       icon="add-item"
       kind="ghost"
-      @click="openObjectModal(id + '-' + name, name)"
+      @click="openObjectModal(`${id}-${name}`, name)"
     />
-    <LxModal :id="id + '-' + name" :ref="(el) => (modalRefs[id + '-' + name] = el)">
+    <LxModal :id="`${id}-${name}`" :ref="(el) => (modalRefs[`${id}-${name}`] = el)">
       <LxForm
         :showHeader="false"
         :showFooter="false"
@@ -1293,7 +1293,7 @@ function handleModalActionClick(action, name) {
       </template>
     </LxList>
     <LxModal
-      :ref="(el) => (modalRefs[id + '-' + name] = el)"
+      :ref="(el) => (modalRefs[`${id}-${name}`] = el)"
       :actionDefinitions="getActions"
       @close="newObject = false"
       @actionClick="handleModalActionClick($event, name)"
@@ -1331,7 +1331,7 @@ function handleModalActionClick(action, name) {
               :signed="itemValue?.lx?.signed"
               :readOnly="isReadOnly(itemValue)"
               :custom-mask-value="itemValue?.lx?.customMaskValue"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxTextArea
               v-if="componentSelect(itemValue, itemName) === 'textArea'"
@@ -1342,7 +1342,7 @@ function handleModalActionClick(action, name) {
               :disabled="itemValue?.lx?.disabled"
               :tooltip="itemValue?.lx?.tooltip"
               :readOnly="isReadOnly(itemValue)"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxTextInput
               v-else-if="componentSelect(itemValue, itemName) === 'textInputInteger'"
@@ -1357,7 +1357,7 @@ function handleModalActionClick(action, name) {
               :placeholder="examplesValue(itemValue)"
               :signed="itemValue?.lx?.signed"
               :readOnly="isReadOnly(itemValue)"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxToggle
               v-else-if="componentSelect(itemValue, itemName) === 'toggle'"
@@ -1365,7 +1365,7 @@ function handleModalActionClick(action, name) {
               :disabled="itemValue?.lx?.disabled"
               :tooltip="itemValue?.lx?.tooltip"
               :readOnly="isReadOnly(itemValue)"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxDateTimePicker
               v-else-if="componentSelect(itemValue, itemName) === 'dateTimePicker'"
@@ -1384,7 +1384,7 @@ function handleModalActionClick(action, name) {
               :variant="itemValue?.lx?.variant"
               :texts="itemValue?.lx?.texts"
               :readOnly="isReadOnly(itemValue)"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxValuePicker
               v-else-if="componentSelect(itemValue, itemName) === 'valuePicker'"
@@ -1408,7 +1408,7 @@ function handleModalActionClick(action, name) {
               :has-select-all="itemValue?.lx?.hasSelectAll"
               :search-attributes="itemValue?.lx?.searchAttributes"
               :read-only-render-type="itemValue?.lx?.readOnlyRenderType"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             >
               <template #customItem="customItem" v-if="itemValue?.lx?.hasCustomItems === 'default'">
                 <LxStack
@@ -1498,7 +1498,7 @@ function handleModalActionClick(action, name) {
             </LxValuePicker>
             <LxAppendableList
               v-else-if="componentSelect(itemValue, itemName) === 'appendableList'"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             >
               <template #customItem="{ item, index }">
                 <template
@@ -1515,7 +1515,7 @@ function handleModalActionClick(action, name) {
                     :rowSpan="appendableItem?.lx?.rowSpan"
                     :columnSpan="appendableItem?.lx?.columnSpan"
                     :required="appendableListRequiredRow(row?.items?.required, appendableItemName)"
-                    :inputId="name + '-' + appendableItemName + '-' + index"
+                    :inputId="`${name}-${appendableItemName}-${index}`"
                     :action-definitions="appendableItem?.lx?.actionDefinitions"
                     @action-click="
                       (a, b, c) => rowActionClicked(b, c, `${name}.${appendableItemName}`, index)
@@ -1525,7 +1525,7 @@ function handleModalActionClick(action, name) {
                       v-if="
                         componentSelect(appendableItem, appendableItemName) === 'textInputDefault'
                       "
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :mask="stringNumberMask(appendableItem?.lx?.mask, appendableItem?.type)"
                       :maxlength="appendableItem?.maxLength"
                       :kind="appendableItem?.lx?.kind"
@@ -1542,7 +1542,7 @@ function handleModalActionClick(action, name) {
                     />
                     <LxTextArea
                       v-else-if="componentSelect(appendableItem, appendableItemName) === 'textArea'"
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :maxlength="appendableItem?.maxLength"
                       :placeholder="examplesValue(appendableItem)"
                       :rows="appendableItem?.lx?.rows"
@@ -1556,7 +1556,7 @@ function handleModalActionClick(action, name) {
                       v-else-if="
                         componentSelect(appendableItem, appendableItemName) === 'dateTimePicker'
                       "
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :kind="
                         appendableItem?.format === 'date-time' ? 'dateTime' : appendableItem?.format
                       "
@@ -1580,7 +1580,7 @@ function handleModalActionClick(action, name) {
                       v-else-if="
                         componentSelect(appendableItem, appendableItemName) === 'textInputInteger'
                       "
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       mask="integer"
                       :maxlength="appendableItem?.maxLength"
                       :kind="appendableItem?.lx?.kind"
@@ -1595,7 +1595,7 @@ function handleModalActionClick(action, name) {
                     />
                     <LxToggle
                       v-else-if="componentSelect(appendableItem, appendableItemName) === 'toggle'"
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :size="appendableItem?.lx?.size"
                       :disabled="appendableItem?.lx?.disabled"
                       :tooltip="appendableItem?.lx?.tooltip"
@@ -1608,7 +1608,7 @@ function handleModalActionClick(action, name) {
                       v-else-if="
                         componentSelect(appendableItem, appendableItemName) === 'valuePicker'
                       "
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :selectionKind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
                       :items="appendableItem?.lx?.items || enumToObject(appendableItem)"
                       :id-attribute="appendableItem?.lx?.idAttribute"
@@ -1817,7 +1817,7 @@ function handleModalActionClick(action, name) {
       </template>
     </LxDataGrid>
     <LxModal
-      :ref="(el) => (modalRefs[id + '-' + name] = el)"
+      :ref="(el) => (modalRefs[`${id}-${name}`] = el)"
       :actionDefinitions="getActions"
       @close="newObject = false"
       @actionClick="handleModalActionClick($event, name)"
@@ -1855,7 +1855,7 @@ function handleModalActionClick(action, name) {
               :signed="itemValue?.lx?.signed"
               :readOnly="isReadOnly(itemValue)"
               :custom-mask-value="itemValue?.lx?.customMaskValue"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxTextArea
               v-if="componentSelect(itemValue, itemName) === 'textArea'"
@@ -1866,7 +1866,7 @@ function handleModalActionClick(action, name) {
               :disabled="itemValue?.lx?.disabled"
               :tooltip="itemValue?.lx?.tooltip"
               :readOnly="isReadOnly(itemValue)"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxTextInput
               v-else-if="componentSelect(itemValue, itemName) === 'textInputInteger'"
@@ -1881,7 +1881,7 @@ function handleModalActionClick(action, name) {
               :placeholder="examplesValue(itemValue)"
               :signed="itemValue?.lx?.signed"
               :readOnly="isReadOnly(itemValue)"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxToggle
               v-else-if="componentSelect(itemValue, itemName) === 'toggle'"
@@ -1889,7 +1889,7 @@ function handleModalActionClick(action, name) {
               :disabled="itemValue?.lx?.disabled"
               :tooltip="itemValue?.lx?.tooltip"
               :readOnly="isReadOnly(itemValue)"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxDateTimePicker
               v-else-if="componentSelect(itemValue, itemName) === 'dateTimePicker'"
@@ -1908,7 +1908,7 @@ function handleModalActionClick(action, name) {
               :variant="itemValue?.lx?.variant"
               :texts="itemValue?.lx?.texts"
               :readOnly="isReadOnly(itemValue)"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             />
             <LxValuePicker
               v-else-if="componentSelect(itemValue, itemName) === 'valuePicker'"
@@ -1932,7 +1932,7 @@ function handleModalActionClick(action, name) {
               :has-select-all="itemValue?.lx?.hasSelectAll"
               :search-attributes="itemValue?.lx?.searchAttributes"
               :read-only-render-type="itemValue?.lx?.readOnlyRenderType"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             >
               <template #customItem="customItem" v-if="itemValue?.lx?.hasCustomItems === 'default'">
                 <LxStack
@@ -2022,7 +2022,7 @@ function handleModalActionClick(action, name) {
             </LxValuePicker>
             <LxAppendableList
               v-else-if="componentSelect(itemValue, itemName) === 'appendableList'"
-              v-model="arrayModelValue[id + '-' + name][itemName]"
+              v-model="arrayModelValue[`${id}-${name}`][itemName]"
             >
               <template #customItem="{ item, index }">
                 <template
@@ -2039,7 +2039,7 @@ function handleModalActionClick(action, name) {
                     :rowSpan="appendableItem?.lx?.rowSpan"
                     :columnSpan="appendableItem?.lx?.columnSpan"
                     :required="appendableListRequiredRow(row?.items?.required, appendableItemName)"
-                    :inputId="name + '-' + appendableItemName + '-' + index"
+                    :inputId="`${name}-${appendableItemName}-${index}`"
                     :action-definitions="appendableItem?.lx?.actionDefinitions"
                     @action-click="
                       (a, b, c) => rowActionClicked(b, c, `${name}.${appendableItemName}`, index)
@@ -2049,7 +2049,7 @@ function handleModalActionClick(action, name) {
                       v-if="
                         componentSelect(appendableItem, appendableItemName) === 'textInputDefault'
                       "
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :mask="stringNumberMask(appendableItem?.lx?.mask, appendableItem?.type)"
                       :maxlength="appendableItem?.maxLength"
                       :kind="appendableItem?.lx?.kind"
@@ -2066,7 +2066,7 @@ function handleModalActionClick(action, name) {
                     />
                     <LxTextArea
                       v-else-if="componentSelect(appendableItem, appendableItemName) === 'textArea'"
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :maxlength="appendableItem?.maxLength"
                       :placeholder="examplesValue(appendableItem)"
                       :rows="appendableItem?.lx?.rows"
@@ -2080,7 +2080,7 @@ function handleModalActionClick(action, name) {
                       v-else-if="
                         componentSelect(appendableItem, appendableItemName) === 'dateTimePicker'
                       "
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :kind="
                         appendableItem?.format === 'date-time' ? 'dateTime' : appendableItem?.format
                       "
@@ -2104,7 +2104,7 @@ function handleModalActionClick(action, name) {
                       v-else-if="
                         componentSelect(appendableItem, appendableItemName) === 'textInputInteger'
                       "
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       mask="integer"
                       :maxlength="appendableItem?.maxLength"
                       :kind="appendableItem?.lx?.kind"
@@ -2119,7 +2119,7 @@ function handleModalActionClick(action, name) {
                     />
                     <LxToggle
                       v-else-if="componentSelect(appendableItem, appendableItemName) === 'toggle'"
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :size="appendableItem?.lx?.size"
                       :disabled="appendableItem?.lx?.disabled"
                       :tooltip="appendableItem?.lx?.tooltip"
@@ -2134,7 +2134,7 @@ function handleModalActionClick(action, name) {
                       v-else-if="
                         componentSelect(appendableItem, appendableItemName) === 'valuePicker'
                       "
-                      :id="name + '-' + appendableItemName + '-' + index"
+                      :id="`${name}-${appendableItemName}-${index}`"
                       :selectionKind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
                       :items="appendableItem?.lx?.items || enumToObject(appendableItem)"
                       :id-attribute="appendableItem?.lx?.idAttribute"
@@ -2288,7 +2288,7 @@ function handleModalActionClick(action, name) {
           :rowSpan="appendableItem?.lx?.rowSpan"
           :columnSpan="appendableItem?.lx?.columnSpan"
           :required="appendableListRequiredRow(row?.items?.required, appendableItemName)"
-          :inputId="name + '-' + appendableItemName + '-' + index"
+          :inputId="`${name}-${appendableItemName}-${index}`"
           :action-definitions="appendableItem?.lx?.actionDefinitions"
           @action-click="
             (a, b, c) => rowActionClicked(b, c, `${name}.${appendableItemName}`, index)
@@ -2296,7 +2296,7 @@ function handleModalActionClick(action, name) {
         >
           <LxTextInput
             v-if="componentSelect(appendableItem, appendableItemName) === 'textInputDefault'"
-            :id="name + '-' + appendableItemName + '-' + index"
+            :id="`${name}-${appendableItemName}-${index}`"
             :mask="stringNumberMask(appendableItem?.lx?.mask, appendableItem?.type)"
             :maxlength="appendableItem?.maxLength"
             :kind="appendableItem?.lx?.kind"
@@ -2313,7 +2313,7 @@ function handleModalActionClick(action, name) {
           />
           <LxTextArea
             v-else-if="componentSelect(appendableItem, appendableItemName) === 'textArea'"
-            :id="name + '-' + appendableItemName + '-' + index"
+            :id="`${name}-${appendableItemName}-${index}`"
             :maxlength="appendableItem?.maxLength"
             :placeholder="examplesValue(appendableItem)"
             :rows="appendableItem?.lx?.rows"
@@ -2325,7 +2325,7 @@ function handleModalActionClick(action, name) {
           />
           <LxDateTimePicker
             v-else-if="componentSelect(appendableItem, appendableItemName) === 'dateTimePicker'"
-            :id="name + '-' + appendableItemName + '-' + index"
+            :id="`${name}-${appendableItemName}-${index}`"
             :kind="appendableItem?.format === 'date-time' ? 'dateTime' : appendableItem?.format"
             :placeholder="examplesValue(appendableItem)"
             :tooltip="appendableItem?.lx?.tooltip"
@@ -2345,7 +2345,7 @@ function handleModalActionClick(action, name) {
           />
           <LxTextInput
             v-else-if="componentSelect(appendableItem, appendableItemName) === 'textInputInteger'"
-            :id="name + '-' + appendableItemName + '-' + index"
+            :id="`${name}-${appendableItemName}-${index}`"
             mask="integer"
             :maxlength="appendableItem?.maxLength"
             :kind="appendableItem?.lx?.kind"
@@ -2360,7 +2360,7 @@ function handleModalActionClick(action, name) {
           />
           <LxToggle
             v-else-if="componentSelect(appendableItem, appendableItemName) === 'toggle'"
-            :id="name + '-' + appendableItemName + '-' + index"
+            :id="`${name}-${appendableItemName}-${index}`"
             :size="appendableItem?.lx?.size"
             :disabled="appendableItem?.lx?.disabled"
             :tooltip="appendableItem?.lx?.tooltip"
@@ -2371,7 +2371,7 @@ function handleModalActionClick(action, name) {
           </LxToggle>
           <LxValuePicker
             v-else-if="componentSelect(appendableItem, appendableItemName) === 'valuePicker'"
-            :id="name + '-' + appendableItemName + '-' + index"
+            :id="`${name}-${appendableItemName}-${index}`"
             :selectionKind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
             :items="appendableItem?.lx?.items || enumToObject(appendableItem)"
             :id-attribute="appendableItem?.lx?.idAttribute"
@@ -2593,7 +2593,7 @@ function handleModalActionClick(action, name) {
 
   <LxAutoComplete
     v-else-if="selectedComponent === 'autoComplete'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :items="displaySchema?.properties[name]?.lx?.items"
     :idAttribute="displaySchema?.properties[name]?.lx?.idAttribute"
     :nameAttribute="displaySchema?.properties[name]?.lx?.nameAttribute"
@@ -2622,7 +2622,7 @@ function handleModalActionClick(action, name) {
   />
   <LxButton
     v-else-if="selectedComponent === 'button'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :label="model[name]?.label || model[name] || displaySchema?.properties[name]?.lx?.label"
     :title="
       displaySchema?.properties[name]?.type === 'object'
@@ -2723,7 +2723,7 @@ function handleModalActionClick(action, name) {
   />
   <LxCamera
     v-else-if="selectedComponent === 'camera'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :cameraSwitcherMode="displaySchema?.properties[name]?.lx?.cameraSwitcherMode"
     :hasFlashlightToggle="displaySchema?.properties[name]?.lx?.hasFlashlightToggle"
     :imageSize="displaySchema?.properties[name]?.lx?.imageSize"
@@ -2734,7 +2734,7 @@ function handleModalActionClick(action, name) {
   />
   <LxCheckbox
     v-else-if="selectedComponent === 'checkbox'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :groupId="displaySchema?.properties[name]?.lx?.groupId"
     :label="displaySchema?.properties[name]?.lx?.label"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
@@ -2746,7 +2746,7 @@ function handleModalActionClick(action, name) {
   />
   <LxContentSwitcher
     v-else-if="selectedComponent === 'contentSwitcher'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :items="displaySchema?.properties[name]?.lx?.items"
     :idAttribute="displaySchema?.properties[name]?.lx?.idAttribute"
     :nameAttribute="displaySchema?.properties[name]?.lx?.nameAttribute"
@@ -2761,7 +2761,7 @@ function handleModalActionClick(action, name) {
   />
   <LxDataVisualizer
     v-else-if="selectedComponent === 'dataVisualizer'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :kind="
       displaySchema?.properties[name]?.type === 'object'
         ? model[name]?.kind
@@ -2827,7 +2827,7 @@ function handleModalActionClick(action, name) {
   />
   <LxDateTimeRange
     v-else-if="selectedComponent === 'dateTimeRange' && model[name]"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     v-model:startDate="model[name].startDate"
     v-model:endDate="model[name].endDate"
     :kind="
@@ -2860,7 +2860,7 @@ function handleModalActionClick(action, name) {
     "
   >
     <LxButton
-      :id="id + '-' + name"
+      :id="`${id}-${name}`"
       :label="model[name]?.label || model[name] || displaySchema?.properties[name]?.lx?.label"
       :title="
         displaySchema?.properties[name]?.type === 'object'
@@ -2985,7 +2985,7 @@ function handleModalActionClick(action, name) {
 
   <LxFileUploader
     v-else-if="selectedComponent === 'file'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :selectionKind="displaySchema?.properties[name]?.lx?.selectionKind"
     :mode="displaySchema?.properties[name]?.lx?.mode"
     :draggable="displaySchema?.properties[name]?.lx?.draggable"
@@ -3013,7 +3013,7 @@ function handleModalActionClick(action, name) {
   />
   <LxFileViewer
     v-else-if="selectedComponent === 'fileViewer'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :scrollable="displaySchema?.properties[name]?.lx?.scrollable"
     :width="displaySchema?.properties[name]?.lx?.width"
     :height="displaySchema?.properties[name]?.lx?.height"
@@ -3107,7 +3107,7 @@ function handleModalActionClick(action, name) {
 
   <LxMap
     v-else-if="selectedComponent === 'map'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :baseLayerDefinitions="model[name].baseLayerDefinitions"
     v-model:selectedBaseLayer="model[name].selectedBaseLayer"
     :overlayLayerDefinitions="model[name].overlayLayerDefinitions"
@@ -3124,7 +3124,7 @@ function handleModalActionClick(action, name) {
   />
   <LxMarkdownTextArea
     v-else-if="selectedComponent === 'markdownTextArea'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :placeholder="examplesValue(displaySchema?.properties[name])"
     :rows="displaySchema?.properties[name]?.lx?.rows"
     :maxlength="displaySchema?.properties[name]?.maxLength"
@@ -3151,7 +3151,7 @@ function handleModalActionClick(action, name) {
   />
   <LxNumberSlider
     v-else-if="selectedComponent === 'numberSlider'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :min="displaySchema?.properties[name]?.lx?.min"
     :max="displaySchema?.properties[name]?.lx?.max"
     :step="displaySchema?.properties[name]?.lx?.step"
@@ -3165,6 +3165,7 @@ function handleModalActionClick(action, name) {
     v-else-if="selectedComponent === 'personDisplay'"
     :value="model?.[name]"
     :name="displaySchema?.properties[name]?.lx?.name"
+    :kind="displaySchema?.properties[name]?.lx?.kind"
     :size="displaySchema?.properties[name]?.lx?.size"
     :variant="displaySchema?.properties[name]?.lx?.variant"
     :description="displaySchema?.properties[name]?.lx?.description"
@@ -3186,7 +3187,7 @@ function handleModalActionClick(action, name) {
   />
   <LxQr
     v-else-if="selectedComponent === 'qr'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :value="model?.[name]?.value || model?.[name] || displaySchema?.properties[name]?.lx?.value"
     :size="
       displaySchema?.properties[name]?.type === 'object'
@@ -3201,7 +3202,7 @@ function handleModalActionClick(action, name) {
   />
   <LxQrScanner
     v-else-if="selectedComponent === 'qrScanner'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :formats="model?.[name]?.formats || displaySchema?.properties[name]?.lx?.formats"
     :hasFileUploader="
       model?.[name]?.hasFileUploader || displaySchema?.properties[name]?.lx?.hasFileUploader
@@ -3232,7 +3233,7 @@ function handleModalActionClick(action, name) {
   />
   <LxRichTextDisplay
     v-else-if="selectedComponent === 'richTextDisplay'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :value="model?.[name]?.value || model?.[name] || displaySchema?.properties[name]?.lx?.value"
     :loading="
       displaySchema?.properties[name]?.type === 'object'
@@ -3251,7 +3252,7 @@ function handleModalActionClick(action, name) {
   />
   <LxSteps
     v-else-if="selectedComponent === 'steps'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :items="displaySchema?.properties[name]?.lx?.items"
     :kind="displaySchema?.properties[name]?.lx?.kind"
     :idAttribute="displaySchema?.properties[name]?.lx?.idAttribute"
@@ -3265,7 +3266,7 @@ function handleModalActionClick(action, name) {
   />
   <LxVisualPicker
     v-else-if="selectedComponent === 'visualPicker'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :kind="displaySchema?.properties[name]?.lx?.kind"
     :mode="displaySchema?.properties[name]?.lx?.mode"
     :selectionKind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
@@ -3277,7 +3278,7 @@ function handleModalActionClick(action, name) {
 
   <LxDayInput
     v-else-if="selectedComponent === 'dayInput'"
-    :id="id + '-' + name"
+    :id="`${id}-${name}`"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :kind="displaySchema?.properties[name]?.lx?.kind"

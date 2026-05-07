@@ -8,7 +8,7 @@ import LxAvatar from '@/components/Avatar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxBadge from '@/components/Badge.vue';
-import { shortenUserName, safeString } from '@/utils/stringUtils';
+import { shortenUserName } from '@/utils/stringUtils';
 import {
   getDisplayTexts,
   sessionEndsInText,
@@ -20,6 +20,7 @@ const props = defineProps({
   mode: { type: String, default: 'default' },
   userInfo: { type: Object, default: null }, // firstName, lastName, description, role, institution
   hasAvatar: { type: Boolean, default: false },
+  avatarKind: { type: String, default: null }, // default, initials
   alternativeProfilesInfo: { type: Array, default: null },
   contextPersonsInfo: { type: Array, default: () => [] },
   selectedContextPerson: { type: Object, default: null },
@@ -872,7 +873,12 @@ const loginButtonKind = computed(() => {
             />
           </div>
 
-          <LxAvatar v-if="hasAvatar" :value="safeString(fullName)" />
+          <LxAvatar
+            v-if="hasAvatar"
+            :value="fullName"
+            :initialsValue="fullName"
+            :kind="avatarKind"
+          />
 
           <div class="lx-user-info">
             <div class="lx-primary">
@@ -890,7 +896,7 @@ const loginButtonKind = computed(() => {
         <template #panel>
           <div class="user-menu-panel" :class="[{ 'has-timeout': hasSessionTimeoutBadge }]">
             <div class="lx-region user-menu-context">
-              <LxAvatar size="xl" :value="safeString(fullName)" />
+              <LxAvatar size="xl" :value="fullName" :initialsValue="fullName" :kind="avatarKind" />
               <div class="lx-data">{{ fullName }}</div>
               <div class="lx-description" v-if="userInfo?.description">
                 {{ userInfo?.description }}

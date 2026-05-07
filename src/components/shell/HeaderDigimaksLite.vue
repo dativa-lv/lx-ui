@@ -17,10 +17,12 @@ import LxBadge from '@/components/Badge.vue';
 
 import { shortenUserName } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import useLx from '@/hooks/useLx';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
   userInfo: { type: Object, default: null }, // firstName, lastName, description, role, institution
+  avatarKind: { type: String, default: null }, // default, initials
   alternativeProfilesInfo: { type: Array, default: null },
   selectedAlternativeProfile: { type: Object, default: null },
   contextPersonsInfo: { type: Array, default: () => [] },
@@ -121,6 +123,9 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const resolvedKind = computed(
+  () => props.avatarKind || useLx().getGlobals()?.avatarKind || 'initials'
+);
 
 const emits = defineEmits([
   'nav-toggle',
@@ -712,7 +717,12 @@ provide('insideHeader', insideHeader);
             </div>
 
             <div class="lx-user-menu-display" v-if="userInfo">
-              <LxAvatar />
+              <LxAvatar
+                :value="fullName"
+                :initialsValue="fullName"
+                :kind="resolvedKind"
+                size="xl"
+              />
               <div>
                 <div class="lx-primary">{{ fullName }}</div>
                 <div class="lx-secondary">{{ userInfo?.description }}</div>

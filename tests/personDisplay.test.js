@@ -42,6 +42,7 @@ describe('LxPersonDisplay', () => {
 
       expect(props.value).toBe(null);
       expect(props.name).toBe(null);
+      expect(props.kind).toBe(null);
       expect(props.size).toBe('m');
       expect(props.variant).toBe('full');
       expect(props.description).toBe(null);
@@ -69,6 +70,7 @@ describe('LxPersonDisplay', () => {
             customName: 'customName',
           },
           name: 'Custom name',
+          kind: 'initials',
           size: 's',
           variant: 'icon-only',
           description: 'Custom description',
@@ -112,6 +114,7 @@ describe('LxPersonDisplay', () => {
         })
         .toBeTypeOf('object');
       expect(props.name).toBe('Custom name').toBeTypeOf('string');
+      expect(props.kind).toBe('initials').toBeTypeOf('string');
       expect(props.size).toBe('s').toBeTypeOf('string');
       expect(props.variant).toBe('icon-only').toBeTypeOf('string');
       expect(props.description).toBe('Custom description').toBeTypeOf('string');
@@ -174,6 +177,136 @@ describe('LxPersonDisplay', () => {
       const { name } = innerWrapper.vm;
 
       expect(name).toBe('John Doe');
+    });
+
+    test('string values should use name prop for initials and raw value for avatar color', () => {
+      innerWrapper = mount(LxPersonDisplay, {
+        props: {
+          value: 'user-1',
+          name: 'Jane Smith',
+          kind: 'initials',
+        },
+        global: {
+          provide: {
+            sectionMode: 'none',
+            formMode: 'defaultFormMode',
+            rowRequiredTexts: 'defaultRequiredTexts',
+            sectionColumnCount: 3,
+          },
+        },
+      });
+
+      expect(innerWrapper.vm.name).toBe('Jane Smith');
+      expect(innerWrapper.vm.getAvatarValue('user-1')).toBe('user-1');
+      expect(innerWrapper.vm.getAvatarInitialsValue('user-1')).toBe('Jane Smith');
+      expect(innerWrapper.vm.hasAvatar('user-1')).toBe(true);
+    });
+
+    test('string values without name prop should fall back to user icon', () => {
+      innerWrapper = mount(LxPersonDisplay, {
+        props: {
+          value: 'user-1',
+          kind: 'initials',
+        },
+        global: {
+          provide: {
+            sectionMode: 'none',
+            formMode: 'defaultFormMode',
+            rowRequiredTexts: 'defaultRequiredTexts',
+            sectionColumnCount: 3,
+          },
+        },
+      });
+
+      expect(innerWrapper.vm.getAvatarInitialsValue('user-1')).toBe(null);
+      expect(innerWrapper.vm.hasAvatar('user-1')).toBe(false);
+    });
+
+    test('string values with default kind should use value for initials without name prop', () => {
+      innerWrapper = mount(LxPersonDisplay, {
+        props: {
+          value: 'user-1',
+        },
+        global: {
+          provide: {
+            sectionMode: 'none',
+            formMode: 'defaultFormMode',
+            rowRequiredTexts: 'defaultRequiredTexts',
+            sectionColumnCount: 3,
+          },
+        },
+      });
+
+      expect(innerWrapper.vm.getAvatarInitialsValue('user-1')).toBe('user-1');
+      expect(innerWrapper.vm.hasAvatar('user-1')).toBe(true);
+    });
+
+    test('object values should use name fields for initials and id for avatar color', () => {
+      innerWrapper = mount(LxPersonDisplay, {
+        props: {
+          value: { id: 'user-1', name: 'Jane Example', firstName: 'John', lastName: 'Doe' },
+          name: 'Jane Smith',
+          kind: 'initials',
+        },
+        global: {
+          provide: {
+            sectionMode: 'none',
+            formMode: 'defaultFormMode',
+            rowRequiredTexts: 'defaultRequiredTexts',
+            sectionColumnCount: 3,
+          },
+        },
+      });
+
+      expect(innerWrapper.vm.name).toBe('John Doe');
+      expect(innerWrapper.vm.getAvatarValue(innerWrapper.props().value)).toBe('John Doe');
+      expect(innerWrapper.vm.getAvatarInitialsValue(innerWrapper.props().value)).toBe('John Doe');
+      expect(innerWrapper.vm.hasAvatar(innerWrapper.props().value)).toBe(true);
+    });
+
+    test('object values should use name attribute when first and last names are missing', () => {
+      innerWrapper = mount(LxPersonDisplay, {
+        props: {
+          value: { id: 'user-1', name: 'Jane Example' },
+          name: 'Jane Smith',
+          kind: 'initials',
+        },
+        global: {
+          provide: {
+            sectionMode: 'none',
+            formMode: 'defaultFormMode',
+            rowRequiredTexts: 'defaultRequiredTexts',
+            sectionColumnCount: 3,
+          },
+        },
+      });
+
+      expect(innerWrapper.vm.name).toBe('Jane Example');
+      expect(innerWrapper.vm.getAvatarInitialsValue(innerWrapper.props().value)).toBe(
+        'Jane Example'
+      );
+      expect(innerWrapper.vm.hasAvatar(innerWrapper.props().value)).toBe(true);
+    });
+
+    test('object values without name fields should fall back to user icon', () => {
+      innerWrapper = mount(LxPersonDisplay, {
+        props: {
+          value: { id: 'user-1' },
+          kind: 'initials',
+        },
+        global: {
+          provide: {
+            sectionMode: 'none',
+            formMode: 'defaultFormMode',
+            rowRequiredTexts: 'defaultRequiredTexts',
+            sectionColumnCount: 3,
+          },
+        },
+      });
+
+      expect(innerWrapper.vm.getAvatarValue(innerWrapper.props().value)).toBe('user-1');
+      expect(innerWrapper.vm.getAvatarInitialsValue(innerWrapper.props().value)).toBe(null);
+      expect(innerWrapper.vm.hasAvatar(innerWrapper.props().value)).toBe(false);
     });
 
     test('showMultiple should return true for multiple values', () => {

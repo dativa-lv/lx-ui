@@ -1650,6 +1650,7 @@ modelValue:
     lx: {
       displayType: 'personDisplay'
       name: 'Name Surname',
+      kind: 'default',
       size: 'm',
       variant: 'full',
       description: 'Admin',

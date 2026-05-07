@@ -88,6 +88,7 @@ function listDisplayText(itemValue, item, itemName) {
     v-else-if="itemValue?.lx?.displayType === 'personDisplay'"
     :value="item?.[itemName]?.value || item?.[itemName] || itemValue?.lx?.value"
     :name="item?.[itemName]?.name || itemValue?.lx?.name"
+    :kind="item?.[itemName]?.kind || itemValue?.lx?.kind"
     :size="item?.[itemName]?.size || itemValue?.lx?.size"
     :variant="item?.[itemName]?.variant || itemValue?.lx?.variant"
     :description="item?.[itemName]?.description || itemValue?.lx?.description"

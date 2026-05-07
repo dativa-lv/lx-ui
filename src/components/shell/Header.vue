@@ -18,6 +18,7 @@ const props = defineProps({
   pageLabel: { type: String, default: null },
   userInfo: { type: Object, default: null }, // firstName, lastName, description, role, institution
   hasAvatar: { type: Boolean, default: false },
+  avatarKind: { type: String, default: null }, // default, initials
   kind: { type: String, default: 'default' }, // 'default', 'public', 'latvijalv'
   alternativeProfilesInfo: { type: Array, default: null },
   selectedAlternativeProfile: { type: Object, default: null },
@@ -568,6 +569,7 @@ provide('insideHeader', insideHeader);
         :has-help="hasHelp"
         :headerNavDisable="headerNavDisable"
         :has-avatar="hasAvatar"
+        :avatar-kind="avatarKind"
         :alternative-profiles-info="alternativeProfilesInfo"
         :context-persons-info="contextPersonsInfo"
         :hasMegaMenu="hasMegaMenu"
@@ -644,6 +646,7 @@ provide('insideHeader', insideHeader);
       :has-login-button="hasLoginButton"
       :headerNavDisable="headerNavDisable"
       :has-avatar="hasAvatar"
+      :avatar-kind="avatarKind"
       :alternative-profiles-info="alternativeProfilesInfo"
       :context-persons-info="contextPersonsInfo"
       :hasMegaMenu="hasMegaMenu"

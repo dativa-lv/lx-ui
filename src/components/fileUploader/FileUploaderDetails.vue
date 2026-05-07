@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
-import { safeString } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
@@ -238,7 +237,7 @@ const nomalizedIconAndType = computed(() => {
               }"
             >
               <div v-if="nameAndSurname" class="lx-avatar-wrapper">
-                <LxAvatar :value="safeString(nameAndSurname)" size="m" />
+                <LxAvatar :value="nameAndSurname" :initialsValue="nameAndSurname" size="m" />
               </div>
 
               <div v-else class="lx-default-icon-wrapper">

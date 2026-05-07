@@ -123,6 +123,7 @@ const props = defineProps({
   hideNavBar: { type: Boolean, default: false },
   userInfo: { type: Object, default: null }, // firstName, lastName, description
   hasAvatar: { type: Boolean, default: false },
+  avatarKind: { type: String, default: null }, // default, initials
   alternativeProfilesInfo: { type: Array, default: null },
   selectedAlternativeProfile: { type: Object, default: null },
   contextPersonsInfo: { type: Array, default: null },
@@ -1251,6 +1252,8 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :has-language-picker="hasLanguagePicker"
           :languages="languages"
           :has-help="hasHelp"
+          :has-avatar="hasAvatar"
+          :avatar-kind="avatarKind"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"
           :environment="environment"
@@ -1390,6 +1393,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :has-language-picker="hasLanguagePicker"
           :languages="languages"
           :has-help="hasHelp"
+          :has-avatar="hasAvatar"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"
           :environment="environment"
@@ -1553,6 +1557,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :environment="environment"
           :headerNavDisable="headerNavDisable"
           :has-avatar="hasAvatar"
+          :avatar-kind="avatarKind"
           kind="public"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
@@ -1725,6 +1730,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :environment="environment"
           :headerNavDisable="headerNavDisable"
           :has-avatar="hasAvatar"
+          :avatar-kind="avatarKind"
           kind="latvijalv"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
@@ -2084,6 +2090,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         <LxMainHeaderDigivesLite
           :userInfo="userInfo"
           :hasAvatar="hasAvatar"
+          :avatar-kind="avatarKind"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
           :nav-items="navItems"
@@ -2201,6 +2208,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :selectedNavItems="navItemsSelected"
           :userInfo="userInfo"
           :hasAvatar="hasAvatar"
+          :avatar-kind="avatarKind"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
           :texts="displayTexts"
@@ -2361,6 +2369,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
       <header ref="header">
         <LxMainHeaderDigimaks
           :userInfo="userInfo"
+          :avatar-kind="avatarKind"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
           :nav-items="navItems"
@@ -2438,6 +2447,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
       <header ref="header">
         <LxMainHeaderDigimaksLite
           :userInfo="userInfo"
+          :avatar-kind="avatarKind"
           :alternativeProfilesInfo="alternativeProfilesInfo"
           :contextPersonsInfo="contextPersonsInfo"
           :navItems="navItems"
@@ -2521,6 +2531,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           :userInfo="userInfo"
           :has-avatar="hasAvatar"
+          :avatar-kind="avatarKind"
           :nav-items="navItems"
           :nav-bar-switch="navBarSwitchBasic"
           :hideNavBar="hideNavBar"
@@ -2737,6 +2748,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           :userInfo="userInfo"
           :has-avatar="hasAvatar"
+          :avatar-kind="avatarKind"
           :nav-items="navItems"
           :nav-bar-switch="navBarSwitchBasic"
           :hideNavBar="hideNavBar"

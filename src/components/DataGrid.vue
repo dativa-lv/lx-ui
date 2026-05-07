@@ -1901,6 +1901,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 <div class="lx-cell-person-wrapper">
                   <LxPersonDisplay
                     :value="row[col.attributeName]"
+                    :kind="col.options?.avatarKind"
                     :customAttributes="col.options?.customAttributes"
                     :texts="row[col.attributeName]?.texts || displayTexts.personDisplay"
                     size="s"
@@ -2404,6 +2405,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               <div class="lx-cell-person-wrapper">
                 <LxPersonDisplay
                   :value="item[col.attributeName]"
+                  :kind="col.options?.avatarKind"
                   :customAttributes="col.options?.customAttributes"
                   :texts="item[col.attributeName]?.texts || displayTexts.personDisplay"
                   size="s"

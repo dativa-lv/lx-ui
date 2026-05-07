@@ -11,10 +11,12 @@ import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import { shortenUserName } from '@/utils/stringUtils';
 import LxAvatar from '@/components/Avatar.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import useLx from '@/hooks/useLx';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
   userInfo: { type: Object, default: null }, // firstName, lastName, description, role, institution
+  avatarKind: { type: String, default: null }, // default, initials
   alternativeProfilesInfo: { type: Array, default: null },
   selectedAlternativeProfile: { type: Object, default: null },
   contextPersonsInfo: { type: Array, default: () => [] },
@@ -91,6 +93,9 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const resolvedKind = computed(
+  () => props.avatarKind || useLx().getGlobals()?.avatarKind || 'initials'
+);
 
 const emits = defineEmits([
   'nav-toggle',
@@ -718,7 +723,7 @@ provide('insideHeader', insideHeader);
             </li>
           </ul>
           <div class="lx-user-menu-display" v-if="userInfo">
-            <LxAvatar />
+            <LxAvatar :value="fullName" :initialsValue="fullName" :kind="resolvedKind" size="xl" />
             <div>
               <p class="lx-primary">{{ fullName }}</p>
               <p class="lx-secondary">{{ userInfo?.description }}</p>

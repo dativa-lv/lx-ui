@@ -180,6 +180,28 @@ export function capitalizeFirstLetter(string) {
   return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 }
 
+/**
+ * Extract initials from a full name string.
+ * Supports formats: "name surname", "name name surname", "name surname-surname", "name name surname-surname".
+ * Always returns the first letter of the first name and the first letter of the first part of the last surname.
+ * @param {string} value - The full name string.
+ * @returns {string} - One or two uppercase initials.
+ */
+export function initials(value) {
+  const input = (value || '').trim();
+  if (!input) return '';
+
+  const words = input.split(/\s+/).filter(Boolean);
+  const firstInitial = words[0].charAt(0).toUpperCase();
+
+  if (words.length === 1) return firstInitial;
+
+  const lastWord = words[words.length - 1];
+  const lastInitial = lastWord.split('-')[0].charAt(0).toUpperCase();
+
+  return `${firstInitial}${lastInitial}`;
+}
+
 export function kebabToCamel(kebabStr) {
   return kebabStr
     .split('-')

@@ -1093,6 +1093,60 @@ svg .lx-shade {
   width: 100%;
 }
 
+.lx .lx-avatar-display > .lx-avatar-initials-icon {
+  height: var(--icon-size-s);
+  width: var(--icon-size-s);
+}
+
+.lx .lx-avatar-display.lx-avatar-display-s > .lx-avatar-initials-icon {
+  height: var(--icon-size-xs);
+  width: var(--icon-size-xs);
+}
+
+.lx .lx-avatar-display.lx-avatar-display-l > .lx-avatar-initials-icon {
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
+}
+
+.lx .lx-avatar-display.lx-avatar-display-xl > .lx-avatar-initials-icon {
+  height: var(--icon-size-l);
+  width: var(--icon-size-l);
+}
+
+.lx-avatar-display > .lx-avatar-initials {
+  font-family: var(--font-family-mono);
+  font-size: var(--small-font-size);
+  font-weight: var(--font-weight-data);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.lx-avatar-display.lx-avatar-display-initials-s > .lx-avatar-initials {
+  font-size: 0.875rem;
+}
+
+.lx-avatar-display.lx-avatar-display-initials-m > .lx-avatar-initials {
+  font-size: 1rem;
+}
+
+.lx-avatar-display.lx-avatar-display-initials-l > .lx-avatar-initials {
+  font-size: 1.25rem;
+}
+
+.lx-avatar-display.lx-avatar-display-initials-xl > .lx-avatar-initials {
+  font-size: 2.5rem;
+}
+
+.lx-avatar-display.lx-avatar-display-initials-m,
+.lx-avatar-display.lx-avatar-display-initials-l,
+.lx-avatar-display.lx-avatar-display-initials-xl {
+  padding: var(--space-0250);
+}
+
+.lx-avatar-display.lx-avatar-display-initials-s {
+  padding: var(--space-0125);
+}
+
 .lx-user-icon-displaym
 .lx-person-icon-display {
   border: var(--border-width-1) solid var(--color-region);

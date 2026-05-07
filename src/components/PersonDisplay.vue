@@ -1,97 +1,35 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { safeString } from '@/utils/stringUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxAvatar from '@/components/Avatar.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxRow from '@/components/forms/Row.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import useLx from '@/hooks/useLx';
 
 const props = defineProps({
-  value: {
-    type: [String, Object],
-    default: null,
-  },
-  name: {
-    type: String,
-    default: null,
-  },
-  size: {
-    type: String,
-    default: 'm' /* 's', 'm', 'l' */,
-  },
-  variant: {
-    type: String,
-    default: 'full' /* 'full', 'icon-only'  */,
-  },
-  description: {
-    type: String,
-    default: null,
-  },
-  role: {
-    type: String,
-    default: null,
-  },
-  institution: {
-    type: String,
-    default: null,
-  },
-  icon: {
-    type: String,
-    default: null,
-  },
-  iconSet: {
-    type: String,
-    default: null,
-  },
-  idAttribute: {
-    type: String,
-    default: 'id',
-  },
-  nameAttribute: {
-    type: String,
-    default: 'name',
-  },
-  firstNameAttribute: {
-    type: String,
-    default: 'firstName',
-  },
-  lastNameAttribute: {
-    type: String,
-    default: 'lastName',
-  },
-  descriptionAttribute: {
-    type: String,
-    default: 'description',
-  },
-  roleAttribute: {
-    type: String,
-    default: 'role',
-  },
-  institutionAttribute: {
-    type: String,
-    default: 'institution',
-  },
-  iconAttribute: {
-    type: String,
-    default: 'icon',
-  },
-  iconSetAttribute: {
-    type: String,
-    default: 'iconSet',
-  },
-  maxLength: {
-    type: Number,
-    default: 3,
-  },
-  customAttributes: {
-    type: Array,
-    default: () => [],
-  },
-  customRole: {
-    type: String,
-    default: null,
-  },
+  value: { type: [String, Object], default: null },
+  kind: { type: String, default: null }, // 'default', 'initials'
+  name: { type: String, default: null },
+  size: { type: String, default: 'm' }, // 's', 'm', 'l' */
+  variant: { type: String, default: 'full' }, // 'full', 'icon-only'
+  description: { type: String, default: null },
+  role: { type: String, default: null },
+  institution: { type: String, default: null },
+  icon: { type: String, default: null },
+  iconSet: { type: String, default: null },
+  idAttribute: { type: String, default: 'id' },
+  nameAttribute: { type: String, default: 'name' },
+  firstNameAttribute: { type: String, default: 'firstName' },
+  lastNameAttribute: { type: String, default: 'lastName' },
+  descriptionAttribute: { type: String, default: 'description' },
+  roleAttribute: { type: String, default: 'role' },
+  institutionAttribute: { type: String, default: 'institution' },
+  iconAttribute: { type: String, default: 'icon' },
+  iconSetAttribute: { type: String, default: 'iconSet' },
+  maxLength: { type: Number, default: 3 },
+  customAttributes: { type: Array, default: () => [] },
+  customRole: { type: String, default: null },
   focusable: { type: Boolean, default: true },
   texts: { type: Object, default: () => ({}) },
 });
@@ -110,7 +48,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
-
+const resolvedKind = computed(() => props.kind || useLx().getGlobals()?.avatarKind || 'default');
 const infoWrapperRef = ref(null);
 
 function formatName(val) {
@@ -124,20 +62,46 @@ function formatName(val) {
     return val;
   }
   if (typeof val === 'object') {
-    if (!val[props.nameAttribute]) {
-      if (!val[props.firstNameAttribute] || !val[props.lastNameAttribute]) {
-        return null;
-      }
+    if (
+      resolvedKind.value === 'initials' &&
+      val[props.firstNameAttribute] &&
+      val[props.lastNameAttribute]
+    ) {
       return `${val[props.firstNameAttribute]} ${val[props.lastNameAttribute]}`;
     }
-    return val[props.nameAttribute];
+
+    if (val[props.nameAttribute]) {
+      return val[props.nameAttribute];
+    }
+
+    if (val[props.firstNameAttribute] && val[props.lastNameAttribute]) {
+      return `${val[props.firstNameAttribute]} ${val[props.lastNameAttribute]}`;
+    }
+
+    return null;
   }
   return null;
 }
 
-const name = computed(() =>
-  props.name && typeof props.value !== 'object' ? props.name : formatName(props.value)
-);
+function getObjectAvatarName(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null;
+  }
+
+  if (value[props.firstNameAttribute] && value[props.lastNameAttribute]) {
+    return `${value[props.firstNameAttribute]} ${value[props.lastNameAttribute]}`;
+  }
+
+  return value[props.nameAttribute] || null;
+}
+
+const name = computed(() => {
+  if (typeof props.value === 'string' && props.name) {
+    return props.name;
+  }
+
+  return formatName(props.value);
+});
 
 const showMultiple = computed(() => {
   if (Array.isArray(props.value)) {
@@ -219,29 +183,58 @@ const tooltipItems = computed(() => {
 
 const isEmpty = computed(() => !name.value && !description.value);
 
-function getAvatarKey(value) {
-  if (typeof value === 'string') {
-    if (value) return safeString(value);
-
-    if (props.name) {
-      return safeString(props.name);
-    }
-  }
+function getAvatarValue(value) {
   if (Array.isArray(value)) {
-    return getAvatarKey(value[0]);
+    return getAvatarValue(value[0]);
   }
-  if (typeof value === 'object') {
+
+  if (typeof value === 'string') {
+    return value || null;
+  }
+
+  if (value && typeof value === 'object') {
+    if (
+      resolvedKind.value === 'initials' &&
+      value[props.firstNameAttribute] &&
+      value[props.lastNameAttribute]
+    ) {
+      return `${value[props.firstNameAttribute]} ${value[props.lastNameAttribute]}`;
+    }
+
     if (value[props.idAttribute]) {
-      return safeString(value[props.idAttribute]);
+      return value[props.idAttribute];
     }
     if (value[props.nameAttribute]) {
-      return safeString(value[props.nameAttribute]);
+      return value[props.nameAttribute];
     }
     if (value[props.firstNameAttribute] && value[props.lastNameAttribute]) {
-      return safeString(`${value[props.firstNameAttribute]} ${value[props.lastNameAttribute]}`);
+      return `${value[props.firstNameAttribute]} ${value[props.lastNameAttribute]}`;
     }
   }
   return null;
+}
+
+function getAvatarInitialsValue(value) {
+  if (Array.isArray(value)) {
+    return getAvatarInitialsValue(value[0]);
+  }
+
+  if (typeof value === 'string') {
+    if (resolvedKind.value === 'initials') {
+      return props.name || null;
+    }
+    return value || null;
+  }
+
+  if (value && typeof value === 'object') {
+    return getObjectAvatarName(value);
+  }
+
+  return null;
+}
+
+function hasAvatar(value) {
+  return !!getAvatarValue(value) && !!getAvatarInitialsValue(value);
 }
 
 const showDescription = computed(() => description.value && props.size === 'l');
@@ -284,6 +277,7 @@ defineExpose({ focus, scrollIntoView });
     <div v-if="isEmpty" class="lx-person-display">
       <span class="lx-empty-person-value">—</span>
     </div>
+
     <LxInfoWrapper
       v-else
       ref="infoWrapperRef"
@@ -303,9 +297,15 @@ defineExpose({ focus, scrollIntoView });
         ]"
       >
         <template v-if="!icon">
-          <LxAvatar v-if="name" :value="getAvatarKey(value)" :size="size" />
+          <LxAvatar
+            v-if="hasAvatar(value)"
+            :value="getAvatarValue(value)"
+            :initialsValue="getAvatarInitialsValue(value)"
+            :kind="kind"
+            :size="size"
+          />
           <div
-            v-else-if="description"
+            v-else-if="name || description"
             class="lx-user-icon-display"
             :class="[
               { 'lx-user-icon-display-s': size === 's' },
@@ -345,12 +345,20 @@ defineExpose({ focus, scrollIntoView });
         <template v-for="(item, index) in displayItems" :key="index">
           <template v-if="!item[iconAttribute]">
             <LxAvatar
-              v-if="(item[firstNameAttribute] && item[lastNameAttribute]) || item[nameAttribute]"
-              :value="getAvatarKey(item)"
+              v-if="hasAvatar(item)"
+              :value="getAvatarValue(item)"
+              :initialsValue="getAvatarInitialsValue(item)"
+              :kind="kind"
               :size="size"
             />
+
             <div
-              v-else-if="item[descriptionAttribute]"
+              v-else-if="
+                item[firstNameAttribute] ||
+                item[lastNameAttribute] ||
+                item[nameAttribute] ||
+                item[descriptionAttribute]
+              "
               class="lx-user-icon-display"
               :class="[
                 { 'lx-user-icon-display-s': size === 's' },
@@ -361,6 +369,7 @@ defineExpose({ focus, scrollIntoView });
               <LxIcon value="user" />
             </div>
           </template>
+
           <div
             v-else-if="
               (item[firstNameAttribute] && item[lastNameAttribute]) ||
@@ -377,13 +386,15 @@ defineExpose({ focus, scrollIntoView });
             <LxIcon :value="item[iconAttribute]" :iconSet="item[iconSetAttribute]" :size="size" />
           </div>
         </template>
+
         <div class="overflow" v-if="displayItems.length < filteredValues.length">
           <p>
-            <span :class="[{ plus: filteredValues.length - maxLength >= 10 }]">+</span
-            >{{ filteredValues.length - maxLength }}
+            <span :class="[{ plus: filteredValues.length - maxLength >= 10 }]">+</span>
+            {{ filteredValues.length - maxLength }}
           </p>
         </div>
       </div>
+
       <template #panel>
         <template
           v-if="
@@ -402,6 +413,7 @@ defineExpose({ focus, scrollIntoView });
             <p class="lx-data">{{ value?.[key?.attributeName] }}</p>
           </LxRow>
         </template>
+
         <template v-else-if="!showMultiple">
           <LxRow :label="displayTexts.name" v-if="name">
             <p class="lx-data">{{ name }}</p>
@@ -416,6 +428,7 @@ defineExpose({ focus, scrollIntoView });
             <p class="lx-data">{{ institution }}</p>
           </LxRow>
         </template>
+
         <template v-else>
           <LxRow v-for="i in tooltipItems.slice(0, 10)" :key="i" :hide-label="true">
             <p class="lx-data">
