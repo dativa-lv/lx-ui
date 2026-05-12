@@ -375,10 +375,10 @@ function onPrev() {
 function onNext() {
   const itemsCount = itemsDisplay.value.length;
   if (itemsCount > 0) {
-    if (!isAnyItemSelected()) {
-      currentIndex = 1;
-    } else {
+    if (isAnyItemSelected()) {
       currentIndex = (currentIndex + 1) % itemsCount;
+    } else {
+      currentIndex = 1;
     }
     const nextItem = itemsDisplay.value[currentIndex];
     selectSingle(nextItem[props.idAttribute]);

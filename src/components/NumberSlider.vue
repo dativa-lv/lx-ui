@@ -81,7 +81,7 @@ watch(
   model,
   (newValue) => {
     clearTimeout(announcementTimeout);
-    announcementTimeout = window.setTimeout(() => {
+    announcementTimeout = globalThis.setTimeout(() => {
       liveAnnouncement.value = newValue.toString();
     }, 250);
   },

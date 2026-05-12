@@ -863,7 +863,7 @@ function initializeDeviceFonts() {
 function initializeTouchMode() {
   if (props.isTouchSensitive === null) {
     const stored = localStorage.getItem(touchModeStorageKey.value);
-    touchModeToggle.value = stored !== null ? JSON.parse(stored) : isTouchMode.value;
+    touchModeToggle.value = stored === null ? isTouchMode.value : JSON.parse(stored);
   } else {
     touchModeToggle.value = props.isTouchSensitive;
   }
@@ -1003,8 +1003,7 @@ function removeBlink() {
     clearTimeout(blinkTimeout);
     blinkTimeout = null;
   }
-  button.classList.remove('custom-button-blink');
-  button.classList.remove('custom-button-after-blink');
+  button.classList.remove('custom-button-blink', 'custom-button-after-blink');
 }
 
 function blink() {

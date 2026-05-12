@@ -853,7 +853,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: flex;
   -webkit-box-align: start;
   -ms-flex-align: start;
-  align-items: flex-start;
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   margin: var(--space-0);
@@ -863,10 +862,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   letter-spacing: var(--letter-spacing-1);
   color: var(--color-data) !important;
   cursor: pointer;
-}
-
-.lx-radio-button-label-wrapper,
-.lx-checkbox-label-wrapper {
   justify-content: start;
   align-items: center;
 }

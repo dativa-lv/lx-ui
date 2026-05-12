@@ -949,10 +949,6 @@
   width: 0;
 }
 
-.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts {
-  margin: var(--space-3000) auto var(--space-0);
-}
-
 .popper.fullscreen-popper .lx-dropdown-panel-wrapper .lx-info-wrapper-responsive-toolbar {
   background-color: var(--color-region);
 }
@@ -1071,10 +1067,6 @@
   margin: var(--space-0500) auto var(--space-1000) auto;
 }
 
-.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts {
-  margin: 6rem auto var(--space-0);
-}
-
 .lx .lx-layout .popper.fullscreen-popper .lx-calendar-container  {
   height: 100%;
 }
@@ -1093,8 +1085,10 @@
 }
 
 .lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts {
+  margin: 6rem auto var(--space-0);
   height: 19.12rem;
 }
+
 .lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper.mobile-date-time .lx-calendar-layouts {
   height: 22.25rem
 }

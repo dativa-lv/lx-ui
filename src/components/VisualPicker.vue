@@ -212,9 +212,9 @@ function mapClick(event) {
   if (props.selectionKind === 'multiple') {
     const res = [...model.value];
 
-    const index = res.findIndex((selectedItem) => selectedItem === countryId);
-    if (index !== -1) res.splice(index, 1);
-    else res.push(countryId);
+    const index = res.indexOf(countryId);
+    if (index === -1) res.push(countryId);
+    else res.splice(index, 1);
 
     model.value = res;
   } else {
@@ -227,10 +227,10 @@ function spineClick(bone) {
     const boneId = bone?.split('-')[0];
 
     const res = [...model.value];
-    const index = res.findIndex((selectedItem) => selectedItem === boneId);
+    const index = res.indexOf(boneId);
     if (boneId !== 'skeleton') {
-      if (index !== -1) res.splice(index, 1);
-      else res.push(boneId);
+      if (index === -1) res.push(boneId);
+      else res.splice(index, 1);
 
       model.value = res;
     }
@@ -243,10 +243,10 @@ function spineClick(bone) {
 function nonSpineClick(boneId) {
   if (props.selectionKind === 'multiple') {
     const res = [...model.value];
-    const index = res.findIndex((selectedItem) => selectedItem === boneId);
+    const index = res.indexOf(boneId);
     if (boneId !== 'skeleton' && boneId !== 'LV') {
-      if (index !== -1) res.splice(index, 1);
-      else res.push(boneId);
+      if (index === -1) res.push(boneId);
+      else res.splice(index, 1);
 
       model.value = res;
     }
@@ -332,7 +332,7 @@ function removeItem(id, event) {
 
   if (container && event && event.currentTarget) {
     const focusable = findFocusableElements(container);
-    const currentIndex = focusable.findIndex((el) => el === event.currentTarget);
+    const currentIndex = focusable.indexOf(event.currentTarget);
     if (currentIndex !== -1) {
       if (currentIndex < focusable.length - 1) nextFocusEl = focusable[currentIndex + 1];
       else if (currentIndex > 0) nextFocusEl = focusable[currentIndex - 1];
@@ -340,7 +340,7 @@ function removeItem(id, event) {
   }
 
   const res = [...model.value];
-  const index = res.findIndex((selectedItem) => selectedItem === id);
+  const index = res.indexOf(id);
   if (index !== -1) res.splice(index, 1);
   model.value = res;
 

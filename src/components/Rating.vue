@@ -95,10 +95,10 @@ function setValue(value) {
   if (props.readOnly || props.disabled) {
     return;
   }
-  if (model.value !== value) {
-    model.value = value;
-  } else {
+  if (model.value === value) {
     model.value = null;
+  } else {
+    model.value = value;
   }
 }
 

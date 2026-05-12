@@ -147,10 +147,10 @@ function clear(e = { stopPropagation: () => {} }) {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
 
-  if (!Array.isArray(model.value)) {
-    model.value = null;
-  } else {
+  if (Array.isArray(model.value)) {
     model.value?.splice(0, model.value?.length);
+  } else {
+    model.value = null;
   }
 }
 

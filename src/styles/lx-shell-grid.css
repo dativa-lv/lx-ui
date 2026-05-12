@@ -568,7 +568,6 @@
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: repeat(auto-fill, minmax(calc(var(--tile-min-height) / 4), auto));
   gap: var(--space-1000);
-  gap: var(--space-1000);
   transition: grid-template-columns 0.1s ease-in-out;
 }
 

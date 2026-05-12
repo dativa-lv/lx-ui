@@ -679,6 +679,7 @@
 .lx-list-wrapper .lx-component-toolbar,
 .lx-appendable-list-wrapper .lx-component-toolbar {
   margin-bottom: var(--list-item-gap);
+  border-top: var(--border-width-1) solid transparent;
 }
 
 .lx-list-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
@@ -705,11 +706,6 @@
 .lx-component-toolbar .first-row {
   display: flex;
   width: 100%;
-}
-
-.lx-list-wrapper .lx-component-toolbar,
-.lx-appendable-list-wrapper .lx-component-toolbar {
-  border-top: var(--border-width-1) solid transparent;
 }
 
 .lx-selection-toolbar > .lx-component-toolbar .first-row {

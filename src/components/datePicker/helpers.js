@@ -1071,16 +1071,14 @@ export function extractYearFromDate(dateObj) {
   return format(dateObj, 'yyyy');
 }
 
-export function extractYearMonthFromDate(dateObj, mask) {
+export function extractYearMonthFromDate(dateObj, mask = 'yyyy-MM') {
   if (!dateObj) return null;
-  const maskToUse = mask || 'yyyy-MM';
-  return format(dateObj, maskToUse);
+  return format(dateObj, mask);
 }
 
-export function extractQuarterFromDate(dateObj, mask) {
+export function extractQuarterFromDate(dateObj, mask = 'yyyy-QQQ') {
   if (!dateObj) return null;
-  const maskToUse = mask || 'yyyy-QQQ';
-  return format(dateObj, maskToUse);
+  return format(dateObj, mask);
 }
 
 export function dateFromYearAndQuarter(year, quarter) {
