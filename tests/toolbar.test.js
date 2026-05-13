@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { describe, test, expect, afterEach, beforeEach } from 'vitest';
-import { mount, RouterLinkStub } from '@vue/test-utils';
+import { mount, RouterLinkStub, flushPromises } from '@vue/test-utils';
 import LxToolbar from '@/components/Toolbar.vue';
 import {
   actionDefinitionsCommon,
@@ -10,10 +10,10 @@ import {
 
 let wrapper;
 
-function mountComponent({ props = {}, slots = {} } = {}) {
+async function mountComponent({ props = {}, slots = {} } = {}) {
   expect(LxToolbar).toBeTruthy();
 
-  return mount(LxToolbar, {
+  const mounted = mount(LxToolbar, {
     props,
     slots,
     global: {
@@ -22,6 +22,10 @@ function mountComponent({ props = {}, slots = {} } = {}) {
       },
     },
   });
+
+  await flushPromises();
+
+  return mounted;
 }
 
 beforeEach(() => {
@@ -37,16 +41,17 @@ afterEach(() => {
   }
 });
 
-test('LxToolbar component mounts successfully', () => {
-  wrapper = mountComponent();
+test('LxToolbar component mounts successfully', async () => {
+  wrapper = await mountComponent();
 
   expect(wrapper.exists()).toBe(true);
 });
 
 describe('Action definitions', () => {
-  test('no actions', () => {
-    wrapper = mountComponent();
+  test('no actions', async () => {
+    wrapper = await mountComponent();
 
+    expect(wrapper.classes()).toContain('lx-toolbar-empty');
     expect(wrapper.findAll('.action-definitions-group')).toHaveLength(0);
   });
 
@@ -71,16 +76,16 @@ describe('Action definitions', () => {
     );
   });
 
-  test('many actions in default (right) area', () => {
-    wrapper = mountComponent({ props: { actionDefinitions: actionDefinitionsCommon } });
+  test('many actions in default (right) area', async () => {
+    wrapper = await mountComponent({ props: { actionDefinitions: actionDefinitionsCommon } });
 
     const buttonElements = wrapper.findAll('.right-area .action-definitions-group .lx-button');
 
     checkActionDefinitionsButtonsMultiple(buttonElements, { wrapper, areIconOnly: true });
   });
 
-  test('many actions in left area (using defaultArea prop)', () => {
-    wrapper = mountComponent({
+  test('many actions in left area (using defaultArea prop)', async () => {
+    wrapper = await mountComponent({
       props: { actionDefinitions: actionDefinitionsCommon, defaultArea: 'left' },
     });
 
@@ -89,13 +94,13 @@ describe('Action definitions', () => {
     checkActionDefinitionsButtonsMultiple(buttonElements, { wrapper, areIconOnly: true });
   });
 
-  test('many actions in left area (using area property for each action)', () => {
+  test('many actions in left area (using area property for each action)', async () => {
     const actionDefinitions = actionDefinitionsCommon.map((action) => ({
       ...action,
       area: 'left',
     }));
 
-    wrapper = mountComponent({ props: { actionDefinitions } });
+    wrapper = await mountComponent({ props: { actionDefinitions } });
 
     const buttonElements = wrapper.findAll('.left-area .action-definitions-group .lx-button');
 
@@ -132,7 +137,7 @@ describe('Action definitions', () => {
         },
       ];
 
-      wrapper = mountComponent({
+      wrapper = await mountComponent({
         props: { actionDefinitions: [parentAction, ...childrenActions] },
       });
 
@@ -156,7 +161,7 @@ describe('Action definitions', () => {
       });
     });
 
-    test('renders two parents, each in separate group', () => {
+    test('renders two parents, each in separate group', async () => {
       const parentGroupIds = ['parentGroup1', 'parentGroup2'];
       const groupIds = ['group1', 'group2'];
 
@@ -192,7 +197,7 @@ describe('Action definitions', () => {
         },
       ];
 
-      wrapper = mountComponent({
+      wrapper = await mountComponent({
         props: { actionDefinitions: [...parentActions, ...childrenActions] },
       });
 
@@ -208,14 +213,14 @@ describe('Action definitions', () => {
   });
 
   describe("kind: 'toggle'", () => {
-    test('renders toggle as action', () => {
+    test('renders toggle as action', async () => {
       const action = {
         id: 'testToggle',
         name: 'Test toggle',
         kind: 'toggle',
       };
 
-      wrapper = mountComponent({ props: { actionDefinitions: [action] } });
+      wrapper = await mountComponent({ props: { actionDefinitions: [action] } });
 
       const toggle = wrapper.find('.right-area .action-definitions-group .lx-toggle');
 
@@ -241,7 +246,7 @@ describe('Action definitions', () => {
         groupId: parentGroupId,
       };
 
-      wrapper = mountComponent({ props: { actionDefinitions: [parentAction, childAction] } });
+      wrapper = await mountComponent({ props: { actionDefinitions: [parentAction, childAction] } });
 
       const parent = wrapper.find('.right-area .action-definitions-group .lx-button');
 
@@ -269,23 +274,24 @@ describe('Action definitions', () => {
       kind: 'slot',
     };
 
-    const slotId = 'test-slot';
-    const slotText = 'Test slot';
-    const slotContents = `<div id="${slotId}">${slotText}</div>`;
+    const slotInnerId = 'test-slot';
+    const slotInnerText = 'Test slot';
+    const slotContents = `<div id="${slotInnerId}">${slotInnerText}</div>`;
 
-    test('renders slot as action', () => {
-      wrapper = mountComponent({
+    test('renders slot as action', async () => {
+      wrapper = await mountComponent({
         props: { actionDefinitions: [slotAction] },
         slots: { [slotAction.id]: slotContents },
       });
 
-      const slotElement = wrapper.find(`#${slotId}`);
+      const slotElement = wrapper.find(`.lx-toolbar-action-slot[id$="${slotAction.id}"]`);
 
       expect(slotElement.exists()).toBe(true);
-      expect(slotElement.text()).toBe(slotText);
+      expect(slotElement.attributes('id').endsWith(slotAction.id)).toBe(true);
+      expect(slotElement.find(`#${slotInnerId}`).text()).toBe(slotInnerText);
     });
 
-    test('renders slot as action between other actions', () => {
+    test('renders slot as action between other actions', async () => {
       const actions = [
         {
           id: 'action1',
@@ -300,7 +306,7 @@ describe('Action definitions', () => {
         },
       ];
 
-      wrapper = mountComponent({
+      wrapper = await mountComponent({
         props: { actionDefinitions: actions },
         slots: { [slotAction.id]: slotContents },
       });
@@ -309,8 +315,8 @@ describe('Action definitions', () => {
 
       expect(elements.length).toBe(actions.length);
       expect(elements[0].attributes('id')).toContain(actions[0].id);
-      expect(elements[1].attributes('id')).toBe(slotId);
-      expect(elements[1].text()).toBe(slotText);
+      expect(elements[1].attributes('id')).toContain(slotAction.id);
+      expect(elements[1].find(`#${slotInnerId}`).text()).toBe(slotInnerText);
       expect(elements[2].attributes('id')).toContain(actions[2].id);
     });
   });

@@ -687,20 +687,9 @@
   align-items: center;
 }
 
-.lx-list-wrapper:not(.is-narrow) .lx-component-toolbar .toolbar-action-buttons-small,
-.lx-list-wrapper:not(.is-narrow) .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons-small {
-  display: none;
-}
-
-.lx-list-wrapper.is-narrow .lx-component-toolbar .toolbar-action-buttons,
+.lx-list-wrapper:not(.is-narrow) .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons-small,
 .lx-list-wrapper.is-narrow .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
   display: none;
-}
-
-.lx-list-wrapper .lx-component-toolbar {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 .lx-component-toolbar .first-row {
@@ -1143,7 +1132,6 @@ a.lx-tile:not(.lx-disabled):hover {
   fill: var(--color-tile-hover-foreground);
 }
 
-.lx-list-wrapper .lx-component-toolbar .toolbar-action-buttons,
 .lx-tile .lx-tile-item-loader, .lx-tile .lx-loader-wrapper {
   display: flex;
 }
@@ -1211,7 +1199,7 @@ a.lx-tile:not(.lx-disabled):hover {
 /*** Misc styles ***/
 
 .lx-list-wrapper .lx-component-toolbar .lx-field-wrapper,
-.lx-list-wrapper .lx-component-toolbar .left-area .lx-group,
+.lx-list-wrapper .lx-component-toolbar .left-area .lx-toolbar-search,
 .lx-list-wrapper.not-selectable .lx-component-toolbar .left-area {
   width: 100%;
 }

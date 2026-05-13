@@ -2872,10 +2872,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   color: var(--color-button-toolbar-selection-disabled);
 }
 
-.lx-component-toolbar:not(.second-row):not(:has(.left-area .action-definitions-group)):not(:has(.right-area .action-definitions-group)):not(:has(.right-area .lx-group:not(:empty))):not(:has(.left-area .lx-group:not(:empty))) {
-  border-bottom: var(--border-width-1) solid transparent;
-}
-
 .lx-component-toolbar.lx-toolbar-no-borders {
   border-top: var(--border-width-0);
   border-bottom: var(--border-width-0);
@@ -2913,8 +2909,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: flex;
 }
 
-.lx-component-toolbar .action-definitions-small {
-  display: none;
+.lx-component-toolbar .lx-toolbar-search {
+  min-width: 10rem;
 }
 
 .lx-list-wrapper > .lx-component-toolbar > .left-area > .lx-group:first-child {
@@ -2962,6 +2958,14 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-component-toolbar .lx-toggle-wrapper {
   margin-left: var(--space-0500);
   margin-right: var(--space-0500);
+}
+
+.lx-component-toolbar .lx-button:not([id$="-select-all"]) {
+  flex-shrink: 0;
+}
+
+.lx-component-toolbar .lx-toolbar-action-slot {
+  display: flex;
 }
 
 /*** LxFileUploader styles ***/
@@ -4123,16 +4127,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 @media (max-width: 300px) {
   .lx .lx-uploaded-file-preview-wrapper {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 800px) {
-  .lx-component-toolbar .action-definitions-small {
-    display: block;
-  }
-
-  .lx-component-toolbar .action-definitions-group {
-    display: none;
   }
 }
 

@@ -1,5 +1,13 @@
 # LX/UI Migration Guide
 
+## 2.1.7 → 2.1.8
+
+### Breaking changes
+
+#### LxToolbar
+
+LxToolbar is now responsive and adapts to available space. Review all toolbars in your project to ensure layouts display correctly, especially in these components with built-in toolbars: LxAppendableList, LxCamera, LxDataGrid, LxDrawPad, LxFileViewer, LxList, LxMap, LxMarkdownTextArea, LxQrScanner, LxValuePicker.
+
 ## 2.1.6 → 2.1.7
 
 ### Breaking changes

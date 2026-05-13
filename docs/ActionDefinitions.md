@@ -58,7 +58,9 @@ The prop `actionDefinitions` is available for following components:
 | `loading` | Boolean | Shows loading indicator on the action button and disables interaction. |
 | `active` | Boolean | Applies active/selected styling to indicate the action is currently active. |
 | `nonResponsive` | Boolean | Prevents the action from being responsive. It will not collapse into overflow menus on smaller screens. |
-| `extra` | Boolean | Reserved for internal framework use. Do not set this property manually! (When `true`, the action is treated as supplemental and placed after built-in actions.) |
+| `builtIn` | Boolean | Reserved for internal framework use - do not set this property manually! (When `true`, the action is treated as built-in and will stay visible longer than other actions.) |
+| `extra` | Boolean | Reserved for internal framework use - do not set this property manually! (When `true`, the action is treated as supplemental and placed after built-in actions.) |
+| `priority` | Number | Order in responsive visibility queue. Lower numbers stay visible longer. Overrides the automatic type-based priority (dropdowns > toggles > regular actions). Supported only in toolbars. Allowed values: any positive integer. |
 | `href` | Object | Route for navigation when the action is clicked. Converts the action into a link. Example: `{ name: 'info' }`. |
 
 ### Usage Details

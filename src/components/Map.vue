@@ -338,9 +338,10 @@ const toolbarActions = computed(() => {
     });
   }
 
-  const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
+  const actionsBuiltIn = actionsDefault.map((a) => ({ ...a, builtIn: true }));
+  const actionsExtra = props.actionDefinitions.map((a) => ({ ...Object(a), extra: true }));
 
-  return [...actionsDefault, ...actionsExtra];
+  return [...actionsBuiltIn, ...actionsExtra];
 });
 
 const insideFullscreenOverlay = computed(() => isExpanded.value);
@@ -466,6 +467,7 @@ const additionalOptionsGroups = computed(() => [
         v-if="showToolbar"
         class="lx-map-toolbar"
         :actionDefinitions="toolbarActions"
+        defaultArea="right"
         :hasSearch="showSearch"
         searchSide="server"
         :texts="displayTexts"

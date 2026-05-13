@@ -140,6 +140,8 @@ const modalActionDefinitions = ref([
   },
 ]);
 
+const toolbarRef = ref(null);
+
 const rowId = inject('rowId', ref(null));
 
 let headingCounter = 0;
@@ -902,9 +904,10 @@ const toolbarActions = computed(() => {
     });
   }
 
-  const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
+  const actionsBuiltIn = actionsDefault.map((a) => ({ ...a, builtIn: true }));
+  const actionsExtra = props.actionDefinitions.map((a) => ({ ...Object(a), extra: true }));
 
-  return [...actionsDefault, ...actionsExtra];
+  return [...actionsBuiltIn, ...actionsExtra];
 });
 
 function toolbarActionClick(id, value) {
@@ -929,6 +932,8 @@ function toolbarActionClick(id, value) {
   } else {
     emits('actionClick', id, value);
   }
+
+  nextTick(() => toolbarRef.value?.focusAction(id));
 }
 
 watch(inputImage, (n) => {
@@ -997,8 +1002,10 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
     >
       <LxToolbar
         v-if="editor"
+        ref="toolbarRef"
         :disabled="isDisabled"
         :actionDefinitions="toolbarActions"
+        defaultArea="left"
         @actionClick="toolbarActionClick"
       >
         <template #color>

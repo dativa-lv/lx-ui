@@ -247,9 +247,10 @@ const toolbarActions = computed(() => {
     });
   }
 
-  const actionsExtra = props.toolbarActionDefinitions.map((a) => ({ ...a, extra: true }));
+  const actionsBuiltIn = actionsDefault.map((a) => ({ ...a, builtIn: true }));
+  const actionsExtra = props.toolbarActionDefinitions.map((a) => ({ ...Object(a), extra: true }));
 
-  return [...actionsDefault, ...actionsExtra];
+  return [...actionsBuiltIn, ...actionsExtra];
 });
 
 const rowId = inject('rowId', ref(null));

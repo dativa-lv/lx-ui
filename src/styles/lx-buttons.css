@@ -2270,21 +2270,9 @@ a.lx-button.lx-button-ghost svg {
   }
 }
 
-@media (max-width: 800px) {
-  .lx-component-toolbar .first-row .left-area .action-definitions-small {
-    display: flex;
-  }
-}
-
 @media (max-width: 500px) {
   .lx .lx-cover>.lx-content>.lx-button-set .lx-button {
     width: 100%;
-  }
-}
-
-@media (max-width: 800px) {
-  .lx-component-toolbar .right-area > .action-definitions-small {
-    display: flex;
   }
 }
 

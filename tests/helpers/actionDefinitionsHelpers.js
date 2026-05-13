@@ -67,8 +67,8 @@ export function checkActionDefinitionsButtonsSingle(
   buttonSelector,
   { props = {} } = {}
 ) {
-  function initButton(action) {
-    const wrapper = mountComponent({ props: { ...props, actionDefinitions: [action] } });
+  async function initButton(action) {
+    const wrapper = await mountComponent({ props: { ...props, actionDefinitions: [action] } });
 
     setWrapper(wrapper);
 
@@ -81,7 +81,7 @@ export function checkActionDefinitionsButtonsSingle(
     return { button, wrapper };
   }
 
-  test('simple', () => {
+  test('simple', async () => {
     const action = {
       id: 'actionSimple',
       name: 'Simple action',
@@ -89,12 +89,12 @@ export function checkActionDefinitionsButtonsSingle(
       title: 'This is a simple action',
     };
 
-    const { button } = initButton(action);
+    const { button } = await initButton(action);
 
     expect(button.attributes('title')).toBe(action.title);
   });
 
-  test('destructive', () => {
+  test('destructive', async () => {
     const action = {
       id: 'actionDestructive',
       name: 'Destructive action',
@@ -102,12 +102,12 @@ export function checkActionDefinitionsButtonsSingle(
       destructive: true,
     };
 
-    const { button } = initButton(action);
+    const { button } = await initButton(action);
 
     checkButtonState(button, 'destructive');
   });
 
-  test('disabled', () => {
+  test('disabled', async () => {
     const action = {
       id: 'actionDisabled',
       name: 'Disabled action',
@@ -115,12 +115,12 @@ export function checkActionDefinitionsButtonsSingle(
       disabled: true,
     };
 
-    const { button } = initButton(action);
+    const { button } = await initButton(action);
 
     checkButtonState(button, 'disabled');
   });
 
-  test('busy', () => {
+  test('busy', async () => {
     const action = {
       id: 'actionBusy',
       name: 'Busy action',
@@ -128,12 +128,12 @@ export function checkActionDefinitionsButtonsSingle(
       busy: true,
     };
 
-    const { button } = initButton(action);
+    const { button } = await initButton(action);
 
     checkButtonState(button, 'busy');
   });
 
-  test('loading', () => {
+  test('loading', async () => {
     const action = {
       id: 'actionLoading',
       name: 'Loading action',
@@ -141,12 +141,12 @@ export function checkActionDefinitionsButtonsSingle(
       loading: true,
     };
 
-    const { button } = initButton(action);
+    const { button } = await initButton(action);
 
     checkButtonState(button, 'loading');
   });
 
-  test('active', () => {
+  test('active', async () => {
     const action = {
       id: 'actionActive',
       name: 'Active action',
@@ -154,12 +154,12 @@ export function checkActionDefinitionsButtonsSingle(
       active: true,
     };
 
-    const { button } = initButton(action);
+    const { button } = await initButton(action);
 
     checkButtonState(button, 'active');
   });
 
-  test('with badge', () => {
+  test('with badge', async () => {
     const action = {
       id: 'actionBadge',
       name: 'Action with badge',
@@ -167,12 +167,12 @@ export function checkActionDefinitionsButtonsSingle(
       badge: '🌞',
     };
 
-    const { button } = initButton(action);
+    const { button } = await initButton(action);
 
     expect(button.find('.lx-badge').exists()).toBe(true);
   });
 
-  test('as link', () => {
+  test('as link', async () => {
     const action = {
       id: 'actionHref',
       name: 'Action as link',
@@ -180,7 +180,7 @@ export function checkActionDefinitionsButtonsSingle(
       href: { name: 'info' },
     };
 
-    const { button, wrapper } = initButton(action);
+    const { button, wrapper } = await initButton(action);
 
     expect(button.element.tagName).toBe('A');
 

@@ -11,7 +11,7 @@ import {
   Fragment,
   Text,
 } from 'vue';
-import { useWindowSize, useDebounceFn } from '@vueuse/core';
+import { useDebounceFn } from '@vueuse/core';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -21,6 +21,7 @@ import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { logWarn } from '@/utils/devUtils';
+import { useToolbarResponsiveness } from '@/utils/useToolbarResponsiveness';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -53,10 +54,10 @@ const emits = defineEmits([
   'update:searchString',
 ]);
 
-const GROUP_ID_DEFAULT = 'lx_group_default';
+const GROUP_ID_DEFAULT_RIGHT = 'lx_group_default_right';
+const GROUP_ID_DEFAULT_LEFT = 'lx_group_default_left';
 const GROUP_ID_EXTRA = 'lx_group_extra';
-const GROUP_ID_PROMOTED = 'lx_group_promoted';
-const ACTION_KINDS_SPECIAL = ['toggle', 'slot'];
+const ACTION_KINDS_SPECIAL = new Set(['toggle', 'slot']);
 const CONTENT_SLOTS = ['default', 'leftArea', 'rightArea', 'secondRow'];
 
 const textsDefault = {
@@ -72,7 +73,6 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const globalEnvironment = useLx().getGlobals()?.environment;
-const { width } = useWindowSize();
 const slots = useSlots();
 
 const hasSlotContent = (nodes = []) => {
@@ -102,6 +102,10 @@ const isToolbarEmpty = computed(
     CONTENT_SLOTS.every((name) => !hasSlotContent(slots[name]?.() ?? []))
 );
 
+const hasDefaultSlotContent = computed(() => hasSlotContent(slots.default?.() ?? []));
+const hasLeftAreaSlotContent = computed(() => hasSlotContent(slots.leftArea?.() ?? []));
+const hasRightAreaSlotContent = computed(() => hasSlotContent(slots.rightArea?.() ?? []));
+
 const insideForm = inject('insideForm', ref(false));
 
 const defaultAreaComputed = computed(() => {
@@ -123,6 +127,9 @@ function getArea(action) {
 }
 
 function applyDefaults(action, overrides = {}) {
+  const area = getArea(action);
+  const defaultGroupId = area === 'right' ? GROUP_ID_DEFAULT_RIGHT : GROUP_ID_DEFAULT_LEFT;
+
   if (action.kind === 'toggle' && action.value === undefined) {
     /* eslint-disable no-param-reassign */
     action.value = false;
@@ -132,7 +139,7 @@ function applyDefaults(action, overrides = {}) {
     return {
       ...action,
       icon: action.icon,
-      area: getArea(action),
+      area,
       kind: action.kind === 'toggle' ? 'toggle' : 'ghost',
       variant: 'icon-only',
       groupId: action.groupId || GROUP_ID_EXTRA,
@@ -144,8 +151,8 @@ function applyDefaults(action, overrides = {}) {
   if (action.kind === 'slot') {
     return {
       ...action,
-      area: getArea(action),
-      groupId: action.groupId || GROUP_ID_DEFAULT,
+      area,
+      groupId: action.groupId || defaultGroupId,
       nonResponsive: true,
       ...overrides,
     };
@@ -154,17 +161,17 @@ function applyDefaults(action, overrides = {}) {
   return {
     ...action,
     icon: action.icon,
-    area: getArea(action),
+    area,
     kind: action.kind || 'ghost',
     variant: action.variant || 'icon-only',
-    groupId: action.groupId || GROUP_ID_DEFAULT,
+    groupId: action.groupId || defaultGroupId,
     disabled: action.disabled || props.disabled || props.loading || props.busy,
     ...overrides,
   };
 }
 
 function applyKindAndVariant(action, overrides = {}) {
-  if (ACTION_KINDS_SPECIAL.includes(action.kind)) {
+  if (ACTION_KINDS_SPECIAL.has(action.kind)) {
     return {
       ...action,
       ...overrides,
@@ -197,32 +204,21 @@ function processGroup(group) {
   }
 
   const rest = group.filter((a) => a.id !== firstAction.id);
-  return {
-    promotedAction: applyDefaults(firstAction, {
-      kind: firstAction.kind,
-      variant: 'default',
-      groupId: GROUP_ID_PROMOTED,
-    }),
-    demotedActions: rest.map((action) => applyKindAndVariant(action)),
-  };
-}
 
-function placeActionByArea(result, action) {
-  if (!action) return;
-
-  if (action.area === 'left') {
-    result.unshift(action);
-  } else {
-    result.push(action);
-  }
-}
-
-function addPromotedAction(result, promotedAction) {
-  placeActionByArea(result, promotedAction);
+  const promotedAction = applyDefaults(firstAction, {
+    kind: firstAction.kind,
+    variant: 'default',
+    promoted: true,
+  });
 
   if (!promotedAction?.name) {
-    logWarn('Promoted toolbar action must have a name.', globalEnvironment);
+    logWarn('LxToolbar: promoted action must have name.', globalEnvironment);
   }
+
+  return {
+    promotedAction,
+    demotedActions: rest.map((action) => applyKindAndVariant(action)),
+  };
 }
 
 const actionsProcessed = computed(() => {
@@ -233,70 +229,87 @@ const actionsProcessed = computed(() => {
   const normalizedActions = props.actionDefinitions.map((a) => applyDefaults(a));
   const regularActions = normalizedActions.filter((a) => !a.extra);
   const extraActions = normalizedActions.filter((a) => a.extra);
-  const sortedExtraActions = insideForm.value ? extraActions : [...extraActions].reverse();
+  const sortedExtraActions = defaultAreaComputed.value ? extraActions : [...extraActions].reverse();
   const { promotedAction, demotedActions } = processGroup(regularActions);
   const result = [...demotedActions, ...sortedExtraActions];
 
   if (promotedAction) {
-    addPromotedAction(result, promotedAction);
+    result.push(promotedAction);
   }
 
   return result;
 });
+
+const isActionButton = (action) =>
+  !action?.nestedGroupId && !ACTION_KINDS_SPECIAL.has(action?.kind);
+const isActionDropDown = (action) =>
+  !!action?.nestedGroupId && !ACTION_KINDS_SPECIAL.has(action?.kind);
+const isActionToggle = (action) => !action?.nestedGroupId && action?.kind === 'toggle';
+const isActionSlot = (action) => !action?.nestedGroupId && action?.kind === 'slot';
 
 const sortActionsByExtra = (actions, extraFirst) => {
   const extraWeight = extraFirst ? -1 : 1;
   return actions?.sort((a, b) => (a?.extra ? extraWeight : 0) - (b?.extra ? extraWeight : 0));
 };
 
-const leftActions = computed(() =>
-  sortActionsByExtra(
-    actionsProcessed.value?.filter((x) => x?.area === 'left'),
-    false
-  )
-);
-const leftActionsResponsive = computed(() => leftActions.value?.filter((x) => !x?.nonResponsive));
-const leftActionsNonResponsive = computed(() => leftActions.value?.filter((x) => x?.nonResponsive));
+const createAreaActions = (area, extraFirst) =>
+  computed(() =>
+    sortActionsByExtra(
+      actionsProcessed.value?.filter((x) => x?.area === area && !x?.promoted),
+      extraFirst
+    )
+  );
 
-const rightActions = computed(() =>
-  sortActionsByExtra(
-    actionsProcessed.value?.filter((x) => x?.area === 'right'),
-    true
-  )
-);
-const rightActionsResponsive = computed(() => rightActions.value?.filter((x) => !x?.nonResponsive));
-const rightActionsNonResponsive = computed(() =>
-  rightActions.value?.filter((x) => x?.nonResponsive)
-);
+const leftActionsAll = createAreaActions('left', false);
+const rightActionsAll = createAreaActions('right', true);
 
-const getUniqueGroupIds = (actions) => [...new Set(actions.map((a) => a.groupId))];
+const actionsByGroupId = computed(() => {
+  const groupMap = new Map();
 
-const getUniqueNestedGroupIds = (actions) =>
-  new Set(actions?.map((a) => a.nestedGroupId).filter(Boolean));
+  [...leftActionsAll.value, ...rightActionsAll.value].forEach((action) => {
+    if (!groupMap.has(action.groupId)) {
+      groupMap.set(action.groupId, []);
+    }
 
-const leftGroupIds = computed(() => getUniqueGroupIds(leftActions.value));
-const rightGroupIds = computed(() => getUniqueGroupIds(rightActions.value));
+    groupMap.get(action.groupId).push(action);
+  });
 
-const leftNestedGroupIds = computed(() => getUniqueNestedGroupIds(leftActions.value));
-const rightNestedGroupIds = computed(() => getUniqueNestedGroupIds(rightActions.value));
+  return groupMap;
+});
 
-const isNested = (groupId, side) => {
-  const groupIds = side === 'right' ? rightNestedGroupIds.value : leftNestedGroupIds.value;
-
-  return groupIds?.has(groupId) ?? false;
-};
-
-const isActionVisibleInGroup = (action, groupId, side) => {
-  if (isNested(action.groupId, side)) {
-    return false;
-  }
-
-  return action.groupId === groupId && !action.nestedGroupId;
-};
+function getActionId(actionId) {
+  return `${props.id}-action-${actionId}`;
+}
 
 function handleActionClick(id, { value = undefined } = {}) {
   emits('actionClick', id, value);
 }
+
+const toolbarRef = ref(null);
+const leftAreaSlotRef = ref(null);
+const defaultAreaSlotRef = ref(null);
+const rightAreaSlotRef = ref(null);
+
+const { rightActionsVisible, leftActionsVisible, actionsOverflow, promotedAction, autoSearchMode } =
+  useToolbarResponsiveness({
+    toolbarRef,
+    leftAreaSlotRef,
+    defaultAreaSlotRef,
+    rightAreaSlotRef,
+    defaultAreaComputed,
+    actionsProcessed,
+    leftActionsAll,
+    rightActionsAll,
+    actionsByGroupId,
+    hasDefaultSlotContent,
+    hasLeftAreaSlotContent,
+    hasRightAreaSlotContent,
+    hasSearch: computed(() => props.hasSearch),
+    searchMode: computed(() => props.searchMode),
+    hasSelectAll: computed(() => props.hasSelectAll),
+    getActionId,
+    isActionDropDown,
+  });
 
 const searchStringRaw = ref(props.searchString);
 
@@ -365,17 +378,6 @@ watch(
   }
 );
 
-const autoSearchMode = computed(() => {
-  if (
-    (props.searchMode === 'default' && !props.hasSelectAll) ||
-    props.searchMode === 'defaultForce'
-  ) {
-    return 'default';
-  }
-
-  return 'compact';
-});
-
 const isSearchExpanded = ref(false);
 const searchInputCompact = ref();
 
@@ -426,7 +428,9 @@ function focusAction(actionId) {
   }
 
   const overflowId =
-    action.area === 'left' ? `${props.id}-overflow-left` : `${props.id}-overflow-right`;
+    defaultAreaComputed.value === 'right'
+      ? `${props.id}-overflow-left`
+      : `${props.id}-overflow-right`;
   document.getElementById(overflowId)?.focus();
 }
 
@@ -445,6 +449,7 @@ defineExpose({ toggleSearch, focusAction });
 
 <template>
   <div
+    ref="toolbarRef"
     class="lx-component-toolbar"
     :class="[
       { 'lx-toolbar-no-borders': noBorders },
@@ -474,210 +479,130 @@ defineExpose({ toggleSearch, focusAction });
           />
         </LxToolbarGroup>
 
-        <template v-if="width > 800">
-          <LxToolbarGroup
-            v-for="groupId in leftGroupIds"
-            :key="groupId"
-            class="action-definitions-group"
-          >
-            <template v-for="action in leftActions" :key="action?.id">
+        <LxButton
+          v-if="promotedAction?.area === 'left'"
+          :id="getActionId(promotedAction.id)"
+          :label="promotedAction.name || promotedAction.label"
+          :title="promotedAction.title || promotedAction.tooltip"
+          :icon="promotedAction.icon"
+          :iconSet="promotedAction.iconSet"
+          :variant="promotedAction.variant"
+          :kind="promotedAction.kind"
+          :loading="promotedAction.loading"
+          :busy="promotedAction.busy"
+          :destructive="promotedAction.destructive"
+          :disabled="promotedAction.disabled || props.disabled || props.loading"
+          :active="promotedAction.active"
+          :badge="promotedAction.badge"
+          :badgeType="promotedAction.badgeType"
+          :badgeIcon="promotedAction.badgeIcon"
+          :badgeTitle="promotedAction.badgeTitle"
+          :customClass="promotedAction.customClass"
+          :href="promotedAction.href"
+          @click="handleActionClick(promotedAction.id)"
+        />
+
+        <LxToolbarGroup
+          v-for="group in leftActionsVisible"
+          :key="group.groupId"
+          class="action-definitions-group"
+        >
+          <template v-for="action in group.actions" :key="action?.id">
+            <LxButton
+              v-if="isActionButton(action)"
+              :id="getActionId(action?.id)"
+              :label="action?.name || action?.label"
+              :title="action?.title || action?.tooltip"
+              :icon="action?.icon"
+              :iconSet="action?.iconSet"
+              :kind="action?.kind || 'ghost'"
+              :loading="action?.loading"
+              :busy="action?.busy"
+              :destructive="action?.destructive"
+              :disabled="action?.disabled || props.disabled || props.loading"
+              :active="action?.active"
+              variant="icon-only"
+              :customClass="action?.customClass"
+              :badge="action?.badge"
+              :badgeType="action?.badgeType"
+              :badgeIcon="action?.badgeIcon"
+              :badgeTitle="action?.badgeTitle"
+              :href="action?.href"
+              @click="handleActionClick(action?.id)"
+            />
+            <LxToggle
+              v-else-if="isActionToggle(action)"
+              :id="getActionId(action?.id)"
+              :label="action?.name || action?.label"
+              :disabled="action?.disabled || props.disabled || props.loading"
+              v-model="action.value"
+              :texts="action?.texts"
+              :tooltip="action?.title || action?.tooltip"
+              :builderOptions="{
+                innerComponent: true,
+              }"
+              @update:modelValue="(value) => handleActionClick(action?.id, { value })"
+            />
+            <LxDropDownMenu
+              v-else-if="isActionDropDown(action)"
+              :disabled="action?.disabled || props.disabled || props.loading"
+              :actionDefinitions="actionsByGroupId.get(action?.nestedGroupId) ?? []"
+              @actionClick="(id, value) => handleActionClick(id, { value })"
+            >
               <LxButton
-                v-if="
-                  isActionVisibleInGroup(action, groupId, 'left') &&
-                  !ACTION_KINDS_SPECIAL.includes(action?.kind)
-                "
-                :id="`${id}-action-${action?.id}`"
-                :kind="action?.kind || 'ghost'"
-                :icon="action?.icon"
-                :iconSet="action?.iconSet"
-                :busy="action?.busy"
-                :loading="action?.loading"
+                v-if="isActionDropDown(action)"
+                :id="getActionId(action?.id)"
+                :label="action?.name || action?.label"
                 :title="action?.title || action?.tooltip"
-                :active="action?.active"
+                :icon="action?.icon || 'menu'"
+                :iconSet="action?.iconSet"
+                :kind="action?.kind || 'ghost'"
+                :tabindex="-1"
+                :loading="action?.loading"
+                :busy="action?.busy"
                 :destructive="action?.destructive"
                 :disabled="action?.disabled || props.disabled || props.loading"
-                :label="action?.name || action?.label"
-                :variant="
-                  action?.variant ? action?.variant : action?.label ? 'default' : 'icon-only'
-                "
+                :active="action?.active"
                 :badge="action?.badge"
                 :badgeType="action?.badgeType"
                 :badgeIcon="action?.badgeIcon"
                 :badgeTitle="action?.badgeTitle"
-                :href="action?.href"
-                @click="handleActionClick(action?.id)"
+                variant="icon-only"
               />
-              <LxToggle
-                v-else-if="
-                  isActionVisibleInGroup(action, groupId, 'left') && action?.kind === 'toggle'
-                "
-                :id="`${id}-action-${action?.id}`"
-                :label="action?.name || action?.label"
-                :disabled="action?.disabled || props.disabled || props.loading"
-                v-model="action.value"
-                :texts="action?.texts"
-                :tooltip="action?.title || action?.tooltip"
-                :builderOptions="{
-                  innerComponent: true,
-                }"
-                @update:modelValue="(value) => handleActionClick(action?.id, { value })"
-              />
-              <LxDropDownMenu
-                v-else-if="
-                  action?.groupId === groupId &&
-                  action?.nestedGroupId &&
-                  !ACTION_KINDS_SPECIAL.includes(action?.kind)
-                "
-                :disabled="action?.disabled || props.disabled || props.loading"
-                :actionDefinitions="leftActions.filter((a) => action?.nestedGroupId === a.groupId)"
-                @actionClick="(id, value) => handleActionClick(id, { value })"
-              >
-                <LxButton
-                  v-if="
-                    action?.groupId === groupId &&
-                    action?.nestedGroupId &&
-                    !ACTION_KINDS_SPECIAL.includes(action?.kind)
-                  "
-                  :id="`${id}-action-${action?.id}`"
-                  :label="action?.name || action?.label"
-                  :title="action?.title || action?.tooltip"
-                  :icon="action?.icon || 'menu'"
-                  :iconSet="action?.iconSet"
-                  :kind="action?.kind || 'ghost'"
-                  :tabindex="-1"
-                  :loading="action?.loading"
-                  :busy="action?.busy"
-                  :destructive="action?.destructive"
-                  :disabled="action?.disabled || props.disabled || props.loading"
-                  :active="action?.active"
-                  :badge="action?.badge"
-                  :badgeType="action?.badgeType"
-                  :badgeIcon="action?.badgeIcon"
-                  :badgeTitle="action?.badgeTitle"
-                  variant="icon-only"
-                />
-              </LxDropDownMenu>
-              <slot
-                v-else-if="
-                  isActionVisibleInGroup(action, groupId, 'left') && action?.kind === 'slot'
-                "
-                :name="action?.id"
-              />
-            </template>
-          </LxToolbarGroup>
-        </template>
+            </LxDropDownMenu>
+            <div
+              v-else-if="isActionSlot(action)"
+              :id="getActionId(action?.id)"
+              class="lx-toolbar-action-slot"
+            >
+              <slot :name="action?.id" />
+            </div>
+          </template>
+        </LxToolbarGroup>
 
-        <LxToolbarGroup
-          class="action-definitions-small"
-          v-if="width < 801 && leftActions?.length > 0"
-        >
+        <LxToolbarGroup v-show="defaultAreaComputed === 'right' && actionsOverflow.length > 0">
           <LxDropDownMenu
-            v-if="leftActionsResponsive?.length > 1"
             :disabled="props.disabled || props.loading"
-            :actionDefinitions="leftActionsResponsive.filter((a) => !a.nestedGroupId)"
+            :actionDefinitions="actionsOverflow"
             @actionClick="(id, value) => handleActionClick(id, { value })"
           >
             <LxButton
               :id="`${id}-overflow-left`"
               kind="ghost"
               :tabindex="-1"
-              icon="menu"
+              icon="overflow-menu"
               :label="displayTexts.overflowMenu"
               variant="icon-only"
               :disabled="props.disabled || props.loading"
             />
           </LxDropDownMenu>
-
-          <template v-if="leftActionsNonResponsive?.length > 0">
-            <template v-for="item in leftActionsNonResponsive" :key="item?.id">
-              <LxButton
-                v-if="!ACTION_KINDS_SPECIAL.includes(item?.kind)"
-                v-show="!item?.nestedGroupId"
-                :id="`${id}-action-${item?.id}`"
-                :label="item?.name || item?.label"
-                :title="item?.title || item?.tooltip"
-                :icon="item?.icon"
-                :iconSet="item?.iconSet"
-                :kind="item?.kind || 'ghost'"
-                :loading="item?.loading"
-                :busy="item?.busy"
-                :destructive="item?.destructive"
-                :disabled="item?.disabled || props.disabled || props.loading"
-                variant="icon-only"
-                :active="item?.active"
-                :badge="item?.badge"
-                :badgeType="item?.badgeType"
-                :badgeIcon="item?.badgeIcon"
-                :badgeTitle="item?.badgeTitle"
-                :href="item?.href"
-                @click="handleActionClick(item?.id)"
-              />
-              <LxToggle
-                v-else-if="item?.kind === 'toggle'"
-                v-show="!item?.nestedGroupId"
-                :id="`${id}-action-${item?.id}`"
-                :label="item?.name || item?.label"
-                :disabled="item?.disabled || props.disabled || props.loading"
-                v-model="item.value"
-                :texts="item?.texts"
-                :tooltip="item?.title || item?.tooltip"
-                :builderOptions="{
-                  innerComponent: true,
-                }"
-                @update:modelValue="(value) => handleActionClick(item?.id, { value })"
-              />
-              <slot v-else-if="item?.kind === 'slot'" :name="item?.id" />
-            </template>
-          </template>
-
-          <template
-            v-if="leftActionsResponsive?.length === 1 && !leftActionsResponsive?.[0]?.nestedGroupId"
-          >
-            <LxButton
-              v-if="!ACTION_KINDS_SPECIAL.includes(leftActionsResponsive?.[0]?.kind)"
-              :id="`${id}-action-${leftActionsResponsive?.[0].id}`"
-              :label="leftActionsResponsive?.[0]?.name || leftActionsResponsive?.[0]?.label"
-              :title="leftActionsResponsive?.[0]?.title || leftActionsResponsive?.[0]?.tooltip"
-              :icon="leftActionsResponsive?.[0]?.icon"
-              :iconSet="leftActionsResponsive?.[0]?.iconSet"
-              :kind="leftActionsResponsive?.[0]?.kind || 'ghost'"
-              :loading="leftActionsResponsive?.[0].loading"
-              :busy="leftActionsResponsive?.[0].busy"
-              :destructive="leftActionsResponsive?.[0]?.destructive"
-              :disabled="leftActionsResponsive?.[0]?.disabled || props.disabled || props.loading"
-              :active="leftActionsResponsive?.[0]?.active"
-              variant="icon-only"
-              :badge="leftActionsResponsive?.[0]?.badge"
-              :badgeType="leftActionsResponsive?.[0]?.badgeType"
-              :badgeIcon="leftActionsResponsive?.[0]?.badgeIcon"
-              :badgeTitle="leftActionsResponsive?.[0]?.badgeTitle"
-              :href="leftActionsResponsive?.[0]?.href"
-              @click="handleActionClick(leftActionsResponsive?.[0].id)"
-            />
-            <LxToggle
-              v-else-if="leftActionsResponsive?.[0]?.kind === 'toggle'"
-              :id="`${id}-action-${leftActionsResponsive?.[0]?.id}`"
-              :label="leftActionsResponsive?.[0]?.name || leftActionsResponsive?.[0]?.label"
-              :disabled="leftActionsResponsive?.[0]?.disabled || props.disabled || props.loading"
-              v-model="leftActionsResponsive[0].value"
-              :texts="leftActionsResponsive?.[0]?.texts"
-              :tooltip="leftActionsResponsive?.[0]?.title || leftActionsResponsive?.[0]?.tooltip"
-              :builderOptions="{
-                innerComponent: true,
-              }"
-              @update:modelValue="
-                (value) => handleActionClick(leftActionsResponsive?.[0]?.id, { value })
-              "
-            />
-          </template>
         </LxToolbarGroup>
 
-        <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'default'">
+        <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'default'" class="lx-toolbar-search">
           <LxTextInput
             ref="searchInputDefault"
             :key="searchInputRefresh"
             role="search"
-            :aria-label="displayTexts.search"
             v-model="searchStringRaw"
             :kind="searchSide === 'server' ? 'default' : 'search'"
             :placeholder="displayTexts.placeholder"
@@ -709,232 +634,140 @@ defineExpose({ toggleSearch, focusAction });
           />
         </LxToolbarGroup>
 
-        <LxToolbarGroup v-if="$slots.leftArea">
+        <LxToolbarGroup v-if="$slots.leftArea" ref="leftAreaSlotRef">
           <slot name="leftArea" />
         </LxToolbarGroup>
       </div>
 
       <div class="default-area">
-        <LxToolbarGroup v-if="$slots.default">
+        <LxToolbarGroup v-if="$slots.default" ref="defaultAreaSlotRef">
           <slot />
         </LxToolbarGroup>
       </div>
 
       <div class="right-area">
-        <LxToolbarGroup v-if="$slots.rightArea">
+        <LxToolbarGroup v-if="$slots.rightArea" ref="rightAreaSlotRef">
           <slot name="rightArea" />
         </LxToolbarGroup>
 
-        <template v-if="width > 800">
-          <LxToolbarGroup
-            v-for="groupId in rightGroupIds"
-            :key="groupId"
-            class="action-definitions-group"
-          >
-            <template v-for="action in rightActions" :key="action?.id">
-              <LxButton
-                v-if="
-                  isActionVisibleInGroup(action, groupId, 'right') &&
-                  !ACTION_KINDS_SPECIAL.includes(action?.kind)
-                "
-                :id="`${id}-action-${action?.id}`"
-                :label="action?.name || action?.label"
-                :title="action?.title || action?.tooltip"
-                :icon="action?.icon"
-                :iconSet="action?.iconSet"
-                :kind="action?.kind || 'ghost'"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
-                :disabled="action?.disabled || props.disabled || props.loading"
-                :active="action?.active"
-                :variant="
-                  action?.variant ? action?.variant : action?.label ? 'default' : 'icon-only'
-                "
-                :custom-class="action?.customClass"
-                :badge="action?.badge"
-                :badgeType="action?.badgeType"
-                :badgeIcon="action?.badgeIcon"
-                :badgeTitle="action?.badgeTitle"
-                :href="action?.href"
-                @click="handleActionClick(action?.id)"
-              />
-              <LxToggle
-                v-else-if="
-                  isActionVisibleInGroup(action, groupId, 'right') && action?.kind === 'toggle'
-                "
-                :id="`${id}-action-${action?.id}`"
-                :label="action?.name || action?.label"
-                :disabled="action?.disabled || props.disabled || props.loading"
-                v-model="action.value"
-                :texts="action?.texts"
-                :tooltip="action?.title || action?.tooltip"
-                :builderOptions="{
-                  innerComponent: true,
-                }"
-                @update:modelValue="(value) => handleActionClick(action?.id, { value })"
-              />
-              <LxDropDownMenu
-                v-else-if="
-                  action?.groupId === groupId &&
-                  action?.nestedGroupId &&
-                  !ACTION_KINDS_SPECIAL.includes(action?.kind)
-                "
-                :disabled="action?.disabled || props.disabled || props.loading"
-                :actionDefinitions="rightActions.filter((a) => action?.nestedGroupId === a.groupId)"
-                @actionClick="(id, value) => handleActionClick(id, { value })"
-              >
-                <LxButton
-                  v-if="
-                    action?.groupId === groupId &&
-                    action?.nestedGroupId &&
-                    !ACTION_KINDS_SPECIAL.includes(action?.kind)
-                  "
-                  :id="`${id}-action-${action?.id}`"
-                  :label="action?.name || action?.label"
-                  :title="action?.title || action?.tooltip"
-                  :icon="action?.icon || 'menu'"
-                  :iconSet="action?.iconSet"
-                  :kind="action?.kind || 'ghost'"
-                  :tabindex="-1"
-                  :loading="action?.loading"
-                  :busy="action?.busy"
-                  :destructive="action?.destructive"
-                  :disabled="action?.disabled || props.disabled || props.loading"
-                  :active="action?.active"
-                  :badge="action?.badge"
-                  :badgeType="action?.badgeType"
-                  :badgeIcon="action?.badgeIcon"
-                  :badgeTitle="action?.badgeTitle"
-                  variant="icon-only"
-                />
-              </LxDropDownMenu>
-              <slot
-                v-else-if="
-                  isActionVisibleInGroup(action, groupId, 'right') && action?.kind === 'slot'
-                "
-                :name="action?.id"
-              />
-            </template>
-          </LxToolbarGroup>
-        </template>
-
-        <LxToolbarGroup
-          class="action-definitions-small"
-          v-if="
-            width < 801 &&
-            (rightActionsResponsive?.length > 0 || rightActionsNonResponsive?.length > 0)
-          "
-        >
-          <template
-            v-if="
-              (rightActionsResponsive?.length === 1 && !rightActions?.[0]?.nestedGroupId) ||
-              rightActionsNonResponsive?.length > 0
-            "
-          >
-            <template v-for="item in rightActionsNonResponsive" :key="item?.id">
-              <LxButton
-                v-if="!ACTION_KINDS_SPECIAL.includes(item?.kind)"
-                v-show="!item?.nestedGroupId && item?.nonResponsive"
-                :id="`${id}-action-${item?.id}`"
-                :label="item?.name || item?.label"
-                :title="item?.title || item?.tooltip"
-                :icon="item?.icon"
-                :iconSet="item?.iconSet"
-                variant="icon-only"
-                :kind="item?.kind || 'ghost'"
-                :loading="item?.loading"
-                :busy="item?.busy"
-                :destructive="item?.destructive"
-                :disabled="item?.disabled || props.disabled || props.loading"
-                :active="item?.active"
-                :badge="item?.badge"
-                :badgeType="item?.badgeType"
-                :badgeIcon="item?.badgeIcon"
-                :badgeTitle="item?.badgeTitle"
-                :customClass="item?.customClass"
-                :href="item?.href"
-                @click="handleActionClick(item?.id)"
-              />
-              <LxToggle
-                v-else-if="item?.kind === 'toggle'"
-                v-show="!item?.nestedGroupId && item?.nonResponsive"
-                :id="`${id}-action-${item?.id}`"
-                :label="item?.name || item?.label"
-                :disabled="item?.disabled || props.disabled || props.loading"
-                v-model="item.value"
-                :texts="item?.texts"
-                :tooltip="item?.title || item?.tooltip"
-                :builderOptions="{
-                  innerComponent: true,
-                }"
-                @update:modelValue="(value) => handleActionClick(item?.id, { value })"
-              />
-              <slot v-else-if="item?.kind === 'slot'" :name="item?.id" />
-            </template>
-          </template>
-
-          <template
-            v-if="
-              rightActionsResponsive?.length === 1 && !rightActionsResponsive?.[0]?.nestedGroupId
-            "
-          >
-            <LxButton
-              v-if="!ACTION_KINDS_SPECIAL.includes(rightActionsResponsive?.[0]?.kind)"
-              :id="`${id}-action-${rightActionsResponsive?.[0]?.id}`"
-              :label="rightActionsResponsive?.[0]?.name || rightActionsResponsive?.[0]?.label"
-              :title="rightActionsResponsive?.[0]?.title || rightActionsResponsive?.[0]?.tooltip"
-              :icon="rightActionsResponsive?.[0]?.icon"
-              :iconSet="rightActionsResponsive?.[0]?.iconSet"
-              variant="icon-only"
-              :kind="rightActionsResponsive?.[0]?.kind || 'ghost'"
-              :loading="rightActionsResponsive?.[0]?.loading"
-              :busy="rightActionsResponsive?.[0]?.busy"
-              :destructive="rightActionsResponsive?.[0]?.destructive"
-              :disabled="rightActionsResponsive?.[0]?.disabled || props.disabled || props.loading"
-              :active="rightActionsResponsive?.[0]?.active"
-              :badge="rightActionsResponsive?.[0]?.badge"
-              :badgeType="rightActionsResponsive?.[0]?.badgeType"
-              :badgeIcon="rightActionsResponsive?.[0]?.badgeIcon"
-              :badgeTitle="rightActionsResponsive?.[0]?.badgeTitle"
-              :customClass="rightActionsResponsive?.[0]?.customClass"
-              :href="rightActionsResponsive?.[0]?.href"
-              @click="handleActionClick(rightActionsResponsive?.[0]?.id)"
-            />
-            <LxToggle
-              v-else-if="rightActionsResponsive?.[0]?.kind === 'toggle'"
-              :id="`${id}-action-${rightActionsResponsive?.[0]?.id}`"
-              :label="rightActionsResponsive?.[0]?.name || rightActionsResponsive?.[0]?.label"
-              :disabled="rightActionsResponsive?.[0]?.disabled || props.disabled || props.loading"
-              v-model="rightActionsResponsive[0].value"
-              :texts="rightActionsResponsive?.[0]?.texts"
-              :tooltip="rightActionsResponsive?.[0]?.title || rightActionsResponsive?.[0]?.tooltip"
-              :builderOptions="{
-                innerComponent: true,
-              }"
-              @update:modelValue="
-                (value) => handleActionClick(rightActionsResponsive?.[0]?.id, { value })
-              "
-            />
-          </template>
-
+        <LxToolbarGroup v-show="defaultAreaComputed === 'left' && actionsOverflow.length > 0">
           <LxDropDownMenu
-            v-if="rightActionsResponsive?.length > 1"
             :disabled="props.disabled || props.loading"
-            :actionDefinitions="rightActionsResponsive.filter((a) => !a.nestedGroupId)"
+            :actionDefinitions="actionsOverflow"
             @actionClick="(id, value) => handleActionClick(id, { value })"
           >
             <LxButton
               :id="`${id}-overflow-right`"
               kind="ghost"
               :tabindex="-1"
-              icon="menu"
+              icon="overflow-menu"
               :label="displayTexts.overflowMenu"
               variant="icon-only"
               :disabled="props.disabled || props.loading"
             />
           </LxDropDownMenu>
         </LxToolbarGroup>
+
+        <LxToolbarGroup
+          v-for="group in rightActionsVisible"
+          :key="group.groupId"
+          class="action-definitions-group"
+        >
+          <template v-for="action in group.actions" :key="action?.id">
+            <LxButton
+              v-if="isActionButton(action)"
+              :id="getActionId(action?.id)"
+              :label="action?.name || action?.label"
+              :title="action?.title || action?.tooltip"
+              :icon="action?.icon"
+              :iconSet="action?.iconSet"
+              :kind="action?.kind || 'ghost'"
+              :loading="action?.loading"
+              :busy="action?.busy"
+              :destructive="action?.destructive"
+              :disabled="action?.disabled || props.disabled || props.loading"
+              :active="action?.active"
+              variant="icon-only"
+              :customClass="action?.customClass"
+              :badge="action?.badge"
+              :badgeType="action?.badgeType"
+              :badgeIcon="action?.badgeIcon"
+              :badgeTitle="action?.badgeTitle"
+              :href="action?.href"
+              @click="handleActionClick(action?.id)"
+            />
+            <LxToggle
+              v-else-if="isActionToggle(action)"
+              :id="getActionId(action?.id)"
+              :label="action?.name || action?.label"
+              :disabled="action?.disabled || props.disabled || props.loading"
+              v-model="action.value"
+              :texts="action?.texts"
+              :tooltip="action?.title || action?.tooltip"
+              :builderOptions="{
+                innerComponent: true,
+              }"
+              @update:modelValue="(value) => handleActionClick(action?.id, { value })"
+            />
+            <LxDropDownMenu
+              v-else-if="isActionDropDown(action)"
+              :disabled="action?.disabled || props.disabled || props.loading"
+              :actionDefinitions="actionsByGroupId.get(action?.nestedGroupId) ?? []"
+              @actionClick="(id, value) => handleActionClick(id, { value })"
+            >
+              <LxButton
+                v-if="isActionDropDown(action)"
+                :id="getActionId(action?.id)"
+                :label="action?.name || action?.label"
+                :title="action?.title || action?.tooltip"
+                :icon="action?.icon || 'menu'"
+                :iconSet="action?.iconSet"
+                :kind="action?.kind || 'ghost'"
+                :tabindex="-1"
+                :loading="action?.loading"
+                :busy="action?.busy"
+                :destructive="action?.destructive"
+                :disabled="action?.disabled || props.disabled || props.loading"
+                :active="action?.active"
+                :badge="action?.badge"
+                :badgeType="action?.badgeType"
+                :badgeIcon="action?.badgeIcon"
+                :badgeTitle="action?.badgeTitle"
+                variant="icon-only"
+              />
+            </LxDropDownMenu>
+            <div
+              v-else-if="isActionSlot(action)"
+              :id="getActionId(action?.id)"
+              class="lx-toolbar-action-slot"
+            >
+              <slot :name="action?.id" />
+            </div>
+          </template>
+        </LxToolbarGroup>
+
+        <LxButton
+          v-if="promotedAction?.area === 'right'"
+          :id="getActionId(promotedAction.id)"
+          :label="promotedAction.name || promotedAction.label"
+          :title="promotedAction.title || promotedAction.tooltip"
+          :icon="promotedAction.icon"
+          :iconSet="promotedAction.iconSet"
+          :variant="promotedAction.variant"
+          :kind="promotedAction.kind"
+          :loading="promotedAction.loading"
+          :busy="promotedAction.busy"
+          :destructive="promotedAction.destructive"
+          :disabled="promotedAction.disabled || props.disabled || props.loading"
+          :active="promotedAction.active"
+          :badge="promotedAction.badge"
+          :badgeType="promotedAction.badgeType"
+          :badgeIcon="promotedAction.badgeIcon"
+          :badgeTitle="promotedAction.badgeTitle"
+          :customClass="promotedAction.customClass"
+          :href="promotedAction.href"
+          @click="handleActionClick(promotedAction.id)"
+        />
 
         <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'compact'">
           <div class="toolbar-search-button" :class="[{ 'is-expanded': isSearchExpanded }]">
@@ -979,7 +812,6 @@ defineExpose({ toggleSearch, focusAction });
         <LxTextInput
           ref="searchInputCompact"
           role="search"
-          :aria-label="displayTexts.search"
           v-model="searchStringRaw"
           :kind="searchSide === 'server' ? 'default' : 'search'"
           :placeholder="displayTexts.placeholder"

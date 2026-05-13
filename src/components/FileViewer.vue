@@ -1013,9 +1013,10 @@ const toolbarActions = computed(() => {
     });
   }
 
-  const actionsExtra = props.actionDefinitions.map((a) => ({ ...a, extra: true }));
+  const actionsBuiltIn = actionsDefault.map((a) => ({ ...a, builtIn: true }));
+  const actionsExtra = props.actionDefinitions.map((a) => ({ ...Object(a), extra: true }));
 
-  return [...actionsDefault, ...actionsExtra];
+  return [...actionsBuiltIn, ...actionsExtra];
 });
 
 function changeImageSize(action) {
@@ -1620,6 +1621,7 @@ onUnmounted(() => {
       class="lx-file-viewer-toolbar"
       :loading="renderingInProgress"
       :actionDefinitions="toolbarActions"
+      defaultArea="right"
       :texts="displayTexts"
       @actionClick="toolbarActionClick"
     >
