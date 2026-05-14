@@ -1453,17 +1453,17 @@ p .lx-person-display-wrapper {
 .lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button > .lx-button-content-wrapper svg {
   height: var(--icon-size-s);
   width: var(--icon-size-s);
-  fill: var(--color-button-toolbar-ghost-icon);
+  fill: var(--color-toolbar-button-ghost-icon);
 }
 
 .lx-row > .lx-row-header > div > .lx-button:hover >.lx-button-content-wrapper svg, 
 .lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:hover > .lx-button-content-wrapper svg {
-  fill: var(--color-button-toolbar-ghost-icon-hover)
+  fill: var(--color-toolbar-button-ghost-icon-hover)
 }
 
 .lx-row >  .lx-row-header > div > .lx-button:active > .lx-button-content-wrapper svg, 
 .lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:active > .lx-button-content-wrapper svg  {
-  fill: var(--color-button-toolbar-ghost-icon-active);
+  fill: var(--color-toolbar-button-ghost-icon-active);
 }
 
 .lx .lx-filter .lx-form.lx-form-region:has(>.lx-form-grid) {
@@ -1739,10 +1739,10 @@ p .lx-person-display-wrapper {
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > svg,
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-stack > svg,
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-stack > .lx-stack > svg {
-  height: var(--button-toolbar-primary-icon-size);
-  width: var(--button-toolbar-primary-icon-size);
-  min-height: var(--button-toolbar-primary-icon-size);
-  min-width: var(--button-toolbar-primary-icon-size);
+  height: var(--toolbar-button-primary-icon-size);
+  width: var(--toolbar-button-primary-icon-size);
+  min-height: var(--toolbar-button-primary-icon-size);
+  min-width: var(--toolbar-button-primary-icon-size);
 }
 
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-context-container {
@@ -1752,10 +1752,10 @@ p .lx-person-display-wrapper {
 .lx-form-grid > header > .lx-group.lx-single-header-button  .lx-button svg,
 .lx-form-grid > header > .lx-group > .lx-context-container .lx-button svg,
 .lx-form-grid > header > .responsive-default-index-button .lx-dropdown-toggler > .lx-button svg {
-  --color-button-ghost-icon: var(--color-button-toolbar-ghost-icon);
-  --color-button-ghost-icon-hover: var(--color-button-toolbar-ghost-icon-hover);
-  --color-button-ghost-icon-focus: var(--color-button-toolbar-ghost-icon-focus);
-  --color-button-ghost-icon-active: var(--color-button-toolbar-ghost-icon-active);
+  --color-button-ghost-icon: var(--color-toolbar-button-ghost-icon);
+  --color-button-ghost-icon-hover: var(--color-toolbar-button-ghost-icon-hover);
+  --color-button-ghost-icon-focus: var(--color-toolbar-button-ghost-icon-focus);
+  --color-button-ghost-icon-active: var(--color-toolbar-button-ghost-icon-active);
 }
 
 .lx-form-grid > header svg {

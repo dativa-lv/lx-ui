@@ -13,7 +13,7 @@
 	--color-label: #5c6371;
 	--color-footer-label: #A5B0C0;
 	--color-region-hover: #e1e4ea;
-	--color-button-nav-selected-background: var(--color-highlight);
+	--color-nav-item-background-selected: var(--color-highlight);
 }
 .lx.lx-theme-dark {
 	--color-brand: #5c8ef9;
@@ -26,5 +26,5 @@
 	--color-region: #1f242e;
 	--color-region-hover: #272c34;
 	--color-label: #afb2b6;
-	--color-button-nav-selected-background: var(--color-highlight);
+	--color-nav-item-background-selected: var(--color-highlight);
 }

@@ -7,7 +7,7 @@
   --color-region-2: #f5f0e3;
   --color-highlight: #dbe0f0;
 
-  --color-button-nav-selected-background: var(--color-highlight);
+  --color-nav-item-background-selected: var(--color-highlight);
 }
 .lx.lx-theme-dark {
   --color-brand: #747cbb;
@@ -15,5 +15,5 @@
   --color-interactive-secondary-background: #60656c;
   --color-highlight: #292d3d;
 
-  --color-button-nav-selected-background: var(--color-highlight);
+  --color-nav-item-background-selected: var(--color-highlight);
 }

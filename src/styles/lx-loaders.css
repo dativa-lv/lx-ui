@@ -163,14 +163,14 @@
 /*** State styles***/
 
 .lx-loader-state {
-  width: var(--loader-state-indicator-width-l);
-  height: var(--loader-state-indicator-height-l);
+  width: var(--loader-state-indicator-size-l);
+  height: var(--loader-state-indicator-size-l);
   margin: var(--loader-state-indicator-margin-l);
 }
 
 .lx-loader-small .lx-loader-state {
-  width: var(--loader-state-indicator-width-s);
-  height: var(--loader-state-indicator-height-s);
+  width: var(--loader-state-indicator-size-s);
+  height: var(--loader-state-indicator-size-s);
   margin: var(--loader-state-indicator-margin-s);
 }
 
@@ -179,8 +179,8 @@
 }
 
 .lx-loader-bar-state {
-  width: var(--loader-bar-indicator-width);
-  height: var(--loader-bar-indicator-height);
+  width: var(--loader-bar-indicator-size);
+  height: var(--loader-bar-indicator-size);
 }
 
 /*** Text styles ***/

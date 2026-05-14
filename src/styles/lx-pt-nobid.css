@@ -9,16 +9,16 @@
   --color-interactive-background: #0042BA;
   --color-interactive-secondary-foreground: var(--color-data);
   --color-interactive-secondary-background: #FFF;
-  --color-button-modal-secondary-background: #3C402B;
-  --color-button-modal-secondary: var(--color-region);
-  --color-button-modal-primary-disabled: #8d8d8d;
-  --color-button-modal-primary-disabled-border: var(--color-button-modal-primary-disabled-background);
-  --color-button-primary-disabled-background: #86A5D0;
-  --color-button-secondary-disabled-background: #F7F5F3;
-  --color-button-primary-disabled: #E8E8E8;
-  --color-button-secondary-disabled: #B3B3B3;
-  --color-button-primary-icon-disabled: var(--color-button-primary-disabled);
-  --color-button-secondary-icon-disabled: var(--color-button-secondary-disabled);
+  --color-modal-button-secondary-background: #3C402B;
+  --color-modal-button-secondary-text: var(--color-region);
+  --color-modal-button-primary-text-disabled: #8d8d8d;
+  --color-modal-button-primary-border-disabled: var(--color-modal-button-primary-background-disabled);
+  --color-button-primary-background-disabled: #86A5D0;
+  --color-button-secondary-background-disabled: #F7F5F3;
+  --color-button-primary-text-disabled: #E8E8E8;
+  --color-button-secondary-text-disabled: #B3B3B3;
+  --color-button-primary-icon-disabled: var(--color-button-primary-text-disabled);
+  --color-button-secondary-icon-disabled: var(--color-button-secondary-text-disabled);
 
 
   --font-size: 16px;
@@ -47,12 +47,12 @@
   --button-secondary-border-radius: var(--border-radius-0500);
   --button-tertiary-border-radius: var(--border-radius-0500);
   --button-ghost-border-radius: var(--border-radius-0500);
-  --button-primary-font-weight: var(--font-weight-bold);
+  --button-primary-text-font-weight: var(--font-weight-bold);
 
-  --button-toolbar-primary-border-radius: var(--border-radius-0500);
-  --button-toolbar-secondary-border-radius: var(--border-radius-0500);
-  --button-toolbar-tertiary-border-radius: var(--border-radius-0500);
-  --button-toolbar-ghost-border-radius: var(--border-radius-0500);
+  --toolbar-button-primary-border-radius: var(--border-radius-0500);
+  --toolbar-button-secondary-border-radius: var(--border-radius-0500);
+  --toolbar-button-tertiary-border-radius: var(--border-radius-0500);
+  --toolbar-button-ghost-border-radius: var(--border-radius-0500);
 }
 
 .lx.lx-theme-dark {
@@ -67,14 +67,14 @@
   --color-interactive-background: #74aeff;
   --color-interactive-secondary-background: #5c5a4e;
   --color-interactive-hover-background: #2e61a7;
-  --color-button-nav-selected-background: var(--color-region-2);
-  --color-button-modal-primary-disabled: #8C8982;
-  --color-button-modal-primary-disabled-background: #514e4b;
-  --color-button-modal-primary-disabled-border: var(--color-button-modal-primary-disabled-background);  --color-button-primary-disabled-background: #323242;
-  --color-button-secondary-disabled-background: #383633;
-  --color-button-primary-disabled: #6F717C;
-  --color-button-secondary-disabled: #8C8982;
-  --color-button-primary-icon-disabled: var(--color-button-primary-disabled);
-  --color-button-secondary-icon-disabled: var(--color-button-secondary-disabled);
+  --color-nav-item-background-selected: var(--color-region-2);
+  --color-modal-button-primary-text-disabled: #8C8982;
+  --color-modal-button-primary-background-disabled: #514e4b;
+  --color-modal-button-primary-border-disabled: var(--color-modal-button-primary-background-disabled);  --color-button-primary-background-disabled: #323242;
+  --color-button-secondary-background-disabled: #383633;
+  --color-button-primary-text-disabled: #6F717C;
+  --color-button-secondary-text-disabled: #8C8982;
+  --color-button-primary-icon-disabled: var(--color-button-primary-text-disabled);
+  --color-button-secondary-icon-disabled: var(--color-button-secondary-text-disabled);
   
 }

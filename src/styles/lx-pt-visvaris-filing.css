@@ -6,11 +6,11 @@
     --color-background: #eeeef2;
     --color-data: #111827;
 
-    --color-button-nav-selected-background: var(--color-highlight);
+    --color-nav-item-background-selected: var(--color-highlight);
   }
   
   .lx.lx-theme-dark {
     --color-highlight: #2F3B4D;
     
-    --color-button-nav-selected-background: var(--color-highlight);
+    --color-nav-item-background-selected: var(--color-highlight);
   }

@@ -333,7 +333,7 @@
 }
 
 .lx-layout.lx-layout-default > nav .lx-nav-panel .lx-nav-group .lx-nav-item-wrapper .lx-button-icon-only {
-  --button-nav-width: var(--button-nav-height);
+  --nav-item-width: var(--nav-item-height);
 }
 
 .lx-layout.lx-layout-default > main {
@@ -1422,11 +1422,11 @@
 }
 
 .lx-layout-default .lx-header .lx-login-button > .lx-button {
-  --color-button-ghost-hover: var(--color-interactive-hover-foreground);
-  --color-button-ghost-active: var(--color-interactive-hover-foreground);
-  --color-button-ghost: var(--color-nav-foreground);
-  --button-ghost-grid-areas: var(--button-nav-grid-areas);
-  --button-ghost-grid-template-columns: var(--button-nav-grid-template-columns);
+  --color-button-ghost-text-hover: var(--color-interactive-hover-foreground);
+  --color-button-ghost-text-active: var(--color-interactive-hover-foreground);
+  --color-button-ghost-text: var(--color-nav-foreground);
+  --button-ghost-grid-areas: var(--nav-item-grid-areas);
+  --button-ghost-grid-template-columns: var(--nav-item-grid-template-columns);
 }
 
 .lx-layout > nav .header-items > .lx-spotlight-button .lx-button .lx-badge {
@@ -1755,13 +1755,13 @@
 .cover-main-area
 > .lx-button-set
 .lx-button.lx-button.lx-button-secondary {
-  --color-button-secondary: var(--color-interactive-background);
+  --color-button-secondary-text: var(--color-interactive-background);
   --color-button-secondary-background: var(--color-region);
   --button-secondary-border: var(--border-width-2) solid var(--color-region);
   --color-button-secondary-icon: var(--color-interactive-background);
-  --color-button-secondary-focus: var(--color-interactive-background);
-  --color-button-secondary-focus-background: var(--color-region);
-  --color-button-secondary-focus-border: var(--color-focus-background);
+  --color-button-secondary-text-focus: var(--color-interactive-background);
+  --color-button-secondary-background-focus: var(--color-region);
+  --color-button-secondary-border-focus: var(--color-focus-background);
   --color-button-secondary-icon-focus: var(--color-interactive-background);
 }
 
@@ -2045,9 +2045,9 @@
 }
 
 .lx-layout-cover .lx-header .lx-shell-custom-button .lx-button.lx-header-button:not(.lx-disabled):hover {
-  background-color: var(--color-button-ghost-hover-background);
-  border-color: var(--color-button-ghost-hover-border);
-  color: var(--color-button-ghost-hover);
+  background-color: var(--color-button-ghost-background-hover);
+  border-color: var(--color-button-ghost-border-hover);
+  color: var(--color-button-ghost-text-hover);
 }
 
 .lx-layout-cover .lx-shell-custom-button .lx-button.lx-header-button:not(.lx-disabled):hover .lx-button-icon {
@@ -2150,10 +2150,10 @@
 }
 
 .lx-spotlight > .lx-spotlight-header .lx-button svg {
-  --color-button-ghost-icon: var(--color-button-toolbar-ghost-icon);
-  --color-button-ghost-icon-hover: var(--color-button-toolbar-ghost-icon-hover);
-  --color-button-ghost-icon-focus: var(--color-button-toolbar-ghost-icon-focus);
-  --color-button-ghost-icon-active: var(--color-button-toolbar-ghost-icon-active);
+  --color-button-ghost-icon: var(--color-toolbar-button-ghost-icon);
+  --color-button-ghost-icon-hover: var(--color-toolbar-button-ghost-icon-hover);
+  --color-button-ghost-icon-focus: var(--color-toolbar-button-ghost-icon-focus);
+  --color-button-ghost-icon-active: var(--color-toolbar-button-ghost-icon-active);
 }
 
 .lx .lx-layout .popper .lx-spotlight + .popper-floating-arrow {

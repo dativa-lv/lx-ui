@@ -26,7 +26,7 @@
 | `--content-switcher-divider-border`               | var(--border-width-1) solid var(--color-chrome)                                                   |
 | `--content-switcher-divider-height`               | 1rem                                                                                              |
 | `--content-switcher-content-gap`                  | `--space-0500`                                                                                    |
-| `--content-switcher-alignment`                    | start                                                                                             |
+| `--content-switcher-content-alignment`            | start                                                                                             |
 | `--content-switcher-text-font-size`               | `--font-size`                                                                                     |
 | `--content-switcher-text-font-weight`             | `--font-weight`                                                                                   |
 | `--content-switcher-text-line-height`             | 1.2em                                                                                             |

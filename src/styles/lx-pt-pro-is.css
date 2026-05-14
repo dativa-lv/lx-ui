@@ -13,7 +13,7 @@
 	--color-label: #616166;
 	--color-chrome: #dfe0e1;
 	--color-region-hover: #e2e3e4;
-	--color-button-nav-selected-background: #dddedf;
+	--color-nav-item-background-selected: #dddedf;
 	--color-footer-label: #b3b3bc;
 }
 .lx.lx-theme-dark {
@@ -26,5 +26,5 @@
 	--color-background: #17191c;
 	--color-region: #26282b;
 	--color-region-hover: #2e3033;
-	--color-button-nav-selected-background:#272a30;
+	--color-nav-item-background-selected:#272a30;
 }

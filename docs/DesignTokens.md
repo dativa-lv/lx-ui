@@ -13,7 +13,7 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 ## Components
 
 - [Inputs](tokens/InputTokens.md)
-- [Buttons](tokens/ButtonTokens.md)
+- [LxButton](tokens/ButtonTokens.md)
 - [LxList](tokens/ListTokens.md)
 - [LxTile](tokens/TileTokens.md)
 - [LxDataBlock](tokens/DataBlockTokens.md)
@@ -23,3 +23,7 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 - [LxToggle](tokens/ToggleTokens.md)
 - [LxLoader](tokens/LoaderTokens.md)
 - [LxContentSwitcher](tokens/ContentSwitcherTokens.md)
+- [LxToolbar](tokens/ToolbarTokens.md)
+- [LxNavBar](tokens/NavBarTokens.md)
+- [LxModal](tokens/ModalTokens.md)
+- [Popovers](tokens/PopoverTokens.md)

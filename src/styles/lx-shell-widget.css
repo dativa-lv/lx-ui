@@ -251,7 +251,7 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-align: var(--button-primary-text-align);
+  text-align: var(--button-primary-text-alignment);
 }
 
 .lx .lx-button.lx-button-ghost {
@@ -259,23 +259,22 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
   position: relative;
   cursor: var(--button-cursor);
   padding: var(--button-ghost-padding);
-  margin: var(--button-ghost-margin);
+  margin: var(--space-0);
   text-decoration: var(--button-ghost-text-decoration);
   height: var(--button-ghost-height);
   min-width: var(--button-ghost-min-width);
   width: var(--button-ghost-width);
-  font-size: var(--button-ghost-font-size);
-  font-weight: var(--button-ghost-font-weight);
+  font-size: var(--button-ghost-text-font-size);
+  font-weight: var(--button-ghost-text-font-weight);
   border: var(--button-ghost-border);
   border-radius: var(--button-ghost-border-radius);
   background-color: var(--color-button-ghost-background);
-  color: var(--color-button-ghost);
+  color: var(--color-button-ghost-text);
   outline-offset: var(--button-ghost-outline-offset);
   grid-template-columns: var(--button-ghost-grid-template-columns);
   grid-template-rows: var(--button-ghost-grid-template-rows);
   grid-template-areas: var(--button-ghost-grid-areas);
-  text-align: var(--button-ghost-text-align);
-  align-items: var(--button-ghost-align);
+  text-align: var(--button-ghost-text-alignment);
 }
 
 .lx-button-content-wrapper {
@@ -283,7 +282,7 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
   grid-template-areas: var(--button-primary-grid-areas);
   grid-template-columns: var(--button-primary-grid-template-columns);
   grid-template-rows: var(--button-primary-grid-template-rows);
-  align-items: var(--button-primary-align);
+  align-items: center;
   gap: var(--button-primary-gap);
   width: 100%;
   height: 100%;
@@ -294,20 +293,18 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
   grid-area: content;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-align: var(--button-primary-text-align);
+  text-align: var(--button-primary-text-alignment);
 }
 
 .lx .lx-button.lx-button-ghost .lx-button-content-wrapper {
   grid-template-areas: var(--button-ghost-grid-areas);
   grid-template-columns: var(--button-ghost-grid-template-columns);
   grid-template-rows: var(--button-ghost-grid-template-rows);
-  align-items: var(--button-ghost-align);
   gap: var(--button-ghost-gap);
 }
 
 .lx .lx-button.lx-button-ghost .lx-button-content {
-  text-align: var(--button-ghost-text-align);
-  align-items: var(--button-ghost-align);
+  text-align: var(--button-ghost-text-alignment);
 }
 
 .lx .lx-button.lx-button-ghost.lx-button-icon-only {
@@ -320,24 +317,24 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
 }
 
 .lx-header .lx-button:focus {
-  background-color: var(--color-button-primary-focus-background);
-  border-color: var(--color-button-primary-focus-border);
+  background-color: var(--color-button-primary-background-focus);
+  border-color: var(--color-button-primary-border-focus);
   outline: 2px solid var(--color-focus-background);
-  color: var(--color-button-primary-focus);
+  color: var(--color-button-primary-text-focus);
   z-index: 1;
 }
 
 .lx .lx-button svg {
-  justify-self: var(--button-icon-justify);
+  justify-self: center;
   flex-shrink: 0;
   pointer-events: none;
   grid-area: icon;
 }
 
 .lx-button.lx-button-ghost:focus {
-  background-color: var(--color-button-ghost-focus-background);
-  border-color: var(--color-button-ghost-focus-border);
-  color: var(--color-button-ghost);
+  background-color: var(--color-button-ghost-background-focus);
+  border-color: var(--color-button-ghost-border-focus);
+  color: var(--color-button-ghost-text);
 }
 
 .lx-button.lx-button-ghost svg {
@@ -347,9 +344,9 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
 }
 
 .lx .lx-button.lx-button-ghost:active {
-  background-color: var(--color-button-ghost-active-background);
-  color: var(--color-button-ghost-active);
-  border-color: var(--color-button-ghost-active-border);
+  background-color: var(--color-button-ghost-background-active);
+  color: var(--color-button-ghost-text-active);
+  border-color: var(--color-button-ghost-border-active);
 }
 
 /** Tertiary button styles **/
@@ -357,17 +354,17 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
 .lx-button.lx-button-tertiary {
   cursor: pointer;
   padding: var(--button-tertiary-padding);
-  margin: var(--button-tertiary-margin);
+  margin: var(--space-0);
   text-decoration: var(--button-tertiary-text-decoration);
   height: var(--button-tertiary-height);
   min-width: var(--button-tertiary-min-width);
   width: var(--button-tertiary-width);
-  font-size: var(--button-tertiary-font-size);
-  font-weight: var(--button-tertiary-font-weight);
+  font-size: var(--button-tertiary-text-font-size);
+  font-weight: var(--button-tertiary-text-font-weight);
   border: var(--button-tertiary-border);
   border-radius: var(--button-tertiary-border-radius);
   background-color: var(--color-button-tertiary-background);
-  color: var(--color-button-tertiary);
+  color: var(--color-button-tertiary-text);
   outline-offset: var(--button-tertiary-outline-offset);
 }
 
@@ -375,12 +372,11 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
   grid-template-areas: var(--button-tertiary-grid-areas);
   grid-template-columns: var(--button-tertiary-grid-template-columns);
   grid-template-rows: var(--button-tertiary-grid-template-rows);
-  align-items: var(--button-tertiary-align);
   gap: var(--button-tertiary-gap);
 }
 
 .lx-button.lx-button-tertiary .lx-button-content {
-  text-align: var(--button-tertiary-text-align);
+  text-align: var(--button-tertiary-text-alignment);
 }
 
 .lx-button.lx-button-tertiary svg {
@@ -406,26 +402,26 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
 }
 
 .lx-button.lx-button-tertiary:hover {
-  background-color: var(--color-button-tertiary-hover-background);
-  color: var(--color-button-tertiary-hover);
-  border-color: var(--color-button-tertiary-hover-border);
+  background-color: var(--color-button-tertiary-background-hover);
+  color: var(--color-button-tertiary-text-hover);
+  border-color: var(--color-button-tertiary-border-hover);
 }
 
 .lx-button.lx-button-tertiary:focus {
-  background-color: var(--color-button-tertiary-focus-background);
-  border-color: var(--color-button-tertiary-focus-border);
-  color: var(--color-button-tertiary);
+  background-color: var(--color-button-tertiary-background-focus);
+  border-color: var(--color-button-tertiary-border-focus);
+  color: var(--color-button-tertiary-text);
 }
 
 .lx-button.lx-button-tertiary:focus:hover {
-  background-color: var(--color-button-tertiary-hover-background);
-  color: var(--color-button-tertiary-hover);
+  background-color: var(--color-button-tertiary-background-hover);
+  color: var(--color-button-tertiary-text-hover);
 }
 
 .lx .lx-button.lx-button-tertiary:active {
-  background-color: var(--color-button-tertiary-active-background);
-  color: var(--color-button-tertiary-active);
-  border-color: var(--color-button-tertiary-active-border);
+  background-color: var(--color-button-tertiary-background-active);
+  color: var(--color-button-tertiary-text-active);
+  border-color: var(--color-button-tertiary-border-active);
 }
 
 .lx-button.lx-button-tertiary.lx-button-icon-only {
@@ -443,23 +439,23 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
 /** Disabled button styles **/
 
 .lx .lx-button.lx-disabled {
-  background-color: var(--color-button-primary-disabled-background);
-  color: var(--color-button-primary-disabled);
-  border-color: var(--color-button-primary-disabled-border);
+  background-color: var(--color-button-primary-background-disabled);
+  color: var(--color-button-primary-text-disabled);
+  border-color: var(--color-button-primary-border-disabled);
   outline: none;
   cursor: not-allowed;
 }
 
 .lx .lx-button.lx-button-ghost.lx-disabled {
-  background-color: var(--color-button-ghost-disabled-background);
-  color: var(--color-button-ghost-disabled);
-  border-color: var(--color-button-ghost-disabled-border);
+  background-color: var(--color-button-ghost-background-disabled);
+  color: var(--color-button-ghost-text-disabled);
+  border-color: var(--color-button-ghost-border-disabled);
 }
 
 .lx .lx-button.lx-button-tertiary.lx-disabled {
-  background-color: var(--color-button-tertiary-disabled-background);
-  color: var(--color-button-tertiary-disabled);
-  border-color: var(--color-button-tertiary-disabled-border);
+  background-color: var(--color-button-tertiary-background-disabled);
+  color: var(--color-button-tertiary-text-disabled);
+  border-color: var(--color-button-tertiary-border-disabled);
 }
 
 .lx .lx-header .lx-button.lx-disabled svg {
@@ -536,37 +532,37 @@ header.lx.lx-header-wrapper .lx-header>.lx-right-group .lx-button:active {
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button svg {
-  height: calc(var(--button-dropdown-icon-size) - 0.25rem);
-  width: calc(var(--button-dropdown-icon-size) - 0.25rem);
-  fill: var(--color-button-dropdown-icon);
+  height: calc(var(--popover-item-icon-size) - 0.25rem);
+  width: calc(var(--popover-item-icon-size) - 0.25rem);
+  fill: var(--color-popover-item-icon);
 }
 
 .lx.lx-header-wrapper .lx-dropdown-panel .user-menu-panel .lx-button:hover svg,
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button:hover svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button:hover svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button:hover svg {
-  fill: var(--color-button-dropdown-icon-hover);
+  fill: var(--color-popover-item-icon-hover);
 }
 
 .lx.lx-header-wrapper .lx-dropdown-panel .user-menu-panel .lx-button:active svg,
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button:active svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button:active svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button:active svg {
-  fill: var(--color-button-dropdown-icon-active);
+  fill: var(--color-popover-item-icon-active);
 }
 
 .lx.lx-header-wrapper .lx-dropdown-panel .user-menu-panel .lx-button:focus svg,
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button:focus svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button:focus svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button:focus svg {
-  fill: var(--color-button-dropdown-icon-focus);
+  fill: var(--color-popover-item-icon-focus);
 }
 
 .lx.lx-header-wrapper .lx-dropdown-panel .user-menu-panel .lx-button.lx-disabled svg,
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button.lx-disabled svg,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button.lx-disabled svg {
-  fill: var(--color-button-dropdown-icon-disabled);
+  fill: var(--color-popover-item-icon-disabled);
 }
 
 /** Active button styles **/
@@ -901,15 +897,15 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
 /** Login button **/
 
 .lx-layout-default .lx-header .lx-login-button > .lx-button {
-  --color-button-ghost-hover: var(--color-interactive-hover-foreground);
-  --color-button-ghost-active: var(--color-interactive-hover-foreground);
-  --color-button-ghost: var(--color-nav-foreground);
-  --button-ghost-grid-areas: var(--button-nav-grid-areas);
-  --button-ghost-grid-template-columns: var(--button-nav-grid-template-columns);
+  --color-button-ghost-text-hover: var(--color-interactive-hover-foreground);
+  --color-button-ghost-text-active: var(--color-interactive-hover-foreground);
+  --color-button-ghost-text: var(--color-nav-foreground);
+  --button-ghost-grid-areas: var(--nav-item-grid-areas);
+  --button-ghost-grid-template-columns: var(--nav-item-grid-template-columns);
 }
 
 .lx.lx-layout-public .lx-header .lx-login-button {
-    --color-header-hover-background: var(--color-button-primary-hover-background);
+    --color-header-hover-background: var(--color-button-primary-background-hover);
 }
 
 /** Main button + logo + (some) user styles **/
@@ -1213,7 +1209,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set {
   flex-direction: column;
-  gap: var(--button-dropdown-set-gap);
+  gap: var(--popover-item-set-gap);
 }
 
 .lx-alert-menu .lx-context-container .lx-dropdown-panel .lx-button-set {
@@ -1224,19 +1220,19 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button {
-  padding: var(--button-dropdown-padding);
-  margin: var(--button-dropdown-margin);
-  text-decoration: var(--button-dropdown-text-decoration);
-  height: var(--button-dropdown-height);
-  min-width: var(--button-dropdown-min-width);
-  width: var(--button-dropdown-width);
-  font-size: var(--button-dropdown-font-size);
-  font-weight: var(--button-dropdown-font-weight);
-  border: var(--button-dropdown-border);
-  border-radius: var(--button-dropdown-border-radius);
-  background-color: var(--color-button-dropdown-background);
-  color: var(--color-button-dropdown);
-  outline-offset: var(--button-dropdown-outline-offset);
+  padding: var(--popover-item-padding);
+  margin: var(--space-0);
+  text-decoration: var(--popover-item-text-decoration);
+  height: var(--popover-item-height);
+  min-width: var(--popover-item-min-width);
+  width: var(--popover-item-width);
+  font-size: var(--popover-item-text-font-size);
+  font-weight: var(--popover-item-text-font-weight);
+  border: var(--popover-item-border);
+  border-radius: var(--popover-item-border-radius);
+  background-color: var(--color-popover-item-background);
+  color: var(--color-popover-item-text);
+  outline-offset: var(--popover-item-outline-offset);
   cursor: pointer;
 }
 
@@ -1244,36 +1240,36 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button:hover,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button:hover,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button:hover {
-  background-color: var(--color-button-dropdown-hover-background);
-  border-color: var(--color-button-dropdown-hover-border);
-  color: var(--color-button-dropdown-hover);
+  background-color: var(--color-popover-item-background-hover);
+  border-color: var(--color-popover-item-border-hover);
+  color: var(--color-popover-item-text-hover);
 }
 
 .lx.lx-header-wrapper .lx-dropdown-panel .user-menu-panel .lx-button:active,
 .lx.lx-header-wrapper  .lx-dropdown-panel .lx-button-set .lx-button:active,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button:active,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button:active {
-  background-color: var(--color-button-dropdown-active-background);
-  border-color: var(--color-button-dropdown-active-border);
-  color: var(--color-button-dropdown-active);
+  background-color: var(--color-popover-item-background-active);
+  border-color: var(--color-popover-item-border-active);
+  color: var(--color-popover-item-text-active);
 }
 
 .lx.lx-header-wrapper .lx-dropdown-panel .user-menu-panel .lx-button:focus,
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button:focus,
 .lx.lx-header-wrapper .popper .lx-dropdown-panel > div > .lx-button:focus,
 .lx.lx-header-wrapper .popper .lx-dropdown-panel > .lx-button:focus {
-  background-color: var(--color-button-dropdown-focus-background);
-  border-color: var(--color-button-dropdown-focus-border);
-  color: var(--color-button-dropdown-focus);
+  background-color: var(--color-popover-item-background-focus);
+  border-color: var(--color-popover-item-border-focus);
+  color: var(--color-popover-item-text-focus);
 }
 
 .lx.lx-header-wrapper .user-menu-panel.lx-dropdown-panel .lx-button.lx-disabled,
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
 .lx.lx-header-wrapper .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
 .lx.lx-header-wrapper .popper .lx-dropdown-panel > .lx-button.lx-disabled {
-  background-color: var(--color-button-dropdown-disabled-background);
-  color: var(--color-button-dropdown-disabled);
-  border-color: var(--color-button-dropdown-disabled-border);
+  background-color: var(--color-popover-item-background-disabled);
+  color: var(--color-popover-item-text-disabled);
+  border-color: var(--color-popover-item-border-disabled);
 }
 
 /** Animations **/

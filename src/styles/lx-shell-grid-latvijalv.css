@@ -294,12 +294,12 @@
   }
   
   .lx-layout.lx-layout-latvijalv .lx-nav-panel ul li.lx-selected .lx-button {
-    color: var(--color-button-nav-selected);
-    background-color: var(--color-button-nav-selected-background);
+    color: var(--color-nav-item-text-selected);
+    background-color: var(--color-nav-item-background-selected);
   }
   
   .lx-layout.lx-layout-latvijalv .lx-nav-panel ul li.lx-selected .lx-button svg {
-    fill: var(--color-button-nav-selected);
+    fill: var(--color-nav-item-text-selected);
   }
 
   .lx-layout.lx-layout-latvijalv>.lx-latvijalv-alert-list {
@@ -544,13 +544,13 @@
   }
 
   .lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:not(.lx-context-container .popper .lx-button):not(.lx-disabled):hover {
-    background-color: var(--color-button-primary-hover-background);
-    color: var(--color-button-primary-hover);
-    border-color: var(--color-button-primary-hover-border);
+    background-color: var(--color-button-primary-background-hover);
+    color: var(--color-button-primary-text-hover);
+    border-color: var(--color-button-primary-border-hover);
   }
 
   .lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:not(.lx-disabled):hover .lx-button-content {
-    color: var(--color-button-primary-hover);
+    color: var(--color-button-primary-text-hover);
 
   }
 

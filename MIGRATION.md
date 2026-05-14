@@ -8,6 +8,53 @@
 
 LxToolbar is now responsive and adapts to available space. Review all toolbars in your project to ensure layouts display correctly, especially in these components with built-in toolbars: LxAppendableList, LxCamera, LxDataGrid, LxDrawPad, LxFileViewer, LxList, LxMap, LxMarkdownTextArea, LxQrScanner, LxValuePicker.
 
+#### LxContentSwitcher
+
+**Token renames**
+The `--content-switcher-alignment` token has been renamed to `--content-switcher-content-alignment`.
+
+#### LxButton
+
+**Token renames**
+- `--*-text-align` → `--*-text-alignment`
+- `--*-font-size` → `--*-text-font-size`
+- `--*-font-weight` → `--*-text-font-weight`
+- `--*-left-border-*` → `--*-border-left-*`
+
+Button tokens have been renamed to follow a component-first convention. The prefix pattern has changed from `--button-{component}-*` to `--{component}-button-*`. This also applies to color tokens, following the same pattern - `--color-{component}-button-*`.
+
+The order of property and state has been reversed in token names. For example, `--*-hover-border` is now `--*-border-hover`, and `--*-hover-background` is now `--*-background-hover`.
+
+Color tokens that were used to color text now have a '-text' suffix added. For example, `--color-button-primary` is now `--color-button-primary-text`. The same applies to state tokens - `--color-button-primary-text-hover`, `--color-button-primary-text-disabled`, etc.
+
+`LxDropDownMenu` buttons are now referred to as popover items, and `LxNavBar` buttons - as nav items, so these follow a different pattern as seen in the table below.
+
+| Old prefix                     | New prefix                     |
+|--------------------------------|--------------------------------|
+| `--button-dropdown-*`          | `--popover-item-*`             |
+| `--button-toolbar-*`           | `--toolbar-button-*`           |
+| `--button-toolbar-selection-*` | `--toolbar-selection-button-*` |
+| `--button-nav-*`               | `--nav-item-*`                 |
+| `--button-nav-public-*`        | `--nav-public-item-*`          |
+| `--button-modal-*`             | `--modal-button-*`             |
+
+Find and replace each old prefix with its new counterpart in your token overrides and theme files. Most of the token names after the prefix are unchanged - only the prefix has changed.
+
+**Token removals**
+- `--button-icon-justify` (center)
+- `--button-primary-align` (center)
+- `--button-secondary-align` (center)
+- `--button-tertiary-align` (center)
+- `--button-ghost-align` (center)
+- `--button-primary-margin` (0rem)
+- `--button-secondary-margin` (0rem)
+- `--button-tertiary-margin` (0rem)
+- `--button-ghost-margin` (0rem)
+
+Any `--*-align` (excluding `--*-text-align`) and `--*-margin` tokens under the renamed prefixes have also been removed.
+
+For the full list of affected tokens, see the [design token documentation](docs/DesignTokens.md).
+
 ## 2.1.6 → 2.1.7
 
 ### Breaking changes
@@ -18,12 +65,10 @@ The `#userMenuButton` selector has been removed. Update any scripts, tests, or s
 
 Some LxBadge styles have been moved to a separate file - `lx-badges.css`. Import this file in your project to ensure correct badge appearance and behavior.
 
-The 'with-gap' class, as well as the following tokens have been removed:
-- `--color-badge-foreground`
-- `--color-badge-region-background`
+**Token & class removals**
+The 'with-gap' class, as well as the `--color-badge-region-background` token, has been removed.
 
 **Token renames**
-
 - `--color-badge-text-color` → `--color-badge-text`
 - `--badge-line-height` → `--badge-text-line-height`
 - `--badge-border-radius` → `--badge-border-radius-s`
@@ -32,6 +77,8 @@ The 'with-gap' class, as well as the following tokens have been removed:
 - `--badge-min-height` → `--badge-min-height-s`
 - `--badge-gap` → `--badge-gap-s`
 
+The `--color-badge-foreground` has been split into `--color-badge-text` and `--color-badge-icon`, with the default value being `--color-data`.
+
 #### ViewBuilder changes
 
 LxViewBuilder form section behavior has been unified.
@@ -39,7 +86,7 @@ LxViewBuilder form section behavior has been unified.
 You must now explicitly define the default section - it is no longer created automatically.
 The first defined section will be treated as the default.
 
-See the [ViewBuilder guide](/docs/ViewBuilder.md)  for updated schema examples.
+See the [ViewBuilder guide](/docs/ViewBuilder.md) for updated schema examples.
 
 The schema and logic for LxFormBuilder and LxFilterBuilder have remained the same.
 
@@ -47,26 +94,26 @@ The schema and logic for LxFormBuilder and LxFilterBuilder have remained the sam
 
 ### Breaking changes
 
-The following tokens have been removed:
-- `--gap`
-- `--content-padding`
-- `--content-padding-s`
-- `--content-padding-l`
-- `--padding`
-- `--padding-default`
-- `--margin-default`
-- `--button-icon-margin`
+**Token removals**
+- `--gap` (use `--space-1000` instead)
+- `--content-padding` (8rem)
+- `--content-padding-s` (use `--space-2000` instead)
+- `--content-padding-l` (16rem)
+- `--padding` (use `--space-0500` instead)
+- `--padding-default` (use `--space-1000` instead)
+- `--margin-default` (use `--space-0250` instead)
+- `--button-icon-margin` (0 -0.4rem)
 
 ## 2.1.2 → 2.1.3
 
 ### Breaking changes
 
-The `--radius-2` token has been removed.
-
 **Token renames**
-
-- `--radius-1` → `--border-radius-0250`
 - `--radius-default` → `--border-radius-default`
+
+**Token removals**
+- `--radius-1` (use `--border-radius-0250` instead)
+- `--radius-2` (use `--border-radius-0500` instead)
 
 #### LxAppendableList
 
@@ -76,13 +123,13 @@ The "Add record" button has moved from the bottom to the top of the list, now re
 
 LxContentSwitcher styles have been moved to a separate file - `lx-content-switchers.css`. Import this file in your project to ensure correct content switcher appearance and behavior.
 
-The following tokens have been removed:
-- `--content-switcher-height`
-- `--color-content-switcher-foreground`
+**Token renames**
+The `--color-content-switcher-foreground` token has been split into `--color-content-switcher-text` and `--color-content-switcher-icon`, with the default value being `--color-data`.
 
 **Class renames**
 - `lx-content-switcher` → `lx-content-switcher-wrapper`
 - `lx-content-switcher-grid` → `lx-content-switcher`
+- `--content-switcher-height` → `--content-switcher-item-height`; container height is now derived from `--content-switcher-container-padding`
 
 ## 2.1.0 → 2.1.1
 
@@ -95,6 +142,7 @@ The following tokens have been removed:
 
 #### Icons
 
+**Token renames**
 Icon `height` and `width` tokens have been merged into a single `size` token. Update any usages to the new tokens listed below.
 
 | Old tokens                                                                        | New token                              |
@@ -126,21 +174,7 @@ Icon `height` and `width` tokens have been merged into a single `size` token. Up
 
 Most LxToggle styles have been moved to a separate file - `lx-toggles.css`. Import this file in your project to ensure correct toggle appearance and behavior.
 
-The following tokens have been removed:
-- `--toggle-border-invalid`
-- `--toggle-padding-left-false`
-- `--toggle-padding-left-true`
-- `--toggle-indeterminate-padding-left`
-- `--toggle-indeterminate-padding-right`
-- `--toggle-s-indeterminate-padding-left`
-- `--toggle-s-indeterminate-padding-right`
-- `--toggle-s-padding-left-true`
-- `--toggle-label-readonly-margin`
-- `--toggle-text-margin-left`
-- `--toggle-checked-icon-position-left`
-- `--toggle-checked-icon-height`
-- `--toggle-checked-icon-width`
-
+**Token renames**
 Some existing tokens have been divided into size-based (`m` / `s`) or state-based (`on` / `off`) variants.
 
 | Old token                | New tokens                                                                                                                  |
@@ -152,6 +186,21 @@ Some existing tokens have been divided into size-based (`m` / `s`) or state-base
 | `--toggle-padding-right` | `--toggle-padding-right-m`, `--toggle-padding-right-s`                                                                      |
 | `--toggle-thumb-width`   | `--toggle-thumb-width-off-m`, `--toggle-thumb-width-on-m`,<br>`--toggle-thumb-width-off-s`, `--toggle-thumb-width-on-s`     |
 | `--toggle-thumb-height`  | `--toggle-thumb-height-off-m`, `--toggle-thumb-height-on-m`,<br>`--toggle-thumb-height-off-s`, `--toggle-thumb-height-on-s` |
+
+**Token removals**
+- `--toggle-border-invalid` (var(--border-width-2) solid transparent)
+- `--toggle-padding-left-false` (0.165rem)
+- `--toggle-padding-left-true` (1.7rem)
+- `--toggle-indeterminate-padding-left` (0.935rem)
+- `--toggle-indeterminate-padding-right` (0.935rem)
+- `--toggle-s-indeterminate-padding-left` (0.625rem)
+- `--toggle-s-indeterminate-padding-right` (0.625rem)
+- `--toggle-s-padding-left-true` (1.075rem)
+- `--toggle-label-readonly-margin` (0.4rem 0)
+- `--toggle-text-margin-left` (0.5rem)
+- `--toggle-checked-icon-position-left` (0.185rem)
+- `--toggle-checked-icon-height` (use `--toggle-checkmark-size` instead)
+- `--toggle-checked-icon-width` (use `--toggle-checkmark-size` instead)
 
 Check for any unintended visual changes in toggles.
 

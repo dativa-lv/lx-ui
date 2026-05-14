@@ -18,8 +18,7 @@
 | `--loader-bar-border-radius-s`               | `--border-radius-0`                                            |
 | `--loader-bar-border-radius-l`               | `--border-radius-0`                                            |
 | `--loader-bar-min-width`                     | `--aside-size`                                                 |
-| `--loader-bar-indicator-height`              | `--icon-size-s`                                                |
-| `--loader-bar-indicator-width`               | `--icon-size-s`                                                |
+| `--loader-bar-indicator-size`                | `--icon-size-s`                                                |
 | `--loader-bar-stop-indicator-margin-right-s` | `--space-0`                                                    |
 | `--loader-bar-stop-indicator-margin-right-l` | `--space-0125`                                                 |
 | `--loader-bar-stop-indicator-width-s`        | 0.25rem                                                        |
@@ -33,11 +32,9 @@
 | `--loader-text-secondary-font-size`          | `--small-font-size`                                            |
 | `--loader-text-secondary-font-weight`        | `--font-weight`                                                |
 | `--loader-text-secondary-line-height`        | 1.1em                                                          |
-| `--loader-state-indicator-height-l`          | 4rem                                                           |
-| `--loader-state-indicator-width-l`           | 4rem                                                           |
+| `--loader-state-indicator-size-l`            | 4rem                                                           |
 | `--loader-state-indicator-margin-l`          | var(--space-0) var(--space-0) var(--space-1500) var(--space-0) |
-| `--loader-state-indicator-height-s`          | `--icon-size-s`                                                |
-| `--loader-state-indicator-width-s`           | `--icon-size-s`                                                |
+| `--loader-state-indicator-size-s`            | `--icon-size-s`                                                |
 | `--loader-state-indicator-margin-s`          | `--space-0`                                                    |
 | `--loader-row-gap`                           | `--space-0500`                                                 |
 | `--loader-column-gap`                        | `--space-1000`                                                 |

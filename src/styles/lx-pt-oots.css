@@ -33,8 +33,8 @@
   
     --color-cover-title: var(--color-brand);
   
-    --color-button-nav-selected: #bf4e2c;
-    --color-button-nav-selected-background: #f6f6f6;
+    --color-nav-item-text-selected: #bf4e2c;
+    --color-nav-item-background-selected: #f6f6f6;
   }
   
   .lx.lx-theme-dark {
@@ -72,7 +72,7 @@
     --color-content-switcher-background-selected: #aaaaaa;
     --color-disabled-foreground: #333333;
   
-    --color-button-nav-selected: #bf4e2c;
-    --color-button-nav-selected-background: var(--color-background);
+    --color-nav-item-text-selected: #bf4e2c;
+    --color-nav-item-background-selected: var(--color-background);
   }
   

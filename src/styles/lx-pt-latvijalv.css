@@ -45,32 +45,27 @@
 
   --color-cover-title: var(--color-brand);
 
-  --color-button-nav-selected: #bf4e2c;
-  --color-button-nav-selected-background: #f6f6f6;
+  --color-nav-item-text-selected: #bf4e2c;
+  --color-nav-item-background-selected: #f6f6f6;
 
-  --button-modal-primary-border-radius: var(--border-radius-default);
-  --button-modal-primary-align: center;
-  --button-modal-primary-padding: var(--space-0);
-  --button-modal-primary-height: 3rem;
-  --button-modal-primary-min-width: 15rem;
-  --button-modal-primary-width: auto;
+  --modal-button-primary-border-radius: var(--border-radius-default);
+  --modal-button-primary-padding: var(--space-0);
+  --modal-button-primary-height: 3rem;
+  --modal-button-primary-min-width: 15rem;
+  --modal-button-primary-width: auto;
+  --modal-button-secondary-border-radius: var(--border-radius-default);
+  --modal-button-secondary-padding: var(--space-0);
+  --modal-button-secondary-height: 3rem;
+  --modal-button-secondary-min-width: 15rem;
+  --modal-button-secondary-width: auto;
+  --modal-button-set-margin: var(--space-1000) 8rem var(--space-1000) var(--space-0);
+  --modal-button-secondary-text-alignment: center;
+  --modal-button-primary-text-alignment: center;
 
-  --button-modal-secondary-border-radius: var(--border-radius-default);
-  --button-modal-secondary-align: center;
-  --button-modal-secondary-padding: var(--space-0);
-  --button-modal-secondary-height: 3rem;
-  --button-modal-secondary-min-width: 15rem;
-  --button-modal-secondary-width: auto;
-
-  --button-modal-set-margin: var(--space-1000) 8rem var(--space-1000) var(--space-0);
-
-  --button-modal-secondary-text-align: center;
-  --button-modal-primary-text-align: center;
-
-  --button-primary-text-align: center;
-  --button-secondary-text-align: center;
-  --button-tertiary-text-align: center;
-  --button-ghost-text-align: center;
+  --button-primary-text-alignment: center;
+  --button-secondary-text-alignment: center;
+  --button-tertiary-text-alignment: center;
+  --button-ghost-text-alignment: center;
 
   --button-primary-grid-areas: 'icon content';
   --button-secondary-grid-areas: 'icon content';
@@ -84,16 +79,9 @@
 
   --input-container-height: 3rem;
 
+  --content-switcher-container-border-radius: calc(var(--content-switcher-item-height) / 2);
   --content-switcher-outer-border-radius: calc(var(--content-switcher-item-height) / 2);
   --content-switcher-outer-border-radius-selected: calc(var(--content-switcher-item-height) / 2);
-}
-
-.lx-button-content-wrapper .lx-button-icon {
-  --button-icon-justify: left;
-}
-
-.lx-button.lx-button-icon-only .lx-button-icon {
-  --button-icon-justify: center;
 }
 
 .lx.lx-theme-dark {
@@ -132,8 +120,8 @@
   --color-content-switcher-background-selected: #aaaaaa;
   --color-disabled-foreground: #333333;
 
-  --color-button-nav-selected: #bf4e2c;
-  --color-button-nav-selected-background: var(--color-background);
+  --color-nav-item-text-selected: #bf4e2c;
+  --color-nav-item-background-selected: var(--color-background);
 }
 
 .lx .lx-notifications-list .lx-notification p.lx-title {

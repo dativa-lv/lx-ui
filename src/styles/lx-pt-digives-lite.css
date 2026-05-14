@@ -26,7 +26,7 @@
 
   --color-cover-title: var(--color-brand);
 
-  --color-button-nav-selected-background: #fae5d7;
+  --color-nav-item-background-selected: #fae5d7;
 }
 .lx.lx-theme-dark {
 	--color-brand: #cb728c;
@@ -38,6 +38,6 @@
 	--color-region: #212123;
 	--color-region-2: #151719;
 	--color-region-hover: #2f2f31;
-	--color-button-nav-selected-background: var(--color-highlight);
+	--color-nav-item-background-selected: var(--color-highlight);
 }
 

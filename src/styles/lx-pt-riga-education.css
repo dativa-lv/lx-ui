@@ -15,7 +15,7 @@
   --color-good: #0d382c;
   --color-data: #000;
 
-  --color-button-nav-selected-background: #78e9b8;
+  --color-nav-item-background-selected: #78e9b8;
 }
 
 .lx.lx-theme-dark {
@@ -29,7 +29,7 @@
   --color-interactive-secondary-background: #001000;
   --color-layout-background: #051612;
 
-  --color-button-nav-selected-background: #07291a;
+  --color-nav-item-background-selected: #07291a;
 }
 
 .lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-secondary {

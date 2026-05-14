@@ -1000,9 +1000,9 @@
 }
 
 .lx-info-wrapper-responsive-toolbar.dropdown-handle-toolbar .lx-button.lx-button-ghost:hover {
-  background-color: var(--color-button-ghost-hover-background);
-  color: var(--color-button-ghost-hover);
-  border-color: var(--color-button-ghost-hover-border);
+  background-color: var(--color-button-ghost-background-hover);
+  color: var(--color-button-ghost-text-hover);
+  border-color: var(--color-button-ghost-border-hover);
 }
 
 .lx .lx-info-wrapper-responsive-toolbar.dropdown-handle-toolbar svg.handle-icon {
@@ -1277,7 +1277,7 @@
   }
 
   .lx .lx-layout .lx-calendar-container .lx-calendar-header .lx-button.lx-calendar-years-select-button {
-    --button-ghost-margin: var(--space-0) var(--space-1000) var(--space-0) var(--space-0);
+    margin-right: var(--space-1000);
   }
   
   .lx .lx-layout .lx-calendar-container:has(.lx-full-rows) .lx-calendar-header {

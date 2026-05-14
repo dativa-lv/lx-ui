@@ -9,11 +9,11 @@
     --color-toggle-border-hover-off: #1D3354;
     --color-toggle-background-hover-off: #1D3354;
 
-    --color-button-nav-selected-background: var(--color-highlight);
+    --color-nav-item-background-selected: var(--color-highlight);
   }
   
   .lx.lx-theme-dark {
     --color-highlight: #2e3a4a;
     
-    --color-button-nav-selected-background: var(--color-highlight);
+    --color-nav-item-background-selected: var(--color-highlight);
   }

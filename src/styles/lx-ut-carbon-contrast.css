@@ -130,16 +130,16 @@
   --color-selected: var(--contrast-background);
   --color-selected-dropdown: var(--contrast-background);
 
-  --color-button-dropdown: var(--contrast-interactive);
-  --color-button-dropdown-background: var(--contrast-background);
-  --color-button-dropdown-focus: var(--contrast-background);
-  --color-button-dropdown-hover: var(--contrast-background);
-  --color-button-nav: var(--contrast-foreground);
-  --color-button-nav-icon: var(--color-button-nav);
-  --color-button-nav-selected: var(--contrast-background);
-  --color-button-nav-selected-background: var(--contrast-foreground);
-  --color-button-nav-public-hover: var(--contrast-background);
-  --color-button-nav-public-icon-hover: var(--contrast-background);
+  --color-popover-item-text: var(--contrast-interactive);
+  --color-popover-item-background: var(--contrast-background);
+  --color-popover-item-text-focus: var(--contrast-background);
+  --color-popover-item-text-hover: var(--contrast-background);
+
+  --color-nav-item-text: var(--contrast-foreground);
+  --color-nav-item-icon: var(--contrast-foreground);
+  --color-nav-item-background-selected: var(--contrast-foreground);
+  --color-nav-public-item-text-hover: var(--contrast-background);
+  --color-nav-public-item-icon-hover: var(--contrast-background);
 
   --color-loader-track: var(--contrast-background);
 

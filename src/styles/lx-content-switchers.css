@@ -13,7 +13,7 @@
   gap: var(--content-switcher-content-gap);
   border: var(--content-switcher-item-border);
   min-width: var(--content-switcher-item-min-width);
-  justify-content: var(--content-switcher-alignment);
+  justify-content: var(--content-switcher-content-alignment);
   padding: var(--content-switcher-item-padding);
   border-radius: var(--content-switcher-inner-border-radius);
   display: flex;

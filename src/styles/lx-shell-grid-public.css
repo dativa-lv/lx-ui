@@ -289,36 +289,36 @@
 }
 
 .lx-layout.lx-layout-public .lx-nav-group li .lx-nav-item-wrapper > .lx-button-icon-only {
-  --button-nav-public-width: var(--button-nav-public-height);
+  --nav-public-item-width: var(--nav-public-item-height);
 }
 
 /* Selected item + unopened selected LxDDM toggler btn + LxDDM toggler, whose child is selected*/
 .lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-nav-item-wrapper > .lx-button,
 .lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected:not(.lx-nested-nav-open) .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button,
 .lx-layout.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button.lx-child-selected {
-  color: var(--color-button-nav-selected);
-  background-color: var(--color-button-nav-selected-background);
+  color: var(--color-nav-item-text-selected);
+  background-color: var(--color-nav-item-background-selected);
 }
 
 /* Selected item + unopened selected LxDDM toggler btn + LxDDM toggler, whose child is selected*/
 .lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-nav-item-wrapper > .lx-button svg,
 .lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected:not(.lx-nested-nav-open) .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button svg,
 .lx-layout.lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button.lx-child-selected svg {
-  fill: var(--color-button-nav-selected);
+  fill: var(--color-nav-item-text-selected);
 }
 
 /* Opened LxDDM toggler btn */
 .lx-layout.lx-layout-public .lx-nav-panel ul li.lx-nested-nav-open .lx-nav-item-wrapper .lx-dropdown-toggler .lx-button {
-  --color-button-nav-public-background: var(--color-region);
-  --color-button-nav-public-focus-background: var(--color-region);
-  --color-button-nav-public-hover-background: var(--color-header-hover-background);
-  --color-button-nav-public-active-background: var(--color-header-hover-background);
-  --color-button-nav-public-icon: var(--color-data);
-  --color-button-nav-public-icon-focus: var(--color-data);
-  --color-button-nav-public-icon-hover: var(--color-header-hover-foreground);
-  --color-button-nav-public-icon-active: var(--color-header-hover-foreground);
-  --color-button-nav-selected: var(--color-data);
-  --color-button-nav-selected-background: var(--color-region);
+  --color-nav-public-item-background: var(--color-region);
+  --color-nav-public-item-text-focus-background: var(--color-region);
+  --color-nav-public-item-background-hover: var(--color-header-hover-background);
+  --color-nav-public-item-text-active-background: var(--color-header-hover-background);
+  --color-nav-public-item-icon: var(--color-data);
+  --color-nav-public-item-icon-focus: var(--color-data);
+  --color-nav-public-item-icon-hover: var(--color-header-hover-foreground);
+  --color-nav-public-item-icon-active: var(--color-header-hover-foreground);
+  --color-nav-item-text-selected: var(--color-data);
+  --color-nav-item-background-selected: var(--color-region);
 }
 
 .lx-layout.lx-layout-public>main {
@@ -460,7 +460,7 @@
 }
 
 .lx-layout.lx-layout-public .lx-header .lx-login-button {
-  --color-header-hover-background: var(--color-button-primary-hover-background);
+  --color-header-hover-background: var(--color-button-primary-background-hover);
 }
 
 .lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-info-wrapper-responsive-toolbar>.lx-button,

@@ -35,18 +35,18 @@ a.lx-sitemap-link {
   display: flex;
   position: relative;
   padding: var(--button-primary-padding);
-  margin: var(--button-primary-margin);
+  margin: var(--space-0);
   text-decoration: var(--button-primary-text-decoration);
   cursor: var(--button-cursor);
   height: var(--button-primary-height);
   min-width: var(--button-primary-min-width);
   width: var(--button-primary-width);
-  font-size: var(--button-primary-font-size);
-  font-weight: var(--button-primary-font-weight);
+  font-size: var(--button-primary-text-font-size);
+  font-weight: var(--button-primary-text-font-weight);
   border: var(--button-primary-border);
   border-radius: var(--button-primary-border-radius);
   background-color: var(--color-button-primary-background);
-  color: var(--color-button-primary);
+  color: var(--color-button-primary-text);
   outline-offset: var(--button-primary-outline-offset);
 }
 
@@ -61,7 +61,7 @@ a.lx-sitemap-link {
   grid-template-areas: var(--button-primary-grid-areas);
   grid-template-columns: var(--button-primary-grid-template-columns);
   grid-template-rows: var(--button-primary-grid-template-rows);
-  align-items: var(--button-primary-align);
+  align-items: center;
   gap: var(--button-primary-gap);
   width: 100%;
   height: 100%;
@@ -80,7 +80,7 @@ a.lx-sitemap-link {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-align: var(--button-primary-text-align);
+  text-align: var(--button-primary-text-alignment);
 }
 
 .lx .lx-button .lx-button-content .lx-button-label {
@@ -99,7 +99,7 @@ a.lx-sitemap-link {
 .lx-override input[type="submit"],
 .lx-override input[type="reset"],
 .lx-override input[type="file"]::file-selector-button { 
-  align-items: var(--button-primary-align);
+  align-items: center;
 }
 
 /*** General secondary styles ***/
@@ -108,17 +108,16 @@ a.lx-sitemap-link {
 .lx-override button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary) {
   padding: var(--button-secondary-padding);
-  margin: var(--button-secondary-margin);
   text-decoration: var(--button-secondary-text-decoration);
   height: var(--button-secondary-height);
   min-width: var(--button-secondary-min-width);
   width: var(--button-secondary-width);
-  font-size: var(--button-secondary-font-size);
-  font-weight: var(--button-secondary-font-weight);
+  font-size: var(--button-secondary-text-font-size);
+  font-weight: var(--button-secondary-text-font-weight);
   border: var(--button-secondary-border);
   border-radius: var(--button-secondary-border-radius);
   background-color: var(--color-button-secondary-background);
-  color: var(--color-button-secondary);
+  color: var(--color-button-secondary-text);
   outline-offset: var(--button-secondary-outline-offset);
 }
 
@@ -126,19 +125,13 @@ a.lx-sitemap-link {
   grid-template-areas: var(--button-secondary-grid-areas);
   grid-template-columns: var(--button-secondary-grid-template-columns);
   grid-template-rows: var(--button-secondary-grid-template-rows);
-  align-items: var(--button-secondary-align);
   gap: var(--button-secondary-gap);
 }
 
 .lx .lx-button.lx-button-secondary .lx-button-content,
 .lx-override button.lx-button-secondary,
 .lx-override input[type="button"]:where(.lx-button-secondary) {
-  text-align: var(--button-secondary-text-align);
-}
-
-.lx-override button.lx-button-secondary,
-.lx-override input[type="button"]:where(.lx-button-secondary) {
-  align-items: var(--button-secondary-align);
+  text-align: var(--button-secondary-text-alignment);
 }
 
 /*** General tertiary styles ***/
@@ -147,17 +140,16 @@ a.lx-sitemap-link {
 .lx-override button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary) {
   padding: var(--button-tertiary-padding);
-  margin: var(--button-tertiary-margin);
   text-decoration: var(--button-tertiary-text-decoration);
   height: var(--button-tertiary-height);
   min-width: var(--button-tertiary-min-width);
   width: var(--button-tertiary-width);
-  font-size: var(--button-tertiary-font-size);
-  font-weight: var(--button-tertiary-font-weight);
+  font-size: var(--button-tertiary-text-font-size);
+  font-weight: var(--button-tertiary-text-font-weight);
   border: var(--button-tertiary-border);
   border-radius: var(--button-tertiary-border-radius);
   background-color: var(--color-button-tertiary-background);
-  color: var(--color-button-tertiary);
+  color: var(--color-button-tertiary-text);
   outline-offset: var(--button-tertiary-outline-offset);
 }
 
@@ -165,19 +157,13 @@ a.lx-sitemap-link {
   grid-template-areas: var(--button-tertiary-grid-areas);
   grid-template-columns: var(--button-tertiary-grid-template-columns);
   grid-template-rows: var(--button-tertiary-grid-template-rows);
-  align-items: var(--button-tertiary-align);
   gap: var(--button-tertiary-gap);
 }
 
 .lx .lx-button.lx-button-tertiary .lx-button-content,
 .lx-override button.lx-button-tertiary,
 .lx-override input[type="button"]:where(.lx-button-tertiary) {
-  text-align: var(--button-tertiary-text-align);
-}
-
-.lx-override button.lx-button-tertiary,
-.lx-override input[type="button"]:where(.lx-button-tertiary) {
-  align-items: var(--button-tertiary-align);
+  text-align: var(--button-tertiary-text-alignment);
 }
 
 /*** General ghost styles ***/
@@ -186,17 +172,16 @@ a.lx-sitemap-link {
 .lx-override button.lx-button-ghost,
 .lx-override input[type="button"]:where(.lx-button-ghost) {
   padding: var(--button-ghost-padding);
-  margin: var(--button-ghost-margin);
   text-decoration: var(--button-ghost-text-decoration);
   height: var(--button-ghost-height);
   min-width: var(--button-ghost-min-width);
   width: var(--button-ghost-width);
-  font-size: var(--button-ghost-font-size);
-  font-weight: var(--button-ghost-font-weight);
+  font-size: var(--button-ghost-text-font-size);
+  font-weight: var(--button-ghost-text-font-weight);
   border: var(--button-ghost-border);
   border-radius: var(--button-ghost-border-radius);
   background-color: var(--color-button-ghost-background);
-  color: var(--color-button-ghost);
+  color: var(--color-button-ghost-text);
   outline-offset: var(--button-ghost-outline-offset);
 }
 
@@ -204,23 +189,17 @@ a.lx-sitemap-link {
   grid-template-areas: var(--button-ghost-grid-areas);
   grid-template-columns: var(--button-ghost-grid-template-columns);
   grid-template-rows: var(--button-ghost-grid-template-rows);
-  align-items: var(--button-ghost-align);
   gap: var(--button-ghost-gap);
 }
 
 .lx-header-digives .lx-lower-row .lower-button > button .lx-button-content-wrapper {
-  grid-template-areas: var(--button-nav-grid-areas);
+  grid-template-areas: var(--nav-item-grid-areas);
 }
 
 .lx .lx-button.lx-button-ghost .lx-button-content,
 .lx-override button.lx-button-ghost,
 .lx-override input[type="button"]:where(.lx-button-ghost) {
-  text-align: var(--button-ghost-text-align);
-}
-
-.lx-override button.lx-button-ghost,
-.lx-override input[type="button"]:where(.lx-button-ghost) {
-  align-items: var(--button-ghost-align);
+  text-align: var(--button-ghost-text-alignment);
 }
 
 /*** Icon styles ***/
@@ -230,7 +209,7 @@ a.lx-sitemap-link {
   height: var(--button-primary-icon-size);
   width: var(--button-primary-icon-size);
   fill: var(--color-button-primary-icon);
-  justify-self: var(--button-icon-justify);
+  justify-self: center;
   flex-shrink: 0;
   pointer-events: none;
   grid-area: icon;
@@ -260,25 +239,25 @@ a.lx-button.lx-button-ghost svg {
 /* Nav icon styles */
 
 .lx-layout-default .lx-nav-panel ul li .lx-button svg {
-  height: var(--button-nav-icon-size);
-  width: var(--button-nav-icon-size);
-  fill: var(--color-button-nav-icon);
+  height: var(--nav-item-icon-size);
+  width: var(--nav-item-icon-size);
+  fill: var(--color-nav-item-icon);
 }
 
 .lx-layout-default .lx-nav-panel ul li.lx-selected .lx-button svg {
-  fill: var(--color-button-nav-icon-selected);
+  fill: var(--color-nav-item-icon-selected);
 }
 
 .lx-layout-default .lx-nav-panel ul li .lx-button:hover svg {
-  fill: var(--color-button-nav-icon-hover);
+  fill: var(--color-nav-item-icon-hover);
 }
 
 /* Public + latvijalv nav icon styles */
 
 .lx-layout-public .lx-nav-panel ul li:first-of-type .lx-button svg,
 .lx-layout-latvijalv .lx-nav-panel ul li:first-of-type .lx-button svg {
-  height: var(--button-nav-public-icon-size);
-  width: var(--button-nav-public-icon-size);
+  height: var(--nav-public-item-icon-size);
+  width: var(--nav-public-item-icon-size);
 }
 
 .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button svg,
@@ -290,7 +269,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button svg,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button svg {
-  fill: var(--color-button-nav-public-icon);
+  fill: var(--color-nav-public-item-icon);
 }
 
 .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button:hover svg,
@@ -302,91 +281,91 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover svg,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button:hover svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button:hover svg {
-  fill: var(--color-button-nav-public-icon-hover);
+  fill: var(--color-nav-public-item-icon-hover);
 }
 
 /* Toolbar primary icon styles */
 
 .lx-layout .lx-component-toolbar .lx-button svg {
-  height: var(--button-toolbar-primary-icon-size);
-  width: var(--button-toolbar-primary-icon-size);
-  fill: var(--color-button-toolbar-primary-icon);
+  height: var(--toolbar-button-primary-icon-size);
+  width: var(--toolbar-button-primary-icon-size);
+  fill: var(--color-toolbar-button-primary-icon);
 }
 
 .lx-layout .lx-component-toolbar .lx-button:hover svg {
-  fill: var(--color-button-toolbar-primary-icon-hover);
+  fill: var(--color-toolbar-button-primary-icon-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button:focus svg {
-  fill: var(--color-button-toolbar-primary-icon-focus);
+  fill: var(--color-toolbar-button-primary-icon-focus);
 }
 
 .lx-layout .lx-component-toolbar .lx-button:focus:hover svg {
-  fill: var(--color-button-toolbar-primary-icon-hover);
+  fill: var(--color-toolbar-button-primary-icon-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button:active svg {
-  fill: var(--color-button-toolbar-primary-icon-active);
+  fill: var(--color-toolbar-button-primary-icon-active);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-disabled svg {
-  fill: var(--color-button-toolbar-primary-icon-disabled);
+  fill: var(--color-toolbar-button-primary-icon-disabled);
 }
 
 /* Toolbar secondary icon styles */
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary svg {
-  height: var(--button-toolbar-secondary-icon-size);
-  width: var(--button-toolbar-secondary-icon-size);
-  fill: var(--color-button-toolbar-secondary-icon);
+  height: var(--toolbar-button-secondary-icon-size);
+  width: var(--toolbar-button-secondary-icon-size);
+  fill: var(--color-toolbar-button-secondary-icon);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:hover svg {
-  fill: var(--color-button-toolbar-secondary-icon-hover);
+  fill: var(--color-toolbar-button-secondary-icon-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:focus svg {
-  fill: var(--color-button-toolbar-secondary-icon-focus);
+  fill: var(--color-toolbar-button-secondary-icon-focus);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:focus:hover svg {
-  fill: var(--color-button-toolbar-secondary-icon-hover);
+  fill: var(--color-toolbar-button-secondary-icon-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:active svg {
-  fill: var(--color-button-toolbar-secondary-icon-active);
+  fill: var(--color-toolbar-button-secondary-icon-active);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary.lx-disabled svg {
-  fill: var(--color-button-toolbar-secondary-icon-disabled);
+  fill: var(--color-toolbar-button-secondary-icon-disabled);
 }
 
 /* Toolbar tertiary icon styles */
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary svg {
-  height: var(--button-toolbar-tertiary-icon-size);
-  width: var(--button-toolbar-tertiary-icon-size);
-  fill: var(--color-button-toolbar-tertiary-icon);
+  height: var(--toolbar-button-tertiary-icon-size);
+  width: var(--toolbar-button-tertiary-icon-size);
+  fill: var(--color-toolbar-button-tertiary-icon);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary:hover svg {
-  fill: var(--color-button-toolbar-tertiary-icon-hover);
+  fill: var(--color-toolbar-button-tertiary-icon-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary:focus svg {
-  fill: var(--color-button-toolbar-tertiary-icon-focus);
+  fill: var(--color-toolbar-button-tertiary-icon-focus);
 }
 
 .lx-component-toolbar .lx-button.lx-button-tertiary:focus:hover svg {
-  fill: var(--color-button-toolbar-tertiary-icon-hover);
+  fill: var(--color-toolbar-button-tertiary-icon-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary:active svg {
-  fill: var(--color-button-toolbar-tertiary-icon-active);
+  fill: var(--color-toolbar-button-tertiary-icon-active);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary.lx-disabled svg {
-  fill: var(--color-button-toolbar-tertiary-icon-disabled);
+  fill: var(--color-toolbar-button-tertiary-icon-disabled);
 }
 
 /* Toolbar ghost icon styles */
@@ -394,29 +373,29 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-data-grid-wrapper .second-row .lx-button svg,
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost svg,
 .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost svg {
-  height: var(--button-toolbar-ghost-icon-size);
-  width: var(--button-toolbar-ghost-icon-size);
-  fill: var(--color-button-toolbar-ghost-icon);
+  height: var(--toolbar-button-ghost-icon-size);
+  width: var(--toolbar-button-ghost-icon-size);
+  fill: var(--color-toolbar-button-ghost-icon);
 }
 
 .lx-component-toolbar + .second-row .lx-button-ghost:not(.lx-disabled):hover svg,
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:not(.lx-disabled):hover svg {
-  fill: var(--color-button-toolbar-ghost-icon-hover);
+  fill: var(--color-toolbar-button-ghost-icon-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:focus svg,
 .lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus svg {
-  fill: var(--color-button-toolbar-ghost-icon-focus);
+  fill: var(--color-toolbar-button-ghost-icon-focus);
 }
 
 .lx-component-toolbar .lx-button.lx-button-ghost:focus:hover svg,
 .lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:focus:hover svg  {
-  fill: var(--color-button-toolbar-ghost-icon-hover);
+  fill: var(--color-toolbar-button-ghost-icon-hover);
 }
 
 .lx-component-toolbar .second-row .lx-button.lx-button-ghost:active svg,
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:active svg {
-  fill: var(--color-button-toolbar-ghost-icon-active);
+  fill: var(--color-toolbar-button-ghost-icon-active);
 }
 
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active svg,
@@ -426,12 +405,12 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active:hover svg,
 .lx .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-active:hover svg {
-  fill: var(--color-button-toolbar-ghost-icon-hover);
+  fill: var(--color-toolbar-button-ghost-icon-hover);
 }
 
 .lx-component-toolbar .second-row .lx-button.lx-button-ghost.lx-disabled svg,
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-disabled svg {
-  fill: var(--color-button-toolbar-ghost-icon-disabled);
+  fill: var(--color-toolbar-button-ghost-icon-disabled);
 }
 
 .lx .lx-layout .lx-dropdown-panel > .lx-button.lx-active:not(.lx-disabled) svg,
@@ -445,34 +424,34 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) svg,
 .lx-selection-toolbar .lx-component-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) svg {
-  height: var(--button-toolbar-selection-icon-size);
-  width: var(--button-toolbar-selection-icon-size);
-  fill: var(--color-button-toolbar-selection-icon);
+  height: var(--toolbar-selection-button-icon-size);
+  width: var(--toolbar-selection-button-icon-size);
+  fill: var(--color-toolbar-selection-button-icon);
 }
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):hover svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:hover svg  {
-  fill: var(--color-button-toolbar-selection-icon-hover);
+  fill: var(--color-toolbar-selection-button-icon-hover);
 }
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):focus svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:focus svg {
-  fill: var(--color-button-toolbar-selection-icon-focus);
+  fill: var(--color-toolbar-selection-button-icon-focus);
 }
 
 .lx-selection-toolbar .first-row .lx-button:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):focus:hover svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button:focus:hover svg {
-  fill: var(--color-button-toolbar-selection-icon-hover);
+  fill: var(--color-toolbar-selection-button-icon-hover);
 }
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):active svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button:active svg {
-  fill: var(--color-button-toolbar-selection-icon-active);
+  fill: var(--color-toolbar-selection-button-icon-active);
 }
 
 .lx-selection-toolbar .first-row .lx-button:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button).lx-disabled svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-disabled svg {
-    fill: var(--color-button-toolbar-selection-icon-disabled);
+    fill: var(--color-toolbar-selection-button-icon-disabled);
 }
 
 /* Dropdown icon styles */
@@ -481,18 +460,18 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button svg,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button svg,
 .lx .lx-layout .lx-dropdown-panel > .lx-button svg {
-  height: calc(var(--button-dropdown-icon-size) - 0.25rem);		
-  width: calc(var(--button-dropdown-icon-size) - 0.25rem);		
-  fill: var(--color-button-dropdown-icon);
+  height: calc(var(--popover-item-icon-size) - 0.25rem);		
+  width: calc(var(--popover-item-icon-size) - 0.25rem);		
+  fill: var(--color-popover-item-icon);
 }
 
 .lx.lx-touch-mode .lx-dropdown-panel .user-menu-panel .lx-button svg,
 .lx.lx-touch-mode .lx-dropdown-panel .lx-button-set .lx-button svg,
 .lx.lx-touch-mode .lx-layout .lx-dropdown-panel > div > .lx-button svg,
 .lx.lx-touch-mode .lx-layout .lx-dropdown-panel > .lx-button svg {
-  height: var(--button-dropdown-icon-size);
-  width: var(--button-dropdown-icon-size);
-  fill: var(--color-button-dropdown-icon);
+  height: var(--popover-item-icon-size);
+  width: var(--popover-item-icon-size);
+  fill: var(--color-popover-item-icon);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:hover svg,
@@ -501,28 +480,28 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel > .lx-button:hover svg,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover svg,
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover svg {
-  fill: var(--color-button-dropdown-icon-hover);
+  fill: var(--color-popover-item-icon-hover);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:active svg,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:active svg,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button:active svg,
 .lx .lx-layout .lx-dropdown-panel > .lx-button:active svg {
-  fill: var(--color-button-dropdown-icon-active);
+  fill: var(--color-popover-item-icon-active);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:focus svg,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:focus svg,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button:focus svg,
 .lx .lx-layout .lx-dropdown-panel > .lx-button:focus svg {
-  fill: var(--color-button-dropdown-icon-focus);
+  fill: var(--color-popover-item-icon-focus);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button.lx-disabled svg,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled svg,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button.lx-disabled svg,
 .lx .lx-layout .lx-dropdown-panel > .lx-button.lx-disabled svg {
-  fill: var(--color-button-dropdown-icon-disabled);
+  fill: var(--color-popover-item-icon-disabled);
 }
 
 /* Header icon styles */
@@ -594,7 +573,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-drawpad-wrapper .popper-wrapper > .lx-dropdown-toggler:focus .lx-button-ghost svg,
 .lx-qr-scanner-wrapper .lx-dropdown-toggler:focus .lx-button-ghost:not(.lx-disabled) svg, 
 .lx-markdown-text-area-wrapper .popper-wrapper > .lx-dropdown-toggler:focus .lx-button-ghost svg {
-  fill: var(--color-button-toolbar-ghost-icon-focus);
+  fill: var(--color-toolbar-button-ghost-icon-focus);
 }
 
 /* Focus-hover icon styles */
@@ -670,45 +649,44 @@ a.lx-button.lx-button-ghost svg {
 /*** Nav styles ***/
 
 .lx-layout-default .lx-nav-panel ul li .lx-button {
-  padding: var(--button-nav-padding);
-  margin: var(--button-nav-margin);
-  text-decoration: var(--button-nav-text-decoration);
-  height: var(--button-nav-height);
-  min-width: var(--button-nav-min-width);
-  width: var(--button-nav-width);
-  font-size: var(--button-nav-font-size);
-  font-weight: var(--button-nav-font-weight);
-  border: var(--button-nav-border);
-  border-radius: var(--button-nav-border-radius);
-  background-color: var(--color-button-nav-background);
-  color: var(--color-button-nav);
-  outline-offset: var(--button-nav-outline-offset);
+  padding: var(--nav-item-padding);
+  margin: var(--space-0);
+  text-decoration: var(--nav-item-text-decoration);
+  height: var(--nav-item-height);
+  min-width: var(--nav-item-min-width);
+  width: var(--nav-item-width);
+  font-size: var(--nav-item-text-font-size);
+  font-weight: var(--nav-item-text-font-weight);
+  border: var(--nav-item-border);
+  border-radius: var(--nav-item-border-radius);
+  background-color: var(--color-nav-item-background);
+  color: var(--color-nav-item-text);
+  outline-offset: var(--nav-item-outline-offset);
 }
 
 .lx-layout-default .lx-nav-panel ul li .lx-button-content-wrapper:not(.lx-dropdown-panel .lx-button-content-wrapper) {
-  grid-template-areas: var(--button-nav-grid-areas);
-  grid-template-columns: var(--button-nav-grid-template-columns);
-  grid-template-rows: var(--button-nav-grid-template-rows);
-  align-items: var(--button-nav-align);
-  gap: var(--button-nav-gap);
+  grid-template-areas: var(--nav-item-grid-areas);
+  grid-template-columns: var(--nav-item-grid-template-columns);
+  grid-template-rows: var(--nav-item-grid-template-rows);
+  gap: var(--nav-item-gap);
 }
 
 .lx-layout-default .lx-nav-panel ul li .lx-button .lx-button-content {
-  text-align: var(--button-nav-text-align);
+  text-align: var(--nav-item-text-alignment);
 }
 
 .lx-layout-default .lx-nav-panel ul li.lx-selected .lx-button {
-  color: var(--color-button-nav-selected);
-  background-color: var(--color-button-nav-selected-background);
-  border-color: var(--color-button-nav-selected-border);
-  border-left-color: var(--color-button-nav-selected-left-border);
+  color: var(--color-nav-item-text-selected);
+  background-color: var(--color-nav-item-background-selected);
+  border-color: var(--color-nav-item-border-selected);
+  border-left-color: var(--color-nav-item-border-left-selected);
   border-collapse: collapse;
 }
 
 .lx-layout-default .lx-nav-panel ul li .lx-button:hover {
-  background-color: var(--color-button-nav-hover-background);
-  border-color: var(--color-button-nav-hover-border);
-  color: var(--color-button-nav-hover);
+  background-color: var(--color-nav-item-background-hover);
+  border-color: var(--color-nav-item-border-hover);
+  color: var(--color-nav-item-text-hover);
 }
 
 .lx-layout-default .lx-nav-panel ul li.lx-selected .lx-button-icon-only {
@@ -716,33 +694,33 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-layout-default .lx-nav-panel ul .lx-dropdown-toggler .lx-button {
-  --color-button-ghost: var(--color-button-nav);
-  --color-button-ghost-icon-focus: var(--color-button-nav-icon);
+  --color-button-ghost-text: var(--color-nav-item-text);
+  --color-button-ghost-icon-focus: var(--color-nav-item-icon);
 }
 
 /* Unselected nested nav btn + opened LxDDM toggler btn */
 .lx-layout-default .lx-nav-panel .lx-nested-nav li:not(.lx-selected) .lx-button,
 .lx-layout-default .lx-nav-panel ul li.lx-nested-nav-open .lx-button-icon-only {
-  --color-button-nav: var(--color-data);
-  --color-button-nav-icon: var(--color-data);
-  --color-button-nav-background: var(--color-region-2);
-  --color-button-nav-selected: var(--color-data);
-  --color-button-nav-icon-selected: var(--color-data);
-  --color-button-nav-selected-background: var(--color-region-2);
-  --color-button-nav-selected-left-border: transparent;
+  --color-nav-item-text: var(--color-data);
+  --color-nav-item-icon: var(--color-data);
+  --color-nav-item-background: var(--color-region-2);
+  --color-nav-item-text-selected: var(--color-data);
+  --color-nav-item-icon-selected: var(--color-data);
+  --color-nav-item-background-selected: var(--color-region-2);
+  --color-nav-item-border-left-selected: transparent;
 }
 
 /* Closed LxDDM toggler btn, whose child is selected */
 .lx-layout-default .lx-nav-panel .lx-button.lx-child-selected {
-  --color-button-nav-background: var(--color-highlight);
-  --color-button-nav-icon: var(--color-button-nav-icon-selected);
+  --color-nav-item-background: var(--color-highlight);
+  --color-nav-item-icon: var(--color-nav-item-icon-selected);
 }
 
 .lx-layout-default .lx-nav-panel ul li .lx-nested-nav {
   list-style: none;
   padding: var(--space-0);
-  --button-nav-gap: var(--space-0);
-  --button-nav-padding: var(--space-0) var(--space-1000) var(--space-0) var(--space-3000);
+  --nav-item-gap: var(--space-0);
+  --nav-item-padding: var(--space-0) var(--space-1000) var(--space-0) var(--space-3000);
 }
 
 .lx-layout-default .lx-nested-nav {
@@ -752,7 +730,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-layout-default .lx-nested-nav-open > .lx-nested-nav {
-  max-height: calc(var(--lx-nested-item-count, 0) * var(--button-nav-height));
+  max-height: calc(var(--lx-nested-item-count, 0) * var(--nav-item-height));
   opacity: 1;
 }
 
@@ -769,19 +747,19 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button {
   flex-direction: row;
   justify-content: center;
-  padding: var(--button-nav-public-padding);
-  margin: var(--button-nav-public-margin);
-  text-decoration: var(--button-nav-public-text-decoration);
-  height: var(--button-nav-public-height);
-  min-width: var(--button-nav-public-min-width);
-  width: var(--button-nav-public-width);
-  font-size: var(--button-nav-public-font-size);
-  font-weight: var(--button-nav-public-font-weight);
-  border: var(--button-nav-public-border);
-  border-radius: var(--button-nav-public-border-radius);
-  background-color: var(--color-button-nav-public-background);
-  color: var(--color-button-nav-public);
-  outline-offset: var(--button-nav-public-outline-offset);
+  padding: var(--nav-public-item-padding);
+  margin: var(--space-0);
+  text-decoration: var(--nav-public-item-text-decoration);
+  height: var(--nav-public-item-height);
+  min-width: var(--nav-public-item-min-width);
+  width: var(--nav-public-item-width);
+  font-size: var(--nav-public-item-text-font-size);
+  font-weight: var(--nav-public-item-text-font-weight);
+  border: var(--nav-public-item-border);
+  border-radius: var(--nav-public-item-border-radius);
+  background-color: var(--color-nav-public-item-background);
+  color: var(--color-nav-public-item-text);
+  outline-offset: var(--nav-public-item-outline-offset);
 }
 
 .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper,
@@ -790,17 +768,16 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper {
-  grid-template-areas: var(--button-nav-public-grid-areas);
-  grid-template-columns: var(--button-nav-public-grid-template-columns);
-  grid-template-rows: var(--button-nav-public-grid-template-rows);
-  align-items: var(--button-nav-public-align);
-  gap: var(--button-nav-public-gap);
+  grid-template-areas: var(--nav-public-item-grid-areas);
+  grid-template-columns: var(--nav-public-item-grid-template-columns);
+  grid-template-rows: var(--nav-public-item-grid-template-rows);
+  gap: var(--nav-public-item-gap);
 }
 
 .lx-layout-public .lx-nav-panel ul li:first-of-type .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper,
 .lx-layout-latvijalv .lx-nav-panel ul li:first-of-type .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper {
-  --button-nav-public-grid-areas: 'icon';
-  --button-nav-public-grid-template-columns: 1fr;
+  --nav-public-item-grid-areas: 'icon';
+  --nav-public-item-grid-template-columns: 1fr;
 }
 
 .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button .lx-button-content,
@@ -809,7 +786,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content {
-  text-align: var(--button-nav-public-text-align);
+  text-align: var(--nav-public-item-text-alignment);
 }
 
 .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button:hover,
@@ -821,34 +798,34 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button:hover,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button:hover {
-  background-color: var(--color-button-nav-public-hover-background);
-  border-color: var(--color-button-nav-public-hover-border);
-  color: var(--color-button-nav-public-hover);
+  background-color: var(--color-nav-public-item-background-hover);
+  border-color: var(--color-nav-public-item-border-hover);
+  color: var(--color-nav-public-item-text-hover);
 }
 
 /*** Toolbar styles ***/
 
 .lx-component-toolbar:has(> .first-row > .left-area > .lx-group):has(> .first-row > .right-area > .lx-group:not(.action-definitions-small)) {
-  column-gap: var(--button-toolbar-group-gap);
+  column-gap: var(--toolbar-button-group-gap);
 }
 
 .lx-component-toolbar > .first-row > .right-area > .lx-group > .lx-group:not(:last-of-type),
 .lx-component-toolbar > .first-row > .right-area > .lx-group:has(+ .lx-group:not(.action-definitions-small)) {
-  margin-right: calc(var(--button-toolbar-group-gap) / 2);
+  margin-right: calc(var(--toolbar-button-group-gap) / 2);
 }
 
 .lx-component-toolbar > .first-row > .left-area > .lx-group > .lx-group,
 .lx-component-toolbar > .first-row > .left-area > .lx-group + .lx-group:not(.action-definitions-small):not(:has(> .lx-group)) {
-  margin-left: calc(var(--button-toolbar-group-gap) / 2);
+  margin-left: calc(var(--toolbar-button-group-gap) / 2);
 }
 
 .lx-component-toolbar > .first-row > .left-area > .lx-group {
-  padding-right: calc(var(--button-toolbar-group-gap) / 2);
+  padding-right: calc(var(--toolbar-button-group-gap) / 2);
 }
 
 .lx-component-toolbar > .first-row > .left-area > .lx-group:only-child,
 .lx-component-toolbar > .first-row > .right-area > .lx-group:not(:has(> .lx-group)) {
-  padding-left: calc(var(--button-toolbar-group-gap) / 2);
+  padding-left: calc(var(--toolbar-button-group-gap) / 2);
 }
 
 .lx-component-toolbar > .first-row > .right-area > .lx-group:only-child,
@@ -859,7 +836,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-component-toolbar .first-row .right-area .lx-group,
 .lx-component-toolbar .first-row .left-area .lx-group:not(:only-child),
 .lx-component-toolbar .first-row .right-area .selection-action-buttons {
-  column-gap: var(--button-toolbar-gap);
+  column-gap: var(--toolbar-button-gap);
 }
 
 .lx-component-toolbar > .first-row > .left-area > .lx-group:empty,
@@ -870,235 +847,228 @@ a.lx-button.lx-button-ghost svg {
 /* Primary toolbar button styles */
 
 .lx-layout .lx-component-toolbar .lx-button {
-  padding: var(--button-toolbar-primary-padding);
-  margin: var(--button-toolbar-primary-margin);
-  text-decoration: var(--button-toolbar-primary-text-decoration);
-  height: var(--button-toolbar-primary-height);
-  min-width: var(--button-toolbar-primary-min-width);
-  width: var(--button-toolbar-primary-width);
-  font-size: var(--button-toolbar-primary-font-size);
-  font-weight: var(--button-toolbar-primary-font-weight);
-  border: var(--button-toolbar-primary-border);
-  border-radius: var(--button-toolbar-primary-border-radius);
-  background-color: var(--color-button-toolbar-primary-background);
-  color: var(--color-button-toolbar-primary);
-  outline-offset: var(--button-toolbar-primary-outline-offset);
+  padding: var(--toolbar-button-primary-padding);
+  margin: var(--space-0);
+  text-decoration: var(--toolbar-button-primary-text-decoration);
+  height: var(--toolbar-button-primary-height);
+  min-width: var(--toolbar-button-primary-min-width);
+  width: var(--toolbar-button-primary-width);
+  font-size: var(--toolbar-button-primary-text-font-size);
+  font-weight: var(--toolbar-button-primary-text-font-weight);
+  border: var(--toolbar-button-primary-border);
+  border-radius: var(--toolbar-button-primary-border-radius);
+  background-color: var(--color-toolbar-button-primary-background);
+  color: var(--color-toolbar-button-primary-text);
+  outline-offset: var(--toolbar-button-primary-outline-offset);
 }
 
 .lx-layout .lx-component-toolbar .lx-button > .lx-button-content-wrapper {
-  grid-template-areas: var(--button-toolbar-primary-grid-areas);
-  grid-template-columns: var(--button-toolbar-primary-grid-template-columns);
-  grid-template-rows: var(--button-toolbar-primary-grid-template-rows);
-  align-items: var(--button-toolbar-primary-align);
-  gap: var(--button-toolbar-primary-gap);
+  grid-template-areas: var(--toolbar-button-primary-grid-areas);
+  grid-template-columns: var(--toolbar-button-primary-grid-template-columns);
+  grid-template-rows: var(--toolbar-button-primary-grid-template-rows);
+  gap: var(--toolbar-button-primary-gap);
 }
 
 .lx-layout .lx-component-toolbar .lx-button .lx-button-content {
-  text-align: var(--button-toolbar-primary-text-align);
+  text-align: var(--toolbar-button-primary-text-alignment);
 }
 
 .lx .lx-layout .lx-component-toolbar .lx-button:hover {
-  background-color: var(--color-button-toolbar-primary-hover-background);
-  border-color: var(--color-button-toolbar-primary-hover-border);
-  color: var(--color-button-toolbar-primary-hover);
+  background-color: var(--color-toolbar-button-primary-background-hover);
+  border-color: var(--color-toolbar-button-primary-border-hover);
+  color: var(--color-toolbar-button-primary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button:focus {
-  background-color: var(--color-button-toolbar-primary-focus-background);
-  border-color: var(--color-button-toolbar-primary-focus-border);
-  color: var(--color-button-toolbar-primary-focus);
+  background-color: var(--color-toolbar-button-primary-background-focus);
+  border-color: var(--color-toolbar-button-primary-border-focus);
+  color: var(--color-toolbar-button-primary-text-focus);
 }
 
 .lx-component-toolbar .lx-button:focus:hover {
-  background-color: var(--color-button-toolbar-primary-hover-background);
-  color: var(--color-button-toolbar-primary-hover);
+  background-color: var(--color-toolbar-button-primary-background-hover);
+  color: var(--color-toolbar-button-primary-text-hover);
 }
 
 .lx .lx-layout .lx-component-toolbar .lx-button:active {
-  background-color: var(--color-button-toolbar-primary-active-background);
-  border-color: var(--color-button-toolbar-primary-active-border);
-  color: var(--color-button-toolbar-primary-active);
+  background-color: var(--color-toolbar-button-primary-background-active);
+  border-color: var(--color-toolbar-button-primary-border-active);
+  color: var(--color-toolbar-button-primary-text-active);
 }
 
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled {
-  background-color: var(--color-button-toolbar-primary-disabled-background);
-  color: var(--color-button-toolbar-primary-disabled);
-  border-color: var(--color-button-toolbar-primary-disabled-border);
+  background-color: var(--color-toolbar-button-primary-background-disabled);
+  color: var(--color-toolbar-button-primary-text-disabled);
+  border-color: var(--color-toolbar-button-primary-border-disabled);
 }
 
 /* Secondary toolbar button styles */
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary {
-  padding: var(--button-toolbar-secondary-padding);
-  margin: var(--button-toolbar-secondary-margin);
-  text-decoration: var(--button-toolbar-secondary-text-decoration);
-  height: var(--button-toolbar-secondary-height);
-  min-width: var(--button-toolbar-secondary-min-width);
-  width: var(--button-toolbar-secondary-width);
-  font-size: var(--button-toolbar-secondary-font-size);
-  font-weight: var(--button-toolbar-secondary-font-weight);
-  border: var(--button-toolbar-secondary-border);
-  border-radius: var(--button-toolbar-secondary-border-radius);
-  background-color: var(--color-button-toolbar-secondary-background);
-  color: var(--color-button-toolbar-secondary);
-  outline-offset: var(--button-toolbar-secondary-outline-offset);
+  padding: var(--toolbar-button-secondary-padding);
+  text-decoration: var(--toolbar-button-secondary-text-decoration);
+  height: var(--toolbar-button-secondary-height);
+  min-width: var(--toolbar-button-secondary-min-width);
+  width: var(--toolbar-button-secondary-width);
+  font-size: var(--toolbar-button-secondary-text-font-size);
+  font-weight: var(--toolbar-button-secondary-text-font-weight);
+  border: var(--toolbar-button-secondary-border);
+  border-radius: var(--toolbar-button-secondary-border-radius);
+  background-color: var(--color-toolbar-button-secondary-background);
+  color: var(--color-toolbar-button-secondary-text);
+  outline-offset: var(--toolbar-button-secondary-outline-offset);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary > .lx-button-content-wrapper {
-  grid-template-areas: var(--button-toolbar-secondary-grid-areas);
-  grid-template-columns: var(--button-toolbar-secondary-grid-template-columns);
-  grid-template-rows: var(--button-toolbar-secondary-grid-template-rows);
-  align-items: var(--button-toolbar-secondary-align);
-  gap: var(--button-toolbar-secondary-gap);
+  grid-template-areas: var(--toolbar-button-secondary-grid-areas);
+  grid-template-columns: var(--toolbar-button-secondary-grid-template-columns);
+  grid-template-rows: var(--toolbar-button-secondary-grid-template-rows);
+  gap: var(--toolbar-button-secondary-gap);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary .lx-button-content {
-  text-align: var(--button-toolbar-secondary-text-align);
+  text-align: var(--toolbar-button-secondary-text-alignment);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:hover {
-  background-color: var(--color-button-toolbar-secondary-hover-background);
-  border-color: var(--color-button-toolbar-secondary-hover-border);
-  color: var(--color-button-toolbar-secondary-hover);
+  background-color: var(--color-toolbar-button-secondary-background-hover);
+  border-color: var(--color-toolbar-button-secondary-border-hover);
+  color: var(--color-toolbar-button-secondary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:focus {
-  background-color: var(--color-button-toolbar-secondary-focus-background);
-  border-color: var(--color-button-toolbar-secondary-focus-border);
-  color: var(--color-button-toolbar-secondary-focus);
+  background-color: var(--color-toolbar-button-secondary-background-focus);
+  border-color: var(--color-toolbar-button-secondary-border-focus);
+  color: var(--color-toolbar-button-secondary-text-focus);
 }
 
 .lx-component-toolbar .lx-button.lx-button-secondary:focus:hover {
-  background-color: var(--color-button-toolbar-secondary-hover-background);
-  color: var(--color-button-toolbar-secondary-hover);
+  background-color: var(--color-toolbar-button-secondary-background-hover);
+  color: var(--color-toolbar-button-secondary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:active {
-  background-color: var(--color-button-toolbar-secondary-active-background);
-  border-color: var(--color-button-toolbar-secondary-active-border);
-  color: var(--color-button-toolbar-secondary-active);
+  background-color: var(--color-toolbar-button-secondary-background-active);
+  border-color: var(--color-toolbar-button-secondary-border-active);
+  color: var(--color-toolbar-button-secondary-text-active);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary.lx-disabled {
-  background-color: var(--color-button-toolbar-secondary-disabled-background);
-  color: var(--color-button-toolbar-secondary-disabled);
-  border-color: var(--color-button-toolbar-secondary-disabled-border);
+  background-color: var(--color-toolbar-button-secondary-background-disabled);
+  color: var(--color-toolbar-button-secondary-text-disabled);
+  border-color: var(--color-toolbar-button-secondary-border-disabled);
 }
 
 /* Tertiary toolbar button styles */
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary {
-  padding: var(--button-toolbar-tertiary-padding);
-  margin: var(--button-toolbar-tertiary-margin);
-  text-decoration: var(--button-toolbar-tertiary-text-decoration);
-  height: var(--button-toolbar-tertiary-height);
-  min-width: var(--button-toolbar-tertiary-min-width);
-  width: var(--button-toolbar-tertiary-width);
-  font-size: var(--button-toolbar-tertiary-font-size);
-  font-weight: var(--button-toolbar-tertiary-font-weight);
-  border: var(--button-toolbar-tertiary-border);
-  border-radius: var(--button-toolbar-tertiary-border-radius);
-  background-color: var(--color-button-toolbar-tertiary-background);
-  color: var(--color-button-toolbar-tertiary);
-  outline-offset: var(--button-toolbar-tertiary-outline-offset);
+  padding: var(--toolbar-button-tertiary-padding);
+  text-decoration: var(--toolbar-button-tertiary-text-decoration);
+  height: var(--toolbar-button-tertiary-height);
+  min-width: var(--toolbar-button-tertiary-min-width);
+  width: var(--toolbar-button-tertiary-width);
+  font-size: var(--toolbar-button-tertiary-text-font-size);
+  font-weight: var(--toolbar-button-tertiary-text-font-weight);
+  border: var(--toolbar-button-tertiary-border);
+  border-radius: var(--toolbar-button-tertiary-border-radius);
+  background-color: var(--color-toolbar-button-tertiary-background);
+  color: var(--color-toolbar-button-tertiary-text);
+  outline-offset: var(--toolbar-button-tertiary-outline-offset);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary > .lx-button-content-wrapper {
-  grid-template-areas: var(--button-toolbar-tertiary-grid-areas);
-  grid-template-columns: var(--button-toolbar-tertiary-grid-template-columns);
-  grid-template-rows: var(--button-toolbar-tertiary-grid-template-rows);
-  align-items: var(--button-toolbar-tertiary-align);
-  gap: var(--button-toolbar-tertiary-gap);
+  grid-template-areas: var(--toolbar-button-tertiary-grid-areas);
+  grid-template-columns: var(--toolbar-button-tertiary-grid-template-columns);
+  grid-template-rows: var(--toolbar-button-tertiary-grid-template-rows);
+  gap: var(--toolbar-button-tertiary-gap);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary .lx-button-content {
-  text-align: var(--button-toolbar-tertiary-text-align);
+  text-align: var(--toolbar-button-tertiary-text-alignment);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary:hover {
-  background-color: var(--color-button-toolbar-tertiary-hover-background);
-  border-color: var(--color-button-toolbar-tertiary-hover-border);
-  color: var(--color-button-toolbar-tertiary-hover);
+  background-color: var(--color-toolbar-button-tertiary-background-hover);
+  border-color: var(--color-toolbar-button-tertiary-border-hover);
+  color: var(--color-toolbar-button-tertiary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary:focus {
-  background-color: var(--color-button-toolbar-tertiary-focus-background);
-  border-color: var(--color-button-toolbar-tertiary-focus-border);
-  color: var(--color-button-toolbar-tertiary-focus);
+  background-color: var(--color-toolbar-button-tertiary-background-focus);
+  border-color: var(--color-toolbar-button-tertiary-border-focus);
+  color: var(--color-toolbar-button-tertiary-text-focus);
 }
 
 .lx-component-toolbar .lx-button.lx-button-tertiary:focus:hover {
-  background-color: var(--color-button-toolbar-tertiary-hover-background);
-  color: var(--color-button-toolbar-tertiary-hover);
+  background-color: var(--color-toolbar-button-tertiary-background-hover);
+  color: var(--color-toolbar-button-tertiary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary:active {
-  background-color: var(--color-button-toolbar-tertiary-active-background);
-  border-color: var(--color-button-toolbar-tertiary-active-border);
-  color: var(--color-button-toolbar-tertiary-active);
+  background-color: var(--color-toolbar-button-tertiary-background-active);
+  border-color: var(--color-toolbar-button-tertiary-border-active);
+  color: var(--color-toolbar-button-tertiary-text-active);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary.lx-disabled {
-  background-color: var(--color-button-toolbar-tertiary-disabled-background);
-  color: var(--color-button-toolbar-tertiary-disabled);
-  border-color: var(--color-button-toolbar-tertiary-disabled-border);
+  background-color: var(--color-toolbar-button-tertiary-background-disabled);
+  color: var(--color-toolbar-button-tertiary-text-disabled);
+  border-color: var(--color-toolbar-button-tertiary-border-disabled);
 }
 
 /* Ghost toolbar button styles */
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost,
 .lx-component-toolbar + .second-row .lx-button.lx-button-ghost {
-  padding: var(--button-toolbar-ghost-padding);
-  margin: var(--button-toolbar-ghost-margin);
-  text-decoration: var(--button-toolbar-ghost-text-decoration);
-  height: var(--button-toolbar-ghost-height);
-  min-width: var(--button-toolbar-ghost-min-width);
-  width: var(--button-toolbar-ghost-width);
-  font-size: var(--button-toolbar-ghost-font-size);
-  font-weight: var(--button-toolbar-ghost-font-weight);
-  border: var(--button-toolbar-ghost-border);
-  border-radius: var(--button-toolbar-ghost-border-radius);
-  background-color: var(--color-button-toolbar-ghost-background);
-  color: var(--color-button-toolbar-ghost);
-  outline-offset: var(--button-toolbar-ghost-outline-offset);
+  padding: var(--toolbar-button-ghost-padding);
+  text-decoration: var(--toolbar-button-ghost-text-decoration);
+  height: var(--toolbar-button-ghost-height);
+  min-width: var(--toolbar-button-ghost-min-width);
+  width: var(--toolbar-button-ghost-width);
+  font-size: var(--toolbar-button-ghost-text-font-size);
+  font-weight: var(--toolbar-button-ghost-text-font-weight);
+  border: var(--toolbar-button-ghost-border);
+  border-radius: var(--toolbar-button-ghost-border-radius);
+  background-color: var(--color-toolbar-button-ghost-background);
+  color: var(--color-toolbar-button-ghost-text);
+  outline-offset: var(--toolbar-button-ghost-outline-offset);
 }
 
 .lx-component-toolbar + .second-row .lx-button-ghost > .lx-button-content-wrapper,
 .lx-component-toolbar .lx-group > .lx-button.lx-button-ghost > .lx-button-content-wrapper,
 .lx-component-toolbar .lx-dropdown-toggler > .lx-button.lx-button-ghost > .lx-button-content-wrapper {
-  grid-template-areas: var(--button-toolbar-ghost-grid-areas);
-  grid-template-columns: var(--button-toolbar-ghost-grid-template-columns);
-  grid-template-rows: var(--button-toolbar-ghost-grid-template-rows);
-  align-items: var(--button-toolbar-ghost-align);
-  gap: var(--button-toolbar-ghost-gap);
+  grid-template-areas: var(--toolbar-button-ghost-grid-areas);
+  grid-template-columns: var(--toolbar-button-ghost-grid-template-columns);
+  grid-template-rows: var(--toolbar-button-ghost-grid-template-rows);
+  gap: var(--toolbar-button-ghost-gap);
 }
 
 .lx-component-toolbar + .second-row .lx-button-ghost .lx-button-content,
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost .lx-button-content {
-  text-align: var(--button-toolbar-ghost-text-align);
+  text-align: var(--toolbar-button-ghost-text-alignment);
 }
 
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover,
 .lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:hover,
 .lx .lx-layout .lx-form-grid .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover {
-  background-color: var(--color-button-toolbar-ghost-hover-background);
-  border-color: var(--color-button-toolbar-ghost-hover-border);
-  color: var(--color-button-toolbar-ghost-hover);
+  background-color: var(--color-toolbar-button-ghost-background-hover);
+  border-color: var(--color-toolbar-button-ghost-border-hover);
+  color: var(--color-toolbar-button-ghost-text-hover);
 }
 
 .lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus,
 .lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus {
-  background-color: var(--color-button-toolbar-ghost-focus-background);
-  border-color: var(--color-button-toolbar-ghost-focus-border);
-  color: var(--color-button-toolbar-ghost-focus);
+  background-color: var(--color-toolbar-button-ghost-background-focus);
+  border-color: var(--color-toolbar-button-ghost-border-focus);
+  color: var(--color-toolbar-button-ghost-text-focus);
 }
 
 .lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus:hover,
 .lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:focus:hover {
-  background-color: var(--color-button-toolbar-ghost-hover-background);
-  color: var(--color-button-toolbar-ghost-hover);
+  background-color: var(--color-toolbar-button-ghost-background-hover);
+  color: var(--color-toolbar-button-ghost-text-hover);
 }
 
 .lx-layout .toolbar-search-button .lx-button.lx-button-ghost:active,
@@ -1106,21 +1076,21 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout .lx-form-grid .lx-component-toolbar .lx-button.lx-button-ghost:active,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active,
 .lx .lx-layout .lx-form-grid .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active {
-  background-color: var(--color-button-toolbar-ghost-active-background);
-  border-color: var(--color-button-toolbar-ghost-active-border);
-  color: var(--color-button-toolbar-ghost-active);
+  background-color: var(--color-toolbar-button-ghost-background-active);
+  border-color: var(--color-toolbar-button-ghost-border-active);
+  color: var(--color-toolbar-button-ghost-text-active);
 }
 
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-disabled {
-  background-color: var(--color-button-toolbar-selection-disabled-background);
+  background-color: var(--color-toolbar-selection-button-background-disabled);
 }
 
 .lx-list-wrapper .lx-component-toolbar.lx-disabled .left-area,
 .lx .lx-layout .lx-component-toolbar .second-row .lx-button.lx-button-ghost.lx-disabled,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-group .lx-button.lx-button-ghost.lx-disabled {
-  background-color: var(--color-button-toolbar-ghost-disabled-background);
-  color: var(--color-button-toolbar-ghost-disabled);
-  border-color: var(--color-button-toolbar-ghost-disabled-border);
+  background-color: var(--color-toolbar-button-ghost-background-disabled);
+  color: var(--color-toolbar-button-ghost-text-disabled);
+  border-color: var(--color-toolbar-button-ghost-border-disabled);
 }
 
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active,
@@ -1133,67 +1103,66 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost.lx-active:hover,
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active:hover,
 .lx .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-active:hover {
-  background-color: var(--color-button-toolbar-ghost-hover-background);
+  background-color: var(--color-toolbar-button-ghost-background-hover);
 }
 
 /* Selection toolbar button styles */
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button),
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost {
-  padding: var(--button-toolbar-selection-padding);
-  margin: var(--button-toolbar-selection-margin);
-  text-decoration: var(--button-toolbar-selection-text-decoration);
-  height: var(--button-toolbar-selection-height);
-  min-width: var(--button-toolbar-selection-min-width);
-  width: var(--button-toolbar-selection-width);
-  font-size: var(--button-toolbar-selection-font-size);
-  font-weight: var(--button-toolbar-selection-font-weight);
-  border: var(--button-toolbar-selection-border);
-  border-radius: var(--button-toolbar-selection-border-radius);
-  background-color: var(--color-button-toolbar-selection-background);
-  color: var(--color-button-toolbar-selection);
-  outline-offset: var(--button-toolbar-selection-outline-offset);
+  padding: var(--toolbar-selection-button-padding);
+  margin: var(--space-0);
+  text-decoration: var(--toolbar-selection-button-text-decoration);
+  height: var(--toolbar-selection-button-height);
+  min-width: var(--toolbar-selection-button-min-width);
+  width: var(--toolbar-selection-button-width);
+  font-size: var(--toolbar-selection-button-font-size);
+  font-weight: var(--toolbar-selection-button-font-weight);
+  border: var(--toolbar-selection-button-border);
+  border-radius: var(--toolbar-selection-button-border-radius);
+  background-color: var(--color-toolbar-selection-button-background);
+  color: var(--color-toolbar-selection-button-text);
+  outline-offset: var(--toolbar-selection-button-outline-offset);
 }
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) > .lx-button-content-wrapper,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost > .lx-button-content-wrapper {
-  grid-template-areas: var(--button-toolbar-selection-grid-areas);
-  grid-template-columns: var(--button-toolbar-selection-grid-template-columns);
-  grid-template-rows: var(--button-toolbar-selection-grid-template-rows);
-  align-items: var(--button-toolbar-selection-align);
-  gap: var(--button-toolbar-selection-gap);
+  grid-template-areas: var(--toolbar-selection-button-grid-areas);
+  grid-template-columns: var(--toolbar-selection-button-grid-template-columns);
+  grid-template-rows: var(--toolbar-selection-button-grid-template-rows);
+  gap: var(--toolbar-selection-button-gap);
 }
 
 .lx-selection-toolbar .lx-component-toolbar .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) .lx-button-content,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost .lx-button-content {
-  text-align: var(--button-toolbar-selection-text-align);
+  text-align: var(--toolbar-selection-button-text-alignment);
 }
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):hover,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:hover {
-  background-color: var(--color-button-toolbar-selection-hover-background);
-  border-color: var(--color-button-toolbar-selection-hover-border);
-  color: var(--color-button-toolbar-selection-hover);
+  background-color: var(--color-toolbar-selection-button-background-hover);
+  border-color: var(--color-toolbar-selection-button-border-hover);
+  color: var(--color-toolbar-selection-button-text-hover);
 }
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):focus,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:focus {
-  background-color: var(--color-button-toolbar-selection-focus-background);
-  border-color: var(--color-button-toolbar-selection-focus-border);
-  color: var(--color-button-toolbar-selection-focus);
+  background-color: var(--color-toolbar-selection-button-background-focus);
+  border-color: var(--color-toolbar-selection-button-border-focus);
+  color: var(--color-toolbar-selection-button-text-focus);
 }
 
 .lx-selection-toolbar .first-row .lx-button:focus:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):hover,
 .lx-selection-toolbar .lx-component-toolbar .lx-button:focus:hover {
-  background-color: var(--color-button-toolbar-selection-hover-background);
-  color: var(--color-button-toolbar-selection-hover);
+  background-color: var(--color-toolbar-selection-button-background-hover);
+  color: var(--color-toolbar-selection-button-text-hover);
 }
 
 /* .lx-selection-toolbar .lx-component-toolbar .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):active, */
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):active,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:active {
-  background-color: var(--color-button-toolbar-selection-active-background);
-  border-color: var(--color-button-toolbar-selection-active-border);
-  color: var(--color-button-toolbar-selection-active);
+  background-color: var(--color-toolbar-selection-button-background-active);
+  border-color: var(--color-toolbar-selection-button-border-active);
+  color: var(--color-toolbar-selection-button-text-active);
 }
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button).lx-disabled,
@@ -1201,74 +1170,74 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost.lx-disabled,
 .lx .lx-layout .lx-selection-toolbar .lx-component-toolbar.lx-disabled .left-area,
 .lx .lx-layout .lx-selection-toolbar .lx-component-toolbar.lx-disabled .first-row {
-  background-color: var(--color-button-toolbar-selection-disabled-background);
-  color: var(--color-button-toolbar-selection-disabled);
-  border-color: var(--color-button-toolbar-selection-disabled-border);
+  background-color: var(--color-toolbar-selection-button-background-disabled);
+  color: var(--color-toolbar-selection-button-text-disabled);
+  border-color: var(--color-toolbar-selection-button-border-disabled);
 }
 
 /* Toolbar icon-only styles */ 
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-icon-only {
-  padding: var(--button-toolbar-primary-icon-only-padding);
-  height: var(--button-toolbar-primary-icon-only-height);
-  width: var(--button-toolbar-primary-icon-only-width);
-  min-width: var(--button-toolbar-primary-icon-only-min-width);
+  padding: var(--toolbar-button-primary-icon-only-padding);
+  height: var(--toolbar-button-primary-icon-only-height);
+  width: var(--toolbar-button-primary-icon-only-width);
+  min-width: var(--toolbar-button-primary-icon-only-min-width);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-secondary {
-  padding: var(--button-toolbar-secondary-icon-only-padding);
-  height: var(--button-toolbar-secondary-icon-only-height);
-  width: var(--button-toolbar-secondary-icon-only-width);
-  min-width: var(--button-toolbar-secondary-icon-only-min-width);
+  padding: var(--toolbar-button-secondary-icon-only-padding);
+  height: var(--toolbar-button-secondary-icon-only-height);
+  width: var(--toolbar-button-secondary-icon-only-width);
+  min-width: var(--toolbar-button-secondary-icon-only-min-width);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-tertiary {
-  padding: var(--button-toolbar-tertiary-icon-only-padding);
-  height: var(--button-toolbar-tertiary-icon-only-height);
-  width: var(--button-toolbar-tertiary-icon-only-width);
-  min-width: var(--button-toolbar-tertiary-icon-only-min-width);
+  padding: var(--toolbar-button-tertiary-icon-only-padding);
+  height: var(--toolbar-button-tertiary-icon-only-height);
+  width: var(--toolbar-button-tertiary-icon-only-width);
+  min-width: var(--toolbar-button-tertiary-icon-only-min-width);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-ghost {
-  padding: var(--button-toolbar-ghost-icon-only-padding);
-  height: var(--button-toolbar-ghost-icon-only-height);
-  width: var(--button-toolbar-ghost-icon-only-width);
-  min-width: var(--button-toolbar-ghost-icon-only-min-width);
+  padding: var(--toolbar-button-ghost-icon-only-padding);
+  height: var(--toolbar-button-ghost-icon-only-height);
+  width: var(--toolbar-button-ghost-icon-only-width);
+  min-width: var(--toolbar-button-ghost-icon-only-min-width);
 }
 
 .lx-selection-toolbar .first-row .lx-button.lx-button-icon-only.lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button),
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-icon-only.lx-button-ghost {
-  padding: var(--button-toolbar-selection-icon-only-padding);
-  height: var(--button-toolbar-selection-icon-only-height);
-  width: var(--button-toolbar-selection-icon-only-width);
-  min-width: var(--button-toolbar-selection-icon-only-min-width);
+  padding: var(--toolbar-selection-button-icon-only-padding);
+  height: var(--toolbar-selection-button-icon-only-height);
+  width: var(--toolbar-selection-button-icon-only-width);
+  min-width: var(--toolbar-selection-button-icon-only-min-width);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-icon-only .lx-button-content-wrapper {
   gap: var(--space-0);
-  --button-toolbar-primary-grid-areas: 'icon';
-  --button-toolbar-primary-grid-template-columns: 1fr;
+  --toolbar-button-primary-grid-areas: 'icon';
+  --toolbar-button-primary-grid-template-columns: 1fr;
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-secondary .lx-button-content-wrapper {
-  --button-toolbar-secondary-grid-areas: 'icon';
-  --button-toolbar-secondary-grid-template-columns: 1fr;
+  --toolbar-button-secondary-grid-areas: 'icon';
+  --toolbar-button-secondary-grid-template-columns: 1fr;
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-tertiary .lx-button-content-wrapper {
-  --button-toolbar-tertiary-grid-areas: 'icon';
-  --button-toolbar-tertiary-grid-template-columns: 1fr;
+  --toolbar-button-tertiary-grid-areas: 'icon';
+  --toolbar-button-tertiary-grid-template-columns: 1fr;
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-ghost .lx-button-content-wrapper {
-  --button-toolbar-ghost-grid-areas: 'icon';
-  --button-toolbar-ghost-grid-template-columns: 1fr;
+  --toolbar-button-ghost-grid-areas: 'icon';
+  --toolbar-button-ghost-grid-template-columns: 1fr;
 }
 
 .lx-selection-toolbar .first-row .lx-button.lx-button-icon-only.lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) .lx-button-content-wrapper,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-icon-only.lx-button-ghost .lx-button-content-wrapper {
-  --button-toolbar-selection-grid-areas: 'icon';
-  --button-toolbar-selection-grid-template-columns: 1fr;
+  --toolbar-selection-button-grid-areas: 'icon';
+  --toolbar-selection-button-grid-template-columns: 1fr;
 }
 
 /*** Dropdown styles ***/
@@ -1283,7 +1252,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-layout .lx-dropdown-panel .lx-button-set {
   flex-direction: column;
-  gap: var(--button-dropdown-set-gap);
+  gap: var(--popover-item-set-gap);
 }
 
 .lx .lx-layout .lx-dropdown-panel .lx-button .lx-badge {
@@ -1294,53 +1263,52 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button,
 .lx .lx-layout .lx-dropdown-panel > .lx-button {
-  padding: var(--button-dropdown-padding);
-  margin: var(--button-dropdown-margin);
-  text-decoration: var(--button-dropdown-text-decoration);
-  height: var(--button-dropdown-height);
-  min-width: var(--button-dropdown-min-width);
-  width: var(--button-dropdown-width);
-  font-size: var(--button-dropdown-font-size);
-  font-weight: var(--button-dropdown-font-weight);
-  border: var(--button-dropdown-border);
-  border-radius: var(--button-dropdown-border-radius);
-  background-color: var(--color-button-dropdown-background);
-  color: var(--color-button-dropdown);
-  outline-offset: var(--button-dropdown-outline-offset);
+  padding: var(--popover-item-padding);
+  margin: var(--space-0);
+  text-decoration: var(--popover-item-text-decoration);
+  height: var(--popover-item-height);
+  min-width: var(--popover-item-min-width);
+  width: var(--popover-item-width);
+  font-size: var(--popover-item-text-font-size);
+  font-weight: var(--popover-item-text-font-weight);
+  border: var(--popover-item-border);
+  border-radius: var(--popover-item-border-radius);
+  background-color: var(--color-popover-item-background);
+  color: var(--color-popover-item-text);
+  outline-offset: var(--popover-item-outline-offset);
   --button-primary-badge-inset: var(--button-ghost-badge-inset);
-  --button-primary-empty-badge-inset: var(--button-ghost-empty-badge-inset);
+  --button-primary-badge-empty-inset: var(--button-ghost-badge-empty-inset);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button-content-wrapper,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button-content-wrapper,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper {
-  grid-template-areas: var(--button-dropdown-grid-areas);
-  grid-template-columns: var(--button-dropdown-grid-template-columns);
-  grid-template-rows: var(--button-dropdown-grid-template-rows);
-  align-items: var(--button-dropdown-align);
-  gap: var(--button-dropdown-gap);
+  grid-template-areas: var(--popover-item-grid-areas);
+  grid-template-columns: var(--popover-item-grid-template-columns);
+  grid-template-rows: var(--popover-item-grid-template-rows);
+  gap: var(--popover-item-gap);
 }
 
 .lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-icon-only,
 .lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-text-only {
-  --button-dropdown-grid-template-columns: 1fr;
-  --button-dropdown-grid-template-rows: 1fr;
-  --button-dropdown-gap: var(--space-0);
+  --popover-item-grid-template-columns: 1fr;
+  --popover-item-grid-template-rows: 1fr;
+  --popover-item-gap: var(--space-0);
 }
 
 .lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-icon-only {
-  --button-dropdown-grid-areas: 'icon';
+  --popover-item-grid-areas: 'icon';
 }
 
 .lx .lx-layout .lx-dropdown-panel .lx-button.lx-button-text-only {
-  --button-dropdown-grid-areas: 'content';
+  --popover-item-grid-areas: 'content';
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button-content,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button-content,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button .lx-button-content,
 .lx .lx-layout .lx-dropdown-panel > .lx-button .lx-button-content {
-  text-align: var(--button-dropdown-text-align);
+  text-align: var(--popover-item-text-alignment);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:hover,
@@ -1349,18 +1317,18 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel > .lx-button:hover,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover,
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover {
-  background-color: var(--color-button-dropdown-hover-background);
-  border-color: var(--color-button-dropdown-hover-border);
-  color: var(--color-button-dropdown-hover);
+  background-color: var(--color-popover-item-background-hover);
+  border-color: var(--color-popover-item-border-hover);
+  color: var(--color-popover-item-text-hover);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:active,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:active,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button:active,
 .lx .lx-layout .lx-dropdown-panel > .lx-button:active {
-  background-color: var(--color-button-dropdown-active-background);
-  border-color: var(--color-button-dropdown-active-border);
-  color: var(--color-button-dropdown-active);
+  background-color: var(--color-popover-item-background-active);
+  border-color: var(--color-popover-item-border-active);
+  color: var(--color-popover-item-text-active);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:focus,
@@ -1371,69 +1339,67 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:focus-visible,
 .lx .lx-layout .popper .lx-dropdown-panel > div > .lx-button:focus-visible,
 .lx .lx-layout .popper .lx-dropdown-panel > .lx-button:focus-visible {
-  background-color: var(--color-button-dropdown-focus-background);
-  border-color: var(--color-button-dropdown-focus-border);
-  color: var(--color-button-dropdown-focus);
+  background-color: var(--color-popover-item-background-focus);
+  border-color: var(--color-popover-item-border-focus);
+  color: var(--color-popover-item-text-focus);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button.lx-disabled,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
 .lx .lx-layout .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
 .lx .lx-layout .popper .lx-dropdown-panel > .lx-button.lx-disabled {
-  background-color: var(--color-button-dropdown-disabled-background);
-  color: var(--color-button-dropdown-disabled);
-  border-color: var(--color-button-dropdown-disabled-border);
+  background-color: var(--color-popover-item-background-disabled);
+  color: var(--color-popover-item-text-disabled);
+  border-color: var(--color-popover-item-border-disabled);
 }
 
 /*** Modal styles ***/
 
 .lx-modal>footer.lx-button-set {
-  justify-content: var(--button-modal-set-justify);
-  flex-direction: var(--button-modal-set-flex-direction);
-  gap: var(--button-modal-set-gap);
-  margin: var(--button-modal-set-margin);
-  padding: var(--button-modal-set-padding);
-  background-color: var(--color-button-modal-set-background);
+  justify-content: var(--modal-button-set-justify);
+  flex-direction: var(--modal-button-set-flex-direction);
+  gap: var(--modal-button-set-gap);
+  margin: var(--modal-button-set-margin);
+  padding: var(--modal-button-set-padding);
+  background-color: var(--color-modal-button-set-background);
 }
 
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) {
   justify-content: flex-start;
   flex-direction: row;
-  padding: var(--button-modal-primary-padding);
-  margin: var(--button-modal-primary-margin);
-  text-decoration: var(--button-modal-primary-text-decoration);
-  height: var(--button-modal-primary-height);
-  min-width: var(--button-modal-primary-min-width);
-  width: var(--button-modal-primary-width);
-  font-size: var(--button-modal-primary-font-size);
-  font-weight: var(--button-modal-primary-font-weight);
-  border: var(--button-modal-primary-border);
-  border-radius: var(--button-modal-primary-border-radius);
-  background-color: var(--color-button-modal-primary-background);
-  color: var(--color-button-modal-primary);
-  outline-offset: var(--button-modal-primary-outline-offset);
+  padding: var(--modal-button-primary-padding);
+  text-decoration: var(--modal-button-primary-text-decoration);
+  height: var(--modal-button-primary-height);
+  min-width: var(--modal-button-primary-min-width);
+  width: var(--modal-button-primary-width);
+  font-size: var(--modal-button-primary-text-font-size);
+  font-weight: var(--modal-button-primary-text-font-weight);
+  border: var(--modal-button-primary-border);
+  border-radius: var(--modal-button-primary-border-radius);
+  background-color: var(--color-modal-button-primary-background);
+  color: var(--color-modal-button-primary-text);
+  outline-offset: var(--modal-button-primary-outline-offset);
 }
 
 .lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button) {
   justify-content: flex-start;
   flex-direction: row;
-  padding: var(--button-modal-secondary-padding);
-  margin: var(--button-modal-secondary-margin);
-  text-decoration: var(--button-modal-secondary-text-decoration);
-  height: var(--button-modal-secondary-height);
-  min-width: var(--button-modal-secondary-min-width);
-  width: var(--button-modal-secondary-width);
-  font-size: var(--button-modal-secondary-font-size);
-  font-weight: var(--button-modal-secondary-font-weight);
-  border: var(--button-modal-secondary-border);
-  border-radius: var(--button-modal-secondary-border-radius);
-  background-color: var(--color-button-modal-secondary-background);
-  color: var(--color-button-modal-secondary);
-  outline-offset: var(--button-modal-secondary-outline-offset);
+  padding: var(--modal-button-secondary-padding);
+  margin: var(--modal-button-secondary-margin);
+  text-decoration: var(--modal-button-secondary-text-decoration);
+  height: var(--modal-button-secondary-height);
+  min-width: var(--modal-button-secondary-min-width);
+  width: var(--modal-button-secondary-width);
+  font-size: var(--modal-button-secondary-text-font-size);
+  font-weight: var(--modal-button-secondary-text-font-weight);
+  border: var(--modal-button-secondary-border);
+  border-radius: var(--modal-button-secondary-border-radius);
+  background-color: var(--color-modal-button-secondary-background);
+  color: var(--color-modal-button-secondary-text);
+  outline-offset: var(--modal-button-secondary-outline-offset);
 }
 
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) .lx-button-content-wrapper {
-  align-items: var(--button-modal-primary-align);
   --button-primary-gap: var(--space-0);
   --button-primary-grid-areas: 'content';
   --button-primary-grid-template-columns: 1fr auto auto;
@@ -1441,7 +1407,6 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button) .lx-button-content-wrapper {
-  align-items: var(--button-modal-secondary-align);
   --button-secondary-gap: var(--space-0);
   --button-secondary-grid-areas: 'content';
   --button-secondary-grid-template-columns: 1fr auto auto;
@@ -1449,11 +1414,11 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) .lx-button-content {
-  text-align: var(--button-modal-primary-text-align);
+  text-align: var(--modal-button-primary-text-alignment);
 }
 
 .lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button) .lx-button-content {
-  text-align: var(--button-modal-secondary-text-align);
+  text-align: var(--modal-button-secondary-text-alignment);
 }
 
 .lx-modal>footer.lx-button-set.lx-two-buttons .lx-button {
@@ -1463,29 +1428,29 @@ a.lx-button.lx-button-ghost svg {
 /* Modal focus */
 
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):focus {
-  background-color: var(--color-button-modal-primary-focus-background);
-  color: var(--color-button-modal-primary-focus);
-  border-color: var(--color-button-modal-primary-focus-border);
+  background-color: var(--color-modal-button-primary-background-focus);
+  color: var(--color-modal-button-primary-text-focus);
+  border-color: var(--color-modal-button-primary-border-focus);
 }
 
 .lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button):focus {
-  background-color: var(--color-button-modal-secondary-focus-background);
-  color: var(--color-button-modal-secondary-focus);
-  border-color: var(--color-button-modal-secondary-focus-border);
+  background-color: var(--color-modal-button-secondary-background-focus);
+  color: var(--color-modal-button-secondary-text-focus);
+  border-color: var(--color-modal-button-secondary-border-focus);
 }
 
 /* Modal hover */
 
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):hover {
-  background-color: var(--color-button-modal-primary-hover-background);
-  color: var(--color-button-modal-primary-hover);
-  border-color: var(--color-button-modal-primary-hover-border);
+  background-color: var(--color-modal-button-primary-background-hover);
+  color: var(--color-modal-button-primary-text-hover);
+  border-color: var(--color-modal-button-primary-border-hover);
 }
 
 .lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button):hover {
-  background-color: var(--color-button-modal-secondary-hover-background);
-  color: var(--color-button-modal-secondary-hover);
-  border-color: var(--color-button-modal-secondary-hover-border);
+  background-color: var(--color-modal-button-secondary-background-hover);
+  color: var(--color-modal-button-secondary-text-hover);
+  border-color: var(--color-modal-button-secondary-border-hover);
 }
 
 /* Modal destructive */
@@ -1499,29 +1464,29 @@ a.lx-button.lx-button-ghost svg {
 /* Modal active */
 
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):active {
-  background-color: var(--color-button-modal-primary-active-background);
-  color: var(--color-button-modal-primary-active);
-  border-color: var(--color-button-modal-primary-active-border);
+  background-color: var(--color-modal-button-primary-background-active);
+  color: var(--color-modal-button-primary-text-active);
+  border-color: var(--color-modal-button-primary-border-active);
 }
 
 .lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button):active {
-  background-color: var(--color-button-modal-secondary-active-background);
-  color: var(--color-button-modal-secondary-active);
-  border-color: var(--color-button-modal-secondary-active-border);
+  background-color: var(--color-modal-button-secondary-background-active);
+  color: var(--color-modal-button-secondary-text-active);
+  border-color: var(--color-modal-button-secondary-border-active);
 }
 
 /* Modal disabled */
 
 .lx-modal>footer.lx-button-set .lx-button.lx-disabled:not(.lx-pseudo-grid .lx-button) {
-  background-color: var(--color-button-modal-primary-disabled-background);
-  color: var(--color-button-modal-primary-disabled);
-  border-color: var(--color-button-modal-primary-disabled-border);
+  background-color: var(--color-modal-button-primary-background-disabled);
+  color: var(--color-modal-button-primary-text-disabled);
+  border-color: var(--color-modal-button-primary-border-disabled);
 }
 
 .lx-modal>footer.lx-button-set .lx-button.lx-button-secondary.lx-disabled:not(.lx-pseudo-grid .lx-button) {
-  background-color: var(--color-button-modal-secondary-disabled-background);
-  color: var(--color-button-modal-secondary-disabled);
-  border-color: var(--color-button-modal-secondary-disabled-border);
+  background-color: var(--color-modal-button-secondary-background-disabled);
+  color: var(--color-modal-button-secondary-text-disabled);
+  border-color: var(--color-modal-button-secondary-border-disabled);
 }
 
 /*** Icon-only styles ***/
@@ -1624,33 +1589,33 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="submit"]:where(:hover),
 .lx .lx-layout.lx-override input[type="reset"]:where(:hover),
 .lx .lx-layout.lx-override input[type="file"]:where(:hover)::file-selector-button {
-  background-color: var(--color-button-primary-hover-background);
-  color: var(--color-button-primary-hover);
-  border-color: var(--color-button-primary-hover-border);
+  background-color: var(--color-button-primary-background-hover);
+  color: var(--color-button-primary-text-hover);
+  border-color: var(--color-button-primary-border-hover);
 }
 
 .lx-button.lx-button-secondary:hover,
 .lx-override button.lx-button-secondary:hover,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:hover) {
-  background-color: var(--color-button-secondary-hover-background);
-  color: var(--color-button-secondary-hover);
-  border-color: var(--color-button-secondary-hover-border);
+  background-color: var(--color-button-secondary-background-hover);
+  color: var(--color-button-secondary-text-hover);
+  border-color: var(--color-button-secondary-border-hover);
 }
 
 .lx-button.lx-button-tertiary:hover,
 .lx-override button.lx-button-tertiary:hover,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:hover) {
-  background-color: var(--color-button-tertiary-hover-background);
-  color: var(--color-button-tertiary-hover);
-  border-color: var(--color-button-tertiary-hover-border);
+  background-color: var(--color-button-tertiary-background-hover);
+  color: var(--color-button-tertiary-text-hover);
+  border-color: var(--color-button-tertiary-border-hover);
 }
 
 .lx-button.lx-button-ghost:hover,
 .lx-override button.lx-button-ghost:hover,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:hover) {
-  background-color: var(--color-button-ghost-hover-background);
-  color: var(--color-button-ghost-hover);
-  border-color: var(--color-button-ghost-hover-border);
+  background-color: var(--color-button-ghost-background-hover);
+  color: var(--color-button-ghost-text-hover);
+  border-color: var(--color-button-ghost-border-hover);
 }
 
 /* Focus styles */
@@ -1662,10 +1627,10 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="submit"]:where(:focus),
 .lx .lx-layout.lx-override input[type="reset"]:where(:focus),
 .lx .lx-layout.lx-override input[type="file"]:where(:focus)::file-selector-button {
-  background-color: var(--color-button-primary-focus-background);
-  border-color: var(--color-button-primary-focus-border);
+  background-color: var(--color-button-primary-background-focus);
+  border-color: var(--color-button-primary-border-focus);
   outline: 2px solid var(--color-focus-background);
-  color: var(--color-button-primary-focus);
+  color: var(--color-button-primary-text-focus);
   z-index: 1;
 }
 
@@ -1678,18 +1643,18 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-secondary:focus,
 .lx-dropdown-toggler:focus .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus) {
-  background-color: var(--color-button-secondary-focus-background);
-  border-color: var(--color-button-secondary-focus-border);
-  color: var(--color-button-secondary);
+  background-color: var(--color-button-secondary-background-focus);
+  border-color: var(--color-button-secondary-border-focus);
+  color: var(--color-button-secondary-text);
 }
 
 .lx-button.lx-button-tertiary:focus,
 .lx-override button.lx-button-tertiary:focus,
 .lx-dropdown-toggler:focus .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus) {
-  background-color: var(--color-button-tertiary-focus-background);
-  border-color: var(--color-button-tertiary-focus-border);
-  color: var(--color-button-tertiary);
+  background-color: var(--color-button-tertiary-background-focus);
+  border-color: var(--color-button-tertiary-border-focus);
+  color: var(--color-button-tertiary-text);
 }
 
 .lx-button.lx-button-ghost:focus,
@@ -1697,9 +1662,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
 .lx-header .popper-wrapper > .lx-dropdown-toggler:focus .lx-button,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus) {
-  background-color: var(--color-button-ghost-focus-background);
-  border-color: var(--color-button-ghost-focus-border);
-  color: var(--color-button-ghost);
+  background-color: var(--color-button-ghost-background-focus);
+  border-color: var(--color-button-ghost-border-focus);
+  color: var(--color-button-ghost-text);
 }
 
 /* Focus-hover styles */
@@ -1711,36 +1676,36 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="submit"]:where(:focus:hover),
 .lx .lx-layout.lx-override input[type="reset"]:where(:focus:hover),
 .lx .lx-layout.lx-override input[type="file"]:where(:focus:hover)::file-selector-button {
-  background-color: var(--color-button-primary-hover-background);
-  color: var(--color-button-primary-hover);
+  background-color: var(--color-button-primary-background-hover);
+  color: var(--color-button-primary-text-hover);
 }
 
 .lx .lx-layout .lx-component-toolbar .lx-button:focus:where(:hover) {
-    --color-button-toolbar-primary-hover-border: var(--color-button-primary-focus-border);
+    --color-toolbar-button-primary-border-hover: var(--color-button-primary-border-focus);
 }
 
 .lx-button.lx-button-secondary:focus:hover,
 .lx-override button.lx-button-secondary:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus:hover) {
-  background-color: var(--color-button-secondary-hover-background);
-  color: var(--color-button-secondary-hover);
+  background-color: var(--color-button-secondary-background-hover);
+  color: var(--color-button-secondary-text-hover);
 }
 
 .lx-button.lx-button-tertiary:focus:hover,
 .lx-override button.lx-button-tertiary:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus:hover) {
-  background-color: var(--color-button-tertiary-hover-background);
-  color: var(--color-button-tertiary-hover);
+  background-color: var(--color-button-tertiary-background-hover);
+  color: var(--color-button-tertiary-text-hover);
 }
 
 .lx-button.lx-button-ghost:focus:hover,
 .lx-override button.lx-button-ghost:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-ghost,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus:hover) {
-  background-color: var(--color-button-ghost-hover-background);
-  color: var(--color-button-ghost-hover);
+  background-color: var(--color-button-ghost-background-hover);
+  color: var(--color-button-ghost-text-hover);
 }
 
 /* Active styles */
@@ -1751,36 +1716,36 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="submit"]:where(:active),
 .lx .lx-layout.lx-override input[type="reset"]:where(:active),
 .lx .lx-layout.lx-override input[type="file"]:where(:active)::file-selector-button {
-  background-color: var(--color-button-primary-active-background);
-  color: var(--color-button-primary-active);
-  border-color: var(--color-button-primary-active-border);
+  background-color: var(--color-button-primary-background-active);
+  color: var(--color-button-primary-text-active);
+  border-color: var(--color-button-primary-border-active);
 }
 
 .lx .lx-button.lx-button-secondary:active,
 .lx-override button.lx-button-secondary:active,
 .lx-dropdown-toggler:active .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:active) {
-  background-color: var(--color-button-secondary-active-background);
-  color: var(--color-button-secondary-active);
-  border-color: var(--color-button-secondary-active-border);
+  background-color: var(--color-button-secondary-background-active);
+  color: var(--color-button-secondary-text-active);
+  border-color: var(--color-button-secondary-border-active);
 }
 
 .lx .lx-button.lx-button-tertiary:active,
 .lx-override button.lx-button-tertiary:active,
 .lx-dropdown-toggler:active .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:active) {
-  background-color: var(--color-button-tertiary-active-background);
-  color: var(--color-button-tertiary-active);
-  border-color: var(--color-button-tertiary-active-border);
+  background-color: var(--color-button-tertiary-background-active);
+  color: var(--color-button-tertiary-text-active);
+  border-color: var(--color-button-tertiary-border-active);
 }
 
 .lx .lx-button.lx-button-ghost:active,
 .lx-override button.lx-button-ghost:active,
 .lx-dropdown-toggler:active .lx-button.lx-button-ghost,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:active) {
-  background-color: var(--color-button-ghost-active-background);
-  color: var(--color-button-ghost-active);
-  border-color: var(--color-button-ghost-active-border);
+  background-color: var(--color-button-ghost-background-active);
+  color: var(--color-button-ghost-text-active);
+  border-color: var(--color-button-ghost-border-active);
 }
 
 /*** Destructive styles ***/
@@ -1811,9 +1776,9 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="reset"][disabled],
 .lx .lx-layout.lx-override input[type="file"].lx-disabled::file-selector-button,
 .lx .lx-layout.lx-override input[type="file"][disabled]::file-selector-button {
-  background-color: var(--color-button-primary-disabled-background);
-  color: var(--color-button-primary-disabled);
-  border-color: var(--color-button-primary-disabled-border);
+  background-color: var(--color-button-primary-background-disabled);
+  color: var(--color-button-primary-text-disabled);
+  border-color: var(--color-button-primary-border-disabled);
   outline: none;
   cursor: not-allowed;
 }
@@ -1823,9 +1788,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-secondary[disabled],
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary.lx-disabled),
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary[disabled]) {
-  background-color: var(--color-button-secondary-disabled-background);
-  color: var(--color-button-secondary-disabled);
-  border-color: var(--color-button-secondary-disabled-border);
+  background-color: var(--color-button-secondary-background-disabled);
+  color: var(--color-button-secondary-text-disabled);
+  border-color: var(--color-button-secondary-border-disabled);
 }
 
 .lx .lx-button.lx-button-tertiary.lx-disabled,
@@ -1833,9 +1798,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-tertiary[disabled],
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary.lx-disabled),
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary[disabled]) {
-  background-color: var(--color-button-tertiary-disabled-background);
-  color: var(--color-button-tertiary-disabled);
-  border-color: var(--color-button-tertiary-disabled-border);
+  background-color: var(--color-button-tertiary-background-disabled);
+  color: var(--color-button-tertiary-text-disabled);
+  border-color: var(--color-button-tertiary-border-disabled);
 }
 
 .lx .lx-button.lx-button-ghost.lx-disabled,
@@ -1847,9 +1812,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-ghost[disabled],
 .lx-layout.lx-override input[type="button"].lx-button-ghost.lx-disabled,
 .lx-layout.lx-override input[type="button"].lx-button-ghost[disabled] {
-  background-color: var(--color-button-ghost-disabled-background);
-  color: var(--color-button-ghost-disabled);
-  border-color: var(--color-button-ghost-disabled-border);
+  background-color: var(--color-button-ghost-background-disabled);
+  color: var(--color-button-ghost-text-disabled);
+  border-color: var(--color-button-ghost-border-disabled);
 }
 
 /*** User button styles ***/
@@ -1909,19 +1874,19 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-button .lx-badge.lx-badge-empty {
-  inset: var(--button-primary-empty-badge-inset);
+  inset: var(--button-primary-badge-empty-inset);
 }
 
 .lx-button.lx-button-secondary .lx-badge.lx-badge-empty {
-  inset: var(--button-secondary-empty-badge-inset);
+  inset: var(--button-secondary-badge-empty-inset);
 }
 
 .lx-button.lx-button-tertiary .lx-badge.lx-badge-empty {
-  inset: var(--button-tertiary-empty-badge-inset);
+  inset: var(--button-tertiary-badge-empty-inset);
 }
 
 .lx-button.lx-button-ghost .lx-badge.lx-badge-empty {
-  inset: var(--button-ghost-empty-badge-inset);
+  inset: var(--button-ghost-badge-empty-inset);
 }
 
 /*** Main header styles ***/
@@ -1954,7 +1919,7 @@ a.lx-button.lx-button-ghost svg {
   height: var(--icon-size-m);
   width: var(--icon-size-m);
   justify-content: center;
-  justify-self: var(--button-icon-justify);
+  justify-self: center;
   align-items: center;
   display: flex;
   grid-area: icon;
@@ -2264,9 +2229,9 @@ a.lx-button.lx-button-ghost svg {
   .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
   .lx .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper ,
   .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper {
-    --button-nav-public-grid-areas: 'icon content';
-    --button-nav-public-grid-template-columns: auto 1fr;
-    --button-nav-public-text-align: left;
+    --nav-public-item-grid-areas: 'icon content';
+    --nav-public-item-grid-template-columns: auto 1fr;
+    --nav-public-item-text-align: left;
   }
 }
 

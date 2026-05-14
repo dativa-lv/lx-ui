@@ -56,58 +56,57 @@
 /*** Nav styles ***/
 
 .lx-layout-digimaks .lx-nav-panel ul li .lx-button {
-  padding: var(--button-nav-padding);
-  margin: var(--button-nav-margin);
-  text-decoration: var(--button-nav-text-decoration);
-  height: var(--button-nav-height);
-  min-width: var(--button-nav-min-width);
-  width: var(--button-nav-width);
-  font-size: var(--button-nav-font-size);
-  font-weight: var(--button-nav-font-weight);
-  border: var(--button-nav-border);
-  border-radius: var(--button-nav-border-radius);
-  background-color: var(--color-button-nav-background);
-  color: var(--color-button-nav);
-  outline-offset: var(--button-nav-outline-offset);
+  padding: var(--nav-item-padding);
+  margin: var(--space-0);
+  text-decoration: var(--nav-item-text-decoration);
+  height: var(--nav-item-height);
+  min-width: var(--nav-item-min-width);
+  width: var(--nav-item-width);
+  font-size: var(--nav-item-text-font-size);
+  font-weight: var(--nav-item-text-font-weight);
+  border: var(--nav-item-border);
+  border-radius: var(--nav-item-border-radius);
+  background-color: var(--color-nav-item-background);
+  color: var(--color-nav-item-text);
+  outline-offset: var(--nav-item-outline-offset);
 }
 
 .lx-layout-digimaks .lx-nav-panel ul li .lx-button-content-wrapper {
-  grid-template-areas: var(--button-nav-grid-areas);
-  grid-template-columns: var(--button-nav-grid-template-columns);
-  grid-template-rows: var(--button-nav-grid-template-rows);
-  align-items: var(--button-nav-align);
-  gap: var(--button-nav-gap);
+  grid-template-areas: var(--nav-item-grid-areas);
+  grid-template-columns: var(--nav-item-grid-template-columns);
+  grid-template-rows: var(--nav-item-grid-template-rows);
+  gap: var(--nav-item-gap);
 }
 
 .lx-layout-digimaks .lx-nav-panel ul li .lx-button-content {
-  text-align: var(--button-nav-text-align);
+  text-align: var(--nav-item-text-alignment);
 }
 
 .lx-layout-digimaks .lx-nav-panel ul li.lx-selected .lx-button {
-  color: var(--color-button-nav-selected);
-  background-color: var(--color-button-nav-selected-background);
-  border-color: var(--color-button-nav-selected-border);
-  border-left-color: var(--color-button-nav-selected-left-border);
+  color: var(--color-nav-item-text-selected);
+  background-color: var(--color-nav-item-background-selected);
+  border-color: var(--color-nav-item-border-selected);
+  border-left-color: var(--color-nav-item-border-left-selected);
   border-collapse: collapse;
 }
 
 .lx-layout-digimaks .lx-nav-panel ul li .lx-button:hover {
-  background-color: var(--color-button-nav-hover-background);
-  border-color: var(--color-button-nav-hover-border);
-  color: var(--color-button-nav-hover);
+  background-color: var(--color-nav-item-background-hover);
+  border-color: var(--color-nav-item-border-hover);
+  color: var(--color-nav-item-text-hover);
 }
 
 .lx-layout-digimaks .lx-nav-panel ul li .lx-button svg {
-  height: var(--button-nav-icon-size);
-  width: var(--button-nav-icon-size);
-  --color-button-ghost-icon: var(--color-button-nav-icon);
-  --color-button-primary-icon: var(--color-button-nav-icon);
-  --color-button-primary-icon-focus: var(--color-button-nav-icon);
+  height: var(--nav-item-icon-size);
+  width: var(--nav-item-icon-size);
+  --color-button-ghost-icon: var(--color-nav-item-icon);
+  --color-button-primary-icon: var(--color-nav-item-icon);
+  --color-button-primary-icon-focus: var(--color-nav-item-icon);
   --color-button-primary-icon-active: var(--color-interactive-active-foreground);
 }
 
 .lx-layout-digimaks .lx-nav-panel .lx-nav-group:last-of-type .lx-button:active:not(:hover) svg {
-  --color-button-primary-icon-active: var(--color-button-nav-icon);
+  --color-button-primary-icon-active: var(--color-nav-item-icon);
 }
 
 .lx-nav-panel .lx-nav-group ul.header-items {
@@ -202,13 +201,13 @@
 
 .lx-layout-digimaks .lx-nav-panel .lx-user-button:hover,
 .lx-layout-digimaks .lx-nav-panel .lx-user-button:hover .lx-user-info p {
-  background-color: var(--color-button-nav-hover-background);
-  border-color: var(--color-button-nav-hover-border);
-  color: var(--color-button-nav-hover);
+  background-color: var(--color-nav-item-background-hover);
+  border-color: var(--color-nav-item-border-hover);
+  color: var(--color-nav-item-text-hover);
 }
 
 .lx-layout-digimaks .lx-nav-panel .lx-user-button:hover svg {
-  fill: var(--color-button-nav-hover);
+  fill: var(--color-nav-item-text-hover);
 }
 
 .lx-layout-digimaks .lx-nav-panel .lx-user-button .lx-user-info {
@@ -300,5 +299,5 @@
 }
 
 .lx-layout-digimaks .lx-nav-panel .lx-nav-header > div .lx-button svg {
-  --color-button-ghost-icon: var(--color-button-nav-icon);
+  --color-button-ghost-icon: var(--color-nav-item-icon);
 }

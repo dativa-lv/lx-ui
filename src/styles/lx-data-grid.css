@@ -289,7 +289,7 @@
 
 .lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-cell-action .lx-toolbar > .lx-button:hover,
 .lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-cell-action .lx-toolbar > .lx-context-container .lx-toolbar > .lx-button:hover {
-  --color-button-ghost-hover-border: var(--contrast-background);
+  --color-button-ghost-border-hover: var(--contrast-background);
 }
 
 .lx .lx-data-grid-wrapper .lx-cell-header {
@@ -1029,11 +1029,11 @@
 }
 
 .lx-data-grid-wrapper .lx-statusbar .lx-chip.lx-button {
+  margin-left: var(--space-0500);
   --button-ghost-icon-size: 1rem;
   --button-ghost-min-width: 5rem;
-  --button-ghost-margin: var(--space-0) var(--space-0) var(--space-0) var(--space-0500);
-  --color-button-ghost: var(--color-label);
-  --color-button-ghost-focus: var(--color-label);
+  --color-button-ghost-text: var(--color-label);
+  --color-button-ghost-text-focus: var(--color-label);
   --color-button-ghost-icon: var(--color-label);
   --color-button-ghost-icon-focus: var(--color-label);
 }
@@ -1063,8 +1063,8 @@
 
 .lx .lx-data-grid-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded:not(:hover, .lx-disabled) {
   background-color: var(--color-list-region-background);
-  --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
-  --color-button-toolbar-ghost-icon-hover: var(--color-interactive-hover-foreground);
+  --color-toolbar-button-ghost-icon-active: var(--color-toolbar-button-ghost-icon);
+  --color-toolbar-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
 .lx-data-grid-wrapper .lx-data-block-content .lx-row.lx-cell-clickable div {
@@ -1084,7 +1084,7 @@
 
 .lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar .lx-group > p,
 .lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-group > p {
-  color: var(--color-button-toolbar-selection);
+  color: var(--color-toolbar-selection-button-text);
   padding-left: var(--space-1000);
 }
 
@@ -1362,15 +1362,15 @@
 }
 
 .lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button {
-  --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
-  --color-button-toolbar-ghost-icon-hover: var(--color-interactive-hover-foreground);
+  --color-toolbar-button-ghost-icon-active: var(--color-toolbar-button-ghost-icon);
+  --color-toolbar-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
 .lx-grid-toolbar.lx-selection-toolbar.is-expanded > .right-area > .action-definitions-small > div:last-of-type > .lx-button,
 .lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button,
 .lx .lx-data-grid-wrapper .second-row .lx-button {
-  --color-button-toolbar-selection-icon: var(--color-data);
-  --color-button-toolbar-selection-icon-focus: var(--color-data);
+  --color-toolbar-selection-button-icon: var(--color-data);
+  --color-toolbar-selection-button-icon-focus: var(--color-data);
 }
 
 .lx .lx-data-grid-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded:hover,
@@ -1412,7 +1412,7 @@
 }
 
 .lx-theme-contrast .lx-data-grid .lx-cell-person-wrapper .lx-button:hover {
-  --color-button-ghost-hover-border: var(--contrast-background);
+  --color-button-ghost-border-hover: var(--contrast-background);
 }
 
 .lx-theme-contrast .lx-data-grid .lx-grid-row:hover .lx-cell-person-wrapper .lx-button svg {

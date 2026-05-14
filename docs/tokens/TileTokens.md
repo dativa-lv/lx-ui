@@ -2,7 +2,7 @@
 
 [← Back to Design Tokens](../DesignTokens.md)
 
-> **Note:** Most LxTile tokens use [LxList](../ListTokens.md) tokens as default values. Changes should be made with caution to avoid unintended effects.
+> **Note:** Most LxTile tokens use [LxList](./ListTokens.md) tokens as default values. Changes should be made with caution to avoid unintended effects.
 
 ## Layout
 

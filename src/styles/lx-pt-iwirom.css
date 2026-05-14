@@ -7,7 +7,7 @@
   --color-interactive-secondary-background: #526d82;
   --color-data: #06283d;
 
-  --color-button-nav-selected-background: #c5cbce;
+  --color-nav-item-background-selected: #c5cbce;
 }
 .lx.lx-theme-dark {
   --color-brand: #82a4bf;

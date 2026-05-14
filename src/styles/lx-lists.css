@@ -743,7 +743,7 @@
 }
 
 .lx-list-wrapper .lx-selection-toolbar > .lx-component-toolbar.lx-disabled .lx-selection-status {
-  color: var(--color-button-toolbar-selection-disabled);
+  color: var(--color-toolbar-selection-button-text-disabled);
 }
 
 .lx-list-wrapper.list-inside-form .lx-selection-toolbar > .lx-component-toolbar p {
@@ -779,7 +779,7 @@
 }
 
 .lx .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button {
-  --color-button-toolbar-ghost-icon-hover: var(--color-interactive-hover-foreground);
+  --color-toolbar-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
 .lx-list-wrapper .tree-list-search > .tree-list-search-item > .lx-list-item-wrapper {

@@ -518,7 +518,7 @@
 }
 
 .lx-layout-digives nav .default-buttons .lower-button-last .lx-button {
-  color: var(--color-button-nav);
+  color: var(--color-nav-item-text);
 }
 
 .lx-layout.lx-layout-digives > nav {

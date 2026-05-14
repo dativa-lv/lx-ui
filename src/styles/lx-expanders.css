@@ -315,10 +315,10 @@
 }
 
 .lx-expander > .lx-head > .lx-button.lx-expander-action {
-  --color-button-ghost-icon: var(--color-button-toolbar-ghost-icon);
-  --color-button-ghost-icon-hover: var(--color-button-toolbar-ghost-icon-hover);
-  --color-button-ghost-icon-focus: var(--color-button-toolbar-ghost-icon-focus);
-  --color-button-ghost-icon-active: var(--color-button-toolbar-ghost-icon-active);
+  --color-button-ghost-icon: var(--color-toolbar-button-ghost-icon);
+  --color-button-ghost-icon-hover: var(--color-toolbar-button-ghost-icon-hover);
+  --color-button-ghost-icon-focus: var(--color-toolbar-button-ghost-icon-focus);
+  --color-button-ghost-icon-active: var(--color-toolbar-button-ghost-icon-active);
 }
 
 .lx-expander:not([data-disabled]) > .lx-head:hover > .lx-button.lx-expander-action {
@@ -750,9 +750,9 @@
   display: grid;
 }
 
-.lx-accessibility-settings-wrapper .lx-button {
+.lx-accessibility-settings-wrapper .lx-button.lx-button-tertiary {
   --button-tertiary-width: max-content;
-  --button-tertiary-margin: var(--space-1000) var(--space-0) var(--space-0) var(--space-0);
+  margin: var(--space-1000) var(--space-0) var(--space-0) var(--space-0);
   justify-self: start;
 }
 

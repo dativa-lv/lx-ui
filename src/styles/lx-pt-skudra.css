@@ -19,8 +19,8 @@
     --color-data: #000;
     --color-focus-background: #755A9A;
 	--color-grid-hover-background: #eee;
-    --color-button-nav: var(--color-foreground);
-    --color-button-nav-selected-background: var(--color-highlight);
+    --color-nav-item-text: var(--color-foreground);
+    --color-nav-item-background-selected: var(--color-highlight);
 }
 
 .lx.lx-theme-dark {
@@ -39,6 +39,6 @@
     --color-label: #9c9b9f;
     --color-notification-success-foreground: #219444;
     --color-focus-background: #b08ddd;
-    --color-button-nav: var(--color-foreground);
-    --color-button-nav-selected-background: var(--color-highlight);
+    --color-nav-item-text: var(--color-foreground);
+    --color-nav-item-background-selected: var(--color-highlight);
 }

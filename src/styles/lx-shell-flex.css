@@ -150,8 +150,8 @@
 }
 
 .lx-layout-default .lx-nav-panel ul li.lx-selected {
-  background-color: var(--color-button-nav-selected-background);
-  color: var(--color-button-nav-selected);
+  background-color: var(--color-nav-item-background-selected);
+  color: var(--color-nav-item-text-selected);
 }
 
 .lx-layout-default .lx-nav-panel .lx-sub-nav {

@@ -2,7 +2,7 @@
 
 [← Back to Design Tokens](../DesignTokens.md)
 
-> **Note:** Some LxDataBlock tokens use [LxList](../ListTokens.md) tokens as default values. Changes should be made with caution to avoid unintended effects.
+> **Note:** Some LxDataBlock tokens use [LxList](./ListTokens.md) tokens as default values. Changes should be made with caution to avoid unintended effects.
 
 ## Layout
 

@@ -13,7 +13,7 @@
   --color-good: #0d382c;
   --color-data: #000;
 
-  --color-button-nav-selected-background: #6687ff;
+  --color-nav-item-background-selected: #6687ff;
 }
 
 .lx.lx-theme-dark {
@@ -30,6 +30,6 @@
   --color-label: #9b9c9f;
   --color-notification-success-foreground: #219444;
   --color-focus-background: #6687ff;
-  --color-button-nav: var(--color-foreground);
-  --color-button-nav-selected-background: var(--color-highlight);
+  --color-nav-item-text: var(--color-foreground);
+  --color-nav-item-background-selected: var(--color-highlight);
 }

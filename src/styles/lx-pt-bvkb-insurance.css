@@ -9,7 +9,7 @@
   --color-interactive-secondary-background: #293232;
   --color-data: #161D1D;
   --color-highlight: #D7EAE9;
-  --color-button-nav-selected-background: var(--color-highlight);
+  --color-nav-item-background-selected: var(--color-highlight);
   --color-footer-label: #A3A3A3;
 }
 
@@ -18,5 +18,5 @@
   --color-interactive-background: #43C1B9;
   --color-interactive-hover-background: #146E69;
   --color-highlight: #2E3838;
-  --color-button-nav-selected-background: var(--color-highlight);
+  --color-nav-item-background-selected: var(--color-highlight);
 }
