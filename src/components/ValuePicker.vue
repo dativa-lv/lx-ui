@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, inject, getCurrentInstance } from 'vue';
+import { computed, onMounted, ref, inject, getCurrentInstance, onUnmounted } from 'vue';
 import { generateUUID, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
@@ -9,7 +9,7 @@ import LxValuePickerTileTag from '@/components/valuePickers/TileTag.vue';
 import LxValuePickerRotator from '@/components/valuePickers/Rotator.vue';
 import LxValuePickerIndicator from '@/components/valuePickers/Indicator.vue';
 import LxValuePickerHorizontal from '@/components/valuePickers/Horizontal.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -179,6 +179,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxValuePicker' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

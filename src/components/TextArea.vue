@@ -1,8 +1,8 @@
 <script setup>
-import { ref, computed, watch, nextTick, inject, getCurrentInstance } from 'vue';
+import { ref, computed, watch, nextTick, inject, getCurrentInstance, onUnmounted } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -98,6 +98,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxTextArea' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

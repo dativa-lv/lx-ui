@@ -1,6 +1,6 @@
 , group: 'main'
 <script setup>
-import { ref, computed, onMounted, watch, inject, getCurrentInstance } from 'vue';
+import { ref, computed, onMounted, watch, inject, getCurrentInstance, onUnmounted } from 'vue';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { generateUUID } from '@/utils/stringUtils';
@@ -14,7 +14,7 @@ import FileUploaderItem from '@/components/fileUploader/FileUploaderItem.vue';
 import LxCamera from '@/components/Camera.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -716,6 +716,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props.id, name: 'LxFileUploader' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

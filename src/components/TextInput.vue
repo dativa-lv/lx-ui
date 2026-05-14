@@ -1,5 +1,14 @@
 <script setup>
-import { computed, onMounted, watch, ref, inject, nextTick, getCurrentInstance } from 'vue';
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  watch,
+  ref,
+  inject,
+  nextTick,
+  getCurrentInstance,
+} from 'vue';
 import { IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
 import { computedAsync } from '@vueuse/core';
@@ -13,7 +22,7 @@ import { loadLibrary } from '@/utils/libLoader';
 import LxIcon from '@/components/Icon.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxButton from '@/components/Button.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -589,6 +598,10 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxTextInput' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 

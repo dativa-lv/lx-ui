@@ -1,8 +1,8 @@
 <script setup>
-import { getCurrentInstance } from 'vue';
+import { getCurrentInstance, onUnmounted } from 'vue';
 import LxButton from '@/components/Button.vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -32,6 +32,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxViewLayout' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

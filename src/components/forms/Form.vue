@@ -22,7 +22,7 @@ import LxIcon from '@/components/Icon.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxSkipLink from '@/components/SkipLink.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const slots = useSlots();
 const emits = defineEmits(['actionClick', 'update:index']);
@@ -936,6 +936,10 @@ if (props.builderOptions.useRegistry) {
     props,
     builderName: props.builderOptions?.schemaPath,
     componentStack: props.builderOptions?.componentStack,
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

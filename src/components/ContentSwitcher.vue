@@ -1,11 +1,11 @@
 <script setup>
-import { computed, ref, onMounted, inject, getCurrentInstance } from 'vue';
+import { computed, ref, onMounted, inject, getCurrentInstance, onUnmounted } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import useLx from '@/hooks/useLx';
 import { useWindowSize } from '@vueuse/core';
 import { lxDevUtils, lxStringUtils } from '@/utils';
 import LxBadge from '@/components/Badge.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => lxStringUtils.generateUUID() },
@@ -126,6 +126,10 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxContentSwitcher' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

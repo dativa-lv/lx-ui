@@ -723,7 +723,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
         :rowSpan="displaySchema?.properties[name]?.lx?.rowSpan"
         :columnSpan="displaySchema?.properties[name]?.lx?.columnSpan"
         :required="isRequiredRow(name)"
-        :inputId="`${id}-${name}`"
+        :inputId="builderOptions?.useRegistry ? undefined : `${id}-${name}`"
         :id="`${id}-${name}-wrapper`"
         :actionDefinitions="displaySchema?.properties[name]?.lx?.rowActionDefinitions"
         :builderOptions="{

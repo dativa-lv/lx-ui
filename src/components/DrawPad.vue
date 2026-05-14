@@ -8,7 +8,7 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
@@ -418,6 +418,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxDrawPad' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

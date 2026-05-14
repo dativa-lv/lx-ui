@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, ref, getCurrentInstance } from 'vue';
+import { computed, inject, ref, getCurrentInstance, onUnmounted } from 'vue';
 import {
   parseDate,
   formatJSON,
@@ -26,7 +26,7 @@ import {
 import { generateUUID } from '@/utils/stringUtils';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -391,6 +391,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxDateTimePicker' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

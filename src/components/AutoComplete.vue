@@ -1,5 +1,14 @@
 <script setup>
-import { ref, computed, onMounted, nextTick, watch, inject, getCurrentInstance } from 'vue';
+import {
+  ref,
+  computed,
+  onMounted,
+  nextTick,
+  watch,
+  inject,
+  getCurrentInstance,
+  onUnmounted,
+} from 'vue';
 import { onClickOutside, useDebounceFn, useWindowSize } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
@@ -23,7 +32,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -1192,6 +1201,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxAutoComplete' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 

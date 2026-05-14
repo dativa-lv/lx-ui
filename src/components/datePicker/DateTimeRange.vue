@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeMount, ref, inject, getCurrentInstance } from 'vue';
+import { computed, onBeforeMount, ref, inject, getCurrentInstance, onUnmounted } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import useLx from '@/hooks/useLx';
 import {
@@ -22,7 +22,7 @@ import {
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { DATE_VALIDATION_RESULT } from '@/constants';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -475,6 +475,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxDateTimeRange' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

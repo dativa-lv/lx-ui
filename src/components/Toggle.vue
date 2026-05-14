@@ -8,12 +8,13 @@ import {
   inject,
   nextTick,
   getCurrentInstance,
+  onUnmounted,
 } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import { formatValueBool } from '@/utils/formatUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -133,6 +134,10 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxToggle' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

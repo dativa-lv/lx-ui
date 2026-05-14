@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, inject, getCurrentInstance } from 'vue';
+import { computed, ref, watch, inject, getCurrentInstance, onUnmounted } from 'vue';
 
 import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
@@ -7,7 +7,7 @@ import LxTextInput from '@/components/TextInput.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -251,6 +251,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxDayInput' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

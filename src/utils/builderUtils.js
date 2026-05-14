@@ -32,3 +32,12 @@ export function registerBuilderInstance({
   };
   builderRegistry.register(res);
 }
+
+/**
+ * Unregisters a component instance from the builderRegistry.
+ * @param {string} id - The registry entry id.
+ */
+export function unregisterBuilderInstance(id) {
+  if (!id) return;
+  builderRegistry.unregister(id);
+}

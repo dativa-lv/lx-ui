@@ -1,8 +1,8 @@
 <script setup>
-import { ref, computed, onMounted, inject, getCurrentInstance } from 'vue';
+import { ref, computed, onMounted, inject, getCurrentInstance, onUnmounted } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -83,6 +83,10 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxCheckbox' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

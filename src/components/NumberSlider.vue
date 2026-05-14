@@ -1,7 +1,15 @@
 <script setup>
-import { ref, computed, watch, inject, onBeforeUnmount, getCurrentInstance } from 'vue';
+import {
+  ref,
+  computed,
+  watch,
+  inject,
+  onBeforeUnmount,
+  getCurrentInstance,
+  onUnmounted,
+} from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -102,6 +110,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxNumberSlider' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

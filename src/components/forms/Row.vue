@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, ref, provide, useSlots, getCurrentInstance } from 'vue';
+import { computed, inject, ref, provide, useSlots, getCurrentInstance, onUnmounted } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -8,7 +8,7 @@ import LxToggle from '@/components/Toggle.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 /**
  * Represents a row component used in forms.
@@ -235,6 +235,10 @@ if (props.builderOptions.useRegistry) {
     props,
     builderName: props.builderOptions?.schemaPath,
     componentStack: props.builderOptions?.componentStack,
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

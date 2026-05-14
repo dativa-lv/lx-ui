@@ -17,7 +17,7 @@ import { lxDevUtils } from '@/utils';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -413,6 +413,10 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxCamera' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

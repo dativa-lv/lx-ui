@@ -9,6 +9,7 @@ import {
   nextTick,
   inject,
   getCurrentInstance,
+  onUnmounted,
 } from 'vue';
 import { generateUUID, kebabToCamel } from '@/utils/stringUtils';
 import LxFlag from '@/components/Flag.vue';
@@ -22,7 +23,7 @@ import useLx from '@/hooks/useLx';
 import { useElementSize } from '@vueuse/core';
 import { getTexts } from '@/utils/visualPickerUtils';
 import { getDisplayTexts, findFocusableElements } from '@/utils/generalUtils';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -409,6 +410,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxVisualPicker' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

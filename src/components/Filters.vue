@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, getCurrentInstance } from 'vue';
+import { computed, ref, getCurrentInstance, onUnmounted } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import LxExpander from '@/components/Expander.vue';
 import LxButton from '@/components/Button.vue';
@@ -8,7 +8,7 @@ import LxForm from '@/components/forms/Form.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const emits = defineEmits([
   'filter',
@@ -208,6 +208,10 @@ if (props.builderOptions?.useRegistry) {
     props,
     builderName: props.builderOptions?.schemaPath,
     componentStack: props.builderOptions?.componentStack,
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>

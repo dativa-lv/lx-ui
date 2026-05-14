@@ -1,5 +1,14 @@
 <script setup>
-import { ref, onMounted, nextTick, computed, watch, inject, getCurrentInstance } from 'vue';
+import {
+  ref,
+  onMounted,
+  nextTick,
+  computed,
+  watch,
+  inject,
+  getCurrentInstance,
+  onUnmounted,
+} from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
@@ -8,7 +17,7 @@ import LxToolbar from '@/components/Toolbar.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
-import { registerBuilderInstance } from '@/utils/builderUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -306,6 +315,10 @@ if (props.builderOptions?.useRegistry) {
     componentStack: props.builderOptions?.componentStack?.concat([
       { id: props?.id, name: 'LxQrScanner' },
     ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
   });
 }
 </script>
