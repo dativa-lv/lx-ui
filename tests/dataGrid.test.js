@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { describe, test, expect, afterEach, beforeEach } from 'vitest';
+import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
 import { mount, RouterLinkStub } from '@vue/test-utils';
 import LxDataGrid from '@/components/DataGrid.vue';
 import {
@@ -30,6 +30,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   document.body.innerHTML = '';
   if (wrapper) {
     wrapper.unmount();
@@ -40,6 +41,63 @@ test('LxDataGrid component mounts successfully', () => {
   wrapper = mountComponent();
 
   expect(wrapper.exists()).toBe(true);
+});
+
+describe('Scrollable performance', () => {
+  const props = {
+    idAttribute: 'id',
+    items: [
+      {
+        id: 'testItem',
+        name: 'Test item',
+      },
+    ],
+    columnDefinitions: [
+      {
+        id: 'name',
+        attributeName: 'name',
+        name: 'Name',
+      },
+    ],
+    scrollable: true,
+  };
+
+  test('coalesces content scroll sync into one animation frame', async () => {
+    const callbacks = [];
+    const requestAnimationFrameSpy = vi
+      .spyOn(globalThis, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callbacks.push(callback);
+        return callbacks.length;
+      });
+    vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(() => {});
+
+    wrapper = mountComponent({ props });
+
+    const grid = wrapper.find('.lx-data-grid');
+    const header = wrapper.find('.lx-grid-header-wrapper > .lx-grid-row[role="toolbar"]');
+
+    callbacks.length = 0;
+    requestAnimationFrameSpy.mockClear();
+
+    grid.element.scrollLeft = 120;
+    await grid.trigger('scroll');
+    await grid.trigger('scroll');
+
+    expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
+
+    callbacks[0]();
+
+    expect(header.element.scrollLeft).toBe(120);
+  });
+
+  test('renders rows without transition wrappers', () => {
+    wrapper = mountComponent({ props });
+
+    const row = wrapper.find('.lx-grid-content > .lx-grid-row');
+
+    expect(row.exists()).toBe(true);
+  });
 });
 
 describe('Action definitions', () => {

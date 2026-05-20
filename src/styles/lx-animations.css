@@ -143,10 +143,6 @@
   transform: translateY(1rem) scale(0.95);
 }
 
-.lx:not(.lx-no-animations) .data-grid-move {
-  transition: all 0.2s ease;
-}
-
 .lx:not(.lx-no-animations) .icon-default-enter-active {
   transform-origin: center;
   animation: bounce-in 0.2s;
