@@ -36,7 +36,7 @@ export function findNextFocusableElement(startElement, forward) {
   while (currentElement) {
     const focusable = findFocusableElements(currentElement);
     if (focusable.length > 0) {
-      return forward ? focusable[0] : focusable[focusable.length - 1];
+      return forward ? focusable[0] : focusable.at(-1);
     }
     currentElement = forward
       ? currentElement.nextElementSibling
@@ -57,7 +57,7 @@ function findFocusableAmongSiblings(startSibling, forward) {
     const focusable = findFocusableElements(sibling);
 
     if (focusable.length > 0) {
-      return forward ? focusable[0] : focusable[focusable.length - 1];
+      return forward ? focusable[0] : focusable.at(-1);
     }
 
     sibling = getDirectionalSibling(sibling, forward);
@@ -96,7 +96,7 @@ export function focusNextFocusableElement(startElement, forward = true) {
   const nextFocusable =
     findNextFocusableElement(startElement, forward) ||
     findFocusableInSiblingsAndParents(startElement, forward) ||
-    (forward ? allFocusable[0] : allFocusable[allFocusable.length - 1]);
+    (forward ? allFocusable[0] : allFocusable.at(-1));
 
   if (nextFocusable) {
     nextFocusable.focus();
@@ -130,7 +130,7 @@ export function focusLastElementInContainer(container) {
     return;
   }
 
-  focusableElements[focusableElements.length - 1]?.focus();
+  focusableElements.at(-1)?.focus();
 }
 
 export function focusNextElementInContainer(container) {
@@ -144,7 +144,7 @@ export function focusNextElementInContainer(container) {
     return;
   }
 
-  const currentIndex = focusableElements.findIndex((el) => el === document.activeElement);
+  const currentIndex = focusableElements.indexOf(document.activeElement);
 
   if (currentIndex === -1) {
     // Nothing focused, focus first element.
@@ -173,13 +173,13 @@ export function focusPreviousElementInContainer(container) {
 
   if (currentIndex === -1) {
     // Nothing focused, focus last element.
-    focusableElements[focusableElements.length - 1]?.focus();
+    focusableElements.at(-1)?.focus();
   } else if (currentIndex > 0) {
     // Focus previous element.
     focusableElements[currentIndex - 1]?.focus();
   } else {
     // At the beginning, wrap to last.
-    focusableElements[focusableElements.length - 1]?.focus();
+    focusableElements.at(-1)?.focus();
   }
 }
 

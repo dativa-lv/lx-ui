@@ -196,7 +196,7 @@ export function initials(value) {
 
   if (words.length === 1) return firstInitial;
 
-  const lastWord = words[words.length - 1];
+  const lastWord = words.at(-1);
   const lastInitial = lastWord.split('-')[0].charAt(0).toUpperCase();
 
   return `${firstInitial}${lastInitial}`;

@@ -722,7 +722,7 @@ export function getDaysInMonthGrid(date, firstDayOfWeek) {
   }
 
   // If there are fewer than 6 weeks, fill remaining rows with days from the next month
-  let lastRenderedDay = weeks[weeks.length - 1][6];
+  let lastRenderedDay = weeks.at(-1)?.at(6);
   while (weeks.length < 6) {
     const nextWeekStart = addDays(lastRenderedDay, 1);
     const nextWeek = Array.from({ length: 7 }, (_, i) => addDays(nextWeekStart, i));

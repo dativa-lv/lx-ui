@@ -836,7 +836,7 @@ function getSelectableQuarterCellsFromRow(quarterRow, direction) {
   const step = direction >= 0 ? 1 : -1;
   const cells = [];
 
-  for (let col = start; col !== end; col += step) {
+  for (let col = start; direction >= 0 ? col < end : col > end; col += step) {
     const quarter = items[col];
 
     if (
@@ -866,7 +866,7 @@ function getEdgeSelectableQuarterCell(direction = 1) {
   const rowEnd = direction >= 0 ? visibleQuarterGrid.length : -1;
   const rowStep = direction >= 0 ? 1 : -1;
 
-  for (let row = rowStart; row !== rowEnd; row += rowStep) {
+  for (let row = rowStart; direction >= 0 ? row < rowEnd : row > rowEnd; row += rowStep) {
     const quarterRow = visibleQuarterGrid[row];
     const selectableCells = getSelectableQuarterCellsFromRow(quarterRow, direction);
 
@@ -2082,11 +2082,8 @@ function handleMonthSelection(selectedValue, newDate, key) {
     return;
   }
 
-  if (isDateBasedMode(props.mode) && key === 'space') {
-    return;
-  }
-
   if (isDateBasedMode(props.mode)) {
+    if (key === 'space') return;
     monthsLayout.value = false;
     regularLayout.value = true;
     nextTick(() => {
@@ -2098,6 +2095,32 @@ function handleMonthSelection(selectedValue, newDate, key) {
   monthsLayout.value = false;
   regularLayout.value = true;
   props.setActiveInput(props.activeInput, props.id);
+}
+
+function handleMonthYearSelection(numericYear, key) {
+  if (
+    selectedMonth.value !== null &&
+    !canSelectDate(
+      new Date(numericYear, selectedMonth.value, 1),
+      props.minDateRef,
+      props.maxDateRef,
+      'month-year'
+    )
+  ) {
+    selectedMonth.value = null;
+    emits('update:modelValue', null);
+  } else if (selectedMonth.value !== null) {
+    const updatedDate = new Date(numericYear, selectedMonth.value, 1);
+    emits('update:modelValue', updatedDate);
+    handleLayoutDisplay();
+    if (key !== 'space') {
+      props.setActiveInput('startInput', props.id);
+    }
+    return;
+  }
+  syncActiveMonthToYear(numericYear);
+  yearsLayout.value = false;
+  monthsLayout.value = true;
 }
 
 function handleYearSelection(selectedValue, newDate, key) {
@@ -2134,38 +2157,16 @@ function handleYearSelection(selectedValue, newDate, key) {
   }
 
   if (props.mode === 'month-year') {
-    if (
-      selectedMonth.value !== null &&
-      !canSelectDate(
-        new Date(numericYear, selectedMonth.value, 1),
-        props.minDateRef,
-        props.maxDateRef,
-        'month-year'
-      )
-    ) {
-      selectedMonth.value = null;
-      emits('update:modelValue', null);
-    } else if (selectedMonth.value !== null) {
-      const updatedDate = new Date(numericYear, selectedMonth.value, 1);
-      emits('update:modelValue', updatedDate);
-      handleLayoutDisplay();
-      if (key !== 'space') {
-        props.setActiveInput('startInput', props.id);
-      }
-      return;
-    }
-    syncActiveMonthToYear(numericYear);
-    yearsLayout.value = false;
-    monthsLayout.value = true;
-    return;
-  }
-
-  if (isDateBasedMode(props.mode) && key === 'space') {
-    syncActiveMonthToYear(numericYear);
+    handleMonthYearSelection(numericYear, key);
     return;
   }
 
   if (isDateBasedMode(props.mode)) {
+    if (key === 'space') {
+      syncActiveMonthToYear(numericYear);
+      return;
+    }
+
     yearsLayout.value = false;
     regularLayout.value = true;
     nextTick(() => {
@@ -2532,6 +2533,26 @@ const isSelectedQuarterRange = (quarterYear, quarterItem) => {
   return false;
 };
 
+// Check if the mode is not 'year' or 'quarters' to handle month transitions
+function getReturnToTodayTransition(newDate) {
+  if (props.mode === 'year') {
+    // Handle year transitions
+    return startYear.value > newDate.getFullYear() && endYear.value > newDate.getFullYear()
+      ? computedPrevTransitionName.value
+      : computedNextTransitionName.value;
+  }
+  if (props.mode === 'quarters') {
+    // Handle quarter transitions
+    return startQuarterYear.value > newDate.getFullYear() &&
+      endQuarterYear.value > newDate.getFullYear()
+      ? computedPrevTransitionName.value
+      : computedNextTransitionName.value;
+  }
+  return currentDate.value > newDate
+    ? computedPrevTransitionName.value
+    : computedNextTransitionName.value;
+}
+
 function returnToToday() {
   const newDate = new Date();
 
@@ -2544,31 +2565,7 @@ function returnToToday() {
     moveTimeColumnsToNow();
   }
 
-  // Check if the mode is not 'year' or 'quarters' to handle month transitions
-  if (props.mode !== 'year' && props.mode !== 'quarters') {
-    if (currentDate.value > newDate) {
-      transitionName.value = computedPrevTransitionName.value;
-    } else {
-      transitionName.value = computedNextTransitionName.value;
-    }
-  } else if (props.mode === 'year') {
-    // Handle year transitions
-    if (startYear.value > newDate.getFullYear() && endYear.value > newDate.getFullYear()) {
-      transitionName.value = computedPrevTransitionName.value;
-    } else {
-      transitionName.value = computedNextTransitionName.value;
-    }
-  } else if (props.mode === 'quarters') {
-    // Handle quarter transitions
-    if (
-      startQuarterYear.value > newDate.getFullYear() &&
-      endQuarterYear.value > newDate.getFullYear()
-    ) {
-      transitionName.value = computedPrevTransitionName.value;
-    } else {
-      transitionName.value = computedNextTransitionName.value;
-    }
-  }
+  transitionName.value = getReturnToTodayTransition(newDate);
 
   currentDate.value = newDate;
   startYear.value = findDecadeStartYear(newDate.getFullYear()) - 1;
@@ -3241,7 +3238,7 @@ function handleContainerTabTrap(e) {
 
   if (currentIndex === -1) {
     if (e.shiftKey) {
-      focusableElements[focusableElements.length - 1].focus();
+      focusableElements.at(-1)?.focus();
     } else {
       focusableElements[0].focus();
     }
@@ -3597,7 +3594,7 @@ const activeSelectableYearCell = computed(() => {
   for (let row = 0; row < yearsList.value.length; row += 1) {
     const years = yearsList.value[row];
     if (Array.isArray(years)) {
-      const col = years.findIndex((year) => year === activeYear);
+      const col = years.indexOf(activeYear);
 
       if (col !== -1 && isYearSelectable(activeYear)) {
         return { row, col, year: activeYear };

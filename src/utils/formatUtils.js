@@ -247,7 +247,7 @@ function formatAddressParts(address, streetLine) {
     if (!postalCode.startsWith('LV') && postalCode.length === 4) {
       // Case when postal code includes only numbers.
       postalCode = `LV-${postalCode}`;
-    } else if (postalCode.indexOf('-') === -1) {
+    } else if (!postalCode.includes('-')) {
       // Case when postal code isn't formatted with '-'.
       postalCode = `${postalCode.slice(0, 2)}-${postalCode.slice(2)}`;
     }
