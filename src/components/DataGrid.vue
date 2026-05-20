@@ -9,7 +9,7 @@ import {
 
 import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
-import { formatValueArray, objectClone } from '@/utils/formatUtils';
+import { formatValueArray } from '@/utils/formatUtils';
 import { useGridKeyboardNavigation } from '@/utils/useGridKeyboardNavigation';
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
@@ -31,6 +31,22 @@ import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';
+
+const lvCollator = new Intl.Collator('lv');
+const numberFormatters = new Map();
+
+function getNumberFormatter(fractionDigits) {
+  if (!numberFormatters.has(fractionDigits)) {
+    numberFormatters.set(
+      fractionDigits,
+      new Intl.NumberFormat('lv-LV', {
+        minimumFractionDigits: fractionDigits,
+        maximumFractionDigits: fractionDigits,
+      })
+    );
+  }
+  return numberFormatters.get(fractionDigits);
+}
 
 const emits = defineEmits([
   'update:searchString',
@@ -240,20 +256,14 @@ function formatValue(value, type, options = null) {
     case 'boolean':
       return formatBoolean(value);
     case 'number':
-      return new Intl.NumberFormat('lv-LV', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(value);
+      return getNumberFormatter(0).format(value);
 
     case 'float':
     case 'decimal':
       if (!options) {
         optionsValue = 2;
       }
-      return new Intl.NumberFormat('lv-LV', {
-        minimumFractionDigits: optionsValue,
-        maximumFractionDigits: optionsValue,
-      }).format(value);
+      return getNumberFormatter(optionsValue).format(value);
 
     case 'date':
       return formatDate(value);
@@ -364,9 +374,13 @@ function selectPageClicked(pageNum) {
   }
 }
 
+const defaultActionEnableByAttribute = computed(() => {
+  const action = props.actionDefinitions?.find((item) => item.id === props.defaultActionName);
+  return action?.enableByAttribute || null;
+});
+
 function checkEnableByAttributeName(row) {
-  const action = props.actionDefinitions.find((item) => item.id === props.defaultActionName);
-  const enableByAttribute = action?.enableByAttribute;
+  const enableByAttribute = defaultActionEnableByAttribute.value;
   if (enableByAttribute) {
     return row[enableByAttribute];
   }
@@ -545,7 +559,7 @@ function compareFlagNames(nameA, nameB, hasNameOnlyA, hasNameOnlyB, ascending) {
   if (!hasNameOnlyA && hasNameOnlyB) {
     return ascending ? 1 : -1;
   }
-  return new Intl.Collator('lv').compare(nameA, nameB);
+  return lvCollator.compare(nameA, nameB);
 }
 
 function compareFlags(a, b, colCode, ascending) {
@@ -585,7 +599,7 @@ function compareFlags(a, b, colCode, ascending) {
   );
   if (nameOnlyComparison !== 0) return nameOnlyComparison;
 
-  return new Intl.Collator('lv').compare(flagIdA, flagIdB);
+  return lvCollator.compare(flagIdA, flagIdB);
 }
 
 function compareNumber(a, b, colCode) {
@@ -666,13 +680,13 @@ function comparePersonsColumn(personA, personB, ascending) {
   if (orderComparison !== 0) return orderComparison;
 
   if (hasFullNameA && hasFullNameB) {
-    return new Intl.Collator('lv').compare(fullNameA, fullNameB);
+    return lvCollator.compare(fullNameA, fullNameB);
   }
   return 0;
 }
 
 function sortPersonsArray(personsArray, ascending) {
-  return personsArray.sort((a, b) => {
+  return [...personsArray].sort((a, b) => {
     const result = comparePersonsColumn(a, b, ascending);
     return ascending ? result : -result;
   });
@@ -699,7 +713,7 @@ function compareIconLabels(labelA, labelB, ascending) {
     return ascending ? 1 : -1;
   }
   if (labelA && labelB) {
-    return new Intl.Collator('lv').compare(labelA.toLowerCase(), labelB.toLowerCase());
+    return lvCollator.compare(labelA.toLowerCase(), labelB.toLowerCase());
   }
   return 0;
 }
@@ -730,7 +744,7 @@ function compareIcons(a, b, colCode, ascending) {
 
   const valueA = (typeof iconA === 'object' ? iconA.icon : iconA) || '';
   const valueB = (typeof iconB === 'object' ? iconB.icon : iconB) || '';
-  return new Intl.Collator('lv').compare(valueA, valueB);
+  return lvCollator.compare(valueA, valueB);
 }
 
 function compareBoolean(a, b, colCode) {
@@ -748,7 +762,7 @@ function compareBoolean(a, b, colCode) {
 
 function defaultComparison(a, b, colCode) {
   if (props.sortingMode === 'default') {
-    return new Intl.Collator('lv').compare(
+    return lvCollator.compare(
       a[colCode]?.toString().toLowerCase(),
       b[colCode]?.toString().toLowerCase()
     );
@@ -760,10 +774,15 @@ function defaultComparison(a, b, colCode) {
 }
 
 function compare(ascending) {
+  const colCode = Object.keys(sortedColumns.value)[0];
+  const colDefinition = columnsComputed.value.find((item) => item.id === colCode);
+
+  if (!colDefinition) {
+    return () => 0;
+  }
+
   return function compareRows(a, b) {
     let ret = 0;
-    const colCode = Object.keys(sortedColumns.value)[0];
-    const colDefinition = columnsComputed.value.find((item) => item.id === colCode);
     if (colDefinition.type !== 'bool' && colDefinition.type !== 'boolean') {
       if (!a[colCode] && props.sortingIgnoreEmpty) {
         return 1;
@@ -824,7 +843,7 @@ function primaryColumnDisplayAttribute() {
 
 const rows = computed(() => {
   if (props.items) {
-    let ret = objectClone([...props.items]);
+    let ret = [...props.items];
 
     const primaryAttributeName = primaryColumn()?.attributeName;
     const primaryAttributeNameHeaders = primaryColumnDisplayAttribute();
@@ -918,13 +937,7 @@ const selectedLabel = computed(() => {
   return ret;
 });
 
-const hasActionButtons = computed(() => {
-  let ret = false;
-  if (props.actionDefinitions && props.actionDefinitions.length > 0) {
-    ret = true;
-  }
-  return ret;
-});
+const hasActionButtons = computed(() => props.actionDefinitions?.length > 0);
 
 const itemsCountSelector = computed(() => [10, 20, 30, 40, 50]);
 
@@ -987,6 +1000,19 @@ function toolbarClick(action) {
 }
 
 const actionDefinitionsGroup = computed(() => props.actionDefinitions?.slice(1));
+
+function getRowActionDefinitionsGroup(row) {
+  return actionDefinitionsGroup.value.map((a) => {
+    const action = a;
+    return {
+      ...action,
+      disabled:
+        isDisabled.value ||
+        action.disabled ||
+        (action.enableByAttribute ? !row[action.enableByAttribute] : false),
+    };
+  });
+}
 
 function emptyStateActionClicked(actionName) {
   emits('emptyStateActionClick', actionName);
@@ -1600,7 +1626,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             :id="`row-${row[idAttribute]}`"
             :tabindex="-1"
             role="row"
-            :key="rowIndex"
+            :key="row[idAttribute]"
             @dblclick="defaultActionClicked(row[idAttribute], row)"
           >
             <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
@@ -2209,15 +2235,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   placement="bottom-end"
                   :disabled="isDisabled"
                   :tabindex="-1"
-                  :actionDefinitions="
-                    actionDefinitionsGroup.map((a) => ({
-                      ...a,
-                      disabled:
-                        isDisabled ||
-                        a.disabled ||
-                        (a.enableByAttribute ? !row[a.enableByAttribute] : false),
-                    }))
-                  "
+                  :actionDefinitions="getRowActionDefinitionsGroup(row)"
                   @actionClick="
                     (id) => handleActionClick(id, row[idAttribute], actionAdditionalParameter)
                   "
