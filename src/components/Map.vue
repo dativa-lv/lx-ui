@@ -465,7 +465,6 @@ const additionalOptionsGroups = computed(() => [
     >
       <LxToolbar
         v-if="showToolbar"
-        class="lx-map-toolbar"
         :actionDefinitions="toolbarActions"
         defaultArea="right"
         :hasSearch="showSearch"

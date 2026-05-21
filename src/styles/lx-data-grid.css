@@ -657,14 +657,6 @@
   flex-direction: row-reverse;
 }
 
-.lx-data-grid-wrapper .lx-grid-toolbar {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
-}
-
-
-
 .lx-data-grid-wrapper .lx-grid-toolbar.lx-grid-toolbar p {
   margin-left: var(--space-1000);
   color: var(--color-interactive-foreground);
@@ -747,11 +739,6 @@
   flex-direction: column;
   align-items: flex-start;
   align-self: flex-start;
-}
-
-.lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar {
-  display: flex;
-  flex-direction: column;
 }
 
 .lx-pseudo-grid .lx-labels {
@@ -1024,10 +1011,6 @@
   overflow-y: auto;
 }
 
-.lx-data-grid-wrapper .lx-grid-toolbar.lx-main-toolbar {
-  flex-direction: row;
-}
-
 .lx-data-grid-wrapper .lx-statusbar .lx-chip.lx-button {
   margin-left: var(--space-0500);
   --button-ghost-icon-size: 1rem;
@@ -1061,7 +1044,8 @@
   align-items: center;
 }
 
-.lx .lx-data-grid-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded:not(:hover, .lx-disabled) {
+.lx .lx-data-grid-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded:not(:hover, .lx-disabled),
+.lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .toolbar-search .lx-button:not(:hover, .lx-disabled) {
   background-color: var(--color-list-region-background);
   --color-toolbar-button-ghost-icon-active: var(--color-toolbar-button-ghost-icon);
   --color-toolbar-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
@@ -1075,11 +1059,6 @@
 .lx-data-grid-wrapper .lx-selection-toolbar .lx-component-toolbar .lx-dropdown-panel {
   background-color: var(--color-interactive-background);
   color: var(--color-interactive-foreground);
-}
-
-.lx-data-grid-wrapper .lx-component-toolbar .left-area .lx-group,
-.lx-data-grid-wrapper .lx-component-toolbar .right-area .lx-group {
-  border: var(--border-width-0);
 }
 
 .lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar .lx-group > p,
@@ -1325,10 +1304,6 @@
   text-decoration: none;
 }
 
-.lx-data-grid-wrapper .lx-component-toolbar  .lx-search-wrapper {
-  display: flex;
-}
-
 /* 2nd toolbar row for DataGrid.vue */
 
 .lx-data-grid-wrapper > .second-row,
@@ -1345,28 +1320,11 @@
   min-height: 3rem;
 }
 
-.lx-data-grid-wrapper .first-row,
-.lx-data-grid-wrapper .second-row,
-.lx-data-grid-wrapper .second-row .lx-field-wrapper,
-.lx-data-grid-wrapper .first-row .lx-search-wrapper,
-.lx-data-grid-wrapper .lx-component-toolbar .left-area,
-.lx-data-grid-wrapper .first-row .lx-search-wrapper > .lx-field-wrapper,
-.lx-data-grid-wrapper > div:not(.lx-selection-toolbar) .left-area .lx-group {
-  width: 100%;
-}
-
-.lx-data-grid-wrapper .lx-component-toolbar .first-row .left-area .lx-context-container,
-.lx-data-grid-wrapper > div:not(.lx-selection-toolbar) .left-area .action-definitions-small,
-.lx-data-grid-wrapper > div:not(.lx-selection-toolbar) .left-area .action-definitions-group {
-    width: fit-content;
-}
-
 .lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button {
   --color-toolbar-button-ghost-icon-active: var(--color-toolbar-button-ghost-icon);
   --color-toolbar-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
-.lx-grid-toolbar.lx-selection-toolbar.is-expanded > .right-area > .action-definitions-small > div:last-of-type > .lx-button,
 .lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button,
 .lx .lx-data-grid-wrapper .second-row .lx-button {
   --color-toolbar-selection-button-icon: var(--color-data);
@@ -1381,10 +1339,6 @@
 .lx .lx-data-grid-wrapper .second-row .lx-input-wrapper {
   --color-input-background: var(--color-region-2);
   --color-input-disabled-background: var(--color-disabled-background);
-}
-
-.lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar .right-area {
-  display: flex;  
 }
 
 .lx .lx-data-grid-wrapper .lx-cell-person-wrapper {
@@ -1488,7 +1442,6 @@
     position: static;
   }
 
-  .lx-data-grid-wrapper  .lx-component-toolbar  .action-definitions-small,
   .lx-data-grid-wrapper:not(:has(.lx-data-grid.lx-loading)) .lx-appendable-list,
   .lx-data-grid-wrapper  .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons-small {
     display: flex;

@@ -1491,7 +1491,6 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
     class="lx-list-wrapper"
     :class="{
       'is-narrow': isNarrow,
-      'not-selectable': !hasSelecting,
       'list-inside-form': insideForm,
     }"
   >

@@ -47,14 +47,38 @@
 .lx-expander .lx-toggle-appearance,
 .lx-form-grid .lx-toggle-appearance,
 .lx-dropdown-panel .lx-toggle-appearance,
-.lx-data-block-wrapper .lx-toggle-appearance {
+.lx-data-block-wrapper .lx-toggle-appearance,
+.lx-markdown-text-area-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-drawpad-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-map .lx-component-toolbar .lx-toggle-appearance,
+.lx-file-viewer .lx-component-toolbar .lx-toggle-appearance,
+.lx-camera .lx-component-toolbar .lx-toggle-appearance,
+.lx-qr-scanner-wrapper .lx-component-toolbar .lx-toggle-appearance {
   --color-toggle-background-off: var(--color-region-2);
   --color-toggle-background-hover-off: var(--color-region-2);
 }
 
 .lx-modal .lx-data-block-wrapper .lx-toggle-appearance,
 .lx-region .lx-data-block-wrapper .lx-toggle-appearance,
-.lx-form-grid .lx-data-block-wrapper .lx-toggle-appearance {
+.lx-form-grid .lx-data-block-wrapper .lx-toggle-appearance,
+.lx-region .lx-markdown-text-area-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-form-grid .lx-markdown-text-area-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-modal .lx-markdown-text-area-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-region .lx-drawpad-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-form-grid .lx-drawpad-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-modal .lx-drawpad-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-region .lx-map .lx-component-toolbar .lx-toggle-appearance,
+.lx-form-grid .lx-map .lx-component-toolbar .lx-toggle-appearance,
+.lx-modal .lx-map .lx-component-toolbar .lx-toggle-appearance,
+.lx-region .lx-file-viewer .lx-component-toolbar .lx-toggle-appearance,
+.lx-form-grid .lx-file-viewer .lx-component-toolbar .lx-toggle-appearance,
+.lx-modal .lx-file-viewer .lx-component-toolbar .lx-toggle-appearance,
+.lx-region .lx-camera .lx-component-toolbar .lx-toggle-appearance,
+.lx-form-grid .lx-camera .lx-component-toolbar .lx-toggle-appearance,
+.lx-modal .lx-camera .lx-component-toolbar .lx-toggle-appearance,
+.lx-region .lx-qr-scanner-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-form-grid .lx-qr-scanner-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-modal .lx-qr-scanner-wrapper .lx-component-toolbar .lx-toggle-appearance {
   --color-toggle-background-off: unset;
   --color-toggle-background-hover-off: unset;
 }

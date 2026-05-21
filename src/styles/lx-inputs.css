@@ -702,7 +702,25 @@
 .lx .lx-data-block-wrapper .lx-input-wrapper,
 .lx .lx-data-block-wrapper .lx-rotator-tag,
 .lx .lx-override .lx-data-block-wrapper input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
-.lx .lx-override .lx-data-block-wrapper textarea {
+.lx .lx-override .lx-data-block-wrapper textarea,
+.lx .lx-region .lx-markdown-text-area-wrapper .lx-component-toolbar,
+.lx .lx-form-grid .lx-markdown-text-area-wrapper .lx-component-toolbar,
+.lx .lx-modal .lx-markdown-text-area-wrapper .lx-component-toolbar,
+.lx .lx-region .lx-drawpad-wrapper .lx-component-toolbar,
+.lx .lx-form-grid .lx-drawpad-wrapper .lx-component-toolbar,
+.lx .lx-modal .lx-drawpad-wrapper .lx-component-toolbar,
+.lx .lx-region .lx-map .lx-component-toolbar,
+.lx .lx-form-grid .lx-map .lx-component-toolbar,
+.lx .lx-modal .lx-map .lx-component-toolbar,
+.lx .lx-region .lx-file-viewer .lx-component-toolbar,
+.lx .lx-form-grid .lx-file-viewer .lx-component-toolbar,
+.lx .lx-modal .lx-file-viewer .lx-component-toolbar,
+.lx .lx-region .lx-camera .lx-component-toolbar,
+.lx .lx-form-grid .lx-camera .lx-component-toolbar,
+.lx .lx-modal .lx-camera .lx-component-toolbar,
+.lx .lx-region .lx-qr-scanner-wrapper .lx-component-toolbar,
+.lx .lx-form-grid .lx-qr-scanner-wrapper .lx-component-toolbar,
+.lx .lx-modal .lx-qr-scanner-wrapper .lx-component-toolbar {
   background-color: var(--color-input-region-background);
 }
 
@@ -729,7 +747,13 @@
 .lx .lx-form-grid .lx-data-block-wrapper .lx-input-wrapper,
 .lx .lx-form-grid .lx-data-block-wrapper .lx-rotator-tag,
 .lx-override .lx-form-grid .lx-data-block-wrapper input,
-.lx-override .lx-form-grid .lx-data-block-wrapper textarea {
+.lx-override .lx-form-grid .lx-data-block-wrapper textarea,
+.lx .lx-markdown-text-area-wrapper .lx-component-toolbar,
+.lx .lx-drawpad-wrapper .lx-component-toolbar,
+.lx .lx-map .lx-component-toolbar,
+.lx .lx-file-viewer .lx-component-toolbar,
+.lx .lx-camera .lx-component-toolbar,
+.lx .lx-qr-scanner-wrapper .lx-component-toolbar {
   background-color: var(--color-input-background);
 }
 
@@ -1115,9 +1139,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-layout .first-row .lx-input-wrapper,
 .lx .lx-layout .left-area .lx-input-wrapper,
-.lx .lx-layout .lx-search-wrapper .lx-input-wrapper,
 .lx .lx-layout .lx-search-toolbar .lx-input-wrapper,
-.lx .lx-layout .lx-search-wrapper input.lx-input-area,
 .lx .lx-layout .lx-toolbar.lx-sticky .lx-input-wrapper,
 .lx .lx-layout .lx-search-toolbar .lx-input-wrapper .lx-search-input {
   background-color: transparent;
@@ -1179,17 +1201,12 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-value-picker-wrapper .lx-component-toolbar {
   margin-bottom: var(--space-0500);
-  border-top: var(--border-width-1) solid transparent;
 }
 
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area,
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group:not(:has(.lx-button[id*="select-all"])),
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group > .lx-field-wrapper {
   width: 100%;
-}
-
-.lx-value-picker-wrapper .lx-component-toolbar .left-area > .lx-group {
-  border-right: var(--border-width-1) solid transparent;
 }
 
 .lx-value-picker-horizontal-container {
@@ -2155,18 +2172,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: auto;
 }
 
-.lx-markdown-text-area-wrapper .lx-toolbar {
-  display: flex;
-  min-height: 3rem;
-  background-color: transparent;
-  border-top: var(--border-width-1) solid var(--color-chrome);
-}
-
-.lx-markdown-text-area-wrapper .lx-toolbar .lx-toolbar-group {
-  display: flex;
-  border-right: var(--border-width-1) solid var(--color-chrome);
-}
-
 .lx .lx-layout .lx-dropdown-panel:has(.lx-color-list) {
   padding-top: var(--space-0500);
   padding-bottom: var(--space-0500);
@@ -2702,18 +2707,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   padding: var(--space-0) var(--space-3000);
 }
 
-.lx-qr-scanner-wrapper > .lx-toolbar {
-  display: flex;
-  justify-content: right;
-  border-top: var(--border-width-1) solid var(--color-chrome);
-  border-bottom: var(--border-width-1) solid var(--color-chrome);
-  align-items: center;
-}
-
-.lx-qr-scanner-wrapper > .lx-toolbar > .lx-field-wrapper {
-  width: auto;
-}
-
 .lx-qr-scanner-wrapper .lx-qr-center {
   display: flex;
   justify-content: center;
@@ -2822,8 +2815,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-component-toolbar {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border-top: var(--border-width-1) solid var(--color-chrome);
   border-bottom: var(--border-width-1) solid var(--color-chrome);
 }
 
@@ -2831,8 +2822,21 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: none;
 }
 
-.lx-component-toolbar .first-row {
+.lx-component-toolbar .first-row,
+.lx-component-toolbar .second-row,
+.lx-component-toolbar .left-area,
+.lx-component-toolbar .right-area,
+.lx-component-toolbar .default-area {
   display: flex;
+  align-items: center;
+}
+
+.lx-component-toolbar .first-row,
+.lx-component-toolbar .second-row,
+.lx-component-toolbar .second-row .toolbar-search .lx-field-wrapper,
+.lx-component-toolbar .left-area:has(.lx-toolbar-search),
+.lx-component-toolbar .lx-toolbar-search,
+.lx-component-toolbar .lx-toolbar-search .lx-field-wrapper {
   width: 100%;
 }
 
@@ -2841,17 +2845,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   --toolbar-button-ghost-grid-template-columns: auto 1fr;
 }
 
-.lx-component-toolbar.lx-toolbar-default-area-left .right-area,
-.lx-component-toolbar.lx-toolbar-default-area-right .default-area {
+.lx-component-toolbar.lx-toolbar-default-area-left:not(.lx-selection-toolbar > .lx-component-toolbar) .right-area,
+.lx-component-toolbar.lx-toolbar-default-area-right:not(.lx-selection-toolbar > .lx-component-toolbar) .default-area {
   margin-left: auto;
 }
 
-.lx-component-toolbar.lx-toolbar-default-area-left .default-area > .lx-group {
-  border-right: var(--border-width-1) solid var(--color-chrome);
-}
-
-.lx-component-toolbar.lx-toolbar-default-area-right .default-area > .lx-group {
-  border-left: var(--border-width-1) solid var(--color-chrome);
+.lx-selection-toolbar .lx-component-toolbar .first-row {
+  justify-content: space-between;
 }
 
 .lx .lx-region .lx-component-toolbar .lx-button.lx-button-ghost:hover:not(.lx-disabled),
@@ -2873,40 +2873,112 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-component-toolbar.lx-toolbar-no-borders {
-  border-top: var(--border-width-0);
   border-bottom: var(--border-width-0);
 }
 
 .lx-component-toolbar .lx-group {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
-.lx-component-toolbar .right-area .lx-group {
-  border-left: var(--border-width-1) solid var(--color-chrome);
+.lx-component-toolbar .lx-group::before {
+  content: '';
+  height: 2rem;
+  position: absolute;
+  left: calc(var(--toolbar-button-group-gap) / -2);
 }
 
-.lx-component-toolbar .right-area .lx-group > .lx-group:first-child {
-  border-left: var(--border-width-0);
-}
-
-.lx-component-toolbar .left-area .lx-group {
+/* Divider for groups after first group in same area */
+.lx-component-toolbar:not(.lx-toolbar-no-borders, .lx-selection-toolbar > .lx-component-toolbar)
+  :is(.left-area, .default-area, .right-area)
+  > .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden)
+  ~ .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden, .lx-toolbar-promoted-action + *)::before {
   border-right: var(--border-width-1) solid var(--color-chrome);
 }
 
-.lx-toolbar-no-borders .left-area .lx-group,
-.lx-component-toolbar.lx-toolbar-default-area-left.lx-toolbar-no-borders .default-area .lx-group {
-  border-right: transparent;
+/* Divider for first eligible group in default-area */
+.lx-component-toolbar:not(.lx-toolbar-no-borders, .lx-selection-toolbar > .lx-component-toolbar, .lx-toolbar-default-area-right)
+  .first-row:has(
+    .left-area > .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden, .lx-toolbar-promoted-action + *)
+  )
+  .default-area > .lx-group:first-child::before {
+  border-right: var(--border-width-1) solid var(--color-chrome);
 }
 
-.lx-toolbar-no-borders .right-area .lx-group,
-.lx-component-toolbar.lx-toolbar-default-area-right.lx-toolbar-no-borders .default-area .lx-group {
-  border-left: transparent;
+/* Divider for first eligible group in right-area */
+.lx-component-toolbar:not(.lx-toolbar-no-borders, .lx-selection-toolbar > .lx-component-toolbar, .lx-toolbar-default-area-left)
+  .first-row:has(
+    :is(.default-area)
+      > .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden, .lx-toolbar-promoted-action + *)
+  )
+  .right-area > .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden, .lx-toolbar-promoted-action + *):first-child::before {
+  border-right: var(--border-width-1) solid var(--color-chrome);
 }
 
-.lx-component-toolbar > .left-area,
-.lx-component-toolbar > .right-area {
-  display: flex;
+/* Divider for default-area when combined */
+.lx-component-toolbar.lx-toolbar-combined.lx-toolbar-default-area-right:not(
+    .lx-toolbar-no-borders,
+    .lx-selection-toolbar > .lx-component-toolbar
+  )
+  .first-row:has(
+    .left-area
+      > .lx-group:not(
+        :empty,
+        .lx-toolbar-promoted-action,
+        .lx-toolbar-overflow-hidden,
+        .lx-toolbar-promoted-action + *
+      )
+  ):not(
+    :has(
+      .right-area:empty,
+      .right-area > .lx-group.lx-toolbar-promoted-action:first-child
+    )
+  )
+  .default-area::before {
+  content: '';
+  height: 2rem;
+  position: absolute;
+  left: calc(var(--lx-toolbar-free-gap) / -2 - var(--border-width-1) / 2);
+  border-right: var(--border-width-1) solid var(--color-chrome);
+}
+
+/* Divider for right-area when combined */
+.lx-component-toolbar.lx-toolbar-combined.lx-toolbar-default-area-left:not(
+    .lx-toolbar-no-borders,
+    .lx-selection-toolbar > .lx-component-toolbar
+  )
+  .first-row:has(
+    .right-area
+      > .lx-group:not(
+        :empty,
+        .lx-toolbar-promoted-action,
+        .lx-toolbar-overflow-hidden,
+        .lx-toolbar-promoted-action + *
+      )
+  )
+  .right-area::before {
+  content: '';
+  height: 2rem;
+  position: absolute;
+  left: calc(var(--lx-toolbar-free-gap) / -2 - var(--border-width-1) / 2);
+  border-right: var(--border-width-1) solid var(--color-chrome);
+}
+
+.lx-component-toolbar.lx-toolbar-combined .default-area,
+.lx-component-toolbar.lx-toolbar-combined .right-area {
+  position: relative;
+}
+
+.lx-component-toolbar .first-row,
+.lx-component-toolbar .left-area,
+.lx-component-toolbar .default-area,
+.lx-component-toolbar .right-area {
+  column-gap: var(--toolbar-button-group-gap);
+}
+
+.lx-component-toolbar .lx-group {
+  column-gap: var(--toolbar-button-gap);
 }
 
 .lx-component-toolbar .lx-toolbar-search {
@@ -2923,7 +2995,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-data-grid-wrapper .lx-grid-toolbar {
   background-color: var(--color-region);
-  flex-direction: row;
   top: var(--nav-row-size);
 }
 
@@ -2944,10 +3015,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx .lx-form-grid .lx-data-grid-wrapper .lx-grid-toolbar {
   top: var(--space-0) !important;
   z-index: 1;
-}
-
-.lx-component-toolbar.lx-selection-toolbar .right-area {
-  flex-grow: 0;
 }
 
 .lx-component-toolbar .second-row .toolbar-search {
@@ -3200,6 +3267,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-uploaded-file-list-wrapper {
   margin-top: var(--space-0500);
+  margin-bottom: var(--space-0500);
 }
 
 .lx .lx-uploaded-file-list-wrapper .lx-list-item-wrapper {
@@ -3604,7 +3672,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
   position: sticky;
   top: var(--nav-row-size);
-  background-color: var(--color-region);
   z-index: 4;
 }
 
@@ -4039,14 +4106,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-camera img,
 .lx-camera:has(> .lx-toolbar-empty) video {
   margin-top: calc(var(--space-3000) + var(--space-0125));
-}
-
-.lx-camera > .lx-component-toolbar > .right-area > .lx-group .lx-field-wrapper:has(.lx-toggle) {
-  padding: var(--space-0) var(--space-0500);
-}
-
-.lx-camera>.lx-component-toolbar .right-area .lx-group > .lx-group:has(.lx-toggle-wrapper){
-  border-left: var(--border-width-0);
 }
 
 /*** Mystery styles ***/

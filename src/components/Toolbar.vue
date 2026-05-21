@@ -5,6 +5,7 @@ import {
   watch,
   nextTick,
   onMounted,
+  onUpdated,
   inject,
   useSlots,
   Comment,
@@ -58,7 +59,6 @@ const GROUP_ID_DEFAULT_RIGHT = 'lx_group_default_right';
 const GROUP_ID_DEFAULT_LEFT = 'lx_group_default_left';
 const GROUP_ID_EXTRA = 'lx_group_extra';
 const ACTION_KINDS_SPECIAL = new Set(['toggle', 'slot']);
-const CONTENT_SLOTS = ['default', 'leftArea', 'rightArea', 'secondRow'];
 
 const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
@@ -94,17 +94,28 @@ const hasSlotContent = (nodes = []) => {
   });
 };
 
+const hasDefaultSlotContent = ref(false);
+const hasLeftAreaSlotContent = ref(false);
+const hasRightAreaSlotContent = ref(false);
+const hasSecondRowSlotContent = ref(false);
+
+function updateSlotContentFlags() {
+  hasDefaultSlotContent.value = hasSlotContent(slots.default?.() ?? []);
+  hasLeftAreaSlotContent.value = hasSlotContent(slots.leftArea?.() ?? []);
+  hasRightAreaSlotContent.value = hasSlotContent(slots.rightArea?.() ?? []);
+  hasSecondRowSlotContent.value = hasSlotContent(slots.secondRow?.() ?? []);
+}
+
 const isToolbarEmpty = computed(
   () =>
     !props.actionDefinitions.length &&
     !props.hasSearch &&
     !props.hasSelectAll &&
-    CONTENT_SLOTS.every((name) => !hasSlotContent(slots[name]?.() ?? []))
+    !hasDefaultSlotContent.value &&
+    !hasLeftAreaSlotContent.value &&
+    !hasRightAreaSlotContent.value &&
+    !hasSecondRowSlotContent.value
 );
-
-const hasDefaultSlotContent = computed(() => hasSlotContent(slots.default?.() ?? []));
-const hasLeftAreaSlotContent = computed(() => hasSlotContent(slots.leftArea?.() ?? []));
-const hasRightAreaSlotContent = computed(() => hasSlotContent(slots.rightArea?.() ?? []));
 
 const insideForm = inject('insideForm', ref(false));
 
@@ -286,30 +297,41 @@ function handleActionClick(id, { value = undefined } = {}) {
 }
 
 const toolbarRef = ref(null);
+const leftAreaRef = ref(null);
+const defaultAreaRef = ref(null);
+const rightAreaRef = ref(null);
 const leftAreaSlotRef = ref(null);
 const defaultAreaSlotRef = ref(null);
 const rightAreaSlotRef = ref(null);
 
-const { rightActionsVisible, leftActionsVisible, actionsOverflow, promotedAction, autoSearchMode } =
-  useToolbarResponsiveness({
-    toolbarRef,
-    leftAreaSlotRef,
-    defaultAreaSlotRef,
-    rightAreaSlotRef,
-    defaultAreaComputed,
-    actionsProcessed,
-    leftActionsAll,
-    rightActionsAll,
-    actionsByGroupId,
-    hasDefaultSlotContent,
-    hasLeftAreaSlotContent,
-    hasRightAreaSlotContent,
-    hasSearch: computed(() => props.hasSearch),
-    searchMode: computed(() => props.searchMode),
-    hasSelectAll: computed(() => props.hasSelectAll),
-    getActionId,
-    isActionDropDown,
-  });
+const {
+  rightActionsVisibleGrouped,
+  leftActionsVisibleGrouped,
+  actionsOverflow,
+  promotedAction,
+  autoSearchMode,
+} = useToolbarResponsiveness({
+  toolbarRef,
+  leftAreaRef,
+  defaultAreaRef,
+  rightAreaRef,
+  leftAreaSlotRef,
+  defaultAreaSlotRef,
+  rightAreaSlotRef,
+  defaultAreaComputed,
+  actionsProcessed,
+  leftActionsAll,
+  rightActionsAll,
+  actionsByGroupId,
+  hasDefaultSlotContent,
+  hasLeftAreaSlotContent,
+  hasRightAreaSlotContent,
+  hasSearch: computed(() => props.hasSearch),
+  searchMode: computed(() => props.searchMode),
+  hasSelectAll: computed(() => props.hasSelectAll),
+  getActionId,
+  isActionDropDown,
+});
 
 const searchStringRaw = ref(props.searchString);
 
@@ -435,6 +457,8 @@ function focusAction(actionId) {
 }
 
 onMounted(() => {
+  updateSlotContentFlags();
+
   if (props.hasSearch && props.searchString) {
     if (props.searchSide === 'client') {
       clientSideSearch();
@@ -442,6 +466,10 @@ onMounted(() => {
       serverSideSearch();
     }
   }
+});
+
+onUpdated(() => {
+  updateSlotContentFlags();
 });
 
 defineExpose({ toggleSearch, focusAction });
@@ -461,7 +489,7 @@ defineExpose({ toggleSearch, focusAction });
     role="toolbar"
   >
     <div class="first-row">
-      <div class="left-area">
+      <div ref="leftAreaRef" class="left-area">
         <LxToolbarGroup v-if="hasSelectAll && selectAllSide === 'left'">
           <LxButton
             :id="`${id}-select-all`"
@@ -479,31 +507,55 @@ defineExpose({ toggleSearch, focusAction });
           />
         </LxToolbarGroup>
 
-        <LxButton
-          v-if="promotedAction?.area === 'left'"
-          :id="getActionId(promotedAction.id)"
-          :label="promotedAction.name || promotedAction.label"
-          :title="promotedAction.title || promotedAction.tooltip"
-          :icon="promotedAction.icon"
-          :iconSet="promotedAction.iconSet"
-          :variant="promotedAction.variant"
-          :kind="promotedAction.kind"
-          :loading="promotedAction.loading"
-          :busy="promotedAction.busy"
-          :destructive="promotedAction.destructive"
-          :disabled="promotedAction.disabled || props.disabled || props.loading"
-          :active="promotedAction.active"
-          :badge="promotedAction.badge"
-          :badgeType="promotedAction.badgeType"
-          :badgeIcon="promotedAction.badgeIcon"
-          :badgeTitle="promotedAction.badgeTitle"
-          :customClass="promotedAction.customClass"
-          :href="promotedAction.href"
-          @click="handleActionClick(promotedAction.id)"
-        />
+        <LxToolbarGroup v-if="promotedAction?.area === 'left'" class="lx-toolbar-promoted-action">
+          <LxButton
+            :id="getActionId(promotedAction.id)"
+            :label="promotedAction.name || promotedAction.label"
+            :title="promotedAction.title || promotedAction.tooltip"
+            :icon="promotedAction.icon"
+            :iconSet="promotedAction.iconSet"
+            :variant="promotedAction.variant"
+            :kind="promotedAction.kind"
+            :loading="promotedAction.loading"
+            :busy="promotedAction.busy"
+            :destructive="promotedAction.destructive"
+            :disabled="promotedAction.disabled || props.disabled || props.loading"
+            :active="promotedAction.active"
+            :badge="promotedAction.badge"
+            :badgeType="promotedAction.badgeType"
+            :badgeIcon="promotedAction.badgeIcon"
+            :badgeTitle="promotedAction.badgeTitle"
+            :customClass="promotedAction.customClass"
+            :href="promotedAction.href"
+            @click="handleActionClick(promotedAction.id)"
+          />
+        </LxToolbarGroup>
+
+        <!-- Both v-if and v-show are necessary -->
+        <LxToolbarGroup
+          v-if="defaultAreaComputed === 'right'"
+          v-show="actionsOverflow.length > 0"
+          :class="actionsOverflow.length === 0 ? 'lx-toolbar-overflow-hidden' : null"
+        >
+          <LxDropDownMenu
+            :disabled="props.disabled || props.loading"
+            :actionDefinitions="actionsOverflow"
+            @actionClick="(id, value) => handleActionClick(id, { value })"
+          >
+            <LxButton
+              :id="`${id}-overflow-left`"
+              kind="ghost"
+              :tabindex="-1"
+              icon="overflow-menu"
+              :label="displayTexts.overflowMenu"
+              variant="icon-only"
+              :disabled="props.disabled || props.loading"
+            />
+          </LxDropDownMenu>
+        </LxToolbarGroup>
 
         <LxToolbarGroup
-          v-for="group in leftActionsVisible"
+          v-for="group in leftActionsVisibleGrouped"
           :key="group.groupId"
           class="action-definitions-group"
         >
@@ -578,24 +630,6 @@ defineExpose({ toggleSearch, focusAction });
               <slot :name="action?.id" />
             </div>
           </template>
-        </LxToolbarGroup>
-
-        <LxToolbarGroup v-show="defaultAreaComputed === 'right' && actionsOverflow.length > 0">
-          <LxDropDownMenu
-            :disabled="props.disabled || props.loading"
-            :actionDefinitions="actionsOverflow"
-            @actionClick="(id, value) => handleActionClick(id, { value })"
-          >
-            <LxButton
-              :id="`${id}-overflow-left`"
-              kind="ghost"
-              :tabindex="-1"
-              icon="overflow-menu"
-              :label="displayTexts.overflowMenu"
-              variant="icon-only"
-              :disabled="props.disabled || props.loading"
-            />
-          </LxDropDownMenu>
         </LxToolbarGroup>
 
         <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'default'" class="lx-toolbar-search">
@@ -634,42 +668,24 @@ defineExpose({ toggleSearch, focusAction });
           />
         </LxToolbarGroup>
 
-        <LxToolbarGroup v-if="$slots.leftArea" ref="leftAreaSlotRef">
+        <LxToolbarGroup v-if="hasLeftAreaSlotContent" ref="leftAreaSlotRef">
           <slot name="leftArea" />
         </LxToolbarGroup>
       </div>
 
-      <div class="default-area">
-        <LxToolbarGroup v-if="$slots.default" ref="defaultAreaSlotRef">
+      <div ref="defaultAreaRef" class="default-area">
+        <LxToolbarGroup v-if="hasDefaultSlotContent" ref="defaultAreaSlotRef">
           <slot />
         </LxToolbarGroup>
       </div>
 
-      <div class="right-area">
-        <LxToolbarGroup v-if="$slots.rightArea" ref="rightAreaSlotRef">
+      <div ref="rightAreaRef" class="right-area">
+        <LxToolbarGroup v-if="hasRightAreaSlotContent" ref="rightAreaSlotRef">
           <slot name="rightArea" />
         </LxToolbarGroup>
 
-        <LxToolbarGroup v-show="defaultAreaComputed === 'left' && actionsOverflow.length > 0">
-          <LxDropDownMenu
-            :disabled="props.disabled || props.loading"
-            :actionDefinitions="actionsOverflow"
-            @actionClick="(id, value) => handleActionClick(id, { value })"
-          >
-            <LxButton
-              :id="`${id}-overflow-right`"
-              kind="ghost"
-              :tabindex="-1"
-              icon="overflow-menu"
-              :label="displayTexts.overflowMenu"
-              variant="icon-only"
-              :disabled="props.disabled || props.loading"
-            />
-          </LxDropDownMenu>
-        </LxToolbarGroup>
-
         <LxToolbarGroup
-          v-for="group in rightActionsVisible"
+          v-for="group in rightActionsVisibleGrouped"
           :key="group.groupId"
           class="action-definitions-group"
         >
@@ -746,28 +762,52 @@ defineExpose({ toggleSearch, focusAction });
           </template>
         </LxToolbarGroup>
 
-        <LxButton
-          v-if="promotedAction?.area === 'right'"
-          :id="getActionId(promotedAction.id)"
-          :label="promotedAction.name || promotedAction.label"
-          :title="promotedAction.title || promotedAction.tooltip"
-          :icon="promotedAction.icon"
-          :iconSet="promotedAction.iconSet"
-          :variant="promotedAction.variant"
-          :kind="promotedAction.kind"
-          :loading="promotedAction.loading"
-          :busy="promotedAction.busy"
-          :destructive="promotedAction.destructive"
-          :disabled="promotedAction.disabled || props.disabled || props.loading"
-          :active="promotedAction.active"
-          :badge="promotedAction.badge"
-          :badgeType="promotedAction.badgeType"
-          :badgeIcon="promotedAction.badgeIcon"
-          :badgeTitle="promotedAction.badgeTitle"
-          :customClass="promotedAction.customClass"
-          :href="promotedAction.href"
-          @click="handleActionClick(promotedAction.id)"
-        />
+        <!-- Both v-if and v-show are necessary -->
+        <LxToolbarGroup
+          v-if="defaultAreaComputed === 'left'"
+          v-show="actionsOverflow.length > 0"
+          :class="actionsOverflow.length === 0 ? 'lx-toolbar-overflow-hidden' : null"
+        >
+          <LxDropDownMenu
+            :disabled="props.disabled || props.loading"
+            :actionDefinitions="actionsOverflow"
+            @actionClick="(id, value) => handleActionClick(id, { value })"
+          >
+            <LxButton
+              :id="`${id}-overflow-right`"
+              kind="ghost"
+              :tabindex="-1"
+              icon="overflow-menu"
+              :label="displayTexts.overflowMenu"
+              variant="icon-only"
+              :disabled="props.disabled || props.loading"
+            />
+          </LxDropDownMenu>
+        </LxToolbarGroup>
+
+        <LxToolbarGroup v-if="promotedAction?.area === 'right'" class="lx-toolbar-promoted-action">
+          <LxButton
+            :id="getActionId(promotedAction.id)"
+            :label="promotedAction.name || promotedAction.label"
+            :title="promotedAction.title || promotedAction.tooltip"
+            :icon="promotedAction.icon"
+            :iconSet="promotedAction.iconSet"
+            :variant="promotedAction.variant"
+            :kind="promotedAction.kind"
+            :loading="promotedAction.loading"
+            :busy="promotedAction.busy"
+            :destructive="promotedAction.destructive"
+            :disabled="promotedAction.disabled || props.disabled || props.loading"
+            :active="promotedAction.active"
+            :badge="promotedAction.badge"
+            :badgeType="promotedAction.badgeType"
+            :badgeIcon="promotedAction.badgeIcon"
+            :badgeTitle="promotedAction.badgeTitle"
+            :customClass="promotedAction.customClass"
+            :href="promotedAction.href"
+            @click="handleActionClick(promotedAction.id)"
+          />
+        </LxToolbarGroup>
 
         <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'compact'">
           <div class="toolbar-search-button" :class="[{ 'is-expanded': isSearchExpanded }]">

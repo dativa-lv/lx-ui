@@ -4,6 +4,9 @@ import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
  * Composable for managing toolbar responsive layout behavior.
  * @param {Object} options - Configuration options.
  * @param {Object} options.toolbarRef - Toolbar root element ref.
+ * @param {Object} options.leftAreaRef - Left area element ref.
+ * @param {Object} options.defaultAreaRef - Default area element ref.
+ * @param {Object} options.rightAreaRef - Right area element ref.
  * @param {Object} options.leftAreaSlotRef - Left area slot ref.
  * @param {Object} options.defaultAreaSlotRef - Default area slot ref.
  * @param {Object} options.rightAreaSlotRef - Right area slot ref.
@@ -24,6 +27,9 @@ import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
  */
 export function useToolbarResponsiveness({
   toolbarRef,
+  leftAreaRef,
+  defaultAreaRef,
+  rightAreaRef,
   leftAreaSlotRef,
   defaultAreaSlotRef,
   rightAreaSlotRef,
@@ -49,8 +55,8 @@ export function useToolbarResponsiveness({
   const SEARCH_COMPACT_WIDTH = BUTTON_WIDTH;
   const SELECTION_BUTTON_WIDTH = BUTTON_WIDTH;
 
-  const rightActionsVisible = ref([]);
-  const leftActionsVisible = ref([]);
+  const rightActionsVisibleGrouped = ref([]);
+  const leftActionsVisibleGrouped = ref([]);
   const actionsOverflow = ref([]);
   const promotedActionVariant = ref('default');
   const forceCompactSearchByWidth = ref(false);
@@ -435,7 +441,12 @@ export function useToolbarResponsiveness({
   }
 
   async function applyOverflowLayout() {
-    const passMax = 2; // Number of measurement and adjustment passes to ensure stable layout
+    /*
+      Number of measurement and adjustment passes to ensure stable layout.
+      1st pass: Initial visibility evaluation and layout adjustment.
+      2nd pass: Re-evaluate with reserved overflow button width if needed.
+    */
+    const passCount = 2;
 
     const runLayoutPass = async (passCurrent) => {
       const target = toolbarRef.value?.$el ?? toolbarRef.value;
@@ -472,8 +483,8 @@ export function useToolbarResponsiveness({
       const left = splitByVisibility(leftActionsTopLevelFlat.value, visibleIds);
       const right = splitByVisibility(rightActionsTopLevelFlat.value, visibleIds);
 
-      leftActionsVisible.value = toActionGroups(left.visible);
-      rightActionsVisible.value = toActionGroups(right.visible);
+      leftActionsVisibleGrouped.value = toActionGroups(left.visible);
+      rightActionsVisibleGrouped.value = toActionGroups(right.visible);
 
       const leftOverflow = partitionOverflow(left.overflow);
       const rightOverflow = partitionOverflow(right.overflow);
@@ -492,7 +503,7 @@ export function useToolbarResponsiveness({
         ...second.regular,
       ];
 
-      if (passCurrent >= passMax) {
+      if (passCurrent >= passCount) {
         return;
       }
 
@@ -503,9 +514,44 @@ export function useToolbarResponsiveness({
     await runLayoutPass(1);
   }
 
+  function checkFreeGap() {
+    const toolbar = toolbarRef.value?.$el ?? toolbarRef.value;
+    const leftArea = leftAreaRef.value?.$el ?? leftAreaRef.value;
+    const defaultArea = defaultAreaRef.value?.$el ?? defaultAreaRef.value;
+    const rightArea = rightAreaRef.value?.$el ?? rightAreaRef.value;
+
+    if (
+      !(toolbar instanceof HTMLElement) ||
+      !(leftArea instanceof HTMLElement) ||
+      !(defaultArea instanceof HTMLElement) ||
+      !(rightArea instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const minGap = 8; // 8px = 0.5rem
+
+    const toolbarWidth = toolbar.getBoundingClientRect()?.width ?? 0;
+    const leftAreaWidth = leftArea.getBoundingClientRect()?.width ?? 0;
+    const defaultAreaWidth = defaultArea.getBoundingClientRect()?.width ?? 0;
+    const rightAreaWidth = rightArea.getBoundingClientRect()?.width ?? 0;
+
+    const actualGap = toolbarWidth - leftAreaWidth - defaultAreaWidth - rightAreaWidth;
+
+    const shouldCombine = actualGap < minGap;
+
+    toolbar.classList.toggle('lx-toolbar-combined', shouldCombine);
+
+    if (shouldCombine) {
+      toolbar.style.setProperty('--lx-toolbar-free-gap', `${actualGap}px`);
+    } else {
+      toolbar.style.removeProperty('--lx-toolbar-free-gap');
+    }
+  }
+
   function resetLayout() {
-    rightActionsVisible.value = rightActionsTopLevelGrouped.value;
-    leftActionsVisible.value = leftActionsTopLevelGrouped.value;
+    rightActionsVisibleGrouped.value = rightActionsTopLevelGrouped.value;
+    leftActionsVisibleGrouped.value = leftActionsTopLevelGrouped.value;
     actionsOverflow.value = [];
     forceCompactSearchByWidth.value = false;
     promotedActionVariant.value = 'default';
@@ -525,6 +571,7 @@ export function useToolbarResponsiveness({
       await nextTick();
 
       if (!hasHorizontalOverflowPressure()) {
+        checkFreeGap();
         return;
       }
 
@@ -533,6 +580,7 @@ export function useToolbarResponsiveness({
         await nextTick();
 
         if (!hasHorizontalOverflowPressure()) {
+          checkFreeGap();
           return;
         }
       }
@@ -542,11 +590,14 @@ export function useToolbarResponsiveness({
         await nextTick();
 
         if (!hasHorizontalOverflowPressure()) {
+          checkFreeGap();
           return;
         }
       }
 
       await applyOverflowLayout();
+
+      checkFreeGap();
     });
   }
 
@@ -597,8 +648,8 @@ export function useToolbarResponsiveness({
   });
 
   return {
-    rightActionsVisible,
-    leftActionsVisible,
+    rightActionsVisibleGrouped,
+    leftActionsVisibleGrouped,
     actionsOverflow,
     promotedAction,
     autoSearchMode,

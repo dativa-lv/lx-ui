@@ -770,52 +770,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
   background: var(--color-interactive-active-background);
 }
 
-.lx-map-toolbar {
-  display: flex;
-  border-top: var(--border-width-1) solid var(--color-chrome);
-  border-bottom: var(--border-width-1) solid var(--color-chrome);
-  justify-content: space-between;
-}
-
-.lx-map-toolbar .first-row {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.lx-map-toolbar.toolbar-no-search {
-  justify-content: right;
-}
-
-.lx-map .lx-map-search {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-right: var(--border-width-1) solid var(--color-chrome);
-}
-
-.lx-map.lx-map-fullscreen .lx-map-search {
-  padding-left: var(--space-1000);
-}
-
 .leaflet-tile-pane {
   filter: grayscale(var(--map-grayscale));
 }
 
 .lx-theme-dark .theme-change .leaflet-tile-pane {
   filter: invert(1) grayscale(var(--map-grayscale));
-}
-
-.lx-map-toolbar .left-area,
-.lx-map-toolbar .right-area,
-.lx-map .lx-map-controls {
-  display: flex;
-}
-
-.lx-map-toolbar>.lx-map-controls>.lx-map-zoom-controls {
-  display: flex;
-  border-left: var(--border-width-1) solid var(--color-chrome);
-  border-right: var(--border-width-1) solid var(--color-chrome);
 }
 
 .lx-dropdown-panel .lx-dropdown-menu-group.lx-map-slider .input-slider,
@@ -832,15 +792,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
   display: flex;
   align-items: center;
   gap: var(--space-0500);
-}
-
-.lx-map>.lx-map-toolbar>.lx-map-controls .overlay-layer>.lx-field-wrapper {
-  width: auto;
-}
-
-.lx-map-toolbar-slot {
-  display: flex;
-  align-items: center;
 }
 
 .lx-map.lx-map-fullscreen {
@@ -863,7 +814,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   grid-row: 1 / 2;
 }
 
-.lx-map.lx-map-fullscreen .lx-map-toolbar {
+.lx-map.lx-map-fullscreen .lx-component-toolbar {
   grid-row: 1 / 2;
   position: absolute;
   top: var(--space-0);
@@ -888,8 +839,4 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 .lx-map hr {
   border: var(--border-width-1) solid var(--color-chrome);
-}
-
-.lx-map .lx-map-search {
-  border-right: var(--border-width-0);
 }
