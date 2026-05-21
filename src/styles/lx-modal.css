@@ -12,44 +12,28 @@
   align-items: center;
 }
 
-.lx-curtain
-  .lx-modal
-  > header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-item header):not(
-    .lx-filter header.lx-head
-  ) {
-  display: flex;
+dialog.lx-modal > header,
+.lx-curtain .lx-modal > header {
+  display: grid;
+  grid-template-areas: var(--modal-header-grid-areas);
+  grid-template-columns: var(--modal-header-grid-template-columns);
   justify-content: space-between;
   align-items: center;
-  height: auto;
+  min-height: var(--modal-header-min-height);
   overflow: hidden;
-  --color-button-ghost-icon: var(--color-data);
-  --color-button-ghost-icon-focus: var(--color-data);
 }
 
-.lx-curtain
-  .lx-modal
-  header:not(.lx-pseudo-grid .lx-labels):not(.lx-head):not(
-    .lx-list-item header
-  ):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky):not(.lx-data-block-header)
-  .lx-primary {
-  margin-left: var(--space-1000);
-  font-size: var(--h2-font-size);
-  font-weight: var(--h2-font-weight);
-  color: var(--color-data);
-  padding-top: var(--space-0500);
+dialog.lx-modal > header > .lx-primary,
+.lx-curtain .lx-modal > header .lx-primary {
+  grid-area: content;
+  padding: var(--modal-header-content-padding);
+  font-size: var(--modal-header-text-font-size);
+  font-weight: var(--modal-header-text-font-weight);
+  color: var(--color-modal-header-text);
+  text-align: var(--modal-header-content-alignment);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.lx-curtain
-  .lx-modal
-  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-item header):not(
-    .lx-filter header.lx-head
-  )
-  .lx-button {
-  align-self: flex-start;
-  min-width: var(--row-size);
 }
 
 .lx.lx-theme-light .lx-curtain {
@@ -58,25 +42,60 @@
 
 .lx-modal {
   display: grid;
+  position: relative;
   grid-template-rows: auto 1fr auto;
   grid-template-columns: auto;
-  background-color: var(--color-region);
-  min-height: var(--row-size);
-  max-height: calc(
-    100dvh - calc(var(--space-3000) * 2)
-  ); /* var(--space-3000) * 2, to reserve space for top & bottom margin */
-  border: var(--region-border);
-  min-width: var(--aside-size);
+  background: var(--color-modal-background);
+  min-height: var(--modal-min-height);
+  min-width: var(--modal-min-width);
+  box-shadow: var(--modal-shadow);
+  border: var(--modal-border);
+  border-radius: var(--modal-border-radius);
   margin: var(--space-3000);
-  box-shadow: var(--shadow-modal);
+  max-height:  calc(100vh - calc(var(--space-3000) * 2)); /* --space-3000 * 2 to account for top & bottom margin */
 }
 
-#modals .lx-modal > header,
-#modals .lx-modal > footer {
-  position: relative;
+dialog.lx-modal {
+  margin: auto;
+  padding: var(--space-0);
 }
 
-#modals:not(.lx-theme-contrast #modals):not(.lx-no-transparency #modals) .lx-modal > header::after {
+.lx-modal > .lx-main {
+  padding: var(--modal-content-padding);
+  overflow-y: auto;
+}
+
+.lx-modal.lx-modal-xs {
+  width: var(--aside-size);
+}
+
+.lx-modal.lx-modal-s {
+  width: var(--modal-width-s);
+}
+
+.lx-modal.lx-modal-m {
+  width: var(--modal-width-m);
+}
+
+.lx-modal.lx-modal-l {
+  width: var(--modal-width-l);
+}
+
+.lx-modal.lx-modal-xl {
+  width: var(--modal-width-xl);
+}
+
+dialog.lx-modal::backdrop {
+  background-color: var(--color-cover-background);
+}
+
+dialog {
+  outline: none;
+}
+
+/*** Shadow styles ***/
+
+#modals .lx-modal > header::after {
   background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
   content: '';
   height: var(--modal-header-size);
@@ -89,9 +108,7 @@
   pointer-events: none;
 }
 
-#modals:not(.lx-theme-contrast #modals):not(.lx-no-transparency #modals)
-  .lx-modal
-  > footer::before {
+#modals .lx-modal > footer::before {
   background: linear-gradient(180deg, transparent 0%, var(--color-background) 100%);
   content: '';
   height: var(--modal-footer-size);
@@ -104,29 +121,287 @@
   pointer-events: none;
 }
 
-.lx-modal > .lx-main {
-  padding: var(--padding-modal);
-  overflow-y: auto;
+.lx-theme-contrast #modals .lx-modal > header::after,
+.lx-theme-contrast #modals .lx-modal > footer::before {
+  display: none;
 }
 
-.lx-modal.lx-modal-xs {
-  width: var(--aside-size);
+/*** Header button styles ***/
+
+.lx dialog.lx-modal > header > .lx-button,
+.lx-curtain .lx-modal > header .lx-button {
+  grid-area: button;
+  margin: var(--modal-button-header-margin);
+  width: var(--modal-button-header-width);
+  height: var(--modal-button-header-height);
+  min-width: var(--modal-button-header-min-width);
+  background: var(--color-modal-button-header-background);
+  border-radius: var(--modal-button-header-border-radius);
+  align-self: start;
+  padding: var(--space-0);
 }
 
-.lx-modal.lx-modal-s {
-  width: 40rem;
+.lx dialog.lx-modal > header > .lx-button svg,
+.lx-curtain .lx-modal > header .lx-button svg {
+  width: var(--modal-button-header-icon-size);
+  height: var(--modal-button-header-icon-size);
+  fill: var(--color-modal-button-header-icon);
 }
 
-.lx-modal.lx-modal-m {
-  width: 60rem;
+/* Header button hover */
+
+.lx dialog.lx-modal > header > .lx-button:hover,
+.lx-curtain .lx-modal > header .lx-button:hover {
+  background: var(--color-modal-button-header-background-hover);
 }
 
-.lx-modal.lx-modal-l {
-  width: var(--body-column-size);
+.lx dialog.lx-modal > header > .lx-button:hover svg,
+.lx-curtain .lx-modal > header .lx-button:hover svg {
+  fill: var(--color-modal-button-header-icon-hover);
 }
 
-.lx-modal.lx-modal-xl {
+/* Header button focus */
+
+.lx dialog.lx-modal > header > .lx-button:focus,
+.lx-curtain .lx-modal > header .lx-button:focus {
+  background: var(--color-modal-button-header-background-focus);
+}
+
+.lx dialog.lx-modal > header > .lx-button:focus svg,
+.lx-curtain .lx-modal > header .lx-button:focus svg {
+  fill: var(--color-modal-button-header-icon-focus);
+}
+
+/* Header button focus-hover */
+
+.lx dialog.lx-modal > header > .lx-button:focus:hover,
+.lx-curtain .lx-modal > header .lx-button:focus:hover {
+  background: var(--color-modal-button-header-background-hover);
+}
+
+.lx dialog.lx-modal > header > .lx-button:focus:hover svg,
+.lx-curtain .lx-modal > header .lx-button:focus:hover svg {
+  fill: var(--color-modal-button-header-icon-hover);
+}
+
+/* Header button active */
+
+.lx dialog.lx-modal > header > .lx-button:active,
+.lx-curtain .lx-modal > header .lx-button:active {
+  background: var(--color-modal-button-header-background-active);
+}
+
+.lx dialog.lx-modal > header > .lx-button:active svg,
+.lx-curtain .lx-modal > header .lx-button:active svg {
+  fill: var(--color-modal-button-header-icon-active);
+}
+
+/*** Footer button styles ***/
+
+.lx-modal > footer.lx-button-set {
+  justify-content: var(--modal-button-set-justification);
+  flex-direction: var(--modal-button-set-flex-direction);
+  gap: var(--modal-button-set-gap);
+  margin: var(--modal-footer-margin);
+  padding: var(--modal-footer-padding);
+  background: var(--color-modal-footer-background);
+}
+
+.lx-modal > footer.lx-button-set .lx-button {
+  justify-content: flex-start;
+  flex-direction: row;
+  padding: var(--modal-button-primary-padding);
+  text-decoration: var(--modal-button-primary-text-decoration);
+  height: var(--modal-button-primary-height);
+  min-width: var(--modal-button-primary-min-width);
+  width: var(--modal-button-primary-width);
+  font-size: var(--modal-button-primary-text-font-size);
+  font-weight: var(--modal-button-primary-text-font-weight);
+  border: var(--modal-button-primary-border);
+  border-radius: var(--modal-button-primary-border-radius);
+  background: var(--color-modal-button-primary-background);
+  color: var(--color-modal-button-primary-text);
+  outline-offset: var(--modal-button-primary-outline-offset);
+}
+
+.lx-modal > footer.lx-button-set .lx-button.lx-button-secondary {
+  justify-content: flex-start;
+  flex-direction: row;
+  padding: var(--modal-button-secondary-padding);
+  text-decoration: var(--modal-button-secondary-text-decoration);
+  height: var(--modal-button-secondary-height);
+  min-width: var(--modal-button-secondary-min-width);
+  width: var(--modal-button-secondary-width);
+  font-size: var(--modal-button-secondary-text-font-size);
+  font-weight: var(--modal-button-secondary-text-font-weight);
+  border: var(--modal-button-secondary-border);
+  border-radius: var(--modal-button-secondary-border-radius);
+  background: var(--color-modal-button-secondary-background);
+  color: var(--color-modal-button-secondary-text);
+  outline-offset: var(--modal-button-secondary-outline-offset);
+}
+
+.lx-modal > footer.lx-button-set .lx-button .lx-button-content-wrapper {
+  --button-primary-gap: var(--space-0);
+  --button-primary-grid-areas: 'content';
+  --button-primary-grid-template-columns: 1fr auto auto;
+  --button-primary-grid-template-rows: 1fr;
+}
+
+.lx-modal > footer.lx-button-set .lx-button.lx-button-secondary .lx-button-content-wrapper {
+  --button-secondary-gap: var(--space-0);
+  --button-secondary-grid-areas: 'content';
+  --button-secondary-grid-template-columns: 1fr auto auto;
+  --button-secondary-grid-template-rows: 1fr;
+}
+
+.lx-modal > footer.lx-button-set .lx-button .lx-button-content {
+  text-align: var(--modal-button-primary-text-alignment);
+}
+
+.lx-modal > footer.lx-button-set .lx-button.lx-button-secondary .lx-button-content {
+  text-align: var(--modal-button-secondary-text-alignment);
+}
+
+.lx-modal > footer.lx-button-set.lx-two-buttons .lx-button {
+  max-width: 50%;
+}
+
+/* Footer button focus */
+
+.lx-modal > footer.lx-button-set .lx-button:focus {
+  background: var(--color-modal-button-primary-background-focus);
+  color: var(--color-modal-button-primary-text-focus);
+  border-color: var(--color-modal-button-primary-border-focus);
+}
+
+.lx-modal > footer.lx-button-set .lx-button.lx-button-secondary:focus {
+  background: var(--color-modal-button-secondary-background-focus);
+  color: var(--color-modal-button-secondary-text-focus);
+  border-color: var(--color-modal-button-secondary-border-focus);
+}
+
+/* Footer button hover */
+
+.lx-modal > footer.lx-button-set .lx-button:hover {
+  background: var(--color-modal-button-primary-background-hover);
+  color: var(--color-modal-button-primary-text-hover);
+  border-color: var(--color-modal-button-primary-border-hover);
+}
+
+.lx-modal > footer.lx-button-set .lx-button.lx-button-secondary:hover {
+  background: var(--color-modal-button-secondary-background-hover);
+  color: var(--color-modal-button-secondary-text-hover);
+  border-color: var(--color-modal-button-secondary-border-hover);
+}
+
+/* Footer button destructive */
+
+.lx-modal > footer.lx-button-set .lx-button.lx-destructive:not(.lx-disabled):hover {
+  background: var(--color-button-destructive-background);
+  border-color: var(--color-button-destructive-border);
+  color: var(--color-button-destructive);
+}
+
+/* Footer button active */
+
+.lx-modal > footer.lx-button-set .lx-button:active {
+  background: var(--color-modal-button-primary-background-active);
+  color: var(--color-modal-button-primary-text-active);
+  border-color: var(--color-modal-button-primary-border-active);
+}
+
+.lx-modal > footer.lx-button-set .lx-button.lx-button-secondary:active {
+  background: var(--color-modal-button-secondary-background-active);
+  color: var(--color-modal-button-secondary-text-active);
+  border-color: var(--color-modal-button-secondary-border-active);
+}
+
+/* Footer button disabled */
+
+.lx-modal > footer.lx-button-set .lx-button.lx-disabled {
+  background: var(--color-modal-button-primary-background-disabled);
+  color: var(--color-modal-button-primary-text-disabled);
+  border-color: var(--color-modal-button-primary-border-disabled);
+}
+
+.lx-modal > footer.lx-button-set .lx-button.lx-button-secondary.lx-disabled {
+  background: var(--color-modal-button-secondary-background-disabled);
+  color: var(--color-modal-button-secondary-text-disabled);
+  border-color: var(--color-modal-button-secondary-border-disabled);
+}
+
+/* Footer button badge styles */
+
+.lx-modal > footer.lx-button-set > .lx-button .lx-badge {
+  position: static;
+  margin-left: 0.5rem;
+}
+
+.lx-modal > footer.lx-button-set > .lx-button .lx-badge .lx-badge-text {
+  max-width: 6ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*** LxDialog ***/ 
+
+.lx-dialog > header .lx-illustration {
+  height: var(--modal-illustration-size);
+  width: var(--modal-illustration-size);
+}
+
+.lx-dialog > header .lx-illustration > svg {
+  fill: var(--modal-illustration-color);
+}
+
+.lx-dialog > .lx-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1000);
+}
+
+.lx-dialog > header {
+  display: grid;
+  grid-template-columns: var(--modal-header-grid-template-columns);
+  grid-template-rows: var(--modal-header-grid-template-columns);
+}
+
+.lx-dialog-header-content {
+  display: grid;
+  grid-area: content;
+  justify-items: var(--modal-header-content-alignment);
+  padding: var(--modal-header-content-padding);
+  row-gap: var(--modal-header-content-gap);
+}
+
+.lx-modal.lx-dialog .lx-dialog-header-content > .lx-primary {
+  grid-area: auto;
   width: 100%;
+  --modal-header-content-padding: 0;
+}
+
+.lx-dialog > .lx-main > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*** LxModalForm styles ***/
+.lx-modal-form {
+  background: var(--color-region);
+  min-height: var(--row-size);
+  border: var(--region-border);
+  border-radius: var(--border-radius-0);
+  min-width: var(--aside-size);
+  grid-template-rows: 1fr auto;
+}
+
+.lx-modal-form > .lx-main {
+  padding: var(--space-0);
+}
+
+.lx-layout .lx-modal.lx-modal-form .lx-main .lx-form-grid > header.lx-sticky {
+  top: var(--space-0);
 }
 
 @media (max-width: 800px) {
@@ -136,53 +411,17 @@
     max-height: 100dvh;
     max-width: 100dvw;
     margin: var(--space-0);
+    border-radius: var(--border-radius-0);
   }
 }
 
-#modals dialog.lx-modal {
-  border: var(--border-width-0);
-  margin: auto;
-  padding: var(--space-0);
+@media (max-height: 499px) {
+  .lx-modal-form .lx-form-grid > header.lx-sticky {
+    position: sticky;
+  }
 }
 
-dialog.lx-modal::backdrop {
-  background-color: var(--color-cover-background);
-}
-
-dialog.lx-modal > header {
-  overflow: hidden;
-}
-
-dialog.lx-modal > header > .lx-primary {
-  margin-left: var(--space-1000);
-  font-size: var(--h2-font-size);
-  font-weight: var(--h2-font-weight);
-  color: var(--color-data);
-  padding-top: var(--space-0500);
-  display: block;
-  padding-right: var(--space-3000);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.lx dialog.lx-modal > .lx-button-set > .lx-button {
-  font-weight: var(--font-weight-interactive);
-}
-
-.lx dialog.lx-modal > header > .lx-button {
-  border-color: transparent;
-  margin: var(--space-0);
-  position: absolute;
-  top: var(--space-0);
-  right: var(--space-0);
-  --color-button-ghost-icon: var(--color-data);
-  --color-button-ghost-icon-focus: var(--color-data);
-}
-
-dialog {
-  outline: none;
-}
+/*** Mystery styles ***/
 
 .lx-modal > header > label {
   overflow-wrap: break-word;
@@ -203,63 +442,4 @@ dialog {
 
 .lx-modal.lx-modal-xl > header > label {
   max-width: calc(100% - var(--row-size) - 2rem);
-}
-
-/* LxDialog */
-
-.lx-dialog > header .lx-illustration {
-  height: 4rem;
-  width: 4rem;
-}
-
-.lx-dialog > header .lx-illustration > svg {
-  fill: var(--illustration-color);
-}
-
-.lx-dialog > header > .illustration-wrapper {
-  padding: var(--space-1000);
-  padding-bottom: var(--space-0);
-}
-
-.lx-dialog > .lx-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1000);
-}
-
-.lx-dialog > .lx-main > p {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* LxModalForm */
-.lx-modal-form {
-  grid-template-rows: 1fr auto;
-}
-
-.lx-modal-form > .lx-main {
-  padding: var(--space-0);
-}
-
-.lx-layout .lx-modal.lx-modal-form .lx-main .lx-form-grid > header.lx-sticky {
-  top: var(--space-0);
-}
-
-@media (max-height: 499px) {
-  .lx-modal-form .lx-form-grid > header.lx-sticky {
-    position: sticky;
-  }
-}
-
-/* LxBadge */
-
-.lx-modal > footer.lx-button-set > .lx-button .lx-badge {
-  position: static;
-  margin-left: 0.5rem;
-}
-
-.lx-modal > footer.lx-button-set > .lx-button .lx-badge .lx-badge-text {
-  max-width: 6ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }

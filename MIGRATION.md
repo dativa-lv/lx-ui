@@ -1,16 +1,43 @@
 # LX/UI Migration Guide
 
+## 2.1.8 → 2.1.9
+
+### Breaking changes
+
+#### LxModal
+
+**Token renames**
+
+- `--shadow-modal` → `--modal-shadow`
+- `--modal-button-set-margin` → `--modal-footer-margin`
+- `--modal-button-set-padding` → `--modal-footer-padding`
+- `--modal-button-set-justify` → `--modal-button-set-justification`
+- `--color-modal-button-set-background` → `--color-modal-footer-background`
+
+The `--padding-modal` has been split into `--modal-content-padding` and `--modal-header-content-padding`.
+
 ## 2.1.7 → 2.1.8
 
 ### Breaking changes
 
 #### LxToolbar
 
-LxToolbar is now responsive and adapts to available space. Review all toolbars in your project to ensure layouts display correctly, especially in these components with built-in toolbars: LxAppendableList, LxCamera, LxDataGrid, LxDrawPad, LxFileViewer, LxList, LxMap, LxMarkdownTextArea, LxQrScanner, LxValuePicker.
+LxToolbar is now responsive and adapts to available space. Review all toolbars in your project to ensure layouts display correctly, especially in these components with built-in toolbars: 
+- LxAppendableList
+- LxCamera
+- LxDataGrid
+- LxDrawPad
+- LxFileViewer
+- LxList
+- LxMap
+- LxMarkdownTextArea
+- LxQrScanner
+- LxValuePicker.
 
 #### LxContentSwitcher
 
 **Token renames**
+
 The `--content-switcher-alignment` token has been renamed to `--content-switcher-content-alignment`.
 
 #### LxButton
@@ -66,9 +93,11 @@ The `#userMenuButton` selector has been removed. Update any scripts, tests, or s
 Some LxBadge styles have been moved to a separate file - `lx-badges.css`. Import this file in your project to ensure correct badge appearance and behavior.
 
 **Token & class removals**
+
 The 'with-gap' class, as well as the `--color-badge-region-background` token, has been removed.
 
 **Token renames**
+
 - `--color-badge-text-color` → `--color-badge-text`
 - `--badge-line-height` → `--badge-text-line-height`
 - `--badge-border-radius` → `--badge-border-radius-s`
@@ -109,9 +138,11 @@ The schema and logic for LxFormBuilder and LxFilterBuilder have remained the sam
 ### Breaking changes
 
 **Token renames**
+
 - `--radius-default` → `--border-radius-default`
 
 **Token removals**
+
 - `--radius-1` (use `--border-radius-0250` instead)
 - `--radius-2` (use `--border-radius-0500` instead)
 
@@ -124,6 +155,7 @@ The "Add record" button has moved from the bottom to the top of the list, now re
 LxContentSwitcher styles have been moved to a separate file - `lx-content-switchers.css`. Import this file in your project to ensure correct content switcher appearance and behavior.
 
 **Token renames**
+
 The `--color-content-switcher-foreground` token has been split into `--color-content-switcher-text` and `--color-content-switcher-icon`, with the default value being `--color-data`.
 
 **Class renames**
@@ -143,6 +175,7 @@ The `--color-content-switcher-foreground` token has been split into `--color-con
 #### Icons
 
 **Token renames**
+
 Icon `height` and `width` tokens have been merged into a single `size` token. Update any usages to the new tokens listed below.
 
 | Old tokens                                                                        | New token                              |
@@ -175,6 +208,7 @@ Icon `height` and `width` tokens have been merged into a single `size` token. Up
 Most LxToggle styles have been moved to a separate file - `lx-toggles.css`. Import this file in your project to ensure correct toggle appearance and behavior.
 
 **Token renames**
+
 Some existing tokens have been divided into size-based (`m` / `s`) or state-based (`on` / `off`) variants.
 
 | Old token                | New tokens                                                                                                                  |

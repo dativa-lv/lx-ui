@@ -31,6 +31,7 @@
 | `--border-radius-0500` | 0.5rem        |
 | `--border-radius-0750` | 0.75rem       |
 | `--border-radius-1000` | 1rem          |
+| `--border-radius-2000` | 2rem          |
 | `--border-radius-full` | 100vh         |
 
 ## Spacing tokens

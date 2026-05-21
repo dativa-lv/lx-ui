@@ -31,9 +31,6 @@ const emits = defineEmits(['close', 'actionClick']);
 const isOpen = ref(false);
 const modalRef = ref();
 const insideModal = ref(true);
-const modalHeader = ref();
-const modalContent = ref();
-const modalFooter = ref();
 
 const { activate, deactivate } = useFocusTrap(modalRef, {
   allowOutsideClick: true,
@@ -163,11 +160,14 @@ defineExpose({ open, close });
           :role="dialogRole"
         >
           <header ref="modalHeader">
-            <div class="illustration-wrapper">
-              <LxIllustration
-                :value="kind !== 'custom' ? illustrationMap[kind] : pictogram"
-                :style="`--illustration-color: ${colorMap[kind]}`"
-              />
+            <div class="lx-dialog-header-content">
+              <div class="illustration-wrapper">
+                <LxIllustration
+                  :value="kind !== 'custom' ? illustrationMap[kind] : pictogram"
+                  :style="`--modal-illustration-color: ${colorMap[kind]}`"
+                />
+              </div>
+              <div v-if="label" :id="`${id}-label`" class="lx-primary">{{ label }}</div>
             </div>
             <LxButton
               v-if="!disableClosing"
@@ -179,8 +179,7 @@ defineExpose({ open, close });
             />
           </header>
           <article class="lx-main" ref="modalContent">
-            <p v-if="label" :id="`${id}-label`" class="heading-3">{{ label }}</p>
-            <p v-if="description" :id="`${id}-description`">{{ description }}</p>
+            <div v-if="description" :id="`${id}-description`">{{ description }}</div>
           </article>
           <footer
             ref="modalFooter"

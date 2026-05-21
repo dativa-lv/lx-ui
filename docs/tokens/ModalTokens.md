@@ -8,6 +8,33 @@
 
 | Variable name                               | Default value                                                                                                                    |
 |---------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `--modal-header-grid-areas`                 | 'content button'                                                                                                                 |
+| `--modal-header-content-gap`                | `--space-1000`                                                                                                                   |
+| `--modal-header-grid-template-columns`      | 1fr auto                                                                                                                         |
+| `--modal-button-header-icon-size`           | `--button-ghost-icon-size`                                                                                                       |
+| `--modal-illustration-size`                 | 4rem                                                                                                                             |
+| `--modal-shadow`                            | 0 1px 2px 0 var(--color-shadow)                                                                                                  |
+| `--modal-border`                            | `--region-border`                                                                                                                |
+| `--modal-border-radius`                     | `--border-radius-0`                                                                                                              |
+| `--modal-min-height`                        | `--row-size`                                                                                                                     |
+| `--modal-min-width`                         | `--aside-size`                                                                                                                   |
+| `--modal-content-padding`                   | var(--space-1000) var(--space-1000) var(--space-2000) var(--space-1000)                                                          |
+| `--modal-header-content-padding`            | var(--space-0500) var(--space-0500) var(--space-0250) var(--space-1000)                                                          |
+| `--modal-header-content-alignment`          | left                                                                                                                             |
+| `--modal-header-text-font-size`             | `--h2-font-size`                                                                                                                 |
+| `--modal-header-text-font-weight`           | `--h2-font-weight`                                                                                                               |
+| `--modal-button-header-border-radius`       | `--border-radius-0`                                                                                                              |
+| `--modal-button-header-width`               | `--button-width`                                                                                                                 |
+| `--modal-button-header-min-width`           | `--button-min-width`                                                                                                             |
+| `--modal-button-header-height`              | `--button-height`                                                                                                                |
+| `--modal-header-min-height`                 | `--row-size`                                                                                                                     |
+| `--modal-button-header-margin`              | `--space-0`                                                                                                                      |
+| `--modal-width-s`                           | 40rem                                                                                                                            |
+| `--modal-width-m`                           | 60rem                                                                                                                            |
+| `--modal-width-l`                           | `--body-column-size`                                                                                                             |
+| `--modal-width-xl`                          | 100%                                                                                                                             |
+| `--modal-footer-padding`                    | `--space-0`                                                                                                                      |
+| `--modal-footer-margin`                     | `--space-0`                                                                                                                      |
 | `--modal-button-primary-border`             | `--button-primary-border`                                                                                                        |
 | `--modal-button-primary-border-radius`      | `--button-primary-border-radius`                                                                                                 |
 | `--modal-button-primary-text-font-size`     | `--button-primary-text-font-size`                                                                                                |
@@ -32,9 +59,7 @@
 | `--modal-button-secondary-width`            | 100%                                                                                                                             |
 | `--modal-button-set-flex-direction`         | row-reverse                                                                                                                      |
 | `--modal-button-set-gap`                    | `--space-0`                                                                                                                      |
-| `--modal-button-set-justify`                | stretch                                                                                                                          |
-| `--modal-button-set-margin`                 | `--space-0`                                                                                                                      |
-| `--modal-button-set-padding`                | `--space-0`                                                                                                                      |
+| `--modal-button-set-justification`          | stretch                                                                                                                          |
 
 ## Color
 
@@ -68,4 +93,4 @@
 | `--color-modal-button-secondary-text-hover`          | `--color-button-secondary-text-hover`          |
 | `--color-modal-button-secondary-background-hover`    | `--color-button-secondary-background-hover`    |
 | `--color-modal-button-secondary-border-hover`        | `--color-button-secondary-border-hover`        |
-| `--color-modal-button-set-background`                | transparent                                    |
+| `--color-modal-footer-background`                    | transparent                                    |

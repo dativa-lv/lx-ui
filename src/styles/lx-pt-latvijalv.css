@@ -58,7 +58,7 @@
   --modal-button-secondary-height: 3rem;
   --modal-button-secondary-min-width: 15rem;
   --modal-button-secondary-width: auto;
-  --modal-button-set-margin: var(--space-1000) 8rem var(--space-1000) var(--space-0);
+  --modal-footer-margin: var(--space-1000) 8rem var(--space-1000) var(--space-0);
   --modal-button-secondary-text-alignment: center;
   --modal-button-primary-text-alignment: center;
 

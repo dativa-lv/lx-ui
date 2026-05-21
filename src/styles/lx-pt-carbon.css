@@ -32,6 +32,7 @@
   --border-radius-0500: 0.5rem;
   --border-radius-0750: 0.75rem;
   --border-radius-1000: 1rem;
+  --border-radius-2000: 2rem;
   --border-radius-full: 100vh;
 
   --border-radius-default: var(--border-radius-0);
@@ -96,13 +97,11 @@
   --padding-grid-header: var(--space-1000);
   --padding-form: var(--space-3000) var(--space-2000);
   --padding-default: var(--space-1000);
-  --padding-modal: var(--space-1000) var(--space-1000) var(--space-2000) var(--space-1000);
   --padding-form-negative: -2rem;
   --padding-tab-body: var(--space-1000) var(--space-2000);
 
   --shadow-1: 0 1px 2px 0 var(--color-shadow);
   --shadow-dropdown: 0 4px 8px 0 var(--color-shadow);
-  --shadow-modal: 0 1px 2px 0 var(--color-shadow);
 
   --screen-xxxl: 2000px;
   --screen-xxl: 1900px;
@@ -583,6 +582,38 @@
   --nav-public-item-padding: var(--space-0) calc(var(--space-1000) - var(--border-width-2)); /* padding - border so that icon is centered */
   --nav-public-item-width: auto;
 
+  --modal-header-grid-areas: 'content button';
+  --modal-header-grid-template-columns: 1fr auto;
+  --modal-header-content-gap: var(--space-1000);
+  --modal-button-header-icon-size: var(--button-ghost-icon-size);
+  --modal-illustration-size: 4rem;
+  --modal-shadow: 0 1px 2px 0 var(--color-shadow);
+  --modal-border: var(--region-border);
+  --modal-border-radius: var(--border-radius-0);
+  --modal-min-height: var(--row-size);
+  --modal-min-width: var(--aside-size);
+  --modal-margin-top: var(--space-3000);
+  --modal-margin-bottom: var(--space-3000);
+  --modal-margin-right: var(--space-3000);
+  --modal-margin-left: var(--space-3000);
+  --modal-content-padding: var(--space-1000) var(--space-1000) var(--space-2000) var(--space-1000);
+  --modal-header-content-padding: var(--space-0500) var(--space-0500) var(--space-0250) var(--space-1000);
+  --modal-header-content-alignment: left;
+  --modal-header-text-font-size: var(--h2-font-size);
+  --modal-header-text-font-weight: var(--h2-font-weight);
+  --modal-button-header-border-radius: var(--border-radius-0);
+  --modal-button-header-width: var(--button-width);
+  --modal-button-header-min-width: var(--button-min-width);
+  --modal-button-header-height: var(--button-height);
+  --modal-header-min-height: var(--row-size);
+  --modal-button-header-margin: var(--space-0);
+  --modal-width-s: 40rem;
+  --modal-width-m: 60rem;
+  --modal-width-l: var(--body-column-size);
+  --modal-width-xl: 100%;
+  --modal-footer-margin: var(--space-0);
+  --modal-footer-padding: var(--space-0);
+
   --modal-button-primary-border: var(--button-primary-border);
   --modal-button-primary-border-radius: var(--button-primary-border-radius);
   --modal-button-primary-text-font-size: var(--button-primary-text-font-size);
@@ -606,12 +637,9 @@
   --modal-button-secondary-outline-offset: var(--button-secondary-outline-offset);
   --modal-button-secondary-padding: var(--space-0) calc(var(--space-1000) - var(--border-width-2)) var(--space-1250) calc(var(--space-1000) - var(--border-width-2)); /* padding - border so that icon is centered */
   --modal-button-secondary-width: 100%;
-
   --modal-button-set-flex-direction: row-reverse;
   --modal-button-set-gap: var(--space-0);
-  --modal-button-set-justify: stretch;
-  --modal-button-set-margin: var(--space-0);
-  --modal-button-set-padding: var(--space-0);
+  --modal-button-set-justification: stretch;
 
   --stack-gap: var(--gap-buttons);
   --stack-gap-compact: var(--space-0);

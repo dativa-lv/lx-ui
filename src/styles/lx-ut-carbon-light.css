@@ -390,7 +390,7 @@
   --color-nav-item-icon-hover: var(--color-interactive-hover-foreground);
   --color-nav-item-icon-selected: #111;
   --color-nav-item-text-selected: #111;
-  --color-nav-item-background-selected: #e0e0e0;
+  --color-nav-item-background-selected: var(--color-highlight);
   --color-nav-item-border-selected: transparent;
   --color-nav-item-border-left-selected: var(--color-brand);
   
@@ -401,6 +401,19 @@
   --color-nav-public-item-background: transparent;
   --color-nav-public-item-icon: var(--color-nav-foreground);
   --color-nav-public-item-icon-hover: var(--color-nav-foreground);
+
+  --color-modal-background: var(--color-region);
+  --color-modal-header-text: var(--color-data);
+
+  --color-modal-button-header-icon: var(--color-data);
+  --color-modal-button-header-icon-focus: var(--color-data);
+  --color-modal-button-header-icon-hover: var(--color-button-ghost-icon-hover);
+  --color-modal-button-header-icon-active: var(--color-button-ghost-icon-active);
+
+  --color-modal-button-header-background: var(--color-button-ghost-background);
+  --color-modal-button-header-background-focus: transparent;
+  --color-modal-button-header-background-hover: var(--color-button-ghost-background-hover);
+  --color-modal-button-header-background-active: var(--color-button-ghost-background-active);
 
   --color-modal-button-primary-text: var(--color-button-primary-text);
   --color-modal-button-primary-background: var(--color-button-primary-background);
@@ -432,7 +445,7 @@
   --color-modal-button-secondary-background-hover: var(--color-button-secondary-background-hover);
   --color-modal-button-secondary-border-hover: var(--color-button-secondary-border-hover);
 
-  --color-modal-button-set-background: transparent;
+  --color-modal-footer-background: transparent;
 
   --color-data-block-primary: var(--color-data);
   --color-data-block-secondary: var(--color-label);

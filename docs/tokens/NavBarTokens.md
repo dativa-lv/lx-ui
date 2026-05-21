@@ -54,7 +54,7 @@
 | `--color-nav-item-icon-hover`              | `--color-interactive-hover-foreground` |
 | `--color-nav-item-icon-selected`           | #111                                   |
 | `--color-nav-item-text-selected`           | #111                                   |
-| `--color-nav-item-background-selected`     | #e0e0e0                                |
+| `--color-nav-item-background-selected`     | `--color-highlight`                    |
 | `--color-nav-item-border-selected`         | transparent                            |
 | `--color-nav-item-border-left-selected`    | `--color-brand`                        |
 | `--color-nav-public-item-text`             | `--color-nav-foreground`               |
@@ -77,7 +77,6 @@ Customized values for dark mode:
 | `--color-nav-item-icon`                | #eee            |
 | `--color-nav-item-icon-selected`       | #eee            |
 | `--color-nav-item-text-selected`       | #eee            |
-| `--color-nav-item-background-selected` | #35373c         |
 
 <br/>
 Customized values for contrast mode:

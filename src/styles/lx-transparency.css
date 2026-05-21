@@ -16,6 +16,25 @@
     --color-background-overlay: rgba(24, 24, 26, 0.9);
 }
 
+.lx.lx-no-transparency .lx-spotlight {
+  --shadow-dropdown: 0px transparent;
+}
+
+.lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-right,
+.lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-left,
+.lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-top,
+.lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-bottom {
+  box-shadow: none;
+}
+
+.lx.lx-no-transparency .lx-info-wrapper-responsive-toolbar {
+  border-top: var(--border-width-2) solid var(--color-chrome);
+}
+
+.lx.lx-no-transparency .lx-layout.lx-layout-default > header {
+  background: var(--color-nav-background);
+}
+
 .lx.lx-theme-contrast.lx-no-transparency .lx-info-wrapper .popper,
 .lx.lx-theme-contrast.lx-no-transparency .lx-dropdown-default-content,
 .lx.lx-theme-contrast.lx-no-transparency .lx-notifications-list .lx-notification .lx-main,
@@ -36,6 +55,11 @@
 
 .lx.lx-no-transparency dialog.lx-modal::backdrop {
   --color-cover-background: rgba(0, 0, 0, .9);
+}
+
+.lx.lx-no-transparency #modals .lx-modal > header::after,
+.lx.lx-no-transparency #modals .lx-modal > footer::before {
+  display: none;
 }
 
 .lx.lx-no-transparency ::backdrop,

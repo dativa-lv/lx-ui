@@ -37,8 +37,8 @@ const modalHeader = ref();
 const modalContent = ref();
 const modalFooter = ref();
 
-const headerSize = useElementSize(modalHeader);
-const footerSize = useElementSize(modalFooter);
+const headerSize = useElementSize(modalHeader, undefined, { box: 'border-box' });
+const footerSize = useElementSize(modalFooter, undefined, { box: 'border-box' });
 
 const { y: scrollYPos } = useScroll(modalContent);
 
@@ -236,7 +236,7 @@ defineExpose({ open, close });
           :aria-labelledby="`${id}-label`"
         >
           <header ref="modalHeader">
-            <p :id="`${id}-label`" class="lx-primary" :title="label">{{ label }}</p>
+            <div :id="`${id}-label`" class="lx-primary" :title="label">{{ label }}</div>
             <LxButton
               v-if="!disableClosing"
               icon="close"

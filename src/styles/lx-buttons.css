@@ -45,7 +45,7 @@ a.lx-sitemap-link {
   font-weight: var(--button-primary-text-font-weight);
   border: var(--button-primary-border);
   border-radius: var(--button-primary-border-radius);
-  background-color: var(--color-button-primary-background);
+  background: var(--color-button-primary-background);
   color: var(--color-button-primary-text);
   outline-offset: var(--button-primary-outline-offset);
 }
@@ -116,7 +116,7 @@ a.lx-sitemap-link {
   font-weight: var(--button-secondary-text-font-weight);
   border: var(--button-secondary-border);
   border-radius: var(--button-secondary-border-radius);
-  background-color: var(--color-button-secondary-background);
+  background: var(--color-button-secondary-background);
   color: var(--color-button-secondary-text);
   outline-offset: var(--button-secondary-outline-offset);
 }
@@ -148,7 +148,7 @@ a.lx-sitemap-link {
   font-weight: var(--button-tertiary-text-font-weight);
   border: var(--button-tertiary-border);
   border-radius: var(--button-tertiary-border-radius);
-  background-color: var(--color-button-tertiary-background);
+  background: var(--color-button-tertiary-background);
   color: var(--color-button-tertiary-text);
   outline-offset: var(--button-tertiary-outline-offset);
 }
@@ -180,7 +180,7 @@ a.lx-sitemap-link {
   font-weight: var(--button-ghost-text-font-weight);
   border: var(--button-ghost-border);
   border-radius: var(--button-ghost-border-radius);
-  background-color: var(--color-button-ghost-background);
+  background: var(--color-button-ghost-background);
   color: var(--color-button-ghost-text);
   outline-offset: var(--button-ghost-outline-offset);
 }
@@ -659,7 +659,7 @@ a.lx-button.lx-button-ghost svg {
   font-weight: var(--nav-item-text-font-weight);
   border: var(--nav-item-border);
   border-radius: var(--nav-item-border-radius);
-  background-color: var(--color-nav-item-background);
+  background: var(--color-nav-item-background);
   color: var(--color-nav-item-text);
   outline-offset: var(--nav-item-outline-offset);
 }
@@ -677,14 +677,14 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-layout-default .lx-nav-panel ul li.lx-selected .lx-button {
   color: var(--color-nav-item-text-selected);
-  background-color: var(--color-nav-item-background-selected);
+  background: var(--color-nav-item-background-selected);
   border-color: var(--color-nav-item-border-selected);
   border-left-color: var(--color-nav-item-border-left-selected);
   border-collapse: collapse;
 }
 
 .lx-layout-default .lx-nav-panel ul li .lx-button:hover {
-  background-color: var(--color-nav-item-background-hover);
+  background: var(--color-nav-item-background-hover);
   border-color: var(--color-nav-item-border-hover);
   color: var(--color-nav-item-text-hover);
 }
@@ -757,7 +757,7 @@ a.lx-button.lx-button-ghost svg {
   font-weight: var(--nav-public-item-text-font-weight);
   border: var(--nav-public-item-border);
   border-radius: var(--nav-public-item-border-radius);
-  background-color: var(--color-nav-public-item-background);
+  background: var(--color-nav-public-item-background);
   color: var(--color-nav-public-item-text);
   outline-offset: var(--nav-public-item-outline-offset);
 }
@@ -798,7 +798,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover,
 .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button:hover,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button:hover {
-  background-color: var(--color-nav-public-item-background-hover);
+  background: var(--color-nav-public-item-background-hover);
   border-color: var(--color-nav-public-item-border-hover);
   color: var(--color-nav-public-item-text-hover);
 }
@@ -823,7 +823,7 @@ a.lx-button.lx-button-ghost svg {
   font-weight: var(--toolbar-button-primary-text-font-weight);
   border: var(--toolbar-button-primary-border);
   border-radius: var(--toolbar-button-primary-border-radius);
-  background-color: var(--color-toolbar-button-primary-background);
+  background: var(--color-toolbar-button-primary-background);
   color: var(--color-toolbar-button-primary-text);
   outline-offset: var(--toolbar-button-primary-outline-offset);
 }
@@ -840,31 +840,31 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-layout .lx-component-toolbar .lx-button:hover {
-  background-color: var(--color-toolbar-button-primary-background-hover);
+  background: var(--color-toolbar-button-primary-background-hover);
   border-color: var(--color-toolbar-button-primary-border-hover);
   color: var(--color-toolbar-button-primary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button:focus {
-  background-color: var(--color-toolbar-button-primary-background-focus);
+  background: var(--color-toolbar-button-primary-background-focus);
   border-color: var(--color-toolbar-button-primary-border-focus);
   color: var(--color-toolbar-button-primary-text-focus);
 }
 
 .lx-component-toolbar .lx-button:focus:hover {
-  background-color: var(--color-toolbar-button-primary-background-hover);
+  background: var(--color-toolbar-button-primary-background-hover);
   color: var(--color-toolbar-button-primary-text-hover);
 }
 
 .lx .lx-layout .lx-component-toolbar .lx-button:active {
-  background-color: var(--color-toolbar-button-primary-background-active);
+  background: var(--color-toolbar-button-primary-background-active);
   border-color: var(--color-toolbar-button-primary-border-active);
   color: var(--color-toolbar-button-primary-text-active);
 }
 
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled {
-  background-color: var(--color-toolbar-button-primary-background-disabled);
+  background: var(--color-toolbar-button-primary-background-disabled);
   color: var(--color-toolbar-button-primary-text-disabled);
   border-color: var(--color-toolbar-button-primary-border-disabled);
 }
@@ -881,7 +881,7 @@ a.lx-button.lx-button-ghost svg {
   font-weight: var(--toolbar-button-secondary-text-font-weight);
   border: var(--toolbar-button-secondary-border);
   border-radius: var(--toolbar-button-secondary-border-radius);
-  background-color: var(--color-toolbar-button-secondary-background);
+  background: var(--color-toolbar-button-secondary-background);
   color: var(--color-toolbar-button-secondary-text);
   outline-offset: var(--toolbar-button-secondary-outline-offset);
 }
@@ -898,30 +898,30 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:hover {
-  background-color: var(--color-toolbar-button-secondary-background-hover);
+  background: var(--color-toolbar-button-secondary-background-hover);
   border-color: var(--color-toolbar-button-secondary-border-hover);
   color: var(--color-toolbar-button-secondary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:focus {
-  background-color: var(--color-toolbar-button-secondary-background-focus);
+  background: var(--color-toolbar-button-secondary-background-focus);
   border-color: var(--color-toolbar-button-secondary-border-focus);
   color: var(--color-toolbar-button-secondary-text-focus);
 }
 
 .lx-component-toolbar .lx-button.lx-button-secondary:focus:hover {
-  background-color: var(--color-toolbar-button-secondary-background-hover);
+  background: var(--color-toolbar-button-secondary-background-hover);
   color: var(--color-toolbar-button-secondary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary:active {
-  background-color: var(--color-toolbar-button-secondary-background-active);
+  background: var(--color-toolbar-button-secondary-background-active);
   border-color: var(--color-toolbar-button-secondary-border-active);
   color: var(--color-toolbar-button-secondary-text-active);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-secondary.lx-disabled {
-  background-color: var(--color-toolbar-button-secondary-background-disabled);
+  background: var(--color-toolbar-button-secondary-background-disabled);
   color: var(--color-toolbar-button-secondary-text-disabled);
   border-color: var(--color-toolbar-button-secondary-border-disabled);
 }
@@ -938,7 +938,7 @@ a.lx-button.lx-button-ghost svg {
   font-weight: var(--toolbar-button-tertiary-text-font-weight);
   border: var(--toolbar-button-tertiary-border);
   border-radius: var(--toolbar-button-tertiary-border-radius);
-  background-color: var(--color-toolbar-button-tertiary-background);
+  background: var(--color-toolbar-button-tertiary-background);
   color: var(--color-toolbar-button-tertiary-text);
   outline-offset: var(--toolbar-button-tertiary-outline-offset);
 }
@@ -955,30 +955,30 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary:hover {
-  background-color: var(--color-toolbar-button-tertiary-background-hover);
+  background: var(--color-toolbar-button-tertiary-background-hover);
   border-color: var(--color-toolbar-button-tertiary-border-hover);
   color: var(--color-toolbar-button-tertiary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary:focus {
-  background-color: var(--color-toolbar-button-tertiary-background-focus);
+  background: var(--color-toolbar-button-tertiary-background-focus);
   border-color: var(--color-toolbar-button-tertiary-border-focus);
   color: var(--color-toolbar-button-tertiary-text-focus);
 }
 
 .lx-component-toolbar .lx-button.lx-button-tertiary:focus:hover {
-  background-color: var(--color-toolbar-button-tertiary-background-hover);
+  background: var(--color-toolbar-button-tertiary-background-hover);
   color: var(--color-toolbar-button-tertiary-text-hover);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary:active {
-  background-color: var(--color-toolbar-button-tertiary-background-active);
+  background: var(--color-toolbar-button-tertiary-background-active);
   border-color: var(--color-toolbar-button-tertiary-border-active);
   color: var(--color-toolbar-button-tertiary-text-active);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-tertiary.lx-disabled {
-  background-color: var(--color-toolbar-button-tertiary-background-disabled);
+  background: var(--color-toolbar-button-tertiary-background-disabled);
   color: var(--color-toolbar-button-tertiary-text-disabled);
   border-color: var(--color-toolbar-button-tertiary-border-disabled);
 }
@@ -996,7 +996,7 @@ a.lx-button.lx-button-ghost svg {
   font-weight: var(--toolbar-button-ghost-text-font-weight);
   border: var(--toolbar-button-ghost-border);
   border-radius: var(--toolbar-button-ghost-border-radius);
-  background-color: var(--color-toolbar-button-ghost-background);
+  background: var(--color-toolbar-button-ghost-background);
   color: var(--color-toolbar-button-ghost-text);
   outline-offset: var(--toolbar-button-ghost-outline-offset);
 }
@@ -1018,7 +1018,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover,
 .lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:hover,
 .lx .lx-layout .lx-form-grid .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover {
-  background-color: var(--color-toolbar-button-ghost-background-hover);
+  background: var(--color-toolbar-button-ghost-background-hover);
   border-color: var(--color-toolbar-button-ghost-border-hover);
   color: var(--color-toolbar-button-ghost-text-hover);
 }
@@ -1026,14 +1026,14 @@ a.lx-button.lx-button-ghost svg {
 .lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus,
 .lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus {
-  background-color: var(--color-toolbar-button-ghost-background-focus);
+  background: var(--color-toolbar-button-ghost-background-focus);
   border-color: var(--color-toolbar-button-ghost-border-focus);
   color: var(--color-toolbar-button-ghost-text-focus);
 }
 
 .lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus:hover,
 .lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:focus:hover {
-  background-color: var(--color-toolbar-button-ghost-background-hover);
+  background: var(--color-toolbar-button-ghost-background-hover);
   color: var(--color-toolbar-button-ghost-text-hover);
 }
 
@@ -1042,26 +1042,26 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout .lx-form-grid .lx-component-toolbar .lx-button.lx-button-ghost:active,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active,
 .lx .lx-layout .lx-form-grid .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active {
-  background-color: var(--color-toolbar-button-ghost-background-active);
+  background: var(--color-toolbar-button-ghost-background-active);
   border-color: var(--color-toolbar-button-ghost-border-active);
   color: var(--color-toolbar-button-ghost-text-active);
 }
 
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-disabled {
-  background-color: var(--color-toolbar-selection-button-background-disabled);
+  background: var(--color-toolbar-selection-button-background-disabled);
 }
 
 .lx-list-wrapper .lx-component-toolbar.lx-disabled .left-area,
 .lx .lx-layout .lx-component-toolbar .second-row .lx-button.lx-button-ghost.lx-disabled,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-group .lx-button.lx-button-ghost.lx-disabled {
-  background-color: var(--color-toolbar-button-ghost-background-disabled);
+  background: var(--color-toolbar-button-ghost-background-disabled);
   color: var(--color-toolbar-button-ghost-text-disabled);
   border-color: var(--color-toolbar-button-ghost-border-disabled);
 }
 
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active,
 .lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost.lx-active {
-  background-color: var(--color-selected-background);
+  background: var(--color-selected-background);
   color: var(--color-selected);
   border-color: var(--color-selected-border);
 }
@@ -1069,7 +1069,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost.lx-active:hover,
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active:hover,
 .lx .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-active:hover {
-  background-color: var(--color-toolbar-button-ghost-background-hover);
+  background: var(--color-toolbar-button-ghost-background-hover);
 }
 
 /* Selection toolbar button styles */
@@ -1085,7 +1085,7 @@ a.lx-button.lx-button-ghost svg {
   font-weight: var(--toolbar-selection-button-font-weight);
   border: var(--toolbar-selection-button-border);
   border-radius: var(--toolbar-selection-button-border-radius);
-  background-color: var(--color-toolbar-selection-button-background);
+  background: var(--color-toolbar-selection-button-background);
   color: var(--color-toolbar-selection-button-text);
   outline-offset: var(--toolbar-selection-button-outline-offset);
 }
@@ -1105,28 +1105,28 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):hover,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:hover {
-  background-color: var(--color-toolbar-selection-button-background-hover);
+  background: var(--color-toolbar-selection-button-background-hover);
   border-color: var(--color-toolbar-selection-button-border-hover);
   color: var(--color-toolbar-selection-button-text-hover);
 }
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):focus,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:focus {
-  background-color: var(--color-toolbar-selection-button-background-focus);
+  background: var(--color-toolbar-selection-button-background-focus);
   border-color: var(--color-toolbar-selection-button-border-focus);
   color: var(--color-toolbar-selection-button-text-focus);
 }
 
 .lx-selection-toolbar .first-row .lx-button:focus:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):hover,
 .lx-selection-toolbar .lx-component-toolbar .lx-button:focus:hover {
-  background-color: var(--color-toolbar-selection-button-background-hover);
+  background: var(--color-toolbar-selection-button-background-hover);
   color: var(--color-toolbar-selection-button-text-hover);
 }
 
 /* .lx-selection-toolbar .lx-component-toolbar .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):active, */
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):active,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:active {
-  background-color: var(--color-toolbar-selection-button-background-active);
+  background: var(--color-toolbar-selection-button-background-active);
   border-color: var(--color-toolbar-selection-button-border-active);
   color: var(--color-toolbar-selection-button-text-active);
 }
@@ -1136,7 +1136,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost.lx-disabled,
 .lx .lx-layout .lx-selection-toolbar .lx-component-toolbar.lx-disabled .left-area,
 .lx .lx-layout .lx-selection-toolbar .lx-component-toolbar.lx-disabled .first-row {
-  background-color: var(--color-toolbar-selection-button-background-disabled);
+  background: var(--color-toolbar-selection-button-background-disabled);
   color: var(--color-toolbar-selection-button-text-disabled);
   border-color: var(--color-toolbar-selection-button-border-disabled);
 }
@@ -1239,7 +1239,7 @@ a.lx-button.lx-button-ghost svg {
   font-weight: var(--popover-item-text-font-weight);
   border: var(--popover-item-border);
   border-radius: var(--popover-item-border-radius);
-  background-color: var(--color-popover-item-background);
+  background: var(--color-popover-item-background);
   color: var(--color-popover-item-text);
   outline-offset: var(--popover-item-outline-offset);
   --button-primary-badge-inset: var(--button-ghost-badge-inset);
@@ -1283,7 +1283,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel > .lx-button:hover,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover,
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover {
-  background-color: var(--color-popover-item-background-hover);
+  background: var(--color-popover-item-background-hover);
   border-color: var(--color-popover-item-border-hover);
   color: var(--color-popover-item-text-hover);
 }
@@ -1292,7 +1292,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:active,
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button:active,
 .lx .lx-layout .lx-dropdown-panel > .lx-button:active {
-  background-color: var(--color-popover-item-background-active);
+  background: var(--color-popover-item-background-active);
   border-color: var(--color-popover-item-border-active);
   color: var(--color-popover-item-text-active);
 }
@@ -1305,7 +1305,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:focus-visible,
 .lx .lx-layout .popper .lx-dropdown-panel > div > .lx-button:focus-visible,
 .lx .lx-layout .popper .lx-dropdown-panel > .lx-button:focus-visible {
-  background-color: var(--color-popover-item-background-focus);
+  background: var(--color-popover-item-background-focus);
   border-color: var(--color-popover-item-border-focus);
   color: var(--color-popover-item-text-focus);
 }
@@ -1314,145 +1314,9 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
 .lx .lx-layout .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
 .lx .lx-layout .popper .lx-dropdown-panel > .lx-button.lx-disabled {
-  background-color: var(--color-popover-item-background-disabled);
+  background: var(--color-popover-item-background-disabled);
   color: var(--color-popover-item-text-disabled);
   border-color: var(--color-popover-item-border-disabled);
-}
-
-/*** Modal styles ***/
-
-.lx-modal>footer.lx-button-set {
-  justify-content: var(--modal-button-set-justify);
-  flex-direction: var(--modal-button-set-flex-direction);
-  gap: var(--modal-button-set-gap);
-  margin: var(--modal-button-set-margin);
-  padding: var(--modal-button-set-padding);
-  background-color: var(--color-modal-button-set-background);
-}
-
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) {
-  justify-content: flex-start;
-  flex-direction: row;
-  padding: var(--modal-button-primary-padding);
-  text-decoration: var(--modal-button-primary-text-decoration);
-  height: var(--modal-button-primary-height);
-  min-width: var(--modal-button-primary-min-width);
-  width: var(--modal-button-primary-width);
-  font-size: var(--modal-button-primary-text-font-size);
-  font-weight: var(--modal-button-primary-text-font-weight);
-  border: var(--modal-button-primary-border);
-  border-radius: var(--modal-button-primary-border-radius);
-  background-color: var(--color-modal-button-primary-background);
-  color: var(--color-modal-button-primary-text);
-  outline-offset: var(--modal-button-primary-outline-offset);
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button) {
-  justify-content: flex-start;
-  flex-direction: row;
-  padding: var(--modal-button-secondary-padding);
-  margin: var(--modal-button-secondary-margin);
-  text-decoration: var(--modal-button-secondary-text-decoration);
-  height: var(--modal-button-secondary-height);
-  min-width: var(--modal-button-secondary-min-width);
-  width: var(--modal-button-secondary-width);
-  font-size: var(--modal-button-secondary-text-font-size);
-  font-weight: var(--modal-button-secondary-text-font-weight);
-  border: var(--modal-button-secondary-border);
-  border-radius: var(--modal-button-secondary-border-radius);
-  background-color: var(--color-modal-button-secondary-background);
-  color: var(--color-modal-button-secondary-text);
-  outline-offset: var(--modal-button-secondary-outline-offset);
-}
-
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) .lx-button-content-wrapper {
-  --button-primary-gap: var(--space-0);
-  --button-primary-grid-areas: 'content';
-  --button-primary-grid-template-columns: 1fr auto auto;
-  --button-primary-grid-template-rows: 1fr;
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button) .lx-button-content-wrapper {
-  --button-secondary-gap: var(--space-0);
-  --button-secondary-grid-areas: 'content';
-  --button-secondary-grid-template-columns: 1fr auto auto;
-  --button-secondary-grid-template-rows: 1fr;
-}
-
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) .lx-button-content {
-  text-align: var(--modal-button-primary-text-alignment);
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button) .lx-button-content {
-  text-align: var(--modal-button-secondary-text-alignment);
-}
-
-.lx-modal>footer.lx-button-set.lx-two-buttons .lx-button {
-  max-width: 50%;
-}
-
-/* Modal focus */
-
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):focus {
-  background-color: var(--color-modal-button-primary-background-focus);
-  color: var(--color-modal-button-primary-text-focus);
-  border-color: var(--color-modal-button-primary-border-focus);
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button):focus {
-  background-color: var(--color-modal-button-secondary-background-focus);
-  color: var(--color-modal-button-secondary-text-focus);
-  border-color: var(--color-modal-button-secondary-border-focus);
-}
-
-/* Modal hover */
-
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):hover {
-  background-color: var(--color-modal-button-primary-background-hover);
-  color: var(--color-modal-button-primary-text-hover);
-  border-color: var(--color-modal-button-primary-border-hover);
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button):hover {
-  background-color: var(--color-modal-button-secondary-background-hover);
-  color: var(--color-modal-button-secondary-text-hover);
-  border-color: var(--color-modal-button-secondary-border-hover);
-}
-
-/* Modal destructive */
-
-.lx-modal>footer.lx-button-set .lx-button.lx-destructive:not(.lx-pseudo-grid .lx-button):not(.lx-disabled):hover {
-  background-color: var(--color-button-destructive-background);
-  border-color: var(--color-button-destructive-border);
-  color: var(--color-button-destructive);
-}
-
-/* Modal active */
-
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):active {
-  background-color: var(--color-modal-button-primary-background-active);
-  color: var(--color-modal-button-primary-text-active);
-  border-color: var(--color-modal-button-primary-border-active);
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button):active {
-  background-color: var(--color-modal-button-secondary-background-active);
-  color: var(--color-modal-button-secondary-text-active);
-  border-color: var(--color-modal-button-secondary-border-active);
-}
-
-/* Modal disabled */
-
-.lx-modal>footer.lx-button-set .lx-button.lx-disabled:not(.lx-pseudo-grid .lx-button) {
-  background-color: var(--color-modal-button-primary-background-disabled);
-  color: var(--color-modal-button-primary-text-disabled);
-  border-color: var(--color-modal-button-primary-border-disabled);
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary.lx-disabled:not(.lx-pseudo-grid .lx-button) {
-  background-color: var(--color-modal-button-secondary-background-disabled);
-  color: var(--color-modal-button-secondary-text-disabled);
-  border-color: var(--color-modal-button-secondary-border-disabled);
 }
 
 /*** Icon-only styles ***/
@@ -1533,7 +1397,7 @@ a.lx-button.lx-button-ghost svg {
 /*** lx-active + hover + focus + active styles ***/
 
 .lx .lx-layout .lx-button.lx-active:not(.lx-disabled) {
-  background-color: var(--color-button-active-mode-background);
+  background: var(--color-button-active-mode-background);
   color: var(--color-button-active-mode);
   border-color: var(--color-button-active-mode-border);
 }
@@ -1542,7 +1406,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-active:not(.lx-disabled),
 .lx .lx-layout .lx-dropdown-panel > div > .lx-button.lx-active:not(.lx-disabled),
 .lx .lx-layout .lx-dropdown-panel > .lx-button.lx-active:not(.lx-disabled) {
-  background-color: var(--color-selected-dropdown-background);
+  background: var(--color-selected-dropdown-background);
   color: var(--color-selected-dropdown);
   border-color: var(--color-selected-dropdown-border);
 }
@@ -1555,7 +1419,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="submit"]:where(:hover),
 .lx .lx-layout.lx-override input[type="reset"]:where(:hover),
 .lx .lx-layout.lx-override input[type="file"]:where(:hover)::file-selector-button {
-  background-color: var(--color-button-primary-background-hover);
+  background: var(--color-button-primary-background-hover);
   color: var(--color-button-primary-text-hover);
   border-color: var(--color-button-primary-border-hover);
 }
@@ -1563,7 +1427,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-button.lx-button-secondary:hover,
 .lx-override button.lx-button-secondary:hover,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:hover) {
-  background-color: var(--color-button-secondary-background-hover);
+  background: var(--color-button-secondary-background-hover);
   color: var(--color-button-secondary-text-hover);
   border-color: var(--color-button-secondary-border-hover);
 }
@@ -1571,7 +1435,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-button.lx-button-tertiary:hover,
 .lx-override button.lx-button-tertiary:hover,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:hover) {
-  background-color: var(--color-button-tertiary-background-hover);
+  background: var(--color-button-tertiary-background-hover);
   color: var(--color-button-tertiary-text-hover);
   border-color: var(--color-button-tertiary-border-hover);
 }
@@ -1579,7 +1443,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-button.lx-button-ghost:hover,
 .lx-override button.lx-button-ghost:hover,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:hover) {
-  background-color: var(--color-button-ghost-background-hover);
+  background: var(--color-button-ghost-background-hover);
   color: var(--color-button-ghost-text-hover);
   border-color: var(--color-button-ghost-border-hover);
 }
@@ -1593,7 +1457,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="submit"]:where(:focus),
 .lx .lx-layout.lx-override input[type="reset"]:where(:focus),
 .lx .lx-layout.lx-override input[type="file"]:where(:focus)::file-selector-button {
-  background-color: var(--color-button-primary-background-focus);
+  background: var(--color-button-primary-background-focus);
   border-color: var(--color-button-primary-border-focus);
   outline: 2px solid var(--color-focus-background);
   color: var(--color-button-primary-text-focus);
@@ -1609,7 +1473,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-secondary:focus,
 .lx-dropdown-toggler:focus .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus) {
-  background-color: var(--color-button-secondary-background-focus);
+  background: var(--color-button-secondary-background-focus);
   border-color: var(--color-button-secondary-border-focus);
   color: var(--color-button-secondary-text);
 }
@@ -1618,7 +1482,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-tertiary:focus,
 .lx-dropdown-toggler:focus .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus) {
-  background-color: var(--color-button-tertiary-background-focus);
+  background: var(--color-button-tertiary-background-focus);
   border-color: var(--color-button-tertiary-border-focus);
   color: var(--color-button-tertiary-text);
 }
@@ -1628,7 +1492,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
 .lx-header .popper-wrapper > .lx-dropdown-toggler:focus .lx-button,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus) {
-  background-color: var(--color-button-ghost-background-focus);
+  background: var(--color-button-ghost-background-focus);
   border-color: var(--color-button-ghost-border-focus);
   color: var(--color-button-ghost-text);
 }
@@ -1642,7 +1506,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="submit"]:where(:focus:hover),
 .lx .lx-layout.lx-override input[type="reset"]:where(:focus:hover),
 .lx .lx-layout.lx-override input[type="file"]:where(:focus:hover)::file-selector-button {
-  background-color: var(--color-button-primary-background-hover);
+  background: var(--color-button-primary-background-hover);
   color: var(--color-button-primary-text-hover);
 }
 
@@ -1654,7 +1518,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-secondary:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus:hover) {
-  background-color: var(--color-button-secondary-background-hover);
+  background: var(--color-button-secondary-background-hover);
   color: var(--color-button-secondary-text-hover);
 }
 
@@ -1662,7 +1526,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-tertiary:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus:hover) {
-  background-color: var(--color-button-tertiary-background-hover);
+  background: var(--color-button-tertiary-background-hover);
   color: var(--color-button-tertiary-text-hover);
 }
 
@@ -1670,7 +1534,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-ghost:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-ghost,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus:hover) {
-  background-color: var(--color-button-ghost-background-hover);
+  background: var(--color-button-ghost-background-hover);
   color: var(--color-button-ghost-text-hover);
 }
 
@@ -1682,7 +1546,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="submit"]:where(:active),
 .lx .lx-layout.lx-override input[type="reset"]:where(:active),
 .lx .lx-layout.lx-override input[type="file"]:where(:active)::file-selector-button {
-  background-color: var(--color-button-primary-background-active);
+  background: var(--color-button-primary-background-active);
   color: var(--color-button-primary-text-active);
   border-color: var(--color-button-primary-border-active);
 }
@@ -1691,7 +1555,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-secondary:active,
 .lx-dropdown-toggler:active .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:active) {
-  background-color: var(--color-button-secondary-background-active);
+  background: var(--color-button-secondary-background-active);
   color: var(--color-button-secondary-text-active);
   border-color: var(--color-button-secondary-border-active);
 }
@@ -1700,7 +1564,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-tertiary:active,
 .lx-dropdown-toggler:active .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:active) {
-  background-color: var(--color-button-tertiary-background-active);
+  background: var(--color-button-tertiary-background-active);
   color: var(--color-button-tertiary-text-active);
   border-color: var(--color-button-tertiary-border-active);
 }
@@ -1709,7 +1573,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-ghost:active,
 .lx-dropdown-toggler:active .lx-button.lx-button-ghost,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:active) {
-  background-color: var(--color-button-ghost-background-active);
+  background: var(--color-button-ghost-background-active);
   color: var(--color-button-ghost-text-active);
   border-color: var(--color-button-ghost-border-active);
 }
@@ -1724,7 +1588,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout.lx-override button.lx-destructive:not([disabled]):hover,
 .lx .lx-layout.lx-override input[type="button"].lx-destructive:not(.lx-disabled):hover,
 .lx .lx-layout.lx-override input[type="button"].lx-destructive:not([disabled]):hover {
-  background-color: var(--color-button-destructive-background);
+  background: var(--color-button-destructive-background);
   border-color: var(--color-button-destructive-border);
   color: var(--color-button-destructive);
 }
@@ -1742,7 +1606,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="reset"][disabled],
 .lx .lx-layout.lx-override input[type="file"].lx-disabled::file-selector-button,
 .lx .lx-layout.lx-override input[type="file"][disabled]::file-selector-button {
-  background-color: var(--color-button-primary-background-disabled);
+  background: var(--color-button-primary-background-disabled);
   color: var(--color-button-primary-text-disabled);
   border-color: var(--color-button-primary-border-disabled);
   outline: none;
@@ -1754,7 +1618,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-secondary[disabled],
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary.lx-disabled),
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary[disabled]) {
-  background-color: var(--color-button-secondary-background-disabled);
+  background: var(--color-button-secondary-background-disabled);
   color: var(--color-button-secondary-text-disabled);
   border-color: var(--color-button-secondary-border-disabled);
 }
@@ -1764,7 +1628,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-tertiary[disabled],
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary.lx-disabled),
 .lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary[disabled]) {
-  background-color: var(--color-button-tertiary-background-disabled);
+  background: var(--color-button-tertiary-background-disabled);
   color: var(--color-button-tertiary-text-disabled);
   border-color: var(--color-button-tertiary-border-disabled);
 }
@@ -1778,7 +1642,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-ghost[disabled],
 .lx-layout.lx-override input[type="button"].lx-button-ghost.lx-disabled,
 .lx-layout.lx-override input[type="button"].lx-button-ghost[disabled] {
-  background-color: var(--color-button-ghost-background-disabled);
+  background: var(--color-button-ghost-background-disabled);
   color: var(--color-button-ghost-text-disabled);
   border-color: var(--color-button-ghost-border-disabled);
 }
@@ -1789,7 +1653,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-layout-cover .lx-header .lx-selected .lx-user-button,
 .lx .lx-layout.lx-layout-cover-digives-lite .lx-header .lx-user-button:hover,
 .lx .lx-layout.lx-layout-cover-digives-lite .lx-header .lx-selected .lx-user-button {
-  background-color: var(--color-interactive-hover-background);
+  background: var(--color-interactive-hover-background);
   color: var(--color-interactive-hover-foreground);
   border-color: var(--color-interactive-hover-background);
 }
@@ -1858,7 +1722,7 @@ a.lx-button.lx-button-ghost svg {
 /*** Main header styles ***/
 
 .lx .lx-main-header .lx-button {
-  background-color: var(--color-nav-background);
+  background: var(--color-nav-background);
   border-color: var(--color-nav-background);
   color: var(--color-nav-foreground);
   height: 100%;
