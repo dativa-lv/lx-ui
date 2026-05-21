@@ -1,5 +1,15 @@
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, inject } from 'vue';
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+  inject,
+  getCurrentInstance,
+  onUnmounted,
+} from 'vue';
 import { useElementSize } from '@vueuse/core';
 import PlaceholderData from '@/components/markdownExtensions/PlaceholderData';
 import ImageComponent from '@/components/markdownExtensions/Image';
@@ -21,6 +31,7 @@ import { checkArrayObjectProperty } from '@/utils/arrayUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { formatValue, formatUrl } from '@/utils/formatUtils';
 import { loadLibrary } from '@/utils/libLoader';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -44,6 +55,14 @@ const props = defineProps({
   labelId: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      componentStack: null,
+      schemaPath: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const emits = defineEmits(['update:modelValue', 'notification', 'preparedImage', 'actionClick']);
@@ -987,11 +1006,28 @@ function getPlainText() {
   return editor.value?.getText() || '';
 }
 
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxMarkdownTextArea',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxMarkdownTextArea' },
+    ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
+  });
+}
+
 defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, getPlainText });
 </script>
 
 <template>
-  <div :id="props.id" class="lx-field-wrapper" ref="markdownWrapper">
+  <div :id="props.id" class="lx-field-wrapper" ref="markdownWrapper" :data-id="id">
     <!--eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
     <div
       v-if="!readOnly"

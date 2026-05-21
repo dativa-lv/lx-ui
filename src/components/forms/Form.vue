@@ -72,7 +72,7 @@ const emits = defineEmits(['actionClick', 'update:index']);
  *   @clearHighlights="handleClearHighlights"
  * >
  *   <template #preHeader>
- *     <h2>Pre-Header Content</h2>
+ *     <p>Pre-Header Content</p>
  *   </template>
  *
  *   <template #postHeaderInfo>
@@ -80,11 +80,11 @@ const emits = defineEmits(['actionClick', 'update:index']);
  *   </template>
  *
  *   <template #header>
- *     <h1>Form Header</h1>
+ *     <p>Form Header</p>
  *   </template>
  *
  *   <template #postHeader>
- *     <h2>Post-Header Content</h2>
+ *     <p>Post-Header Content</p>
  *   </template>
  *
  *   <template #postHeaderInfo>
@@ -136,6 +136,7 @@ const props = defineProps({
     type: Boolean,
     default: true,
     group: 'main',
+    sequence: 2,
   },
   /**
    * Determines whether to show the footer of the form.
@@ -147,6 +148,7 @@ const props = defineProps({
     type: Boolean,
     default: true,
     group: 'main',
+    sequence: 3,
   },
   /**
    * Determines whether the footer should be sticky or not.
@@ -158,6 +160,7 @@ const props = defineProps({
     type: Boolean,
     default: true,
     group: 'main',
+    sequence: 4,
   },
   /**
    * Determines whether to show preHeader information slot.
@@ -169,6 +172,7 @@ const props = defineProps({
     type: Boolean,
     default: true,
     group: 'main',
+    sequence: 5,
   },
   /**
    * Determines whether to show postHeader information slot.
@@ -180,6 +184,7 @@ const props = defineProps({
     type: Boolean,
     default: true,
     group: 'main',
+    sequence: 6,
   },
   /**
    * The array of sections in the form.
@@ -191,6 +196,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
     group: 'main',
+    sequence: 8,
   },
   /**
    * The type of index for the form.
@@ -203,6 +209,7 @@ const props = defineProps({
     default: 'default', // 'default' or 'tabs' or 'expanders' or 'wizard' or 'none'
     options: ['none', 'default', 'tabs', 'expanders', 'wizard'],
     group: 'main',
+    sequence: 9,
   },
   /**
    * An array of buttons for the form.
@@ -213,7 +220,8 @@ const props = defineProps({
   actionDefinitions: {
     type: Array,
     default: () => [], // { actionName: '', name: '', icon: '', kind: 'primary'/'secondary'/'tertiary'/'additional' }
-    group: 'additional',
+    group: 'main',
+    sequence: 7,
   },
   /**
    * The required mode for the form.
@@ -226,6 +234,7 @@ const props = defineProps({
     default: 'none',
     options: ['none', 'required', 'required-asterisk', 'optional'],
     group: 'main',
+    sequence: 10,
   }, // none || required || required-asterisk || optional
   /**
    * Determines spacings between, before, after rows and sections in form.
@@ -238,6 +247,7 @@ const props = defineProps({
     default: 'default',
     options: ['default', 'compact', 'stripped'],
     group: 'main',
+    sequence: 11,
   }, // default || compact || stripped
   /**
    * The orientation of the forms rows
@@ -260,6 +270,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
     group: 'additional',
+    sequence: 1,
   },
   /**
    * The object containing text translations for the form.

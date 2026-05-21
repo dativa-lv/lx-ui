@@ -54,8 +54,8 @@
   border-top: var(--region-border);
 }
 
-.lx-layout.lx-layout-default .lx-data-grid-wrapper h2,
-.lx-layout.lx-layout-default .lx-data-grid-wrapper .heading-2 {
+.lx-data-grid-wrapper h2,
+.lx-data-grid-wrapper .heading-2 {
   font-weight: var(--h2-font-weight);
 }
 

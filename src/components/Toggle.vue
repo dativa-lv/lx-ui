@@ -29,7 +29,6 @@ const props = defineProps({
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
   role: { type: String, default: 'switch' },
-
   builderOptions: {
     type: Object,
     default: () => ({
