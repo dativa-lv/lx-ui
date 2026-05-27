@@ -64,6 +64,27 @@ export function useToolbarResponsiveness({
   let resizeObserver = null;
   let frame = null;
 
+  function remToPx(remValue) {
+    const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+    return remValue * rootFontSize;
+  }
+
+  const lxElement = computed(() => document.querySelector('.lx'));
+
+  const toolbarButtonGroupGap = computed(() =>
+    remToPx(
+      Number.parseFloat(
+        getComputedStyle(lxElement.value).getPropertyValue('--toolbar-button-group-gap')
+      )
+    )
+  );
+
+  const toolbarButtonGap = computed(() =>
+    remToPx(
+      Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--toolbar-button-gap'))
+    )
+  );
+
   function toActionGroups(actions = []) {
     const nestedGroupIds = new Set(actions?.map((a) => a.nestedGroupId).filter(Boolean));
     const groupMap = new Map();
@@ -135,18 +156,19 @@ export function useToolbarResponsiveness({
     };
   });
 
-  function getClosestExceededParent(tolerance = 0) {
+  function getClosestExceededParent() {
     const target = toolbarRef.value?.$el ?? toolbarRef.value;
     if (!(target instanceof HTMLElement)) {
       return null;
     }
 
-    const targetRect = target.getBoundingClientRect();
+    const targetWidth = target.getBoundingClientRect().width;
+
     let parent = target.parentElement;
 
     while (parent) {
       const parentRect = parent.getBoundingClientRect();
-      const exceedsHorizontally = targetRect.width > parentRect.width - tolerance;
+      const exceedsHorizontally = targetWidth > parentRect.width;
 
       if (exceedsHorizontally) {
         return parent;
@@ -158,11 +180,13 @@ export function useToolbarResponsiveness({
     return null;
   }
 
-  function hasInternalHorizontalOverflow(tolerance = 0) {
+  function hasInternalHorizontalOverflow() {
     const target = toolbarRef.value?.$el ?? toolbarRef.value;
     if (!(target instanceof HTMLElement)) {
       return false;
     }
+
+    const tolerance = 1; // 1px - to account for minor measurement discrepancies
 
     // Detect overflow even when CSS clips content and parent boundaries are not exceeded.
     if (target.scrollWidth - target.clientWidth > tolerance) {
@@ -178,12 +202,12 @@ export function useToolbarResponsiveness({
 
       const childRect = child.getBoundingClientRect();
 
-      return childRect.width > targetRect.width - tolerance;
+      return childRect.width > targetRect.width;
     });
   }
 
-  function hasHorizontalOverflowPressure(tolerance = 0) {
-    return Boolean(getClosestExceededParent(tolerance)) || hasInternalHorizontalOverflow(tolerance);
+  function hasHorizontalOverflowPressure() {
+    return Boolean(getClosestExceededParent()) || hasInternalHorizontalOverflow();
   }
 
   function getToolbarMaxWidth() {
@@ -330,6 +354,19 @@ export function useToolbarResponsiveness({
     }, 0);
   }
 
+  function getReservedInterAreaGapsWidth() {
+    const leftHasContent = hasLeftAreaSlotContent.value || leftActionsTopLevelFlat.value.length > 0;
+    const rightHasContent =
+      hasRightAreaSlotContent.value || rightActionsTopLevelFlat.value.length > 0;
+    const defaultHasContent = hasDefaultSlotContent.value;
+
+    const visibleAreaCount = [leftHasContent, defaultHasContent, rightHasContent].filter(
+      Boolean
+    ).length;
+
+    return Math.max(0, visibleAreaCount - 1) * toolbarButtonGroupGap.value;
+  }
+
   function getAvailableWidthForActions(maxWidthOverride) {
     const maxWidth = maxWidthOverride ?? getToolbarMaxWidth();
     const promotedWidth = getReservedPromotedActionWidth();
@@ -337,6 +374,7 @@ export function useToolbarResponsiveness({
     const searchWidth = getReservedSearchWidth();
     const selectionWidth = getReservedSelectionWidth();
     const builtInSlotWidth = getReservedBuiltInSlotWidth();
+    const interAreaGapsWidth = getReservedInterAreaGapsWidth();
 
     return Math.max(
       0,
@@ -345,7 +383,8 @@ export function useToolbarResponsiveness({
         nonResponsiveWidth -
         searchWidth -
         selectionWidth -
-        builtInSlotWidth
+        builtInSlotWidth -
+        interAreaGapsWidth
     );
   }
 
@@ -380,28 +419,66 @@ export function useToolbarResponsiveness({
     return a.area === 'left' ? a.index - b.index : b.index - a.index;
   }
 
-  function collectVisibleActionIds(actions, availableWidthForActions) {
-    const state = actions.reduce(
-      (acc, item) => {
-        if (item.action?.nonResponsive) {
-          return acc;
-        }
+  function collectVisibleActionIds(actions, options = {}) {
+    const { reserveOverflowButton = false } = options;
 
-        const actionWidth = getActionWidth(item.action);
+    const overflowArea = defaultAreaComputed.value === 'right' ? 'left' : 'right';
 
-        if (acc.usedWidth + actionWidth > availableWidthForActions) {
-          return acc;
-        }
+    const overflowAreaHasOtherContent =
+      overflowArea === 'left'
+        ? hasLeftAreaSlotContent.value || leftActionsTopLevelFlat.value.length > 0
+        : hasRightAreaSlotContent.value || rightActionsTopLevelFlat.value.length > 0;
 
-        acc.usedWidth += actionWidth;
-        acc.ids.add(item.action.id);
+    let overflowReservation = 0;
 
-        return acc;
-      },
-      { usedWidth: 0, ids: new Set() }
-    );
+    if (reserveOverflowButton) {
+      overflowReservation = OVERFLOW_BUTTON_WIDTH;
 
-    return state.ids;
+      if (overflowAreaHasOtherContent) {
+        overflowReservation += toolbarButtonGroupGap.value;
+      }
+    }
+
+    const budget = getAvailableWidthForActions() - overflowReservation;
+
+    const visibleIds = new Set();
+    const groupsByArea = { left: new Set(), right: new Set() };
+    let usedWidth = 0;
+
+    function getNewGroupGap(groupsInArea) {
+      return groupsInArea.size > 0 ? toolbarButtonGroupGap.value : 0;
+    }
+
+    actions.some((item) => {
+      if (item.action?.nonResponsive) {
+        return false;
+      }
+
+      const { area } = item;
+      const { groupId } = item.action;
+      const groupsInArea = groupsByArea[area];
+      const isNewGroup = !groupsInArea.has(groupId);
+
+      const actionWidth = getActionWidth(item.action);
+      const gapCost = isNewGroup ? getNewGroupGap(groupsInArea) : toolbarButtonGap.value;
+
+      const cost = actionWidth + gapCost;
+
+      if (usedWidth + cost > budget) {
+        return true;
+      }
+
+      usedWidth += cost;
+      visibleIds.add(item.action.id);
+
+      if (isNewGroup) {
+        groupsInArea.add(groupId);
+      }
+
+      return false;
+    });
+
+    return visibleIds;
   }
 
   function splitByVisibility(actions, visibleIds) {
@@ -440,78 +517,53 @@ export function useToolbarResponsiveness({
     );
   }
 
-  async function applyOverflowLayout() {
-    /*
-      Number of measurement and adjustment passes to ensure stable layout.
-      1st pass: Initial visibility evaluation and layout adjustment.
-      2nd pass: Re-evaluate with reserved overflow button width if needed.
-    */
-    const passCount = 2;
+  function applyOverflowLayout() {
+    const allActions = [
+      ...toActionDescriptors(leftActionsTopLevelFlat.value, 'left'),
+      ...toActionDescriptors(rightActionsTopLevelFlat.value, 'right'),
+    ];
+    const sortedActions = [...allActions].sort(compareActionsForVisibility);
 
-    const runLayoutPass = async (passCurrent) => {
-      const target = toolbarRef.value?.$el ?? toolbarRef.value;
+    const evaluateVisibility = ({ reserveOverflowButton = false } = {}) => {
+      const visibleIds = collectVisibleActionIds(sortedActions, {
+        reserveOverflowButton,
+      });
+      const hiddenCount = sortedActions.filter(
+        (item) => !item.action?.nonResponsive && !visibleIds.has(item.action.id)
+      ).length;
 
-      const renderedToolbarWidth = Math.floor(target?.getBoundingClientRect?.()?.width ?? 0);
-      const maxWidthOverride = passCurrent > 1 ? renderedToolbarWidth : undefined;
-
-      const allActions = [
-        ...toActionDescriptors(leftActionsTopLevelFlat.value, 'left'),
-        ...toActionDescriptors(rightActionsTopLevelFlat.value, 'right'),
-      ];
-      const sortedActions = [...allActions].sort(compareActionsForVisibility);
-
-      const evaluateVisibility = ({ reserveOverflowButton = false } = {}) => {
-        const baseWidth = getAvailableWidthForActions(maxWidthOverride);
-        const availableWidthForActions = reserveOverflowButton
-          ? baseWidth - OVERFLOW_BUTTON_WIDTH
-          : baseWidth;
-
-        const visibleIds = collectVisibleActionIds(sortedActions, availableWidthForActions);
-        const hiddenCount = sortedActions.filter(
-          (item) => !item.action?.nonResponsive && !visibleIds.has(item.action.id)
-        ).length;
-
-        return { visibleIds, hiddenCount };
-      };
-
-      const initialVisibility = evaluateVisibility();
-      const { visibleIds } =
-        initialVisibility.hiddenCount > 0
-          ? evaluateVisibility({ reserveOverflowButton: true })
-          : initialVisibility;
-
-      const left = splitByVisibility(leftActionsTopLevelFlat.value, visibleIds);
-      const right = splitByVisibility(rightActionsTopLevelFlat.value, visibleIds);
-
-      leftActionsVisibleGrouped.value = toActionGroups(left.visible);
-      rightActionsVisibleGrouped.value = toActionGroups(right.visible);
-
-      const leftOverflow = partitionOverflow(left.overflow);
-      const rightOverflow = partitionOverflow(right.overflow);
-
-      rightOverflow.regular.reverse();
-
-      const [first, second] =
-        defaultAreaComputed.value === 'right'
-          ? [rightOverflow, leftOverflow]
-          : [leftOverflow, rightOverflow];
-
-      actionsOverflow.value = [
-        ...first.nested,
-        ...second.nested,
-        ...first.regular,
-        ...second.regular,
-      ];
-
-      if (passCurrent >= passCount) {
-        return;
-      }
-
-      await nextTick();
-      await runLayoutPass(passCurrent + 1);
+      return { visibleIds, hiddenCount };
     };
 
-    await runLayoutPass(1);
+    const initialVisibility = evaluateVisibility();
+
+    const { visibleIds } =
+      initialVisibility.hiddenCount > 0
+        ? evaluateVisibility({ reserveOverflowButton: true })
+        : initialVisibility;
+
+    const left = splitByVisibility(leftActionsTopLevelFlat.value, visibleIds);
+    const right = splitByVisibility(rightActionsTopLevelFlat.value, visibleIds);
+
+    leftActionsVisibleGrouped.value = toActionGroups(left.visible);
+    rightActionsVisibleGrouped.value = toActionGroups(right.visible);
+
+    const leftOverflow = partitionOverflow(left.overflow);
+    const rightOverflow = partitionOverflow(right.overflow);
+
+    rightOverflow.regular.reverse();
+
+    const [first, second] =
+      defaultAreaComputed.value === 'right'
+        ? [rightOverflow, leftOverflow]
+        : [leftOverflow, rightOverflow];
+
+    actionsOverflow.value = [
+      ...first.nested,
+      ...second.nested,
+      ...first.regular,
+      ...second.regular,
+    ];
   }
 
   function checkFreeGap() {
@@ -529,14 +581,46 @@ export function useToolbarResponsiveness({
       return;
     }
 
-    const minGap = 8; // 8px = 0.5rem
+    const isLeftAreaVisible =
+      toolbar.querySelector('.left-area .lx-group:not(.lx-toolbar-overflow-hidden)') !== null;
+    const isRightAreaVisible =
+      toolbar.querySelector('.right-area .lx-group:not(.lx-toolbar-overflow-hidden)') !== null;
+    const isDefaultAreaVisible = defaultArea.children.length > 0;
+
+    toolbar.classList.toggle('lx-toolbar-has-default-area', isDefaultAreaVisible);
+
+    let areBothAreasVisible = false;
+
+    if (defaultAreaComputed.value === 'right') {
+      areBothAreasVisible = isLeftAreaVisible && (isRightAreaVisible || isDefaultAreaVisible);
+    } else if (defaultAreaComputed.value === 'left') {
+      areBothAreasVisible = isRightAreaVisible && (isLeftAreaVisible || isDefaultAreaVisible);
+    }
+
+    if (!areBothAreasVisible) {
+      toolbar.classList.remove('lx-toolbar-combined');
+      toolbar.style.removeProperty('--lx-toolbar-free-gap');
+      return;
+    }
+
+    if (defaultAreaComputed.value === 'right') {
+      defaultArea.classList.toggle('lx-toolbar-combined-divider', isDefaultAreaVisible);
+      rightArea.classList.toggle('lx-toolbar-combined-divider', !isDefaultAreaVisible);
+    } else if (defaultAreaComputed.value === 'left') {
+      rightArea.classList.add('lx-toolbar-combined-divider');
+    }
+
+    const minGap = 8 + toolbarButtonGroupGap.value; // 8px = 0.5rem
 
     const toolbarWidth = toolbar.getBoundingClientRect()?.width ?? 0;
     const leftAreaWidth = leftArea.getBoundingClientRect()?.width ?? 0;
-    const defaultAreaWidth = defaultArea.getBoundingClientRect()?.width ?? 0;
     const rightAreaWidth = rightArea.getBoundingClientRect()?.width ?? 0;
+    const defaultAreaWidth = defaultArea.getBoundingClientRect()?.width ?? 0;
+    const defaultAreaGap =
+      areBothAreasVisible && isDefaultAreaVisible ? toolbarButtonGroupGap.value : 0;
 
-    const actualGap = toolbarWidth - leftAreaWidth - defaultAreaWidth - rightAreaWidth;
+    const actualGap =
+      toolbarWidth - leftAreaWidth - rightAreaWidth - defaultAreaWidth - defaultAreaGap;
 
     const shouldCombine = actualGap < minGap;
 
@@ -595,7 +679,8 @@ export function useToolbarResponsiveness({
         }
       }
 
-      await applyOverflowLayout();
+      applyOverflowLayout();
+      await nextTick();
 
       checkFreeGap();
     });

@@ -22,7 +22,7 @@ import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { logWarn } from '@/utils/devUtils';
-import { useToolbarResponsiveness } from '@/utils/useToolbarResponsiveness';
+import { useToolbarResponsiveness } from '@/hooks/useToolbarResponsiveness';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },

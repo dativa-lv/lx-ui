@@ -2845,7 +2845,14 @@ h2.lx-section-header + p.lx-invalidation-message,
   --toolbar-button-ghost-grid-template-columns: auto 1fr;
 }
 
+.lx-component-toolbar .first-row > :empty,
+.lx-component-toolbar .left-area:has(> .lx-toolbar-overflow-hidden:only-child),
+.lx-component-toolbar .right-area:has(> .lx-toolbar-overflow-hidden:only-child) {
+  display: none;
+}
+
 .lx-component-toolbar.lx-toolbar-default-area-left:not(.lx-selection-toolbar > .lx-component-toolbar) .right-area,
+.lx-component-toolbar.lx-toolbar-default-area-right:not(.lx-selection-toolbar > .lx-component-toolbar, .lx-toolbar-has-default-area) .right-area,
 .lx-component-toolbar.lx-toolbar-default-area-right:not(.lx-selection-toolbar > .lx-component-toolbar) .default-area {
   margin-left: auto;
 }
@@ -2916,7 +2923,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-right: var(--border-width-1) solid var(--color-chrome);
 }
 
-/* Divider for default-area when combined */
+/* Divider for combined toolbar when default area is right */
 .lx-component-toolbar.lx-toolbar-combined.lx-toolbar-default-area-right:not(
     .lx-toolbar-no-borders,
     .lx-selection-toolbar > .lx-component-toolbar
@@ -2935,7 +2942,7 @@ h2.lx-section-header + p.lx-invalidation-message,
       .right-area > .lx-group.lx-toolbar-promoted-action:first-child
     )
   )
-  .default-area::before {
+  .lx-toolbar-combined-divider::before {
   content: '';
   height: 2rem;
   position: absolute;
@@ -2943,7 +2950,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-right: var(--border-width-1) solid var(--color-chrome);
 }
 
-/* Divider for right-area when combined */
+/* Divider for combined toolbar when default area is left */
 .lx-component-toolbar.lx-toolbar-combined.lx-toolbar-default-area-left:not(
     .lx-toolbar-no-borders,
     .lx-selection-toolbar > .lx-component-toolbar
@@ -2957,7 +2964,7 @@ h2.lx-section-header + p.lx-invalidation-message,
         .lx-toolbar-promoted-action + *
       )
   )
-  .right-area::before {
+  .lx-toolbar-combined-divider::before {
   content: '';
   height: 2rem;
   position: absolute;
@@ -2972,8 +2979,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-component-toolbar .first-row,
 .lx-component-toolbar .left-area,
-.lx-component-toolbar .default-area,
-.lx-component-toolbar .right-area {
+.lx-component-toolbar .right-area,
+.lx-component-toolbar .default-area {
   column-gap: var(--toolbar-button-group-gap);
 }
 
