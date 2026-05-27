@@ -142,7 +142,7 @@ if (props.builderOptions?.useRegistry) {
             v-if="props.dynamicHeight"
             ref="shadowTextarea"
             class="lx-text-area lx-text-area-template lx-input-area"
-            :id="props.id"
+            :id="`${props.id}-shadow`"
             readonly
             aria-hidden="true"
             role="presentation"
