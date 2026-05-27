@@ -81,7 +81,7 @@
     "c2pa": "^0.22.3",
     "cyrillic-to-translit-js": "^3.2.1",
     "date-fns": "4.0.0",
-    "exifreader": "^4.22.1",
+    "exifreader": "4.38.1",
     "focus-trap": "^7",
     "glob": "^10.5.0",
     "i18n-iso-countries": "^7.14.0",
@@ -138,8 +138,8 @@
       "lodash": "4.18.1",
       "follow-redirects": "1.16.0",
       "dompurify": "3.4.0",
-      "@xmldom/xmldom": "0.9.10",
-      "postcss": "8.5.10"
+      "postcss": "8.5.10",
+      "js-cookie": "3.0.7"
     }
   },
   "peerDependencies": {

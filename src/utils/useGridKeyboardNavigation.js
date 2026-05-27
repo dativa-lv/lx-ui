@@ -58,55 +58,65 @@ export function useGridKeyboardNavigation() {
     return [{ target: targets, item: 0 }];
   }
 
+  function normalizeTargets(targets) {
+    return Array.isArray(targets)
+      ? targets.map((target, item) => ({ target, item }))
+      : [{ target: targets, item: 0 }];
+  }
+
+  function createFocusableCandidate(currentRow, currentCol, row, col, target, item) {
+    if (isDisabledCell(target)) return null;
+
+    const rowDistance = Math.abs(currentRow - row);
+    const colDistance = Math.abs(currentCol - col);
+
+    return {
+      row: currentRow,
+      col: currentCol,
+      item,
+      target,
+      distance: rowDistance + colDistance,
+      rowDistance,
+      colDistance,
+    };
+  }
+
+  function pickBestFocusableCandidate(bestMatch, candidate) {
+    if (!bestMatch) return candidate;
+
+    if (candidate.distance < bestMatch.distance) return candidate;
+    if (candidate.distance > bestMatch.distance) return bestMatch;
+
+    if (candidate.rowDistance < bestMatch.rowDistance) return candidate;
+    if (candidate.rowDistance > bestMatch.rowDistance) return bestMatch;
+
+    if (candidate.colDistance < bestMatch.colDistance) return candidate;
+
+    return bestMatch;
+  }
+
+  function collectFocusableCandidates(row, col) {
+    return Object.entries(cellRefs.value).reduce((allCandidates, [rowKey, rowCells]) => {
+      const currentRow = Number(rowKey);
+
+      const rowCandidates = Object.entries(rowCells || {}).reduce((matches, [colKey, targets]) => {
+        const currentCol = Number(colKey);
+
+        const candidates = normalizeTargets(targets)
+          .map(({ target, item }) =>
+            createFocusableCandidate(currentRow, currentCol, row, col, target, item)
+          )
+          .filter(Boolean);
+
+        return matches.concat(candidates);
+      }, []);
+
+      return allCandidates.concat(rowCandidates);
+    }, []);
+  }
+
   function findClosestFocusableCell(row, col) {
-    return Object.entries(cellRefs.value)
-      .reduce((matches, [rowKey, rowCells]) => {
-        const currentRow = Number(rowKey);
-
-        return matches.concat(
-          Object.entries(rowCells || {})
-            .flatMap(([colKey, targets]) => {
-              const currentCol = Number(colKey);
-
-              const normalizedTargets = Array.isArray(targets)
-                ? targets.map((target, item) => ({ target, item }))
-                : [{ target: targets, item: 0 }];
-
-              return normalizedTargets
-                .map(({ target, item }) => {
-                  if (isDisabledCell(target)) return null;
-
-                  const rowDistance = Math.abs(currentRow - row);
-                  const colDistance = Math.abs(currentCol - col);
-
-                  return {
-                    row: currentRow,
-                    col: currentCol,
-                    item,
-                    target,
-                    distance: rowDistance + colDistance,
-                    rowDistance,
-                    colDistance,
-                  };
-                })
-                .filter(Boolean);
-            })
-            .filter(Boolean)
-        );
-      }, [])
-      .reduce((bestMatch, candidate) => {
-        if (!bestMatch) return candidate;
-
-        if (candidate.distance < bestMatch.distance) return candidate;
-        if (candidate.distance > bestMatch.distance) return bestMatch;
-
-        if (candidate.rowDistance < bestMatch.rowDistance) return candidate;
-        if (candidate.rowDistance > bestMatch.rowDistance) return bestMatch;
-
-        if (candidate.colDistance < bestMatch.colDistance) return candidate;
-
-        return bestMatch;
-      }, null);
+    return collectFocusableCandidates(row, col).reduce(pickBestFocusableCandidate, null);
   }
 
   function focusCell(row, col, scroll = true, preferredItem = 0) {

@@ -338,6 +338,110 @@ function getNounForm(targetDate, referenceDate) {
   return null;
 }
 
+function resolveLocaleId(locale) {
+  return locale || useLx().getGlobals()?.locale?.locale || 'lv-LV';
+}
+
+function resolveMaxRelativeDays(limitDays, defaultLimitDays = 7) {
+  const normalizedLimitDays = Number(limitDays);
+
+  return Number.isFinite(normalizedLimitDays) ? normalizedLimitDays : defaultLimitDays;
+}
+
+function tryGetLvNounLabel({ form, isLv, targetDate, referenceDate, absValue, maxAbsValue }) {
+  if (!(isLv && form === 'noun' && absValue === maxAbsValue)) {
+    return null;
+  }
+
+  return getNounForm(targetDate, referenceDate);
+}
+
+function resolveDayLabel({
+  absDays,
+  diffDays,
+  isLv,
+  form,
+  localeId,
+  relativeTimeFormatter,
+  targetDate,
+  referenceDate,
+}) {
+  if (isLv) {
+    if (form === 'noun' && absDays <= 2) {
+      const noun = getNounForm(targetDate, referenceDate);
+      if (noun) return noun;
+    }
+
+    if (absDays > 2) {
+      const weekdayLabel = getWeekdayLabel(targetDate, referenceDate, localeId, form);
+      if (weekdayLabel) return weekdayLabel;
+    }
+  }
+
+  return capitalizeFirstLetter(relativeTimeFormatter.format(diffDays, 'day'));
+}
+
+function resolveWeekMonthYearLabel({
+  diffWeeks,
+  diffMonths,
+  diffYears,
+  absWeeks,
+  absMonths,
+  absYears,
+  isLv,
+  form,
+  targetDate,
+  referenceDate,
+  relativeTimeFormatter,
+}) {
+  if (absWeeks < 4) {
+    const noun = tryGetLvNounLabel({
+      form,
+      isLv,
+      targetDate,
+      referenceDate,
+      absValue: absWeeks,
+      maxAbsValue: 1,
+    });
+
+    if (noun) return noun;
+
+    return capitalizeFirstLetter(relativeTimeFormatter.format(diffWeeks, 'week'));
+  }
+
+  if (absMonths < 12) {
+    const noun = tryGetLvNounLabel({
+      form,
+      isLv,
+      targetDate,
+      referenceDate,
+      absValue: absMonths,
+      maxAbsValue: 1,
+    });
+
+    if (noun) return noun;
+
+    return capitalizeFirstLetter(relativeTimeFormatter.format(diffMonths, 'month'));
+  }
+
+  if (absYears > 0) {
+    const noun = tryGetLvNounLabel({
+      form,
+      isLv,
+      targetDate,
+      referenceDate,
+      absValue: absYears,
+      maxAbsValue: 1,
+    });
+
+    if (noun) return noun;
+
+    return capitalizeFirstLetter(relativeTimeFormatter.format(diffYears, 'year'));
+  }
+
+  return null;
+}
+
 /**
  * Formats date into natural human language. See more info in docs/HumanizeDateUtil.md.
  * @param {Date|string} date - Date to humanize.
@@ -366,11 +470,7 @@ export function humanizeDate(date, { dateFrom, form = 'adverb', limitDays, local
     referenceDate.getMilliseconds()
   );
 
-  const defaultLimitDays = 7;
-  const normalizedLimitDays = Number(limitDays);
-  const maxRelativeDays = Number.isFinite(normalizedLimitDays)
-    ? normalizedLimitDays
-    : defaultLimitDays;
+  const maxRelativeDays = resolveMaxRelativeDays(limitDays);
 
   const diffDays = differenceInCalendarDays(targetDate, referenceDate);
   const absDays = Math.abs(diffDays);
@@ -379,24 +479,21 @@ export function humanizeDate(date, { dateFrom, form = 'adverb', limitDays, local
     return formatDate(targetDate);
   }
 
-  const localeId = locale || useLx().getGlobals()?.locale?.locale || 'lv-LV';
+  const localeId = resolveLocaleId(locale);
   const isLv = localeId.startsWith('lv');
   const relativeTimeFormatter = new Intl.RelativeTimeFormat(localeId, { numeric: 'auto' });
 
   if (absDays < 7) {
-    if (isLv) {
-      if (form === 'noun' && absDays <= 2) {
-        const noun = getNounForm(targetDate, referenceDate);
-        if (noun) return noun;
-      }
-
-      if (absDays > 2) {
-        const weekdayLabel = getWeekdayLabel(targetDate, referenceDate, localeId, form);
-        if (weekdayLabel) return weekdayLabel;
-      }
-    }
-
-    return capitalizeFirstLetter(relativeTimeFormatter.format(diffDays, 'day'));
+    return resolveDayLabel({
+      absDays,
+      diffDays,
+      isLv,
+      form,
+      localeId,
+      relativeTimeFormatter,
+      targetDate,
+      referenceDate,
+    });
   }
 
   const diffWeeks = differenceInCalendarWeeks(targetDate, referenceDate, { weekStartsOn: 1 });
@@ -408,32 +505,21 @@ export function humanizeDate(date, { dateFrom, form = 'adverb', limitDays, local
   const diffYears = differenceInCalendarYears(targetDate, referenceDate);
   const absYears = Math.abs(diffYears);
 
-  if (absWeeks < 4) {
-    if (isLv && form === 'noun' && absWeeks === 1) {
-      const noun = getNounForm(targetDate, referenceDate);
-      if (noun) return noun;
-    }
+  const periodLabel = resolveWeekMonthYearLabel({
+    diffWeeks,
+    diffMonths,
+    diffYears,
+    absWeeks,
+    absMonths,
+    absYears,
+    isLv,
+    form,
+    targetDate,
+    referenceDate,
+    relativeTimeFormatter,
+  });
 
-    return capitalizeFirstLetter(relativeTimeFormatter.format(diffWeeks, 'week'));
-  }
-
-  if (absMonths < 12) {
-    if (isLv && form === 'noun' && absMonths === 1) {
-      const noun = getNounForm(targetDate, referenceDate);
-      if (noun) return noun;
-    }
-
-    return capitalizeFirstLetter(relativeTimeFormatter.format(diffMonths, 'month'));
-  }
-
-  if (absYears > 0) {
-    if (isLv && form === 'noun' && absYears === 1) {
-      const noun = getNounForm(targetDate, referenceDate);
-      if (noun) return noun;
-    }
-
-    return capitalizeFirstLetter(relativeTimeFormatter.format(diffYears, 'year'));
-  }
+  if (periodLabel) return periodLabel;
 
   return formatDate(targetDate);
 }

@@ -134,6 +134,122 @@ export function validateDateRange(date, minDate, maxDate) {
   return DATE_VALIDATION_RESULT.VALID;
 }
 
+function canSelectDateModeDate(date, minDateParsed, maxDateParsed) {
+  const normalizedDate = normalizeDate(new Date(date));
+  const normalizedMinDate = minDateParsed ? normalizeDate(minDateParsed) : null;
+  const normalizedMaxDate = maxDateParsed ? normalizeDate(maxDateParsed) : null;
+
+  const isAfterMinDate = !normalizedMinDate || normalizedDate >= normalizedMinDate;
+  const isBeforeMaxDate = !normalizedMaxDate || normalizedDate <= normalizedMaxDate;
+
+  return isAfterMinDate && isBeforeMaxDate;
+}
+
+function canSelectDateModeTime(date, minDateParsed, maxDateParsed) {
+  const selectedHours = date.getHours();
+  const selectedMinutes = date.getMinutes();
+
+  const minHour = minDateParsed?.getHours();
+  const minMinute = minDateParsed?.getMinutes();
+  const maxHour = maxDateParsed?.getHours();
+  const maxMinute = maxDateParsed?.getMinutes();
+
+  const isAfterMinHours = !minDateParsed || selectedHours > minHour;
+  const isBeforeMaxHours = !maxDateParsed || selectedHours < maxHour;
+
+  if (isAfterMinHours && isBeforeMaxHours) return true;
+
+  if (minDateParsed && selectedHours === minHour && selectedMinutes < minMinute) {
+    return false;
+  }
+
+  if (maxDateParsed && selectedHours === maxHour && selectedMinutes > maxMinute) {
+    return false;
+  }
+
+  if (selectedHours < minHour) {
+    return false;
+  }
+
+  if (selectedHours > maxHour) {
+    return false;
+  }
+
+  return true;
+}
+
+function canSelectDateModeTimeFull(date, minDateParsed, maxDateParsed) {
+  const selectedHours = date.getHours();
+  const selectedMinutes = date.getMinutes();
+  const selectedSeconds = date.getSeconds();
+
+  const minHour = minDateParsed?.getHours();
+  const minMinute = minDateParsed?.getMinutes();
+  const minSecond = minDateParsed?.getSeconds();
+
+  const maxHour = maxDateParsed?.getHours();
+  const maxMinute = maxDateParsed?.getMinutes();
+  const maxSecond = maxDateParsed?.getSeconds();
+
+  if (minDateParsed) {
+    if (selectedHours < minHour) return false;
+    if (selectedHours === minHour) {
+      if (selectedMinutes < minMinute) return false;
+      if (selectedMinutes === minMinute && selectedSeconds < minSecond) return false;
+    }
+  }
+
+  if (maxDateParsed) {
+    if (selectedHours > maxHour) return false;
+    if (selectedHours === maxHour) {
+      if (selectedMinutes > maxMinute) return false;
+      if (selectedMinutes === maxMinute && selectedSeconds > maxSecond) return false;
+    }
+  }
+
+  return true;
+}
+
+function canSelectDateModeYear(date, minDateParsed, maxDateParsed) {
+  const selectedYear = date.getFullYear();
+  const isAfterMinYear = !minDateParsed || selectedYear >= minDateParsed.getFullYear();
+  const isBeforeMaxYear = !maxDateParsed || selectedYear <= maxDateParsed.getFullYear();
+
+  return isAfterMinYear && isBeforeMaxYear;
+}
+
+function canSelectDateModeMonthYear(date, minDateParsed, maxDateParsed) {
+  const selectedYear = date.getFullYear();
+  const selectedMonth = date.getMonth();
+
+  const minYear = minDateParsed ? minDateParsed.getFullYear() : null;
+  const maxYear = maxDateParsed ? maxDateParsed.getFullYear() : null;
+
+  const minMonth = minDateParsed ? minDateParsed.getMonth() : null;
+  const maxMonth = maxDateParsed ? maxDateParsed.getMonth() : null;
+
+  const isAfterMinYearMonth =
+    !minDateParsed ||
+    selectedYear > minYear ||
+    (selectedYear === minYear && selectedMonth >= minMonth);
+
+  const isBeforeMaxYearMonth =
+    !maxDateParsed ||
+    selectedYear < maxYear ||
+    (selectedYear === maxYear && selectedMonth <= maxMonth);
+
+  return isAfterMinYearMonth && isBeforeMaxYearMonth;
+}
+
+function canSelectDateModeDefault(date, minDate, maxDate, minDateParsed, maxDateParsed, mode) {
+  const isAfterMinDate =
+    !minDate || normalizeDate(date, mode) >= normalizeDate(minDateParsed, mode);
+  const isBeforeMaxDate =
+    !maxDate || normalizeDate(date, mode) <= normalizeDate(maxDateParsed, mode);
+
+  return isAfterMinDate && isBeforeMaxDate;
+}
+
 export function canSelectDate(date, minDate, maxDate, mode = 'date') {
   if (!date) return false;
 
@@ -141,127 +257,21 @@ export function canSelectDate(date, minDate, maxDate, mode = 'date') {
   const minDateParsed = minDate ? new Date(minDate) : null;
   const maxDateParsed = maxDate ? new Date(maxDate) : null;
 
-  if (mode === 'date') {
-    const normalizedDate = normalizeDate(new Date(date));
-    const normalizedMinDate = minDateParsed ? normalizeDate(minDateParsed) : null;
-    const normalizedMaxDate = maxDateParsed ? normalizeDate(maxDateParsed) : null;
+  const modeValidators = {
+    date: () => canSelectDateModeDate(date, minDateParsed, maxDateParsed),
+    time: () => canSelectDateModeTime(date, minDateParsed, maxDateParsed),
+    'time-full': () => canSelectDateModeTimeFull(date, minDateParsed, maxDateParsed),
+    year: () => canSelectDateModeYear(date, minDateParsed, maxDateParsed),
+    'month-year': () => canSelectDateModeMonthYear(date, minDateParsed, maxDateParsed),
+  };
 
-    const isAfterMinDate = !normalizedMinDate || normalizedDate >= normalizedMinDate;
-    const isBeforeMaxDate = !normalizedMaxDate || normalizedDate <= normalizedMaxDate;
-    return isAfterMinDate && isBeforeMaxDate;
+  const validateByMode = modeValidators[mode];
+
+  if (validateByMode) {
+    return validateByMode();
   }
 
-  if (mode === 'time') {
-    const selectedHours = date.getHours();
-    const selectedMinutes = date.getMinutes();
-
-    const minHour = minDateParsed?.getHours();
-    const minMinute = minDateParsed?.getMinutes();
-    const maxHour = maxDateParsed?.getHours();
-    const maxMinute = maxDateParsed?.getMinutes();
-
-    const isAfterMinHours = !minDateParsed || selectedHours > minHour;
-    const isBeforeMaxHours = !maxDateParsed || selectedHours < maxHour;
-
-    // If hour is strictly between min and max, allow all minutes
-    if (isAfterMinHours && isBeforeMaxHours) return true;
-
-    // If on min hour, minutes must be >= minMinute
-    if (minDateParsed && selectedHours === minHour && selectedMinutes < minMinute) {
-      return false;
-    }
-
-    // If on max hour, minutes must be <= maxMinute
-    if (maxDateParsed && selectedHours === maxHour && selectedMinutes > maxMinute) {
-      return false;
-    }
-
-    // If selected hour is before min hour
-    if (selectedHours < minHour) {
-      return false;
-    }
-
-    // If selected hour is after max hour
-    if (selectedHours > maxHour) {
-      return false;
-    }
-
-    // Otherwise, allow all
-    return true;
-  }
-
-  if (mode === 'time-full') {
-    const selectedHours = date.getHours();
-    const selectedMinutes = date.getMinutes();
-    const selectedSeconds = date.getSeconds();
-
-    const minHour = minDateParsed?.getHours();
-    const minMinute = minDateParsed?.getMinutes();
-    const minSecond = minDateParsed?.getSeconds();
-
-    const maxHour = maxDateParsed?.getHours();
-    const maxMinute = maxDateParsed?.getMinutes();
-    const maxSecond = maxDateParsed?.getSeconds();
-
-    // Check against minDate
-    if (minDateParsed) {
-      if (selectedHours < minHour) return false;
-      if (selectedHours === minHour) {
-        if (selectedMinutes < minMinute) return false;
-        if (selectedMinutes === minMinute && selectedSeconds < minSecond) return false;
-      }
-    }
-
-    // Check against maxDate
-    if (maxDateParsed) {
-      if (selectedHours > maxHour) return false;
-      if (selectedHours === maxHour) {
-        if (selectedMinutes > maxMinute) return false;
-        if (selectedMinutes === maxMinute && selectedSeconds > maxSecond) return false;
-      }
-    }
-
-    return true;
-  }
-
-  if (mode === 'year') {
-    const selectedYear = date.getFullYear();
-    const isAfterMinYear = !minDateParsed || selectedYear >= minDateParsed.getFullYear();
-    const isBeforeMaxYear = !maxDateParsed || selectedYear <= maxDateParsed.getFullYear();
-    return isAfterMinYear && isBeforeMaxYear;
-  }
-
-  if (mode === 'month-year') {
-    const selectedYear = date.getFullYear();
-    const selectedMonth = date.getMonth();
-
-    const minYear = minDateParsed ? minDateParsed.getFullYear() : null;
-    const maxYear = maxDateParsed ? maxDateParsed.getFullYear() : null;
-
-    const minMonth = minDateParsed ? minDateParsed.getMonth() : null;
-    const maxMonth = maxDateParsed ? maxDateParsed.getMonth() : null;
-
-    // Validate year and month together
-    const isAfterMinYearMonth =
-      !minDateParsed ||
-      selectedYear > minYear ||
-      (selectedYear === minYear && selectedMonth >= minMonth);
-
-    const isBeforeMaxYearMonth =
-      !maxDateParsed ||
-      selectedYear < maxYear ||
-      (selectedYear === maxYear && selectedMonth <= maxMonth);
-
-    return isAfterMinYearMonth && isBeforeMaxYearMonth;
-  }
-
-  // For other modes, compare full date and time
-  const isAfterMinDate =
-    !minDate || normalizeDate(date, mode) >= normalizeDate(minDateParsed, mode);
-  const isBeforeMaxDate =
-    !maxDate || normalizeDate(date, mode) <= normalizeDate(maxDateParsed, mode);
-
-  return isAfterMinDate && isBeforeMaxDate;
+  return canSelectDateModeDefault(date, minDate, maxDate, minDateParsed, maxDateParsed, mode);
 }
 
 export const isSameDay = (d1, d2) =>
