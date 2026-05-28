@@ -733,6 +733,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
   min-height: 20rem;
 }
 
+.lx-map .lx-loader-view-wrapper {
+  align-content: center;
+  height: 100%;
+}
+
 .lx-map .map-component {
   z-index: 1;
   min-width: 30rem;

@@ -720,7 +720,16 @@
 .lx .lx-modal .lx-camera .lx-component-toolbar,
 .lx .lx-region .lx-qr-scanner-wrapper .lx-component-toolbar,
 .lx .lx-form-grid .lx-qr-scanner-wrapper .lx-component-toolbar,
-.lx .lx-modal .lx-qr-scanner-wrapper .lx-component-toolbar {
+.lx .lx-modal .lx-qr-scanner-wrapper .lx-component-toolbar,
+.lx .lx-region .lx-map,
+.lx .lx-form-grid .lx-map,
+.lx .lx-modal .lx-map,
+.lx .lx-region .lx-camera,
+.lx .lx-form-grid .lx-camera,
+.lx .lx-modal .lx-camera,
+.lx .lx-region .lx-qr-scanner,
+.lx .lx-form-grid .lx-qr-scanner,
+.lx .lx-modal .lx-qr-scanner {
   background-color: var(--color-input-region-background);
 }
 
@@ -753,7 +762,10 @@
 .lx .lx-map .lx-component-toolbar,
 .lx .lx-file-viewer .lx-component-toolbar,
 .lx .lx-camera .lx-component-toolbar,
-.lx .lx-qr-scanner-wrapper .lx-component-toolbar {
+.lx .lx-qr-scanner-wrapper .lx-component-toolbar,
+.lx .lx-map,
+.lx .lx-camera,
+.lx .lx-qr-scanner {
   background-color: var(--color-input-background);
 }
 
@@ -2639,7 +2651,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-qr-scanner-wrapper > .lx-qr-scanner {
   aspect-ratio: 1;
-  background-color: var(--color-region);
 }
 
 .lx-qr-scanner-wrapper .lx-qr-placeholder {
@@ -2759,7 +2770,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: 100%;
   position: absolute;
   inset: var(--space-0);
-  background: var(--color-region);
 }
 
 .lx-qr-scanner-wrapper .lx-qr-notification {
@@ -3739,6 +3749,10 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: flex;
   justify-content: safe center;
   overflow: auto;
+}
+
+.lx-file-viewer .lx-pdf-wrapper,
+.lx-file-viewer .lx-img-wrapper {
   background-color: var(--color-preview-backdrop);
 }
 

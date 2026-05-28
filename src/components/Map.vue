@@ -457,12 +457,12 @@ const additionalOptionsGroups = computed(() => [
 ]);
 </script>
 <template>
-  <LxLoaderView :loading="loadingLib" label="">
-    <div
-      class="lx-map"
-      :style="grayscaleStyle"
-      :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
-    >
+  <div
+    class="lx-map"
+    :style="grayscaleStyle"
+    :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
+  >
+    <LxLoaderView :loading="loadingLib" label="">
       <LxToolbar
         v-if="showToolbar"
         :actionDefinitions="toolbarActions"
@@ -575,6 +575,6 @@ const additionalOptionsGroups = computed(() => [
         :description="displayTexts.errorDescription"
         icon="invalid"
       />
-    </div>
-  </LxLoaderView>
+    </LxLoaderView>
+  </div>
 </template>
