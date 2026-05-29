@@ -3,30 +3,51 @@
   grid-template-areas: var(--input-grid-areas);
   grid-template-columns: var(--input-grid-template-columns);
   align-items: center;
-  height: var(--input-container-height);
-  width: var(--input-container-width);
+  height: var(--input-height);
+  width: var(--input-width-m);
   border-radius: var(--input-border-radius);
-  background-color: var(--color-input-background);
-  color: var(--color-input);
+  background: var(--color-input-background);
+  color: var(--color-input-text);
+  font-size: var(--input-text-font-size);
   font-weight: var(--input-text-font-weight);
+  line-height: var(--input-text-line-height);
   overflow: hidden;
 }
+
+.lx .lx-drawpad-wrapper .lx-input-wrapper,
+.lx .lx-text-area-wrapper .lx-input-wrapper,
+.lx .lx-markdown-text-area-wrapper .lx-input-wrapper {
+  --input-height: auto;
+}
+
+.lx .lx-date-time-picker-wrapper .lx-input-wrapper {
+  width: var(--input-width-s);
+}
+
+.lx .lx-date-time .lx-date-time-picker-wrapper .lx-input-wrapper,
+.lx .lx-date-time-range-wrapper.lx-date.month-year .lx-input-wrapper,
+.lx .lx-date-time-full .lx-date-time-picker-wrapper .lx-input-wrapper {
+  width: var(--input-width-l);
+}
+
+/******/
 
 .lx .lx-override.lx-layout input:where(:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="reset"]):not([type="button"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="image"]):not(.lx-input-area)),
 .lx .lx-override.lx-layout textarea:where(:not(.lx-input-area)) {
   display: grid;
   align-items: center;
-  height: var(--input-container-height);
-  width: var(--input-container-width);
+  height: var(--input-height);
+  width: var(--input-width-m);
   border-radius: var(--input-border-radius);
   outline: 2px solid transparent;
   outline-offset: -2px;
-  border: var(--input-border);
-  border-bottom: var(--input-border-bottom);
+  border-width: var(--input-border-width);
+  border-style: var(--input-border-style);
+  border-color: var(--color-input-border);
   font-size: var(--input-text-font-size);
-  color: var(--color-input);
-  background-color: var(--color-input-background);
-  padding: var(--space-0) var(--input-container-padding-right) var(--space-0) var(--input-container-padding-left);
+  color: var(--color-input-text);
+  background: var(--color-input-background);
+  padding: var(--space-0) var(--input-padding-right) var(--space-0) var(--input-padding-left);
 }
 
 .lx-autocomplete-default .lx-input-wrapper:not(.lx-disabled):has(input:focus),
@@ -68,6 +89,8 @@
 .lx .lx-layout .lx-input-wrapper:not(.lx-disabled) .lx-input-area:has(.ProseMirror-focused),
 .lx .lx-layout .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus,
 .lx .lx-layout .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus-visible,
+.lx-override input:not([disabled]):focus + .lx-input-area,
+.lx-override input:not([disabled]):focus-visible + .lx-input-area,
 .lx-override input:not([disabled]):focus,
 .lx-override input:not([disabled]):focus-visible,
 .lx-override textarea:not([disabled]):focus,
@@ -87,7 +110,8 @@
 }
 
 .lx .lx-layout .lx-field-wrapper .lx-input-wrapper.lx-invalid .lx-input-area {
-  border: var(--input-border);
+  border-width: var(--border-width-2);
+  border-style: var(--input-border-style);
   border-color: var(--color-bad);
 }
 
@@ -96,6 +120,7 @@
   border-color: transparent;
 }
 
+/* Todo: add tokens */
 .lx-input-wrapper .lx-tag {
   z-index: 2;
   display: flex;
@@ -107,7 +132,7 @@
   height: var(--input-tag-height);
   width: var(--input-tag-width);
   margin: var(--input-tag-margin);
-  background-color: var(--color-interactive-secondary-background);
+  background: var(--color-interactive-secondary-background);
   color: var(--color-interactive-secondary-foreground);
   border-radius: var(--border-radius-0750);
   grid-area: tag;
@@ -151,8 +176,8 @@
 }
 
 .lx .lx-layout div.lx-input-wrapper:not(:has(.lx-invalidation-icon-wrapper)) .lx-input-area {
-  --input-invalid-icon-indent-left: 0rem;
-  --input-invalid-icon-indent-right: 0rem;
+  --input-icon-invalid-indent-left: 0rem;
+  --input-icon-invalid-indent-right: 0rem;
 }
 
 .lx .lx-layout div.lx-input-wrapper:not(:has(> .lx-button)) .lx-input-area {
@@ -162,11 +187,10 @@
 
 /* Multiple, valid */
 
-
 .lx .lx-layout div.lx-input-wrapper:has(.lx-tag) .lx-input-area {
-  padding-left: max(var(--input-container-padding-left), 
+  padding-left: max(var(--input-padding-left), 
                 calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
-  padding-right: max(var(--input-container-padding-right), 
+  padding-right: max(var(--input-padding-right), 
                  calc(var(--input-tag-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
@@ -176,37 +200,41 @@
 }
 
 .lx .lx-layout div.lx-input-wrapper:has(.lx-tag.chars-1) .lx-input-area {
-  padding-left: max(var(--input-container-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-left: max(var(--input-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
 }
+
 .lx .lx-layout div.lx-input-wrapper:has(.lx-tag.chars-2) .lx-input-area  {
-  padding-left: max(var(--input-container-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 1ch));
+  padding-left: max(var(--input-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 1ch));
 }
+
 .lx .lx-layout div.lx-input-wrapper:has(.lx-tag.chars-3) .lx-input-area  {
-  padding-left: max(var(--input-container-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 2ch));
+  padding-left: max(var(--input-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 2ch));
 }
+
 .lx .lx-layout div.lx-input-wrapper:has(.lx-tag.chars-4) .lx-input-area  {
-  padding-left: max(var(--input-container-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 3ch));
+  padding-left: max(var(--input-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 3ch));
 }
+
 .lx .lx-layout div.lx-input-wrapper:has(.lx-tag.chars-5) .lx-input-area  {
-  padding-left: max(var(--input-container-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 4ch));
+  padding-left: max(var(--input-padding-left),calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 4ch));
 }
 
 /* Multiple, invalid */
 
 .lx .lx-layout div.lx-input-wrapper.lx-invalid:has(.lx-tag) .lx-input-area {
-  padding-left: max(var(--input-container-padding-left), 
-                calc(var(--input-tag-indent-left) + var(--input-invalid-icon-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
-  padding-right: max(var(--input-container-padding-right), 
-                 calc(var(--input-tag-indent-right) + var(--input-invalid-icon-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
+  padding-left: max(var(--input-padding-left), 
+                calc(var(--input-tag-indent-left) + var(--input-icon-invalid-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-padding-right), 
+                 calc(var(--input-tag-indent-right) + var(--input-icon-invalid-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
 /* Single, valid */
 
 .lx .lx-layout div.lx-input-wrapper:not(:has(.lx-tag)) .lx-input-area,
 .lx-input-wrapper .lx-markdown-text-area .ProseMirror {
-  padding-left: max(var(--input-container-padding-left), 
+  padding-left: max(var(--input-padding-left), 
                 calc(var(--input-icon-indent-left) + var(--input-button-indent-left)));
-  padding-right: max(var(--input-container-padding-right), 
+  padding-right: max(var(--input-padding-right), 
                  calc(var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
@@ -214,8 +242,8 @@
 
 .lx .lx-layout div.lx-input-wrapper.lx-invalid:not(:has(.lx-tag)) .lx-input-area,
 .lx-input-wrapper.lx-invalid .lx-markdown-text-area .ProseMirror {
-  padding-left: max(var(--input-container-padding-left), calc(var(--input-invalid-icon-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
-  padding-right: max(var(--input-container-padding-right), calc(var(--input-invalid-icon-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
+  padding-left: max(var(--input-padding-left), calc(var(--input-icon-invalid-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-padding-right), calc(var(--input-icon-invalid-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
 /*** Text styles ***/
@@ -250,19 +278,9 @@
   z-index: 1;
 }
 
-.lx-dropdown-default-data,
-.lx-input-wrapper .lx-input-text,
-.lx-autocomplete-default-panel .lx-value,
-.lx-dropdown-default-data.dropdown-multiple,
-.lx-rotator .lx-rotator-set .lx-rotator-tag > p,
-.lx-autocomplete-default-panel .lx-value .lx-item-display > p {
-  color: var(--color-input);
-  font-weight: var(--input-text-font-weight);    
-}
-
 .lx-markdown-text-area-wrapper .lx-input-wrapper.lx-disabled ~ .lx-text-length,
 .lx-text-area-wrapper .lx-input-wrapper.lx-disabled ~ .lx-text-length {
-  color: var(--color-input-disabled);
+  color: var(--color-input-text-disabled);
 }
 
 .lx-toggle-wrapper ~ .lx-invalidation-message {
@@ -295,7 +313,7 @@
   color: var(--color-label);
   font-weight: 400;
   vertical-align: baseline;
-  margin-top: var(--space-0125);
+  margin-top: var(--space-0250);
 }
 
 .lx-text-length.lx-exceeded {
@@ -306,7 +324,7 @@
 .lx .lx-input-wrapper input,
 .lx .lx-input-wrapper textarea {
   letter-spacing: var(--letter-spacing-1);
-  color: var(--color-input);
+  color: var(--color-input-text);
 }
 
 .lx-field-wrapper .lx-invalidation-message {
@@ -323,7 +341,7 @@
 .lx-input-wrapper.lx-disabled .lx-markdown-text-area a,
 .lx-input-wrapper.lx-disabled .lx-input-text,
 .lx-input-wrapper.lx-disabled .lx-input-area {
-  color: var(--color-input-disabled) !important;
+  color: var(--color-input-text-disabled) !important;
 }
 
 .lx .lx-layout .lx-dropdown-default-content .lx-empty > p {
@@ -339,7 +357,7 @@
   display: flex;
   grid-area: input;
   align-items: center;
-  height: var(--input-container-height);
+  height: var(--input-height);
   width: 100%;
 }
 
@@ -372,11 +390,11 @@
 }
 
 .lx-date-time-picker-wrapper.lx-date {
-  width: var(--input-container-width-small);
+  width: var(--input-width-s);
 }
 
 .lx-date-time-picker-wrapper.lx-time {
-  width: var(--input-container-width-small);
+  width: var(--input-width-s);
 }
 
 .lx-date-time-picker-wrapper.lx-date-time .lx-input-wrapper,
@@ -385,7 +403,7 @@
 .lx-date-time-picker-wrapper.lx-date-time-full,
 .lx-date-picker-dropdown .lx-field-wrapper,
 .lx-date-dropdowns .lx-field-wrapper {
-  width: var(--input-container-width-large);
+  width: var(--input-width-l);
 }
 
 .lx-date-time-picker-wrapper.lx-time .vc-popover-content-wrapper .vc-time-date {
@@ -472,13 +490,6 @@
 
 /*** LxTextArea and LxMarkdownTextArea styles ***/
 
-.lx .lx-markdown-text-area-wrapper .lx-input-wrapper,
-.lx .lx-text-area-wrapper .lx-input-wrapper {
-  height: auto;
-  padding: var(--space-0);
-  position: relative;
-}
-
 .lx-markdown-text-area-wrapper .lx-input-wrapper .lx-invalidation-icon-wrapper,
 .lx-markdown-text-area-wrapper .lx-input-wrapper .lx-input-icon-wrapper,
 .lx-text-area-wrapper .lx-input-wrapper .lx-invalidation-icon-wrapper,
@@ -506,7 +517,7 @@
 
 .lx-markdown-text-area .ProseMirror {
   width: 100%;
-  padding: var(--input-container-padding-vertical-text-area) var(--space-0);
+  padding: var(--input-text-area-padding-y) var(--space-0);
   z-index: 2;
 }
 
@@ -524,19 +535,18 @@
 
 .lx .lx-layout .lx-input-wrapper .lx-input-area.lx-text-area,
 .lx .lx-layout .lx-input-wrapper .lx-input-area.lx-markdown-text-area {
-  --input-container-height: 100%;
-  min-height: var(--input-container-min-height-text-area);
-  padding: var(--input-container-padding-vertical-text-area) var(--space-0);
   resize: vertical;
+  min-height: var(--input-text-area-min-height);
+  padding: var(--input-text-area-padding-y) var(--space-0);
 }
 
 .lx .lx-override.lx-layout textarea {
-  --input-container-height: auto;
-  min-height: var(--input-container-min-height-text-area);
-  padding: var(--input-container-padding-vertical-text-area) 
-           var(--input-container-padding-right) 
-           var(--input-container-padding-vertical-text-area) 
-           var(--input-container-padding-left);
+  --input-height: auto;
+  min-height: var(--input-text-area-min-height);
+  padding: var(--input-text-area-padding-y) 
+           var(--input-padding-right) 
+           var(--input-text-area-padding-y) 
+           var(--input-padding-left);
 }
 
 .lx .lx-layout .lx-text-area-wrapper div.lx-input-wrapper .lx-text-area.lx-text-area-template {
@@ -639,8 +649,8 @@
 /*** Container background + disabled styles ***/
 
 .lx .lx-layout .lx-input-wrapper input:disabled {
-  background-color: transparent;
-  color: var(--color-input-disabled);
+  background: transparent;
+  color: var(--color-input-text-disabled);
   cursor: not-allowed;
 }
 
@@ -649,8 +659,8 @@
 .lx .lx-override.lx-layout input[disabled],
 .lx .lx-override.lx-layout textarea.lx-disabled,
 .lx .lx-override.lx-layout textarea[disabled] {
-  color: var(--color-input-disabled);
-  background-color: var(--color-input-disabled-background);
+  color: var(--color-input-text-disabled);
+  background: var(--color-input-background-disabled);
   cursor: not-allowed;
 }
 
@@ -659,24 +669,25 @@
 .lx .lx-override.lx-layout input[disabled],
 .lx .lx-override.lx-layout textarea.lx-disabled,
 .lx .lx-override.lx-layout textarea[disabled] {
-  border: var(--input-border-disabled);
-  border-bottom: var(--input-border-bottom-disabled);
+  border-color: var(--color-input-border-disabled);
   cursor: not-allowed;
   pointer-events: none;
 }
 
-.lx.lx-theme-contrast .lx-layout div.lx-input-wrapper.lx-disabled .lx-input-area,
-.lx.lx-theme-contrast .lx-override input:not([type="submit"]):not([type="button"]):not([type="file"]).lx-disabled,
-.lx.lx-theme-contrast .lx-override input:not([type="submit"]):not([type="button"]):not([type="file"])[disabled],
-.lx.lx-theme-contrast .lx-override input:not([type="reset"]):not([type="button"]):not([type="file"]).lx-disabled,
-.lx.lx-theme-contrast .lx-override input:not([type="reset"]):not([type="button"]):not([type="file"])[disabled],
-.lx.lx-theme-contrast .lx-override textarea.lx-disabled,
-.lx.lx-theme-contrast .lx-override textarea[disabled] {
-  border-bottom: var(--input-border);
+.lx .lx-layout .lx-input-wrapper.lx-disabled .lx-rotator-tag {
+  background: var(--color-input-background-disabled);
 }
 
-.lx .lx-layout .lx-input-wrapper.lx-disabled .lx-rotator-tag {
-  background-color: var(--color-input-disabled-background);
+.lx .lx-markdown-text-area-wrapper .lx-component-toolbar,
+.lx .lx-drawpad-wrapper .lx-component-toolbar,
+.lx .lx-map .lx-component-toolbar,
+.lx .lx-file-viewer .lx-component-toolbar,
+.lx .lx-camera .lx-component-toolbar,
+.lx .lx-qr-scanner-wrapper .lx-component-toolbar,
+.lx .lx-map,
+.lx .lx-camera,
+.lx .lx-qr-scanner {
+  background: var(--color-input-background);
 }
 
 .lx .lx-appendable-list .lx-input-wrapper,
@@ -730,7 +741,7 @@
 .lx .lx-region .lx-qr-scanner,
 .lx .lx-form-grid .lx-qr-scanner,
 .lx .lx-modal .lx-qr-scanner {
-  background-color: var(--color-input-region-background);
+  --color-input-background: var(--color-region-2);
 }
 
 .lx .lx-form-grid .lx-appendable-list .lx-input-wrapper,
@@ -766,7 +777,7 @@
 .lx .lx-map,
 .lx .lx-camera,
 .lx .lx-qr-scanner {
-  background-color: var(--color-input-background);
+  --color-input-background: unset;
 }
 
 .lx-form-grid > .lx-main .popper ul.lx-list li {
@@ -800,26 +811,25 @@
   z-index: 1;
 }
 
+.lx-rotator .lx-modifier-icon,
+.lx-dropdown-wrapper .lx-modifier-icon,
+.lx-dropdown-default .lx-modifier-icon,
+.lx-autocomplete-default .lx-modifier-icon,
 .lx-date-time-picker-wrapper .lx-modifier-icon {
-  fill: var(--color-input);
-}
-
-.lx .lx-input-wrapper .lx-button svg {
-  --color-button-ghost-icon: var(--color-input);
-  --color-button-ghost-icon-focus: var(--color-input);
+  fill: var(--color-input-icon-interactive);
 }
 
 .lx-input-wrapper .lx-invalidation-icon {
   position: absolute;
-  height: var(--input-invalid-icon-size);
-  width: var(--input-invalid-icon-size);
+  height: var(--input-icon-invalid-size);
+  width: var(--input-icon-invalid-size);
   z-index: 1;
   pointer-events: none;
 }
 
 .lx .lx-input-wrapper.lx-disabled .lx-modifier-icon,
 .lx .lx-input-wrapper.lx-disabled svg.thumb {
-  fill: var(--color-input-disabled-icon);
+  fill: var(--color-input-icon-disabled);
 }
 
 h2.lx-section-header + p.lx-invalidation-message,
@@ -833,9 +843,13 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-markdown-text-area-wrapper .lx-invalidation-icon-wrapper,
 .lx-text-area-wrapper .lx-invalidation-icon-wrapper {
-  padding: var(--input-container-padding-vertical-text-area) var(--space-0);
   align-items: flex-start;
   z-index: 1;
+}
+
+.lx-text-area-wrapper .lx-invalidation-icon-wrapper,
+.lx-markdown-text-area-wrapper .lx-invalidation-icon-wrapper {
+  padding: var(--input-text-area-padding-y) var(--space-0);
 }
 
 .lx-input-wrapper .lx-invalidation-icon-wrapper,
@@ -2123,20 +2137,21 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .input-slider-container-wrapper.lx-disabled input.lx-number-slider::-webkit-slider-thumb {
-  background-color: var(--color-input-disabled);
+  background-color: var(--color-input-text-disabled);
 }
 .input-slider-container-wrapper.lx-disabled input.lx-number-slider::-moz-range-thumb {
-  background-color: var(--color-input-disabled);
+  background-color: var(--color-input-text-disabled);
 }
 
 .input-slider-container-wrapper.lx-disabled .input-slider-filled {
-  background-color: var(--color-input-disabled);
+  background-color: var(--color-input-text-disabled);
 }
 
 .input-slider-container-wrapper.lx-disabled .input-slider-range-label > p {
-  color: var(--color-input-disabled);
+  color: var(--color-input-text-disabled);
   cursor: not-allowed;
 }
+
 /*** LxDrawPad styles***/
 
 .lx .lx-drawpad-wrapper .lx-input-wrapper {
@@ -2423,13 +2438,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   outline: none;
 }
 
-.lx-dropdown-input-wrapper,
-.lx-autocomplete-default-data,
-.lx-rotator .lx-dropdown-toggler,
-.lx-value-picker-dropdown-wrapper > .lx-dropdown-default {
-  height: var(--input-container-height);
-}
-
 .lx-dropdown-default > .popper-wrapper,
 .lx-autocomplete-default > .popper-wrapper {
   display: inline-block;
@@ -2532,7 +2540,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx .lx-layout .lx-autocomplete-default.lx-disabled {
-  color: var(--color-input-disabled);
+  color: var(--color-input-text-disabled);
   cursor: not-allowed;
 }
 
@@ -2584,17 +2592,31 @@ h2.lx-section-header + p.lx-invalidation-message,
   grid-area: input;
   grid-column: 1 / -1;
   width: 100%;
-  height: var(--input-container-height);
+  height: var(--input-height);
   outline: 2px solid transparent;
   outline-offset: -2px;
-  border: var(--input-border);
-  border-bottom: var(--input-border-bottom);
+  border-width: var(--input-border-width);
+  border-style: var(--input-border-style);
+  border-color: var(--color-input-border);
   border-radius: var(--input-border-radius);
   font-size: var(--input-text-font-size);
 }
 
+.pseudo-input,
+.lx-dropdown-input-wrapper,
+.lx-autocomplete-default-data,
+.lx-rotator .lx-dropdown-toggler,
+.lx-value-picker-dropdown-wrapper > .lx-dropdown-default {
+  height: var(--input-height);
+}
+
 .lx .lx-layout .lx-input-wrapper .lx-input-area::placeholder {
   font-size: var(--input-text-font-size);
+}
+
+.pseudo-input {
+  width: 100%;
+  grid-area: input;
 }
 
 .lx .lx-layout .lx-input-wrapper textarea.lx-input-area,
@@ -2602,12 +2624,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx .lx-layout .lx-input-wrapper select.lx-input-area,
 .lx .lx-layout .lx-input-wrapper input.lx-input-area {
   z-index: 1;
-}
-
-.pseudo-input {
-  height: var(--input-container-height);
-  width: 100%;
-  grid-area: input;
 }
 
 .lx-markdown-text-area-wrapper .pseudo-input,
@@ -2633,12 +2649,64 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: flex;
 }
 
+/*** Input button styles ***/
+
 .lx .lx-input-wrapper > .lx-button {
   height: var(--input-button-height);
   min-width: var(--input-button-width);
+  width: var(--input-button-width);
+  border: var(--input-button-border);
   border-radius: var(--input-button-border-radius);
+  background: var(--color-input-button-background);
+  outline-offset: var(--input-button-outline-offset);
   grid-area: button;
   z-index: 1;
+}
+
+.lx .lx-input-wrapper > .lx-button svg {
+  height: var(--input-button-icon-size);
+  width: var(--input-button-icon-size);
+  fill: var(--color-input-button-icon);
+}
+
+/* Hover */
+
+.lx .lx-input-wrapper > .lx-button:hover {
+  background: var(--color-input-button-background-hover);
+}
+
+.lx .lx-input-wrapper > .lx-button:hover svg {
+  fill: var(--color-input-button-icon-hover);
+}
+
+/* Focus */
+
+.lx .lx-input-wrapper > .lx-button:focus {
+  background: var(--color-input-button-background-focus);
+}
+
+.lx .lx-input-wrapper > .lx-button:focus svg {
+  fill: var(--color-input-button-icon-focus);
+}
+
+/* Focus-hover */
+
+.lx .lx-input-wrapper > .lx-button:focus:hover {
+  background: var(--color-input-button-background-hover);
+}
+
+.lx .lx-input-wrapper > .lx-button:focus:hover svg {
+  fill: var(--color-input-button-icon-hover);
+}
+
+/* Disabled */
+
+.lx .lx-input-wrapper > .lx-button.lx-disabled {
+  background: var(--color-input-button-background-disabled);
+}
+
+.lx .lx-input-wrapper > .lx-button.lx-disabled svg {
+  fill: var(--color-input-button-icon-disabled);
 }
 
 /*** QR scanner styles ***/
@@ -3073,7 +3141,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx.lx-theme-contrast .lx-appendable-list .lx-file-wrapper .lx-list-item {
-  height: calc(var(--input-container-height) - 0.15rem);
+  height: calc(var(--input-height) - 0.15rem);
 }
 
 .lx .lx-appendable-list .lx-file-upload-wrapper.compact .lx-file-wrapper .lx-file-name-main-data-wrapper {
@@ -3081,12 +3149,12 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx .lx-appendable-list .lx-uploaded-file-list-wrapper .lx-list-item-container {
-  --list-item-min-height: var(--input-container-height);
-  --list-item-header-min-height: calc(var(--input-container-height) - 0.15rem);
+  --list-item-min-height: var(--input-height);
+  --list-item-header-min-height: calc(var(--input-height) - 0.15rem);
 }
 
 .lx .lx-appendable-list-compact .lx-uploaded-file-list-wrapper .lx-list-item-container {
-  height: var(--input-container-height);
+  height: var(--input-height);
 }
 
 .lx:not(.lx-theme-contrast) .lx-appendable-list .lx-uploaded-file-list-wrapper .lx-list-item-container {
@@ -3103,12 +3171,12 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-appendable-list .lx-file-info-button > .lx-button,
 .lx .lx-appendable-list .lx-upload-buttons .lx-button {
-  --button-ghost-icon-only-height: var(--input-container-height);
-  --button-ghost-icon-only-min-width: var(--input-container-height);
+  --button-ghost-icon-only-height: var(--input-height);
+  --button-ghost-icon-only-min-width: var(--input-height);
 }
 
 .lx .lx-appendable-list .lx-file-main-part {
-  height: var(--input-container-height);
+  height: var(--input-height);
 }
 
 .lx-appendable-list .lx-uploaded-file-preview-wrapper.small-preview .lx-file-preview .lx-button {
@@ -3117,7 +3185,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx.lx-theme-contrast .lx-appendable-list .lx-upload-buttons .lx-button,
 .lx.lx-theme-contrast .lx-appendable-list .lx-file-main-part {
-  height: calc(var(--input-container-height) - 0.15rem);
+  height: calc(var(--input-height) - 0.15rem);
 }
 
 .lx-file-wrapper.lx-invalid {
@@ -3945,26 +4013,21 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-rotator-dropdown-wrapper.lx-input-wrapper {
   cursor: pointer;
-  border-bottom: var(--input-border-bottom);
+  border-bottom: var(--rotator-border-bottom);
   outline: none;
   overflow: visible;
 }
 
 .lx .lx-layout div.lx-input-wrapper.lx-disabled.lx-rotator-dropdown-wrapper {
-  border-bottom-color: var(--color-input-disabled);
+  border-bottom-color: var(--color-input-text-disabled);
 }
 
 .lx .lx-layout .lx-rotator div.lx-input-wrapper ul.lx-rotator-set {
   position: relative;
   flex-direction: column;
-  height: var(--input-container-height);
   overflow: hidden;
   justify-content: center;
   list-style: none;
-}
-
-.lx:not(.lx-theme-contrast) .lx-rotator .lx-input-wrapper ul.lx-rotator-set {
-  border: var(--border-width-2) solid transparent;
 }
 
 .lx-input-wrapper.lx-disabled .lx-rotator-set {
@@ -3987,8 +4050,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-rotator svg.thumb {
-  --input-icon-size: var(--icon-size-m);
-  fill: var(--color-input);
   pointer-events: none;
 }
 
@@ -4007,7 +4068,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   align-items: center;
   display: flex;
   justify-content: flex-start;
-  background-color: var(--color-input-background);
+  background: var(--color-rotator-background);
   border: var(--border-width-0);
 }
 
@@ -4167,7 +4228,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-text-input-wrapper .lx-text-input.lx-phone-input{
-  --input-container-padding-left: var(--space-3000);
+  --input-padding-left: var(--space-3000);
 }
 
 .lx-text-input-wrapper .multiple-flags{

@@ -65,6 +65,7 @@
   background: var(--color-content-switcher-background-selected);
   color: var(--color-content-switcher-text-selected);
   border: var(--content-switcher-border-selected);
+  border-radius: var(--content-switcher-inner-border-radius-selected);
 }
 
 .lx-content-switcher-item.lx-selected:first-of-type {

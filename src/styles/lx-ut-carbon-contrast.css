@@ -120,12 +120,11 @@
   --color-list-category-contrast: transparent;
   --color-list-disabled-selected-text: var(--contrast-background);
 
-  --input-border: var(--border-width-2) solid var(--contrast-foreground);
-  --input-border-disabled: var(--input-border);
-  --input-border-bottom: var(--input-border);
-  --input-border-bottom-disabled: var(--input-border);
-  --color-input-disabled: var(--contrast-foreground);
-  --color-input-selected-range-background: var(--contrast-hover);
+  --input-border-width: var(--border-width-2);
+  --color-input-border: var(--contrast-foreground);
+  --color-input-border-disabled: var(--contrast-foreground);
+  --color-input-text-disabled: var(--contrast-foreground);
+  --color-input-background-selected: var(--contrast-hover);
 
   --color-selected: var(--contrast-background);
   --color-selected-dropdown: var(--contrast-background);

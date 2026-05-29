@@ -132,7 +132,7 @@
 /*** Small toggle styles ***/
 
 .lx-form-grid .lx-small .lx-toggle-label-wrapper {
-  margin: var(--space-0750) var(--space-0); /* --toggle-height-s + 0.75 * 2 = --input-container-height */ 
+  margin: var(--space-0750) var(--space-0); /* --toggle-height-s + 0.75 * 2 = --input-height */ 
 }
 
 .lx-form-grid .lx-row-header .lx-small .lx-toggle-label-wrapper {
@@ -274,7 +274,7 @@
   font-size: var(--toggle-text-font-size);
   line-height: var(--toggle-text-line-height);
   color: var(--color-toggle-text);
-  margin: var(--space-0500) var(--space-0); /* --toggle-height-m + 0.5 * 2 = --input-container-height */ 
+  margin: var(--space-0500) var(--space-0); /* --toggle-height-m + 0.5 * 2 = --input-height */ 
 }
 
 .lx-toggle-appearance ~ .lx-toggle-text {

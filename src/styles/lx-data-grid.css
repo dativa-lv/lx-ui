@@ -1326,7 +1326,7 @@
 
 .lx .lx-data-grid-wrapper .second-row .lx-input-wrapper {
   --color-input-background: var(--color-region-2);
-  --color-input-disabled-background: var(--color-disabled-background);
+  --color-input-background-disabled: var(--color-disabled-background);
 }
 
 .lx .lx-data-grid-wrapper .lx-cell-person-wrapper {

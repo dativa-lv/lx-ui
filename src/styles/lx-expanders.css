@@ -787,7 +787,7 @@
 .lx-accessibility-settings-block .lx-data-block-wrapper {
   margin-bottom: var(--space-0500);
   --color-data-block-icon: var(--color-data-block-primary);
-  --input-container-width: 14rem;
+  --input-width-m: 14rem;
 }
 
 .lx-accessibility-settings-dropdown-content {
@@ -799,7 +799,7 @@
 .lx-accessibility-settings-dropdown-content > svg {
   height: var(--icon-size-m);
   width: var(--icon-size-m);
-  fill: var(--color-input);
+  fill: var(--color-input-text);
 }
 
 .lx-accessibility-settings-block .lx-data-block-wrapper .lx-link-wrapper {

@@ -20,8 +20,8 @@
   --list-item-border-radius: var(--border-radius-default);
 
   --input-border-radius: var(--border-radius-default);
-  --input-border-bottom: var(--input-border);
-  --input-border-bottom-disabled: var(--input-border);
+  --input-border-width: var(--border-width-2);
+  --color-input-border: transparent;
 
   --color-nav-item-background-selected: var(--color-highlight);
 

@@ -23,7 +23,8 @@
     --region-border: var(--border-width-1) solid var(--color-chrome);
     --region-border-transparent: var(--region-border);
     --list-item-border: var(--border-width-1) solid var(--color-chrome);
-    --input-border: var(--border-width-1) solid var(--color-chrome);
+    --input-border-width: var(--border-width-1);
+    --color-input-border: var(--color-chrome) var(--color-chrome) var(--color-label) var(--color-chrome);
     --color-toggle-background-off: #d0d5dc;
     --color-toggle-border-off: #d0d5dc;
     --color-toggle-thumb-off: #6e7681;
@@ -65,7 +66,6 @@
     --tab-border: var(--border-width-4) solid transparent;
     --region-border: var(--border-width-1) solid var(--color-chrome);
     --list-item-border: var(--border-width-1) solid var(--color-chrome);
-    --input-border: var(--border-width-1) solid var(--color-chrome);
     --color-toggle-background-off: #d0d5dc;
     --color-toggle-border-off: #d0d5dc;
     --color-toggle-thumb-off: #6e7681;

@@ -1,5 +1,37 @@
 # LX/UI Migration Guide
 
+## 2.1.10 → 2.1.11
+
+### Breaking changes
+
+#### Inputs
+
+**Token renames**
+
+- `--color-input` → `--color-input-text`
+- `--color-input-disabled` → `--color-input-text-disabled`
+- `--color-input-disabled-background` → `--color-input-background-disabled`
+- `--color-input-disabled-icon` → `--color-input-icon-disabled`
+- `--color-input-selected-range-background` → `--color-input-background-selected`
+- `--input-container-height` → `--input-height`
+- `--input-container-width` → `--input-width-m`
+- `--input-container-width-small` → `--input-width-s`
+- `--input-container-width-large` → `--input-width-l`
+- `--input-container-padding-left` → `--input-padding-left`
+- `--input-container-padding-right` → `--input-padding-right`
+- `--input-container-min-height-text-area` → `--input-text-area-min-height`
+- `--input-container-padding-vertical-text-area` → `--input-text-area-padding-y` (previously `--space-0250`, now `--space-0500`)
+- `--input-invalid-icon-size` → `--input-icon-invalid-size`
+- `--input-invalid-icon-indent-left` → `--input-icon-invalid-indent-left`
+- `--input-invalid-icon-indent-right` → `--input-icon-invalid-indent-right`
+
+**Token removals**
+
+- `--color-input-region-background` (`--color-region-2`)
+- `--input-double-width-small` (use `calc(var(--input-width-s) * 2 + var(--space-0500))` instead)
+
+The `--input-border`, `--input-border-bottom`, `--input-border-disabled` and `--input-border-bottom-disabled` tokens have been removed. Border styles are now split into `--input-border-width`, `--input-border-style`, and `--color-input-border`. Disabled inputs use `--color-input-border-disabled` for the border color.
+
 ## 2.1.8 → 2.1.9
 
 ### Breaking changes
@@ -187,7 +219,7 @@ Icon `height` and `width` tokens have been merged into a single `size` token. Up
 | `--data-block-invalid-icon-height`, `--data-block-invalid-icon-width`             | `--data-block-invalid-icon-size`       |
 | `--badge-icon-width`                                                              | `--badge-icon-size`                    |
 | `--input-icon-height`, `--input-icon-width`                                       | `--input-icon-size`                    |
-| `--input-invalid-icon-height`, `--input-invalid-icon-width`                       | `--input-invalid-icon-size`            |
+| `--input-invalid-icon-height`, `--input-invalid-icon-width`                       | `--input-icon-invalid-size`            |
 | `--button-dropdown-icon-height`, `--button-dropdown-icon-width`                   | `--button-dropdown-icon-size`          |
 | `--button-toolbar-primary-icon-height`, `--button-toolbar-primary-icon-width`     | `--button-toolbar-primary-icon-size`   |
 | `--button-toolbar-secondary-icon-height`, `--button-toolbar-secondary-icon-width` | `--button-toolbar-secondary-icon-size` |
