@@ -737,44 +737,8 @@
   padding-right: var(--space-1000);
 }
 
-.lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button {
-  background-color: var(--color-region);
-}
-
-.lx .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
-.lx .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
-.lx-list-wrapper .lx-component-toolbar .second-row {
-    background-color: var(--color-region);
-}
-
-.lx .lx-modal .lx-component-toolbar .second-row .lx-button,
-.lx .lx-region .lx-component-toolbar .second-row .lx-button,
-.lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar .second-row .lx-button,
-.lx .lx-region .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
-.lx .lx-region .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
-.lx-modal .lx-list-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
-.lx-modal .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
-.lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
-.lx-modal .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
-.lx-form-grid .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded {
-  background-color: var(--color-list-region-background);
-}
-
-.lx .lx-component-toolbar .second-row .lx-button:hover,
-.lx-component-toolbar .toolbar-search-button.is-expanded:hover .lx-button {
-  background-color: var(--color-interactive-hover-background);
-}
-
-.lx .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button {
-  --color-toolbar-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
-}
-
 .lx-list-wrapper .tree-list-search > .tree-list-search-item > .lx-list-item-wrapper {
   width: 100%;
-}
-
-.lx-component-toolbar .toolbar-search-button.is-expanded:hover .lx-button svg {
-  fill: var(--color-focus-foreground);
 }
 
 /*** Load button styles ***/

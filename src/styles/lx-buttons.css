@@ -1001,6 +1001,28 @@ a.lx-button.lx-button-ghost svg {
   outline-offset: var(--toolbar-button-ghost-outline-offset);
 }
 
+.lx .lx-component-toolbar .second-row .lx-button,
+.lx .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button {
+  background: var(--color-region);
+  --color-toolbar-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
+}
+
+.lx .lx-region .lx-component-toolbar .second-row .lx-button,
+.lx .lx-form-grid .lx-component-toolbar .second-row .lx-button,
+.lx .lx-modal .lx-component-toolbar .second-row .lx-button,
+.lx .lx-region .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx .lx-region .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
+.lx .lx-form-grid .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx .lx-form-grid .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
+.lx-modal .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx-modal .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
+.lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button,
+.lx .lx-data-grid-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx .lx-data-grid-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button {
+  background: var(--color-list-region-background);
+}
+
 .lx-component-toolbar + .second-row .lx-button-ghost > .lx-button-content-wrapper,
 .lx-component-toolbar .lx-group > .lx-button.lx-button-ghost > .lx-button-content-wrapper,
 .lx-component-toolbar .lx-dropdown-toggler > .lx-button.lx-button-ghost > .lx-button-content-wrapper {
@@ -1023,9 +1045,18 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-toolbar-button-ghost-text-hover);
 }
 
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus,
-.lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus,
-.lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus {
+.lx .lx-component-toolbar .second-row .lx-button:hover,
+.lx .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded:hover,
+.lx .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button:hover {
+  background: var(--color-interactive-hover-background);
+}
+
+.lx .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded:hover svg,
+.lx .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button:hover svg {
+  fill: var(--color-focus-foreground);
+}
+
+.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus {
   background: var(--color-toolbar-button-ghost-background-focus);
   border-color: var(--color-toolbar-button-ghost-border-focus);
   color: var(--color-toolbar-button-ghost-text-focus);
@@ -1037,11 +1068,11 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-toolbar-button-ghost-text-hover);
 }
 
-.lx-layout .toolbar-search-button .lx-button.lx-button-ghost:active,
-.lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:active,
-.lx-layout .lx-form-grid .lx-component-toolbar .lx-button.lx-button-ghost:active,
-.lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active,
-.lx .lx-layout .lx-form-grid .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active {
+.lx .lx-component-toolbar .second-row .lx-button:active,
+.lx .lx-component-toolbar .toolbar-search-button .lx-button:active,
+.lx .lx-component-toolbar .toolbar-search-button.lx-button:active,
+.lx .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button:active,
+.lx .lx-component-toolbar .toolbar-search-button.is-expanded.lx-button:active {
   background: var(--color-toolbar-button-ghost-background-active);
   border-color: var(--color-toolbar-button-ghost-border-active);
   color: var(--color-toolbar-button-ghost-text-active);
