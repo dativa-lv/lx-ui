@@ -39,9 +39,13 @@
 .lx.lx-theme-contrast .lx-date-time-range-wrapper .lx-context-container .lx-datepicker-input-container.range .lx-date-time-picker.input-active + .lx-input-icon-wrapper svg {
   fill: var(--contrast-background);
 }
+.lx .lx-datepicker-input-container.range .lx-input-wrapper {
+  width: var(--input-container-width-small);
+}
 
 .lx-datepicker-default .lx-datepicker-input-container.range {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
 }
 
@@ -220,11 +224,12 @@
 
 .lx-date-time-picker-wrapper.lx-date-time-range-wrapper {
   position: static;
-  width: var(--input-container-double-width-small);
+  width: 100%;
 }
-
+.lx .lx-field-wrapper.lx-date-time-range-field-wrapper,
+.lx-field-wrapper.lx-date-time-range-small-view .lx-date-time-range-separator,
 .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.month-year {
-  width: 29.5rem;
+  width: 100%;
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper {
@@ -1113,12 +1118,7 @@
   height: unset;
 } 
 
-.lx-field-wrapper.lx-date-time-range-column-view .lx-date-time-picker-wrapper.lx-date-time-range-wrapper {
-  width: var(--input-container-width-small);
-}
-
-.lx .lx-layout .lx-field-wrapper.lx-date-time-range-column-view .lx-context-container .lx-datepicker-input-container.range {
-  flex-direction: column;
+.lx .lx-date-time-range-wrapper .lx-context-container {
   align-items: flex-start;
 }
 
@@ -1261,6 +1261,14 @@
 .lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-disabled-quarter):focus{
   outline: 2px solid var(--color-focus-background);
   z-index: 100;
+}
+
+.lx .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.month-year .lx-datepicker-input-container.range .lx-input-wrapper {
+  width: var(--input-container-width-large);
+}
+
+.lx .lx-date-time-picker-wrapper.lx-date-time-range-wrapper .legacy-pickers-wrapper .lx-datepicker-input-container .lx-input-wrapper {
+  width: var(--input-container-width-small);
 }
 
 @media (max-width: 640px) {

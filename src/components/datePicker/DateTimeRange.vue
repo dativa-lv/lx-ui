@@ -1,6 +1,15 @@
 <script setup>
-import { computed, onBeforeMount, ref, inject, getCurrentInstance, onUnmounted } from 'vue';
-import { useElementSize } from '@vueuse/core';
+import {
+  computed,
+  onBeforeMount,
+  ref,
+  inject,
+  getCurrentInstance,
+  onUnmounted,
+  onMounted,
+  nextTick,
+} from 'vue';
+import { useResizeObserver } from '@vueuse/core';
 import useLx from '@/hooks/useLx';
 import {
   formatDateJSON,
@@ -420,40 +429,28 @@ function onOutOfRange(payload) {
   }
 }
 
-const rangeWrapperCurrentWidth = useElementSize(rangeWrapper).width;
+const forceColumnView = ref(false);
 
-const rangeWrapperStyleWidth = computed(() => {
-  const el = rangeWrapper.value;
-  if (!el) return null;
+function updateColumnView() {
+  const wrapper = rangeWrapper.value;
+  if (!(wrapper instanceof HTMLElement)) return;
 
-  const style = getComputedStyle(el);
-  const remValue = Number.parseFloat(
-    style.getPropertyValue('--input-container-double-width-small')
-  );
-  const fontSize = Number.parseFloat(style.fontSize) || 16;
-  if (Number.isNaN(remValue)) return null;
+  const wrapperWidth = wrapper.clientWidth;
 
-  return Math.round(remValue * fontSize);
-});
-
-const hasFixedParentWidth = computed(() => {
-  const el = rangeWrapper.value;
-  if (!el) return false;
-
-  const parent = el.parentElement;
-  if (!parent) return false;
-
-  const parentWidth = getComputedStyle(parent).width;
-  if (Math.ceil(Number(parentWidth.split('px')[0])) === rangeWrapperStyleWidth.value) {
-    return false;
+  if (wrapperWidth < 380) {
+    forceColumnView.value = true;
+  } else {
+    forceColumnView.value = false;
   }
-  return !!parentWidth && parentWidth !== 'auto';
+}
+
+onMounted(async () => {
+  await nextTick();
+  updateColumnView();
 });
 
-const useColumnView = computed(() => {
-  if (!hasFixedParentWidth.value) return false;
-  if (rangeWrapperStyleWidth.value == null) return false;
-  return rangeWrapperCurrentWidth.value < rangeWrapperStyleWidth.value;
+useResizeObserver(rangeWrapper, () => {
+  updateColumnView();
 });
 
 onBeforeMount(() => {
@@ -486,8 +483,8 @@ if (props.builderOptions?.useRegistry) {
 <template>
   <div
     ref="rangeWrapper"
-    class="lx-field-wrapper"
-    :class="[{ 'lx-date-time-range-column-view': useColumnView }]"
+    class="lx-field-wrapper lx-date-time-range-field-wrapper"
+    :class="[{ 'lx-date-time-range-small-view': forceColumnView }]"
     :data-id="id"
   >
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
