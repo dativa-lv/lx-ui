@@ -8,12 +8,11 @@
 
 | Variable name                          | Default value                                                    |
 |----------------------------------------|------------------------------------------------------------------|
-| `--popover-item-align`                 | center                                                           |
 | `--popover-item-border`                | var(--border-width-2) solid var(--color-popover-item-background) |
 | `--popover-item-border-radius`         | `--border-radius-default`                                        |
 | `--popover-item-text-font-size`        | inherit                                                          |
 | `--popover-item-text-font-weight`      | `--font-weight-interactive`                                      |
-| `--popover-item-text-align`            | left                                                             |
+| `--popover-item-text-alignment`        | left                                                             |
 | `--popover-item-text-decoration`       | none                                                             |
 | `--popover-item-gap`                   | `--space-0750`                                                   |
 | `--popover-item-grid-areas`            | 'content icon'                                                   |

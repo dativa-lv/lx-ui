@@ -1256,10 +1256,7 @@
   transition: opacity 0.1s ease-out;
 }
 
-.lx-layout-cover .lx-group .lx-header-button svg,
-.lx-layout-cover .lx-header .lx-user-menu .lx-avatar svg,
-.lx-layout-cover-digives-lite .lx-group .lx-header-button svg,
-.lx-layout-cover-digives-lite .lx-header .lx-user-menu .lx-avatar svg{
+.lx-layout-cover .lx-user-menu .lx-avatar svg {
   fill: var(--color-brand);
 }
 

@@ -1,5 +1,5 @@
 <template>
   <g>
-    <path transform="translate(0,1056)" d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+    <path transform="translate(0,96)" d="M424,664l282-282-56-56-226,226-114-114-56,56,170,170Z" />
   </g>
 </template>

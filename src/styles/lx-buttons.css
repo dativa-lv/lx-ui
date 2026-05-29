@@ -2061,7 +2061,7 @@ a.lx-button.lx-button-ghost svg {
   .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper {
     --nav-public-item-grid-areas: 'icon content';
     --nav-public-item-grid-template-columns: auto 1fr;
-    --nav-public-item-text-align: left;
+    --nav-public-item-text-alignment: left;
   }
 }
 

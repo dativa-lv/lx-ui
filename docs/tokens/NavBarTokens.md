@@ -6,12 +6,11 @@
 
 | Variable name                             | Default value                                                  |
 |-------------------------------------------|----------------------------------------------------------------|
-| `--nav-item-align`                        | center                                                         |
 | `--nav-item-border`                       | var(--border-width-2) solid transparent                        |
 | `--nav-item-border-radius`                | `--border-radius-0`                                            |
 | `--nav-item-text-font-size`               | inherit                                                        |
 | `--nav-item-text-font-weight`             | `--font-weight-interactive`                                    |
-| `--nav-item-text-align`                   | left                                                           |
+| `--nav-item-text-alignment`               | left                                                           |
 | `--nav-item-text-decoration`              | none                                                           |
 | `--nav-item-gap`                          | `--space-0750`                                                 |
 | `--nav-item-grid-areas`                   | 'icon content'                                                 |
@@ -23,12 +22,11 @@
 | `--nav-item-outline-offset`               | -2px                                                           |
 | `--nav-item-padding`                      | var(--space-0) calc(var(--space-0750) - var(--border-width-2)) |
 | `--nav-item-width`                        | 100%                                                           |
-| `--nav-public-item-align`                 | center                                                         |
 | `--nav-public-item-border`                | `--border-width-0`                                             |
 | `--nav-public-item-border-radius`         | `--border-radius-0`                                            |
 | `--nav-public-item-text-font-size`        | inherit                                                        |
 | `--nav-public-item-text-font-weight`      | `--font-weight-interactive`                                    |
-| `--nav-public-item-text-align`            | center                                                         |
+| `--nav-public-item-text-alignment`        | center                                                         |
 | `--nav-public-item-text-decoration`       | none                                                           |
 | `--nav-public-item-gap`                   | `--space-0750`                                                 |
 | `--nav-public-item-grid-areas`            | 'content'                                                      |
