@@ -24,10 +24,6 @@ svg .lx-shade {
   border: var(--border-width-0);
 }
 
-.lx-form-grid > .lx-main {
-  overflow-x: hidden;
-}
-
 .lx-form-grid > header {
   min-height: var(--row-size);
   border-bottom: var(--border-width-1) solid var(--color-chrome);
@@ -452,7 +448,6 @@ svg .lx-shade {
   max-width: 100%;
   display: inline-block;
   text-overflow: ellipsis;
-  overflow: hidden;
   white-space: nowrap;
   transition: background-color 0.5s ease;
 }
@@ -1431,7 +1426,6 @@ p .lx-person-display-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: end;
-  overflow: hidden;
   padding: var(--space-0) var(--space-0125);
 }
 

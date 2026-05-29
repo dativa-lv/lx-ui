@@ -34,6 +34,7 @@ const props = defineProps({
   invalidAttribute: { type: String, default: 'invalid' },
   selectedValues: { type: Object, default: () => {} },
   labelId: { type: String, default: null },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -260,14 +261,18 @@ onMounted(() => {
   model.value = props.modelValue;
 });
 
+const wrapperRef = ref();
+
 defineExpose({ clearModel });
 </script>
 <template>
-  <div class="lx-appendable-list-wrapper">
+  <div class="lx-appendable-list-wrapper" ref="wrapperRef">
     <LxToolbar
       :id="`${props.id}-toolbar`"
       :actionDefinitions="toolbarActions"
       :texts="displayTexts"
+      :sticky="stickyToolbar"
+      :wrapperRef="wrapperRef"
       @actionClick="handleToolbarActionClick"
     />
 

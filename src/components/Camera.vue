@@ -40,6 +40,7 @@ const props = defineProps({
   preferencesId: { type: String, default: 'lx-camera-settings' },
   labelId: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
   builderOptions: {
     type: Object,
@@ -419,10 +420,11 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
     unregisterBuilderInstance(props?.id);
   });
 }
+const wrapperRef = ref();
 </script>
 
 <template>
-  <div class="lx-camera" :aria-labelledby="labelledBy" :data-id="id">
+  <div ref="wrapperRef" class="lx-camera" :aria-labelledby="labelledBy" :data-id="id">
     <div
       :id="`${id}-announce`"
       class="lx-invisible"
@@ -439,6 +441,8 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
       :id="`${id}-toolbar`"
       :disabled="error || loading"
       :actionDefinitions="toolbarActions"
+      :sticky="stickyToolbar"
+      :wrapperRef="wrapperRef"
       @actionClick="toolbarActionClick"
     />
     <LxLoader :loading="true" v-if="loading" />

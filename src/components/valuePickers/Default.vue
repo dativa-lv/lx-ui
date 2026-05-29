@@ -33,6 +33,7 @@ const props = defineProps({
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => {} },
 });
 
@@ -376,9 +377,11 @@ function getTabIndex(id) {
   }
   return -1;
 }
+const wrapperRef = ref();
 </script>
 <template>
   <div
+    ref="wrapperRef"
     class="lx-value-picker-default-wrapper"
     :class="[
       { 'lx-invalid': invalid },
@@ -416,6 +419,8 @@ function getTabIndex(id) {
           selectAllRows: displayTexts.selectAll,
           clearSelected: displayTexts.clearChosen,
         }"
+        :sticky="stickyToolbar"
+        :wrapperRef="wrapperRef"
         @search="search"
         @selectAll="selectAll"
         @deselectAll="selectAll"

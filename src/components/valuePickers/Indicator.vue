@@ -33,6 +33,7 @@ const props = defineProps({
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => {} },
 });
 
@@ -329,10 +330,12 @@ const indicatorTooltips = computed(() => {
   });
   return tooltips;
 });
+const wrapperRef = ref();
 </script>
 
 <template>
   <div
+    ref="wrapperRef"
     class="lx-value-picker-indicators"
     :class="[{ 'lx-invalid': invalid }]"
     v-if="variant === 'indicator'"
@@ -357,6 +360,8 @@ const indicatorTooltips = computed(() => {
         selectAllRows: displayTexts.selectAll,
         clearSelected: displayTexts.clearChosen,
       }"
+      :sticky="stickyToolbar"
+      :wrapperRef="wrapperRef"
       @search="search"
       @selectAll="selectAll"
       @deselectAll="selectAll"

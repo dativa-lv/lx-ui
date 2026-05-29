@@ -30,6 +30,7 @@ const props = defineProps({
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => {} },
 });
 
@@ -356,10 +357,11 @@ function updateDescriptionTabIndexes(items) {
     }
   });
 }
+const wrapperRef = ref();
 </script>
 
 <template>
-  <div class="lx-value-picker-tile-tag-container" :id="id">
+  <div ref="wrapperRef" class="lx-value-picker-tile-tag-container" :id="id">
     <template v-if="readOnly">
       <p v-if="readOnlyRenderType === 'row'" class="lx-data">
         {{ getName(false) }}
@@ -387,6 +389,8 @@ function updateDescriptionTabIndexes(items) {
           selectAllRows: displayTexts.selectAll,
           clearSelected: displayTexts.clearChosen,
         }"
+        :sticky="stickyToolbar"
+        :wrapperRef="wrapperRef"
         @search="search"
         @selectAll="selectAll"
         @deselectAll="selectAll"

@@ -53,6 +53,7 @@ const props = defineProps({
   imageMaxSize: { type: Number, default: 3000000, group: 'additional', sequence: 4 }, // 3MB
   dictionary: { type: Object, default: null },
   labelId: { type: String, default: null },
+  stickyToolbar: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
   builderOptions: {
@@ -1042,6 +1043,8 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
         :disabled="isDisabled"
         :actionDefinitions="toolbarActions"
         defaultArea="left"
+        :sticky="stickyToolbar"
+        :wrapperRef="markdownWrapper"
         @actionClick="toolbarActionClick"
       >
         <template #color>

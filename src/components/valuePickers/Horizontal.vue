@@ -31,6 +31,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => {} },
 });
 
@@ -414,9 +415,10 @@ function focusNext() {
   onNext();
   handleFocus();
 }
+const wrapperRef = ref();
 </script>
 <template>
-  <div class="lx-value-picker-horizontal-container" :id="id">
+  <div ref="wrapperRef" class="lx-value-picker-horizontal-container" :id="id">
     <LxToolbar
       v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')"
       :disabled="disabled"
@@ -433,6 +435,8 @@ function focusNext() {
         selectAllRows: displayTexts.selectAll,
         clearSelected: displayTexts.clearChosen,
       }"
+      :sticky="stickyToolbar"
+      :wrapperRef="wrapperRef"
       @search="search"
       @selectAll="selectAll"
       @deselectAll="selectAll"

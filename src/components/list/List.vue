@@ -74,6 +74,7 @@ const props = defineProps({
   labelId: { type: String, default: null },
   hasSkipLink: { type: Boolean, default: false },
   hasVirtualization: { type: Boolean, default: true },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -1503,7 +1504,12 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         @click="focusFirstFocusableElementAfter"
       />
 
-      <div :class="[{ 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 }]">
+      <div
+        :class="[
+          { 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 },
+          { 'lx-sticky-toolbar-list-wrapper': props.stickyToolbar },
+        ]"
+      >
         <LxToolbar
           ref="toolbarRef"
           :id="`${id}-toolbar`"
@@ -1519,6 +1525,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           :hasSelectAll="hasSelectAll"
           :selectionState="selectionState"
           :texts="displayTexts"
+          :sticky="stickyToolbar"
+          :wrapperRef="listWrapper"
           @actionClick="handleToolbarActionClick"
           @search="search"
           @update:searchString="(searchString) => (searchStringClientRaw = searchString)"

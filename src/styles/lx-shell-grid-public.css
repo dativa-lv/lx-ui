@@ -362,7 +362,7 @@
 .lx-layout.lx-layout-public.no-nav-items .lx-form-grid>aside.lx-index>ul,
 .lx-layout.lx-layout-public.no-nav-items .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
 .lx-layout.lx-layout-public.no-nav-items .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky,
-.lx-layout.lx-layout-public .lx-file-viewer-sticky .lx-file-viewer-toolbar {
+.lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-file-viewer-sticky .lx-file-viewer-toolbar {
   top: var(--public-nav-header-size);
 }
 

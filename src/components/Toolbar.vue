@@ -12,7 +12,7 @@ import {
   Fragment,
   Text,
 } from 'vue';
-import { useDebounceFn } from '@vueuse/core';
+import { useDebounceFn, useElementSize, useElementBounding, useScroll } from '@vueuse/core';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -37,10 +37,12 @@ const props = defineProps({
   searchMode: { type: String, default: 'default' }, // default, compact, defaultForce
   useSearchDebounce: { type: Boolean, default: false },
   hasSelectAll: { type: Boolean, default: false },
+  sticky: { type: Boolean, default: false },
   selectionState: { type: String, default: 'checkbox' }, // checkbox, checkbox-filled, checkbox-indeterminate, radiobutton-filled
   selectAllSide: { type: String, default: 'right' }, // right, left
   selectAllVariant: { type: String, default: 'icon-only' }, // icon-only, default
   defaultArea: { type: String, default: 'auto' }, // auto, right, left
+  wrapperRef: { type: Object, default: null },
   texts: {
     type: Object,
     default: () => ({}),
@@ -468,6 +470,61 @@ onMounted(() => {
   }
 });
 
+const toolbarSize = useElementSize(toolbarRef);
+const resolvedWrapperRef = computed(() => props.wrapperRef?.value ?? props.wrapperRef);
+const { top: wrapperTop, update: updateWrapperBounding } = useElementBounding(resolvedWrapperRef);
+const { y: wrapperScrollTop } = useScroll(resolvedWrapperRef, {
+  behavior: 'auto',
+  throttle: 16,
+});
+const baselineWrapperTop = ref(null);
+
+watch(
+  resolvedWrapperRef,
+  (el) => {
+    if (!el) {
+      baselineWrapperTop.value = null;
+      return;
+    }
+
+    baselineWrapperTop.value = wrapperTop.value;
+    updateWrapperBounding();
+  },
+  { immediate: true }
+);
+
+watch(wrapperTop, (newTop) => {
+  if (baselineWrapperTop.value === null) {
+    baselineWrapperTop.value = newTop;
+  }
+});
+
+const topOutOfBounds = computed(() => {
+  const keyOpacity = '--toolbar-top-shadow-opacity';
+  const keySize = '--toolbar-header-size';
+
+  const limit = 100;
+  const toolbarHeight = toolbarSize.height.value || 0;
+  const wrapper = props.wrapperRef;
+
+  if (!wrapper || !toolbarRef.value) {
+    return `${keyOpacity}: 0; ${keySize}: ${toolbarHeight}px;`;
+  }
+
+  const byWrapperScroll = Math.max(0, wrapperScrollTop.value || 0);
+  const baselineTop = baselineWrapperTop.value ?? wrapperTop.value;
+  const byBoundingDelta = Math.max(0, baselineTop - wrapperTop.value);
+  const progress = Math.max(byWrapperScroll, byBoundingDelta);
+
+  let opacity = Math.min(1, progress / limit);
+
+  if (!props.sticky) {
+    opacity = 0;
+  }
+
+  return `${keyOpacity}: ${opacity}; ${keySize}: ${toolbarHeight}px;`;
+});
+
 onUpdated(() => {
   updateSlotContentFlags();
 });
@@ -485,7 +542,9 @@ defineExpose({ toggleSearch, focusAction });
       { 'lx-toolbar-default-area-left': defaultAreaComputed === 'left' },
       { 'lx-toolbar-empty': isToolbarEmpty },
       { 'lx-disabled': disabled || loading },
+      { 'lx-toolbar-sticky': sticky },
     ]"
+    :style="`${topOutOfBounds}`"
     role="toolbar"
   >
     <div class="first-row">

@@ -40,6 +40,7 @@ const props = defineProps({
   hasFlashlightToggle: { type: Boolean, default: false, group: 'main', sequence: 3 },
   showAlerts: { type: Boolean, default: true, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
+  stickyToolbar: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
   builderOptions: {
@@ -321,10 +322,12 @@ if (props.builderOptions?.useRegistry) {
     unregisterBuilderInstance(props?.id);
   });
 }
+const wrapperRef = ref();
 </script>
 
 <template>
   <div
+    ref="wrapperRef"
     class="lx-qr-scanner-wrapper"
     :class="{ 'drag-over': dragOver }"
     :aria-labelledby="labelledBy"
@@ -334,6 +337,8 @@ if (props.builderOptions?.useRegistry) {
       v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"
       :disabled="loading || error || refreshError || accepted"
       :actionDefinitions="toolbarActions"
+      :sticky="stickyToolbar"
+      :wrapperRef="wrapperRef"
       @actionClick="toolbarActionClick"
     />
     <div class="lx-qr-scanner">

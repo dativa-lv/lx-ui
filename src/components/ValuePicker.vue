@@ -69,6 +69,7 @@ const props = defineProps({
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
   builderOptions: {
     type: Object,
@@ -216,6 +217,7 @@ if (props.builderOptions?.useRegistry) {
         :search-attributes="searchAttributes"
         :hasSelectAll="hasSelectAll"
         :labelId="labelledBy"
+        :stickyToolbar="stickyToolbar"
       >
         <template v-slot:customItem="slotData" v-if="$slots.customItem">
           <slot name="customItem" v-bind="slotData" />
@@ -283,6 +285,7 @@ if (props.builderOptions?.useRegistry) {
         :search-attributes="searchAttributes"
         :hasSelectAll="hasSelectAll"
         :labelId="labelledBy"
+        :stickyToolbar="stickyToolbar"
       >
         <template v-slot:customItem="slotData" v-if="$slots.customItem">
           <slot name="customItem" v-bind="slotData" />
@@ -347,6 +350,7 @@ if (props.builderOptions?.useRegistry) {
         :search-attributes="searchAttributes"
         :hasSelectAll="hasSelectAll"
         :labelId="labelledBy"
+        :stickyToolbar="stickyToolbar"
       >
         <template v-slot:customItem="slotData" v-if="$slots.customItem">
           <slot name="customItem" v-bind="slotData" />
@@ -377,6 +381,7 @@ if (props.builderOptions?.useRegistry) {
         :variant="variant"
         :search-attributes="searchAttributes"
         :hasSelectAll="hasSelectAll"
+        :stickyToolbar="stickyToolbar"
       >
         <template v-slot:customItem="slotData" v-if="$slots.customItem">
           <slot name="customItem" v-bind="slotData" />

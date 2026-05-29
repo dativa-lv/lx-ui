@@ -1622,7 +1622,9 @@ onUnmounted(() => {
       :loading="renderingInProgress"
       :actionDefinitions="toolbarActions"
       defaultArea="right"
+      :sticky="stickyHeader"
       :texts="displayTexts"
+      :wrapperRef="fileViewerWrapperRef"
       @actionClick="toolbarActionClick"
     >
       <template #pagination>

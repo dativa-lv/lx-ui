@@ -641,12 +641,39 @@ export function useToolbarResponsiveness({
     promotedActionVariant.value = 'default';
   }
 
+  function updateStickyVisibility() {
+    const toolbar = toolbarRef.value?.$el ?? toolbarRef.value;
+    if (!(toolbar instanceof HTMLElement)) return;
+
+    const form = toolbar.closest('.lx-form-grid');
+    const header = form?.querySelector(':scope > header.lx-sticky');
+    if (!(header instanceof HTMLElement)) return;
+
+    const threshold = 3;
+
+    const hasExtraFormBar =
+      header.classList.contains('lx-form-with-tabs') ||
+      header.classList.contains('lx-form-with-steps');
+
+    const extraFormBarOffset = hasExtraFormBar
+      ? 3 * parseFloat(getComputedStyle(document.documentElement).fontSize)
+      : 0;
+
+    const toolbarTop = Math.floor(toolbar.getBoundingClientRect().top);
+    const headerBottom = Math.floor(header.getBoundingClientRect().bottom + extraFormBarOffset);
+
+    const overlap = headerBottom - toolbarTop;
+    toolbar.classList.toggle('lx-toolbar-hidden-under-header', overlap > threshold);
+  }
+
   function recalculateLayout() {
     if (frame) {
       cancelAnimationFrame(frame);
     }
 
     frame = requestAnimationFrame(async () => {
+      updateStickyVisibility();
+
       if (!toolbarRef.value) {
         return;
       }
@@ -714,7 +741,7 @@ export function useToolbarResponsiveness({
     resizeObserver.observe(toolbar);
 
     globalThis.addEventListener('resize', recalculateLayout);
-
+    globalThis.addEventListener('scroll', recalculateLayout, { passive: true });
     recalculateLayout();
   });
 

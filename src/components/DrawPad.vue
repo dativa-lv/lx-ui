@@ -35,6 +35,7 @@ const props = defineProps({
   showColorPicker: { type: Boolean, default: false, group: 'main', sequence: 3 },
   showClearAll: { type: Boolean, default: false, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
+  stickyToolbar: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
   builderOptions: {
@@ -424,14 +425,17 @@ if (props.builderOptions?.useRegistry) {
     unregisterBuilderInstance(props?.id);
   });
 }
+const wrapperRef = ref();
 </script>
 
 <template>
-  <div class="lx-field-wrapper" :data-id="id">
+  <div ref="wrapperRef" class="lx-field-wrapper" :data-id="id">
     <div ref="container" class="lx-drawpad-wrapper">
       <LxToolbar
         :disabled="props.disabled"
         :actionDefinitions="toolbarActions"
+        :sticky="stickyToolbar"
+        :wrapperRef="wrapperRef"
         @actionClick="toolbarActionClick"
       >
         <template #color>

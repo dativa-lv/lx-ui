@@ -62,6 +62,7 @@ const props = defineProps({
   ignoreThemeChange: { type: Boolean, default: false },
   hasUserLocation: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: () => [] },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -455,10 +456,13 @@ const additionalOptionsGroups = computed(() => [
     label: displayTexts.value.grayscale,
   },
 ]);
+
+const wrapperRef = ref();
 </script>
 <template>
   <div
     class="lx-map"
+    ref="wrapperRef"
     :style="grayscaleStyle"
     :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
   >
@@ -470,6 +474,8 @@ const additionalOptionsGroups = computed(() => [
         :hasSearch="showSearch"
         searchSide="server"
         :texts="displayTexts"
+        :sticky="stickyToolbar"
+        :wrapperRef="wrapperRef"
         @actionClick="toolbarActionClick"
         @search="emitSearch"
       >

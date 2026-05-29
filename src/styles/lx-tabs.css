@@ -187,7 +187,7 @@
   color: var(--color-data);
 }
 
-.lx-tab-control > header.lx-sticky.lx-toolbar::after {
+.lx:not(.lx-no-transparency) .lx-tab-control > header.lx-sticky.lx-toolbar::after {
   background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
   content: '';
   height: 3rem;

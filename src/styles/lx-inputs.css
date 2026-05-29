@@ -3760,9 +3760,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   max-height: calc(100vh - 10rem);
 }
 
-.lx-file-viewer .lx-pdf-wrapper.lx-pdf-wrapper-fullscreen {
-  margin-top: var(--space-3000);
-}
 
 .lx-file-viewer .lx-file-viewer-loader {
   position: absolute;

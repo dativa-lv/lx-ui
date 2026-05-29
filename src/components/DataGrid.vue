@@ -112,6 +112,7 @@ const props = defineProps({
   locale: { type: String, default: null }, // lv, en
   fullBleed: { type: Boolean, default: true },
   badgeDefinitions: { type: Array, default: () => [] },
+  stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -1349,14 +1350,23 @@ const computedGridColumnCount = computed(() => {
   return colCount.value + actionColumns - selectingColumn;
 });
 
+const toolbarRef = ref(null);
+const { height: toolbarHeight } = useElementSize(toolbarRef);
+
+const stickyToolbarAdditionalHeight = computed(() => {
+  if (!props.stickyToolbar) return '';
+  return `--sticky-toolbar-additional-height: calc(${Math.floor(
+    toolbarHeight.value
+  )}px - var(--row-size));`;
+});
 defineExpose({ cancelSelection, selectRows, sortBy });
 </script>
 <template>
   <div
     ref="dataGridWrapperRef"
     class="lx-data-grid-wrapper"
-    :style="`${topOutOfBounds} ${fullBleedMargin}`"
-    :class="[{ 'lx-grid-sticky': stickyHeader }]"
+    :style="`${topOutOfBounds} ${fullBleedMargin} ${stickyToolbarAdditionalHeight}`"
+    :class="[{ 'lx-grid-sticky': stickyHeader }, { 'lx-grid-sticky-toolbar': props.stickyToolbar }]"
   >
     <header v-if="showHeader">
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
@@ -1377,7 +1387,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
 
     <div
       v-if="isToolbarVisible"
-      :class="[{ 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length }]"
+      ref="toolbarRef"
+      :class="[
+        { 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length },
+        { 'lx-sticky-toolbar-list-wrapper': props.stickyToolbar },
+      ]"
     >
       <LxToolbar
         class="lx-grid-toolbar"
@@ -1398,6 +1412,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           clear: displayTexts.clearSearch,
           clearSelected: displayTexts.clear,
         }"
+        :sticky="stickyToolbar"
+        :wrapperRef="dataGridWrapperRef"
         @actionClick="toolbarClick"
         @search="search"
         @selectAll="selectRows"
