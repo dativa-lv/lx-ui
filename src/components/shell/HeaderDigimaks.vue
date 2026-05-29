@@ -1,17 +1,18 @@
 <script setup>
-import { computed, ref, watch, provide, inject } from 'vue';
+import { computed, ref, watch, provide, inject, defineAsyncComponent } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import LxEmptyState from '@/components/EmptyState.vue';
-import LxInfoBox from '@/components/InfoBox.vue';
-import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import { shortenUserName } from '@/utils/stringUtils';
-import LxAvatar from '@/components/Avatar.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
+
+const LxMegaMenu = defineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
+const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
+const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
+const LxAvatar = defineAsyncComponent(() => import('@/components/Avatar.vue'));
 
 const props = defineProps({
   mode: { type: String, default: 'default' },

@@ -1,23 +1,24 @@
 <script setup>
-import { computed, ref, watch, provide } from 'vue';
+import { computed, ref, watch, provide, defineAsyncComponent } from 'vue';
 
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import LxMegaMenu from '@/components/shell/MegaMenu.vue';
-import LxAvatar from '@/components/Avatar.vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxToggle from '@/components/Toggle.vue';
-import LxEmptyState from '@/components/EmptyState.vue';
 import LxBadge from '@/components/Badge.vue';
 
 import { shortenUserName } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
+
+const LxMegaMenu = defineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
+const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
+const LxAvatar = defineAsyncComponent(() => import('@/components/Avatar.vue'));
 
 const props = defineProps({
   mode: { type: String, default: 'default' },

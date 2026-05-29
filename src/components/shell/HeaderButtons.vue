@@ -1,12 +1,8 @@
 <script setup>
-import { computed, watch, ref, onMounted, inject } from 'vue';
+import { computed, watch, ref, onMounted, inject, defineAsyncComponent } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import LxMegaMenu from '@/components/shell/MegaMenu.vue';
-import LxAvatar from '@/components/Avatar.vue';
-import LxEmptyState from '@/components/EmptyState.vue';
-import LxInfoBox from '@/components/InfoBox.vue';
 import LxBadge from '@/components/Badge.vue';
 import { shortenUserName } from '@/utils/stringUtils';
 import {
@@ -15,6 +11,11 @@ import {
   secondsToMinutesAndSeconds,
 } from '@/utils/generalUtils';
 import { useWindowSize } from '@vueuse/core';
+
+const LxMegaMenu = defineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
+const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
+const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
+const LxAvatar = defineAsyncComponent(() => import('@/components/Avatar.vue'));
 
 const props = defineProps({
   mode: { type: String, default: 'default' },

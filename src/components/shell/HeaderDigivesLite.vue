@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, ref, provide, inject } from 'vue';
+import { computed, watch, ref, provide, inject, defineAsyncComponent } from 'vue';
 
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { useWindowSize } from '@vueuse/core';
@@ -9,8 +9,6 @@ import LxRow from '@/components/forms/Row.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-import LxInfoBox from '@/components/InfoBox.vue';
-import LxEmptyState from '@/components/EmptyState.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxBadge from '@/components/Badge.vue';
 import {
@@ -18,6 +16,9 @@ import {
   sessionEndsInText,
   secondsToMinutesAndSeconds,
 } from '@/utils/generalUtils';
+
+const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
+const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
 
 const props = defineProps({
   systemNameShort: { type: String, default: null },

@@ -28,3 +28,33 @@ app.use(createLx, {
     components: [LxSection, LxDataGrid],
   },
 });
+```
+
+## Shell Mode Preload Usage
+
+Shell in `lx-ui` now resolves mode views via `shellModeLoaders`.
+You can preload shell mode chunks directly with `preload.shellModes`.
+
+```js
+import { createApp } from 'vue';
+import { createLx } from '@dativa-lv/lx-ui';
+
+const app = createApp(App);
+
+app.use(createLx, {
+  systemId: 'portal',
+  authSessionKey: AUTH_KEY_TOKEN_SESSION,
+  authUrl: APP_CONFIG.authUrl,
+  authClientId: APP_CONFIG.clientId,
+  publicUrl: APP_CONFIG.publicUrl,
+  environment: APP_CONFIG.environment,
+
+  preload: {
+    shellModes: ['default', 'public'],
+  },
+});
+```
+
+Notes:
+
+- Unknown mode keys are ignored and logged as warnings.

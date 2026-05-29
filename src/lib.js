@@ -2,6 +2,7 @@
 import useLx from '@/hooks/useLx';
 import { logWarn } from '@/utils/devUtils';
 import { setGlobalProperties } from '@/utils/global';
+import { shellModeLoaders } from '@/components/shell/shellModeLoaders';
 
 /**
  * Install function for Vue plugin (called by Vue.use() or app.use())
@@ -16,6 +17,7 @@ import { setGlobalProperties } from '@/utils/global';
  * @property {string} environment - Current environment ('dev', 'test', 'prod', etc.)
  * @property {Object} [preload] - Configuration for preloading async components
  * @property {string[]} [preload.components] - Array of actual components to preload (e.g. [LxModal, LxDataGrid])
+ * @property {string[]} [preload.shellModes] - Array of shell mode names to preload (e.g. ['default', 'digimaks'])
  */
 function install(Vue, options) {
   // Don't install more than once
@@ -46,6 +48,16 @@ function install(Vue, options) {
         loaders.push(loaderFn);
       } else {
         logWarn('[lx-ui] Could not extract loader from component', globalEnvironment);
+      }
+    });
+  }
+
+  if (preloadConfig.shellModes?.length) {
+    preloadConfig.shellModes.forEach((mode) => {
+      if (shellModeLoaders[mode]) {
+        loaders.push(shellModeLoaders[mode]);
+      } else {
+        logWarn(`[lx-ui] Unknown shell mode for preload: "${mode}"`, globalEnvironment);
       }
     });
   }

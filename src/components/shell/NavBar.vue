@@ -1,13 +1,14 @@
 <script setup>
-import { computed, ref, provide, watch, inject } from 'vue';
+import { computed, ref, provide, watch, inject, defineAsyncComponent } from 'vue';
 import { vOnClickOutside } from '@vueuse/components';
 import { useWindowSize, useScroll } from '@vueuse/core';
 
 import LxButton from '@/components/Button.vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
-import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+
+const LxMegaMenu = defineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
 
 const props = defineProps({
   navItems: {

@@ -1,10 +1,8 @@
 <script setup>
-import { computed, ref, watch, provide } from 'vue';
+import { computed, ref, watch, provide, defineAsyncComponent } from 'vue';
 import { useWindowSize, onClickOutside } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import LxEmptyState from '@/components/EmptyState.vue';
-import LxInfoBox from '@/components/InfoBox.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxBadge from '@/components/Badge.vue';
 import {
@@ -12,6 +10,9 @@ import {
   sessionEndsInText,
   secondsToMinutesAndSeconds,
 } from '@/utils/generalUtils';
+
+const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
+const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
 
 const props = defineProps({
   navItems: {
