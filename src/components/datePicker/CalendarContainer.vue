@@ -34,6 +34,7 @@ import {
   positiveMod,
   formatTimeValue,
   getCadencedTimeItems,
+  constants,
 } from '@/components/datePicker/helpers';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -612,7 +613,7 @@ const isCurrentTimeVisibleInPicker = computed(() => {
   return hoursVisible && minutesVisible;
 });
 
-const isMobileScreen = computed(() => windowSize.width.value < 640);
+const isMobileScreen = computed(() => windowSize.width.value < constants.MOBILE_SCREEN_WIDTH);
 
 const isTimePickerVisible = computed(
   () =>

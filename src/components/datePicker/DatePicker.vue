@@ -31,6 +31,7 @@ import {
   isStandardTimeMask,
   isTimeWithinMinMax,
   normalizeFlexibleDateInput,
+  constants,
 } from '@/components/datePicker/helpers';
 import { DATE_VALIDATION_RESULT } from '@/constants';
 import LxCalendarContainer from '@/components/datePicker/CalendarContainer.vue';
@@ -1364,7 +1365,7 @@ const placeholderComputed = computed(() => {
   }
 });
 
-const isMobileScreen = computed(() => windowSize.width.value < 640);
+const isMobileScreen = computed(() => windowSize.width.value < constants.MOBILE_SCREEN_WIDTH);
 
 const computedPlacement = computed(() => {
   if (isMobileScreen.value) return 'bottom';

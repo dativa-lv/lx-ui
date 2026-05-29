@@ -15,6 +15,10 @@ import useLx from '@/hooks/useLx';
 import { DATE_VALIDATION_RESULT } from '@/constants';
 import { isDefined, isNil } from '@/utils/generalUtils';
 
+export const constants = {
+  MOBILE_SCREEN_WIDTH: 690,
+};
+
 export const normalizeDate = (d, mode = 'date') => {
   if (!d) return null;
 

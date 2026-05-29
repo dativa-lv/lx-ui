@@ -256,7 +256,7 @@
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-layouts.lx-full-layout {
-  width: 33.7rem;
+  width: 35rem;
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.quarters-only {
@@ -469,26 +469,34 @@
   position: relative;
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):not(.lx-disabled-date):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):not(.lx-disabled-date):focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):not(.lx-disabled-month):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):not(.lx-disabled-month):focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):not(.lx-disabled-year):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):not(.lx-disabled-year):focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):not(.lx-disabled-quarter):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):not(.lx-disabled-quarter):focus {
+  background-color: transparent;
+  color: var(--contrast-background);
+}
+
+.lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):not(.lx-disabled-date):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):not(.lx-disabled-month):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):not(.lx-disabled-year):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):not(.lx-disabled-quarter):hover {
   background-color: var(--color-grid-hover-background);
   color: var(--contrast-background);
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-day.lx-today:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):hover,
+
 .lx .lx-layout .lx-calendar-container .lx-calendar-day.lx-today:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-month.lx-today:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-month.lx-today:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-year.lx-today:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-year.lx-today:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):focus,
-.lx .lx-layout .lx-calendar-container .lx-calendar-quarter.lx-today:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-quarter.lx-today:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):focus {
+  background-color: transparent;
+}
+
+.lx .lx-layout .lx-calendar-container .lx-calendar-day.lx-today:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-month.lx-today:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-year.lx-today:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):hover,
+.lx .lx-layout .lx-calendar-container .lx-calendar-quarter.lx-today:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):hover {
   background-color: var(--color-grid-hover-background);
 }
 
