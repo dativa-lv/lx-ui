@@ -335,6 +335,30 @@ const {
   isActionDropDown,
 });
 
+const isLeftAreaEmpty = computed(
+  () =>
+    !(
+      (props.hasSelectAll && props.selectAllSide === 'left') ||
+      (props.hasSearch && autoSearchMode.value === 'default') ||
+      promotedAction.value?.area === 'left' ||
+      hasLeftAreaSlotContent.value ||
+      leftActionsVisibleGrouped.value.length > 0 ||
+      (defaultAreaComputed.value === 'right' && actionsOverflow.value.length > 0)
+    )
+);
+
+const isRightAreaEmpty = computed(
+  () =>
+    !(
+      (props.hasSelectAll && props.selectAllSide === 'right') ||
+      (props.hasSearch && autoSearchMode.value === 'compact') ||
+      promotedAction.value?.area === 'right' ||
+      hasRightAreaSlotContent.value ||
+      rightActionsVisibleGrouped.value.length > 0 ||
+      (defaultAreaComputed.value === 'left' && actionsOverflow.value.length > 0)
+    )
+);
+
 const searchStringRaw = ref(props.searchString);
 
 const updateSearchString = useDebounceFn(() => {
@@ -548,7 +572,11 @@ defineExpose({ toggleSearch, focusAction });
     role="toolbar"
   >
     <div class="first-row">
-      <div ref="leftAreaRef" class="left-area">
+      <div
+        ref="leftAreaRef"
+        class="left-area"
+        :class="{ 'lx-toolbar-area-empty': isLeftAreaEmpty }"
+      >
         <LxToolbarGroup v-if="hasSelectAll && selectAllSide === 'left'">
           <LxButton
             :id="`${id}-select-all`"
@@ -738,7 +766,11 @@ defineExpose({ toggleSearch, focusAction });
         </LxToolbarGroup>
       </div>
 
-      <div ref="rightAreaRef" class="right-area">
+      <div
+        ref="rightAreaRef"
+        class="right-area"
+        :class="{ 'lx-toolbar-area-empty': isRightAreaEmpty }"
+      >
         <LxToolbarGroup v-if="hasRightAreaSlotContent" ref="rightAreaSlotRef">
           <slot name="rightArea" />
         </LxToolbarGroup>
