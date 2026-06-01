@@ -83,13 +83,13 @@ importers:
         version: 14.0.0(vue@3.5.17(typescript@5.8.2))
       '@vueuse/integrations':
         specifier: 14.0.0
-        version: 14.0.0(axios@1.15.2)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))
+        version: 14.0.0(axios@1.16.0)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))
       avvvatars-vue:
         specifier: ^1.0.2
         version: 1.1.1(vue@3.5.17(typescript@5.8.2))
       axios:
-        specifier: 1.15.2
-        version: 1.15.2
+        specifier: 1.16.0
+        version: 1.16.0
       c2pa:
         specifier: ^0.22.3
         version: 0.22.6
@@ -100,8 +100,8 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       exifreader:
-        specifier: 4.38.1
-        version: 4.38.1
+        specifier: 4.39.0
+        version: 4.39.0
       focus-trap:
         specifier: ^7
         version: 7.6.4
@@ -1651,8 +1651,8 @@ packages:
     resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
     engines: {node: '>=4'}
 
-  axios@1.15.2:
-    resolution: {integrity: sha512-wLrXxPtcrPTsNlJmKjkPnNPK2Ihe0hn0wGSaTEiHRPxwjvJwT3hKmXF4dpqxmPO9SoNb2FsYXj/xEo0gHN+D5A==}
+  axios@1.16.0:
+    resolution: {integrity: sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -2207,8 +2207,8 @@ packages:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
     engines: {node: '>=10'}
 
-  exifreader@4.38.1:
-    resolution: {integrity: sha512-VUQ8pnWJHpnQXPQLgx4XBwjhj+eE0f5t4KhVFn6BnnTYKLf79DfjVRntR5061qE9NZgx2ohvE+JLXe/FWfCaAA==}
+  exifreader@4.39.0:
+    resolution: {integrity: sha512-lP/BslNNbT3zZDtNyVli8XaPCxKE8f0OXb5hGhPVqaoIGCvOVanICwM3FXO45MkDjI3KHgFBk0KKVAw/W4xP2A==}
 
   exit@0.1.2:
     resolution: {integrity: sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ==}
@@ -5262,13 +5262,13 @@ snapshots:
       '@vueuse/shared': 14.0.0(vue@3.5.17(typescript@5.8.2))
       vue: 3.5.17(typescript@5.8.2)
 
-  '@vueuse/integrations@14.0.0(axios@1.15.2)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))':
+  '@vueuse/integrations@14.0.0(axios@1.16.0)(focus-trap@7.6.4)(sortablejs@1.14.0)(vue@3.5.17(typescript@5.8.2))':
     dependencies:
       '@vueuse/core': 14.0.0(vue@3.5.17(typescript@5.8.2))
       '@vueuse/shared': 14.0.0(vue@3.5.17(typescript@5.8.2))
       vue: 3.5.17(typescript@5.8.2)
     optionalDependencies:
-      axios: 1.15.2
+      axios: 1.16.0
       focus-trap: 7.6.4
       sortablejs: 1.14.0
 
@@ -5438,7 +5438,7 @@ snapshots:
 
   axe-core@4.10.3: {}
 
-  axios@1.15.2:
+  axios@1.16.0:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.5
@@ -6183,7 +6183,7 @@ snapshots:
       signal-exit: 3.0.7
       strip-final-newline: 2.0.0
 
-  exifreader@4.38.1:
+  exifreader@4.39.0:
     optionalDependencies:
       '@xmldom/xmldom': 0.9.10
 
