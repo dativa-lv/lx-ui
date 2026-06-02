@@ -1,5 +1,15 @@
 # LX/UI Migration Guide
 
+## 2.1.12 → 2.2.0
+
+### Other changes
+
+#### Package manager switch: pnpm → Bun
+
+We have migrated from **pnpm** to **[Bun](https://bun.sh/) 1.3.14** as the package manager for LX/UI library. The `pnpm-lock.yaml` has been replaced with `bun.lock`.
+
+If you are contributing to this project, refer to the [Development Guide](DEVELOPMENT.md) for updated install steps.
+
 ## 2.1.10 → 2.1.11
 
 ### Breaking changes

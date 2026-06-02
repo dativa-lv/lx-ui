@@ -35,7 +35,7 @@ Check out our [🌐&nbsp;Demo](https://lx-ui.dev/) and
 ## Get
 
 ```bash
-pnpm i -w '@dativa-lv/lx-ui@latest'
+bun add '@dativa-lv/lx-ui@latest'
 ```
 
 For migration tips refer to [ℹ️&nbsp;Migration Guide](https://github.com/dativa-lv/lx-ui/blob/main/MIGRATION.md)
@@ -58,8 +58,8 @@ myApp.use(createLx());
 ## Develop
 
 ```bash
-pnpm
-pnpm dev
+bun install
+bun run dev
 ```
 
 Read more about development in [ℹ️&nbsp;Development manual](https://github.com/dativa-lv/lx-ui/blob/main/DEVELOPMENT.md)

@@ -66,20 +66,20 @@ The normal styles build (`dist/styles`) excludes bundle outputs by bundle names 
 
 1. Edit `bundles.config.js`.
 2. Add the file to `commonStyles`.
-3. Run `pnpm build`.
+3. Run `bun run build`.
 
 ### Add a style to one bundle only
 
 1. Edit `bundles.config.js`.
 2. Add the file under that bundle in `bundles`.
-3. Run `pnpm build`.
+3. Run `bun run build`.
 
 ### Exclude a bundle from common styles
 
 1. Edit `bundles.config.js`.
 2. Add the bundle name to `bundlesWithoutCommonStyles`.
 3. Keep only required files in that bundle's own array.
-4. Run `pnpm build`.
+4. Run `bun run build`.
 
 ## File Locations
 

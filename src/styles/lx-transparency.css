@@ -63,7 +63,7 @@
 }
 
 .lx.lx-no-transparency ::backdrop,
-.lx.lx-no-transparency.lx-theme-dark ::backdrop
+.lx.lx-no-transparency.lx-theme-dark ::backdrop,
 .lx.lx-no-transparency.lx-theme-contrast ::backdrop {
   --color-cover-background: transparent;
 }

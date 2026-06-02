@@ -1,50 +1,40 @@
 {
   "version": "2.0.0",
-  "command": "pnpm",
+  "command": "bun",
   "tasks": [
     {
       "label": "Build All",
       "type": "shell",
-      "command": "pnpm",
-      "args": [
-        "build"
-      ],
+      "command": "bun",
+      "args": ["run", "build"],
       "group": "build"
     },
     {
       "label": "Build Lib",
       "type": "shell",
-      "command": "pnpm",
-      "args": [
-        "build:lib"
-      ],
+      "command": "bun",
+      "args": ["run", "build:lib"],
       "group": "build"
     },
     {
       "label": "Build CSS",
       "type": "shell",
-      "command": "pnpm",
-      "args": [
-        "build:css"
-      ],
+      "command": "bun",
+      "args": ["run", "build:css"],
       "group": "build"
     },
     {
       "label": "Build Bundles",
       "type": "shell",
-      "command": "pnpm",
-      "args": [
-        "build:bundles"
-      ],
+      "command": "bun",
+      "args": ["run", "build:bundles"],
       "group": "build"
     },
     {
       "label": "Build Vite Plugins",
       "type": "shell",
-      "command": "pnpm",
-      "args": [
-        "build:vite"
-      ],
+      "command": "bun",
+      "args": ["run", "build:vite"],
       "group": "build"
     },
     {
@@ -53,9 +43,7 @@
       "group": {
         "kind": "test"
       },
-      "args": [
-        "test"
-      ]
+      "args": ["test"]
     },
     {
       "label": "install",
@@ -63,9 +51,7 @@
       "group": {
         "kind": "none"
       },
-      "args": [
-        "i"
-      ]
+      "args": ["i"]
     }
   ]
 }

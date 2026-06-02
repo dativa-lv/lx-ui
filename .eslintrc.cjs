@@ -2,18 +2,18 @@ module.exports = {
   ignorePatterns: ['vite.config.js', 'jsconfig.js', 'build.js'],
   settings: {
     'import/resolver': {
+      'custom-alias': {
+        alias: {
+          '@': './src',
+          'pdfjs-dist': './node_modules/pdfjs-dist',
+        },
+        extensions: ['.js', '.vue'],
+      },
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
       },
-      alias: {
-        extensions: ['.js', '.vue'],
-        map: [
-          ['@', './src'],
-          ['pdfjs-dist', './node_modules/pdfjs-dist'],
-        ],
-      },
     },
-    'import/core-modules': ['vue', 'pdfjs-dist'],
+    'import/core-modules': ['vue', 'vite', 'pdfjs-dist'],
   },
   env: {
     browser: true,

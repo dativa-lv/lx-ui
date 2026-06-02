@@ -7,26 +7,26 @@
   - [Setup](#setup)
   - [Development](#development)
   - [Trivy scan with docker](#trivy-scan-with-docker)
-    - [Filesystem vulnerabilities scan](#filesystem-vulnerabilities-scan)
+  - [Filesystem vulnerabilities scan](#filesystem-vulnerabilities-scan)
 
 <!-- /TOC -->
 
 ## Requirements
 
 - [Node.js](https://nodejs.org/en/download/)
-- [Pnpm](https://pnpm.io/installation)
+- [Bun](https://bun.sh/docs/installation)
 - [Git](https://git-scm.com/downloads)
 - [VSCode](https://code.visualstudio.com/download)
 
 ## Setup
 
 1. Clone **[lx/ui](https://github.com/dativa-lv/lx-ui)** repository
-2. Run `pnpm install` to install all dependencies
-3. Run `pnpm build` to build the package
+2. Run `bun install` to install all dependencies
+3. Run `bun run build` to build the package
 
 ## Development
 
-Use [`pnpm link`](https://pnpm.io/cli/link) in your project to check your changes before pushing.
+Use [`bun link`](https://bun.sh/docs/cli/link) in your project to check your changes before pushing.
 
 ## Trivy scan with docker
 

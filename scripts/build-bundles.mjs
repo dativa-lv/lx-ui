@@ -60,7 +60,7 @@ for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex += 1) {
   console.log(`[bundles] chunk ${chunkIndex + 1} bundles (${chunkNames.length}):`);
   console.log(`  ${chunkNames.join(', ')}`);
 
-  execSync('pnpm vite build --mode bundles', {
+  execSync('bun vite build --mode bundles', {
     stdio: 'inherit',
     env: {
       ...process.env,

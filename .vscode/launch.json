@@ -7,12 +7,10 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch via Pnpm",
-      "runtimeExecutable": "pnpm",
+      "name": "Launch via Bun",
+      "runtimeExecutable": "bun",
       "cwd": "${workspaceFolder}",
-      "runtimeArgs": [
-        "dev"
-      ]
+      "runtimeArgs": ["dev"]
     }
   ]
 }
