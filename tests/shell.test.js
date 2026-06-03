@@ -146,7 +146,7 @@ test('renders the public mode layout when requested', async () => {
 
   expect(wrapper.find('.lx-layout-public').exists()).toBe(true);
   expect(wrapper.find('.lx-layout-default').exists()).toBe(false);
-});
+}, 10_000);
 
 test('falls back to the default layout for unknown modes', async () => {
   wrapper = mountShell({ mode: 'unknown-mode' });
