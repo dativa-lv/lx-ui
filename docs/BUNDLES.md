@@ -1,4 +1,4 @@
-# Bundle Management System
+# CSS Bundling Guide
 
 ## Overview
 

@@ -8,9 +8,15 @@
 </p>
 
 <p align="center">
-  <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/%40dativa-lv%2Flx-ui" />
-  <img alt="NPM Version" src="https://img.shields.io/npm/v/%40dativa-lv%2Flx-ui" />
-  <img alt="NPM License" src="https://img.shields.io/npm/l/%40dativa-lv%2Flx-ui" />
+  <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/%40dativa-lv%2Flx-ui?color=green" />
+  <img alt="NPM Version" src="https://img.shields.io/npm/v/%40dativa-lv%2Flx-ui?color=green" />
+  <img alt="NPM License" src="https://img.shields.io/npm/l/%40dativa-lv%2Flx-ui?color=white" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/package-json/dependency-version/dativa-lv/lx-ui/peer/vue" alt="Vue.js Version" />
+  <img src="https://img.shields.io/github/package-json/dependency-version/dativa-lv/lx-ui/dev/vite" alt="Vite Version" />
+  <img src="https://img.shields.io/github/package-json/packageManager/dativa-lv/lx-ui?label=package%20manager" alt="Package Manager" />
 </p>
 
 ![LX/UI](https://raw.githubusercontent.com/dativa-lv/lx-ui/main/public/imgs/cover.png)
@@ -22,15 +28,15 @@ Check out our [🌐&nbsp;Demo](https://lx-ui.dev/) and
 
 ## Read the docs
 - [ℹ️ Design Tokens](https://github.com/dativa-lv/lx-ui/blob/main/docs/DesignTokens.md)
-- [ℹ️ Progressive Web App Guide](https://github.com/dativa-lv/lx-ui/blob/main/docs/PWA.md)
-- [🌐 Forms](https://lx.zzdats.lv/resources/forms)
-- [🌐 Colors](https://lx.zzdats.lv/resources/colors)
-- [🌐 Icons](https://lx.zzdats.lv/resources/icons)
-- [🌐 Utils](https://lx.zzdats.lv/resources/utility/stringUtils)
-### Declarative Tools
-- [🏗️ LxFormBuilder](https://github.com/dativa-lv/lx-ui/blob/main/docs/FormBuilder.md)
-- [🏗️ LxViewBuilder](https://github.com/dativa-lv/lx-ui/blob/main/docs/ViewBuilder.md)
-- 🛠️ LxFilterBuilder
+- [ℹ️ CSS Bundling](https://github.com/dativa-lv/lx-ui/blob/main/docs/BUNDLES.md)
+- [ℹ️ Action Definitions](https://github.com/dativa-lv/lx-ui/blob/main/docs/ActionDefinitions.md)
+- [ℹ️ Progressive Web App](https://github.com/dativa-lv/lx-ui/blob/main/docs/PWA.md)
+- [ℹ️ Component Preload](https://github.com/dativa-lv/lx-ui/blob/main/docs/ComponentPreload.md)
+- [ℹ️ Library Preload](https://github.com/dativa-lv/lx-ui/blob/main/docs/LibraryLoader.md)
+- [🌐 Forms](https://lx-ui.dev/resources/forms)
+- [🌐 Colors](https://lx-ui.dev/resources/colors)
+- [🌐 Icons](https://lx-ui.dev/resources/icons)
+- [🌐 Utils](https://lx-ui.dev/resources/utility/stringUtils)
 
 ## Get
 
@@ -54,6 +60,9 @@ myApp.use(createPinia());
 myApp.use(createLx());
 …
 ```
+## Extend
+
+ - [lx/builders](https://www.npmjs.com/package/@dativa-lv/lx-builders) - a companion library containing declarative design tools for views, forms, etc.
 
 ## Develop
 
@@ -63,6 +72,8 @@ bun run dev
 ```
 
 Read more about development in [ℹ️&nbsp;Development manual](https://github.com/dativa-lv/lx-ui/blob/main/DEVELOPMENT.md)
+
+
 
 ### Vite Plugins
 
