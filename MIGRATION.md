@@ -2,6 +2,41 @@
 
 ## 2.1.12 → 2.2.0
 
+### Breaking changes
+
+#### LxDropDown Component Removed
+
+The `LxDropDown` component has been removed. Use `LxValuePicker` with `variant="dropdown"` instead.
+
+**Before:**
+```js
+<LxDropDown 
+  v-model="selectedValue" 
+  :items="items" 
+  :placeholder="placeholder"
+/>
+```
+
+**After:**
+```js
+<LxValuePicker 
+  v-model="selectedValue" 
+  variant="dropdown"
+  :items="items" 
+  :placeholder="placeholder"
+/>
+```
+
+#### CSS File Renames
+
+Several CSS files have been renamed:
+
+- `lx-modal.css` → `lx-modals.css`
+- `lx-shell-grid-digimaks-lite.css` → `lx-shell-grid-digimaks.css`
+- `lx-shell-grid-digimaks.css` → `lx-shell-grid-nobid.css`
+
+If you are importing these files directly in your project, update your imports accordingly.
+
 #### LxFileUploader
 
 Removed `changeState` exposed function to change item states. Use emitted `v-model:itemsStates` instead.

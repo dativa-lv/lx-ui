@@ -454,7 +454,7 @@ a.lx-button.lx-button-ghost svg {
     fill: var(--color-toolbar-selection-button-icon-disabled);
 }
 
-/* Dropdown icon styles */
+/* DropDown icon styles */
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button svg,
 .lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button svg,
@@ -1237,7 +1237,7 @@ a.lx-button.lx-button-ghost svg {
   --toolbar-selection-button-grid-template-columns: 1fr;
 }
 
-/*** Dropdown styles ***/
+/*** DropDown styles ***/
 
 .lx-context-container {
   position: static !important;

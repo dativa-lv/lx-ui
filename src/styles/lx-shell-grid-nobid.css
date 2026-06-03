@@ -1,0 +1,303 @@
+/* CUSTOM STYLES BELOW */
+
+/*LxShell*/
+
+.lx-layout-digimaks > .lx-main {
+  padding: var(--space-0) var(--space-1000);
+}
+
+.lx-layout-digimaks > header {
+  position: fixed;
+  top: var(--space-0);
+  background-color: var(--color-background);
+  width: 100%;
+  z-index: 8100;
+}
+
+.lx-layout-digimaks .nav-toggle {
+  opacity: 1;
+  margin-left: var(--space-0);
+}
+
+.lx-layout-digimaks header .lx-header button.lx-button.nav-toggle .lx-badge,
+.lx-layout-digimaks nav .lx-nav-panel .lx-button .lx-badge {
+  inset: var(--space-0) var(--space-0) auto auto;
+}
+
+.lx-layout-digimaks .nav-toggle svg {
+  --color-button-ghost-icon: var(--color-label);
+}
+
+.lx-layout-digimaks > header nav {
+  background-color: var(--color-region);
+  min-height: var(--row-size);
+  height: calc(100dvh - var(--nav-row-size));
+  position: fixed;
+  top: var(--nav-row-size);
+}
+
+.lx-layout-digimaks nav .lx-nav-panel {
+  background-color: var(--color-region);
+  height: 100%;
+  width: 0;
+  position: fixed;
+  top: var(--space-0);
+  left: var(--space-0);
+}
+
+.lx:not(.lx-no-animations) .lx-layout-digimaks nav .lx-nav-panel {
+  transition: width 0.2s ease;
+}
+
+.lx-layout-digimaks .lx-header.lx-nav-panel-expanded nav .lx-nav-panel {
+  width: 100%;
+}
+
+/*** Nav styles ***/
+
+.lx-layout-digimaks .lx-nav-panel ul li .lx-button {
+  padding: var(--nav-item-padding);
+  margin: var(--space-0);
+  text-decoration: var(--nav-item-text-decoration);
+  height: var(--nav-item-height);
+  min-width: var(--nav-item-min-width);
+  width: var(--nav-item-width);
+  font-size: var(--nav-item-text-font-size);
+  font-weight: var(--nav-item-text-font-weight);
+  border: var(--nav-item-border);
+  border-radius: var(--nav-item-border-radius);
+  background-color: var(--color-nav-item-background);
+  color: var(--color-nav-item-text);
+  outline-offset: var(--nav-item-outline-offset);
+}
+
+.lx-layout-digimaks .lx-nav-panel ul li .lx-button-content-wrapper {
+  grid-template-areas: var(--nav-item-grid-areas);
+  grid-template-columns: var(--nav-item-grid-template-columns);
+  grid-template-rows: var(--nav-item-grid-template-rows);
+  gap: var(--nav-item-gap);
+}
+
+.lx-layout-digimaks .lx-nav-panel ul li .lx-button-content {
+  text-align: var(--nav-item-text-alignment);
+}
+
+.lx-layout-digimaks .lx-nav-panel ul li.lx-selected .lx-button {
+  color: var(--color-nav-item-text-selected);
+  background-color: var(--color-nav-item-background-selected);
+  border-color: var(--color-nav-item-border-selected);
+  border-left-color: var(--color-nav-item-border-left-selected);
+  border-collapse: collapse;
+}
+
+.lx-layout-digimaks .lx-nav-panel ul li .lx-button:hover {
+  background-color: var(--color-nav-item-background-hover);
+  border-color: var(--color-nav-item-border-hover);
+  color: var(--color-nav-item-text-hover);
+}
+
+.lx-layout-digimaks .lx-nav-panel ul li .lx-button svg {
+  height: var(--nav-item-icon-size);
+  width: var(--nav-item-icon-size);
+  --color-button-ghost-icon: var(--color-nav-item-icon);
+  --color-button-primary-icon: var(--color-nav-item-icon);
+  --color-button-primary-icon-focus: var(--color-nav-item-icon);
+  --color-button-primary-icon-active: var(--color-interactive-active-foreground);
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-nav-group:last-of-type .lx-button:active:not(:hover) svg {
+  --color-button-primary-icon-active: var(--color-nav-item-icon);
+}
+
+.lx-nav-panel .lx-nav-group ul.header-items {
+  list-style-type: none;
+  padding-inline-start: 0;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-nav-group {
+  width: 100%;
+}
+
+/* User Info */
+
+.lx-layout-digimaks .lx-nav-panel {
+  justify-content: flex-start;
+}
+
+.lx-layout-digimaks .lx-header nav .lx-nav-panel > .lx-nav-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.lx-layout-digimaks .lx-header nav .lx-nav-panel > .lx-nav-panel-group {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.lx-layout-digimaks .lx-header nav .lx-nav-panel > div > div {
+  display: flex;
+}
+
+.lx-layout-digimaks .lx-header.lx-nav-panel-expanded > .lx-group {
+  display: none;
+}
+
+.lx-layout-digimaks .lx-user-menu {
+  position: absolute;
+  height: calc(100% - var(--nav-row-size));
+  background-color: var(--color-region);
+  color: green;
+  width: 100%;
+  padding-left: var(--space-0);
+  margin-top: var(--space-0);
+  overflow: hidden;
+  left: 100vw;
+  top: var(--nav-row-size);
+}
+
+.lx:not(.lx-no-animations) .lx-layout-digimaks .lx-user-menu {
+  transition: left 0.2s ease;
+}
+
+.lx-layout-digimaks .lx-user-menu.lx-user-menu-expanded {
+  left: var(--space-0);
+  top: var(--nav-row-size);
+  height: calc(100% - var(--nav-row-size));
+}
+
+.lx-layout-digimaks .lx-user-menu p {
+  visibility: hidden;
+}
+
+.lx-layout-digimaks .lx-user-menu.lx-user-menu-expanded p {
+  visibility: visible;
+}
+
+.lx-layout-digimaks .lx-nav-panel-group {
+  flex-direction: column;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-nav-panel-group .lx-nav-group > .lx-user-button {
+  height: var(--nav-row-size);
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-0) var(--space-0750);
+  align-items: center;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-nav-panel-group .lx-nav-group > .lx-user-button > div {
+  align-items: center;
+  gap: var(--space-1000);
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  width: 100%;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-nav-panel-group .lx-nav-group > .lx-user-button svg {
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-button:hover,
+.lx-layout-digimaks .lx-nav-panel .lx-user-button:hover .lx-user-info p {
+  background-color: var(--color-nav-item-background-hover);
+  border-color: var(--color-nav-item-border-hover);
+  color: var(--color-nav-item-text-hover);
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-button:hover svg {
+  fill: var(--color-nav-item-text-hover);
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-button .lx-user-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: var(--nav-row-size);
+  overflow: hidden;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-button .lx-user-info p {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu > ul {
+  border-bottom: var(--border-width-1) solid var(--color-chrome);
+  list-style-type: none;
+  padding: var(--space-0);
+  margin: var(--space-0);
+  width: 100%;
+}
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu > ul:last-child {
+  border-bottom: var(--border-width-0);
+}
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu > ul:first-child {
+  border-bottom: var(--border-width-1) solid var(--color-chrome);
+}
+
+.lx-layout-digimaks
+  .lx-nav-panel
+  .lx-user-menu
+  > ul
+  > li.lx-user-menu-item
+  > .lx-button
+  > .lx-button-content-wrapper,
+.lx-layout-digimaks
+  .lx-nav-panel
+  .lx-user-menu
+  > ul
+  > li.lx-user-menu-item
+  .lx-context-container
+  .lx-dropdown-toggler
+  .lx-button
+  .lx-button-content-wrapper {
+  grid-template-areas: 'icon content';
+  grid-template-columns: auto 1fr;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu > ul > li.lx-user-menu-item .lx-context-container {
+  align-items: flex-start;
+}
+
+.lx-layout-digimaks
+  .lx-nav-panel
+  .lx-user-menu
+  > ul
+  > li.lx-user-menu-item
+  .lx-context-container
+  > .popper-wrapper {
+  width: 100%;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu .lx-user-menu-display {
+  display: flex;
+  flex-direction: column;
+  height: calc(4 * var(--nav-row-size));
+  padding-top: var(--space-1000);
+  align-items: center;
+  gap: var(--space-0250);
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu .lx-user-menu-display :not(.lx-avatar-display) {
+  text-align: center;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu .lx-user-menu-display > .lx-avatar-display {
+  height: 6rem;
+  width: 6rem;
+  align-self: center;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu .lx-user-menu-display > div > p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.lx-layout-digimaks .lx-nav-panel .lx-nav-header > div .lx-button svg {
+  --color-button-ghost-icon: var(--color-nav-item-icon);
+}

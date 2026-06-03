@@ -7,11 +7,11 @@ import LxButton from '@/components/Button.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxAutoComplete from '@/components/AutoComplete.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-import LxDropDown from '@/components/Dropdown.vue';
 import { onClickOutside } from '@vueuse/core';
 import LxPopper from '@/components/Popper.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
+import LxDropDown from '@/components/DropDown.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -90,7 +90,7 @@ const getIdAttributeString = (item) => {
         resArr[idKey] = item[idKey];
         if (resArr[idKey] === undefined) {
           throw new Error(
-            `Dropdown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(
+            `DropDown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(
               item
             )}`
           );
@@ -102,7 +102,7 @@ const getIdAttributeString = (item) => {
   const attribute = item[props.idAttribute];
   if (attribute === undefined) {
     throw new Error(
-      `Dropdown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(item)}`
+      `DropDown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(item)}`
     );
   }
   return attribute;

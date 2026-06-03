@@ -2,7 +2,7 @@
 import { onMounted, ref, computed, nextTick, watch } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
-import LxDropDown from '@/components/Dropdown.vue';
+import LxValuePicker from '@/components/ValuePicker.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
@@ -202,7 +202,12 @@ onMounted(() => {
       </div>
 
       <div class="lx-dropdown-container">
-        <LxDropDown :items="props.items" :modelValue="model" @update:modelValue="setActiveTab" />
+        <LxValuePicker
+          variant="dropdown"
+          :items="props.items"
+          :modelValue="model"
+          @update:modelValue="setActiveTab"
+        />
       </div>
     </header>
 

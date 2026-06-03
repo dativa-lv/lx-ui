@@ -6,7 +6,6 @@ The following input components share these tokens as they are visually and funct
 
 - LxTextInput
 - LxAutoComplete
-- LxDropDown
 - LxValuePicker `variant='dropdown'`
 - LxRotator
 - LxDayInput
