@@ -129,10 +129,12 @@
   --color-selected: var(--contrast-background);
   --color-selected-dropdown: var(--contrast-background);
 
+  --popover-border-width: var(--border-width-2);
+  --color-popover-checkmark: var(--contrast-background);
   --color-popover-item-text: var(--contrast-interactive);
   --color-popover-item-background: var(--contrast-background);
-  --color-popover-item-text-focus: var(--contrast-background);
   --color-popover-item-text-hover: var(--contrast-background);
+  --color-popover-item-icon-hover: var(--contrast-background);
 
   --color-nav-item-text: var(--contrast-foreground);
   --color-nav-item-icon: var(--contrast-foreground);

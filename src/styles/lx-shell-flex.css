@@ -374,7 +374,7 @@ code {
 }
 
 .lx .lx-layout .lx-dropdown-panel {
-  padding: var(--padding-dropdown);
+  padding: var(--popover-padding);
   top: var(--nav-row-size);
   background-color: var(--color-region);
   width: var(--aside-size);

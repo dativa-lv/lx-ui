@@ -1,4 +1,4 @@
-# Action Definitions
+# Action Definitions Guide
 
 The prop `actionDefinitions` is available for following components:
 - LxAppendableList

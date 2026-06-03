@@ -1,4 +1,3 @@
-, group: 'main'
 <script setup>
 import { ref, computed, onMounted, watch, inject, getCurrentInstance, onUnmounted } from 'vue';
 
@@ -306,13 +305,6 @@ const filesWithStates = computed(() =>
     ...getStateById(file.id),
   }))
 );
-
-/**
- * @deprecated Use `v-model:itemsStates` instead. This exposed API will be removed in the next LX major release.
- */
-function changeState(value) {
-  states.value = normalizeStates(value);
-}
 
 function getFiles() {
   if (!advancedFilesData.value) {
@@ -702,9 +694,7 @@ const showCameraButton = computed(() => {
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
-// Exposed variant of setting states will be deprecated in next LX major release
-
-defineExpose({ changeState, getFiles, isUploading });
+defineExpose({ getFiles, isUploading });
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();

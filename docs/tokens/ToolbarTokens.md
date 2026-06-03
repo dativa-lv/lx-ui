@@ -90,7 +90,7 @@
 | `--toolbar-button-ghost-icon-only-min-width`       | `--button-ghost-icon-only-min-width`         |
 | `--toolbar-button-ghost-icon-only-padding`         | `--button-ghost-icon-only-padding`           |
 | `--toolbar-button-ghost-icon-only-width`           | `--button-ghost-icon-only-min-width`         |
-| `--toolbar-selection-button-border`                | var(--button-border-width) solid transparent |
+| `--toolbar-selection-button-border`                | `--button-border-width` solid transparent |
 | `--toolbar-selection-button-border-radius`         | `--button-border-radius`                     |
 | `--toolbar-selection-button-text-font-size`        | `--button-text-font-size`                    |
 | `--toolbar-selection-button-text-font-weight`      | `--button-text-font-weight`                  |

@@ -353,35 +353,13 @@
   align-items: flex-end;
 }
 
-.lx .lx-layout .lx-dropdown-panel {
-  padding: var(--padding-dropdown);
-  top: var(--nav-row-size);
-  background-color: var(--color-region);
-  width: var(--aside-size);
-  box-shadow: var(--shadow-dropdown);
-  border: var(--region-border-transparent);
-  height: auto;
-  max-height: 75vh;
-  overflow-y: auto;
-  z-index: 1000;
-}
-
-.lx:not(.lx-theme-contrast) .lx-layout .lx-dropdown-default-content,
-.lx:not(.lx-theme-contrast) .lx-layout .lx-notifications-list .lx-notification,
-.lx:not(.lx-theme-contrast) .lx-layout .popper .lx-dropdown-panel {
+.lx:not(.lx-theme-contrast) .lx-layout .lx-notifications-list .lx-notification {
   --region-border-transparent: 1px solid var(--color-chrome);
 }
 
 .lx .lx-layout .lx-dropdown-panel .lx-group {
   padding-bottom: var(--space-0500);
   margin-bottom: var(--space-0500);
-  border-bottom: var(--border-width-1) solid var(--color-chrome);
-}
-
-.lx .lx-layout .lx-dropdown-panel .lx-group:last-of-type {
-  border-bottom: var(--border-width-0);
-  margin-bottom: var(--space-0);
-  padding-bottom: var(--space-0);
 }
 
 .lx .lx-layout.lx-dropdown-panel.lx-position-rb {
@@ -1229,7 +1207,8 @@
 }
 
 .lx .lx-layout .lx-alert-menu-list {
-  padding-inline-start: 0;
+  margin: var(--space-0);
+  padding: var(--space-0500) var(--space-0250);
   list-style: none;
   gap: var(--gap-buttons);
   display: grid;
@@ -1736,12 +1715,6 @@
   cursor: pointer;
 }
 
-.lx:not(.lx-touch-mode) .lx-layout .popper > .lx-dropdown-panel-wrapper
-  > .lx-dropdown-panel
-  > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {
-  padding: var(--space-0) var(--space-0250) var(--space-0) var(--space-1000);
-}
-
 .lx-touch-mode-controller {		
   border-top-color: transparent;		
 }
@@ -1862,6 +1835,7 @@
 }
 
 .lx-mega-menu-container {
+  position: relative;
   width: 100%;
   height: 75%;
   order: -1; /* Move slot items to the top */
@@ -1875,14 +1849,6 @@
 
 .lx-dropdown-panel:has(.lx-mega-menu-container) .lx-button.has-custom-color svg.lx-button-icon {
   fill: var(--dropdown-icon-fill);
-}
-
-.popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel:has(.lx-mega-menu-container) > .lx-dropdown-menu-group:has(+ .lx-mega-menu-container) {
-  border-bottom: var(--border-width-0);
-}
-
-.popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel:has(.primary-menu) > .lx-dropdown-menu-group:first-of-type > .lx-label {
-  margin-top: var(--space-0500);
 }
 
 .lx .lx-layout .lx-mega-menu-container ul {
@@ -1900,8 +1866,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: .5rem;
-  border-bottom: var(--border-width-1) solid var(--color-chrome);
-  padding-bottom: var(--space-0500);
+  padding: var(--space-0500) var(--space-0250);
 }
 
 .lx .lx-layout .lx-mega-menu-container ul.primary-menu .primary-menu-tile .lx-data {
@@ -1961,7 +1926,6 @@
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel:not(:has(.lx-dropdown-menu-group)) .lx-mega-menu-container .primary-menu {
   border-bottom: var(--border-width-0);
-  padding-bottom: var(--space-0);
 }
 
 .lx-view-layout {

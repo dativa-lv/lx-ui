@@ -526,7 +526,7 @@ header.lx.lx-header-wrapper .lx-header>.lx-right-group .lx-button:active {
   border-color: var(--color-header-hover-background);
 }
 
-/** Dropdown icon styles **/
+/** DropDown icon styles **/
 
 .lx.lx-header-wrapper .lx-dropdown-panel .user-menu-panel .lx-button svg,
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button svg,
@@ -1137,7 +1137,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   background: var(--color-red);
 }
 
-/** Dropdown styles **/
+/** DropDown styles **/
 
 .lx-context-container {
   position: static !important;
@@ -1189,7 +1189,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 }
 
 .lx.lx-header-wrapper .lx-dropdown-panel {
-  padding: var(--padding-dropdown);
+  padding: var(--popover-padding);
   top: var(--nav-row-size);
   background-color: var(--color-region);
   width: var(--aside-size);
@@ -1201,7 +1201,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   z-index: 1000;
 }
 
-/** Dropdown button styles **/
+/** DropDown button styles **/
 
 .lx-button-set {
   display: flex;
@@ -1220,16 +1220,17 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button,
 .lx.lx-header-wrapper .lx-dropdown-panel > div > .lx-button,
 .lx.lx-header-wrapper .lx-dropdown-panel > .lx-button {
-  padding: var(--popover-item-padding);
+  padding: var(--popover-item-padding-s);
   margin: var(--space-0);
   text-decoration: var(--popover-item-text-decoration);
-  height: var(--popover-item-height);
-  min-width: var(--popover-item-min-width);
-  width: var(--popover-item-width);
+  height: var(--row-size-dynamic);
+  width: 100%;
   font-size: var(--popover-item-text-font-size);
   font-weight: var(--popover-item-text-font-weight);
-  border: var(--popover-item-border);
-  border-radius: var(--popover-item-border-radius);
+  border-width: var(--popover-item-border-width);
+  border-style: var(--popover-item-border-style);
+  border-color: var(--color-popover-item-border);
+  border-radius: var(--popover-item-border-radius-inner);
   background-color: var(--color-popover-item-background);
   color: var(--color-popover-item-text);
   outline-offset: var(--popover-item-outline-offset);

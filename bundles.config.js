@@ -22,7 +22,7 @@ export const commonStyles = [
   'lx-steps',
   'lx-forms',
   'lx-notifications',
-  'lx-modal',
+  'lx-modals',
   'lx-loaders',
   'lx-lists',
   'lx-expanders',
@@ -42,6 +42,7 @@ export const commonStyles = [
   'lx-toggles',
   'lx-content-switchers',
   'lx-badges',
+  'lx-popovers',
   // add new style file names here (without .css extension)
 ];
 
@@ -66,8 +67,8 @@ export const bundles = {
   'lx-bt-visvaris-education': ['lx-pt-visvaris-education'],
   'lx-bt-lvas': ['lx-pt-lvas'],
   'lx-bt-oots': ['lx-fonts-latvijalv', 'lx-pt-oots', 'lx-shell-grid-public', 'lx-pt-latvijalv'],
-  'lx-bt-digimaks': ['lx-pt-digimaks', 'lx-shell-grid-digimaks-lite'],
-  'lx-bt-nobid': ['lx-pt-nobid', 'lx-shell-grid-digimaks'],
+  'lx-bt-digimaks': ['lx-pt-digimaks', 'lx-shell-grid-digimaks'],
+  'lx-bt-nobid': ['lx-pt-nobid', 'lx-shell-grid-nobid'],
   'lx-bt-droni': ['lx-pt-droni'],
   'lx-bt-shell-widget': ['lx-shell-widget', 'lx-pt-carbon', 'lx-ut-carbon-light'],
   'lx-bt-riga': ['lx-pt-riga'],

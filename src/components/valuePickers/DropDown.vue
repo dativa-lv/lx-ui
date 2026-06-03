@@ -7,11 +7,11 @@ import LxButton from '@/components/Button.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxAutoComplete from '@/components/AutoComplete.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-import LxDropDown from '@/components/Dropdown.vue';
 import { onClickOutside } from '@vueuse/core';
 import LxPopper from '@/components/Popper.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
+import LxDropDown from '@/components/DropDown.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -90,7 +90,7 @@ const getIdAttributeString = (item) => {
         resArr[idKey] = item[idKey];
         if (resArr[idKey] === undefined) {
           throw new Error(
-            `Dropdown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(
+            `DropDown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(
               item
             )}`
           );
@@ -102,7 +102,7 @@ const getIdAttributeString = (item) => {
   const attribute = item[props.idAttribute];
   if (attribute === undefined) {
     throw new Error(
-      `Dropdown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(item)}`
+      `DropDown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(item)}`
     );
   }
   return attribute;
@@ -765,37 +765,40 @@ function countDigits(number) {
                       v-if="
                         index === 0 && hasSelectAll && selectionKind === 'multiple' && !isItemsEmpty
                       "
-                      id="select-all"
-                      class="lx-value-picker-item select-all lx-aligned-row"
-                      :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
-                      :tabindex="
-                        highlightedItemId === 'select-all' ? '0' : !highlightedItemId ? '0' : '-1'
-                      "
-                      role="button"
-                      :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-                      @keydown.enter.prevent="selectAll"
-                      @keydown.space.prevent="selectAll"
-                      @click="selectAll"
+                      class="select-all-wrapper"
                     >
-                      <LxIcon
-                        :value="
-                          areSomeSelected
-                            ? areAllSelected
-                              ? 'checkbox-filled'
-                              : 'checkbox-indeterminate'
-                            : 'checkbox'
+                      <div
+                        id="select-all"
+                        class="lx-value-picker-item select-all lx-popover-item-selecting"
+                        :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
+                        :tabindex="
+                          highlightedItemId === 'select-all' ? '0' : !highlightedItemId ? '0' : '-1'
                         "
-                      />
-                      <span>
-                        {{ areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll }}
-                      </span>
+                        role="button"
+                        :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+                        @keydown.enter.prevent="selectAll"
+                        @keydown.space.prevent="selectAll"
+                        @click="selectAll"
+                      >
+                        <LxIcon
+                          :value="
+                            areSomeSelected
+                              ? areAllSelected
+                                ? 'checkbox-filled'
+                                : 'checkbox-indeterminate'
+                              : 'checkbox'
+                          "
+                        />
+                        <span>
+                          {{ areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll }}
+                        </span>
+                      </div>
                     </div>
-
                     <!-- Normal item rendering -->
                     <div
                       v-if="getIdAttributeString(item) !== 'select-all'"
                       :title="item[nameAttribute]"
-                      class="lx-value-picker-item lx-aligned-row"
+                      class="lx-value-picker-item lx-popover-item-text-only"
                       :tabindex="
                         highlightedItemId && highlightedItemId === getIdAttributeString(item)
                           ? '0'
@@ -816,7 +819,7 @@ function countDigits(number) {
                           'lx-selected': isItemSelected(item),
                         },
                         {
-                          'dropdown-multiple lx-aligned-row-inverse lx-aligned-row-2':
+                          'dropdown-multiple lx-popover-item-selecting':
                             selectionKind === 'multiple',
                         },
                       ]"
@@ -848,6 +851,11 @@ function countDigits(number) {
                           <slot name="customItemDropdown" v-bind="item"></slot>
                         </div>
                       </label>
+                      <LxIcon
+                        v-if="itemsModel[item[idAttribute]] && selectionKind === 'single'"
+                        customClass="lx-popover-item-checkmark"
+                        value="tick"
+                      />
                     </div>
                   </template>
                 </div>

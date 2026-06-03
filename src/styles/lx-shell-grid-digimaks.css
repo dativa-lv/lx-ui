@@ -1,31 +1,26 @@
-/* CUSTOM STYLES BELOW */
-
-/*LxShell*/
-
-.lx-layout-digimaks > .lx-main {
-  padding: var(--space-0) var(--space-1000);
-}
-
 .lx-layout-digimaks > header {
   position: fixed;
   top: var(--space-0);
-  background-color: var(--color-background);
   width: 100%;
   z-index: 8100;
 }
 
+.lx-layout-digimaks > header:not(:has(.lx-nav-panel-expanded)) {
+  -webkit-backdrop-filter: blur(0.125rem);
+  backdrop-filter: blur(0.125rem);
+  background-color: transparent;
+}
+
 .lx-layout-digimaks .nav-toggle {
   opacity: 1;
-  margin-left: var(--space-0);
+  margin-left: var(--space-0) !important;
 }
 
-.lx-layout-digimaks header .lx-header button.lx-button.nav-toggle .lx-badge,
-.lx-layout-digimaks nav .lx-nav-panel .lx-button .lx-badge {
-  inset: var(--space-0) var(--space-0) auto auto;
-}
-
-.lx-layout-digimaks .nav-toggle svg {
-  --color-button-ghost-icon: var(--color-label);
+.lx-layout-digimaks header > .lx-header:not(.lx-nav-panel-expanded) > .lx-group.lx-group-header,
+.lx-layout-digimaks header > .lx-header > nav .lx-nav-header  {
+  padding: var(--space-0) var(--space-1000);
+  display: flex;
+  justify-content: space-between;
 }
 
 .lx-layout-digimaks > header nav {
@@ -55,7 +50,7 @@
 
 /*** Nav styles ***/
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button {
+.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button {
   padding: var(--nav-item-padding);
   margin: var(--space-0);
   text-decoration: var(--nav-item-text-decoration);
@@ -71,18 +66,18 @@
   outline-offset: var(--nav-item-outline-offset);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button-content-wrapper {
+.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button-content-wrapper {
   grid-template-areas: var(--nav-item-grid-areas);
   grid-template-columns: var(--nav-item-grid-template-columns);
   grid-template-rows: var(--nav-item-grid-template-rows);
   gap: var(--nav-item-gap);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button-content {
+.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button-content {
   text-align: var(--nav-item-text-alignment);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li.lx-selected .lx-button {
+.lx-layout-digimaks .lx-nav-panel-group ul li.lx-selected .lx-button {
   color: var(--color-nav-item-text-selected);
   background-color: var(--color-nav-item-background-selected);
   border-color: var(--color-nav-item-border-selected);
@@ -90,19 +85,19 @@
   border-collapse: collapse;
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button:hover {
+.lx-layout-digimaks .lx-nav-panel-group ul li:not(.lx-selected) .lx-button:hover {
   background-color: var(--color-nav-item-background-hover);
   border-color: var(--color-nav-item-border-hover);
   color: var(--color-nav-item-text-hover);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button svg {
+.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button svg {
   height: var(--nav-item-icon-size);
   width: var(--nav-item-icon-size);
+  fill: var(--color-nav-item-icon);
   --color-button-ghost-icon: var(--color-nav-item-icon);
   --color-button-primary-icon: var(--color-nav-item-icon);
   --color-button-primary-icon-focus: var(--color-nav-item-icon);
-  --color-button-primary-icon-active: var(--color-interactive-active-foreground);
 }
 
 .lx-layout-digimaks .lx-nav-panel .lx-nav-group:last-of-type .lx-button:active:not(:hover) svg {
@@ -124,9 +119,10 @@
   justify-content: flex-start;
 }
 
-.lx-layout-digimaks .lx-header nav .lx-nav-panel > .lx-nav-header {
+.lx-layout-digimaks .lx-header nav .lx-nav-panel>.lx-nav-header {
   display: flex;
   justify-content: space-between;
+  overflow-y: hidden;
 }
 
 .lx-layout-digimaks .lx-header nav .lx-nav-panel > .lx-nav-panel-group {
@@ -182,7 +178,7 @@
   height: var(--nav-row-size);
   display: flex;
   justify-content: space-between;
-  padding: var(--space-0) var(--space-0750);
+  padding: var(--space-0) var(--space-1000) var(--space-0) var(--space-2000);
   align-items: center;
 }
 
@@ -272,7 +268,7 @@
   width: 100%;
 }
 
-.lx-layout-digimaks .lx-nav-panel .lx-user-menu .lx-user-menu-display {
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu-display {
   display: flex;
   flex-direction: column;
   height: calc(4 * var(--nav-row-size));
@@ -281,17 +277,17 @@
   gap: var(--space-0250);
 }
 
-.lx-layout-digimaks .lx-nav-panel .lx-user-menu .lx-user-menu-display :not(.lx-avatar-display) {
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu-display :not(.lx-avatar-display) {
   text-align: center;
 }
 
-.lx-layout-digimaks .lx-nav-panel .lx-user-menu .lx-user-menu-display > .lx-avatar-display {
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu-display > .lx-avatar-display {
   height: 6rem;
   width: 6rem;
   align-self: center;
 }
 
-.lx-layout-digimaks .lx-nav-panel .lx-user-menu .lx-user-menu-display > div > p {
+.lx-layout-digimaks .lx-nav-panel .lx-user-menu-display > div > p {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -300,4 +296,289 @@
 
 .lx-layout-digimaks .lx-nav-panel .lx-nav-header > div .lx-button svg {
   --color-button-ghost-icon: var(--color-nav-item-icon);
+  --color-button-ghost-icon-focus: var(--color-nav-item-icon);
+  --color-button-ghost-icon-hover: var(--color-nav-item-icon);
+  --color-button-ghost-icon-active: var(--color-nav-item-icon);
+}
+
+.lx-layout-digimaks .lx-nav-panel ul li .lx-button {
+  --nav-item-padding: var(--space-0) var(--space-1000) var(--space-0) var(--space-2000);
+  --button-tertiary-width: 100%;
+}
+
+.lx-layout-digimaks > .lx-main {
+  padding: var(--space-1000);
+  padding-top: var(--space-4000); /* Header height + 2rem */
+}
+
+.lx-layout-digimaks > header > .lx-header:not(.lx-nav-panel-expanded) .lx-button.nav-toggle {
+  --color-button-ghost-background: var(--color-background);
+  --color-button-ghost-background-hover: var(--color-background);
+  /* TODO: add more styles for hover etc. */
+}
+
+.lx-layout-digimaks > header > .lx-header:not(.lx-nav-panel-expanded) .lx-button.nav-toggle .lx-button-icon {
+  --color-button-ghost-icon: var(--color-brand);
+  --color-button-ghost-icon-focus: var(--color-brand);
+  --color-button-ghost-icon-hover: var(--color-brand);
+}
+
+.lx-layout-digimaks > header > .lx-header .lx-left-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-0500);
+}
+
+.lx-layout-digimaks > header > .lx-header .lx-left-group > p {
+  font-weight: var(--font-weight-bold);
+  padding-left: var(--space-0500);
+}
+
+.lx-layout-digimaks header > .lx-badge.lx-badge-beta {
+  position: fixed;
+  top: var(--space-0750);
+  border-color: var(--color-warning);
+  --color-badge-background: var(--color-warning);
+  --color-badge-text: var(--color-region);
+  right: calc(var(--button-secondary-icon-only-height) * 2 + var(--space-3000)); /* 2 dashboard right side buttons + gaps */
+  z-index: 101;
+}
+
+.lx-layout-digimaks #modals .lx-modal footer .lx-button {
+  margin-bottom: var(--native-inset-bottom, 0px);
+  --modal-button-primary-height: 5rem;
+  --modal-button-secondary-height: 5rem;
+}
+
+.lx-layout-digimaks > header > .lx-header .lx-button.lx-nav-back {
+  --color-button-ghost-background: var(--color-background);
+  --color-button-ghost-background-hover: var(--color-background);
+  --color-button-ghost-background-focus: var(--color-background);
+  --color-button-ghost-background-active: var(--color-background);
+  /* TODO: add other styles */
+}
+
+.lx-layout-digimaks > header > .lx-header .lx-button.lx-nav-back svg {
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
+  --color-button-ghost-icon-hover: var(--color-data);
+  --color-button-ghost-icon-active: var(--color-data);
+  /* TODO: add other styles */
+}
+
+/* header actions */
+
+.lx-layout-digimaks > .lx-main .lx-view-layout > .header-container {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: var(--space-0);
+  right: var(--space-0);
+  z-index: 101;
+  margin-right: var(--space-1000);
+  gap: var(--space-0500);
+}
+
+.lx-layout-digimaks:has(header .lx-header .lx-group-header .lx-button.lx-nav-back) > .lx-main .lx-view-layout > .header-container {
+  right: calc(var(--space-3000) + var(--space-0500));
+}
+
+.lx-layout-digimaks > .lx-main .lx-view-layout > .header-container .lx-button{
+  background-color: var(--color-region);
+  /* TODO: add more styles for hover etc. */
+}
+
+.lx-layout-digimaks:has(.lx-header.lx-nav-panel-expanded) > .lx-main .lx-view-layout > .header-container {
+  display: none;
+}
+
+/* footer */
+
+.lx-layout-digimaks > .lx-main .lx-view-layout > .footer-container {
+  position: fixed;
+  bottom: var(--space-0);
+  left: var(--space-0);
+  width: 100%;
+  background-color: var(--color-background);
+  padding: var(--space-1000);
+  z-index: 100;
+  display: flex;
+  border-top: var(--border-width-1) solid var(--color-chrome);
+}
+
+
+.lx-layout-digimaks .lx-settings-menu {
+  position: absolute;
+  left: var(--space-0);
+  bottom: var(--space-0);
+  width: 100%;
+  height: 100%;
+  z-index: 105;
+  background-color: var(--color-background);
+  padding: var(--space-0) var(--space-1000);
+  overflow-y: scroll;
+  padding-bottom: var(--space-3000);
+}
+
+.lx-layout-digimaks .lx-settings-menu .lx-settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.lx-layout-digimaks .lx-settings-menu .lx-settings-header > p {
+  font-weight: var(--font-weight-bold);
+  padding-left: var(--space-0500);
+}
+ 
+/* Settings menu */
+
+.lx-layout-digimaks .lx-settings-menu > .lx-button {
+  --button-tertiary-width: 100%;
+}
+
+.lx-layout-digimaks .lx-settings-menu > .lx-form-grid > .lx-main > .lx-form-section {
+  padding-left: var(--space-0500);
+  padding-bottom: var(--space-0);
+  gap: var(--space-0250);
+}
+
+.lx-layout-digimaks .lx-settings-menu > * {
+  padding-bottom: var(--space-1000);
+}
+
+.lx-layout-digimaks .lx-settings-menu > .lx-form-grid {
+  border: var(--border-width-0);
+  padding-bottom: var(--space-0);
+}
+
+.lx-layout-digimaks .lx-settings-menu > .lx-shell-custom-button .lx-button,
+.lx-layout-digimaks .lx-settings-menu > .settings-button > .lx-button{
+  --button-tertiary-width: 100%;
+}
+
+.lx-layout-digimaks .lx-header .lx-shell-custom-button .lx-button.lx-header-button:not(.lx-disabled):hover {
+  background-color: var(--color-button-tertiary-background-hover);
+  border-color: var(--color-button-tertiary-border-hover);
+}
+
+.lx-layout-digimaks .lx-header .lx-shell-custom-button .lx-button.lx-header-button:not(.lx-disabled):hover svg {
+  fill: var(--color-button-tertiary-icon-hover);
+}
+
+.lx-layout-digimaks .lx-settings-menu > ul {
+  list-style-type: none;
+  margin: var(--space-0);
+  padding-left: var(--space-0);
+  padding-top: var(--space-1000);
+  border-top: var(--border-width-2) solid var(--color-chrome);
+}
+
+.lx-layout-digimaks .lx-settings-menu > ul li {
+  padding-bottom: var(--space-1000);
+}
+
+.lx-layout-digimaks .lx-settings-menu>ul li:last-of-type {
+  padding-bottom: var(--space-0);
+}
+
+.lx-layout-digimaks .lx-settings-menu .lx-settings-link {
+  height: var(--list-item-min-height);
+  border: var(--border-width-2) solid var(--color-chrome);
+  border-radius: var(--list-item-border-radius);
+  padding-bottom: var(--space-0);
+  margin-bottom: var(--space-1000);
+}
+
+.lx-layout-digimaks .lx-settings-menu .lx-settings-link:last-of-type {
+  margin-bottom: var(--space-0);
+}
+
+.lx-layout-digimaks .lx-settings-menu .lx-settings-link .lx-button {
+  --color-button-tertiary-text: var(--color-list-primary);
+  --color-button-tertiary-background: var(--color-list-background);
+  --color-button-tertiary-icon: var(--color-list-primary);
+  --color-button-tertiary-text-hover: var(--color-list-primary);
+  --color-button-tertiary-background-hover: var(--color-list-background);
+  --color-button-tertiary-icon-hover: var(--color-list-primary);
+  --color-button-tertiary-text-focus: var(--color-list-primary);
+  --color-button-tertiary-background-focus: var(--color-list-background);
+  --color-button-tertiary-icon-focus: var(--color-list-primary);
+  --color-button-tertiary-text-active: var(--color-list-primary);
+  --color-button-tertiary-background-active: var(--color-list-background);
+  --color-button-tertiary-icon-active: var(--color-list-primary);
+  --button-tertiary-border: var(--border-width-0);
+  --button-tertiary-border-radius: var(--list-item-border-radius);
+  --button-tertiary-padding: var(--space-0500) var(--space-0) var(--space-0250) var(--space-1000);
+  --button-tertiary-height: 100%;
+  --button-icon-width: var(--list-icon-size);
+  --button-icon-height: var(--list-icon-size);
+  --button-tertiary-text-font-weight: var(--font-weight);
+}
+
+.lx-layout-digimaks .lx-settings-menu .lx-tag {
+  border-radius: var(--border-radius-default);
+}
+
+.lx-layout-digimaks>header:has(>.lx-header .lx-left-group:empty) {
+  height: 0;
+}
+
+.lx-layout-digimaks header>.lx-header:not(.lx-nav-panel-expanded)>.lx-group.lx-group-header {
+  padding-bottom: var(--space-0250);
+}
+
+
+.lx .lx-layout-digimaks nav .lx-nav-panel {
+  height: 100vh;
+  height: 100dvh;
+}
+
+.lx .lx-layout-digimaks nav .lx-nav-panel .lx-nav-header {
+  padding-bottom: var(--space-0250);
+  overflow-x: hidden;
+}
+
+.lx .lx-layout-digimaks a:hover {
+  --color-interactive-hover-foreground: var(--color-interactive-background);
+  --color-interactive-hover-background: transparent;
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button.lx-destructive {
+  --color-button-destructive: var(--color-button-primary-text);
+  --color-button-destructive-background: var(--color-button-primary-background);
+  --color-button-destructive-border: var(--color-button-primary-background);
+  --color-button-destructive-icon: var(--color-button-primary-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button-secondary.lx-destructive {
+  --color-button-destructive: var(--color-button-secondary-text);
+  --color-button-destructive-background: var(--color-button-secondary-background);
+  --color-button-destructive-border: var(--color-chrome);
+  --color-button-destructive-icon: var(--color-button-secondary-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button-tertiary.lx-destructive {
+  --color-button-destructive: var(--color-button-tertiary-text);
+  --color-button-destructive-background: var(--color-button-tertiary-background);
+  --color-button-destructive-border: var(--color-button-tertiary-text);
+  --color-button-destructive-icon: var(--color-button-tertiary-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button-ghost.lx-destructive {
+  --color-button-destructive: var(--color-button-ghost-text);
+  --color-button-destructive-background: var(--color-button-ghost-background);
+  --color-button-destructive-border: var(--color-button-ghost-background);
+  --color-button-destructive-icon: var(--color-button-ghost-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-dropdown-panel .lx-button.lx-destructive {
+  --color-button-destructive: var(--color-popover-item-text);
+  --color-button-destructive-background: var(--color-popover-item-background);
+  --color-button-destructive-border: transparent;
+  --color-button-destructive-icon: var(--color-popover-item-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button {
+  outline: none;
 }

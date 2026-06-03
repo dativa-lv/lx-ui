@@ -2,7 +2,7 @@
 import { computed, watch, ref, provide, inject } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
-import LxDropDown from '@/components/Dropdown.vue';
+import LxValuePicker from '@/components/ValuePicker.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { useWindowSize } from '@vueuse/core';
@@ -243,7 +243,8 @@ provide('insideHeader', insideHeader);
           </template>
           <div class="header-profile-name" v-if="alternativeProfilesInfo">
             <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
-            <LxDropDown
+            <LxValuePicker
+              variant="dropdown"
               :tabindex="1"
               :items="alternativeProfilesComputed"
               v-model="dropDownModelAlternatives"

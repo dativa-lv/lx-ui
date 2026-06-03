@@ -1,5 +1,61 @@
 import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 
+function remToPx(remValue) {
+  const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return remValue * rootFontSize;
+}
+
+function toActionGroups(actions = []) {
+  const nestedGroupIds = new Set(actions?.map((a) => a.nestedGroupId).filter(Boolean));
+  const groupMap = new Map();
+
+  actions.forEach((action) => {
+    if (nestedGroupIds.has(action.groupId)) {
+      return;
+    }
+
+    if (!groupMap.has(action.groupId)) {
+      groupMap.set(action.groupId, []);
+    }
+
+    groupMap.get(action.groupId).push(action);
+  });
+
+  return Array.from(groupMap.entries()).map(([groupId, actionsInGroup]) => ({
+    groupId,
+    actions: actionsInGroup,
+  }));
+}
+
+// Find which category index an action belongs to (with fallback to last entry).
+function findCategoryIndex(categories, action) {
+  const index = categories.findIndex((cat) => cat.test(action));
+  return index >= 0 ? index : categories.length - 1;
+}
+
+function toActionDescriptors(actions, area) {
+  return actions.map((action, index) => ({
+    action,
+    index,
+    area,
+  }));
+}
+
+function splitByVisibility(actions, visibleIds) {
+  return actions.reduce(
+    (acc, action) => {
+      if (visibleIds.has(action.id) || action?.nonResponsive) {
+        acc.visible.push(action);
+      } else {
+        acc.overflow.push(action);
+      }
+
+      return acc;
+    },
+    { visible: [], overflow: [] }
+  );
+}
+
 /**
  * Composable for managing toolbar responsive layout behavior.
  * @param {Object} options - Configuration options.
@@ -64,11 +120,6 @@ export function useToolbarResponsiveness({
   let resizeObserver = null;
   let frame = null;
 
-  function remToPx(remValue) {
-    const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-    return remValue * rootFontSize;
-  }
-
   const lxElement = computed(() => document.querySelector('.lx'));
 
   const toolbarButtonGroupGap = computed(() =>
@@ -84,28 +135,6 @@ export function useToolbarResponsiveness({
       Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--toolbar-button-gap'))
     )
   );
-
-  function toActionGroups(actions = []) {
-    const nestedGroupIds = new Set(actions?.map((a) => a.nestedGroupId).filter(Boolean));
-    const groupMap = new Map();
-
-    actions.forEach((action) => {
-      if (nestedGroupIds.has(action.groupId)) {
-        return;
-      }
-
-      if (!groupMap.has(action.groupId)) {
-        groupMap.set(action.groupId, []);
-      }
-
-      groupMap.get(action.groupId).push(action);
-    });
-
-    return Array.from(groupMap.entries()).map(([groupId, actionsInGroup]) => ({
-      groupId,
-      actions: actionsInGroup,
-    }));
-  }
 
   const flattenActionGroups = (groups = []) => groups.flatMap((group) => group?.actions ?? []);
 
@@ -238,12 +267,6 @@ export function useToolbarResponsiveness({
     { name: 'toggle', test: (action) => action?.kind === 'toggle' },
     { name: 'regular', test: () => true }, // fallback - always matches
   ];
-
-  // Find which category index an action belongs to (with fallback to last entry).
-  function findCategoryIndex(categories, action) {
-    const index = categories.findIndex((cat) => cat.test(action));
-    return index >= 0 ? index : categories.length - 1;
-  }
 
   function normalizePriority(action) {
     const value = Number(action?.priority);
@@ -388,14 +411,6 @@ export function useToolbarResponsiveness({
     );
   }
 
-  function toActionDescriptors(actions, area) {
-    return actions.map((action, index) => ({
-      action,
-      index,
-      area,
-    }));
-  }
-
   function compareActionsForVisibility(a, b) {
     const priorityDiff = normalizePriority(a.action) - normalizePriority(b.action);
 
@@ -445,10 +460,6 @@ export function useToolbarResponsiveness({
     const groupsByArea = { left: new Set(), right: new Set() };
     let usedWidth = 0;
 
-    function getNewGroupGap(groupsInArea) {
-      return groupsInArea.size > 0 ? toolbarButtonGroupGap.value : 0;
-    }
-
     actions.some((item) => {
       if (item.action?.nonResponsive) {
         return false;
@@ -458,11 +469,13 @@ export function useToolbarResponsiveness({
       const { groupId } = item.action;
       const groupsInArea = groupsByArea[area];
       const isNewGroup = !groupsInArea.has(groupId);
+      let gapCost = toolbarButtonGap.value;
 
-      const actionWidth = getActionWidth(item.action);
-      const gapCost = isNewGroup ? getNewGroupGap(groupsInArea) : toolbarButtonGap.value;
+      if (isNewGroup) {
+        gapCost = groupsInArea.size > 0 ? toolbarButtonGroupGap.value : 0;
+      }
 
-      const cost = actionWidth + gapCost;
+      const cost = getActionWidth(item.action) + gapCost;
 
       if (usedWidth + cost > budget) {
         return true;
@@ -479,21 +492,6 @@ export function useToolbarResponsiveness({
     });
 
     return visibleIds;
-  }
-
-  function splitByVisibility(actions, visibleIds) {
-    return actions.reduce(
-      (acc, action) => {
-        if (visibleIds.has(action.id) || action?.nonResponsive) {
-          acc.visible.push(action);
-        } else {
-          acc.overflow.push(action);
-        }
-
-        return acc;
-      },
-      { visible: [], overflow: [] }
-    );
   }
 
   function partitionOverflow(overflow) {
@@ -649,20 +647,18 @@ export function useToolbarResponsiveness({
     const header = form?.querySelector(':scope > header.lx-sticky');
     if (!(header instanceof HTMLElement)) return;
 
-    const threshold = 3;
-
     const hasExtraFormBar =
       header.classList.contains('lx-form-with-tabs') ||
       header.classList.contains('lx-form-with-steps');
 
-    const extraFormBarOffset = hasExtraFormBar
-      ? 3 * parseFloat(getComputedStyle(document.documentElement).fontSize)
-      : 0;
+    const formBarHeightRem = 3;
+    const extraFormBarOffset = hasExtraFormBar ? remToPx(formBarHeightRem) : 0;
 
     const toolbarTop = Math.floor(toolbar.getBoundingClientRect().top);
     const headerBottom = Math.floor(header.getBoundingClientRect().bottom + extraFormBarOffset);
 
     const overlap = headerBottom - toolbarTop;
+    const threshold = 3;
     toolbar.classList.toggle('lx-toolbar-hidden-under-header', overlap > threshold);
   }
 
@@ -752,6 +748,7 @@ export function useToolbarResponsiveness({
     }
 
     globalThis.removeEventListener('resize', recalculateLayout);
+    globalThis.removeEventListener('scroll', recalculateLayout);
 
     if (frame) {
       cancelAnimationFrame(frame);

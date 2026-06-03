@@ -4,33 +4,33 @@
 
 ## Layout
 
-| Variable name                                     | Default value                                                                                     |
-|---------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `--content-switcher-container-border-width`       | `--border-width-1`                                                                                |
-| `--content-switcher-container-border`             | var(--content-switcher-container-border-width) solid var(--color-data)                            |
-| `--content-switcher-container-border-disabled`    | var(--content-switcher-container-border-width) solid var(--color-disabled-foreground)             |
-| `--content-switcher-container-border-radius`      | `--border-radius-0250`                                                                            |
-| `--content-switcher-container-padding`            | `--space-0`                                                                                       |
-| `--content-switcher-item-border-width`            | `--border-width-1`                                                                                |
-| `--content-switcher-item-border`                  | var(--content-switcher-item-border-width) solid transparent                                       |
-| `--content-switcher-item-border-disabled`         | var(--content-switcher-item-border-width) solid transparent                                       |
-| `--content-switcher-inner-border-radius`          | `--border-radius-0`                                                                               |
-| `--content-switcher-outer-border-radius`          | `--border-radius-0125`                                                                            |
-| `--content-switcher-item-height`                  | 2.5rem                                                                                            |
-| `--content-switcher-item-min-width`               | 3rem                                                                                              |
-| `--content-switcher-item-padding`                 | var(--space-0) var(--space-1000)                                                                  |
-| `--content-switcher-item-gap`                     | `--space-0`                                                                                       |
-| `--content-switcher-border-selected`              | var(--content-switcher-item-border-width) solid var(--color-content-switcher-background-selected) |
-| `--content-switcher-inner-border-radius-selected` | `--content-switcher-inner-border-radius`                                                          |
-| `--content-switcher-outer-border-radius-selected` | `--content-switcher-outer-border-radius`                                                          |
-| `--content-switcher-divider-border`               | var(--border-width-1) solid var(--color-chrome)                                                   |
-| `--content-switcher-divider-height`               | 1rem                                                                                              |
-| `--content-switcher-content-gap`                  | `--space-0500`                                                                                    |
-| `--content-switcher-content-alignment`            | start                                                                                             |
-| `--content-switcher-text-font-size`               | `--font-size`                                                                                     |
-| `--content-switcher-text-font-weight`             | `--font-weight`                                                                                   |
-| `--content-switcher-text-line-height`             | 1.2em                                                                                             |
-| `--content-switcher-icon-size`                    | `--icon-size-s`                                                                                   |
+| Variable name                                     | Default value                                                                               |
+|---------------------------------------------------|---------------------------------------------------------------------------------------------|
+| `--content-switcher-container-border-width`       | `--border-width-1`                                                                          |
+| `--content-switcher-container-border`             | `--content-switcher-container-border-width` solid `--color-data`                            |
+| `--content-switcher-container-border-disabled`    | `--content-switcher-container-border-width` solid `--color-disabled-foreground`             |
+| `--content-switcher-container-border-radius`      | `--border-radius-0250`                                                                      |
+| `--content-switcher-container-padding`            | `--space-0`                                                                                 |
+| `--content-switcher-item-border-width`            | `--border-width-1`                                                                          |
+| `--content-switcher-item-border`                  | `--content-switcher-item-border-width` solid transparent                                    |
+| `--content-switcher-item-border-disabled`         | `--content-switcher-item-border-width` solid transparent                                    |
+| `--content-switcher-inner-border-radius`          | `--border-radius-0`                                                                         |
+| `--content-switcher-outer-border-radius`          | `--border-radius-0125`                                                                      |
+| `--content-switcher-item-height`                  | 2.5rem                                                                                      |
+| `--content-switcher-item-min-width`               | 3rem                                                                                        |
+| `--content-switcher-item-padding`                 | `--space-0` `--space-1000`                                                                  |
+| `--content-switcher-item-gap`                     | `--space-0`                                                                                 |
+| `--content-switcher-border-selected`              | `--content-switcher-item-border-width` solid `--color-content-switcher-background-selected` |
+| `--content-switcher-inner-border-radius-selected` | `--content-switcher-inner-border-radius`                                                    |
+| `--content-switcher-outer-border-radius-selected` | `--content-switcher-outer-border-radius`                                                    |
+| `--content-switcher-divider-border`               | `--border-width-1` solid `--color-chrome`                                                   |
+| `--content-switcher-divider-height`               | 1rem                                                                                        |
+| `--content-switcher-content-gap`                  | `--space-0500`                                                                              |
+| `--content-switcher-content-alignment`            | start                                                                                       |
+| `--content-switcher-text-font-size`               | `--font-size`                                                                               |
+| `--content-switcher-text-font-weight`             | `--font-weight`                                                                             |
+| `--content-switcher-text-line-height`             | 1.2em                                                                                       |
+| `--content-switcher-icon-size`                    | `--icon-size-s`                                                                             |
 
 ## Color
 

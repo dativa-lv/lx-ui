@@ -6,65 +6,75 @@
 
 ## Layout
 
-| Variable name                               | Default value                                                                                                                    |
-|---------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
-| `--modal-header-grid-areas`                 | 'content button'                                                                                                                 |
-| `--modal-header-content-gap`                | `--space-1000`                                                                                                                   |
-| `--modal-header-grid-template-columns`      | 1fr auto                                                                                                                         |
-| `--modal-button-header-icon-size`           | `--button-ghost-icon-size`                                                                                                       |
-| `--modal-illustration-size`                 | 4rem                                                                                                                             |
-| `--modal-shadow`                            | 0 1px 2px 0 var(--color-shadow)                                                                                                  |
-| `--modal-border`                            | `--region-border`                                                                                                                |
-| `--modal-border-radius`                     | `--border-radius-0`                                                                                                              |
-| `--modal-min-height`                        | `--row-size`                                                                                                                     |
-| `--modal-min-width`                         | `--aside-size`                                                                                                                   |
-| `--modal-content-padding`                   | var(--space-1000) var(--space-1000) var(--space-2000) var(--space-1000)                                                          |
-| `--modal-header-content-padding`            | var(--space-0500) var(--space-0500) var(--space-0250) var(--space-1000)                                                          |
-| `--modal-header-content-alignment`          | left                                                                                                                             |
-| `--modal-header-text-font-size`             | `--h2-font-size`                                                                                                                 |
-| `--modal-header-text-font-weight`           | `--h2-font-weight`                                                                                                               |
-| `--modal-button-header-border-radius`       | `--border-radius-0`                                                                                                              |
-| `--modal-button-header-width`               | `--button-width`                                                                                                                 |
-| `--modal-button-header-min-width`           | `--button-min-width`                                                                                                             |
-| `--modal-button-header-height`              | `--button-height`                                                                                                                |
-| `--modal-header-min-height`                 | `--row-size`                                                                                                                     |
-| `--modal-button-header-margin`              | `--space-0`                                                                                                                      |
-| `--modal-width-s`                           | 40rem                                                                                                                            |
-| `--modal-width-m`                           | 60rem                                                                                                                            |
-| `--modal-width-l`                           | `--body-column-size`                                                                                                             |
-| `--modal-width-xl`                          | 100%                                                                                                                             |
-| `--modal-footer-padding`                    | `--space-0`                                                                                                                      |
-| `--modal-footer-margin`                     | `--space-0`                                                                                                                      |
-| `--modal-button-primary-border`             | `--button-primary-border`                                                                                                        |
-| `--modal-button-primary-border-radius`      | `--button-primary-border-radius`                                                                                                 |
-| `--modal-button-primary-text-font-size`     | `--button-primary-text-font-size`                                                                                                |
-| `--modal-button-primary-text-font-weight`   | `--button-primary-text-font-weight`                                                                                              |
-| `--modal-button-primary-text-alignment`     | `--button-primary-text-alignment`                                                                                                |
-| `--modal-button-primary-text-decoration`    | `--button-primary-text-decoration`                                                                                               |
-| `--modal-button-primary-height`             | 4.5rem                                                                                                                           |
-| `--modal-button-primary-min-width`          | `--button-primary-min-width`                                                                                                     |
-| `--modal-button-primary-outline-offset`     | `--button-primary-outline-offset`                                                                                                |
-| `--modal-button-primary-padding`            | var(--space-0) calc(var(--space-1000) - var(--border-width-2)) var(--space-1250) calc(var(--space-1000) - var(--border-width-2)) |
-| `--modal-button-primary-width`              | 100%                                                                                                                             |
-| `--modal-button-secondary-border`           | var(--button-secondary-border)                                                                                                   |
-| `--modal-button-secondary-border-radius`    | `--button-secondary-border-radius`                                                                                               |
-| `--modal-button-secondary-text-font-size`   | `--button-secondary-text-font-size`                                                                                              |
-| `--modal-button-secondary-text-font-weight` | `--button-secondary-text-font-weight`                                                                                            |
-| `--modal-button-secondary-text-alignment`   | `--button-secondary-text-alignment`                                                                                              |
-| `--modal-button-secondary-text-decoration`  | `--button-secondary-text-decoration`                                                                                             |
-| `--modal-button-secondary-height`           | 4.5rem                                                                                                                           |
-| `--modal-button-secondary-min-width`        | `--button-secondary-min-width`                                                                                                   |
-| `--modal-button-secondary-outline-offset`   | `--button-secondary-outline-offset`                                                                                              |
-| `--modal-button-secondary-padding`          | var(--space-0) calc(var(--space-1000) - var(--border-width-2)) var(--space-1250) calc(var(--space-1000) - var(--border-width-2)) |
-| `--modal-button-secondary-width`            | 100%                                                                                                                             |
-| `--modal-button-set-flex-direction`         | row-reverse                                                                                                                      |
-| `--modal-button-set-gap`                    | `--space-0`                                                                                                                      |
-| `--modal-button-set-justification`          | stretch                                                                                                                          |
+| Variable name                               | Default value                                                                                                  |
+|---------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| `--modal-header-grid-areas`                 | 'content button'                                                                                               |
+| `--modal-header-content-gap`                | `--space-1000`                                                                                                 |
+| `--modal-header-grid-template-columns`      | 1fr auto                                                                                                       |
+| `--modal-button-header-icon-size`           | `--button-ghost-icon-size`                                                                                     |
+| `--modal-illustration-size`                 | 4rem                                                                                                           |
+| `--modal-shadow`                            | 0 1px 2px 0 `--color-shadow`                                                                                   |
+| `--modal-border`                            | `--region-border`                                                                                              |
+| `--modal-border-radius`                     | `--border-radius-0`                                                                                            |
+| `--modal-min-height`                        | `--row-size`                                                                                                   |
+| `--modal-min-width`                         | `--aside-size`                                                                                                 |
+| `--modal-content-padding`                   | `--space-1000` `--space-1000` `--space-2000` `--space-1000`                                                    |
+| `--modal-header-content-padding`            | `--space-0500` `--space-0500` `--space-0250` `--space-1000`                                                    |
+| `--modal-header-content-alignment`          | left                                                                                                           |
+| `--modal-header-text-font-size`             | `--h2-font-size`                                                                                               |
+| `--modal-header-text-font-weight`           | `--h2-font-weight`                                                                                             |
+| `--modal-button-header-border-radius`       | `--border-radius-0`                                                                                            |
+| `--modal-button-header-width`               | `--button-width`                                                                                               |
+| `--modal-button-header-min-width`           | `--button-min-width`                                                                                           |
+| `--modal-button-header-height`              | `--button-height`                                                                                              |
+| `--modal-header-min-height`                 | `--row-size`                                                                                                   |
+| `--modal-button-header-margin`              | `--space-0`                                                                                                    |
+| `--modal-width-s`                           | 40rem                                                                                                          |
+| `--modal-width-m`                           | 60rem                                                                                                          |
+| `--modal-width-l`                           | `--body-column-size`                                                                                           |
+| `--modal-width-xl`                          | 100%                                                                                                           |
+| `--modal-footer-padding`                    | `--space-0`                                                                                                    |
+| `--modal-footer-margin`                     | `--space-0`                                                                                                    |
+| `--modal-button-primary-border`             | `--button-primary-border`                                                                                      |
+| `--modal-button-primary-border-radius`      | `--button-primary-border-radius`                                                                               |
+| `--modal-button-primary-text-font-size`     | `--button-primary-text-font-size`                                                                              |
+| `--modal-button-primary-text-font-weight`   | `--button-primary-text-font-weight`                                                                            |
+| `--modal-button-primary-text-alignment`     | `--button-primary-text-alignment`                                                                              |
+| `--modal-button-primary-text-decoration`    | `--button-primary-text-decoration`                                                                             |
+| `--modal-button-primary-height`             | 4.5rem                                                                                                         |
+| `--modal-button-primary-min-width`          | `--button-primary-min-width`                                                                                   |
+| `--modal-button-primary-outline-offset`     | `--button-primary-outline-offset`                                                                              |
+| `--modal-button-primary-padding`            | `--space-0` calc(`--space-1000` - `--border-width-2`) `--space-1250` calc(`--space-1000` - `--border-width-2`) |
+| `--modal-button-primary-width`              | 100%                                                                                                           |
+| `--modal-button-secondary-border`           | `--button-secondary-border`                                                                                    |
+| `--modal-button-secondary-border-radius`    | `--button-secondary-border-radius`                                                                             |
+| `--modal-button-secondary-text-font-size`   | `--button-secondary-text-font-size`                                                                            |
+| `--modal-button-secondary-text-font-weight` | `--button-secondary-text-font-weight`                                                                          |
+| `--modal-button-secondary-text-alignment`   | `--button-secondary-text-alignment`                                                                            |
+| `--modal-button-secondary-text-decoration`  | `--button-secondary-text-decoration`                                                                           |
+| `--modal-button-secondary-height`           | 4.5rem                                                                                                         |
+| `--modal-button-secondary-min-width`        | `--button-secondary-min-width`                                                                                 |
+| `--modal-button-secondary-outline-offset`   | `--button-secondary-outline-offset`                                                                            |
+| `--modal-button-secondary-padding`          | `--space-0` calc(`--space-1000` - `--border-width-2`) `--space-1250` calc(`--space-1000` - `--border-width-2`) |
+| `--modal-button-secondary-width`            | 100%                                                                                                           |
+| `--modal-button-set-flex-direction`         | row-reverse                                                                                                    |
+| `--modal-button-set-gap`                    | `--space-0`                                                                                                    |
+| `--modal-button-set-justification`          | stretch                                                                                                        |
 
 ## Color
 
 | Variable name                                        | Default value                                  |
-|------------------------------------------------------|------------------------------------------------|
+| ---------------------------------------------------- | ---------------------------------------------- |
+| `--color-modal-background`                           | `--color-region`                               |
+| `--color-modal-header-text`                          | `--color-data`                                 |
+| `--color-modal-button-header-icon`                   | `--color-data`                                 |
+| `--color-modal-button-header-icon-focus`             | `--color-data`                                 |
+| `--color-modal-button-header-icon-hover`             | `--color-button-ghost-icon-hover`              |
+| `--color-modal-button-header-icon-active`            | `--color-button-ghost-icon-active`             |
+| `--color-modal-button-header-background`             | `--color-button-ghost-background`              |
+| `--color-modal-button-header-background-focus`       | transparent                                    |
+| `--color-modal-button-header-background-hover`       | `--color-button-ghost-background-hover`        |
+| `--color-modal-button-header-background-active`      | `--color-button-ghost-background-active`       |
 | `--color-modal-button-primary-text`                  | `--color-button-primary-text`                  |
 | `--color-modal-button-primary-background`            | `--color-button-primary-background`            |
 | `--color-modal-button-primary-text-focus`            | `--color-button-primary-text-focus`            |

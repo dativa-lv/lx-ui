@@ -4,26 +4,26 @@
 
 ## Layout
 
-| Variable name                   | Default value                                 |
-|---------------------------------|-----------------------------------------------|
-| `--badge-border-width-s`        | `--border-width-2`                            |
-| `--badge-border-s`              | var(--badge-border-width-s) solid transparent |
-| `--badge-border-radius-s`       | `--border-radius-1000`                        |
-| `--badge-padding-s`             | var(--space-0125) var(--space-0375)           |
-| `--badge-padding-icon-only-s`   | `--space-0125`                                |
-| `--badge-width-s`               | fit-content                                   |
-| `--badge-height-s`              | auto                                          |
-| `--badge-height-empty`          | 1rem                                          |
-| `--badge-width-empty`           | 1rem                                          |
-| `--badge-min-width-s`           | 1.5rem                                        |
-| `--badge-min-height-s`          | 1.5rem                                        |
-| `--badge-gap-s`                 | `--space-0250`                                |
-| `--badge-icon-size-s`           | `--icon-size-xs`                              |
-| `--badge-grid-areas`            | 'icon text'                                   |
-| `--badge-grid-template-columns` | auto 1fr                                      |
-| `--badge-text-font-size`        | `--font-size`                                 |
-| `--badge-text-font-weight`      | `--font-weight`                               |
-| `--badge-text-line-height`      | 1                                             |
+| Variable name                   | Default value                              |
+|---------------------------------|--------------------------------------------|
+| `--badge-border-width-s`        | `--border-width-2`                         |
+| `--badge-border-s`              | `--badge-border-width-s` solid transparent |
+| `--badge-border-radius-s`       | `--border-radius-1000`                     |
+| `--badge-padding-s`             | `--space-0125` `--space-0375`              |
+| `--badge-padding-icon-only-s`   | `--space-0125`                             |
+| `--badge-width-s`               | fit-content                                |
+| `--badge-height-s`              | auto                                       |
+| `--badge-height-empty`          | 1rem                                       |
+| `--badge-width-empty`           | 1rem                                       |
+| `--badge-min-width-s`           | 1.5rem                                     |
+| `--badge-min-height-s`          | 1.5rem                                     |
+| `--badge-gap-s`                 | `--space-0250`                             |
+| `--badge-icon-size-s`           | `--icon-size-xs`                           |
+| `--badge-grid-areas`            | 'icon text'                                |
+| `--badge-grid-template-columns` | auto 1fr                                   |
+| `--badge-text-font-size`        | `--font-size`                              |
+| `--badge-text-font-weight`      | `--font-weight`                            |
+| `--badge-text-line-height`      | 1                                          |
 
 ## Color
 
@@ -41,4 +41,4 @@ Customized value for contrast mode:
 
 | Variable name      | Contrast mode value                                          |
 |--------------------|--------------------------------------------------------------|
-| `--badge-border-s` | var(--badge-border-width-s) solid var(--contrast-foreground) |
+| `--badge-border-s` | `--badge-border-width-s` solid `--contrast-foreground` |

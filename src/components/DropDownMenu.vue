@@ -686,27 +686,35 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     @click="preventClose"
                   />
                 </div>
-
-                <LxButton
+                <div
                   v-else-if="groupMap[groupName]?.kind !== 'tags'"
-                  :id="action?.id"
-                  :label="action?.name || action?.label"
-                  :title="action?.title || action?.tooltip"
-                  kind="menuitem"
-                  :icon="action?.icon"
-                  :iconSet="action?.iconSet"
-                  :disabled="action?.disabled"
-                  :loading="action?.loading"
-                  :busy="action?.busy"
-                  :destructive="action?.destructive"
-                  :badge="action?.badge"
-                  :badge-type="action?.badgeType"
-                  :active="action?.active"
-                  :badgeIcon="action?.badgeIcon"
-                  :badgeTitle="action?.badgeTitle"
-                  :href="action?.href || action?.to"
-                  @click="handleActionClick(action?.id)"
-                />
+                  class="lx-dropdown-menu-button"
+                >
+                  <LxButton
+                    :id="action?.id"
+                    :label="action?.name || action?.label"
+                    :title="action?.title || action?.tooltip"
+                    kind="menuitem"
+                    :icon="action?.icon"
+                    :iconSet="action?.iconSet"
+                    :disabled="action?.disabled"
+                    :loading="action?.loading"
+                    :busy="action?.busy"
+                    :destructive="action?.destructive"
+                    :badge="action?.badge"
+                    :badge-type="action?.badgeType"
+                    :active="action?.active"
+                    :badgeIcon="action?.badgeIcon"
+                    :badgeTitle="action?.badgeTitle"
+                    :href="action?.href || action?.to"
+                    @click="handleActionClick(action?.id)"
+                  />
+                  <LxIcon
+                    v-if="action?.active"
+                    customClass="lx-popover-item-checkmark"
+                    value="tick"
+                  />
+                </div>
               </template>
             </div>
             <div v-if="responsiveView && datePickerType">
@@ -800,28 +808,37 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   />
                 </div>
 
-                <LxButton
+                <div
                   v-else-if="groupMap[groupName]?.kind !== 'tags'"
-                  :id="action?.id"
-                  :label="action?.name || action?.label"
-                  :title="action?.title || action?.tooltip"
-                  kind="menuitem"
-                  :icon="action?.icon"
-                  :iconSet="action?.iconSet"
-                  :disabled="action?.disabled"
-                  :loading="action?.loading"
-                  :busy="action?.busy"
-                  :destructive="action?.destructive"
-                  :badge="action?.badge"
-                  :badge-type="action?.badgeType"
-                  :active="action?.active"
-                  :badgeIcon="action?.badgeIcon"
-                  :badgeTitle="action?.badgeTitle"
-                  :href="action?.href || action?.to"
-                  :customClass="action?.iconColor ? 'has-custom-color' : null"
-                  :style="{ '--dropdown-icon-fill': action?.iconColor }"
-                  @click="handleActionClick(action?.id, { close: true, event: $event })"
-                />
+                  class="lx-dropdown-menu-button"
+                >
+                  <LxButton
+                    :id="action?.id"
+                    :label="action?.name || action?.label"
+                    :title="action?.title || action?.tooltip"
+                    kind="menuitem"
+                    :icon="action?.icon"
+                    :iconSet="action?.iconSet"
+                    :disabled="action?.disabled"
+                    :loading="action?.loading"
+                    :busy="action?.busy"
+                    :destructive="action?.destructive"
+                    :badge="action?.badge"
+                    :badge-type="action?.badgeType"
+                    :active="action?.active"
+                    :badgeIcon="action?.badgeIcon"
+                    :badgeTitle="action?.badgeTitle"
+                    :href="action?.href || action?.to"
+                    :customClass="action?.iconColor ? 'has-custom-color' : null"
+                    :style="{ '--dropdown-icon-fill': action?.iconColor }"
+                    @click="handleActionClick(action?.id, { close: true, event: $event })"
+                  />
+                  <LxIcon
+                    v-if="action?.active"
+                    customClass="lx-popover-item-checkmark"
+                    value="tick"
+                  />
+                </div>
               </template>
             </div>
 

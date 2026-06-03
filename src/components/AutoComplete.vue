@@ -1468,7 +1468,6 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     <template v-if="filteredItems?.length && !loadingState">
                       <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
                         <!-- Inject "Select All" just before the first item -->
-                        <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
                         <div
                           v-if="
                             index === 0 &&
@@ -1478,40 +1477,44 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                             filteredItems.length > 0 &&
                             (!query || query?.length === 0)
                           "
-                          id="select-all"
-                          class="lx-value-picker-item select-all lx-aligned-row"
-                          :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
-                          :tabindex="
-                            highlightedItemId === 'select-all'
-                              ? '0'
-                              : !highlightedItemId
-                              ? '0'
-                              : '-1'
-                          "
-                          role="button"
-                          @keydown.enter.prevent="selectAll"
-                          @keydown.space.prevent="selectAll"
-                          @click="selectAll"
-                          :title="
-                            areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
-                          "
+                          class="select-all-wrapper"
                         >
-                          <LxIcon
-                            :value="
-                              areSomeSelected
-                                ? areAllSelected
-                                  ? 'checkbox-filled'
-                                  : 'checkbox-indeterminate'
-                                : 'checkbox'
+                          <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
+                          <div
+                            id="select-all"
+                            class="lx-value-picker-item select-all lx-popover-item-selecting"
+                            :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
+                            :tabindex="
+                              highlightedItemId === 'select-all'
+                                ? '0'
+                                : !highlightedItemId
+                                ? '0'
+                                : '-1'
                             "
-                          />
-                          <span>
-                            {{
+                            role="button"
+                            @keydown.enter.prevent="selectAll"
+                            @keydown.space.prevent="selectAll"
+                            @click="selectAll"
+                            :title="
                               areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
-                            }}
-                          </span>
+                            "
+                          >
+                            <LxIcon
+                              :value="
+                                areSomeSelected
+                                  ? areAllSelected
+                                    ? 'checkbox-filled'
+                                    : 'checkbox-indeterminate'
+                                  : 'checkbox'
+                              "
+                            />
+                            <span>
+                              {{
+                                areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
+                              }}
+                            </span>
+                          </div>
                         </div>
-
                         <!-- Normal item rendering -->
                         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
                         <div
@@ -1527,14 +1530,14 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                           "
                           role="option"
                           :aria-selected="isItemSelected(item)"
-                          class="lx-value-picker-item"
+                          class="lx-value-picker-item lx-popover-item-text-only"
                           :class="[
                             {
                               'lx-selected': isItemSelected(item),
                               'lx-highlighted-item':
                                 highlightedItemId &&
                                 highlightedItemId === getIdAttributeString(item),
-                              'autocomplete-multiple lx-aligned-row lx-aligned-row-inverse lx-aligned-row-2':
+                              'autocomplete-multiple lx-popover-item-selecting':
                                 selectionKind === 'multiple',
                               'autocomplete-default-item': !$slots.customItem,
                             },
@@ -1577,6 +1580,11 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                               />
                             </template>
                           </label>
+                          <LxIcon
+                            v-if="isItemSelected(item) && selectionKind === 'single'"
+                            customClass="lx-popover-item-checkmark"
+                            value="tick"
+                          />
                         </div>
                       </template>
                     </template>

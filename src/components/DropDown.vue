@@ -546,7 +546,7 @@ const getSelectedItem = computed(
                         :id="getItemId(getIdAttributeString(item))"
                         role="option"
                         :aria-selected="isItemSelected(item)"
-                        class="lx-value-picker-item"
+                        class="lx-value-picker-item lx-popover-item-text-only"
                         :tabindex="
                           highlightedItemId && highlightedItemId === getIdAttributeString(item)
                             ? '0'
@@ -572,6 +572,11 @@ const getSelectedItem = computed(
 
                           <template v-else> {{ item[nameAttribute] }}</template>
                         </label>
+                        <LxIcon
+                          v-if="isItemSelected(item)"
+                          customClass="lx-popover-item-checkmark"
+                          value="tick"
+                        />
                       </div>
                     </template>
                   </template>

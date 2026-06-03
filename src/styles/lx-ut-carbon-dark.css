@@ -279,8 +279,13 @@
   --color-button-ghost-icon-focus: var(--color-interactive-background);
   --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 
+  --color-popover-border: var(--color-chrome);
+  --color-popover-divider: var(--color-chrome);
+  --color-popover-label: var(--color-label);
+  --color-popover-checkmark: var(--color-brand);
   --color-popover-item-text: var(--color-data);
   --color-popover-item-background: transparent;
+  --color-popover-item-border: var(--color-popover-item-background);
   --color-popover-item-text-active: var(--color-interactive-active-foreground);
   --color-popover-item-background-active: var(--color-interactive-active-background);
   --color-popover-item-border-active: var(--color-interactive-active-background);
@@ -298,6 +303,12 @@
   --color-popover-item-icon-disabled: var(--color-disabled-foreground);
   --color-popover-item-icon-focus: var(--color-data);
   --color-popover-item-icon-hover: var(--color-data);
+  --color-popover-item-icon-selected: var(--color-selected);
+  --color-popover-item-text-selected: var(--color-selected);
+  --color-popover-item-background-selected: var(--color-selected-background);
+  --color-popover-item-border-selected: transparent transparent transparent var(--color-selected-border);
+  --color-popover-item-tag-border: var(--color-chrome);
+  --color-popover-item-tag-border-selected: var(--color-selected-border);
 
   --color-toolbar-button-primary-text: var(--color-button-primary-text);
   --color-toolbar-button-primary-background: var(--color-button-primary-background);
@@ -425,13 +436,12 @@
 
   --color-modal-button-header-icon: var(--color-data);
   --color-modal-button-header-icon-focus: var(--color-data);
-  --color-modal-button-header-icon-hover: var(--color-button-toolbar-ghost-icon-hover);
-  --color-modal-button-header-icon-active: var(--color-button-toolbar-ghost-icon-active);
-
+  --color-modal-button-header-icon-hover: var(--color-button-ghost-icon-hover);
+  --color-modal-button-header-icon-active: var(--color-button-ghost-icon-active);
   --color-modal-button-header-background: var(--color-button-ghost-background);
   --color-modal-button-header-background-focus: transparent;
-  --color-modal-button-header-background-hover: var(--color-interactive-hover-background);
-  --color-modal-button-header-background-active: var(--color-interactive-active-background);
+  --color-modal-button-header-background-hover: var(--color-button-ghost-background-hover);
+  --color-modal-button-header-background-active: var(--color-button-ghost-background-active);
 
   --color-modal-button-primary-text: var(--color-button-primary-text);
   --color-modal-button-primary-background: var(--color-button-primary-background);

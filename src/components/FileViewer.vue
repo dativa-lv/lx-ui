@@ -25,7 +25,7 @@ const props = defineProps({
   showPrintButton: { type: Boolean, default: false },
   showFullScreenButton: { type: Boolean, default: true },
   primaryDownloadButton: { type: Boolean, default: false },
-  stickyHeader: { type: Boolean, default: true },
+  stickyToolbar: { type: Boolean, default: true },
   zoomLevel: { type: Number, default: null }, //  50, 75, 100, 125, 150, 175, 200, 250, 300
   downloadType: { type: String, default: 'default' }, // "default" - component will start download, "emit" - component will emit download event
   actionDefinitions: { type: Array, default: () => [] },
@@ -1152,7 +1152,7 @@ function addGlobalPrintStyles() {
   const gate = `html.lx-printing[data-lx-print-owner="${owner}"]`;
 
   const style = globalThis.document.createElement('style');
-  style.setAttribute('data-lx-print-style', 'true');
+  style.dataset.lxPrintStyle = 'true';
   style.textContent = `
 @page { margin: 0; }
 
@@ -1605,7 +1605,7 @@ onUnmounted(() => {
     :class="[
       { 'lx-file-viewer-fullscreen': isExpanded },
       { image: supportedFileType === 'Image' || supportedFileType === 'SVG' },
-      { 'lx-file-viewer-sticky': stickyHeader && !isExpanded },
+      { 'lx-file-viewer-sticky': stickyToolbar && !isExpanded },
     ]"
     :style="inlineSize"
     ref="fileViewerWrapperRef"
@@ -1622,7 +1622,7 @@ onUnmounted(() => {
       :loading="renderingInProgress"
       :actionDefinitions="toolbarActions"
       defaultArea="right"
-      :sticky="stickyHeader"
+      :sticky="stickyToolbar"
       :texts="displayTexts"
       :wrapperRef="fileViewerWrapperRef"
       @actionClick="toolbarActionClick"

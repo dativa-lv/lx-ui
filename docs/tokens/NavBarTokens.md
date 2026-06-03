@@ -4,40 +4,40 @@
 
 ## Layout
 
-| Variable name                             | Default value                                                  |
-|-------------------------------------------|----------------------------------------------------------------|
-| `--nav-item-border`                       | var(--border-width-2) solid transparent                        |
-| `--nav-item-border-radius`                | `--border-radius-0`                                            |
-| `--nav-item-text-font-size`               | inherit                                                        |
-| `--nav-item-text-font-weight`             | `--font-weight-interactive`                                    |
-| `--nav-item-text-alignment`               | left                                                           |
-| `--nav-item-text-decoration`              | none                                                           |
-| `--nav-item-gap`                          | `--space-0750`                                                 |
-| `--nav-item-grid-areas`                   | 'icon content'                                                 |
-| `--nav-item-grid-template-columns`        | auto 1fr                                                       |
-| `--nav-item-grid-template-rows`           | 1fr                                                            |
-| `--nav-item-height`                       | `--row-size`                                                   |
-| `--nav-item-icon-size`                    | `--icon-size-m`                                                |
-| `--nav-item-min-width`                    | `--row-size`                                                   |
-| `--nav-item-outline-offset`               | -2px                                                           |
-| `--nav-item-padding`                      | var(--space-0) calc(var(--space-0750) - var(--border-width-2)) |
-| `--nav-item-width`                        | 100%                                                           |
-| `--nav-public-item-border`                | `--border-width-0`                                             |
-| `--nav-public-item-border-radius`         | `--border-radius-0`                                            |
-| `--nav-public-item-text-font-size`        | inherit                                                        |
-| `--nav-public-item-text-font-weight`      | `--font-weight-interactive`                                    |
-| `--nav-public-item-text-alignment`        | center                                                         |
-| `--nav-public-item-text-decoration`       | none                                                           |
-| `--nav-public-item-gap`                   | `--space-0750`                                                 |
-| `--nav-public-item-grid-areas`            | 'content'                                                      |
-| `--nav-public-item-grid-template-columns` | 1fr                                                            |
-| `--nav-public-item-grid-template-rows`    | 1fr                                                            |
-| `--nav-public-item-height`                | calc(var(--row-size) - 1.35px)                                 |
-| `--nav-public-item-icon-size`             | `--icon-size-m`                                                |
-| `--nav-public-item-min-width`             | `--row-size`                                                   |
-| `--nav-public-item-outline-offset`        | -2px                                                           |
-| `--nav-public-item-padding`               | var(--space-0) calc(var(--space-1000) - var(--border-width-2)) |
-| `--nav-public-item-width`                 | auto                                                           |
+| Variable name                             | Default value                                         |
+|-------------------------------------------|-------------------------------------------------------|
+| `--nav-item-border`                       | `--border-width-2` solid transparent                  |
+| `--nav-item-border-radius`                | `--border-radius-0`                                   |
+| `--nav-item-text-font-size`               | inherit                                               |
+| `--nav-item-text-font-weight`             | `--font-weight-interactive`                           |
+| `--nav-item-text-alignment`               | left                                                  |
+| `--nav-item-text-decoration`              | none                                                  |
+| `--nav-item-gap`                          | `--space-0750`                                        |
+| `--nav-item-grid-areas`                   | 'icon content'                                        |
+| `--nav-item-grid-template-columns`        | auto 1fr                                              |
+| `--nav-item-grid-template-rows`           | 1fr                                                   |
+| `--nav-item-height`                       | `--row-size`                                          |
+| `--nav-item-icon-size`                    | `--icon-size-m`                                       |
+| `--nav-item-min-width`                    | `--row-size`                                          |
+| `--nav-item-outline-offset`               | -2px                                                  |
+| `--nav-item-padding`                      | `--space-0` calc(`--space-0750` - `--border-width-2`) |
+| `--nav-item-width`                        | 100%                                                  |
+| `--nav-public-item-border`                | `--border-width-0`                                    |
+| `--nav-public-item-border-radius`         | `--border-radius-0`                                   |
+| `--nav-public-item-text-font-size`        | inherit                                               |
+| `--nav-public-item-text-font-weight`      | `--font-weight-interactive`                           |
+| `--nav-public-item-text-alignment`        | center                                                |
+| `--nav-public-item-text-decoration`       | none                                                  |
+| `--nav-public-item-gap`                   | `--space-0750`                                        |
+| `--nav-public-item-grid-areas`            | 'content'                                             |
+| `--nav-public-item-grid-template-columns` | 1fr                                                   |
+| `--nav-public-item-grid-template-rows`    | 1fr                                                   |
+| `--nav-public-item-height`                | calc(`--row-size` - 1.35px)                           |
+| `--nav-public-item-icon-size`             | `--icon-size-m`                                       |
+| `--nav-public-item-min-width`             | `--row-size`                                          |
+| `--nav-public-item-outline-offset`        | -2px                                                  |
+| `--nav-public-item-padding`               | `--space-0` calc(`--space-1000` - `--border-width-2`) |
+| `--nav-public-item-width`                 | auto                                                  |
 
 ## Color
 

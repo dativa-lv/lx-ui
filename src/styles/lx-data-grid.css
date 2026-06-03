@@ -629,6 +629,20 @@
   display: contents;
 }
 
+.lx-data-grid > .lx-grid-table > .lx-grid-content.lx-grid-content-virtualized {
+  display: block;
+}
+
+.lx .lx-data-grid .lx-grid-content-virtualized .lx-grid-row {
+  display: grid;
+  grid-template-columns: var(--lx-data-grid-template-columns, auto);
+  border-top: var(--border-width-0);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
 .lx-data-grid .lx-grid-table .lx-grid-header-hidden {
   display: none;
 }
@@ -1002,13 +1016,6 @@
 
 .lx .lx-layout .popper .lx-info-wrapper.lx-tooltip-kind > div {
   align-items: center;
-}
-
-.lx .lx-layout .popper .lx-dropdown-panel {
-  padding: var(--space-0500);
-  position: static;
-  box-shadow: var(--shadow-dropdown);
-  overflow-y: auto;
 }
 
 .lx-data-grid-wrapper .lx-statusbar .lx-chip.lx-button {
