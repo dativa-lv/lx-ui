@@ -3071,7 +3071,7 @@ const builderOptions = computed(() => ({
     :showPrintButton="displaySchema?.properties[name]?.lx?.showPrintButton"
     :showFullScreenButton="displaySchema?.properties[name]?.lx?.showFullScreenButton"
     :primaryDownloadButton="displaySchema?.properties[name]?.lx?.primaryDownloadButton"
-    :stickyHeader="displaySchema?.properties[name]?.lx?.stickyHeader"
+    :stickyToolbar="displaySchema?.properties[name]?.lx?.stickyToolbar"
     :zoomLevel="displaySchema?.properties[name]?.lx?.zoomLevel"
     :downloadType="displaySchema?.properties[name]?.lx?.downloadType"
     :preloadLibs="displaySchema?.properties[name]?.lx?.preloadLibs"
