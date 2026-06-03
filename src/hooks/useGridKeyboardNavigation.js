@@ -230,6 +230,7 @@ export function useGridKeyboardNavigation() {
   return {
     activeRow,
     activeCol,
+    activeItem,
     registerCell,
     getTabIndex,
     getFocusable,
