@@ -44,12 +44,8 @@ export const LxFileUploader = defineAsyncComponent(() =>
   import('@/components/fileUploader/FileUploader.vue')
 );
 export const LxFileViewer = defineAsyncComponent(() => import('@/components/FileViewer.vue'));
-export const LxFilterBuilder = defineAsyncComponent(() => import('@/components/FilterBuilder.vue'));
 export const LxFilters = defineAsyncComponent(() => import('@/components/Filters.vue'));
 export const LxFlag = defineAsyncComponent(() => import('@/components/Flag.vue'));
-export const LxFormBuilder = defineAsyncComponent(() =>
-  import('@/components/forms/FormBuilder.vue')
-);
 export const LxIcon = defineAsyncComponent(() => import('@/components/Icon.vue'));
 export const LxIllustration = defineAsyncComponent(() => import('@/components/Illustration.vue'));
 export const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
@@ -95,9 +91,6 @@ export const LxToolbar = defineAsyncComponent(() => import('@/components/Toolbar
 export const LxToolbarGroup = defineAsyncComponent(() => import('@/components/ToolbarGroup.vue'));
 export const LxTooltip = defineAsyncComponent(() => import('@/components/Tooltip.vue'));
 export const LxValuePicker = defineAsyncComponent(() => import('@/components/ValuePicker.vue'));
-export const LxViewBuilder = defineAsyncComponent(() =>
-  import('@/components/forms/ViewBuilder.vue')
-);
 export const LxViewLayout = defineAsyncComponent(() => import('@/components/ViewLayout.vue'));
 export const LxVisualPicker = defineAsyncComponent(() => import('@/components/VisualPicker.vue'));
 export const LxWidget = defineAsyncComponent(() => import('@/components/Widget.vue'));

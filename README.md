@@ -40,8 +40,14 @@ Check out our [🌐&nbsp;Demo](https://lx-ui.dev/) and
 
 ## Get
 
+Get using bun:
 ```bash
 bun add '@dativa-lv/lx-ui@latest'
+```
+
+Get using pnpm:
+```bash
+pnpm i '@dativa-lv/lx-ui@latest'
 ```
 
 For migration tips refer to [ℹ️&nbsp;Migration Guide](https://github.com/dativa-lv/lx-ui/blob/main/MIGRATION.md)

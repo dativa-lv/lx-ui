@@ -6,7 +6,6 @@ import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxMap from '@/components/Map.vue';
 import LxSection from '@/components/forms/Section.vue';
-import LxFormBuilder from '@/components/forms/FormBuilder.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxList from '@/components/list/List.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -14,6 +13,7 @@ import LxAvatar from '@/components/Avatar.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxBadge from '@/components/Badge.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
+import { lxDateUtils, lxFormatUtils } from '@/utils';
 
 const props = defineProps({
   value: { type: Object, default: () => ({}) },
@@ -135,7 +135,23 @@ const customEsignSectionClass = computed(() => {
   return '';
 });
 
-const nomalizedIconAndType = computed(() => {
+function formatAdditionalDataItem(value) {
+  if (typeof value === 'string') {
+    if (lxDateUtils.isDateValid(value)) {
+      return lxDateUtils.formatDate(value);
+    }
+    return value;
+  }
+  if (typeof value === 'number') {
+    return lxFormatUtils.formatDecimal(value);
+  }
+  if (Array.isArray(value)) {
+    return lxFormatUtils.formatValueArray(value);
+  }
+  return '—';
+}
+
+const normalizedIconAndType = computed(() => {
   const iconsArr = props.value.mainData?.additionalIconAndType?.filter(
     (item) => item.type !== 'c2pa-sign'
   );
@@ -145,8 +161,8 @@ const nomalizedIconAndType = computed(() => {
 </script>
 <template>
   <LxForm
-    :show-header="false"
-    :show-footer="false"
+    :showHeader="false"
+    :showFooter="false"
     :column-count="3"
     kind="compact"
     indexType="expanders"
@@ -164,7 +180,7 @@ const nomalizedIconAndType = computed(() => {
       <LxSection
         id="metaPreview"
         :label="displayTexts.metaPreviewLabel"
-        :column-count="3"
+        :columnCount="3"
         v-if="props.value?.preview"
       >
         <LxRow columnSpan="3" :hideLabel="true">
@@ -181,7 +197,7 @@ const nomalizedIconAndType = computed(() => {
         </LxRow>
       </LxSection>
 
-      <LxSection id="metaMain" :label="displayTexts.metaMainLabel" :column-count="3">
+      <LxSection id="metaMain" :label="displayTexts.metaMainLabel" :columnCount="3">
         <LxRow :label="displayTexts.metaMainAuthor">
           <template v-if="normalizedAuthors">
             <LxPersonDisplay v-for="item in normalizedAuthors" :key="item" :value="item" />
@@ -192,8 +208,8 @@ const nomalizedIconAndType = computed(() => {
           <p class="lx-data">{{ item.value }}</p>
         </LxRow>
 
-        <template v-if="nomalizedIconAndType">
-          <LxRow class="lx-main-data-icon-row" v-for="item in nomalizedIconAndType" :key="item.id">
+        <template v-if="normalizedIconAndType">
+          <LxRow class="lx-main-data-icon-row" v-for="item in normalizedIconAndType" :key="item.id">
             <LxBadge
               :icon="item.icon"
               class="lx-main-data-badge"
@@ -217,15 +233,15 @@ const nomalizedIconAndType = computed(() => {
         :customClass="customEsignSectionClass"
         :label="displayTexts.metaEDocContentLabel"
         :badge="edocSectionBadge"
-        :badge-title="displayTexts.metaEDocContentLabel"
+        :badgeTitle="displayTexts.metaEDocContentLabel"
       >
-        <LxRow :column-span="1">
+        <LxRow :columnSpan="1">
           <LxInfoBox
             v-if="value?.edocContentSystemError"
             variant="error"
             :label="displayTexts.metaEDocContentSystemErrorLabel"
           />
-          <LxList v-else list-type="1" :items="props.value?.edocContentData">
+          <LxList v-else listType="1" :items="props.value?.edocContentData">
             <template
               #customItem="{
                 nameAndSurname,
@@ -265,7 +281,7 @@ const nomalizedIconAndType = computed(() => {
       <LxSection
         id="metaLocation"
         :label="displayTexts.metaLocationLabel"
-        :column-count="3"
+        :columnCount="3"
         v-if="props.value?.locationData"
       >
         <LxRow :label="displayTexts.metaLocationLatitude">
@@ -299,7 +315,7 @@ const nomalizedIconAndType = computed(() => {
       <LxSection
         id="metaImage"
         :label="displayTexts.metaImageLabel"
-        :column-count="3"
+        :columnCount="3"
         v-if="props.value?.imageData"
       >
         <LxRow v-for="(row, index) in value.imageData" :key="index" :label="row.label">
@@ -310,19 +326,26 @@ const nomalizedIconAndType = computed(() => {
       <LxSection
         id="metaAdditional"
         :label="displayTexts.metaAdditionalLabel"
-        :column-count="3"
+        :columnCount="3"
         v-if="props.value?.additionalData"
       >
-        <LxFormBuilder v-model="additionalData" mode="mixed" :readOnly="true"></LxFormBuilder>
+        <!-- <LxFormBuilder v-model="additionalData" mode="mixed" :readOnly="true"></LxFormBuilder> -->
+        <LxRow
+          v-for="(item, name) in props.value.additionalData"
+          :label="name?.toString()"
+          :key="name"
+        >
+          <p class="lx-data">{{ formatAdditionalDataItem(item) }}</p>
+        </LxRow>
       </LxSection>
 
       <LxSection
         id="metaArchiveContent"
         :label="archiveContentSectionlabel"
-        :column-count="2"
+        :columnCount="2"
         v-if="props.value?.archiveContentData && props.value?.archiveContentData?.length !== 0"
       >
-        <LxRow :column-span="2">
+        <LxRow :columnSpan="2">
           <LxList
             class="lx-archive-content"
             kind="treelist"

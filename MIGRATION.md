@@ -51,6 +51,33 @@ Prop `stickyHeader` renamed and now it's `stickyToolbar`.
 
 ### Other changes
 
+#### Builders moved to @dativa-lv/lx-builders 
+
+The following builders have been moved out of the core package into a dedicated repository:
+- LxFormBuilder
+- LxViewBuilder
+- LxFilterBuilder
+
+They are now maintained in the `@dativa-lv/lx-builders` package.
+
+If your project uses any of the builders listed above, you must install the new package:
+
+pnpm example:
+```bash
+pnpm i @dativa-lv/lx-builders
+```
+
+Update your imports to reference `@dativa-lv/lx-builders` instead of `@dativa-lv/lx-ui`.
+
+You must now explicitly register the builders plugin in your application, similar to how `createLX` is registered in `src/main.js`.
+
+Example:
+```js
+myApp.use(createLxBuilders, {
+  environment: 'local',
+});
+```
+
 #### Package manager switch: pnpm → Bun
 
 We have migrated from **pnpm** to **[Bun](https://bun.sh/) 1.3.14** as the package manager for LX/UI library. The `pnpm-lock.yaml` has been replaced with `bun.lock`.
