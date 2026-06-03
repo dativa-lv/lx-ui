@@ -4,7 +4,7 @@ import { computed, ref, watch, inject, getCurrentInstance, onUnmounted } from 'v
 import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import LxTextInput from '@/components/TextInput.vue';
-import LxValuePicker from '@/components/ValuePicker.vue';
+import LxDropDown from '@/components/Dropdown.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
@@ -290,7 +290,7 @@ if (props.builderOptions?.useRegistry) {
           :builderOptions="{ innerComponent: true }"
         />
 
-        <LxValuePicker
+        <LxDropDown
           v-model="selectedUnit"
           :items="unitOptionTypes"
           :placeholder="displayTexts.dropdownPlaceholder"
@@ -298,7 +298,6 @@ if (props.builderOptions?.useRegistry) {
           :disabled="disabled"
           :invalid="invalid"
           :labelId="labelledBy"
-          variant="dropdown"
         />
       </template>
 

@@ -1,0 +1,568 @@
+<script setup>
+import { onMounted, ref, computed } from 'vue';
+import LxFilters from '@/components/Filters.vue';
+import LxFormBuilder from '@/components/forms/FormBuilder.vue';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import { formatValue } from '@/utils/formatUtils';
+import { formatDateTime, formatDate } from '@/utils/dateUtils';
+import useLx from '@/hooks/useLx';
+import { lxDevUtils, lxFormatUtils } from '@/utils';
+
+const props = defineProps({
+  /**
+   * The prop is used to bind a value to the component. It supports two-way data binding in Vue components.
+   * @type {Object}
+   * @default null
+   * @since 1.9.0-beta.3
+   */
+  modelValue: { type: Object, default: null },
+  /**
+   * Defines the input fields for the filter.
+   * @type {Object}
+   * @default null
+   * @since 1.9.0-beta.3
+   */
+  schema: { type: Object, default: null },
+  /**
+   * Indicates whether the component is in read-only mode.
+   * @type {Boolean}
+   * @default false
+   * @since 1.9.0-beta.3
+   */
+  readOnly: { type: Boolean, default: false },
+  /**
+   * Determines whether the form will be built from modelValue or schema.
+   * @type {String}
+   * @default 'default'
+   * @since 1.9.0-beta.3
+   */
+  mode: { type: String, default: 'default' }, // 'default' || 'no-schema' || 'mixed'
+  /**
+   * The default values for the filter component.
+   * @type {Object}
+   * @default null
+   * @since 1.9.0-beta.3
+   */
+  defaultValues: { type: Object, default: null },
+  /**
+   * Indicates whether to use initial modelValue props values as default values.
+   * @type {Boolean}
+   * @default true
+   * @since 1.9.0-beta.3
+   */
+  useDefaults: { type: Boolean, default: true },
+  /**
+   * The label for the filter component.
+   * @type {String}
+   * @default null
+   * @since 1.9.0-beta.3
+   */
+  label: { type: String, default: null },
+  /**
+   * The description for the filter component.
+   * @type {String}
+   * @default null
+   * @since 1.9.0-beta.3
+   */
+  description: { type: String, default: null },
+  /**
+   * Indicates whether the filter values differ from default values.
+   * @type {Boolean}
+   * @default undefined
+   * @since 1.9.0-beta.3
+   */
+  usesFilters: { type: Boolean, default: undefined },
+  /**
+   * The kind of the filter buttons.
+   * @type {String}
+   * @default 'tertiary'
+   * @since 1.9.0-beta.3
+   */
+  filterButtonKind: {
+    type: String,
+    default: 'tertiary',
+  },
+  /**
+   * The number of columns for the filter component.
+   * @type {Number}
+   * @default 3
+   * @since 1.9.0-beta.3
+   */
+  columnCount: { type: Number, default: 3 },
+  /**
+   * Indicates whether the filter component is expanded.
+   * @type {Boolean}
+   * @default undefined
+   * @since 1.9.0-beta.3
+   */
+  expanded: { type: Boolean, default: undefined },
+  /**
+   * Indicates whether the filter component is disabled.
+   * @type {Boolean}
+   * @default false
+   * @since 1.9.0-beta.3
+   */
+  disabled: { type: Boolean, default: false },
+  /**
+   * The list of fast filters.
+   * @type {Array}
+   * @default []
+   * @since 1.9.0-beta.3
+   */
+  fastFilters: { type: Array, default: () => [] },
+  /**
+   * The attribute used to identify fast filters.
+   * @type {String}
+   * @default 'id'
+   * @since 1.9.0-beta.3
+   */
+  fastIdAttribute: { type: String, default: 'id' },
+  /**
+   * The attribute used to name fast filters.
+   * @type {String}
+   * @default 'name'
+   * @since 1.9.0-beta.3
+   */
+  fastNameAttribute: { type: String, default: 'name' },
+  /**
+   * Badge text to be displayed on the filter component.
+   * @type {String}
+   * @default ''
+   * @since 1.9.0-beta.3
+   */
+  badge: { type: String, default: '' },
+  /**
+   * Badge icon to be displayed on the filter component inside badge.
+   * @type {String}
+   * @default ''
+   * @since 1.9.0-beta.8
+   */
+  badgeIcon: { type: String, default: null },
+  /**
+   * The type of the badge.
+   * @type {String}
+   * @default 'default'
+   * @since 1.9.0-beta.3
+   */
+  badgeType: { type: String, default: 'default' }, // default, info, success, warning, error
+  /**
+   * Badge title to be displayed on the filter badge when badge is provided.
+   * @type {String}
+   * @default ''
+   * @since 1.9.0-beta.8
+   */
+  badgeTitle: {
+    type: String,
+    default: null,
+    validator: (v, p) => {
+      // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
+      if ((p.badge || p.badgeIcon) && !v) {
+        lxDevUtils.logWarn(
+          `Warning: LxFilterBuilder "badgeTitle" is required when "badge" or "badgeIcon" is provided!`,
+          useLx().getGlobals()?.environment
+        );
+        return false;
+      }
+      return true;
+    },
+  },
+  /**
+   * Determines invalidation messages for the filters input fields.
+   *
+   * @type {Object}
+   * @default null
+   * @since 1.9.0
+   */
+  validations: { type: Object, default: null },
+  /**
+   * Determines whether the filter panel should close automatically after a filter is applied.
+   * @type {Boolean}
+   * @default true
+   * @since 1.10.0-beta.13
+   */
+  closeOnFilter: { type: Boolean, default: true },
+  /**
+   * Determines whether the reset button is shown in the collapsed state.
+   * @type {Boolean}
+   * @default false
+   * @since 2.0.3
+   */
+  hasShortlistReset: { type: Boolean, default: false },
+  /**
+   * The object containing filtered model values.
+   * @type {Object}
+   * @since 2.0.4
+   */
+  filteredModelValue: {
+    type: Object,
+    default: undefined,
+  },
+  /**
+   * The object containing text translations.
+   * @type {Object}
+   * @since 1.9.0-beta.3
+   */
+  texts: {
+    type: Object,
+    default: () => ({}),
+  },
+  name: { type: String, default: null },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+      defaultSectionSchemaPath: null,
+    }),
+  },
+  id: { type: String, default: null },
+});
+
+const emits = defineEmits([
+  'update:modelValue',
+  'filter',
+  'resetFilters',
+  'fastFilterClick',
+  'update:expanded',
+  'rowActionClick',
+]);
+
+const defaultTexts = {
+  filters: 'Filtri',
+  search: 'Atlasīt',
+  clear: 'Notīrīt',
+  fastFiltersLabel: 'Ātrie filtri',
+  required: 'Šis lauks ir obligāts',
+  minimum: 'Vērtībai jābūt lielākai vai vienādai ar {0}',
+  exclusiveMinimum: 'Vērtībai jābūt lielākai par {0}',
+  maximum: 'Vērtībai jābūt mazākai vai vienādai ar {0}',
+  exclusiveMaximum: 'Vērtībai jābūt mazākai par {0}',
+  multipleOf: 'Vērtībai jādalās ar skaitli {0}',
+  minLength: 'Vērtības garumam jābūt lielākam par {0}',
+  maxLength: 'Vērtības garumam jābūt mazākam par {0}',
+  pattern: 'Vērtība neatbilst regulārajai izteiksmei {0}',
+  minItems: 'Jāizvēlas vismaz {0} vērtības',
+  maxItems: 'Jāizvēlas ne vairāk kā {0} vērtības',
+  uniqueItems: 'Izvēlētās vērtības nav unikālas',
+  minProperties: 'Objektam jābūt vismaz {0} atribūtiem',
+  maxProperties: 'Objektam jābut ne vairāk kā {0} atribūtiem',
+  addElement: 'Pievienot elementu',
+  saveElement: 'Pievienot elementu sarakstam',
+  addObject: 'Pievienot objektu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
+
+const model = computed({
+  get() {
+    if (!props.modelValue) return {};
+    return props.modelValue;
+  },
+  set(value) {
+    emits('update:modelValue', value);
+  },
+});
+
+const formBuilder = ref();
+const internalExpanded = ref(false);
+
+const isExpanded = computed({
+  get() {
+    return props.expanded !== undefined ? props.expanded : internalExpanded.value;
+  },
+  set(value) {
+    if (props.expanded !== undefined) emits('update:expanded', value);
+    else internalExpanded.value = value;
+  },
+});
+
+const filterElement = ref();
+
+function filter() {
+  if (props.closeOnFilter) {
+    isExpanded.value = false;
+    focusNextFocusableElement(filterElement.value?.$el);
+  }
+  emits('filter');
+}
+
+const initialModelValues = ref({});
+
+const defaultValues = computed(() => {
+  if (props.schema?.properties) {
+    const res = Object.keys(props.schema?.properties).reduce((acc, key) => {
+      acc[key] =
+        props.defaultValues?.[key] ||
+        (props.useDefaults ? initialModelValues.value?.[key] : undefined);
+      return acc;
+    }, {});
+    return res;
+  }
+  return {};
+});
+
+function arraysEqual(arr1, arr2) {
+  if (Array.isArray(arr1) && Array.isArray(arr2)) {
+    if (arr1?.length !== arr2?.length) return false;
+    for (let i = 0; i < arr1?.length; i += 1) {
+      if (arr1[i] !== arr2[i]) return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+const resultingFilterModel = computed(() =>
+  props.filteredModelValue !== undefined ? props.filteredModelValue : model.value
+);
+
+function formatDateDescription(format, description, modelValueKey) {
+  if (format === 'dateTime' || format === 'date-time')
+    return `${description || ''}${formatDateTime(modelValueKey)}`;
+  if (format === 'date') return `${description || ''}${formatDate(modelValueKey)}`;
+  return `${description || ''}${modelValueKey}`;
+}
+
+function formatValuePicker(value, key) {
+  if (value?.type === 'string') {
+    // if enum then there is no nameAttribute to map to
+    if (value?.enum) {
+      return `${value?.lx?.filterDescription || ''}${resultingFilterModel.value[key]}`;
+    }
+    if (value?.lx?.items && typeof value?.lx?.items !== 'function') {
+      return `${value?.lx?.filterDescription || ''}${
+        value?.lx?.items?.find(
+          (x) => x?.[value?.lx?.idAttribute || 'id'] === resultingFilterModel.value[key]
+        )?.[value?.lx?.nameAttribute || 'name']
+      }`;
+    }
+  } else if (resultingFilterModel.value?.[key]?.length > 0) {
+    if (
+      !arraysEqual(resultingFilterModel.value?.[key], defaultValues.value?.[key]) &&
+      resultingFilterModel.value?.[key]?.length > 0
+    ) {
+      const desc =
+        value?.lx?.filterDescription || (value?.title ? `${value?.title}: ` : `${key}: `);
+      return `${desc}${resultingFilterModel.value?.[key]?.length}`;
+    }
+  }
+  return null;
+}
+
+function formatNoSchemaDescription(value, key) {
+  if (value && value !== resultingFilterModel.value?.[key]) {
+    if (typeof resultingFilterModel.value?.[key] === 'string') {
+      return `${resultingFilterModel.value?.[key]}`;
+    }
+    if (typeof resultingFilterModel.value?.[key] === 'boolean') {
+      return `${key}: ${formatValue(resultingFilterModel.value[key], 'bool')}`;
+    }
+    if (Array.isArray(resultingFilterModel.value?.[key])) {
+      if (resultingFilterModel.value?.[key]?.length > 0)
+        return `${key}: ${resultingFilterModel.value?.[key]?.length}`;
+    }
+    return `${resultingFilterModel.value?.[key]}`;
+  }
+  return null;
+}
+
+function formatDateRange(format, description, modelValueKey) {
+  if (
+    (format === 'dateTime' || format === 'date-time') &&
+    (modelValueKey?.startDate || modelValueKey?.endDate)
+  ) {
+    return `${description || ''}${formatDateTime(modelValueKey?.startDate)}-${formatDateTime(
+      modelValueKey?.endDate
+    )}`;
+  }
+  if (format === 'date' && (modelValueKey?.startDate || modelValueKey?.endDate)) {
+    return `${description || ''}${formatDate(modelValueKey?.startDate)}-${formatDate(
+      modelValueKey?.endDate
+    )}`;
+  }
+  if (modelValueKey?.startDate || modelValueKey?.endDate) {
+    return `${description || ''}${modelValueKey?.startDate}-${modelValueKey?.endDate}`;
+  }
+  return '';
+}
+
+function formatDescription(value, key) {
+  switch (formBuilder.value?.componentSelect(value, key)) {
+    case 'textInputDefault':
+    case 'textInputInteger':
+    case 'textArea':
+      return `${value?.lx?.filterDescription || ''}${resultingFilterModel.value[key]}`;
+
+    case 'dateTimePicker':
+      return formatDateDescription(
+        value?.format,
+        value?.lx?.filterDescription,
+        resultingFilterModel.value[key]
+      );
+
+    case 'dateTimeRange':
+      return formatDateRange(
+        value?.format,
+        value?.lx?.filterDescription,
+        resultingFilterModel.value[key]
+      );
+
+    case 'toggle':
+      return `${
+        value?.lx?.filterDescription || (value?.title ? `${value?.title}: ` : `${key}: `)
+      }${formatValue(resultingFilterModel.value[key], 'bool')}`;
+
+    case 'valuePicker':
+    case 'autoComplete':
+      if (formatValuePicker(value, key)) {
+        return formatValuePicker(value, key);
+      }
+      return null;
+    case 'select':
+    case 'arrayListModal':
+    case 'arrayTable':
+    case 'arrayTableModal':
+    case 'appendableList':
+    case 'smallAppendableList':
+      if (
+        !arraysEqual(resultingFilterModel.value?.[key], defaultValues.value?.[key]) &&
+        resultingFilterModel.value?.[key]?.length > 0
+      )
+        return `${
+          value?.lx?.filterDescription || (value?.title ? `${value?.title}: ` : `${key}: `)
+        }${resultingFilterModel.value?.[key]?.length}`;
+      return null;
+
+    case 'objectList':
+    case 'objectButton':
+    case 'dataBlock':
+      if (value?.lx?.filterDescription) {
+        return value.lx.filterDescription;
+      }
+      if (value?.title) {
+        return value.title;
+      }
+      return key;
+
+    default:
+      return null;
+  }
+}
+
+function deepEqual(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function isObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value);
+}
+
+const filterDescription = computed(() => {
+  if ((props.defaultValues && Object.keys(props.defaultValues)?.length > 0) || props.useDefaults) {
+    if (props.schema?.properties && props.mode !== 'no-schema') {
+      const res = Object.entries(props.schema?.properties).reduce((acc, [key, value]) => {
+        if (
+          resultingFilterModel.value?.[key] !== null &&
+          resultingFilterModel.value?.[key] !== undefined &&
+          resultingFilterModel.value?.[key] !== '' &&
+          ((!isObject(resultingFilterModel.value?.[key]) &&
+            resultingFilterModel.value?.[key] !== defaultValues.value?.[key]) ||
+            (isObject(resultingFilterModel.value?.[key]) &&
+              !deepEqual(resultingFilterModel.value?.[key], defaultValues.value?.[key])))
+        ) {
+          const formattedDesc = formatDescription(value, key);
+          if (formattedDesc) acc.push(formattedDesc);
+        }
+        return acc;
+      }, []);
+      return res.join(', ');
+    }
+    if (props.mode === 'no-schema') {
+      return Object.entries(initialModelValues.value)
+        .reduce((acc, [key, value]) => {
+          if (formatNoSchemaDescription(value, key))
+            acc.push(formatNoSchemaDescription(value, key));
+
+          return acc;
+        }, [])
+        ?.join(', ');
+    }
+  }
+
+  return '';
+});
+
+function validateModel() {
+  return formBuilder.value.validateModel();
+}
+
+function clearValidations() {
+  formBuilder.value.clearValidations();
+}
+
+onMounted(() => {
+  initialModelValues.value = lxFormatUtils.objectClone(props.modelValue || {});
+});
+
+const formBuilderName = computed(
+  () => `${props.name}.${props.builderOptions?.defaultSectionSchemaPath}`
+);
+
+defineExpose({
+  validateModel,
+  clearValidations,
+});
+</script>
+<template>
+  <LxFilters
+    ref="filterElement"
+    :id="id"
+    v-model:expanded="isExpanded"
+    :label="label"
+    :description="description || (isExpanded ? '' : filterDescription)"
+    :usesFilters="
+      usesFilters === undefined ? !isExpanded && filterDescription?.length > 0 : usesFilters
+    "
+    :filterButtonKind="filterButtonKind"
+    :disabled="disabled"
+    :fastFilters="fastFilters"
+    :fastIdAttribute="fastIdAttribute"
+    :fastNameAttribute="fastNameAttribute"
+    :badge="badge"
+    :badgeIcon="badgeIcon"
+    :badgeType="badgeType"
+    :badgeTitle="badgeTitle"
+    :columnCount="columnCount || 3"
+    :hasShortlistReset="hasShortlistReset"
+    :texts="displayTexts"
+    :builderOptions="builderOptions"
+    @filter="filter"
+    @resetFilters="() => emits('resetFilters')"
+    @fastFilterClick="(e) => emits('fastFilterClick', e)"
+  >
+    <LxFormBuilder
+      ref="formBuilder"
+      :id="id"
+      :schema="schema"
+      v-model="model"
+      :readOnly="readOnly"
+      :mode="mode"
+      :texts="displayTexts"
+      :validations="validations"
+      :builderOptions="{
+        componentStack: builderOptions?.componentStack?.concat(
+          { id: `${id}-form`, name: 'LxForm' },
+          { id: `${id}-form-default`, name: 'LxSection' }
+        ),
+        useRegistry: builderOptions?.useRegistry,
+        schemaPath: formBuilderName,
+      }"
+      @rowActionClick="
+        (action, value, schemaName, index) =>
+          emits('rowActionClick', action, value, schemaName, index)
+      "
+      @filterBuilderFilter="filter"
+    />
+  </LxFilters>
+</template>

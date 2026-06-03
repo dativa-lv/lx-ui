@@ -5,6 +5,7 @@ import LxDataBlock from '@/components/DataBlock.vue';
 import LxButton from '@/components/Button.vue';
 import LxStack from '@/components/Stack.vue';
 import LxToggle from '@/components/Toggle.vue';
+import LxDropDown from '@/components/Dropdown.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxLink from '@/components/Link.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -253,8 +254,7 @@ const headingAttrs = computed(() => {
                     @click.stop
                     @keyup.space.stop
                   />
-                  <LxValuePicker
-                    variant="dropdown"
+                  <LxDropDown
                     v-else-if="block.id === 'theme' && !blockExpanderModels[block.id]"
                     v-model="blockToggleModels[block.id]"
                     :items="themeDisplayItems"
@@ -269,7 +269,7 @@ const headingAttrs = computed(() => {
                         </span>
                       </div>
                     </template>
-                  </LxValuePicker>
+                  </LxDropDown>
                 </LxStack>
                 <div class="lx-indications">
                   <LxIcon :value="blockExpanderModels[block.id] ? 'chevron-up' : 'chevron-down'" />

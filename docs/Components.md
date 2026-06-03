@@ -7,6 +7,7 @@ LX/UI provides over 50 components for different needs. Check these live demos fr
 - [🌐 LxTextArea](https://lx.zzdats.lv/sandbox/text-area)
 - [🌐 LxDateTimePicker](https://lx.zzdats.lv/sandbox/date-time-picker)
 - [🌐 LxDateTimeRange](https://lx.zzdats.lv/sandbox/date-time-range)
+- [🌐 LxDropDown](https://lx.zzdats.lv/sandbox/drop-down)
 - [🌐 LxAutoComplete](https://lx.zzdats.lv/sandbox/auto-complete)
 - [🌐 LxCheckbox](https://lx.zzdats.lv/sandbox/checkbox)
 - [🌐 LxRadioButton](https://lx.zzdats.lv/sandbox/radio-button)

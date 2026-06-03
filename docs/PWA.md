@@ -1,6 +1,6 @@
-# Progressive Web App (PWA) Guide
+# Step-by-Step Guide: Turning Your Project into a Progressive Web App (PWA)
 
-This is a step-by-step guide on how to turn your project into a Progressive Web App (PWA).
+This guide explains how to manually configure your project to become a PWA.
 
 ## Step 1: Create the `manifest.json` file
 

@@ -2,7 +2,7 @@
 import { computed, ref, watch, inject } from 'vue';
 
 import LxButton from '@/components/Button.vue';
-import LxValuePicker from '@/components/ValuePicker.vue';
+import LxDropDown from '@/components/Dropdown.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxIcon from '@/components/Icon.vue';
 import { useWindowSize, onClickOutside } from '@vueuse/core';
@@ -205,8 +205,7 @@ onClickOutside(navPanel, toggleNavBar);
       <div v-if="alternativeProfilesInfo" class="nav-bar-user-info nav-bar-profile">
         <p>{{ displayTexts.userTitle }}</p>
         <li>
-          <LxValuePicker
-            variant="dropdown"
+          <LxDropDown
             :items="alternativeProfilesComputed"
             v-model="dropDownModelAlternatives"
             :disabled="headerNavDisable"

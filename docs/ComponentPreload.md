@@ -1,4 +1,4 @@
-# Component Preloading Guide
+# Component Preloading in lx-ui
 
 `lx-ui` exports most of its components as **async components** (`defineAsyncComponent`) to keep the initial bundle size small and improve load performance.
 

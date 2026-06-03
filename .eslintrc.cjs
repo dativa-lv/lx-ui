@@ -45,9 +45,6 @@ module.exports = {
     ],
     'vue/html-indent': ['off'], // leave it to prettier
     'vue/multi-word-component-names': 'off',
-    // False-positives on `v-memo` placed on a nested `v-for` element (valid Vue);
-    // the rule only tracks the outermost `v-for`. Used intentionally in DataGrid.
-    'vue/valid-v-memo': 'off',
     'vuejs-accessibility/label-has-for': 'off',
     indent: ['off'], // leave it to prettier
     quotes: ['off'], // leave it to prettier

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onBeforeUnmount, ref, toRaw, watch, nextTick, useSlots } from 'vue';
+import { computed, onMounted, onBeforeUnmount, ref, watch, nextTick, useSlots } from 'vue';
 import {
   useWindowSize,
   useElementBounding,
@@ -9,9 +9,8 @@ import {
 
 import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
-import useScrollVirtualizer from '@/hooks/useScrollVirtualizer';
-import { useGridKeyboardNavigation } from '@/hooks/useGridKeyboardNavigation';
 import { formatValueArray } from '@/utils/formatUtils';
+import { useGridKeyboardNavigation } from '@/utils/useGridKeyboardNavigation';
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -84,7 +83,6 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
   skeletonRowCount: { type: Number, default: 10 },
-  hasVirtualization: { type: Boolean, default: true },
   scrollable: { type: [Boolean, String], default: 'auto' }, // 'auto', true, false
   stickyHeader: { type: Boolean, default: true },
   showHeader: { type: Boolean, default: false },
@@ -187,97 +185,25 @@ const header = ref(null);
 const container = ref(null);
 const showLoadingAlert = ref(false);
 const autoScrollable = ref(false);
-
-// Row dropdown menus keyed by rowKey, not by render index: Vue's v-for ref
-// arrays aren't guaranteed to match source order, so during fast virtualized
-// scrolling an index lookup can resolve to the wrong row's menu and open the
-// popper at the wrong place. Keying by the stable rowKey avoids that.
-const dropDownMenus = new Map();
-const dropDownMenuSetters = new Map();
-
-function dropDownMenuRefFor(rowKey) {
-  let setter = dropDownMenuSetters.get(rowKey);
-  if (!setter) {
-    setter = (instance) => {
-      if (instance) dropDownMenus.set(rowKey, instance);
-      else dropDownMenus.delete(rowKey);
-    };
-    dropDownMenuSetters.set(rowKey, setter);
-  }
-  return setter;
-}
-
-const VIRTUALIZED_ESTIMATED_ROW_HEIGHT = 72;
-const VIRTUALIZED_OVERSCAN = 6;
-const isDataGridLayoutVisible = ref(false);
+const dropDownMenuRef = ref();
 
 let pendingHeaderScrollRaf = null;
 let pendingContainerScrollRaf = null;
-let pendingBoundingRaf = null;
 
 const { width, height } = useWindowSize();
-
-const isResponsiveLayout = computed(() => width.value <= 800);
-
-const bounding = useElementBounding(container, {
-  windowScroll: false,
-  windowResize: false,
-});
+const bounding = useElementBounding(container);
 const headerSize = useElementSize(header);
 const lxElement = document.querySelector('.lx');
 const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-function isElementRenderable(element) {
-  if (!element) return false;
-
-  let currentElement = element;
-  while (currentElement) {
-    if (currentElement.style?.display === 'none' || currentElement.style?.visibility === 'hidden') {
-      return false;
-    }
-
-    const currentComputedStyle =
-      typeof globalThis.getComputedStyle === 'function'
-        ? globalThis.getComputedStyle(currentElement)
-        : null;
-
-    if (currentComputedStyle?.display === 'none' || currentComputedStyle?.visibility === 'hidden') {
-      return false;
-    }
-
-    currentElement = currentElement.parentElement;
-  }
-
-  const computedStyle =
-    typeof globalThis.getComputedStyle === 'function' ? globalThis.getComputedStyle(element) : null;
-
-  if (typeof element.getClientRects === 'function' && element.getClientRects().length > 0) {
-    return true;
-  }
-
-  if ((element.offsetWidth ?? 0) > 0 || (element.offsetHeight ?? 0) > 0) {
-    return true;
-  }
-
-  return computedStyle ? computedStyle.display !== 'none' : true;
-}
-
-function syncDataGridLayoutVisibility() {
-  const nextVisibility = isElementRenderable(container.value);
-  isDataGridLayoutVisible.value = nextVisibility;
-  return nextVisibility;
-}
-
 const {
-  activeRow: gridActiveRow,
-  activeCol: gridActiveCol,
-  activeItem: gridActiveItem,
   registerCell,
   getTabIndex,
   getFocusable,
   onKeydown,
   isCellDelegated,
   setActiveFromClick,
+  activeRow,
 } = useGridKeyboardNavigation();
 
 const isDisabled = computed(() => props.loading || props.busy);
@@ -302,98 +228,16 @@ const columnsComputed = computed(() => {
   return ret;
 });
 
+const gridColumnsDisplay = computed(() =>
+  columnsComputed.value.filter((col) => col.kind !== 'extra' || props.showAllColumns)
+);
+
 function isValueEmpty(value) {
   return value === null || value === undefined || value === '';
 }
 
 function isObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-// Keep column wrapper identities stable across recomputes so `col` stays stable
-// in cell :class arrays and v-memo deps (a fresh wrapper invalidates every cell).
-const gridColumnsDisplayCache = new Map();
-function buildCellStaticClass(col) {
-  return Object.freeze({
-    'lx-cell-number': col.type === 'number' || col.type === 'decimal' || col.type === 'float',
-    'lx-cell-number-left': col.options?.justify === 'left',
-    'lx-cell-xs': col.size === 'xs',
-    'lx-cell-s': col.size === 's',
-    'lx-cell-m': col.size === 'm',
-    'lx-cell-l': col.size === 'l',
-    'lx-cell-xl': col.size === 'xl',
-    'lx-cell-stretch': col.size === '*',
-    'lx-cell-clickable': col.kind === 'clickable',
-    'lx-cell-primary': col.kind === 'primary',
-    'lx-cell-secondary': col.kind === 'secondary',
-    'lx-cell-extra': col.kind === 'extra',
-  });
-}
-function colSignature(col) {
-  return [
-    col.attributeName,
-    col.attributeDescription,
-    col.name,
-    col.title,
-    col.dictionary,
-    col.type,
-    col.kind,
-    col.size,
-    col.options?.justify ?? '',
-    col.options?.displayItemsCount ?? '',
-    col.options?.fractionDigits ?? '',
-    col.sortingTooltips ?? '',
-  ].join('|');
-}
-const gridColumnsDisplay = computed(() => {
-  const seenIds = new Set();
-  const result = columnsComputed.value
-    .filter((col) => col.kind !== 'extra' || props.showAllColumns)
-    .map((col) => {
-      seenIds.add(col.id);
-      const cached = gridColumnsDisplayCache.get(col.id);
-      const sig = colSignature(col);
-      if (cached && cached.sig === sig) return cached.value;
-      const value = Object.freeze({
-        ...col,
-        cellStaticClass: buildCellStaticClass(col),
-      });
-      gridColumnsDisplayCache.set(col.id, { sig, value });
-      return value;
-    });
-  Array.from(gridColumnsDisplayCache.keys()).forEach((id) => {
-    if (!seenIds.has(id)) gridColumnsDisplayCache.delete(id);
-  });
-  return result;
-});
-
-function cellNotDelegated(row, col) {
-  return !isCellDelegated(
-    col,
-    (isObject(row?.[col?.attributeName]) &&
-      !isValueEmpty(row?.[col?.attributeName]) &&
-      col.type === 'icon') ||
-      (row[col.attributeName] &&
-        row[col.attributeName].length >
-          (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
-        col.type === 'array') ||
-      (col.type === 'person' && !isValueEmpty(row?.[col?.attributeName]))
-  );
-}
-
-// Cache cellNotDelegated(row, col) by identity — :tabindex, :ref and :class all
-// need it per cell, and it does several reactive reads per call.
-const cellInteractiveCache = new WeakMap();
-function cellIsInteractive(row, col) {
-  let perRow = cellInteractiveCache.get(row);
-  if (!perRow) {
-    perRow = new WeakMap();
-    cellInteractiveCache.set(row, perRow);
-  }
-  if (perRow.has(col)) return perRow.get(col);
-  const result = cellNotDelegated(row, col);
-  perRow.set(col, result);
-  return result;
 }
 
 function formatBoolean(value) {
@@ -562,45 +406,6 @@ function selectFirstPage() {
   selectPageClicked(0);
 }
 
-function resolveDataGridScrollParent(el) {
-  if (!el) return null;
-
-  const isScrollableOverflow = (overflowY) =>
-    overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay';
-
-  const isConstrainedScrollableElement = (element, style) => {
-    if (!element || !style) return false;
-    if (element.scrollHeight > element.clientHeight + 1) return true;
-
-    const hasConstrainedHeight = style.height !== 'auto' && style.height !== '';
-    const hasConstrainedMaxHeight = style.maxHeight && style.maxHeight !== 'none';
-
-    return hasConstrainedHeight || hasConstrainedMaxHeight;
-  };
-
-  const modalElement = el.closest('.lx-modal');
-  const modalMain = modalElement?.querySelector(':scope > .lx-main');
-  if (modalMain) {
-    const modalMainStyle = globalThis.getComputedStyle(modalMain);
-    if (isScrollableOverflow(modalMainStyle?.overflowY)) {
-      return modalMain;
-    }
-  }
-
-  let parent = el.parentElement;
-  while (parent && parent !== document.body && parent !== document.documentElement) {
-    const style = globalThis.getComputedStyle(parent);
-
-    if (isScrollableOverflow(style?.overflowY) && isConstrainedScrollableElement(parent, style)) {
-      return parent;
-    }
-
-    parent = parent.parentElement;
-  }
-
-  return null;
-}
-
 function syncHeaderScroll() {
   if (header.value && container.value) {
     header.value.scrollLeft = container.value.scrollLeft;
@@ -620,16 +425,6 @@ function scheduleHeaderScroll() {
   pendingHeaderScrollRaf = globalThis.requestAnimationFrame(() => {
     pendingHeaderScrollRaf = null;
     syncHeaderScroll();
-  });
-}
-
-function scheduleBoundingUpdate() {
-  if (pendingBoundingRaf !== null) {
-    return;
-  }
-  pendingBoundingRaf = globalThis.requestAnimationFrame(() => {
-    pendingBoundingRaf = null;
-    bounding.update();
   });
 }
 
@@ -1048,178 +843,53 @@ function primaryColumnDisplayAttribute() {
 }
 
 const rows = computed(() => {
-  if (!props.items) return [];
+  if (props.items) {
+    let ret = [...props.items];
 
-  const primaryAttributeName = primaryColumn()?.attributeName;
-  const primaryAttributeNameHeaders = primaryColumnDisplayAttribute();
-  const primaryType = primaryColumn()?.type;
-  const { idAttribute } = props;
+    const primaryAttributeName = primaryColumn()?.attributeName;
+    const primaryAttributeNameHeaders = primaryColumnDisplayAttribute();
+    const primaryType = primaryColumn()?.type;
 
-  // Single pass: transform each row and detect duplicate IDs at once.
-  const seenIds = idAttribute ? new Set() : null;
-  let hasDuplicates = false;
-
-  let ret = props.items.map((row) => {
-    if (seenIds) {
-      const id = row?.[idAttribute];
-      if (!hasDuplicates) {
-        if (seenIds.has(id)) hasDuplicates = true;
-        else seenIds.add(id);
-      }
-    }
-    // If the primary column is an array display it as a string to ensure clickability, except for "person" type
-    if (Array.isArray(row[primaryAttributeName]) && primaryType !== 'person') {
-      if (
-        typeof row[primaryAttributeName][0] === 'object' ||
-        row[primaryAttributeName].length === 0
-      ) {
+    ret = ret.map((row) => {
+      // If the primary column is an array display it as a string to ensure clickability, except for "person" type
+      if (Array.isArray(row[primaryAttributeName]) && primaryType !== 'person') {
+        if (
+          typeof row[primaryAttributeName][0] === 'object' ||
+          row[primaryAttributeName].length === 0
+        ) {
+          return {
+            ...row,
+            [primaryAttributeName]: formatValueArray(row[primaryAttributeName]),
+            [primaryAttributeNameHeaders]: formatValueArray(row[primaryAttributeName]),
+          };
+        }
         return {
           ...row,
-          [primaryAttributeName]: formatValueArray(row[primaryAttributeName]),
-          [primaryAttributeNameHeaders]: formatValueArray(row[primaryAttributeName]),
+          [primaryAttributeName]: row[primaryAttributeName],
+          [primaryAttributeNameHeaders]: row[primaryAttributeName].join(', '),
         };
       }
-      return {
-        ...row,
-        [primaryAttributeName]: row[primaryAttributeName],
-        [primaryAttributeNameHeaders]: row[primaryAttributeName].join(', '),
-      };
+      return { ...row, [primaryAttributeNameHeaders]: row[primaryAttributeName] };
+    });
+
+    const colCode = Object.keys(sortedColumns.value)[0];
+    if (sortedColumns.value[colCode] && props.sortingSide === 'client') {
+      if (sortedColumns.value[colCode] === 'asc') {
+        ret = ret.sort(compare(true));
+      } else {
+        ret = ret.sort(compare(false));
+      }
     }
-    return { ...row, [primaryAttributeNameHeaders]: row[primaryAttributeName] };
-  });
-
-  const colCode = Object.keys(sortedColumns.value)[0];
-  if (sortedColumns.value[colCode] && props.sortingSide === 'client') {
-    if (sortedColumns.value[colCode] === 'asc') {
-      ret = ret.sort(compare(true));
-    } else {
-      ret = ret.sort(compare(false));
+    if (ret.length !== new Set(ret.map((x) => x[props.idAttribute])).size) {
+      logError(
+        `DataGrid: Duplicate row IDs found in items. Please ensure that each item has a unique ID for the attribute "${props.idAttribute}".`,
+        useLx().getGlobals()?.environment
+      );
     }
+    return ret;
   }
-  if (hasDuplicates) {
-    logError(
-      `DataGrid: Duplicate row IDs found in items. Please ensure that each item has a unique ID for the attribute "${idAttribute}".`,
-      useLx().getGlobals()?.environment
-    );
-  }
-  return ret;
+  return [];
 });
-
-const rowsWithVirtualKey = computed(() => {
-  const seenById = new Map();
-  return (rows.value || []).map((row, index) => {
-    const baseId = row?.[props.idAttribute] ?? index;
-    const duplicateCount = (seenById.get(baseId) || 0) + 1;
-    seenById.set(baseId, duplicateCount);
-    return {
-      // Detach the row from Vue's reactive Proxy. Every `row[col.attributeName]`
-      // access in the cell template would otherwise hit the Proxy machinery;
-      // for ~17 visible × N cells × multiple field reads per render, that
-      // overhead adds up. Assumes the parent treats `items` as immutable —
-      // mutating a row field in place would no longer trigger a re-render.
-      row: toRaw(row),
-      rowIndex: index,
-      virtualKey: duplicateCount === 1 ? `${baseId}` : `${baseId}__dup_${duplicateCount}`,
-    };
-  });
-});
-
-const wantsDataGridVirtualization = computed(
-  () =>
-    props.hasVirtualization &&
-    !props.loading &&
-    rows.value.length > 0 &&
-    isDataGridLayoutVisible.value
-);
-
-const {
-  virtualizer: dataGridVirtualizer,
-  isActive: shouldVirtualizeDataGrid,
-  totalSize: dataGridVirtualTotalSize,
-  virtualItems: dataGridVirtualItems,
-  scrollMargin: dataGridScrollMargin,
-  measureElement: measureDataGridVirtualElement,
-  measureElements: measureDataGridVirtualElements,
-  updateScrollContext: updateDataGridScrollContext,
-  scheduleLayoutUpdate: scheduleDataGridLayoutUpdate,
-  syncVirtualizationContext: syncDataGridVirtualizationContext,
-  clearVirtualizer: clearDataGridVirtualization,
-  cleanup: cleanupDataGridVirtualization,
-} = useScrollVirtualizer({
-  enabled: wantsDataGridVirtualization,
-  scrollParentSourceRef: container,
-  scrollAnchorRef: container,
-  positionObserverRef: dataGridWrapperRef,
-  resolveScrollParent: resolveDataGridScrollParent,
-  createVirtualizerOptions: ({ scrollMargin }) => ({
-    get count() {
-      if (!wantsDataGridVirtualization.value) return 0;
-      return rows.value?.length || 0;
-    },
-    getItemKey: (index) => rowsWithVirtualKey.value?.[index]?.virtualKey ?? index,
-    get scrollMargin() {
-      return scrollMargin.value;
-    },
-    estimateSize: () => VIRTUALIZED_ESTIMATED_ROW_HEIGHT,
-    shouldAdjustScrollPositionOnItemSizeChange: () => false,
-    overscan: VIRTUALIZED_OVERSCAN,
-  }),
-});
-
-function handleDataGridResize() {
-  syncDataGridLayoutVisibility();
-  scheduleDataGridLayoutUpdate();
-  scheduleBoundingUpdate();
-}
-
-const displayedRows = computed(() => {
-  if (shouldVirtualizeDataGrid.value) {
-    const scrollMargin = dataGridScrollMargin.value;
-    const rowsByIndex = rowsWithVirtualKey.value;
-    return dataGridVirtualItems.value
-      .map((virtualRow) => {
-        const entry = rowsByIndex?.[virtualRow.index];
-        if (!entry?.row) return null;
-        return {
-          row: entry.row,
-          rowIndex: virtualRow.index,
-          rowKey: entry.virtualKey,
-          style: { transform: `translateY(${virtualRow.start - scrollMargin}px)` },
-        };
-      })
-      .filter(Boolean);
-  }
-
-  // Virtualization opted in but not yet initialized: render nothing instead of
-  // mounting every item just to discard it once the virtualizer activates.
-  if (props.hasVirtualization) {
-    return [];
-  }
-
-  return rowsWithVirtualKey.value.map((entry) => ({
-    row: entry.row,
-    rowIndex: entry.rowIndex,
-    rowKey: entry.virtualKey,
-    style: null,
-  }));
-});
-
-const dataGridContentStyle = computed(() => {
-  if (!shouldVirtualizeDataGrid.value) return null;
-  return {
-    height: `${dataGridVirtualTotalSize.value}px`,
-    position: 'relative',
-  };
-});
-
-// Re-measures the currently rendered rows in place to settle initial heights
-// once layout and web fonts are final — the first measurement can run before
-// column widths/fonts are ready, which otherwise only corrects on scroll.
-function remeasureRenderedDataGridRows() {
-  if (!shouldVirtualizeDataGrid.value || !container.value) return;
-  const rowElements = container.value.querySelectorAll('.lx-grid-content-virtualized .lx-grid-row');
-  measureDataGridVirtualElements(rowElements);
-}
 
 const pagesTotal = computed(() => Math.ceil(props.itemsTotal / props.itemsPerPage));
 
@@ -1427,12 +1097,7 @@ function syncColumnWidths() {
     .map((col) => `${col.getBoundingClientRect().width}px`)
     .join(' ');
 
-  container.value.style.setProperty('--lx-data-grid-template-columns', columnWidths);
   container.value.style.gridTemplateColumns = columnWidths;
-
-  if (shouldVirtualizeDataGrid.value) {
-    dataGridVirtualizer.value?.value.measure();
-  }
 }
 
 function calculateOffset(el) {
@@ -1440,11 +1105,6 @@ function calculateOffset(el) {
   const { fontSize } = getComputedStyle(el);
 
   return Number.parseInt(rowRems, 10) * Number.parseFloat(fontSize);
-}
-
-function getInlineDisplayValue(styleText = '') {
-  const displayMatch = styleText.match(/(?:^|;)\s*display\s*:\s*([^;]+)/i);
-  return displayMatch?.[1]?.trim() || '';
 }
 
 const topOutOfBounds = computed(() => {
@@ -1544,34 +1204,10 @@ watch(
   { immediate: true }
 );
 
-watch(wantsDataGridVirtualization, async (value) => {
-  if (!value) {
-    clearDataGridVirtualization();
-    return;
-  }
-
-  await nextTick();
-  syncDataGridLayoutVisibility();
-  if (!wantsDataGridVirtualization.value) return;
-  await syncDataGridVirtualizationContext({ reloadOnScrollParentChange: true });
-});
-
-watch([rows, () => props.loading], async () => {
-  await nextTick();
-  syncDataGridLayoutVisibility();
-  if (!wantsDataGridVirtualization.value) return;
-  updateDataGridScrollContext();
-  dataGridVirtualizer.value?.value.measure();
-  globalThis.requestAnimationFrame(() => remeasureRenderedDataGridRows());
-});
-
-watch([width, height], async () => {
-  await nextTick();
-  syncDataGridLayoutVisibility();
-  syncColumnWidths();
-  if (!wantsDataGridVirtualization.value) return;
-  await syncDataGridVirtualizationContext({ reloadOnScrollParentChange: true });
-  globalThis.requestAnimationFrame(() => remeasureRenderedDataGridRows());
+watch([width, height], () => {
+  nextTick(() => {
+    syncColumnWidths();
+  });
 });
 
 useMutationObserver(
@@ -1579,24 +1215,12 @@ useMutationObserver(
   (mutations) => {
     const mutation = mutations[0];
     const target = mutation?.target;
-    const previousDisplay = getInlineDisplayValue(mutation?.oldValue || '');
-    const nextDisplay = target instanceof HTMLElement ? target.style.display : '';
 
-    if (
-      mutation &&
-      mutation.attributeName === 'style' &&
-      previousDisplay !== nextDisplay &&
-      nextDisplay === ''
-    ) {
-      syncDataGridLayoutVisibility();
+    if (mutation && mutation.attributeName === 'style' && target?.style.display === '') {
       syncColumnWidths();
-      if (wantsDataGridVirtualization.value) {
-        updateDataGridScrollContext();
-        dataGridVirtualizer.value?.value.measure();
-      }
     }
   },
-  { attributes: true, childList: false, attributeFilter: ['style'], attributeOldValue: true }
+  { attributes: true, childList: false }
 );
 
 watch(
@@ -1617,12 +1241,6 @@ onMounted(() => {
     throw new Error('"idAttribute" prop is required on DataGrid Component');
   }
 
-  globalThis.addEventListener('resize', handleDataGridResize);
-  globalThis.addEventListener('scroll', scheduleBoundingUpdate, {
-    capture: true,
-    passive: true,
-  });
-
   watch(
     () => props.loading,
     (newValue, oldValue) => {
@@ -1637,23 +1255,9 @@ onMounted(() => {
     },
     { immediate: false }
   );
-
-  nextTick(async () => {
-    syncDataGridLayoutVisibility();
-    if (!wantsDataGridVirtualization.value) return;
-    await syncDataGridVirtualizationContext({ reloadOnScrollParentChange: true });
-    // Settle initial row heights after the first layout frame and after web
-    // fonts finish loading, both of which can change row height after the
-    // virtualizer's first measurement.
-    globalThis.requestAnimationFrame(() => remeasureRenderedDataGridRows());
-    globalThis.document?.fonts?.ready?.then(() => remeasureRenderedDataGridRows());
-  });
 });
 
 onBeforeUnmount(() => {
-  globalThis.removeEventListener('resize', handleDataGridResize);
-  globalThis.removeEventListener('scroll', scheduleBoundingUpdate, { capture: true });
-
   if (pendingHeaderScrollRaf !== null) {
     globalThis.cancelAnimationFrame(pendingHeaderScrollRaf);
     pendingHeaderScrollRaf = null;
@@ -1662,16 +1266,13 @@ onBeforeUnmount(() => {
     globalThis.cancelAnimationFrame(pendingContainerScrollRaf);
     pendingContainerScrollRaf = null;
   }
-  if (pendingBoundingRaf !== null) {
-    globalThis.cancelAnimationFrame(pendingBoundingRaf);
-    pendingBoundingRaf = null;
-  }
-  cleanupDataGridVirtualization();
 });
 
-const isMenuOpen = computed(() =>
-  Array.from(dropDownMenus.values()).some((menu) => menu?.menuOpen)
-);
+const isMenuOpen = computed(() => {
+  const offset = props.hasSorting ? 1 : 0;
+  const index = activeRow.value - offset;
+  return dropDownMenuRef.value?.[index]?.menuOpen ?? false;
+});
 
 const manyRowsSelected = computed(
   () => Object.values(selectedRowsRaw.value).filter(Boolean).length > 1
@@ -1703,14 +1304,16 @@ function getGridRowIndex(rowIndex) {
   return props.hasSorting ? Number(rowIndex) + 1 : Number(rowIndex);
 }
 
-function handleMenuClick(rowIndex, rowKey) {
+function handleMenuClick(rowIndex) {
   setActiveFromClick(
     getGridRowIndex(rowIndex),
     props.hasSelecting ? colCount.value + 2 : colCount.value + 1,
     false
   );
 
-  dropDownMenus.get(rowKey)?.openMenu();
+  const offset = props.hasSorting ? 1 : 0;
+  const index = activeRow.value - offset;
+  dropDownMenuRef.value?.[index]?.openMenu();
 }
 
 watch(
@@ -2029,24 +1632,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           <div v-if="hasActionButtons" role="columnheader" />
         </div>
 
-        <div
-          class="lx-grid-content"
-          :class="[{ 'lx-grid-content-virtualized': shouldVirtualizeDataGrid }]"
-          :style="dataGridContentStyle"
-        >
+        <div class="lx-grid-content">
           <!-- Row focus is handled programmatically by the grid roving-focus manager. -->
           <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
           <div
-            v-for="{ row, rowIndex, rowKey, style } in displayedRows"
+            v-for="(row, rowIndex) in rows"
             class="lx-grid-row"
             :class="[{ 'lx-selected': selectedRowsRaw[row[idAttribute]] && hasSelecting }]"
             :id="`row-${row[idAttribute]}`"
-            :style="style"
-            :ref="shouldVirtualizeDataGrid ? measureDataGridVirtualElement : null"
             :tabindex="-1"
             role="row"
-            :key="rowKey"
-            :data-index="shouldVirtualizeDataGrid ? rowIndex : null"
+            :key="row[idAttribute]"
             @dblclick="defaultActionClicked(row[idAttribute], row)"
           >
             <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
@@ -2081,16 +1677,35 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             <div
               v-for="(col, colIndex) in gridColumnsDisplay"
               :key="col.id"
-              v-memo="[row, col, gridActiveRow, gridActiveCol, gridActiveItem, isDisabled]"
               class="lx-cell"
               role="cell"
               :tabindex="
-                cellIsInteractive(row, col)
+                !isCellDelegated(
+                  col,
+                  (isObject(row?.[col?.attributeName]) &&
+                    !isValueEmpty(row?.[col?.attributeName]) &&
+                    col.type === 'icon') ||
+                    (row[col.attributeName] &&
+                      row[col.attributeName].length >
+                        (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
+                      col.type === 'array') ||
+                    (col.type === 'person' && !isValueEmpty(row?.[col?.attributeName]))
+                )
                   ? getTabIndex(getGridRowIndex(rowIndex), hasSelecting ? colIndex + 1 : colIndex)
                   : -1
               "
               :ref="
-                cellIsInteractive(row, col)
+                !isCellDelegated(
+                  col,
+                  (isObject(row?.[col?.attributeName]) &&
+                    !isValueEmpty(row?.[col?.attributeName]) &&
+                    col.type === 'icon') ||
+                    (row[col.attributeName] &&
+                      row[col.attributeName].length >
+                        (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
+                      col.type === 'array') ||
+                    (col.type === 'person' && !isValueEmpty(row?.[col?.attributeName]))
+                )
                   ? (el) =>
                       registerCell(
                         el,
@@ -2100,11 +1715,59 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   : null
               "
               :class="[
-                col.cellStaticClass,
+                {
+                  'lx-cell-number':
+                    col.type === 'number' || col.type === 'decimal' || col.type === 'float',
+                },
+                {
+                  'lx-cell-number-left': col.options?.justify === 'left',
+                },
+                {
+                  'lx-cell-xs': col.size === 'xs',
+                },
+                {
+                  'lx-cell-s': col.size === 's',
+                },
+                {
+                  'lx-cell-m': col.size === 'm',
+                },
+                {
+                  'lx-cell-l': col.size === 'l',
+                },
+                {
+                  'lx-cell-xl': col.size === 'xl',
+                },
+                {
+                  'lx-cell-stretch': col.size === '*',
+                },
+                {
+                  'lx-cell-clickable': col.kind === 'clickable',
+                },
+                {
+                  'lx-cell-primary': col.kind === 'primary',
+                },
+                {
+                  'lx-cell-secondary': col.kind === 'secondary',
+                },
+                {
+                  'lx-cell-extra': col.kind === 'extra',
+                },
                 {
                   'lx-cell-link-disabled':
                     (col.kind === 'clickable' && !checkEnableByAttributeName(row)) || isDisabled,
-                  'lx-cell-not-delegated': cellIsInteractive(row, col),
+                },
+                {
+                  'lx-cell-not-delegated': !isCellDelegated(
+                    col,
+                    (isObject(row?.[col?.attributeName]) &&
+                      !isValueEmpty(row?.[col?.attributeName]) &&
+                      col.type === 'icon') ||
+                      (row[col.attributeName] &&
+                        row[col.attributeName].length >
+                          (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1) &&
+                        col.type === 'array') ||
+                      (col.type === 'person' && !isValueEmpty(row?.[col?.attributeName]))
+                  ),
                 },
               ]"
               @click="
@@ -2584,7 +2247,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 />
 
                 <LxDropDownMenu
-                  :ref="dropDownMenuRefFor(rowKey)"
+                  ref="dropDownMenuRef"
                   placement="bottom-end"
                   :disabled="isDisabled"
                   :tabindex="-1"
@@ -2610,7 +2273,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                           hasSelecting ? colCount + 2 : colCount + 1
                         )
                     "
-                    @click.stop.prevent="handleMenuClick(rowIndex, rowKey)"
+                    @click.stop.prevent="handleMenuClick(rowIndex)"
                   >
                     <LxButton
                       :id="`${id}-${row[idAttribute]}-action`"
@@ -2673,7 +2336,6 @@ defineExpose({ cancelSelection, selectRows, sortBy });
     />
 
     <LxAppendableList
-      v-if="isResponsiveLayout"
       :modelValue="rows"
       :expandable="true"
       :nameAttribute="primaryColumnDisplayAttribute()"

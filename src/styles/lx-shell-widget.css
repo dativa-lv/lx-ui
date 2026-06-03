@@ -526,7 +526,7 @@ header.lx.lx-header-wrapper .lx-header>.lx-right-group .lx-button:active {
   border-color: var(--color-header-hover-background);
 }
 
-/** DropDown icon styles **/
+/** Dropdown icon styles **/
 
 .lx.lx-header-wrapper .lx-dropdown-panel .user-menu-panel .lx-button svg,
 .lx.lx-header-wrapper .lx-dropdown-panel .lx-button-set .lx-button svg,
@@ -1137,7 +1137,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   background: var(--color-red);
 }
 
-/** DropDown styles **/
+/** Dropdown styles **/
 
 .lx-context-container {
   position: static !important;
@@ -1201,7 +1201,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   z-index: 1000;
 }
 
-/** DropDown button styles **/
+/** Dropdown button styles **/
 
 .lx-button-set {
   display: flex;

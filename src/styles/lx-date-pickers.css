@@ -942,13 +942,12 @@
   background-color: var(--color-data);
 }
 
-.lx .lx-layout .popper.fullscreen-popper .lx-dropdown-panel {
-  max-height: calc(75dvh - 3rem);
-  border: var(--border-width-0);
-}
-
 .popper.fullscreen-popper .lx-calendar-container {
   width: 100vw;
+}
+
+.lx .lx-layout .popper.fullscreen-popper .lx-dropdown-panel {
+  max-height: calc(75dvh - 3rem);
 }
 
 .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper {
@@ -969,6 +968,10 @@
 
 .lx-curtain.popper-curtain.higher-z-index {
   z-index: 9000;
+}
+
+.lx .lx-layout .popper.fullscreen-popper .lx-dropdown-panel {
+  border: var(--border-width-0);
 }
 
 .lx-dropdown-panel-wrapper.date-picker-type {
@@ -1073,7 +1076,7 @@
   margin: var(--space-0500) auto var(--space-1000) auto;
 }
 
-.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container {
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-container  {
   height: 100%;
 }
 
@@ -1084,8 +1087,10 @@
 
 .lx .lx-layout .popper.fullscreen-popper .lx-calendar-main {
   height: 100%;
-  justify-content: center;
-  align-items: center;
+}
+
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper.mobile-date-time.special-dates-layout {
+  height: unset;
 }
 
 .lx .lx-layout .popper.fullscreen-popper .lx-calendar-main .lx-calendar-layouts-wrapper .lx-calendar-layouts {
@@ -1168,6 +1173,16 @@
   font-weight: var(--font-weight-extra-bold);
 }
 
+.lx .lx-layout .popper.fullscreen-popper .lx-calendar-main {
+  justify-content: center;
+  align-items: center;
+}
+.lx .lx-layout .lx-calendar-container .lx-time-picker-container {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+}
+
 .lx-time-list-viewport::after,
 .lx-time-list-viewport::before {
   content: "";
@@ -1191,7 +1206,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  overflow: hidden;
+
   border-left: var(--border-width-2) solid var(--color-chrome);
 }
 
@@ -1212,7 +1227,7 @@
 .lx .lx-layout .popper .lx-calendar-container.mode-time-full .lx-time-picker-container,
 .lx .lx-layout .lx-date-time-picker-wrapper .lx-calendar-container.mode-time .lx-time-picker-container,
 .lx .lx-layout .lx-date-time-picker-wrapper .lx-calendar-container.mode-time-full .lx-time-picker-container {
-	border-left: var(--border-width-0);
+	  border-left: var(--border-width-0);
 }
 
 .lx-date-time-picker-wrapper .lx-calendar-container.mode-date-time .lx-time-picker-container .lx-time-columns,

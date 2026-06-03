@@ -4,7 +4,7 @@ import { generateUUID, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
-import LxValuePickerDropDown from '@/components/valuePickers/DropDown.vue';
+import LxValuePickerDropDown from '@/components/valuePickers/Dropdown.vue';
 import LxValuePickerTileTag from '@/components/valuePickers/TileTag.vue';
 import LxValuePickerRotator from '@/components/valuePickers/Rotator.vue';
 import LxValuePickerIndicator from '@/components/valuePickers/Indicator.vue';

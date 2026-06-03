@@ -127,7 +127,7 @@ const props = defineProps({
    * @default null
    * @since 0.3.11
    */
-  required: { type: Boolean, default: null },
+  required: { type: Boolean, default: null, group: 'main', sequence: 4 },
   /**
    * The unique identifier for the input element.
    * @type {String}

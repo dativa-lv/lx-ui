@@ -1270,12 +1270,13 @@ function toggleMenu(type, toggleType = null) {
 }
 
 function preventDefaultFocus(e) {
-  if (isTouchSensitive.value) {
+  if (isTouchSensitive.value && !isTouchMode.value) {
     e.preventDefault();
   }
 }
 
 function onTouchStart(e, type) {
+  if (!isTouchSensitive.value || !responsiveView.value) return;
   const t = e.touches && e.touches[0];
   if (!t) return;
 

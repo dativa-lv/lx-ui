@@ -887,18 +887,18 @@ function defineVars() {
 }
 
 watch(
-  () => computedBackgrounds.value,
+  () => computedBackgrounds,
   () => {
     defineVars();
   }
 );
 
 watch(
-  () => shell.value,
-  (element) => {
-    if (element && (props.mode === 'cover' || props.mode === 'cover-digives-lite')) {
-      nextTick(() => defineVars());
-    }
+  () => props.mode,
+  (newValue) => {
+    nextTick(() => {
+      if (newValue === 'cover' || newValue === 'cover-digives-lite') defineVars();
+    });
   }
 );
 
