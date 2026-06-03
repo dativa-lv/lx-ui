@@ -58,12 +58,6 @@ export function useGridKeyboardNavigation() {
     return [{ target: targets, item: 0 }];
   }
 
-  function normalizeTargets(targets) {
-    return Array.isArray(targets)
-      ? targets.map((target, item) => ({ target, item }))
-      : [{ target: targets, item: 0 }];
-  }
-
   function createFocusableCandidate(currentRow, currentCol, row, col, target, item) {
     if (isDisabledCell(target)) return null;
 
@@ -96,27 +90,26 @@ export function useGridKeyboardNavigation() {
   }
 
   function collectFocusableCandidates(row, col) {
-    return Object.entries(cellRefs.value).reduce((allCandidates, [rowKey, rowCells]) => {
+    return Object.entries(cellRefs.value).flatMap(([rowKey, rowCells]) => {
       const currentRow = Number(rowKey);
 
-      const rowCandidates = Object.entries(rowCells || {}).reduce((matches, [colKey, targets]) => {
+      return Object.entries(rowCells || {}).flatMap(([colKey]) => {
         const currentCol = Number(colKey);
 
-        const candidates = normalizeTargets(targets)
+        return getCellTargets(currentRow, currentCol)
           .map(({ target, item }) =>
             createFocusableCandidate(currentRow, currentCol, row, col, target, item)
           )
           .filter(Boolean);
-
-        return matches.concat(candidates);
-      }, []);
-
-      return allCandidates.concat(rowCandidates);
-    }, []);
+      });
+    });
   }
 
   function findClosestFocusableCell(row, col) {
-    return collectFocusableCandidates(row, col).reduce(pickBestFocusableCandidate, null);
+    return collectFocusableCandidates(row, col).reduce(
+      (bestMatch, candidate) => pickBestFocusableCandidate(bestMatch, candidate),
+      null
+    );
   }
 
   function focusCell(row, col, scroll = true, preferredItem = 0) {

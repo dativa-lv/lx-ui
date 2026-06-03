@@ -1152,7 +1152,7 @@ function addGlobalPrintStyles() {
   const gate = `html.lx-printing[data-lx-print-owner="${owner}"]`;
 
   const style = globalThis.document.createElement('style');
-  style.setAttribute('data-lx-print-style', 'true');
+  style.dataset.lxPrintStyle = 'true';
   style.textContent = `
 @page { margin: 0; }
 
