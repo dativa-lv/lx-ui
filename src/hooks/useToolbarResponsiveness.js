@@ -1,4 +1,5 @@
 import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
+import { useWindowSize } from '@vueuse/core';
 
 function remToPx(remValue) {
   const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -77,6 +78,7 @@ function splitByVisibility(actions, visibleIds) {
  * @param {Object} options.hasSearch - Computed reference for hasSearch.
  * @param {Object} options.searchMode - Computed reference for searchMode.
  * @param {Object} options.hasSelectAll - Computed reference for hasSelectAll.
+ * @param {Object} options.isSearchExpanded - Ref tracking whether compact search is open.
  * @param {Function} options.getActionId - Function to get action ID.
  * @param {Function} options.isActionDropDown - Function to check if action is dropdown.
  * @returns {Object} Responsive state and refs.
@@ -100,6 +102,7 @@ export function useToolbarResponsiveness({
   hasSearch,
   searchMode,
   hasSelectAll,
+  isSearchExpanded,
   getActionId,
   isActionDropDown,
 }) {
@@ -119,6 +122,8 @@ export function useToolbarResponsiveness({
 
   let resizeObserver = null;
   let frame = null;
+
+  const { width: windowWidth } = useWindowSize();
 
   const lxElement = computed(() => document.querySelector('.lx'));
 
@@ -662,6 +667,10 @@ export function useToolbarResponsiveness({
     toolbar.classList.toggle('lx-toolbar-hidden-under-header', overlap > threshold);
   }
 
+  function handleScroll() {
+    updateStickyVisibility();
+  }
+
   function recalculateLayout() {
     if (frame) {
       cancelAnimationFrame(frame);
@@ -726,6 +735,8 @@ export function useToolbarResponsiveness({
     { flush: 'post' }
   );
 
+  watch(windowWidth, () => recalculateLayout(), { flush: 'post' });
+
   onMounted(() => {
     const toolbar = toolbarRef.value?.$el ?? toolbarRef.value;
 
@@ -733,11 +744,25 @@ export function useToolbarResponsiveness({
       return;
     }
 
-    resizeObserver = new ResizeObserver(recalculateLayout);
+    let lastToolbarWidth = -1;
+    resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      if (!entry) {
+        return;
+      }
+      const newWidth = entry.borderBoxSize?.[0]?.inlineSize ?? entry.contentRect.width;
+      if (lastToolbarWidth >= 0 && Math.abs(newWidth - lastToolbarWidth) < 0.5) {
+        return;
+      }
+      lastToolbarWidth = newWidth;
+
+      if (!isSearchExpanded?.value) {
+        recalculateLayout();
+      }
+    });
     resizeObserver.observe(toolbar);
 
-    globalThis.addEventListener('resize', recalculateLayout);
-    globalThis.addEventListener('scroll', recalculateLayout, { passive: true });
+    globalThis.addEventListener('scroll', handleScroll, { passive: true });
     recalculateLayout();
   });
 
@@ -747,8 +772,7 @@ export function useToolbarResponsiveness({
       resizeObserver = null;
     }
 
-    globalThis.removeEventListener('resize', recalculateLayout);
-    globalThis.removeEventListener('scroll', recalculateLayout);
+    globalThis.removeEventListener('scroll', handleScroll);
 
     if (frame) {
       cancelAnimationFrame(frame);

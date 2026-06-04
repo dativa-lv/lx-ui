@@ -27,6 +27,7 @@ import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
 import useLx from '@/hooks/useLx';
 import { generateUUID, foldToAscii, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { lxDevUtils } from '@/utils';
+import { logWarn } from '@/utils/devUtils';
 import { focusNextFocusableElement, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
 
@@ -264,7 +265,33 @@ const wantsDefaultListVirtualization = computed(
     props.hasVirtualization &&
     props.kind === 'default' &&
     !props.groupDefinitions &&
-    normalizedListType.value === '1'
+    normalizedListType.value === '1' &&
+    // Virtualization is intentionally disabled together with stickyToolbar: the
+    // sticky toolbar + virtualized rows interact badly (focus-driven scrolling
+    // and row re-measurement make the list jump around). See warning below.
+    !props.stickyToolbar
+);
+
+const virtualizationDisabledByStickyToolbar = computed(
+  () =>
+    props.hasVirtualization &&
+    props.kind === 'default' &&
+    !props.groupDefinitions &&
+    normalizedListType.value === '1' &&
+    props.stickyToolbar
+);
+
+watch(
+  virtualizationDisabledByStickyToolbar,
+  (disabled) => {
+    if (disabled) {
+      logWarn(
+        '[lx-ui] Temporary limitation: when stickyToolbar and hasVirtualization are used together, virtualization is automatically disabled. This is a temporary workaround while compatibility between these features is being improved.',
+        useLx().getGlobals()?.environment
+      );
+    }
+  },
+  { immediate: true }
 );
 
 function resolveScrollParent(el) {
@@ -463,7 +490,6 @@ updateDefaultListScrollOffset = () => {
 
   if (Math.abs(next - defaultListScrollMargin.value) < 0.5) return;
   defaultListScrollMargin.value = next;
-  defaultListVirtualizer.value?.value.measure();
 };
 
 function updateDefaultListGap() {

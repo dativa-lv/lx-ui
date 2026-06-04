@@ -101,6 +101,9 @@ const hasLeftAreaSlotContent = ref(false);
 const hasRightAreaSlotContent = ref(false);
 const hasSecondRowSlotContent = ref(false);
 
+const isSearchExpanded = ref(false);
+const searchInputCompact = ref();
+
 function updateSlotContentFlags() {
   hasDefaultSlotContent.value = hasSlotContent(slots.default?.() ?? []);
   hasLeftAreaSlotContent.value = hasSlotContent(slots.leftArea?.() ?? []);
@@ -331,6 +334,7 @@ const {
   hasSearch: computed(() => props.hasSearch),
   searchMode: computed(() => props.searchMode),
   hasSelectAll: computed(() => props.hasSelectAll),
+  isSearchExpanded,
   getActionId,
   isActionDropDown,
 });
@@ -425,9 +429,6 @@ watch(
     searchInputRefresh.value += 1;
   }
 );
-
-const isSearchExpanded = ref(false);
-const searchInputCompact = ref();
 
 function toggleSearch() {
   if (!props.hasSearch || autoSearchMode.value !== 'compact') {
