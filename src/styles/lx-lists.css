@@ -692,7 +692,8 @@
   display: none;
 }
 
-.lx-selection-toolbar > .lx-component-toolbar .first-row {
+
+.lx-list-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row {
   background-color: var(--color-brand);
 }
 
@@ -725,15 +726,15 @@
   gap: var(--space-01250);
 }
 
-.lx-list-wrapper .lx-selection-toolbar > .lx-component-toolbar p {
+.lx-list-wrapper .lx-selection-toolbar.lx-component-toolbar p {
   color: var(--color-interactive-foreground);
 }
 
-.lx-list-wrapper .lx-selection-toolbar > .lx-component-toolbar.lx-disabled .lx-selection-status {
+.lx-list-wrapper .lx-selection-toolbar.lx-component-toolbar.lx-disabled .lx-selection-status {
   color: var(--color-toolbar-selection-button-text-disabled);
 }
 
-.lx-list-wrapper.list-inside-form .lx-selection-toolbar > .lx-component-toolbar p {
+.lx-list-wrapper.list-inside-form .lx-selection-toolbar.lx-component-toolbar p {
   padding-right: var(--space-1000);
 }
 

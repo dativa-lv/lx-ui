@@ -43,6 +43,7 @@ const props = defineProps({
   selectAllVariant: { type: String, default: 'icon-only' }, // icon-only, default
   defaultArea: { type: String, default: 'auto' }, // auto, right, left
   wrapperRef: { type: Object, default: null },
+  customClass: { type: String, default: '' },
   texts: {
     type: Object,
     default: () => ({}),
@@ -562,6 +563,7 @@ defineExpose({ toggleSearch, focusAction });
     ref="toolbarRef"
     class="lx-component-toolbar"
     :class="[
+      customClass,
       { 'lx-toolbar-no-borders': noBorders },
       { 'lx-toolbar-default-area-right': defaultAreaComputed === 'right' },
       { 'lx-toolbar-default-area-left': defaultAreaComputed === 'left' },

@@ -2309,16 +2309,16 @@
   background-color: var(--color-background);
 } 
 
-.lx .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--nav-row-size) + var(--row-size) + var(--row-size));
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
 }
 
-.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--public-nav-header-size) + var(--row-size) + var(--row-size));
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2);
 }
 
 .lx-toolbar-sticky.lx-toolbar-hidden-under-header {
@@ -2386,7 +2386,7 @@
 
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
-  top: calc(var(--nav-row-size) + var(--row-size) + var(--row-size));
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
 }
 
 .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-sticky-toolbar-list-wrapper,
@@ -2407,12 +2407,78 @@
 
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
-  top: calc(var(--nav-row-size) + var(--row-size) + var(--row-size) + var(--sticky-toolbar-additional-height));
+  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--sticky-toolbar-additional-height));
 }
 
 .lx .lx-layout .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky {
   top: 0;
 }
+
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+}
+
+.lx .lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx .lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2);
+}
+
+.lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+  z-index: 9;
+  border-bottom: var(--border-width-1) solid var(--color-chrome);
+  position: sticky;
+}
+
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky  {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+}
+
+.lx .lx-layout.lx-layout-public .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-public .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--nav-row-size) + var(--row-size) * 3);
+}
+
+.lx .lx-form-grid>header.lx-form-with-tabs+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>header.lx-form-with-steps+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>header.lx-form-with-tabs+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-steps+.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size));
+}
+
+
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx-layout.lx-layout-public .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--nav-row-size) + var(--row-size)*2);
+}
+
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--public-nav-header-size) + var(--row-size)*2);
+}
+
+.lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar){
+  top: calc(var(--nav-row-size) + var(--row-size));
+  z-index: 9;
+}
+
 
 @media (max-height: 640px) {
   .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-component-toolbar.lx-toolbar-sticky,
@@ -2425,7 +2491,7 @@
   }
   .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky {
-    top: calc(var(--row-size) + var(--row-size));
+    top: calc(var(--row-size)*2);
   }
 }
 
@@ -2707,8 +2773,78 @@
  
   .lx .lx-layout.lx-layout-public .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar,
   .lx .lx-layout.lx-layout-latvijalv .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
-  top: var(--row-size);
+    top: var(--row-size);
+  }
+  .lx .lx-layout-public .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout-public .lx-wizard .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout-latvijalv .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout-latvijalv .lx-wizard .lx-sticky-toolbar-list-wrapper {
+    top: calc(var(--row-size) * 3) !important;
+  }
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+    top: calc(var(--row-size) * 3);
+  }
+
+  .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+    top: calc(var(--nav-row-size) + var(--row-size));
+    z-index: 9;
+    border-bottom: var(--border-width-1) solid var(--color-chrome);
+    position: sticky;
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky {
+     top: calc(var(--nav-row-size) + var(--row-size)  * 2);
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-sticky-toolbar-list-wrapper {
+    top: calc(var(--row-size) * 3) !important;
+  }
+  .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper {
+    top: calc(var(--row-size) * 2) !important;
+  } 
 }
+.lx .lx-component-toolbar.lx-toolbar-sticky.lx-toolbar-hidden-under-footer {
+  z-index: 5;
+}
+
+.lx .lx-region .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-modal .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+  background-color: var(--color-region);
+}
+
+.lx .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+  background-color: var(--color-background);
+}
+
+.lx-layout.lx-layout-public .lx-form-grid > .lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-latvijalv .lx-form-grid > .lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-public .lx-form-grid > .lx-form-with-steps:not(.lx-sticky)+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-latvijalv .lx-form-grid > .lx-form-with-steps:not(.lx-sticky)+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  top: var(--public-nav-header-size);
 }
 
 @media (max-width: 1000px) {
@@ -2939,4 +3075,36 @@
   }
 }
 
+@media (max-height: 640px) {
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-public .lx-form-grid:not(:has(> header)) > .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-latvijalv .lx-form-grid:not(:has(> header)) > .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-public .lx-form-grid:not(:has(> header)) > .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-latvijalv .lx-form-grid:not(:has(> header)) > .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+    top: var(--row-size);
+  }
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid > .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid > .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid > .lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid > .lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky {
+    top: calc(var(--row-size) * 2);
+  }
 
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky {
+    top: calc(var(--row-size) * 3);
+  }
+}

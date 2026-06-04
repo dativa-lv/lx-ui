@@ -1529,46 +1529,101 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         :tabindex="0"
         @click="focusFirstFocusableElementAfter"
       />
-
-      <div
-        :class="[
-          { 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 },
-          { 'lx-sticky-toolbar-list-wrapper': props.stickyToolbar },
-        ]"
+      <LxToolbar
+        ref="toolbarRef"
+        :customClass="hasSelecting && selectedItems?.length > 0 ? 'lx-selection-toolbar' : ''"
+        :id="`${id}-toolbar`"
+        :actionDefinitions="toolbarActions"
+        :disabled="busy"
+        :loading="loading"
+        :busy="busy"
+        :hasSearch="hasSearch"
+        v-model:searchString="reactiveSearchString"
+        :searchSide="searchSide"
+        :searchMode="autoSearchMode"
+        :useSearchDebounce="true"
+        :hasSelectAll="hasSelectAll"
+        :selectionState="selectionState"
+        :texts="displayTexts"
+        :sticky="stickyToolbar"
+        :wrapperRef="listWrapper"
+        @actionClick="handleToolbarActionClick"
+        @search="search"
+        @update:searchString="(searchString) => (searchStringClientRaw = searchString)"
+        @selectAll="selectRows"
+        @deselectAll="cancelSelection"
       >
-        <LxToolbar
-          ref="toolbarRef"
-          :id="`${id}-toolbar`"
-          :actionDefinitions="toolbarActions"
-          :disabled="busy"
-          :loading="loading"
-          :busy="busy"
-          :hasSearch="hasSearch"
-          v-model:searchString="reactiveSearchString"
-          :searchSide="searchSide"
-          :searchMode="autoSearchMode"
-          :useSearchDebounce="true"
-          :hasSelectAll="hasSelectAll"
-          :selectionState="selectionState"
-          :texts="displayTexts"
-          :sticky="stickyToolbar"
-          :wrapperRef="listWrapper"
-          @actionClick="handleToolbarActionClick"
-          @search="search"
-          @update:searchString="(searchString) => (searchStringClientRaw = searchString)"
-          @selectAll="selectRows"
-          @deselectAll="cancelSelection"
-        >
-          <template #leftArea>
-            <slot
-              v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
-              name="leftToolbar"
-            />
+        <template #leftArea>
+          <slot
+            v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
+            name="leftToolbar"
+          />
+
+          <div
+            v-if="hasSelecting && insideForm && selectedItems?.length > 0"
+            class="selection-action-button-toolbar"
+          >
+            <div class="selection-action-buttons">
+              <LxButton
+                v-for="selectAction in selectionActionDefinitions"
+                :key="selectAction.id"
+                :id="selectAction.id"
+                :label="selectAction.name || selectAction.label"
+                :title="selectAction.title || selectAction.tooltip"
+                :loading="selectAction.loading"
+                :busy="selectAction.busy"
+                :icon="selectAction.icon"
+                :iconSet="selectAction.iconSet"
+                :destructive="selectAction.destructive"
+                :disabled="selectAction.disabled || busy || loading"
+                kind="ghost"
+                :active="selectAction.active"
+                :badge="selectAction.badge"
+                :badgeType="selectAction.badgeType"
+                :badgeIcon="selectAction.badgeIcon"
+                :badgeTitle="selectAction.badgeTitle"
+                :href="selectAction.href"
+                @click="selectionActionClick(selectAction.id, selectedItems)"
+              />
+            </div>
 
             <div
-              v-if="hasSelecting && insideForm && selectedItems?.length > 0"
-              class="selection-action-button-toolbar"
+              v-if="selectionActionDefinitions?.length > 0"
+              class="selection-action-buttons-small"
             >
+              <LxDropDownMenu
+                :disabled="loading || busy"
+                :actionDefinitions="selectionActionDefinitions"
+                @actionClick="(id) => selectionActionClick(id, selectedItems)"
+              >
+                <LxButton
+                  icon="menu"
+                  kind="ghost"
+                  :label="displayTexts.overflowMenu"
+                  variant="icon-only"
+                  tabindex="-1"
+                  :disabled="loading || busy"
+                />
+              </LxDropDownMenu>
+            </div>
+          </div>
+
+          <p
+            v-if="hasSelecting && selectedItems?.length > 0 && !insideForm"
+            class="lx-selection-status"
+          >
+            {{ selectedLabel }}
+          </p>
+        </template>
+
+        <template #rightArea>
+          <slot
+            v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
+            name="toolbar"
+          />
+
+          <template v-if="selectedItems?.length > 0">
+            <div v-if="hasSelecting && !insideForm" class="selection-action-button-toolbar">
               <div class="selection-action-buttons">
                 <LxButton
                   v-for="selectAction in selectionActionDefinitions"
@@ -1615,77 +1670,14 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             </div>
 
             <p
-              v-if="hasSelecting && selectedItems?.length > 0 && !insideForm"
+              v-if="hasSelecting && selectedItems?.length > 0 && insideForm"
               class="lx-selection-status"
             >
               {{ selectedLabel }}
             </p>
           </template>
-
-          <template #rightArea>
-            <slot
-              v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
-              name="toolbar"
-            />
-
-            <template v-if="selectedItems?.length > 0">
-              <div v-if="hasSelecting && !insideForm" class="selection-action-button-toolbar">
-                <div class="selection-action-buttons">
-                  <LxButton
-                    v-for="selectAction in selectionActionDefinitions"
-                    :key="selectAction.id"
-                    :id="selectAction.id"
-                    :label="selectAction.name || selectAction.label"
-                    :title="selectAction.title || selectAction.tooltip"
-                    :loading="selectAction.loading"
-                    :busy="selectAction.busy"
-                    :icon="selectAction.icon"
-                    :iconSet="selectAction.iconSet"
-                    :destructive="selectAction.destructive"
-                    :disabled="selectAction.disabled || busy || loading"
-                    kind="ghost"
-                    :active="selectAction.active"
-                    :badge="selectAction.badge"
-                    :badgeType="selectAction.badgeType"
-                    :badgeIcon="selectAction.badgeIcon"
-                    :badgeTitle="selectAction.badgeTitle"
-                    :href="selectAction.href"
-                    @click="selectionActionClick(selectAction.id, selectedItems)"
-                  />
-                </div>
-
-                <div
-                  v-if="selectionActionDefinitions?.length > 0"
-                  class="selection-action-buttons-small"
-                >
-                  <LxDropDownMenu
-                    :disabled="loading || busy"
-                    :actionDefinitions="selectionActionDefinitions"
-                    @actionClick="(id) => selectionActionClick(id, selectedItems)"
-                  >
-                    <LxButton
-                      icon="menu"
-                      kind="ghost"
-                      :label="displayTexts.overflowMenu"
-                      variant="icon-only"
-                      tabindex="-1"
-                      :disabled="loading || busy"
-                    />
-                  </LxDropDownMenu>
-                </div>
-              </div>
-
-              <p
-                v-if="hasSelecting && selectedItems?.length > 0 && insideForm"
-                class="lx-selection-status"
-              >
-                {{ selectedLabel }}
-              </p>
-            </template>
-          </template>
-        </LxToolbar>
-      </div>
-
+        </template>
+      </LxToolbar>
       <div v-if="groupDefinitions && filteredUngroupedItems && filteredUngroupedItems.length > 0">
         <ul
           v-if="kind === 'default'"

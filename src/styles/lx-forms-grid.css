@@ -774,12 +774,12 @@ svg .lx-shade {
   background-color: var(--color-region);
 }
 
-.lx-form-grid > .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
-.lx-form-grid > .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
-  position: sticky;
+.lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
   top: calc(var(--nav-row-size) + var(--row-size));
   z-index: 3;
   border-bottom: var(--border-width-1) solid var(--color-chrome);
+  position: sticky;
 }
 
 .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar), 

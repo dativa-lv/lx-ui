@@ -649,22 +649,46 @@ export function useToolbarResponsiveness({
     if (!(toolbar instanceof HTMLElement)) return;
 
     const form = toolbar.closest('.lx-form-grid');
-    const header = form?.querySelector(':scope > header.lx-sticky');
-    if (!(header instanceof HTMLElement)) return;
+    if (!(form instanceof HTMLElement)) {
+      toolbar.classList.remove('lx-toolbar-hidden-under-header');
+      toolbar.classList.remove('lx-toolbar-hidden-under-footer');
+      return;
+    }
 
-    const hasExtraFormBar =
-      header.classList.contains('lx-form-with-tabs') ||
-      header.classList.contains('lx-form-with-steps');
+    const header = form.querySelector(':scope > header.lx-sticky');
+    const formBar = form.querySelector(
+      ':scope > .lx-tab-control > header.lx-toolbar, :scope > .lx-wizard > header.lx-toolbar'
+    );
+    const footer = form.querySelector(':scope > footer.lx-sticky');
 
-    const formBarHeightRem = 3;
-    const extraFormBarOffset = hasExtraFormBar ? remToPx(formBarHeightRem) : 0;
+    const stickyTopElements = [header, formBar].filter((element) => element instanceof HTMLElement);
+    const stickyBottomElements = [footer].filter((element) => element instanceof HTMLElement);
 
-    const toolbarTop = Math.floor(toolbar.getBoundingClientRect().top);
-    const headerBottom = Math.floor(header.getBoundingClientRect().bottom + extraFormBarOffset);
+    if (stickyTopElements.length > 0) {
+      const toolbarTop = Math.floor(toolbar.getBoundingClientRect().top);
+      const topBoundaryBottom = Math.floor(
+        Math.max(...stickyTopElements.map((element) => element.getBoundingClientRect().bottom))
+      );
 
-    const overlap = headerBottom - toolbarTop;
-    const threshold = 3;
-    toolbar.classList.toggle('lx-toolbar-hidden-under-header', overlap > threshold);
+      const topOverlap = topBoundaryBottom - toolbarTop;
+      const threshold = 3;
+      toolbar.classList.toggle('lx-toolbar-hidden-under-header', topOverlap > threshold);
+    } else {
+      toolbar.classList.remove('lx-toolbar-hidden-under-header');
+    }
+
+    if (stickyBottomElements.length > 0) {
+      const toolbarBottom = Math.floor(toolbar.getBoundingClientRect().bottom);
+      const bottomBoundaryTop = Math.floor(
+        Math.min(...stickyBottomElements.map((element) => element.getBoundingClientRect().top))
+      );
+
+      const bottomOverlap = toolbarBottom - bottomBoundaryTop;
+      const threshold = 3;
+      toolbar.classList.toggle('lx-toolbar-hidden-under-footer', bottomOverlap > threshold);
+    } else {
+      toolbar.classList.remove('lx-toolbar-hidden-under-footer');
+    }
   }
 
   function handleScroll() {
