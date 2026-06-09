@@ -88,21 +88,24 @@ export function useGridKeyboardNavigation() {
 
     return bestMatch;
   }
+  function collectCellFocusableCandidates(currentRow, currentCol, row, col) {
+    return getCellTargets(currentRow, currentCol)
+      .map(({ target, item }) =>
+        createFocusableCandidate(currentRow, currentCol, row, col, target, item)
+      )
+      .filter(Boolean);
+  }
+
+  function collectRowFocusableCandidates(currentRow, rowCells, row, col) {
+    return Object.keys(rowCells || {}).flatMap((colKey) =>
+      collectCellFocusableCandidates(currentRow, Number(colKey), row, col)
+    );
+  }
 
   function collectFocusableCandidates(row, col) {
-    return Object.entries(cellRefs.value).flatMap(([rowKey, rowCells]) => {
-      const currentRow = Number(rowKey);
-
-      return Object.entries(rowCells || {}).flatMap(([colKey]) => {
-        const currentCol = Number(colKey);
-
-        return getCellTargets(currentRow, currentCol)
-          .map(({ target, item }) =>
-            createFocusableCandidate(currentRow, currentCol, row, col, target, item)
-          )
-          .filter(Boolean);
-      });
-    });
+    return Object.entries(cellRefs.value).flatMap(([rowKey, rowCells]) =>
+      collectRowFocusableCandidates(Number(rowKey), rowCells, row, col)
+    );
   }
 
   function findClosestFocusableCell(row, col) {

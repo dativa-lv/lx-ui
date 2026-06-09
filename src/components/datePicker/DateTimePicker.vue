@@ -124,100 +124,181 @@ const localeMasks = computed(() => {
   return props.locale?.masks ? props.locale.masks : defaultMasks;
 });
 
+const createFirstDayDate = () => {
+  const newDate = new Date();
+  newDate.setDate(1); // Set to the first day of the month
+  return newDate;
+};
+
+const isStringWithLength = (value, length) => typeof value === 'string' && value?.length === length;
+
+const parseTimeModelValue = (value) => {
+  if (!isStringWithLength(value, 5)) return parseDate(value);
+
+  const newDate = createFirstDayDate();
+  newDate.setHours(Number(value?.slice(0, 2)));
+  newDate.setMinutes(Number(value?.slice(3, 5)));
+
+  return newDate;
+};
+
+const parseFullTimeModelValue = (value) => {
+  if (!isStringWithLength(value, 8)) return parseDate(value);
+
+  const newDate = createFirstDayDate();
+  newDate.setHours(Number(value?.slice(0, 2)));
+  newDate.setMinutes(Number(value?.slice(3, 5)));
+  newDate.setSeconds(Number(value?.slice(6, 8)));
+
+  return newDate;
+};
+
+const parseMonthModelValue = (value) => {
+  if (!isStringWithLength(value, 2)) return parseDate(value);
+
+  const newDate = createFirstDayDate();
+  newDate.setMonth(Number(value) - 1);
+
+  return newDate;
+};
+
+const parseYearModelValue = (value) => {
+  if (!isStringWithLength(value, 4)) return parseDate(value);
+
+  const newDate = createFirstDayDate();
+  newDate.setFullYear(Number(value));
+
+  return newDate;
+};
+
+const parseMonthYearModelValue = (value) => {
+  if (!isStringWithLength(value, 7)) return parseDate(value);
+
+  const newDate = createFirstDayDate();
+  newDate.setFullYear(Number(value?.slice(0, 4)));
+  newDate.setMonth(Number(value?.slice(5, 7)) - 1);
+
+  return newDate;
+};
+
+const parseQuarterModelValue = (value) => {
+  if (!isStringWithLength(value, 7)) return parseDate(value);
+
+  const [year, quarter] = value.split('-');
+  const normalizedQuarter = quarter.split('Q');
+  const newDate = dateFromYearAndQuarter(year, normalizedQuarter[1]);
+
+  return newDate;
+};
+
+const getModelValue = () => {
+  switch (props.kind) {
+    case 'time':
+      return parseTimeModelValue(props.modelValue);
+    case 'time-full':
+      return parseFullTimeModelValue(props.modelValue);
+    case 'month':
+      return parseMonthModelValue(props.modelValue);
+    case 'year':
+      return parseYearModelValue(props.modelValue);
+    case 'month-year':
+      return parseMonthYearModelValue(props.modelValue);
+    case 'quarters':
+      return parseQuarterModelValue(props.modelValue);
+    default:
+      return parseExact(props.modelValue);
+  }
+};
+
+const emitModelValue = (value) => {
+  emits('update:modelValue', value);
+};
+
+const setTimeModelValue = (newValue) => {
+  const nv = extractTime(formatDateTime(newValue));
+  emitModelValue(nv);
+};
+
+const setFullTimeModelValue = (newValue) => {
+  const nv = extractTime(formatFull(newValue));
+  emitModelValue(nv);
+};
+
+const setDateModelValue = (newValue) => {
+  const nv = formatDateJSON(newValue);
+  emitModelValue(nv);
+};
+
+const setDateTimeModelValue = (newValue) => {
+  const nv = formatJSON(newValue);
+  emitModelValue(nv);
+};
+
+const setMonthModelValue = (newValue) => {
+  const nv = extractMonthFromDate(newValue);
+  emitModelValue(nv);
+};
+
+const setYearModelValue = (newValue) => {
+  const nv = extractYearFromDate(newValue);
+  emitModelValue(nv);
+};
+
+const setMonthYearModelValue = (newValue) => {
+  const nv = extractYearMonthFromDate(newValue, localeMasks.value.monthYearFormat);
+  emitModelValue(nv);
+};
+
+const setQuarterModelValue = (newValue) => {
+  const nv = extractQuarterFromDate(newValue);
+  emitModelValue(nv);
+};
+
+const setDefaultModelValue = (newValue) => {
+  const nv = formatJSON(newValue);
+
+  if (nv === props.modelValue) return;
+
+  emitModelValue(nv);
+};
+
+const setModelValue = (newValue) => {
+  switch (props.kind) {
+    case 'time':
+      setTimeModelValue(newValue);
+      break;
+    case 'time-full':
+      setFullTimeModelValue(newValue);
+      break;
+    case 'date':
+      setDateModelValue(newValue);
+      break;
+    case 'dateTime':
+    case 'date-time':
+    case 'date-time-full':
+      setDateTimeModelValue(newValue);
+      break;
+    case 'month':
+      setMonthModelValue(newValue);
+      break;
+    case 'year':
+      setYearModelValue(newValue);
+      break;
+    case 'month-year':
+      setMonthYearModelValue(newValue);
+      break;
+    case 'quarters':
+      setQuarterModelValue(newValue);
+      break;
+    default:
+      setDefaultModelValue(newValue);
+      break;
+  }
+};
+
 const model = computed({
-  get() {
-    switch (props.kind) {
-      case 'time':
-        if (typeof props.modelValue === 'string' && props.modelValue?.length === 5) {
-          const newDate = new Date();
-          newDate.setDate(1); // Set to the first day of the month
-          newDate.setHours(Number(props.modelValue?.slice(0, 2)));
-          newDate.setMinutes(Number(props.modelValue?.slice(3, 5)));
-          return newDate;
-        }
-        return parseDate(props.modelValue);
-      case 'time-full':
-        if (typeof props.modelValue === 'string' && props.modelValue?.length === 8) {
-          const newDate = new Date();
-          newDate.setDate(1); // Set to the first day of the month
-          newDate.setHours(Number(props.modelValue?.slice(0, 2)));
-          newDate.setMinutes(Number(props.modelValue?.slice(3, 5)));
-          newDate.setSeconds(Number(props.modelValue?.slice(6, 8)));
-          return newDate;
-        }
-        return parseDate(props.modelValue);
-      case 'month':
-        if (typeof props.modelValue === 'string' && props.modelValue?.length === 2) {
-          const newDate = new Date();
-          newDate.setDate(1); // Set to the first day of the month
-          newDate.setMonth(Number(props.modelValue) - 1);
-          return newDate;
-        }
-        return parseDate(props.modelValue);
-      case 'year':
-        if (typeof props.modelValue === 'string' && props.modelValue?.length === 4) {
-          const newDate = new Date();
-          newDate.setDate(1); // Set to the first day of the month
-          newDate.setFullYear(Number(props.modelValue));
-          return newDate;
-        }
-        return parseDate(props.modelValue);
-      case 'month-year':
-        if (typeof props.modelValue === 'string' && props.modelValue?.length === 7) {
-          const newDate = new Date();
-          newDate.setDate(1); // Set to the first day of the month
-          newDate.setFullYear(Number(props.modelValue?.slice(0, 4)));
-          newDate.setMonth(Number(props.modelValue?.slice(5, 7)) - 1);
-          return newDate;
-        }
-        return parseDate(props.modelValue);
-      case 'quarters':
-        if (typeof props.modelValue === 'string' && props.modelValue?.length === 7) {
-          const [year, quarter] = props.modelValue.split('-');
-          const normalizedQuarter = quarter.split('Q');
-          const newDate = dateFromYearAndQuarter(year, normalizedQuarter[1]);
-          return newDate;
-        }
-        return parseDate(props.modelValue);
-      default:
-        return parseExact(props.modelValue);
-    }
-  },
-  set(newValue) {
-    if (props.kind === 'time') {
-      const nv = extractTime(formatDateTime(newValue));
-      emits('update:modelValue', nv);
-    } else if (props.kind === 'time-full') {
-      const nv = extractTime(formatFull(newValue));
-      emits('update:modelValue', nv);
-    } else if (props.kind === 'date') {
-      const nv = formatDateJSON(newValue);
-      emits('update:modelValue', nv);
-    } else if (
-      props.kind === 'dateTime' ||
-      props.kind === 'date-time' ||
-      props.kind === 'date-time-full'
-    ) {
-      const nv = formatJSON(newValue);
-      emits('update:modelValue', nv);
-    } else if (props.kind === 'month') {
-      const nv = extractMonthFromDate(newValue);
-      emits('update:modelValue', nv);
-    } else if (props.kind === 'year') {
-      const nv = extractYearFromDate(newValue);
-      emits('update:modelValue', nv);
-    } else if (props.kind === 'month-year') {
-      const nv = extractYearMonthFromDate(newValue, localeMasks.value.monthYearFormat);
-      emits('update:modelValue', nv);
-    } else if (props.kind === 'quarters') {
-      const nv = extractQuarterFromDate(newValue);
-      emits('update:modelValue', nv);
-    } else {
-      const nv = formatJSON(newValue);
-      if (nv === props.modelValue) return;
-      emits('update:modelValue', nv);
-    }
-  },
+  get: getModelValue,
+  set: setModelValue,
 });
 
 function getNameDate() {

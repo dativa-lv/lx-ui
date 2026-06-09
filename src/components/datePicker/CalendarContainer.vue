@@ -2494,41 +2494,73 @@ const isSelectedYearRange = (year) => {
   return false;
 };
 
+const isSameYearQuarterRange = (quarterYear, quarterItem, range) =>
+  quarterYear === range.startYear &&
+  quarterItem >= range.startQuarter &&
+  quarterItem <= range.endQuarter;
+
+const isStartYearQuarterRange = (quarterYear, quarterItem, range) =>
+  quarterYear === range.startYear && quarterItem >= range.startQuarter;
+
+const isEndYearQuarterRange = (quarterYear, quarterItem, range) =>
+  quarterYear === range.endYear && quarterItem <= range.endQuarter;
+
+const isBetweenYearsQuarterRange = (quarterYear, range) =>
+  quarterYear > range.startYear && quarterYear < range.endYear;
+
+const isFullQuarterRange = (quarterYear, quarterItem, range) => {
+  if (range.startYear === range.endYear) {
+    return isSameYearQuarterRange(quarterYear, quarterItem, range);
+  }
+
+  if (isStartYearQuarterRange(quarterYear, quarterItem, range)) return true;
+  if (isEndYearQuarterRange(quarterYear, quarterItem, range)) return true;
+
+  return isBetweenYearsQuarterRange(quarterYear, range);
+};
+
+const isForwardQuarterRange = (quarterYear, quarterItem, range) => {
+  if (quarterYear === range.startYear) return quarterItem >= range.startQuarter;
+  if (quarterYear > range.startYear) return true;
+
+  return false;
+};
+
+const isBackwardQuarterRange = (quarterYear, quarterItem, range) => {
+  if (quarterYear === range.endYear) return quarterItem <= range.endQuarter;
+  if (quarterYear < range.endYear) return true;
+
+  return false;
+};
+
+const createQuarterRange = (sMonth, eMonth) => ({
+  startYear: Number(selectedStartYear.value),
+  endYear: Number(selectedEndYear.value),
+  startQuarter: sMonth !== null ? quarterFromMonth(sMonth) : null,
+  endQuarter: eMonth !== null ? quarterFromMonth(eMonth) : null,
+});
+
 const isSelectedQuarterRange = (quarterYear, quarterItem) => {
   const sMonth = selectedStartMonth.value;
   const eMonth = selectedEndMonth.value;
-  const sYear = Number(selectedStartYear.value);
-  const eYear = Number(selectedEndYear.value);
-  const startQuarter = sMonth !== null ? quarterFromMonth(sMonth) : null;
-  const endQuarter = eMonth !== null ? quarterFromMonth(eMonth) : null;
 
   const hasStart = sMonth !== null;
   const hasEnd = eMonth !== null;
-
-  const sameYear = hasStart && hasEnd && sYear === eYear;
-  const betweenYears = quarterYear > sYear && quarterYear < eYear;
+  const range = createQuarterRange(sMonth, eMonth);
 
   // Both start and end selected
   if (hasStart && hasEnd) {
-    if (sameYear) {
-      return quarterYear === sYear && quarterItem >= startQuarter && quarterItem <= endQuarter;
-    }
-
-    if (quarterYear === sYear) return quarterItem >= startQuarter;
-    if (quarterYear === eYear) return quarterItem <= endQuarter;
-    return betweenYears;
+    return isFullQuarterRange(quarterYear, quarterItem, range);
   }
 
   // Only start selected (forward selection)
   if (hasStart && !hasEnd && !selectedManually.value) {
-    if (quarterYear === sYear) return quarterItem >= startQuarter;
-    if (quarterYear > sYear) return true;
+    return isForwardQuarterRange(quarterYear, quarterItem, range);
   }
 
   // Only end selected (backward selection)
   if (hasEnd && !hasStart && !selectedManually.value) {
-    if (quarterYear === eYear) return quarterItem <= endQuarter;
-    if (quarterYear < eYear) return true;
+    return isBackwardQuarterRange(quarterYear, quarterItem, range);
   }
 
   return false;
