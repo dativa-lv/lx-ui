@@ -110,6 +110,7 @@ const alignedRowSize = computed(() => {
   -->
 
   <div
+    v-if="definition"
     class="lx-state lx-aligned-row"
     :class="[
       alignedRowSize,
@@ -139,4 +140,5 @@ const alignedRowSize = computed(() => {
     />
     <p class="lx-primary">{{ definition?.displayName }}</p>
   </div>
+  <span v-else>—</span>
 </template>
