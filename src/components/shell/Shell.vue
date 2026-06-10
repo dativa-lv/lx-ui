@@ -139,7 +139,7 @@ const props = defineProps({
   pageBackPath: { type: [Object, String], default: null },
   pageBackButtonVisible: { type: Boolean, default: true },
   pageHeaderVisible: { type: Boolean, default: true },
-  pageBreadcrumbs: { type: Array, default: null },
+  pageBreadcrumbs: { type: Array, default: () => [] },
   notifications: { type: Array, default: () => [] },
 
   hasThemePicker: { type: Boolean, default: false },
