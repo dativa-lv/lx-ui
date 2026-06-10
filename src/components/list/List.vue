@@ -1,15 +1,5 @@
 <script setup>
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  nextTick,
-  inject,
-  onBeforeUnmount,
-  shallowRef,
-  effectScope,
-} from 'vue';
+import { ref, computed, watch, onMounted, nextTick, inject, onBeforeUnmount } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxExpander from '@/components/Expander.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -28,8 +18,9 @@ import useLx from '@/hooks/useLx';
 import { generateUUID, foldToAscii, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { lxDevUtils } from '@/utils';
 import { logWarn } from '@/utils/devUtils';
-import { focusNextFocusableElement, getDisplayTexts, isDefined } from '@/utils/generalUtils';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
+import useScrollVirtualizer from '@/hooks/useScrollVirtualizer';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -157,10 +148,7 @@ const toolbarRef = ref(null);
 const isNarrow = ref(false);
 
 const defaultListRef = ref(null);
-const defaultListScrollMargin = ref(0);
 const defaultListGap = ref(8);
-const defaultListVirtualizer = shallowRef(null);
-const defaultListScrollParent = shallowRef(null);
 
 const searchStringClient = ref(props.searchSide === 'client' ? props.searchString : '');
 const searchStringClientRaw = ref('');
@@ -168,12 +156,7 @@ const searchStringServer = ref(props.searchSide === 'server' ? props.searchStrin
 
 let invisibleBlockTimeout;
 let observer;
-let defaultListPositionObserver = null;
-let virtualizerScope = null;
-let defaultListScrollOffsetRaf = null;
-let defaultListScrollTarget = null;
 let duplicateIdsWarningSignature = '';
-let updateDefaultListScrollOffset = () => {};
 
 const reactiveSearchString = computed({
   get() {
@@ -338,56 +321,49 @@ function resolveScrollParent(el) {
   return fallback;
 }
 
-function resolveDefaultListScrollTarget(scrollParent = defaultListScrollParent.value) {
-  if (scrollParent?.addEventListener) return scrollParent;
-  if (globalThis?.addEventListener) return globalThis;
-  return null;
-}
-
-async function loadVueVirtual() {
-  const lib = await loadLibrary('vueVirtual');
-  if (virtualizerScope) virtualizerScope.stop();
-  virtualizerScope = effectScope();
-  virtualizerScope.run(() => {
-    // IMPORTANT: do NOT spread this object when passing it to the virtualizer.
-    // Object spread evaluates the getters once and copies plain values, which
-    // would freeze `scrollMargin`, `count` and `gap` at their initial values
-    // and break reactivity.
-    const virtualizerOptions = {
-      get count() {
-        if (!wantsDefaultListVirtualization.value) return 0;
-        return filteredItems.value?.length || 0;
-      },
-      getItemKey: (index) => filteredItemsWithVirtualKey.value?.[index]?.virtualKey ?? index,
-      get scrollMargin() {
-        return defaultListScrollMargin.value;
-      },
-      estimateSize: () => VIRTUALIZED_ESTIMATED_ITEM_HEIGHT,
-      get gap() {
-        return defaultListGap.value;
-      },
-      overscan: 6, // The number of items to render above and below the visible area
-    };
-
-    if (defaultListScrollParent.value && lib.useVirtualizer) {
-      // `getScrollElement` must only be defined for the element virtualizer.
-      // Adding it to `useWindowVirtualizer` makes it try to read a (null)
-      // element and produces zero virtual rows.
-      Object.defineProperty(virtualizerOptions, 'getScrollElement', {
-        enumerable: true,
-        value: () => defaultListScrollParent.value,
-      });
-      defaultListVirtualizer.value = lib.useVirtualizer(virtualizerOptions);
-    } else {
-      defaultListVirtualizer.value = lib.useWindowVirtualizer(virtualizerOptions);
-    }
-  });
-}
-
-async function ensureDefaultListVirtualizer() {
-  if (!wantsDefaultListVirtualization.value) return;
-  await loadVueVirtual();
-}
+// Bespoke per-list virtualization is delegated to the shared
+// `useScrollVirtualizer` hook (the same one LxDataGrid uses), so the scroll
+// parent resolution, scroll-margin tracking, ResizeObserver wiring and lazy
+// `@tanstack/vue-virtual` loading all live in one place.
+//
+// `listWrapper` is the scroll-parent source (it always exists, so the scroll
+// parent — and the element-vs-window virtualizer choice — resolves on the very
+// first sync), while the `<ul>` (`defaultListRef`) is the scroll-margin anchor:
+// the margin must be measured from where the list content actually starts.
+const {
+  isActive: shouldVirtualizeDefaultList,
+  totalSize: defaultListTotalSize,
+  virtualItems: defaultListVirtualItems,
+  scrollMargin: defaultListScrollMargin,
+  measure: measureDefaultList,
+  measureElement: measureDefaultListRow,
+  updateScrollContext: updateDefaultListScrollContext,
+  scheduleLayoutUpdate: scheduleDefaultListLayoutUpdate,
+  syncVirtualizationContext: syncDefaultListVirtualizationContext,
+  clearVirtualizer: clearDefaultListVirtualization,
+  cleanup: cleanupDefaultListVirtualization,
+} = useScrollVirtualizer({
+  enabled: wantsDefaultListVirtualization,
+  scrollParentSourceRef: listWrapper,
+  scrollAnchorRef: defaultListRef,
+  positionObserverRef: listWrapper,
+  resolveScrollParent,
+  createVirtualizerOptions: ({ scrollMargin }) => ({
+    get count() {
+      if (!wantsDefaultListVirtualization.value) return 0;
+      return filteredItems.value?.length || 0;
+    },
+    getItemKey: (index) => filteredItemsWithVirtualKey.value?.[index]?.virtualKey ?? index,
+    get scrollMargin() {
+      return scrollMargin.value;
+    },
+    estimateSize: () => VIRTUALIZED_ESTIMATED_ITEM_HEIGHT,
+    get gap() {
+      return defaultListGap.value;
+    },
+    overscan: 6, // The number of items to render above and below the visible area
+  }),
+});
 
 function warnAboutDuplicateItemIds(items) {
   const duplicateIds = getDuplicateItemIds(items);
@@ -403,94 +379,15 @@ function warnAboutDuplicateItemIds(items) {
   lxDevUtils.log('LxList item codes are not unique!', useLx().getGlobals()?.environment, 'error');
 }
 
-const shouldVirtualizeDefaultList = computed(
-  () => wantsDefaultListVirtualization.value && !!defaultListVirtualizer.value
-);
-
-const defaultListRows = computed(() => {
-  const vRef = defaultListVirtualizer.value;
-  if (!vRef) return [];
-  return vRef.value
-    .getVirtualItems()
+const defaultListRows = computed(() =>
+  defaultListVirtualItems.value
     .map((virtualRow) => ({
       virtualRow,
       item: filteredItemsWithVirtualKey.value?.[virtualRow.index]?.item,
       virtualKey: filteredItemsWithVirtualKey.value?.[virtualRow.index]?.virtualKey,
     }))
-    .filter((row) => row.item);
-});
-
-const defaultListTotalSize = computed(() => {
-  const vRef = defaultListVirtualizer.value;
-  if (!vRef) return 0;
-  return vRef.value.getTotalSize();
-});
-
-function scheduleDefaultListScrollOffsetUpdate() {
-  if (!shouldVirtualizeDefaultList.value || isDefined(defaultListScrollOffsetRaf)) return;
-
-  defaultListScrollOffsetRaf = globalThis.requestAnimationFrame(() => {
-    defaultListScrollOffsetRaf = null;
-    updateDefaultListScrollOffset();
-    globalThis.requestAnimationFrame(() => {
-      updateDefaultListScrollOffset();
-    });
-  });
-}
-
-function setupDefaultListPositionObservers() {
-  if (!listWrapper.value) return;
-  defaultListPositionObserver?.disconnect();
-
-  const RO = globalThis.ResizeObserver;
-
-  if (RO) {
-    defaultListPositionObserver = new RO(() => {
-      scheduleDefaultListScrollOffsetUpdate();
-    });
-    defaultListPositionObserver.observe(listWrapper.value);
-    if (listWrapper.value.parentElement) {
-      defaultListPositionObserver.observe(listWrapper.value.parentElement);
-    }
-    if (defaultListScrollParent.value) {
-      defaultListPositionObserver.observe(defaultListScrollParent.value);
-    }
-  }
-}
-
-updateDefaultListScrollOffset = () => {
-  if (!shouldVirtualizeDefaultList.value || !defaultListRef.value) return;
-  const resolvedParent = resolveScrollParent(listWrapper.value);
-  if (resolvedParent !== defaultListScrollParent.value) {
-    defaultListScrollParent.value = resolvedParent;
-    const newTarget = resolveDefaultListScrollTarget(resolvedParent);
-    if (defaultListScrollTarget && defaultListScrollTarget !== newTarget) {
-      defaultListScrollTarget.removeEventListener('scroll', scheduleDefaultListScrollOffsetUpdate);
-      newTarget?.addEventListener('scroll', scheduleDefaultListScrollOffsetUpdate, {
-        passive: true,
-      });
-    }
-    defaultListScrollTarget = newTarget;
-    setupDefaultListPositionObservers();
-    if (wantsDefaultListVirtualization.value) {
-      loadVueVirtual();
-    }
-  }
-
-  const listTop = defaultListRef.value.getBoundingClientRect().top;
-  const parent = defaultListScrollParent.value;
-
-  let next;
-  if (parent) {
-    const parentTop = parent.getBoundingClientRect().top;
-    next = listTop - parentTop + parent.scrollTop;
-  } else {
-    next = listTop + globalThis.scrollY;
-  }
-
-  if (Math.abs(next - defaultListScrollMargin.value) < 0.5) return;
-  defaultListScrollMargin.value = next;
-};
+    .filter((row) => row.item)
+);
 
 function updateDefaultListGap() {
   if (!shouldVirtualizeDefaultList.value || !defaultListRef.value) return;
@@ -502,13 +399,8 @@ function updateDefaultListGap() {
 function handleDefaultListResize() {
   if (!shouldVirtualizeDefaultList.value) return;
   updateDefaultListGap();
-  updateDefaultListScrollOffset();
-  defaultListVirtualizer.value?.value.measure();
-}
-
-function measureDefaultListRow(element) {
-  if (!shouldVirtualizeDefaultList.value || !element) return;
-  defaultListVirtualizer.value?.value.measureElement(element);
+  scheduleDefaultListLayoutUpdate();
+  measureDefaultList();
 }
 
 function findObjectById(array) {
@@ -719,8 +611,8 @@ watch(filteredItems, () => {
   if (!shouldVirtualizeDefaultList.value) return;
   nextTick(() => {
     updateDefaultListGap();
-    updateDefaultListScrollOffset();
-    defaultListVirtualizer.value?.value.measure();
+    updateDefaultListScrollContext();
+    measureDefaultList();
   });
 });
 
@@ -728,20 +620,22 @@ watch(shouldVirtualizeDefaultList, (isEnabled) => {
   if (!isEnabled) return;
   nextTick(() => {
     updateDefaultListGap();
-    updateDefaultListScrollOffset();
-    defaultListVirtualizer.value?.value.measure();
+    updateDefaultListScrollContext();
+    measureDefaultList();
   });
 });
 
-watch(
-  wantsDefaultListVirtualization,
-  async (wants) => {
-    if (wants && !defaultListVirtualizer.value) {
-      await loadVueVirtual();
-    }
-  },
-  { immediate: true }
-);
+watch(wantsDefaultListVirtualization, async (wants) => {
+  if (!wants) {
+    clearDefaultListVirtualization();
+    return;
+  }
+  await nextTick();
+  if (!wantsDefaultListVirtualization.value) return;
+  await syncDefaultListVirtualizationContext({ reloadOnScrollParentChange: true });
+  updateDefaultListGap();
+  measureDefaultList();
+});
 
 watch(
   stringifiedItems,
@@ -1475,37 +1369,18 @@ onMounted(async () => {
 
   observer.observe(listWrapper.value);
 
-  defaultListScrollParent.value = resolveScrollParent(listWrapper.value);
-  defaultListScrollTarget = resolveDefaultListScrollTarget(defaultListScrollParent.value);
+  globalThis.addEventListener('resize', handleDefaultListResize);
 
   if (wantsDefaultListVirtualization.value) {
-    await ensureDefaultListVirtualizer();
+    await syncDefaultListVirtualizationContext({ reloadOnScrollParentChange: true });
+    updateDefaultListGap();
+    measureDefaultList();
   }
-
-  await nextTick();
-  updateDefaultListGap();
-  updateDefaultListScrollOffset();
-  defaultListVirtualizer.value?.value.measure();
-
-  setupDefaultListPositionObservers();
-
-  defaultListScrollTarget?.addEventListener('scroll', scheduleDefaultListScrollOffsetUpdate, {
-    passive: true,
-  });
-  globalThis.addEventListener('resize', handleDefaultListResize);
 });
 
 onBeforeUnmount(() => {
-  virtualizerScope?.stop();
+  cleanupDefaultListVirtualization();
   observer?.disconnect();
-  defaultListPositionObserver?.disconnect();
-  defaultListPositionObserver = null;
-  if (isDefined(defaultListScrollOffsetRaf)) {
-    globalThis.cancelAnimationFrame(defaultListScrollOffsetRaf);
-    defaultListScrollOffsetRaf = null;
-  }
-  defaultListScrollTarget?.removeEventListener('scroll', scheduleDefaultListScrollOffsetUpdate);
-  defaultListScrollTarget = null;
   globalThis.removeEventListener('resize', handleDefaultListResize);
 });
 
@@ -2301,7 +2176,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           </li>
         </ul>
         <ul
-          v-else-if="kind === 'default'"
+          v-else-if="kind === 'default' && !wantsDefaultListVirtualization"
           :id="id"
           class="lx-list"
           :class="[

@@ -13,6 +13,19 @@ import {
 
 let wrapper;
 
+// The default list lazily loads `@tanstack/vue-virtual` and only renders rows
+// once the virtualizer is instantiated (it no longer mounts the full,
+// unvirtualized list first). Flush a few microtask + render steps so the
+// virtualized rows are present before asserting. Mirrors LxDataGrid's tests.
+async function flushVirtualizationSetup() {
+  const flushStep = () => Promise.resolve().then(() => nextTick());
+
+  return Array.from({ length: 5 }).reduce(
+    (promise) => promise.then(() => flushStep()),
+    Promise.resolve()
+  );
+}
+
 function mountComponent({ props = {}, attachTo } = {}) {
   expect(LxList).toBeTruthy();
 
@@ -75,6 +88,10 @@ test('default elements', () => {
     idAttribute: 'id',
     nameAttribute: 'name',
     groupAttribute: 'group',
+    // This test asserts synchronous DOM; the virtualized default list renders
+    // its rows asynchronously (once the virtualizer initializes), so opt out of
+    // virtualization to render all rows immediately.
+    hasVirtualization: false,
   };
 
   wrapper = mountComponent({ props });
@@ -590,8 +607,7 @@ describe('Virtualization', () => {
         },
       });
 
-      await Promise.resolve();
-      await nextTick();
+      await flushVirtualizationSetup();
 
       const firstRowA = wrapperA.find('li.lx-list-item-container');
       const firstRowB = wrapperB.find('li.lx-list-item-container');
@@ -694,8 +710,7 @@ describe('Virtualization', () => {
       });
       wrapper = wrapperA;
 
-      await Promise.resolve();
-      await nextTick();
+      await flushVirtualizationSetup();
 
       const firstRow = wrapperA.find('li.lx-list-item-container');
       expect(firstRow.exists()).toBe(true);
@@ -771,8 +786,7 @@ describe('Virtualization', () => {
         attachTo: modalMain,
       });
 
-      await Promise.resolve();
-      await nextTick();
+      await flushVirtualizationSetup();
 
       const rows = wrapper.findAll('li.lx-list-item-container');
       expect(rows.length).toBe(1);
@@ -843,8 +857,7 @@ describe('Virtualization', () => {
         attachTo: modalMain,
       });
 
-      await Promise.resolve();
-      await nextTick();
+      await flushVirtualizationSetup();
 
       const rows = wrapper.findAll('li.lx-list-item-container');
       expect(rows.length).toBe(1);
@@ -906,8 +919,7 @@ describe('Virtualization', () => {
         },
       });
 
-      await Promise.resolve();
-      await nextTick();
+      await flushVirtualizationSetup();
 
       const rows = wrapper.findAll('li.lx-list-item-container');
       expect(rows.length).toBe(2);
