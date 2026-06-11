@@ -20,6 +20,7 @@ const props = defineProps({
   iconAttribute: { type: String, default: null },
   hideRemoveAttribute: { type: String, default: null },
   removeEnableByAttribute: { type: String, default: null },
+  removeVisibleByAttribute: { type: String, default: null },
   columnCount: { type: Number, default: 1 },
   kind: { type: String, default: 'default' }, // default, compact
   requiredMode: { type: String, default: 'optional' }, // required, required-asterisk, optional
@@ -148,17 +149,19 @@ function clearModel() {
 }
 
 function changeActions(actionDefinitions, item) {
-  return actionDefinitions.map((x) => {
-    const updatedAction = { ...x };
+  return actionDefinitions
+    .filter((x) => (x.visibleByAttribute ? item[x.visibleByAttribute] : true))
+    .map((x) => {
+      const updatedAction = { ...x };
 
-    if (x.enableByAttribute) {
-      const value = item[x.enableByAttribute];
-      if (!value) {
-        updatedAction.disabled = true;
+      if (x.enableByAttribute) {
+        const value = item[x.enableByAttribute];
+        if (!value) {
+          updatedAction.disabled = true;
+        }
       }
-    }
-    return updatedAction;
-  });
+      return updatedAction;
+    });
 }
 
 const allActions = computed(() => {
@@ -170,6 +173,7 @@ const allActions = computed(() => {
         destructive: true,
         title: displayTexts.value.removeItem,
         enableByAttribute: props.removeEnableByAttribute,
+        visibleByAttribute: props.removeVisibleByAttribute,
       },
     ];
   }
@@ -182,6 +186,7 @@ const allActions = computed(() => {
         destructive: true,
         title: displayTexts.value.removeItem,
         enableByAttribute: props.removeEnableByAttribute,
+        visibleByAttribute: props.removeVisibleByAttribute,
       },
       ...props.actionDefinitions,
     ];
@@ -355,7 +360,11 @@ defineExpose({ clearModel });
           <div class="appendable-list-remove-button-wrapper">
             <div class="appendable-list-remove">
               <LxButton
-                v-if="!readOnly && (!hideRemoveAttribute || !item[hideRemoveAttribute])"
+                v-if="
+                  !readOnly &&
+                  (!hideRemoveAttribute || !item[hideRemoveAttribute]) &&
+                  (!removeVisibleByAttribute || item[removeVisibleByAttribute])
+                "
                 icon="remove-item"
                 variant="icon-only"
                 :label="displayTexts.removeItem"

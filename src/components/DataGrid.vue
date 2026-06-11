@@ -1332,17 +1332,25 @@ function toolbarClick(action) {
 
 const actionDefinitionsGroup = computed(() => props.actionDefinitions?.slice(1));
 
+function getRowVisibleActions(row) {
+  return props.actionDefinitions?.filter((a) =>
+    a.visibleByAttribute ? row[a.visibleByAttribute] : true
+  );
+}
+
 function getRowActionDefinitionsGroup(row) {
-  return actionDefinitionsGroup.value.map((a) => {
-    const action = a;
-    return {
-      ...action,
-      disabled:
-        isDisabled.value ||
-        action.disabled ||
-        (action.enableByAttribute ? !row[action.enableByAttribute] : false),
-    };
-  });
+  return actionDefinitionsGroup.value
+    .filter((a) => (a.visibleByAttribute ? row[a.visibleByAttribute] : true))
+    .map((a) => {
+      const action = a;
+      return {
+        ...action,
+        disabled:
+          isDisabled.value ||
+          action.disabled ||
+          (action.enableByAttribute ? !row[action.enableByAttribute] : false),
+      };
+    });
 }
 
 function emptyStateActionClicked(actionName) {
@@ -2349,7 +2357,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     "
                   />
                   <LxButton
-                    v-if="col?.options?.actionDefinitions?.[0]"
+                    v-if="
+                      col?.options?.actionDefinitions?.[0] &&
+                      (!col.options.actionDefinitions[0]?.visibleByAttribute ||
+                        row[col.options.actionDefinitions[0]?.visibleByAttribute])
+                    "
                     :id="`${id}-${row[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
                     variant="icon-only"
                     kind="ghost"
@@ -2479,7 +2491,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
               <div
                 class="lx-toolbar"
-                v-if="actionDefinitions.length <= 2"
+                v-if="getRowVisibleActions(row).length <= 2"
                 role="toolbar"
                 @click="
                   setActiveFromClick(
@@ -2489,7 +2501,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 "
               >
                 <LxButton
-                  v-for="action in actionDefinitions"
+                  v-for="action in getRowVisibleActions(row)"
                   :key="action.id"
                   :id="`${id}-${row[idAttribute]}-action-${action.id}`"
                   :label="action.name || action.label"
@@ -2529,7 +2541,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
 
               <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
               <div
-                v-if="actionDefinitions.length > 2"
+                v-if="getRowVisibleActions(row).length > 2"
                 class="lx-toolbar"
                 role="toolbar"
                 @click="
@@ -2540,6 +2552,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 "
               >
                 <LxButton
+                  v-if="
+                    !actionDefinitions?.[0]?.visibleByAttribute ||
+                    row[actionDefinitions?.[0]?.visibleByAttribute]
+                  "
                   :id="`${id}-${row[idAttribute]}-action-${actionDefinitions?.[0]?.id}`"
                   :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
                   :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
@@ -2820,7 +2836,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   "
                 />
                 <LxButton
-                  v-if="col?.options?.actionDefinitions?.[0]"
+                  v-if="
+                    col?.options?.actionDefinitions?.[0] &&
+                    (!col.options.actionDefinitions[0]?.visibleByAttribute ||
+                      item[col.options.actionDefinitions[0]?.visibleByAttribute])
+                  "
                   :id="`${id}-${item[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
                   variant="icon-only"
                   kind="ghost"
