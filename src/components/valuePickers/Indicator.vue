@@ -81,7 +81,7 @@ const notSelectedId = 'notSelected';
 function activate() {
   // First set all items as not selected
   itemsDisplay.value?.forEach((item) => {
-    itemsModel.value[item[props.idAttribute].toString()] = false;
+    itemsModel.value[item[props.idAttribute]?.toString()] = false;
   });
 
   // Then set items from model as selected

@@ -76,7 +76,7 @@ const suppressTransition = ref(false);
 
 function activate() {
   rotatorItemsArray.value?.forEach((item) => {
-    itemsModel.value[item[props.idAttribute].toString()] = false;
+    itemsModel.value[item[props.idAttribute]?.toString()] = false;
   });
 
   if (props.nullable) {

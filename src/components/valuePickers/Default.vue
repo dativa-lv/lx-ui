@@ -93,7 +93,7 @@ const notSelectedId = 'notSelected';
 
 function resetSelection() {
   itemsDisplay.value?.forEach((item) => {
-    itemsModel.value[item[props.idAttribute].toString()] = false;
+    itemsModel.value[item[props.idAttribute]?.toString()] = false;
   });
 }
 

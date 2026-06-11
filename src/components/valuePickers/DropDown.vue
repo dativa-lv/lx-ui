@@ -122,7 +122,7 @@ const itemsDisplay = computed(() => {
 function activateItems() {
   // First set all items as not selected
   itemsDisplay.value?.forEach((item) => {
-    itemsModel.value[item[props.idAttribute].toString()] = false;
+    itemsModel.value[item[props.idAttribute]?.toString()] = false;
   });
 
   // Then set items from model as selected
@@ -144,7 +144,7 @@ function clear(e = { stopPropagation: () => {} }) {
   e?.stopPropagation();
 
   itemsDisplay.value.forEach((item) => {
-    itemsModel.value[item[props.idAttribute].toString()] = false;
+    itemsModel.value[item[props.idAttribute]?.toString()] = false;
   });
 
   if (Array.isArray(model.value)) {
