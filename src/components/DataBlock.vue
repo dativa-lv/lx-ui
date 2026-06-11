@@ -165,6 +165,7 @@ const expandIconTitle = computed(() => {
         @click="toggleExpander"
         @keydown.space="handleKeyDown"
         @keyup.space="toggleExpander"
+        @keyup.enter="toggleExpander"
       >
         <slot name="customHeader" v-if="$slots.customHeader" />
         <template v-else>
