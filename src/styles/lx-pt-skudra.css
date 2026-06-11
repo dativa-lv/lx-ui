@@ -1,7 +1,5 @@
 .lx {
     --color-chrome: #e0dee3;
-    --color-placeholder: #aba3b1;
-    --color-foreground: #261736;
     --color-region-2: #F3F1F4;
     --color-region-hover: #e6e4e7;
     --color-layout-background: #26212c;
@@ -11,15 +9,9 @@
     --color-interactive-hover-background: #180036;
     --color-background: #f1eef3;
     --color-highlight: #eae4f1;
-    --color-grid-hover-background: #ddd;
-    --color-label: #565947;
-    --color-bad: #ff4b33;
-    --color-destructive: #ff4b33;
-    --color-good: #0d382c;
-    --color-data: #000;
-    --color-focus-background: #755A9A;
 	--color-grid-hover-background: #eee;
-    --color-nav-item-text: var(--color-foreground);
+    --color-label: #565947;
+    --color-data: #000;
     --color-nav-item-background-selected: var(--color-highlight);
 }
 
@@ -37,8 +29,5 @@
     --color-highlight: #383142;
     --color-chrome: #717171;
     --color-label: #9c9b9f;
-    --color-notification-success-foreground: #219444;
-    --color-focus-background: #b08ddd;
-    --color-nav-item-text: var(--color-foreground);
     --color-nav-item-background-selected: var(--color-highlight);
 }
