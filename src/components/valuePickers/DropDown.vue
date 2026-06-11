@@ -90,9 +90,9 @@ const getIdAttributeString = (item) => {
         resArr[idKey] = item[idKey];
         if (resArr[idKey] === undefined) {
           throw new Error(
-            `DropDown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(
-              item
-            )}`
+            `LxDropDown [${props.id}]: "idAttribute" (${
+              props.idAttribute
+            }) is not defined for item ${JSON.stringify(item)}`
           );
         }
         return resArr;
@@ -102,7 +102,9 @@ const getIdAttributeString = (item) => {
   const attribute = item[props.idAttribute];
   if (attribute === undefined) {
     throw new Error(
-      `DropDown: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(item)}`
+      `LxDropDown [${props.id}]: "idAttribute" (${
+        props.idAttribute
+      }) is not defined for item ${JSON.stringify(item)}`
     );
   }
   return attribute;

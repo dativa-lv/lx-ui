@@ -105,7 +105,10 @@ onMounted(() => {
     highlightedItemId.value = props.items[0][props.idAttribute];
   }
   if (props.items.length > 4) {
-    lxDevUtils.logWarn('There are more than 4 items', globalEnvironment);
+    lxDevUtils.logWarn(
+      `LxContentSwitcher [${props.id}]: There are more than 4 items`,
+      globalEnvironment
+    );
   }
 });
 

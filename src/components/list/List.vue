@@ -269,7 +269,7 @@ watch(
   (disabled) => {
     if (disabled) {
       logWarn(
-        '[lx-ui] Temporary limitation: when stickyToolbar and hasVirtualization are used together, virtualization is automatically disabled. This is a temporary workaround while compatibility between these features is being improved.',
+        `LxList [${props.id}]: Temporary limitation: when "stickyToolbar" and "hasVirtualization" are used together, virtualization is automatically disabled. This is a temporary workaround while compatibility between these features is being improved`,
         useLx().getGlobals()?.environment
       );
     }
@@ -376,7 +376,11 @@ function warnAboutDuplicateItemIds(items) {
   if (signature === duplicateIdsWarningSignature) return;
   duplicateIdsWarningSignature = signature;
 
-  lxDevUtils.log('LxList item codes are not unique!', useLx().getGlobals()?.environment, 'error');
+  lxDevUtils.log(
+    `LxList [${props.id}]: Item codes are not unique`,
+    useLx().getGlobals()?.environment,
+    'error'
+  );
 }
 
 const defaultListRows = computed(() =>

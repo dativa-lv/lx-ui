@@ -170,7 +170,7 @@ const props = defineProps({
       // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
       if ((p.badge || p.badgeIcon) && !v) {
         lxDevUtils.logWarn(
-          `Warning: LxSection "badgeTitle" is required when "badge" or "badgeIcon" is provided!`,
+          `LxSection [${p.id}]: "badgeTitle" is required when "badge" or "badgeIcon" is provided`,
           useLx().getGlobals()?.environment
         );
         return false;
@@ -307,7 +307,7 @@ function checkElements() {
   );
   if (elemList?.length > 1 || (elemList?.length === 1 && elemList[0].tagName !== 'HEADER')) {
     lxDevUtils.log(
-      `LxSection '${sectionUUID.value}' contains elements that are not LxRow or LxPlaceholder.`,
+      `LxSection [${sectionUUID.value}]: Contains elements that are not LxRow or LxPlaceholder`,
       globalEnvironment,
       'warn'
     );
@@ -318,7 +318,7 @@ const columnCountComputed = computed(() => {
   let res = props.columnCount;
   if (sectionOrientation.value === 'horizontal' && props.columnCount > 2) {
     lxDevUtils.log(
-      `LxSection '${sectionUUID.value}' with horizontal orientation should have less than 3 columns.`,
+      `LxSection [${sectionUUID.value}]: Horizontal orientation should have less than 3 columns`,
       globalEnvironment,
       'warn'
     );

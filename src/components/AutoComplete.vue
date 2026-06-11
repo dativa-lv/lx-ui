@@ -165,9 +165,9 @@ const getIdAttributeString = (item) => {
 
   if (attribute === undefined) {
     logError(
-      `Autocomplete: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(
-        item
-      )}`,
+      `LxAutoComplete [${props.id}]: "idAttribute" (${
+        props.idAttribute
+      }) is not defined for item ${JSON.stringify(item)}`,
       globalEnvironment
     );
   }
@@ -297,7 +297,7 @@ watch(
 function shouldWarnAboutQueryMinLength() {
   if (typeof props.items !== 'function' && props.queryMinLength > 0) {
     logWarn(
-      "To take effect, props 'queryMinLength' and 'queryDebounce' must be used with an async items function!",
+      `LxAutoComplete [${props.id}]: props "queryMinLength" and "queryDebounce" must be used with an async items function`,
       globalEnvironment
     );
 
@@ -1064,7 +1064,7 @@ const activateTrap = () => {
     activate();
     isTrapActive.value = true;
   } catch (err) {
-    logWarn(`Trap activate skipped, ${err}`, globalEnvironment);
+    logWarn(`LxAutoComplete [${props.id}]: Trap activate skipped, ${err}`, globalEnvironment);
   }
 };
 
@@ -1073,7 +1073,7 @@ const deactivateTrap = () => {
   try {
     deactivate({ returnFocus: false });
   } catch (err) {
-    logWarn(`Trap deactivate skipped, ${err}`, globalEnvironment);
+    logWarn(`LxAutoComplete [${props.id}]: Trap deactivate skipped, ${err}`, globalEnvironment);
   } finally {
     isTrapActive.value = false;
   }

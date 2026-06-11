@@ -122,7 +122,10 @@ async function getCameraDevices() {
     const camerasListRaw = devices.filter((device) => device.kind === 'videoinput');
     camerasList.value = camerasListRaw;
   } catch (error_) {
-    lxDevUtils.logError('Error getting camera devices', error_);
+    lxDevUtils.logError(
+      `LxCamera [${props.id}]: Error getting camera devices: ${error_}`,
+      useLx().getGlobals()?.environment
+    );
   }
 }
 
@@ -203,7 +206,10 @@ async function updateCameraSettings() {
 
 function handleCameraError() {
   error.value = true;
-  lxDevUtils.logError('Error switching cameras', useLx().getGlobals()?.environment);
+  lxDevUtils.logError(
+    `LxCamera [${props.id}]: Error switching cameras`,
+    useLx().getGlobals()?.environment
+  );
 }
 
 async function switchCamera(val) {

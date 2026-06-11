@@ -925,7 +925,7 @@ describe('Virtualization', () => {
       expect(rows.length).toBe(2);
       expect(loadLibrarySpy).toHaveBeenCalled();
       expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('item codes are not unique!'),
+        expect.stringContaining('Item codes are not unique'),
         undefined,
         'error'
       );

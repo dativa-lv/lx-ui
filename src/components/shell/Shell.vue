@@ -416,7 +416,7 @@ const selectedLanguageModel = computed({
       emits('update:selected-language', value);
     } else {
       lxDevUtils.log(
-        'Language does not exist in the language array',
+        'LxShell: Selected language does not exist in the languages array',
         useLx().getGlobals()?.environment,
         'info'
       );
@@ -645,7 +645,7 @@ const selectedAlternativeProfileModel = computed({
       emits('update:selected-alternative-profile', value);
     } else {
       lxDevUtils.log(
-        'Alternative Profiles does not exist',
+        'LxShell: Selected alternative profile does not exist in the profiles array',
         useLx().getGlobals()?.environment,
         'info'
       );
@@ -846,11 +846,14 @@ async function onClosedConfirmModal() {
       } else if (typeof cb === 'function') {
         await cb();
       } else {
-        lxDevUtils.logError('closeCallback is not a function', useLx().getGlobals()?.environment);
+        lxDevUtils.logError(
+          'LxShell: "closeCallback" is not a function',
+          useLx().getGlobals()?.environment
+        );
       }
     } catch (e) {
       lxDevUtils.logError(
-        `Error while processing closeCallback: ${String(e)}`,
+        `LxShell: Error while processing "closeCallback": ${String(e)}`,
         useLx().getGlobals()?.environment
       );
     }
@@ -859,7 +862,7 @@ async function onClosedConfirmModal() {
     emits?.('confirmModalClose');
   } catch (e) {
     lxDevUtils.logError(
-      `Failed to emit confirmModalClose: ${String(e)}`,
+      `LxShell: Failed to emit "confirmModalClose": ${String(e)}`,
       useLx().getGlobals()?.environment
     );
   }

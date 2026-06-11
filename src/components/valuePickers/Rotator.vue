@@ -281,7 +281,9 @@ const getIdAttributeString = (item) => {
 
   if (attribute === undefined || attribute === null) {
     logError(
-      `Rotator: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(item)}`,
+      `LxRotator [${props.id}]: "idAttribute" (${
+        props.idAttribute
+      }) is not defined for item ${JSON.stringify(item)}`,
       useLx().getGlobals().environment
     );
   }

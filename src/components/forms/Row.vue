@@ -198,7 +198,7 @@ const validatedColumnSpan = computed(() => {
   let res = Number(props.columnSpan);
   if (sectionColumnCount.value && Number(props.columnSpan) > sectionColumnCount.value) {
     lxDevUtils.log(
-      `LxRow ${props.id} column span is greater than the section column count.`,
+      `LxRow [${props.id}]: Column span is greater than the section column count`,
       useLx().getGlobals()?.environment,
       'warn'
     );

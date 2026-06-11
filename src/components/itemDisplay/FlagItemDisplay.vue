@@ -27,7 +27,7 @@ const props = defineProps({
 
 const idAttribute = computed(() => {
   if (Array.isArray(props.idAttribute)) {
-    throw new Error('idAttributeName cannot be an array');
+    throw new Error('LxFlagItemDisplay: "idAttributeName" cannot be an array');
   }
   return props.idAttribute;
 });

@@ -49,7 +49,7 @@ const props = defineProps({
       // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
       if ((p.badge || p.badgeIcon) && !v) {
         lxDevUtils.logWarn(
-          `Warning: LxFilters "badgeTitle" is required when "badge" or "badgeIcon" is provided!`,
+          `LxFilters [${p.id}]: "badgeTitle" is required when "badge" or "badgeIcon" is provided`,
           useLx().getGlobals()?.environment
         );
         return false;

@@ -79,13 +79,13 @@ const actionDefinitionsDisplay = computed(() => {
   const env = useLx().getGlobals()?.environment;
   if (primary.length > 1) {
     logWarn(
-      'LxDialog: Only one primary action is allowed. All other primary actions will be ignored.',
+      `LxDialog [${props.id}]: Only one primary action is allowed. All other primary actions will be ignored`,
       env
     );
   }
   if (secondary.length > 1) {
     logWarn(
-      'LxDialog: Only one secondary action is allowed. All other secondary actions will be ignored.',
+      `LxDialog [${props.id}]: Only one secondary action is allowed. All other secondary actions will be ignored`,
       env
     );
   }

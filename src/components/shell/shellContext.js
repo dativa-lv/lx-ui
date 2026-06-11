@@ -8,7 +8,7 @@ export function useShellContext() {
   const shellContext = inject(shellContextKey, null);
 
   if (!shellContext) {
-    logError('[lx-ui] Shell context is not available', useLx().getGlobals()?.environment);
+    logError('LxShell: Shell context is not available', useLx().getGlobals()?.environment);
     return {};
   }
 

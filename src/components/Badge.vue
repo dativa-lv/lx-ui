@@ -17,7 +17,7 @@ const props = defineProps({
       // If icon or value is non-empty, tooltip must be non-empty
       if ((p.icon || p.value) && !v) {
         lxDevUtils.logWarn(
-          `Warning: LxBadge "tooltip" is required when "icon" is provided!`,
+          `LxBadge [${p.id}]: "tooltip" is required when "icon" is provided`,
           useLx().getGlobals()?.environment
         );
         return false;

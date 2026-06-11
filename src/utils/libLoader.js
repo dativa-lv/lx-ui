@@ -133,8 +133,8 @@ async function loadLibrary(name, caching = true) {
   const loader = libraryLoaders[name];
 
   if (!loader) {
-    logError(`No loader registered for '${name}'`, useLx().getGlobals()?.environment);
-    throw new Error(`No loader registered for '${name}'`);
+    logError(`No loader registered for "${name}"`, useLx().getGlobals()?.environment);
+    throw new Error(`No loader registered for "${name}"`);
   }
 
   const promise = (async () => {
@@ -143,8 +143,8 @@ async function loadLibrary(name, caching = true) {
       if (caching) libraryCache.set(name, loaded);
       return loaded;
     } catch (error) {
-      logError(`Failed to load '${name}': ${error}`, useLx().getGlobals()?.environment);
-      throw new Error(`Failed to load '${name}': ${error.message}`);
+      logError(`Failed to load "${name}": ${error}`, useLx().getGlobals()?.environment);
+      throw new Error(`Failed to load "${name}": ${error.message}`);
     } finally {
       pendingPromises.delete(name);
     }

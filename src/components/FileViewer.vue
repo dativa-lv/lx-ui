@@ -331,7 +331,10 @@ function drawImage(providedScale) {
         };
       })
       .catch((error) => {
-        lxDevUtils.logError(`Error loading SVG file, ${error}`, useLx().getGlobals()?.environment);
+        lxDevUtils.logError(
+          `LxFileViewer [${props.id}]: Error loading SVG file: ${error}`,
+          useLx().getGlobals()?.environment
+        );
       });
   } else {
     // Handle other image types
@@ -450,7 +453,10 @@ async function renderPage(pageNum) {
     }
   } catch (error) {
     isPageRendering.value = false;
-    lxDevUtils.logError(`Page render failed, ${error}`, useLx().getGlobals()?.environment);
+    lxDevUtils.logError(
+      `LxFileViewer [${props.id}]: Page render failed: ${error}`,
+      useLx().getGlobals()?.environment
+    );
   } finally {
     isPageRendering.value = false;
   }
@@ -642,7 +648,9 @@ async function setZoomLevel(zoomLevel) {
   // Ensure the zoomLevel exists in ZOOM_LEVELS
   if (!ZOOM_LEVELS.includes(zoomLevel)) {
     lxDevUtils.logError(
-      `Invalid zoom level: ${zoomLevel}. Allowed levels: ${ZOOM_LEVELS.join(', ')}`,
+      `LxFileViewer [${
+        props.id
+      }]: Invalid zoom level: ${zoomLevel}. Allowed levels: ${ZOOM_LEVELS.join(', ')}`,
       useLx().getGlobals()?.environment
     );
     return;
@@ -842,7 +850,10 @@ async function loadPdfFromBase64(base64) {
     isFileUploaded.value = true;
     showPdf.value = true;
   } catch (error) {
-    lxDevUtils.logError(`Error loading PDF file, ${error}`, useLx().getGlobals().environment);
+    lxDevUtils.logError(
+      `LxFileViewer [${props.id}]: Error loading PDF file: ${error}`,
+      useLx().getGlobals().environment
+    );
   } finally {
     isLoadingPdf.value = false;
   }
@@ -857,7 +868,10 @@ function decodeBase64(newValue) {
     binaryText.value = decoder.decode(bytes);
     isFileUploaded.value = true;
   } catch (error) {
-    lxDevUtils.logError(`Decode Base64 error, ${error}`, useLx().getGlobals()?.environment);
+    lxDevUtils.logError(
+      `LxFileViewer [${props.id}]: Error decoding Base64: ${error}`,
+      useLx().getGlobals()?.environment
+    );
     binaryText.value = '';
   }
 }
@@ -877,7 +891,10 @@ function prepareSVGImage(newValue) {
       };
     })
     .catch((error) => {
-      lxDevUtils.logError(`Error loading SVG file, ${error}`, useLx().getGlobals()?.environment);
+      lxDevUtils.logError(
+        `LxFileViewer [${props.id}]: Error loading SVG file: ${error}`,
+        useLx().getGlobals()?.environment
+      );
     });
 }
 
@@ -1276,7 +1293,7 @@ function nextFrame() {
 
 function prepareBinaryPage(printRoot) {
   const element = binaryWrapper.value?.querySelector('article');
-  if (!element) throw new Error('Binary article not found');
+  if (!element) throw new Error(`LxFileViewer [${props.id}]: Binary article not found`);
 
   const pageEl = globalThis.document.createElement('div');
   pageEl.className = 'lx-print-page';
@@ -1286,7 +1303,7 @@ function prepareBinaryPage(printRoot) {
 
 function prepareImgPage(printRoot) {
   const src = imgCanvasRef.value;
-  if (!src) throw new Error('Image canvas not found');
+  if (!src) throw new Error(`LxFileViewer [${props.id}]: Image canvas not found`);
 
   const cnv = globalThis.document.createElement('canvas');
   cnv.width = src.width;
@@ -1305,7 +1322,7 @@ function prepareImgPage(printRoot) {
 }
 
 async function preparePdfPages(printRoot, allPages, effectiveDpi, mobile) {
-  if (!pdf.value) throw new Error('PDF is not loaded');
+  if (!pdf.value) throw new Error(`LxFileViewer [${props.id}]: PDF is not loaded`);
 
   const pageNums =
     currentPage.value && !allPages
@@ -1409,7 +1426,10 @@ async function print(printType, dpi = 300, allPages = true) {
       printInProgress.value = false;
     }
   } catch (error) {
-    lxDevUtils.logError(`Printing failed, ${error}`, useLx().getGlobals()?.environment);
+    lxDevUtils.logError(
+      `LxFileViewer [${props.id}]: Printing failed: ${error}`,
+      useLx().getGlobals()?.environment
+    );
 
     if (mobile) {
       restoreTitle(originalTitle);

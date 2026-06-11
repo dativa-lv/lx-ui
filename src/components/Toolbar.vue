@@ -229,7 +229,7 @@ function processGroup(group) {
   });
 
   if (!promotedAction?.name) {
-    logWarn('LxToolbar: promoted action must have name.', globalEnvironment);
+    logWarn(`LxToolbar [${props.id}]: promoted action must have name`, globalEnvironment);
   }
 
   return {

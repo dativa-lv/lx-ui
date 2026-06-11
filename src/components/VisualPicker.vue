@@ -294,7 +294,11 @@ watch(
         textsDefault.value[kebabToCamel(newValue)] = getTexts(newValue);
       }
     } catch (error) {
-      lxDevUtils.log(`Failed to load component: ${error}`, environment, 'error');
+      lxDevUtils.log(
+        `LxVisualPicker [${props.id}]: Failed to load component: ${error}`,
+        environment,
+        'error'
+      );
       errorState.value = true;
     } finally {
       loading.value = false;

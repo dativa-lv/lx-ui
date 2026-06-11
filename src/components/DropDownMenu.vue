@@ -207,7 +207,7 @@ const mainButton = computed(() => {
   const mainButtons = props.actionDefinitions?.filter((x) => x?.kind === 'main');
   if (mainButtons.length > 1) {
     logWarn(
-      'LxDropDownMenu: More than one action with kind "main" defined. Only the first one will be used.',
+      'LxDropDownMenu: More than one action with kind "main" defined. Only the first one will be used',
       useLx()?.environment
     );
   }

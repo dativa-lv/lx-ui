@@ -1098,7 +1098,7 @@ const rows = computed(() => {
   }
   if (hasDuplicates) {
     logError(
-      `DataGrid: Duplicate row IDs found in items. Please ensure that each item has a unique ID for the attribute "${idAttribute}".`,
+      `LxDataGrid [${props.id}]: Duplicate row IDs found in items. Please ensure that each item has a unique ID for the attribute "${idAttribute}"`,
       useLx().getGlobals()?.environment
     );
   }
@@ -1614,7 +1614,7 @@ watch(
 
 onMounted(() => {
   if (props.items && !props.idAttribute) {
-    throw new Error('"idAttribute" prop is required on DataGrid Component');
+    throw new Error(`LxDataGrid [${props.id}]: "idAttribute" prop is required`);
   }
 
   globalThis.addEventListener('resize', handleDataGridResize);

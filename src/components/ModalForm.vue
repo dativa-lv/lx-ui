@@ -111,19 +111,19 @@ const actionDefinitionsDisplay = computed(() => {
   const env = useLx().getGlobals()?.environment;
   if (primary.length > 1) {
     logWarn(
-      'LxModalForm: Only one primary action is allowed. All other primary actions will be ignored.',
+      `LxModalForm [${props.id}]: Only one primary action is allowed. All other primary actions will be ignored`,
       env
     );
   }
   if (secondary.length > 1) {
     logWarn(
-      'LxModalForm: Only one secondary action is allowed. All other secondary actions will be ignored.',
+      `LxModalForm [${props.id}]: Only one secondary action is allowed. All other secondary actions will be ignored`,
       env
     );
   }
   if (tertiary.length > 0) {
     logWarn(
-      'LxModalForm: All tertiary actions will be ignored. Use additional kind for extra buttons in the header.',
+      `LxModalForm [${props.id}]: All tertiary actions will be ignored. Use additional kind for extra buttons in the header`,
       env
     );
   }
@@ -233,11 +233,11 @@ defineExpose({ open, close });
               @actionClick="buttonClicked"
               @update:index="indexUpdated"
             >
-              <template v-if="$slots['preHeader']" #preHeader>
+              <template v-if="$slots.preHeader" #preHeader>
                 <slot name="preHeader" />
               </template>
 
-              <template v-if="$slots['preHeaderInfo']" #preHeaderInfo>
+              <template v-if="$slots.preHeaderInfo" #preHeaderInfo>
                 <slot name="preHeaderInfo" />
               </template>
 
@@ -246,11 +246,11 @@ defineExpose({ open, close });
                 <span v-else :id="`${id}-label`">{{ label }}</span>
               </template>
 
-              <template v-if="$slots['postHeader']" #postHeader>
+              <template v-if="$slots.postHeader" #postHeader>
                 <slot name="postHeader" />
               </template>
 
-              <template v-if="$slots['postHeaderInfo']" #postHeaderInfo>
+              <template v-if="$slots.postHeaderInfo" #postHeaderInfo>
                 <slot name="postHeaderInfo" />
               </template>
 

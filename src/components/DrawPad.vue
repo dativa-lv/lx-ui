@@ -348,7 +348,10 @@ watch(
       };
 
       img.onerror = (error) => {
-        logError(error, useLx().getGlobals()?.environment);
+        logError(
+          `LxDrawPad [${props.id}]: Error loading image: ${error}`,
+          useLx().getGlobals()?.environment
+        );
       };
     }
   },
@@ -371,7 +374,7 @@ watch(
       selectedColorVariable.value = getColorOrVariableByLabel(newColorLabel, 'variable');
     } else {
       logWarn(
-        `Color not found, defaulting to: ${colorsList.value[0].label}`,
+        `LxDrawPad [${props.id}]: Color not found, defaulting to: ${colorsList.value[0].label}`,
         useLx().getGlobals()?.environment
       );
 

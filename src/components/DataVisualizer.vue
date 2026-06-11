@@ -64,7 +64,10 @@ const maxValue = computed(() => {
     if (props.maxValue >= maxCombinedValue) {
       return props.maxValue + props.maxValue * 0.05;
     }
-    logWarn('maxValue is smaller than the biggest value in items and targets', globalEnvironment);
+    logWarn(
+      `LxDataVisualizer [${props.id}]: "maxValue" is smaller than the biggest value in items and targets`,
+      globalEnvironment
+    );
   }
 
   return maxCombinedValue + maxCombinedValue * 0.05;

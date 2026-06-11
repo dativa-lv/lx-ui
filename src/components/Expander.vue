@@ -36,7 +36,7 @@ const props = defineProps({
       // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
       if ((p.badge || p.badgeIcon) && !v) {
         lxDevUtils.logWarn(
-          `Warning: LxExpander "badgeTitle" is required when  "badgeIcon" is provided!`,
+          `LxExpander [${p.id}]: "badgeTitle" is required when "badgeIcon" is provided`,
           useLx().getGlobals()?.environment
         );
         return false;

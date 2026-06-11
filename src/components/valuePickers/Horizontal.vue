@@ -81,7 +81,7 @@ onMounted(() => {
     model.value.length > 0
   ) {
     lxDevUtils.log(
-      'Error: No items available but v-model value is set.',
+      `LxValuePicker [${props.id}]: No items available but v-model value is set`,
       useLx().getGlobals()?.environment,
       'error'
     );

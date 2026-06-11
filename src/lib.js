@@ -47,7 +47,7 @@ function install(Vue, options) {
       if (loaderFn) {
         loaders.push(loaderFn);
       } else {
-        logWarn('[lx-ui] Could not extract loader from component', globalEnvironment);
+        logWarn('Could not extract loader from component', globalEnvironment);
       }
     });
   }
@@ -57,7 +57,7 @@ function install(Vue, options) {
       if (shellModeLoaders[mode]) {
         loaders.push(shellModeLoaders[mode]);
       } else {
-        logWarn(`[lx-ui] Unknown shell mode for preload: "${mode}"`, globalEnvironment);
+        logWarn(`Unknown shell mode for preload: "${mode}"`, globalEnvironment);
       }
     });
   }
