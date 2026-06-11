@@ -33,16 +33,16 @@
   --color-button-secondary-text-focus: var(--color-brand);
   --color-button-secondary-icon-focus: var(--color-brand);
 
-  --button-primary-text-font-weight: 800;
-  --button-secondary-text-font-weight: 800;
-  --button-tertiary-text-font-weight: 800;
-  --button-ghost-text-font-weight: 800;
-  --modal-button-primary-text-font-weight: 800;
-  --modal-button-secondary-text-font-weight: 800;
-  --toolbar-button-primary-text-font-weight: 800;
-  --toolbar-button-secondary-text-font-weight: 800;
-  --toolbar-button-tertiary-text-font-weight: 800;
-  --toolbar-button-ghost-text-font-weight: 800;
+  --button-primary-text-font-weight: var(--font-weight-bold);
+  --button-secondary-text-font-weight: var(--font-weight-bold);
+  --button-tertiary-text-font-weight: var(--font-weight-bold);
+  --button-ghost-text-font-weight: var(--font-weight-bold);
+  --modal-button-primary-text-font-weight: var(--font-weight-bold);
+  --modal-button-secondary-text-font-weight: var(--font-weight-bold);
+  --toolbar-button-primary-text-font-weight: var(--font-weight-bold);
+  --toolbar-button-secondary-text-font-weight: var(--font-weight-bold);
+  --toolbar-button-tertiary-text-font-weight: var(--font-weight-bold);
+  --toolbar-button-ghost-text-font-weight: var(--font-weight-bold);
 
   --color-nav-item-text-hover: var(--color-nav-item-text);
   --color-nav-item-background-hover: var(--color-nav-item-background);

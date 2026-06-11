@@ -1021,7 +1021,7 @@
 .lx-layout .lx-article > h4,
 .lx-layout .lx-article > h5,
 .lx-layout .lx-article > h6 {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   margin-top: var(--space-2000);
   margin-bottom: var(--space-1000);
   line-height: 1.1em;
@@ -1350,7 +1350,7 @@
 }
 
 .lx-alert-button .lx-alert-header {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   color: var(--color-data);
   margin-bottom: var(--space-0250);
   overflow: hidden;
@@ -1655,7 +1655,7 @@
 }
 
 .lx-empty-state-data p.lx-primary {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   line-height: 1.2em;
 }
 
@@ -2251,7 +2251,7 @@
   font-feature-settings: var(--font-features-mono);
   --color-badge-background: var(--color-warning);
   --color-badge-text: var(--color-region);
-  --badge-text-font-weight: 700;
+  --badge-text-font-weight: var(--font-weight-bold);
   --badge-text-font-size: var(--small-font-size);
   border-color: var(--color-nav-background);
 }

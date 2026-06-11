@@ -39,7 +39,7 @@ The following input components share these tokens as they are visually and funct
 | `--input-icon-invalid-indent-left`  | `--space-0`                                                                 |
 | `--input-icon-invalid-indent-right` | `--input-icon-wrapper-width`                                                |
 | `--input-text-font-size`            | `--font-size`                                                               |
-| `--input-text-font-weight`          | 400                                                                         |
+| `--input-text-font-weight`          | `--font-weight`                                                             |
 | `--input-text-line-height`          | 1.5                                                                         |
 | `--input-button-border`             | `--button-ghost-border`                                                     |
 | `--input-button-outline-offset`     | `--button-ghost-outline-offset`                                             |

@@ -1676,7 +1676,7 @@ a.lx-button.lx-button-ghost svg {
   font-feature-settings: var(--font-features-mono);
   border-color: var(--color-background);
   --badge-text-font-size: var(--small-font-size);
-  --badge-text-font-weight: bold;
+  --badge-text-font-weight: var(--font-weight-bold);
   --color-badge-background: var(--color-blue);
   --color-badge-text: var(--color-region);
   --color-badge-icon: var(--color-region);

@@ -20,6 +20,10 @@ dd {
   color: var(--color-data);
 }
 
+strong {
+  font-weight: var(--font-weight-bold);
+}
+
 svg {
   fill: var(--color-data);
 }
@@ -82,7 +86,7 @@ select {
   margin-inline-start: 0px;
   margin-inline-end: 0px;
   margin: var(--space-0);
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   unicode-bidi: isolate;
 }
 

@@ -310,7 +310,7 @@
   max-height: 12.5rem;
   color: var(--color-bad);
   font-size: var(--small-font-size);
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   margin-top: var(--space-0125);
   cursor: auto;
@@ -325,7 +325,7 @@
   letter-spacing: var(--letter-spacing-2);
   display: inline-block;
   color: var(--color-label);
-  font-weight: 400;
+  font-weight: var(--font-weight);
   vertical-align: baseline;
   margin-top: var(--space-0250);
 }
@@ -500,7 +500,7 @@
   max-height: 12.5rem;
   color: var(--color-bad);
   font-size: var(--small-font-size);
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   margin-top: var(--space-0125);
 }
@@ -925,7 +925,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   -ms-flex-pack: center;
   margin: var(--space-0);
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: var(--font-weight);
   line-height: 1.2em;
   letter-spacing: var(--letter-spacing-1);
   color: var(--color-data) !important;
@@ -1492,7 +1492,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-value-picker-tile-header {
   justify-content: space-between;
   color: var(--color-data);
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -1847,7 +1847,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   color: var(--color-placeholder);
   opacity: 1;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
 }
 
@@ -1855,7 +1855,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   color: var(--color-placeholder);
   opacity: 1;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
 }
 
@@ -1863,7 +1863,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   color: var(--color-placeholder);
   opacity: 1;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
 }
 
@@ -1871,7 +1871,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   color: var(--color-placeholder);
   opacity: 1;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
 }
 
@@ -1879,7 +1879,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   color: var(--color-placeholder);
   opacity: 1;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
 }
 
@@ -2024,7 +2024,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-field-wrapper .lx-item-display .lx-data {
-  font-weight: normal;
+  font-weight: var(--font-weight);
   height: auto;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2160,7 +2160,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   .lx-button
   .lx-button-content
   label {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
 }
 
 .lx
@@ -2309,7 +2309,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-layout .lx-markdown-text-area-wrapper .lx-component-toolbar .lx-group .popper .lx-dropdown-panel .lx-markdown-tag-item p.lx-data {
   padding: var(--space-0);
-  font-weight: normal;
+  font-weight: var(--font-weight);
   color: var(--color-data);
   min-height: auto;
 }
@@ -2775,7 +2775,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-qr-scanner-wrapper .lx-qr-notification .lx-qr-success p {
   color: var(--color-notification-success-foreground);
-  font-weight: 800;
+  font-weight: var(--font-weight-bold);
 }
 
 .lx-qr-scanner-wrapper .lx-qr-notification .lx-qr-error {
@@ -2791,7 +2791,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-qr-scanner-wrapper .lx-qr-notification .lx-qr-error p {
   color: var(--color-notification-error-foreground);
-  font-weight: 800;
+  font-weight: var(--font-weight-bold);
 }
 
 .lx-qr-scanner-wrapper .lx-qr-notification .lx-qr-error svg {
@@ -3133,7 +3133,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-file-main-part .lx-file-name {
   align-self: center;
   color: var(--color-data);
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4106,7 +4106,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-label {
   font-size: var(--small-font-size);
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   display: inline-block;
   margin-bottom: var(--space-0500);

@@ -1,0 +1,7 @@
+@font-face {
+  font-display: auto;
+  font-family: 'DepartureMonoLX';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/lx-fonts/DepartureMono-Regular.woff2') format('woff2');
+}

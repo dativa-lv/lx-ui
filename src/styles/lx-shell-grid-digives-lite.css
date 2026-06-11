@@ -669,7 +669,7 @@
 }
 
 .lx-layout.lx-layout-default.lx-layout-digives-lite main.lx-main>ul.lx-digives-lite-alert-list>li .lx-description {
-  font-weight: 400;
+  font-weight: var(--font-weight);
   font-size: var(--small-font-size);
   color: var(--color-label);
   line-height: 1.1em;

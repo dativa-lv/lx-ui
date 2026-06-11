@@ -30,7 +30,7 @@
   letter-spacing: var(--letter-spacing-2);
   display: inline-block;
   color: var(--color-label);
-  font-weight: 400;
+  font-weight: var(--font-weight);
   vertical-align: baseline;
   margin-top: var(--space-0125);
 }

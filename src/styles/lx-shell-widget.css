@@ -12,7 +12,7 @@ header.lx.lx-header-wrapper * {
 }
 
 .lx-secondary {
-  font-weight: normal;
+  font-weight: var(--font-weight);
   font-size: var(--small-font-size);
   color: var(--color-label);
   line-height: 1.1em;
@@ -797,7 +797,7 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
 
 .lx-label {
   font-size: var(--small-font-size);
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   display: inline-block;
   margin-bottom: var(--space-0500);
@@ -1072,7 +1072,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 }
 
 .lx-info-box-button .lx-alert-header {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   color: var(--color-data);
   margin-bottom: var(--space-0250);
   margin-top: var(--space-0250);
@@ -1112,7 +1112,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   font-family: var(--font-family-mono);
   font-size: var(--small-font-size);
   color: var(--color-region);
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   background: var(--color-data);
   min-width: 1.5rem;
   min-height: 1.5rem;

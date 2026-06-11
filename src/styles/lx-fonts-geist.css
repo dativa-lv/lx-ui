@@ -1,0 +1,15 @@
+@font-face {
+  font-display: auto;
+  font-family: 'GeistLX';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('/lx-fonts/GeistVar.ttf') format('truetype-variations');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'GeistLX';
+  font-style: italic;
+  font-weight: 100 900;
+  src: url('/lx-fonts/GeistVar-Italic.ttf') format('truetype-variations');
+}

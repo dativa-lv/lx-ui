@@ -155,7 +155,7 @@
 .lx .lx-layout .lx-calendar-container .lx-calendar-header .lx-button.lx-calendar-years-select-button:not(.lx-active),
 .lx .lx-layout .lx-calendar-container .lx-mobile-time-selection-button-wrapper .lx-button.lx-mobile-time-selection-button:not(.lx-active) {
   color: var(--color-data);
-  font-weight: 500;
+  font-weight: var(--font-weight);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-header .lx-button.lx-calendar-months-select-button:not(.lx-active):disabled,
@@ -345,7 +345,7 @@
   user-select: none;
   height: 1.6rem;
   width: 2.2rem; /* Same as lx-calendar-day-wrapper width */
-  font-weight: 500;
+  font-weight: var(--font-weight);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-months-wrapper,
@@ -435,7 +435,7 @@
   justify-content: center;
   text-align: center;
   font-size: var(--small-font-size);
-  font-weight: 500;
+  font-weight: var(--font-weight);
   line-height: 1em;
   cursor: pointer;
   -webkit-user-select: none;
@@ -669,7 +669,7 @@
   padding: var(--space-0250) var(--space-1250);
   cursor: pointer;
   font-size: var(--small-font-size);
-  font-weight: 500;
+  font-weight: var(--font-weight);
   user-select: none;
   color: var(--color-data);
   z-index: 1;
@@ -709,7 +709,7 @@
   opacity: 1;
   color: var(--color-disabled-foreground);
   cursor: not-allowed;
-  font-weight: 400;
+  font-weight: var(--font-weight);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-weeks .lx-calendar-week .lx-calendar-day.lx-disabled-date .lx-calendar-day-content {

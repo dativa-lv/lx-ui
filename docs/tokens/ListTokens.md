@@ -28,7 +28,7 @@
 | `--list-grid-inner-column-span`           | 1 / span 4                                                    |
 | `--list-grid-outer-column-span`           | 1 / span 6                                                    |
 | `--list-text-primary-font-size`           | `--font-size`                                                 |
-| `--list-text-primary-font-weight`         | bold                                                          |
+| `--list-text-primary-font-weight`         | `--font-weight-bold`                                          |
 | `--list-text-primary-line-height`         | 1.2em                                                         |
 | `--list-text-primary-margin`              | -0.1rem 0 0 0                                                 |
 | `--list-text-primary-padding`             | 0.1rem 0 0.1rem 0                                             |

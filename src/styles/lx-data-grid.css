@@ -417,7 +417,7 @@
   .lx-appendable-list-item
   .lx-row.lx-cell-primary
   .lx-vertical {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
 }
 
 .lx .lx-data-grid .lx-cell-primary svg {
@@ -467,7 +467,7 @@
   .lx-row.lx-cell-clickable
   .lx-vertical
   .lx-empty-person-value {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   text-decoration: underline;
   color: var(--color-interactive-background);
   cursor: pointer;
@@ -539,7 +539,7 @@
 
 .lx .lx-data-grid-wrapper .lx-data-grid .lx-cell-secondary p.lx-person-display-name,
 .lx .lx-data-grid-wrapper .lx-data-grid .lx-cell-extra p.lx-person-display-name {
-  font-weight: normal;
+  font-weight: var(--font-weight);
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: normal;
@@ -896,7 +896,7 @@
   border: var(--border-width-1) solid var(--color-chrome);
   color: var(--color-data);
   font-size: var(--small-font-size);
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   border-radius: var(--border-radius-0750);
   min-width: 1.5rem;
   height: 1.5rem;

@@ -59,7 +59,7 @@
   --h1-font-size: 3.3rem;
   --h1-font-weight: 300;
   --h2-font-size: 1.5rem;
-  --h2-font-weight: 500;
+  --h2-font-weight: 400;
   --small-font-size: 0.875rem;
   --label-font-size: 0.875rem;
   --data-weight: 600;
@@ -146,7 +146,7 @@
   --list-grid-outer-column-span: 1 / span 6;
   --list-grid-template-columns: auto 1fr auto auto auto auto auto;
   --list-text-primary-font-size: var(--font-size);
-  --list-text-primary-font-weight: bold;
+  --list-text-primary-font-weight: var(--font-weight-bold);
   --list-text-primary-line-height: 1.2em;
   --list-text-primary-margin: -0.1rem 0 0 0; /* TODO: use tokens instead*/
   --list-text-primary-padding: 0.1rem 0 0.1rem 0;
@@ -279,7 +279,7 @@
   --input-icon-invalid-indent-left: var(--space-0);
   --input-icon-invalid-indent-right: var(--input-icon-wrapper-width);
   --input-text-font-size: var(--font-size);
-  --input-text-font-weight: 400;
+  --input-text-font-weight: var(--font-weight);
   --input-text-line-height: 1.5;
   --input-button-border: var(--button-ghost-border);
   --input-button-outline-offset: var(--button-ghost-outline-offset);

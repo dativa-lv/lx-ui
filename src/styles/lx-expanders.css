@@ -66,7 +66,7 @@
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
   --badge-text-font-size: var(--small-font-size);
-  --badge-text-font-weight: bold;
+  --badge-text-font-weight: var(--font-weight-bold);
   --badge-padding-s: var(--space-0125) var(--space-0500);
   --badge-padding-icon-only-s: var(--space-0);
 }
@@ -119,7 +119,7 @@
 
 .lx-expander .lx-head label {
   color: var(--color-data);
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   font-size: 1rem;
   line-height: 1em;
   margin-top: var(--space-0125);
@@ -165,7 +165,7 @@
   max-height: 12.5rem;
   color: var(--color-bad);
   font-size: var(--small-font-size);
-  font-weight: 400;
+  font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   margin-top: var(--space-0125);
 }

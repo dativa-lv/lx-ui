@@ -116,7 +116,7 @@
 .lx-tab-control .lx-tab-container .lx-tab .lx-primary {
   cursor: pointer;
   color: var(--color-label);
-  font-weight: normal;
+  font-weight: var(--font-weight);
   max-width: 14rem;
   overflow: hidden;
   white-space: nowrap;
@@ -130,7 +130,7 @@
 
 .lx-tab-control .lx-tab-container .lx-tab.lx-selected .lx-primary {
   color: var(--color-tab-selected-foreground);
-  font-weight: normal;
+  font-weight: var(--font-weight);
 }
 
 .lx-tab-control .lx-tab-container .lx-tab:hover {
@@ -183,7 +183,7 @@
 }
 
 .lx .lx-card .lx-tab-control .lx-tab-container .lx-tab.lx-selected .lx-primary {
-  font-weight: normal;
+  font-weight: var(--font-weight);
   color: var(--color-data);
 }
 

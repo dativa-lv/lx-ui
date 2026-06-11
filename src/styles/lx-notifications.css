@@ -106,7 +106,7 @@ p.lx-subtitle {
 }
 
 .lx .lx-notifications-list .lx-notification p.lx-title {
-  font-weight: 800;
+  font-weight: var(--font-weight-bold);
   padding-top: var(--space-0500);
 }
 
@@ -170,7 +170,7 @@ p.lx-subtitle {
 }
 
 .lx-info-box-button .lx-alert-header {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   color: var(--color-data);
   margin-bottom: var(--space-0125);
   margin-top: var(--space-0125);

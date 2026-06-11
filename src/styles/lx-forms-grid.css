@@ -287,7 +287,7 @@ svg .lx-shade {
   header
   .lx-primary
   .lx-edoc-description-code {
-  font-weight: normal;
+  font-weight: var(--font-weight);
   color: var(--color-label);
 }
 
@@ -820,7 +820,7 @@ svg .lx-shade {
 .lx-form-grid .lx-row > .lx-row-header .lx-info-wrapper-content label span.lx-required-asterisk {
   color: var(--color-red);
   font-size: var(--label-font-size);
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
 }
 
 .lx-form-grid > .lx-main.lx-compact-sections > .lx-form-section {
@@ -1643,7 +1643,7 @@ p .lx-person-display-wrapper {
 .lx-wizard .lx-wizard-container .lx-wizard-step .lx-primary {
   cursor: pointer;
   color: var(--color-label);
-  font-weight: normal;
+  font-weight: var(--font-weight);
 }
 
 .lx-wizard .lx-wizard-container .lx-wizard-step.lx-selected {
@@ -1653,7 +1653,7 @@ p .lx-person-display-wrapper {
 
 .lx-wizard .lx-wizard-container .lx-wizard-step.lx-selected .lx-primary {
   color: var(--color-tab-selected-foreground);
-  font-weight: normal;
+  font-weight: var(--font-weight);
 }
 
 .lx-wizard > header.lx-sticky.lx-toolbar::after {
@@ -1713,7 +1713,7 @@ p .lx-person-display-wrapper {
 }
 
 .lx .lx-card .lx-wizard .lx-wizard-container .lx-wizard-step.lx-selected .lx-primary {
-  font-weight: normal;
+  font-weight: var(--font-weight);
   color: var(--color-data);
 }
 
