@@ -22,6 +22,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   labelId: { type: String, default: null },
+  disableArrowKeys: { type: Boolean, default: false },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -141,13 +142,13 @@ if (props.builderOptions?.useRegistry) {
           :aria-labelledby="labelledBy"
           :disabled
           @mousedown="onMouseDown"
-          @keydown.up.prevent="onIncreaseStep"
+          @keydown.up.prevent="!props.disableArrowKeys && onIncreaseStep()"
           @keydown.right.prevent="onIncreaseStep"
-          @keydown.down.prevent="onDecreaseStep"
+          @keydown.down.prevent="!props.disableArrowKeys && onDecreaseStep()"
           @keydown.left.prevent="onDecreaseStep"
-          @keydown.shift.up.exact.prevent="onIncreaseMultiplier"
+          @keydown.shift.up.exact.prevent="!props.disableArrowKeys && onIncreaseMultiplier()"
           @keydown.shift.right.exact.prevent="onIncreaseMultiplier"
-          @keydown.shift.down.exact.prevent="onDecreaseMultiplier"
+          @keydown.shift.down.exact.prevent="!props.disableArrowKeys && onDecreaseMultiplier()"
           @keydown.shift.left.exact.prevent="onDecreaseMultiplier"
         />
         <div class="input-slider-filled" :style="`width: ${fillingUp}%`" />

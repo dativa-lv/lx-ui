@@ -495,7 +495,14 @@ const wrapperRef = ref();
             <template #panel>
               <div class="lx-button-set lx-dropdown-menu-group lx-map-slider">
                 <div class="lx-label">{{ displayTexts.grayscale }}</div>
-                <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" @click.stop />
+                <LxNumberSlider
+                  v-model="grayscaleRef"
+                  :min="0"
+                  :max="100"
+                  :step="1"
+                  :disableArrowKeys="true"
+                  @click.stop
+                />
               </div>
             </template>
           </LxDropDownMenu>
