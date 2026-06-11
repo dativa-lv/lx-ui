@@ -227,6 +227,11 @@
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
 
+.lx:not(.lx-no-animations) .lx-list-item-wrapper .lx-list-item.lx-selected p.lx-primary .lx-highlight,
+.lx:not(.lx-no-animations) .lx-list-item-wrapper .lx-list-item.lx-selected p.lx-secondary .lx-highlight {
+  transition: background-color .1s ease-in, color .1s ease-in;
+}
+
 .lx:not(.lx-no-animations) .lx-modal {
   transition: height 0.2s ease-in-out;
 }

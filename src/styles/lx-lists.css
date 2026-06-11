@@ -665,6 +665,16 @@
   color: var(--color-selected);
 }
 
+.lx-list-item-wrapper .lx-list-item.lx-selected p.lx-primary .lx-highlight,
+.lx-list-item-wrapper .lx-list-item.lx-selected p.lx-secondary .lx-highlight {
+  background-color: var(--color-background);
+}
+
+.lx-theme-contrast .lx-list-item-wrapper .lx-list-item.lx-selected p.lx-primary .lx-highlight,
+.lx-theme-contrast .lx-list-item-wrapper .lx-list-item.lx-selected p.lx-secondary .lx-highlight {
+  color: var(--color-highlight);
+}
+
 .lx-list-item-wrapper .lx-list-item-interactive:not(.lx-list-item-disabled):hover p.lx-primary,
 .lx-list-item-interactive:not(.lx-list-item-disabled):hover header p {
   color: var(--color-list-hover-text-primary);
