@@ -184,7 +184,7 @@ const {
         @settingsClick="handleSettingsClick"
       />
     </nav>
-    <main ref="main" class="lx-main">
+    <main ref="main" class="lx-main" :aria-busy="props.navigating">
       <LxPageHeader
         v-if="props.pageHeaderVisible"
         :label="pageTitle"
@@ -204,6 +204,9 @@ const {
         <div class="spinner">
           <LxLoader :loading="true" />
         </div>
+      </div>
+      <div aria-live="polite" role="status" class="lx-invisible">
+        {{ props.navigating ? displayTexts.loadingInProgress : displayTexts.loadingComplete }}
       </div>
     </main>
     <footer ref="footer">

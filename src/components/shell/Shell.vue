@@ -305,6 +305,8 @@ const textsDefault = {
   loginButtonTitle: 'Pieslēgties sistēmai',
   collapse: 'Sakļaut',
   expand: 'Izvērst',
+  loadingInProgress: 'Notiek ielāde',
+  loadingComplete: 'Ielāde ir pabeigta',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',

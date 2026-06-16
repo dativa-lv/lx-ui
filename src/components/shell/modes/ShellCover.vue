@@ -129,7 +129,7 @@ const vCleanHtml = buildVueDompurifyHTMLDirective();
         </template>
       </LxMainHeader>
     </header>
-    <main ref="main" class="lx-main">
+    <main ref="main" class="lx-main" :aria-busy="props.navigating">
       <div class="lx-cover">
         <slot name="backdrop" />
         <div class="lx-content">
@@ -175,6 +175,9 @@ const vCleanHtml = buildVueDompurifyHTMLDirective();
         <div class="spinner">
           <LxLoader :loading="true" />
         </div>
+      </div>
+      <div aria-live="polite" role="status" class="lx-invisible">
+        {{ props.navigating ? displayTexts.loadingInProgress : displayTexts.loadingComplete }}
       </div>
     </main>
     <footer ref="footer">

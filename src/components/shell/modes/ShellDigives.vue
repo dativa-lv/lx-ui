@@ -143,7 +143,7 @@ const {
         @settingsClick="emits('settingsClick')"
       />
     </nav>
-    <main ref="main" class="lx-main">
+    <main ref="main" class="lx-main" :aria-busy="props.navigating">
       <ul v-if="props.alerts?.length > 0" class="lx-digives-alert-list">
         <li
           v-for="alert in props.alerts"
@@ -195,6 +195,9 @@ const {
         <div class="spinner">
           <LxLoader :loading="true" />
         </div>
+      </div>
+      <div aria-live="polite" role="status" class="lx-invisible">
+        {{ props.navigating ? displayTexts.loadingInProgress : displayTexts.loadingComplete }}
       </div>
     </main>
     <footer ref="footer">
