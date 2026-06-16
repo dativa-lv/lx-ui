@@ -1127,9 +1127,9 @@ const confirmModalActions = computed(() => {
       props.confirmDialogData?.$state.confirmDialogState.primaryLabel ||
       displayTexts.value.confirmModalPrimaryDefaultLabel,
     busy:
-      props.confirmDialogData?.$state.confirmDialogState.primaryBusy !== null
-        ? props.confirmDialogData?.$state.confirmDialogState.primaryBusy
-        : props.confirmPrimaryButtonBusy,
+      props.confirmDialogData?.$state.confirmDialogState.primaryBusy === null
+        ? props.confirmPrimaryButtonBusy
+        : props.confirmDialogData?.$state.confirmDialogState.primaryBusy,
     destructive: props.confirmPrimaryButtonDestructive,
   };
   const secondary = {
@@ -1139,9 +1139,9 @@ const confirmModalActions = computed(() => {
       props.confirmDialogData?.$state.confirmDialogState.secondaryLabel ||
       displayTexts.value.confirmModalSecondaryDefaultLabel,
     busy:
-      props.confirmDialogData?.$state.confirmDialogState.secondaryBusy !== null
-        ? props.confirmDialogData?.$state.confirmDialogState.secondaryBusy
-        : props.confirmSecondaryButtonBusy,
+      props.confirmDialogData?.$state.confirmDialogState.secondaryBusy === null
+        ? props.confirmSecondaryButtonBusy
+        : props.confirmDialogData?.$state.confirmDialogState.secondaryBusy,
   };
   return [primary, secondary];
 });

@@ -2521,16 +2521,12 @@ const isFullQuarterRange = (quarterYear, quarterItem, range) => {
 
 const isForwardQuarterRange = (quarterYear, quarterItem, range) => {
   if (quarterYear === range.startYear) return quarterItem >= range.startQuarter;
-  if (quarterYear > range.startYear) return true;
-
-  return false;
+  return quarterYear > range.startYear;
 };
 
 const isBackwardQuarterRange = (quarterYear, quarterItem, range) => {
   if (quarterYear === range.endYear) return quarterItem <= range.endQuarter;
-  if (quarterYear < range.endYear) return true;
-
-  return false;
+  return quarterYear < range.endYear;
 };
 
 const createQuarterRange = (sMonth, eMonth) => ({

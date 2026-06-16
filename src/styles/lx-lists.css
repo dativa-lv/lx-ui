@@ -1134,10 +1134,6 @@ a.lx-tile:not(.lx-disabled):hover {
   padding: var(--tile-mini-loader-padding);
 }
 
-.lx-tile.lx-mini > .lx-tile-item-loader {
-  padding: var(--tile-mini-loader-padding);
-}
-
 .lx .lx-tile.lx-mini header {
   min-height: var(--tile-mini-header-min-height);
 }

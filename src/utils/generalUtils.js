@@ -169,7 +169,7 @@ export function focusPreviousElementInContainer(container) {
     return;
   }
 
-  const currentIndex = focusableElements.findIndex((el) => el === document.activeElement);
+  const currentIndex = focusableElements.indexOf(document.activeElement);
 
   if (currentIndex === -1) {
     // Nothing focused, focus last element.
@@ -194,10 +194,10 @@ export function getDisplayTexts(textsPassed, textsDefault) {
         : undefined;
     if (defaultVal && typeof defaultVal === 'object') {
       ret[key] = getDisplayTexts(passedVal, defaultVal);
-    } else if (passedVal !== undefined) {
-      ret[key] = passedVal;
-    } else {
+    } else if (passedVal === undefined) {
       ret[key] = defaultVal;
+    } else {
+      ret[key] = passedVal;
     }
   });
   return ret;

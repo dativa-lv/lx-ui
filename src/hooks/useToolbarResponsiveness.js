@@ -650,8 +650,7 @@ export function useToolbarResponsiveness({
 
     const form = toolbar.closest('.lx-form-grid');
     if (!(form instanceof HTMLElement)) {
-      toolbar.classList.remove('lx-toolbar-hidden-under-header');
-      toolbar.classList.remove('lx-toolbar-hidden-under-footer');
+      toolbar.classList.remove('lx-toolbar-hidden-under-header', 'lx-toolbar-hidden-under-footer');
       return;
     }
 
