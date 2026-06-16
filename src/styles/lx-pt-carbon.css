@@ -1,8 +1,8 @@
 .lx {
   font-size: var(--font-size);
-  --font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
-  --font-family-mono: 'IBM Plex Mono', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono',
-    Courier, monospace;
+  --font-family: 'IBMPlexSansLX', 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'IBMPlexMonoLX', 'IBM Plex Mono', 'Menlo', 'DejaVu Sans Mono',
+    'Bitstream Vera Sans Mono', Courier, monospace;
   --font-features-mono: 'ss04';
   --font-smoothing-moz: grayscale;
   --font-smoothing-wk: antialiased;
