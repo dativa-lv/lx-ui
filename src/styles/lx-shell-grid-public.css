@@ -21,12 +21,17 @@
   --color-header-hover-foreground: var(--color-interactive-hover-foreground);
 }
 
-.lx .lx-layout.lx-layout-public>header>.lx-header .lx-group .lx-button:not(.lx-context-container .popper .lx-button):hover,
-.lx .lx-layout.lx-layout-public>header>.lx-header .lx-right-group #nav-toggle:hover {
+.lx:not(.lx-theme-contrast) .lx-layout.lx-layout-public>header>.lx-header .lx-group .lx-button:not(.lx-context-container .popper .lx-button):hover,
+.lx:not(.lx-theme-contrast) .lx-layout.lx-layout-public>header>.lx-header .lx-group .lx-button:not(.lx-context-container .popper .lx-button):active,
+.lx:not(.lx-theme-contrast) .lx-layout.lx-layout-public>header>.lx-header .lx-right-group #nav-toggle:hover {
   background-color: var(--color-header-hover-background);
   border-color: var(--color-header-hover-background);
 }
 
+.lx.lx-theme-contrast .lx-layout.lx-layout-public>header>.lx-header .lx-group .lx-button:not(.lx-context-container .popper .lx-button):active {
+  background: var(--color-button-ghost-background-active);
+  border-color: var(--color-button-ghost-border-active);
+}
 .lx-layout.lx-layout-public>header>.lx-header .lx-button:hover>.lx-badge {
   border-color: var(--color-header-hover-background);
 }
@@ -349,7 +354,7 @@
   border-color: var(--color-interactive-hover-background);
 }
 
-.lx .lx-layout .lx-header>.lx-right-group .lx-button:active {
+.lx:not(.lx-theme-contrast).lx-layout .lx-header>.lx-right-group .lx-button:active {
   background-color: var(--color-header-hover-background);
   border-color: var(--color-header-hover-background);
 }

@@ -1973,11 +1973,18 @@
   transition: opacity .1s ease-out;
 }
 
-.lx .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-after-blink {
+.lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-after-blink {
   background-color: var(--color-orange);
   transition: background-color 0.2s ease-in;
 }
+.lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-after-blink:focus {
+  border-color: var(--color-nav-hover-background);
+  background-color: var(--color-orange);
+}
 
+.lx .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-after-blink:active {
+  background: var(--color-button-ghost-background-active);
+}
 .lx.lx-no-animations .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-blink{
   background-color: var(--color-orange);
 }
@@ -1985,6 +1992,11 @@
 .lx .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-after-blink svg {
   fill: var(--color-region);
   transition: fill 0.2s ease-in;
+}
+
+.lx .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-after-blink:hover svg,
+.lx .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-after-blink:active svg{
+  fill: var(--color-button-ghost-icon-hover);
 }
 
 .lx.lx-no-animations .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-blink svg {

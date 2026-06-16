@@ -463,8 +463,8 @@ a.lx-button.lx-button-ghost svg {
   --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
-.lx-layout-public .lx-header .lx-button.lx-header-button svg,
-.lx-layout-latvijalv .lx-header .lx-button.lx-header-button svg {
+.lx:not(.lx-theme-contrast) .lx-layout-public .lx-header .lx-button.lx-header-button svg,
+.lx:not(.lx-theme-contrast) .lx-layout-latvijalv .lx-header .lx-button.lx-header-button svg {
   --color-button-ghost-icon: var(--color-data);
   --color-button-ghost-icon-focus: var(--color-data);
   --color-button-ghost-icon-active: var(--color-header-hover-foreground);
