@@ -436,7 +436,7 @@ const navBarShortMode = ref(false);
 
 watch(width, () => {
   nextTick(() => {
-    if (width.value <= 1900) {
+    if (width.value <= 1840) {
       navBarShortMode.value = true;
     } else {
       navBarShortMode.value = false;
@@ -454,7 +454,7 @@ const customButtonOpenedModal = computed({
 });
 
 onMounted(() => {
-  if (width.value <= 1900) {
+  if (width.value <= 1840) {
     navBarShortMode.value = true;
   } else {
     navBarShortMode.value = false;

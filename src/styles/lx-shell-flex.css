@@ -1198,7 +1198,7 @@ code {
   }
 }
 
-@media (max-width: 1900px) {
+@media (max-width: 1840px) {
   .lx-main .lx-header {
     margin-top: var(--space-1000);
     margin-bottom: var(--space-2000);

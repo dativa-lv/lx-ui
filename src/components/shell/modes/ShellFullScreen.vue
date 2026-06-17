@@ -58,7 +58,7 @@ const {
       v-if="props.hasSkipLink"
       :label="displayTexts.skipLinkLabel"
       :title="displayTexts.skipLinkTitle"
-      :tabindex="width < 1900 ? 1 : 0"
+      :tabindex="width < 1840 ? 1 : 0"
       @click="focusFirstMainFocusableElement"
     />
     <header ref="header">

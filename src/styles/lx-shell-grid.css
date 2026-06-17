@@ -2522,13 +2522,13 @@
   }
 }
 
-@media (min-width: 1901px) {
+@media (min-width: 1841px) {
   .lx-layout.lx-layout-default > nav .lx-nav-panel {
     border-right: var(--border-width-1) solid var(--color-chrome);
   }
 }
 
-@media (max-width: 1900px) {
+@media (max-width: 1840px) {
   .lx-layout.lx-layout-default > header .lx-header .lx-main-button.lx-nav-bar-hidden {
     min-width: calc(var(--aside-size) - var(--row-size));
     width: calc(var(--aside-size) - var(--row-size));

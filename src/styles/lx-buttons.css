@@ -1917,7 +1917,7 @@ a.lx-button.lx-button-ghost svg {
   display: none;
 }
 
-@media (max-width: 1900px) {
+@media (max-width: 1840px) {
   .lx-layout-default.lx-collapsed .lx-nav-panel {
     width: var(--row-size);
   }
@@ -1931,7 +1931,7 @@ a.lx-button.lx-button-ghost svg {
   }
 }
 
-@media (min-width: 801px) and (max-width: 1900px) {
+@media (min-width: 801px) and (max-width: 1840px) {
   .lx-layout-default.lx-collapsed .lx-nav-panel:hover,
   .lx-layout-default.lx-collapsed .lx-nav-panel:has(.lx-button:focus-visible) {
     width: var(--aside-size);

@@ -174,7 +174,7 @@ function closeNestedNavs() {
 }
 
 function closeNestedNavsOnLeave() {
-  if (width.value <= 1900 && width.value > 800 && props.layoutMode === 'default') {
+  if (width.value <= 1840 && width.value > 800 && props.layoutMode === 'default') {
     closeNestedNavs();
   }
 }
@@ -203,7 +203,7 @@ function getNavItemClasses(item, index) {
 }
 
 watch(width, (newWidth) => {
-  if (newWidth <= 1900 && width.value > 800 && props.layoutMode === 'default') {
+  if (newWidth <= 1840 && width.value > 800 && props.layoutMode === 'default') {
     closeNestedNavs();
   }
 });
@@ -271,7 +271,7 @@ const touchModeModel = computed({
 });
 
 const getTabIndex = computed(() => {
-  if ((props.layoutMode !== 'default' && props.layoutMode !== 'digives') || width.value > 1900)
+  if ((props.layoutMode !== 'default' && props.layoutMode !== 'digives') || width.value > 1840)
     return 0;
   return 2;
 });

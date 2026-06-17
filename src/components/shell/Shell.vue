@@ -777,7 +777,7 @@ function navToggle(value) {
   }
 }
 
-const semiResponsiveView = computed(() => globalThis.innerWidth < 1900);
+const semiResponsiveView = computed(() => globalThis.innerWidth < 1840);
 
 function navToggleButton() {
   if (props.mode === 'digives') {
