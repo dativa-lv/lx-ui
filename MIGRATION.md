@@ -4,6 +4,18 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
+## 2.2.3 → 2.2.4
+
+### Breaking changes
+
+#### LxNumberSlider
+
+**Decimal support removed**
+
+`LxNumberSlider` now only supports whole numbers. Decimal `modelValue`, `step`, and `stepMultiplier` values are no longer accepted. Values are silently rounded to the nearest integer at runtime, and a warning is logged in development environments.
+
+If your project passes decimal values to any of these props, round them before passing.
+
 ## 2.1.12 → 2.2.0
 
 ### Breaking changes

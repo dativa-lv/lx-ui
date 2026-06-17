@@ -56,6 +56,8 @@ The following input components share these tokens as they are visually and funct
 | `--input-tag-margin`                | `--space-0` `--space-0500`                                                  |
 | `--input-text-area-padding-y`       | `--space-0500`                                                              |
 | `--input-text-area-min-height`      | 6rem                                                                        |
+| `--input-divider-height`            | 1.5rem                                                                      |
+| `--input-divider-border`            | `--border-width-1` solid `--color-chrome`                                   |
 
 ## Color
 

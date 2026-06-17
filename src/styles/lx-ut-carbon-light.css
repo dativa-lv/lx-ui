@@ -176,14 +176,17 @@
   --color-input-button-border: var(--color-button-ghost-border);
   --color-input-button-border-focus: var(--color-button-ghost-border-focus);
   --color-input-button-border-hover: var(--color-button-ghost-border-hover);
+  --color-input-button-border-active: var(--color-button-ghost-border-active);
   --color-input-button-border-disabled: var(--color-button-ghost-border-disabled);
   --color-input-button-background: var(--color-button-ghost-background);
   --color-input-button-background-focus: var(--color-button-ghost-background-focus);
   --color-input-button-background-hover: var(--color-button-ghost-background-hover);
+  --color-input-button-background-active: var(--color-button-ghost-background-active);
   --color-input-button-background-disabled: var(--color-button-ghost-background-disabled);
   --color-input-button-icon: var(--color-data);
   --color-input-button-icon-focus: var(--color-data);
   --color-input-button-icon-hover: var(--color-button-ghost-icon-hover);
+  --color-input-button-icon-active: var(--color-button-ghost-icon-active);
   --color-input-button-icon-disabled: var(--color-button-ghost-icon-disabled);
   
   --color-button-active-mode: var(--color-data);

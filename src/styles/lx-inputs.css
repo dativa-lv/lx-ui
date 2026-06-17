@@ -2098,6 +2098,61 @@ h2.lx-section-header + p.lx-invalidation-message,
   cursor: not-allowed;
 }
 
+/*** Number slider stepper kind styles ***/
+
+.lx .lx-number-stepper-wrapper.lx-input-wrapper {
+  --input-grid-areas: 'input button-decrease button-increase';
+  --input-grid-template-columns: 1fr auto auto;
+  --input-button-indent-right: calc(2 * var(--input-button-width));
+  --input-divider-height: 1.5rem;
+  --input-divider-border: var(--border-width-1) solid var(--color-chrome);
+  position: relative;
+  width: var(--input-width-s);
+}
+
+.lx .lx-number-stepper-wrapper.lx-input-wrapper::before {
+  content: '';
+  height: var(--input-divider-height);
+  position: absolute;
+  right: calc(var(--input-button-width) - var(--border-width-1) / 2);
+  border-right: var(--input-divider-border);
+}
+
+.lx .lx-layout .lx-number-stepper-wrapper.lx-number-stepper-no-input .lx-input-area {
+  border-bottom-color: var(--color-chrome);
+}
+
+.lx .lx-layout .lx-number-stepper-wrapper.lx-number-stepper-no-input {
+  --input-border-width: var(--border-width-2) var(--border-width-2) var(--border-width-1) var(--border-width-2);
+  --color-input-border: transparent transparent var(--color-label) transparent;
+  --input-border-radius: var(--border-radius-0);
+  background-color: transparent;
+}
+
+.lx .lx-number-stepper-wrapper > .lx-number-stepper-field,
+.lx .lx-number-stepper-wrapper > .lx-number-stepper-field > .lx-text-input-wrapper {
+  display: contents;
+}
+
+.lx .lx-layout .lx-number-stepper-wrapper input.lx-text-input.lx-input-area {
+  --input-button-indent-right: calc(2 * var(--input-button-width));
+}
+
+.lx .lx-input-wrapper > .lx-button.lx-number-stepper-decrease {
+  grid-area: button-decrease;
+}
+
+.lx .lx-input-wrapper > .lx-button.lx-number-stepper-increase {
+  grid-area: button-increase;
+}
+
+.lx .lx-number-stepper-wrapper .lx-number-stepper-value {
+  margin: var(--space-0);
+  padding-left: var(--space-1000);
+  color: var(--color-data);
+  font-weight: var(--font-weight-data);
+}
+
 /*** LxDrawPad styles***/
 
 .lx .lx-drawpad-wrapper .lx-input-wrapper {
@@ -2588,6 +2643,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-input-wrapper > .lx-button:hover {
   background: var(--color-input-button-background-hover);
+  border-color: var(--color-input-button-border-hover);
 }
 
 .lx .lx-input-wrapper > .lx-button:hover svg {
@@ -2606,18 +2662,31 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 /* Focus-hover */
 
-.lx .lx-input-wrapper > .lx-button:focus:hover {
+.lx-input-wrapper > .lx-button:focus:hover {
   background: var(--color-input-button-background-hover);
+  border-color: var(--color-input-button-border-hover);
 }
 
-.lx .lx-input-wrapper > .lx-button:focus:hover svg {
+.lx-input-wrapper > .lx-button:focus:hover svg {
   fill: var(--color-input-button-icon-hover);
+}
+
+/* Active */
+
+.lx .lx-input-wrapper > .lx-button:active {
+  background: var(--color-input-button-background-active);
+  border-color: var(--color-input-button-border-active);
+}
+
+.lx .lx-input-wrapper > .lx-button:active svg {
+  fill: var(--color-input-button-icon-active);
 }
 
 /* Disabled */
 
 .lx .lx-input-wrapper > .lx-button.lx-disabled {
   background: var(--color-input-button-background-disabled);
+  border-color: var(--color-input-button-border-disabled);
 }
 
 .lx .lx-input-wrapper > .lx-button.lx-disabled svg {

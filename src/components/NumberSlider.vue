@@ -9,20 +9,57 @@ import {
   onUnmounted,
 } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
+import LxButton from '@/components/Button.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { makeIntegerValidator } from '@/utils/numberSliderUtils';
 
 const props = defineProps({
   id: { type: String, default: null },
-  modelValue: { type: Number, default: 0 },
-  min: { type: Number, default: 0, group: 'main', sequence: 2 },
-  max: { type: Number, default: 9999, group: 'main', sequence: 3 },
-  step: { type: Number, default: 1, group: 'additional' },
-  stepMultiplier: { type: Number, default: 5, group: 'additional' },
-  hasInput: { type: Boolean, default: false, group: 'main', sequence: 1 },
+  modelValue: {
+    type: Number,
+    default: 0,
+    validator: makeIntegerValidator('modelValue'),
+  },
+  kind: {
+    type: String,
+    default: 'slider',
+    options: ['slider', 'stepper'],
+    group: 'main',
+    sequence: 1,
+  },
+  min: {
+    type: Number,
+    default: 0,
+    group: 'main',
+    sequence: 2,
+    validator: makeIntegerValidator('min'),
+  },
+  max: {
+    type: Number,
+    default: 9999,
+    group: 'main',
+    sequence: 3,
+    validator: makeIntegerValidator('max'),
+  },
+  step: {
+    type: Number,
+    default: 1,
+    group: 'additional',
+    validator: makeIntegerValidator('step'),
+  },
+  stepMultiplier: {
+    type: Number,
+    default: 5,
+    group: 'additional',
+    validator: makeIntegerValidator('stepMultiplier'),
+  },
+  hasInput: { type: Boolean, default: false, group: 'main', sequence: 4 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   labelId: { type: String, default: null },
   disableArrowKeys: { type: Boolean, default: false },
+  texts: { type: Object, default: () => ({}) },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -34,16 +71,28 @@ const props = defineProps({
   },
 });
 
+const textsDefault = {
+  decreaseValue: 'Samazināt vērtību',
+  increaseValue: 'Palielināt vērtību',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
 const emits = defineEmits(['update:modelValue']);
 
 const model = computed({
   get() {
-    return Number(props.modelValue);
+    return Math.round(Number(props.modelValue));
   },
   set(value) {
-    emits('update:modelValue', Number(value));
+    emits('update:modelValue', Math.round(Number(value)));
   },
 });
+
+const stepValue = computed(() => Math.round(Number(props.step)));
+const stepMultiplierValue = computed(() => Math.round(Number(props.stepMultiplier)));
+const minValue = computed(() => Math.round(Number(props.min)));
+const maxValue = computed(() => Math.round(Number(props.max)));
 
 watch(
   () => model.value,
@@ -52,11 +101,11 @@ watch(
       model.value = Number(newValue);
     }
 
-    if (model.value <= props.min) {
-      model.value = props.min;
+    if (model.value <= minValue.value) {
+      model.value = minValue.value;
     }
-    if (model.value >= props.max) {
-      model.value = props.max;
+    if (model.value >= maxValue.value) {
+      model.value = maxValue.value;
     }
   }
 );
@@ -66,18 +115,38 @@ const liveAnnouncement = ref(model.value.toString());
 let announcementTimeout;
 
 const onIncreaseMultiplier = () => {
-  model.value += Number(props.stepMultiplier);
+  model.value += stepMultiplierValue.value;
 };
 const onDecreaseMultiplier = () => {
-  model.value -= Number(props.stepMultiplier);
+  model.value -= stepMultiplierValue.value;
 };
 const onIncreaseStep = () => {
-  model.value += Number(props.step);
+  model.value += stepValue.value;
 };
 const onDecreaseStep = () => {
-  model.value -= Number(props.step);
+  model.value -= stepValue.value;
 };
-const fillingUp = computed(() => ((model.value - props.min) / (props.max - props.min)) * 100);
+
+const pageStep = computed(() =>
+  Math.max(stepValue.value, Math.round((maxValue.value - minValue.value) / 10))
+);
+
+const onIncreasePage = () => {
+  model.value += pageStep.value;
+};
+const onDecreasePage = () => {
+  model.value -= pageStep.value;
+};
+
+function onStepperButtonMouseDown(event) {
+  if (props.hasInput) event.preventDefault();
+}
+
+const isDecreaseDisabled = computed(() => props.disabled || model.value <= minValue.value);
+const isIncreaseDisabled = computed(() => props.disabled || model.value >= maxValue.value);
+const fillingUp = computed(
+  () => ((model.value - minValue.value) / (maxValue.value - minValue.value)) * 100
+);
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
@@ -121,13 +190,74 @@ if (props.builderOptions?.useRegistry) {
 <template>
   <div class="lx-field-wrapper" :data-id="id">
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">{{ model }}</p>
-    <div
-      v-if="!readOnly"
-      class="input-slider-container-wrapper"
-      :class="{ 'lx-disabled': disabled }"
-    >
+    <template v-else-if="kind === 'stepper'">
+      <div
+        class="lx-number-stepper-wrapper lx-input-wrapper"
+        :class="[{ 'lx-disabled': disabled }, { 'lx-number-stepper-no-input': !hasInput }]"
+      >
+        <LxTextInput
+          v-if="hasInput"
+          :id="id"
+          v-model="model"
+          mask="integer"
+          class="lx-number-stepper-field"
+          :labelId="labelledBy"
+          :disabled
+          :builderOptions="{ innerComponent: true }"
+          @keydown.up.exact.prevent="!props.disableArrowKeys && onIncreaseStep()"
+          @keydown.down.exact.prevent="!props.disableArrowKeys && onDecreaseStep()"
+          @keydown.shift.up.exact.prevent="!props.disableArrowKeys && onIncreaseMultiplier()"
+          @keydown.shift.down.exact.prevent="!props.disableArrowKeys && onDecreaseMultiplier()"
+          @keydown.page-up.prevent="onIncreasePage"
+          @keydown.page-down.prevent="onDecreasePage"
+        />
+        <p
+          v-else
+          class="lx-number-stepper-value lx-input-area"
+          role="spinbutton"
+          :aria-labelledby="labelledBy"
+          :aria-valuenow="model"
+          :aria-valuemin="minValue"
+          :aria-valuemax="maxValue"
+        >
+          {{ model }}
+        </p>
+        <LxButton
+          customClass="lx-number-stepper-decrease"
+          kind="ghost"
+          variant="icon-only"
+          icon="subtract"
+          :label="displayTexts.decreaseValue"
+          :disabled="isDecreaseDisabled"
+          :tabindex="hasInput ? -1 : 0"
+          @mousedown="onStepperButtonMouseDown"
+          @click="onDecreaseStep"
+        />
+        <LxButton
+          customClass="lx-number-stepper-increase"
+          kind="ghost"
+          variant="icon-only"
+          icon="add"
+          :label="displayTexts.increaseValue"
+          :disabled="isIncreaseDisabled"
+          :tabindex="hasInput ? -1 : 0"
+          @mousedown="onStepperButtonMouseDown"
+          @click="onIncreaseStep"
+        />
+      </div>
+      <div
+        v-if="!hasInput"
+        class="lx-visually-hidden"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {{ liveAnnouncement }}
+      </div>
+    </template>
+    <div v-else class="input-slider-container-wrapper" :class="{ 'lx-disabled': disabled }">
       <div class="input-slider-range-label">
-        <p>{{ props.min }}</p>
+        <p>{{ minValue }}</p>
       </div>
 
       <div class="input-slider" :title="tooltip">
@@ -136,9 +266,9 @@ if (props.builderOptions?.useRegistry) {
           type="range"
           class="lx-number-slider"
           :id="id"
-          :min="props.min"
-          :max="props.max"
-          :step="props.step"
+          :min="minValue"
+          :max="maxValue"
+          :step="stepValue"
           :aria-labelledby="labelledBy"
           :disabled
           @mousedown="onMouseDown"
@@ -159,9 +289,18 @@ if (props.builderOptions?.useRegistry) {
       </div>
 
       <div class="input-slider-range-label">
-        <p>{{ props.max }}</p>
+        <p>{{ maxValue }}</p>
       </div>
-      <div class="input-slider-range-text" v-show="hasInput">
+      <div
+        class="input-slider-range-text"
+        v-show="hasInput"
+        @keydown.up.exact.prevent="!props.disableArrowKeys && onIncreaseStep()"
+        @keydown.down.exact.prevent="!props.disableArrowKeys && onDecreaseStep()"
+        @keydown.shift.up.exact.prevent="!props.disableArrowKeys && onIncreaseMultiplier()"
+        @keydown.shift.down.exact.prevent="!props.disableArrowKeys && onDecreaseMultiplier()"
+        @keydown.page-up.prevent="onIncreasePage"
+        @keydown.page-down.prevent="onDecreasePage"
+      >
         <LxTextInput
           type="text"
           v-model="model"
