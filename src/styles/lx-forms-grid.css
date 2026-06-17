@@ -693,13 +693,25 @@ svg .lx-shade {
   border: var(--region-border);
 }
 
-.lx-form-grid > aside.lx-index > ul li:hover {
-  background-color: var(--color-grid-hover-background);
-}
-
-.lx-form-grid > aside.lx-index > ul li.lx-selected {
+.lx .lx-form-grid > aside.lx-index > ul li.lx-selected {
   border-color: var(--color-interactive-background);
   background-color: var(--color-region);
+}
+
+.lx-theme-contrast .lx-form-grid > aside.lx-index.lx-index-small > ul li.lx-selected,
+.lx-theme-contrast .lx-form-grid > aside.lx-index > ul li.lx-selected {
+  border-color: var(--color-highlight);
+  background-color: var(--color-highlight);
+}
+
+.lx-theme-contrast .lx-form-grid > aside.lx-index > ul li.lx-selected p,
+.lx-theme-contrast .lx-form-grid > aside.lx-index > ul li.lx-selected .inner-text {
+  color: var(--color-highlight-foreground);
+}
+
+.lx .lx-form-grid > aside.lx-index.lx-index-small > ul li:hover,
+.lx .lx-form-grid > aside.lx-index > ul li:hover {
+  background-color: var(--color-grid-hover-background);
 }
 
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-button,
@@ -1339,6 +1351,10 @@ p .lx-person-display-wrapper {
   overflow: hidden;
 }
 
+.lx-form-grid > .lx-index > ul > li:hover > .index-text > .inner-text{
+  color: var(--color-grid-hover-foreground);
+}
+
 .lx-form-grid > .lx-index > ul > li > .index-text.lx-invalid,
 .lx-form-grid > .lx-index > ul > li > .index-text.lx-invalid > p {
   color: var(--color-bad);
@@ -1352,13 +1368,17 @@ p .lx-person-display-wrapper {
   flex-shrink: 0;
 }
 
-.lx .lx-layout .additional-index-button.lx-button > .lx-button-content-wrapper > p {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.lx-form-grid > .lx-index > ul > li:hover > .index-text > p{
+  color: var(--color-grid-hover-foreground);
 }
 
-.lx-form-grid .additional-index-button.lx-invalid {
+.lx-theme-contrast .lx-form-grid > .lx-index > ul > li:hover > .index-text > svg,
+.lx-theme-contrast .lx-form-grid > .lx-index > ul > li:hover > .index-text svg,
+.lx-theme-contrast .lx-form-grid > .lx-index > ul > li.lx-selected > .index-text svg {
+  fill: var(--color-grid-hover-foreground);
+}
+
+.lx .lx-layout .additional-index-button.lx-button.lx-invalid {
   color: var(--color-bad);
 }
 
@@ -1368,8 +1388,8 @@ p .lx-person-display-wrapper {
   height: var(--icon-size-s);
 }
 
-.lx-form-grid .additional-index-button > .lx-button-content-wrapper > p {
-  color: inherit;
+.lx.lx-theme-contrast .lx-layout .additional-index-button.lx-button.lx-invalid:hover:not(:focus) > .lx-button-content-wrapper > svg {
+  fill: var(--color-popover-item-icon-hover);
 }
 
 .lx-index.lx-index-small > ul > li > .index-text.lx-invalid > svg {
@@ -1806,11 +1826,11 @@ p .lx-person-display-wrapper {
     background-color: var(--color-background);
   }
 
-  .lx-form-grid > aside.lx-index.lx-index-small > ul:hover > li.lx-selected {
+  .lx:not(.lx-theme-contrast) .lx-form-grid > aside.lx-index.lx-index-small > ul:hover > li.lx-selected {
     background-color: var(--color-region);
   }
 
-  .lx-form-grid > aside.lx-index.lx-index-small > ul > li:hover {
+  .lx:not(.lx-theme-contrast) .lx-form-grid > aside.lx-index.lx-index-small > ul > li:hover:has(.index-text) {
     background-color: var(--color-region-hover);
   }
 

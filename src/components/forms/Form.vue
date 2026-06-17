@@ -1219,7 +1219,7 @@ if (props.builderOptions.useRegistry) {
                   @click="scrollTo(i.id)"
                 >
                   <div class="lx-button-content-wrapper">
-                    <p>{{ i.name }}</p>
+                    <span class="lx-button-content">{{ i.name }}</span>
                     <LxIcon value="invalid" v-if="i.invalid" />
                   </div>
                 </div>
@@ -1265,7 +1265,7 @@ if (props.builderOptions.useRegistry) {
                 @click="scrollTo(i.id)"
               >
                 <div class="lx-button-content-wrapper">
-                  <p>{{ i.name }}</p>
+                  <span class="lx-button-content">{{ i.name }}</span>
                   <LxIcon value="invalid" v-if="i.invalid" />
                 </div>
               </div>
