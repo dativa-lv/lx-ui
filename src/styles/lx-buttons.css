@@ -1233,20 +1233,6 @@ a.lx-button.lx-button-ghost svg {
   outline-offset: var(--modal-button-secondary-outline-offset);
 }
 
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) .lx-button-content-wrapper {
-  --button-primary-gap: var(--space-0);
-  --button-primary-grid-areas: 'content';
-  --button-primary-grid-template-columns: 1fr auto auto;
-  --button-primary-grid-template-rows: 1fr;
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button) .lx-button-content-wrapper {
-  --button-secondary-gap: var(--space-0);
-  --button-secondary-grid-areas: 'content';
-  --button-secondary-grid-template-columns: 1fr auto auto;
-  --button-secondary-grid-template-rows: 1fr;
-}
-
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) .lx-button-content {
   text-align: var(--modal-button-primary-text-alignment);
 }

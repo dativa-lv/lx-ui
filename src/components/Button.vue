@@ -104,7 +104,9 @@ const isIconOnly = computed(() =>
   Boolean(props.variant === 'icon-only' || (!props.label && !slots.default && props.icon))
 );
 
-const isTextOnly = computed(() => Boolean((props.label || slots.default) && !props.icon));
+const isTextOnly = computed(() =>
+  Boolean((props.label || slots.default) && !props.icon && !props.busy)
+);
 
 const accessibleTitle = computed(() => {
   unref(overflowCheckTrigger);
@@ -232,8 +234,9 @@ defineExpose({ focus, scrollIntoView, getElement });
     @keyup.enter.stop.prevent="click"
   >
     <div class="lx-button-content-wrapper">
-      <template v-if="showIcon">
+      <template v-if="showIcon || busy">
         <LxIcon
+          v-if="showIcon"
           v-show="!busy"
           :value="icon"
           :icon-set="iconSet"
@@ -246,7 +249,7 @@ defineExpose({ focus, scrollIntoView, getElement });
           <LxLoader :loading="true" size="s" />
         </div>
       </template>
-      <div v-if="!showIcon"></div>
+      <div v-if="!showIcon && !busy"></div>
       <div
         class="lx-button-content"
         v-if="variant !== 'icon-only' && (label?.trim() !== '' || $slots.default)"
@@ -295,8 +298,9 @@ defineExpose({ focus, scrollIntoView, getElement });
     v-bind="$attrs"
   >
     <div class="lx-button-content-wrapper">
-      <template v-if="showIcon">
+      <template v-if="showIcon || busy">
         <LxIcon
+          v-if="showIcon"
           v-show="!busy"
           :value="icon"
           :icon-set="iconSet"

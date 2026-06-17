@@ -132,7 +132,8 @@
   margin: var(--space-0);
 }
 
-.lx-layout .lx-dropdown-panel .lx-dropdown-menu-toggle-wrapper .lx-field-wrapper {
+.lx-layout .lx-dropdown-panel .lx-dropdown-menu-toggle-wrapper .lx-field-wrapper,
+.lx-dropdown-panel .lx-button .lx-loader-container {
   grid-area: icon-toggle;
 }
 
