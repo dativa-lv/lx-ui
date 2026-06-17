@@ -402,6 +402,8 @@ const wrapperRef = ref();
         tabindex="-1"
         role="radiogroup"
         :aria-invalid="invalid"
+        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
         :title="tooltip"
         :aria-labelledby="labelId"
       >
@@ -518,6 +520,8 @@ const wrapperRef = ref();
         :class="[{ 'lx-invalid': invalid }]"
         v-if="variant === 'tags' || variant === 'tags-custom'"
         :aria-invalid="invalid"
+        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
         :title="tooltip"
       >
         <ul
@@ -590,7 +594,9 @@ const wrapperRef = ref();
           </li>
         </ul>
       </div>
-      <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+      <div v-show="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+        {{ invalidationMessage }}
+      </div>
     </template>
   </div>
 </template>

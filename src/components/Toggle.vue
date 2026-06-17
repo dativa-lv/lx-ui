@@ -193,6 +193,8 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
         :role="role"
         :aria-checked="model"
         :aria-invalid="invalid"
+        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
         :aria-label="accessibleLabel || (!(size !== 's' && hasSlots) ? tooltipValue : null)"
         :aria-labelledby="accessibleLabel ? null : labelledBy"
         tabindex="0"
@@ -227,6 +229,12 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
         <LxIcon customClass="lx-invalidation-icon" value="invalid" />
       </div>
     </div>
-    <div v-if="invalid && !readOnly" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+    <div
+      v-if="invalid && !readOnly"
+      class="lx-invalidation-message"
+      :id="`${id}-invalidation-message`"
+    >
+      {{ invalidationMessage }}
+    </div>
   </div>
 </template>

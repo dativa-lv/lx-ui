@@ -1614,6 +1614,7 @@ onMounted(async () => {
             :tabindex="startInputIndex"
             :maxlength="getMaxLength"
             :aria-invalid="invalid"
+            :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
             :aria-label="
               pickerType === 'range'
                 ? displayTexts.startDateLabel
@@ -1622,7 +1623,11 @@ onMounted(async () => {
                 : null
             "
             :aria-labelledby="pickerType === 'single' && !legacyMode ? labelledBy : null"
-            :aria-describedby="`${id}-lx-input-description`"
+            :aria-describedby="
+              invalid
+                ? `${id}-lx-input-description ${id}-invalidation-message`
+                : `${id}-lx-input-description`
+            "
             @mousedown="preventDefaultFocus"
             @touchstart="onTouchStart($event, 'startInput')"
             @touchmove="onTouchMove($event)"
@@ -1675,8 +1680,13 @@ onMounted(async () => {
               :tabindex="endInputIndex"
               :maxlength="getMaxLength"
               :aria-invalid="invalid"
+              :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
               :aria-label="displayTexts.endDateLabel"
-              :aria-describedby="`${id}-lx-input-description`"
+              :aria-describedby="
+                invalid
+                  ? `${id}-lx-input-description ${id}-invalidation-message`
+                  : `${id}-lx-input-description`
+              "
               @mousedown="preventDefaultFocus"
               @touchstart="onTouchStart($event, 'endInput')"
               @touchmove="onTouchMove($event)"
@@ -1755,7 +1765,12 @@ onMounted(async () => {
       :texts="displayTexts"
       @focusActiveInput="focusInput"
     />
-    <div v-if="invalid && !legacyMode" class="lx-invalidation-message">
+    <div
+      v-if="invalid"
+      class="lx-invalidation-message"
+      :class="{ 'lx-visually-hidden': legacyMode }"
+      :id="`${id}-invalidation-message`"
+    >
       {{ invalidationMessage }}
     </div>
   </div>

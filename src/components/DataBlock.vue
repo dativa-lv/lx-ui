@@ -160,8 +160,16 @@ const expandIconTitle = computed(() => {
         :tabindex="expandable && !isDisabled ? 0 : null"
         :aria-expanded="expandable ? expanded : null"
         :aria-invalid="invalid"
+        :aria-errormessage="invalid && invalidationMessage ? `${id}-invalidation-message` : null"
         :aria-label="ariaLabel"
-        :aria-describedby="width <= 500 || expanded ? null : `data-block-${id}-desc`"
+        :aria-describedby="
+          [
+            width <= 500 || expanded ? null : `data-block-${id}-desc`,
+            invalid && invalidationMessage ? `${id}-invalidation-message` : null,
+          ]
+            .filter(Boolean)
+            .join(' ') || null
+        "
         @click="toggleExpander"
         @keydown.space="handleKeyDown"
         @keyup.space="toggleExpander"
@@ -218,6 +226,13 @@ const expandIconTitle = computed(() => {
             />
           </div>
         </template>
+        <div
+          v-if="invalid && invalidationMessage"
+          class="lx-visually-hidden"
+          :id="`${id}-invalidation-message`"
+        >
+          {{ invalidationMessage }}
+        </div>
       </header>
       <div class="additional-buttons" v-if="Number(actionDefinitionsLength) > 0">
         <LxButton

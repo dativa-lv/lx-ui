@@ -448,6 +448,9 @@ const wrapperRef = ref();
         { 'select-all': hasSelectAll && selectionKind === 'multiple' },
       ]"
       :role="props.selectionKind === 'single' ? 'radiogroup' : 'group'"
+      :aria-invalid="invalid"
+      :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+      :aria-describedby="invalid ? `${id}-invalidation-message` : null"
       tabindex="-1"
     >
       <template v-if="readOnly">
@@ -573,5 +576,11 @@ const wrapperRef = ref();
       </template>
     </div>
   </div>
-  <div v-show="invalid && !readOnly" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+  <div
+    v-show="invalid && !readOnly"
+    class="lx-invalidation-message"
+    :id="`${id}-invalidation-message`"
+  >
+    {{ invalidationMessage }}
+  </div>
 </template>

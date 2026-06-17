@@ -164,6 +164,13 @@ onMounted(() => {
           :tabindex="t.id === model ? '0' : '-1'"
           role="tab"
           :aria-selected="t.id === model"
+          :aria-invalid="t.invalid"
+          :aria-errormessage="
+            t.invalid && t.invalidationMessage ? `${id}-tab-${t.id}-invalidation-message` : null
+          "
+          :aria-describedby="
+            t.invalid && t.invalidationMessage ? `${id}-tab-${t.id}-invalidation-message` : null
+          "
           @click="setActiveTab(t.id)"
           @keyup.enter="setActiveTab(t.id)"
           @keyup.space="setActiveTab(t.id)"
@@ -178,6 +185,13 @@ onMounted(() => {
             customClass="invalid"
             v-show="!(kind !== 'default' && !t.invalid)"
           />
+          <span
+            v-if="t.invalid && t.invalidationMessage"
+            class="lx-visually-hidden"
+            :id="`${id}-tab-${t.id}-invalidation-message`"
+          >
+            {{ t.invalidationMessage }}
+          </span>
         </div>
       </div>
 

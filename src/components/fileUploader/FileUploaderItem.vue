@@ -130,6 +130,17 @@ const additionalInfoTitle = computed(() => {
             !isItemBusy,
         }"
         :title="props.hasDownloadButton ? displayTexts.download : ''"
+        :aria-invalid="props.customItem.state === 'invalid'"
+        :aria-errormessage="
+          props.customItem.state === 'invalid' && props.customItem.invalidDescription
+            ? `${props.customItem.id}-invalidation-message`
+            : null
+        "
+        :aria-describedby="
+          props.customItem.state === 'invalid' && props.customItem.invalidDescription
+            ? `${props.customItem.id}-invalidation-message`
+            : null
+        "
         @keyup.space="downloadFile(props.customItem.id)"
         @keyup.enter="downloadFile(props.customItem.id)"
         @click="downloadFile(props.customItem.id)"
@@ -180,7 +191,11 @@ const additionalInfoTitle = computed(() => {
         class="lx-file-state-info"
         v-if="props.customItem.invalidDescription || props.customItem.description"
       >
-        <div class="lx-invalidation-message" v-if="props.customItem.invalidDescription">
+        <div
+          class="lx-invalidation-message"
+          v-if="props.customItem.invalidDescription"
+          :id="`${props.customItem.id}-invalidation-message`"
+        >
           {{ props.customItem.invalidDescription }}
         </div>
         <p v-if="props.customItem.description" class="lx-secondary">

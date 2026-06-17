@@ -664,6 +664,8 @@ function countDigits(number) {
         :aria-expanded="menuOpen"
         aria-controls="popper-id"
         :aria-invalid="invalid"
+        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
         :aria-labelledby="labelId"
         @keydown.esc.prevent="closeDropDownDefaultOnEsc"
         @keydown.enter.prevent="onEnter"
@@ -866,7 +868,9 @@ function countDigits(number) {
           </template>
         </LxPopper>
       </div>
-      <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+      <div v-show="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+        {{ invalidationMessage }}
+      </div>
     </div>
   </template>
 </template>

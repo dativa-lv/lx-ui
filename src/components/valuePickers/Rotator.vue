@@ -377,6 +377,8 @@ function onUp() {
           class="lx-rotator-dropdown-wrapper lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
           :aria-invalid="invalid"
+          :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+          :aria-describedby="invalid ? `${id}-invalidation-message` : null"
           :tabindex="disabled ? -1 : 0"
           :aria-labelledby="labelId"
           :aria-disabled="disabled"
@@ -439,7 +441,12 @@ function onUp() {
         </template>
       </LxDropDownMenu>
 
-      <div v-if="invalid" class="lx-invalidation-message" @contextmenu.stop>
+      <div
+        v-if="invalid"
+        class="lx-invalidation-message"
+        :id="`${id}-invalidation-message`"
+        @contextmenu.stop
+      >
         {{ invalidationMessage }}
       </div>
     </div>

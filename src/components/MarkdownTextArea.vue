@@ -1200,6 +1200,8 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
           role="textbox"
           :aria-invalid="invalid"
           :aria-labelledby="labelledBy"
+          :aria-errormessage="invalid ? `${props.id}-invalidation-message` : null"
+          :aria-describedby="invalid ? `${props.id}-invalidation-message` : null"
         />
 
         <div v-if="invalid" class="lx-invalidation-icon-wrapper">
@@ -1214,7 +1216,11 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
       >
         {{ characterCount }}/{{ maxlength }}
       </div>
-      <div class="lx-invalidation-message" v-if="invalid && !readOnly">
+      <div
+        class="lx-invalidation-message"
+        v-if="invalid && !readOnly"
+        :id="`${props.id}-invalidation-message`"
+      >
         {{ invalidationMessage }}
       </div>
     </div>

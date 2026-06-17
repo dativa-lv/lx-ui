@@ -413,6 +413,8 @@ const getSelectedItem = computed(
           v-model="model"
           :id="id"
           :aria-invalid="invalid"
+          :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+          :aria-describedby="invalid ? `${id}-invalidation-message` : null"
           class="lx-dropdown lx-input-area"
           :class="[
             { 'lx-invalid': invalid },
@@ -446,7 +448,9 @@ const getSelectedItem = computed(
           <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
         </div>
       </div>
-      <div v-if="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+      <div v-if="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+        {{ invalidationMessage }}
+      </div>
     </template>
 
     <template v-if="props.kind === 'default' && !readOnly">
@@ -482,6 +486,8 @@ const getSelectedItem = computed(
               :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
               :title="tooltip"
               :aria-invalid="invalid"
+              :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+              :aria-describedby="invalid ? `${id}-invalidation-message` : null"
             >
               <div class="pseudo-input" />
 
@@ -510,7 +516,13 @@ const getSelectedItem = computed(
               </div>
             </div>
 
-            <div v-if="invalid" class="lx-invalidation-message" @click.stop @mousedown.prevent>
+            <div
+              v-if="invalid"
+              class="lx-invalidation-message"
+              :id="`${id}-invalidation-message`"
+              @click.stop
+              @mousedown.prevent
+            >
               {{ invalidationMessage }}
             </div>
           </div>

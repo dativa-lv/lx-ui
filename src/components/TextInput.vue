@@ -687,6 +687,8 @@ defineExpose({ focus });
         :maxlength="maxLengthValue"
         :title="tooltip"
         :aria-labelledby="labelledBy"
+        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
         :inputmode="inputMode"
         @accept="onAccept"
         @blur="onBlur"
@@ -710,11 +712,20 @@ defineExpose({ focus });
         :disabled="disabled"
         :title="tooltip"
         :placeholder="placeholder"
+        :aria-invalid="invalid"
+        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
         class="lx-text-input lx-input-area"
         :class="[{ 'lx-invalid': invalid }, { 'lx-search-input': props.kind === 'search' }]"
       />
     </div>
 
-    <div class="lx-invalidation-message" v-if="invalid && !readOnly">{{ invalidationMessage }}</div>
+    <div
+      class="lx-invalidation-message"
+      v-if="invalid && !readOnly"
+      :id="`${id}-invalidation-message`"
+    >
+      {{ invalidationMessage }}
+    </div>
   </div>
 </template>

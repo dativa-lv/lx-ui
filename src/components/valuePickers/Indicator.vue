@@ -342,6 +342,8 @@ const wrapperRef = ref();
     :id="id"
     :title="tooltip"
     :aria-invalid="invalid"
+    :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+    :aria-describedby="invalid ? `${id}-invalidation-message` : null"
     :aria-labelledby="labelId"
   >
     <LxToolbar
@@ -440,5 +442,7 @@ const wrapperRef = ref();
       </li>
     </ul>
   </div>
-  <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+  <div v-show="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+    {{ invalidationMessage }}
+  </div>
 </template>

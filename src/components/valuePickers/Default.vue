@@ -388,6 +388,8 @@ const wrapperRef = ref();
       { 'select-all': hasSelectAll && selectionKind === 'multiple' },
     ]"
     :aria-invalid="invalid"
+    :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+    :aria-describedby="invalid ? `${id}-invalidation-message` : null"
     role="radiogroup"
     :title="tooltip"
     :id="id"
@@ -506,7 +508,9 @@ const wrapperRef = ref();
         </LxCheckbox>
       </div>
 
-      <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+      <div v-show="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+        {{ invalidationMessage }}
+      </div>
     </template>
   </div>
 </template>

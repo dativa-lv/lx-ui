@@ -154,10 +154,11 @@ defineExpose({ focus });
       role="button"
       :aria-label="ariaLabelWithBadge"
       :aria-describedby="
-        ((badge || badgeIcon) && badgeTitle) || description
+        ((badge || badgeIcon) && badgeTitle) || description || invalid
           ? [
               (badge || badgeIcon) && badgeTitle ? `${id}-label` : null,
               description ? `${id}-desc` : null,
+              invalid ? `${id}-invalidation-message` : null,
             ]
               .filter(Boolean)
               .join(' ')
@@ -165,6 +166,7 @@ defineExpose({ focus });
       "
       :aria-expanded="isExpandedRaw"
       :aria-invalid="invalid"
+      :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
       aria-controls="lx-body"
       @click="toggleExpander"
       @keydown.space.prevent="toggleExpander"
@@ -254,7 +256,9 @@ defineExpose({ focus });
         v-show="renderMode === 'default' ? isExpandedRaw : true"
         class="lx-body"
       >
-        <div v-if="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+        <div v-if="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+          {{ invalidationMessage }}
+        </div>
         <slot></slot>
       </article>
     </transition>

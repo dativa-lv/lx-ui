@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -30,6 +31,8 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const infoWrapperRef = ref(null);
+
+const ratingId = ref(generateUUID());
 
 const model = computed({
   get() {
@@ -213,6 +216,9 @@ defineExpose({ focus, scrollIntoView });
           class="lx-ratings"
           role="radiogroup"
           :aria-disabled="disabled"
+          :aria-invalid="showInvalid"
+          :aria-errormessage="showInvalid ? `${ratingId}-invalidation-message` : null"
+          :aria-describedby="showInvalid ? `${ratingId}-invalidation-message` : null"
           :class="[
             { 'lx-disabled': disabled },
             { 'lx-read-only': readOnly },
@@ -343,7 +349,11 @@ defineExpose({ focus, scrollIntoView });
         <LxIcon customClass="lx-invalidation-icon" value="invalid" />
       </div>
     </div>
-    <div class="lx-invalidation-message" v-if="showInvalid">
+    <div
+      class="lx-invalidation-message"
+      v-if="showInvalid"
+      :id="`${ratingId}-invalidation-message`"
+    >
       {{ invalidationMessage }}
     </div>
   </div>

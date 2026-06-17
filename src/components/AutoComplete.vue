@@ -1322,6 +1322,8 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       :aria-labelledby="labelledBy"
                       :aria-label="getName(false)"
                       :aria-invalid="invalid"
+                      :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+                      :aria-describedby="invalid ? `${id}-invalidation-message` : null"
                       :aria-busy="loadingState || loading"
                       :maxlength="queryMaxLength || null"
                       :tabindex="disabled ? '-1' : '0'"
@@ -1422,7 +1424,12 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     </div>
                   </div>
 
-                  <div v-if="invalid" class="lx-invalidation-message" @click.stop>
+                  <div
+                    v-if="invalid"
+                    class="lx-invalidation-message"
+                    :id="`${id}-invalidation-message`"
+                    @click.stop
+                  >
                     {{ invalidationMessage }}
                   </div>
                 </div>

@@ -565,6 +565,7 @@ if (props.builderOptions?.useRegistry) {
             :placeholder="placeholder"
             :disabled="disabled"
             :invalid="invalid"
+            :invalidationMessage="invalidationMessage"
             :min-date="endMinDate"
             :max-date="maxDate"
             :locale="localeComputed"

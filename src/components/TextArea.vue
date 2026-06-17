@@ -134,6 +134,8 @@ if (props.builderOptions?.useRegistry) {
             :maxlength="props.maxlength"
             :title="props.tooltip"
             :aria-labelledby="labelledBy"
+            :aria-errormessage="invalid ? `${props.id}-invalidation-message` : null"
+            :aria-describedby="invalid ? `${props.id}-invalidation-message` : null"
             @input="triggerResize"
           />
 
@@ -156,7 +158,11 @@ if (props.builderOptions?.useRegistry) {
         <div v-if="props.maxlength" class="lx-text-length">
           {{ model?.toString()?.length || 0 }}/{{ props.maxlength }}
         </div>
-        <div v-if="invalid && !readOnly" class="lx-invalidation-message">
+        <div
+          v-if="invalid && !readOnly"
+          class="lx-invalidation-message"
+          :id="`${props.id}-invalidation-message`"
+        >
           {{ props.invalidationMessage }}
         </div>
       </div>
