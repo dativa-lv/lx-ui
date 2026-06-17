@@ -271,3 +271,12 @@ export const isEmpty = (v) => v === null || v === undefined || v === '';
  * @returns {boolean} `true` if the value is a boolean (`true` or `false`), otherwise `false`.
  */
 export const isBoolean = (v) => typeof v === 'boolean';
+
+/**
+ * Converts a value from `rem` units to `px` units.
+ *
+ * @param {number} rem - The value in `rem` units.
+ * @returns {number} The value converted to `px` units.
+ */
+export const remToPx = (rem) =>
+  rem * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);

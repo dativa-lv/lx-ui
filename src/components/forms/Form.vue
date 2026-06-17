@@ -21,7 +21,7 @@ import LxWizard from '@/components/Wizard.vue';
 import LxIcon from '@/components/Icon.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxSkipLink from '@/components/SkipLink.vue';
-import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import { focusNextFocusableElement, getDisplayTexts, remToPx } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const slots = useSlots();
@@ -331,11 +331,6 @@ const shellLayoutMode = computed(() => {
 
   return hasPublicClass ? 'public' : 'default';
 });
-
-function remToPx(remValue) {
-  const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-  return remValue * rootFontSize;
-}
 
 const layoutElement = document.querySelector('.lx-layout');
 

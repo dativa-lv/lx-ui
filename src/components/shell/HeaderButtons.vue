@@ -1,5 +1,13 @@
 <script setup>
-import { computed, watch, ref, onMounted, inject, defineAsyncComponent } from 'vue';
+import {
+  computed,
+  watch,
+  ref,
+  onMounted,
+  onBeforeUnmount,
+  inject,
+  defineAsyncComponent,
+} from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -9,8 +17,9 @@ import {
   getDisplayTexts,
   sessionEndsInText,
   secondsToMinutesAndSeconds,
+  remToPx,
 } from '@/utils/generalUtils';
-import { useWindowSize } from '@vueuse/core';
+import { useWindowSize, useElementSize } from '@vueuse/core';
 
 const LxMegaMenu = defineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
 const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
@@ -68,6 +77,9 @@ const props = defineProps({
 
   showIdleBadge: { type: Boolean, default: false },
   secondsToLive: { type: Number, default: null },
+
+  headerButtonsVisibility: { type: Object, default: () => ({}) },
+  headerActionsVisibility: { type: Object, default: () => ({}) },
 
   texts: {
     type: Object,
@@ -158,10 +170,14 @@ const emits = defineEmits([
   'customButtonClick',
   'toggleSpotlight',
   'settingsClick',
+  'update:headerButtonsVisibility',
+  'update:headerActionsVisibility',
 ]);
 
 const windowSize = useWindowSize();
 const windowWidth = computed(() => windowSize.width.value);
+
+const lxElement = computed(() => document.querySelector('.lx'));
 
 const themeIcon = ref('accessibility');
 const themeMenu = ref(null);
@@ -178,11 +194,399 @@ watch(closeSignal, () => {
   menus.forEach((menu) => menu?.value?.closeMenu());
 });
 
+const PUBLIC_MODE_WIDTH_BREAKPOINT = 900;
+
+const spotlightButtonRef = ref(null);
+const helpButtonRef = ref(null);
+const customButtonRef = ref(null);
+const themeButtonRef = ref(null);
+const alertButtonRef = ref(null);
+const languageButtonRef = ref(null);
+const megaMenuButtonRef = ref(null);
+const loginButtonRef = ref(null);
+const userButtonRef = ref(null);
+const headerRef = inject('headerRef', ref(null));
+const navToggleRef = inject('navToggleRef', ref(null));
+const mainButtonRef = inject('mainButtonRef', ref(null));
+const additionalNavMenuRef = inject('additionalNavMenuRef', ref(null));
+const scrollUpButtonRef = inject('scrollUpButtonRef', ref(null));
+
+function useBorderBoxElementWidth(element) {
+  return useElementSize(element, undefined, { box: 'border-box' }).width;
+}
+
+const spotlightButtonWidth = useBorderBoxElementWidth(() => spotlightButtonRef.value);
+const helpButtonWidth = useBorderBoxElementWidth(() => helpButtonRef.value);
+const customButtonWidth = useBorderBoxElementWidth(() => customButtonRef.value);
+const themeButtonWidth = useBorderBoxElementWidth(() => themeButtonRef.value);
+const alertButtonWidth = useBorderBoxElementWidth(() => alertButtonRef.value);
+const languageButtonWidth = useBorderBoxElementWidth(() => languageButtonRef.value);
+const megaMenuButtonWidth = useBorderBoxElementWidth(() => megaMenuButtonRef.value);
+const loginButtonWidth = useBorderBoxElementWidth(() => loginButtonRef.value);
+const userButtonWidth = useBorderBoxElementWidth(() => userButtonRef.value);
+const headerWidth = useBorderBoxElementWidth(() => headerRef.value);
+const navToggleWidth = useBorderBoxElementWidth(() => navToggleRef.value?.getElement?.() ?? null);
+const additionalNavMenuWidth = useBorderBoxElementWidth(() => additionalNavMenuRef.value);
+const scrollUpButtonWidth = useBorderBoxElementWidth(() => scrollUpButtonRef.value);
+
+const areAllOptionalButtonsHidden = ref(false);
+const isLoginButtonCollapsed = ref(false);
+const isUserButtonCollapsed = ref(false);
+const loginButtonVariant = computed(() => (isLoginButtonCollapsed.value ? 'icon-only' : 'default'));
+
+const showGoBackButtonComputed = computed(() => {
+  const additionalNavMenuWidthMinRem = 6;
+  const additionalNavMenuWidthMinPx = remToPx(additionalNavMenuWidthMinRem);
+
+  return (
+    additionalNavMenuWidth.value >= additionalNavMenuWidthMinPx &&
+    !areAllOptionalButtonsHidden.value &&
+    !isLoginButtonCollapsed.value &&
+    !isUserButtonCollapsed.value
+  );
+});
+const showScrollUpButtonComputed = computed(() => {
+  const scrollUpButtonWidthMinRem = 10;
+  const scrollUpButtonWidthMinPx = remToPx(scrollUpButtonWidthMinRem);
+
+  return (
+    scrollUpButtonWidth.value >= scrollUpButtonWidthMinPx &&
+    !areAllOptionalButtonsHidden.value &&
+    !isLoginButtonCollapsed.value &&
+    !isUserButtonCollapsed.value
+  );
+});
+
+function updateHeaderActionsVisibility(showGoBackButton, showScrollUpButton) {
+  if (
+    props.headerActionsVisibility?.showGoBackButton === showGoBackButton &&
+    props.headerActionsVisibility?.showScrollUpButton === showScrollUpButton
+  ) {
+    return;
+  }
+
+  emits('update:headerActionsVisibility', {
+    showGoBackButton,
+    showScrollUpButton,
+  });
+}
+
+watch(
+  [showGoBackButtonComputed, showScrollUpButtonComputed],
+  ([showGoBackButton, showScrollUpButton]) => {
+    updateHeaderActionsVisibility(showGoBackButton, showScrollUpButton);
+  },
+  { immediate: true }
+);
+
+watch(
+  isUserButtonCollapsed,
+  (isUserButtonCollapsedNew) => {
+    userButtonRef.value?.classList.toggle('lx-user-button-collapsed', isUserButtonCollapsedNew);
+    mainButtonRef.value?.classList.toggle('lx-main-button-static', isUserButtonCollapsedNew);
+  },
+  { immediate: true }
+);
+
+watch(
+  isLoginButtonCollapsed,
+  (isLoginButtonCollapsedNew) => {
+    mainButtonRef.value?.classList.toggle('lx-main-button-static', isLoginButtonCollapsedNew);
+  },
+  { immediate: true }
+);
+
+const buttonWidthRefs = {
+  spotlight: spotlightButtonWidth,
+  help: helpButtonWidth,
+  custom: customButtonWidth,
+  theme: themeButtonWidth,
+  alert: alertButtonWidth,
+  language: languageButtonWidth,
+  megaMenu: megaMenuButtonWidth,
+  login: loginButtonWidth,
+  user: userButtonWidth,
+};
+const buttonWidthKeys = Object.keys(buttonWidthRefs);
+const buttonWidthEntries = Object.entries(buttonWidthRefs);
+const buttonWidthSources = Object.values(buttonWidthRefs);
+
+const buttonNaturalWidths = {
+  spotlight: 0,
+  help: 0,
+  custom: 0,
+  theme: 0,
+  alert: 0,
+  language: 0,
+  megaMenu: 0,
+  login: 0,
+  user: 0,
+};
+
+function updateButtonNaturalWidths() {
+  buttonWidthEntries.forEach(([key, widthRef]) => {
+    if (widthRef.value > 0) {
+      buttonNaturalWidths[key] = widthRef.value;
+    }
+  });
+}
+
+const buttonsEligibility = computed(() => ({
+  spotlight: props.hasSpotlight,
+  help: props.hasHelp,
+  custom: props.hasCustomButton,
+  theme: props.hasThemePicker,
+  alert: props.hasAlerts,
+  language: props.hasLanguagePicker,
+  megaMenu: props.hasMegaMenu,
+  login: props.hasLoginButton && !props.userInfo,
+  user: !!props.userInfo,
+}));
+const buttonsEligibilitySources = buttonWidthKeys.map((key) => () => buttonsEligibility.value[key]);
+
+function getButtonWidth(key) {
+  if (!buttonsEligibility.value[key]) {
+    return 0;
+  }
+  return buttonNaturalWidths[key] || buttonWidthRefs[key]?.value || 0;
+}
+
+// Lower number = higher priority to keep visible.
+const buttonsPriority = {
+  spotlight: 5,
+  theme: 3,
+  language: 4,
+  megaMenu: 2,
+  login: 1,
+};
+
+const ALWAYS_VISIBLE_BUTTON_KEYS = ['help', 'custom', 'alert', 'user'];
+const OPTIONAL_BUTTON_KEYS = ['spotlight', 'theme', 'language', 'megaMenu', 'login'];
+const LOGIN_ICON_ONLY_ALLOWED_MODES = new Set(['default', 'public', 'latvijalv', 'full-screen']);
+
+/** @type {{ spotlight: boolean, theme: boolean, language: boolean, megaMenu: boolean, login: boolean }} */
+const DEFAULT_BUTTONS_VISIBILITY = {
+  spotlight: true,
+  theme: true,
+  language: true,
+  megaMenu: true,
+  login: true,
+};
+
+const buttonsVisibility = ref({ ...DEFAULT_BUTTONS_VISIBILITY });
+
+const buttonVisibilitySources = OPTIONAL_BUTTON_KEYS.map(
+  (key) => () => (props.hasNavBar ? props.headerButtonsVisibility : buttonsVisibility.value)?.[key]
+);
+
+watch(
+  [() => props.hasNavBar, ...buttonVisibilitySources, ...buttonsEligibilitySources],
+  () => {
+    if (!props.hasNavBar) {
+      const visibleEligibleButtons = Object.fromEntries(
+        Object.entries(buttonsVisibility.value ?? {}).filter(
+          ([key]) => buttonsEligibility.value[key]
+        )
+      );
+      emits('update:headerButtonsVisibility', visibleEligibleButtons);
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  [() => props.hasNavBar, ...buttonVisibilitySources],
+  () => {
+    if (!props.hasNavBar) {
+      return;
+    }
+
+    const next = {
+      ...buttonsVisibility.value,
+      ...props.headerButtonsVisibility,
+    };
+    const changed = Object.keys(next).some((k) => buttonsVisibility.value[k] !== next[k]);
+    if (changed) {
+      buttonsVisibility.value = next;
+    }
+  },
+  { immediate: true }
+);
+
+function resetButtonsVisibility() {
+  buttonsVisibility.value = { ...DEFAULT_BUTTONS_VISIBILITY };
+  areAllOptionalButtonsHidden.value = false;
+  isLoginButtonCollapsed.value = false;
+  isUserButtonCollapsed.value = false;
+  mainButtonRef.value?.classList.remove('lx-main-button-collapsed');
+}
+
+let buttonsVisibilityFrame = null;
+
+function recalculateButtonsVisibility() {
+  if (buttonsVisibilityFrame) {
+    cancelAnimationFrame(buttonsVisibilityFrame);
+  }
+
+  buttonsVisibilityFrame = requestAnimationFrame(() => {
+    if (props.hasNavBar) {
+      return;
+    }
+
+    resetButtonsVisibility();
+
+    if (
+      (props.mode === 'public' || props.mode === 'latvijalv') &&
+      windowWidth.value > PUBLIC_MODE_WIDTH_BREAKPOINT
+    ) {
+      const shouldCollapse =
+        windowWidth.value > PUBLIC_MODE_WIDTH_BREAKPOINT && windowWidth.value < 1000;
+
+      isLoginButtonCollapsed.value = shouldCollapse;
+      isUserButtonCollapsed.value = shouldCollapse;
+      return;
+    }
+
+    const asideSizePx = remToPx(
+      Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--aside-size').trim())
+    );
+    const rowSizePx = remToPx(
+      Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--row-size').trim())
+    );
+    const mainButtonWidthMin = asideSizePx - rowSizePx;
+    const reservedWidth = mainButtonWidthMin + navToggleWidth.value;
+    const availableWidth = Math.max(0, headerWidth.value - reservedWidth);
+
+    if (props.mode === 'cover') {
+      const buttonsGroup = headerRef.value?.querySelector('.lx-group:last-of-type');
+
+      if (buttonsGroup === null) {
+        return;
+      }
+
+      if (windowWidth.value >= 500) {
+        buttonsGroup.style.gap = '';
+        return;
+      }
+
+      const marginPx = remToPx(
+        Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--space-1000').trim())
+      );
+
+      const eligibleButtonKeys = buttonWidthKeys.filter((key) => buttonsEligibility.value[key]);
+
+      const totalButtonsWidth = Math.max(
+        0,
+        eligibleButtonKeys.reduce((total, key) => total + getButtonWidth(key) + marginPx, 0) -
+          marginPx
+      );
+
+      buttonsGroup.style.gap = totalButtonsWidth > availableWidth - 2 * marginPx ? 0 : '';
+
+      return;
+    }
+
+    if (buttonsEligibility.value.login) {
+      const loginButtonWidthMinRem = 10;
+      const loginButtonWidthMinPx = remToPx(loginButtonWidthMinRem);
+
+      const otherButtonsWidth = buttonWidthKeys
+        .filter((key) => key !== 'login')
+        .reduce((total, key) => total + getButtonWidth(key), 0);
+
+      if (
+        LOGIN_ICON_ONLY_ALLOWED_MODES.has(props.mode) &&
+        availableWidth - otherButtonsWidth < loginButtonWidthMinPx
+      ) {
+        isLoginButtonCollapsed.value = true;
+      } else {
+        return;
+      }
+    }
+
+    if (buttonsEligibility.value.user) {
+      const userButtonWidthMinRem = 8;
+      const userButtonWidthMinPx = remToPx(userButtonWidthMinRem);
+
+      const otherButtonsWidth = buttonWidthKeys
+        .filter((key) => key !== 'user')
+        .reduce((total, key) => total + getButtonWidth(key), 0);
+
+      if (availableWidth - otherButtonsWidth < userButtonWidthMinPx) {
+        isUserButtonCollapsed.value = true;
+      } else {
+        return;
+      }
+    }
+
+    const requiredBaseWidth = ALWAYS_VISIBLE_BUTTON_KEYS.reduce(
+      (sum, key) => (buttonsEligibility.value[key] ? sum + getButtonWidth(key) : sum),
+      0
+    );
+
+    let usedWidth = requiredBaseWidth;
+
+    const optionalEligibleKeys = OPTIONAL_BUTTON_KEYS.filter(
+      (key) => buttonsEligibility.value[key]
+    ).sort((a, b) => (buttonsPriority[a] ?? 0) - (buttonsPriority[b] ?? 0));
+
+    const nextVisibility = { ...DEFAULT_BUTTONS_VISIBILITY };
+
+    optionalEligibleKeys.forEach((key) => {
+      const buttonWidth = getButtonWidth(key);
+      if (usedWidth + buttonWidth <= availableWidth) {
+        usedWidth += buttonWidth;
+      } else {
+        nextVisibility[key] = false;
+      }
+    });
+
+    const isChanged = Object.keys(nextVisibility).some(
+      (key) => buttonsVisibility.value[key] !== nextVisibility[key]
+    );
+
+    if (isChanged) {
+      buttonsVisibility.value = nextVisibility;
+    }
+
+    areAllOptionalButtonsHidden.value = availableWidth < requiredBaseWidth;
+
+    mainButtonRef.value?.classList.toggle(
+      'lx-main-button-collapsed',
+      areAllOptionalButtonsHidden.value
+    );
+  });
+}
+
+watch(
+  [
+    () => props.hasNavBar,
+    () => props.mode,
+    windowWidth,
+    headerWidth,
+    navToggleWidth,
+    ...buttonsEligibilitySources,
+    ...buttonWidthSources,
+  ],
+  () => {
+    updateButtonNaturalWidths();
+    recalculateButtonsVisibility();
+  },
+  { immediate: true }
+);
+
 onMounted(() => {
   if (props.mode === 'cover-digives-lite') {
     themeIcon.value = 'theme-alternative';
   } else {
     themeIcon.value = 'accessibility';
+  }
+});
+
+onBeforeUnmount(() => {
+  if (buttonsVisibilityFrame) {
+    cancelAnimationFrame(buttonsVisibilityFrame);
+    buttonsVisibilityFrame = null;
   }
 });
 
@@ -586,22 +990,6 @@ watch(
   }
 );
 
-const loginButtonVariant = computed(() => {
-  if (
-    (props.mode === 'public' || props.mode === 'latvijalv' || props.mode === 'full-screen') &&
-    windowWidth.value < 1000
-  ) {
-    return 'icon-only';
-  }
-  if (
-    (props.mode === 'public' || props.mode === 'latvijalv' || props.mode === 'full-screen') &&
-    windowWidth.value < 800
-  ) {
-    return 'icon-only';
-  }
-  return 'default';
-});
-
 const loginButtonKind = computed(() => {
   if (props.mode === 'default' || props.mode === 'latvijalv' || props.mode === 'full-screen') {
     return 'ghost';
@@ -611,8 +999,12 @@ const loginButtonKind = computed(() => {
 </script>
 
 <template>
-  <div class="lx-group" v-if="!hasNavBar">
-    <div class="lx-spotlight-button" v-if="hasSpotlight">
+  <div v-if="!hasNavBar" class="lx-group">
+    <div
+      v-if="buttonsEligibility.spotlight && buttonsVisibility.spotlight"
+      ref="spotlightButtonRef"
+      class="lx-spotlight-button"
+    >
       <LxButton
         id="lx-shell-spotlight-button"
         customClass="lx-header-button"
@@ -625,7 +1017,7 @@ const loginButtonKind = computed(() => {
         @click="toggleSpotlight"
       />
     </div>
-    <div class="lx-help-button" v-if="hasHelp">
+    <div v-if="buttonsEligibility.help" ref="helpButtonRef" class="lx-help-button">
       <LxButton
         id="lx-shell-help-button"
         customClass="lx-header-button"
@@ -638,7 +1030,8 @@ const loginButtonKind = computed(() => {
       />
     </div>
     <div
-      v-if="hasCustomButton"
+      v-if="buttonsEligibility.custom"
+      ref="customButtonRef"
       class="lx-shell-custom-button"
       :class="[{ 'lx-shell-custom-button-opened': customButton?.menuOpen }]"
     >
@@ -656,7 +1049,7 @@ const loginButtonKind = computed(() => {
         :disabled="headerNavDisable"
         @click="emits('customButtonClick')"
       />
-      <LxDropDownMenu ref="customButton" v-else :disabled="headerNavDisable">
+      <LxDropDownMenu v-else ref="customButton" :disabled="headerNavDisable">
         <LxButton
           id="lx-shell-custom-button"
           kind="ghost"
@@ -679,7 +1072,11 @@ const loginButtonKind = computed(() => {
       </LxDropDownMenu>
     </div>
 
-    <div class="lx-theme-menu" v-if="hasThemePicker">
+    <div
+      v-if="buttonsEligibility.theme && buttonsVisibility.theme"
+      ref="themeButtonRef"
+      class="lx-theme-menu"
+    >
       <LxDropDownMenu
         ref="themeMenu"
         :actionDefinitions="themeDisplayItems"
@@ -703,10 +1100,10 @@ const loginButtonKind = computed(() => {
       </LxDropDownMenu>
     </div>
 
-    <div class="lx-alert-menu" v-if="hasAlerts">
+    <div v-if="buttonsEligibility.alert" ref="alertButtonRef" class="lx-alert-menu">
       <LxDropDownMenu
-        ref="alertMenu"
         v-if="alertsKind === 'menu' || alertsKind === 'combo'"
+        ref="alertMenu"
         :disabled="headerNavDisable"
       >
         <LxButton
@@ -735,11 +1132,11 @@ const loginButtonKind = computed(() => {
               @click="alertsClicked"
             />
           </div>
-          <ol class="lx-alert-menu-list" role="group" aria-live="polite" v-if="alerts?.length > 0">
+          <ol v-if="alerts?.length > 0" class="lx-alert-menu-list" role="group" aria-live="polite">
             <li
+              v-for="item in alerts"
               :aria-labelledby="`alert-${item?.id}-name`"
               :aria-describedby="`alert-${item?.id}-desc`"
-              v-for="item in alerts"
               :key="item?.id"
               @click="alertItemClicked(item)"
               @keyup.enter.prevent="alertItemClicked(item)"
@@ -768,11 +1165,11 @@ const loginButtonKind = computed(() => {
               @click="alertsClicked"
             />
           </div>
-          <ol class="lx-alert-menu-list" role="group" aria-live="polite" v-if="alerts?.length > 0">
+          <ol v-if="alerts?.length > 0" class="lx-alert-menu-list" role="group" aria-live="polite">
             <li
+              v-for="item in alerts"
               :aria-labelledby="`alert-${item?.id}-name`"
               :aria-describedby="`alert-${item?.id}-desc`"
-              v-for="item in alerts"
               :key="item?.id"
               @click="alertItemClicked(item)"
               @keyup.enter.prevent="alertItemClicked(item)"
@@ -808,7 +1205,11 @@ const loginButtonKind = computed(() => {
       />
     </div>
 
-    <div class="lx-language-menu" v-if="hasLanguagePicker">
+    <div
+      v-if="buttonsEligibility.language && buttonsVisibility.language"
+      ref="languageButtonRef"
+      class="lx-language-menu"
+    >
       <LxDropDownMenu
         ref="languageMenu"
         :actionDefinitions="languagesDisplayItems"
@@ -830,8 +1231,9 @@ const loginButtonKind = computed(() => {
     </div>
 
     <div
+      v-if="buttonsEligibility.megaMenu && buttonsVisibility.megaMenu"
+      ref="megaMenuButtonRef"
       class="lx-mega-menu"
-      v-if="hasMegaMenu && (windowWidth > 500 || mode === 'cover' || mode === 'cover-digives-lite')"
     >
       <LxMegaMenu
         :items="megaMenuItems"
@@ -845,7 +1247,11 @@ const loginButtonKind = computed(() => {
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
       />
     </div>
-    <div class="lx-login-button" v-if="hasLoginButton && windowWidth > 500 && !userInfo">
+    <div
+      v-if="buttonsEligibility.login && buttonsVisibility.login"
+      ref="loginButtonRef"
+      class="lx-login-button"
+    >
       <LxButton
         id="lx-shell-login-button"
         customClass="lx-header-button"
@@ -858,7 +1264,7 @@ const loginButtonKind = computed(() => {
         @click="loginClicked"
       />
     </div>
-    <div class="lx-user-menu" v-if="userInfo">
+    <div v-if="buttonsEligibility.user" ref="userButtonRef" class="lx-user-menu">
       <LxDropDownMenu ref="dropDownMenu" :disabled="headerNavDisable">
         <div
           id="lx-shell-user-button"
@@ -867,7 +1273,7 @@ const loginButtonKind = computed(() => {
           role="button"
           tabindex="-1"
         >
-          <div class="lx-avatar" v-if="!hasAvatar">
+          <div v-if="!hasAvatar" class="lx-avatar">
             <LxIcon
               :value="!selectedContextPersonModel ? 'user' : 'context-person'"
               customClass="lx-icon"
@@ -958,7 +1364,10 @@ const loginButtonKind = computed(() => {
 
   <template v-if="hasNavBar">
     <ul class="header-items">
-      <li v-if="hasLanguagePicker" class="lx-language-picker">
+      <li
+        v-if="buttonsEligibility.language && !buttonsVisibility.language"
+        class="lx-language-picker"
+      >
         <div class="lx-language-menu">
           <LxDropDownMenu
             ref="languageMenu"
@@ -971,21 +1380,21 @@ const loginButtonKind = computed(() => {
               <LxButton
                 id="lx-shell-language-button"
                 customClass="lx-header-button"
-                :label="displayTexts.languagesTitle"
                 kind="ghost"
                 icon="language"
                 tabindex="-1"
+                :label="displayTexts.languagesTitle"
                 :disabled="headerNavDisable"
               />
             </div>
           </LxDropDownMenu>
         </div>
       </li>
-      <li v-if="hasThemePicker" class="lx-theme-picker">
+      <li v-if="buttonsEligibility.theme && !buttonsVisibility.theme" class="lx-theme-picker">
         <div class="lx-theme-menu">
           <LxDropDownMenu
             ref="themeMenu"
-            :action-definitions="themeDisplayItems"
+            :actionDefinitions="themeDisplayItems"
             :groupDefinitions="accessibilityDisplayGroups"
             :disabled="headerNavDisable"
             @actionClick="themeDropdownClicked"
@@ -994,18 +1403,21 @@ const loginButtonKind = computed(() => {
               <LxButton
                 id="lx-shell-theme-button"
                 customClass="lx-header-button"
-                :label="displayTexts.themeLabel"
-                :title="displayTexts.themeTitle"
                 kind="ghost"
                 :icon="themeIcon"
-                tabindex="-1"
                 :disabled="headerNavDisable"
+                :label="displayTexts.themeLabel"
+                :title="displayTexts.themeTitle"
+                :tabindex="-1"
               />
             </div>
           </LxDropDownMenu>
         </div>
       </li>
-      <li v-if="hasSpotlight" class="lx-spotlight-button">
+      <li
+        v-if="buttonsEligibility.spotlight && !buttonsVisibility.spotlight"
+        class="lx-spotlight-button"
+      >
         <div>
           <LxButton
             id="lx-shell-spotlight-button"

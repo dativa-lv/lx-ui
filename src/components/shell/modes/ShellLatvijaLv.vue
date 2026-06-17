@@ -32,6 +32,7 @@ const {
   customButtonOpenedModal,
   visibleAlerts,
   viewSpotlightItems,
+  headerButtonsVisibility,
   focusFirstMainFocusableElement,
   triggerShowAllClick,
   loginClicked,
@@ -82,6 +83,7 @@ const {
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedContextPerson="selectedContextPersonModel"
         v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+        v-model:headerButtonsVisibility="headerButtonsVisibility"
         :mode="props.mode"
         :userInfo="props.userInfo"
         :nav-items="props.navItems"
@@ -186,6 +188,7 @@ const {
         :hasSpotlight="viewSpotlightItems?.length > 0"
         :spotlightHasBadge="props.spotlightHasBadge"
         :has-login-button="props.hasLoginButton"
+        :headerButtonsVisibility="headerButtonsVisibility"
         :texts="displayTexts"
         @mega-menu-show-all-click="triggerShowAllClick"
         @log-in-click="loginClicked"

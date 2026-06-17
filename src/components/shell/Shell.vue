@@ -74,6 +74,8 @@ const themeModel = useColorMode({
 });
 provide('theme', themeModel);
 
+const headerButtonsVisibility = ref({});
+
 const { width } = useWindowSize();
 
 const emits = defineEmits([
@@ -1364,6 +1366,7 @@ provide(shellContextKey, {
   spotlightVisible,
   spotlightItemCurrentModel,
   viewSpotlightItems,
+  headerButtonsVisibility,
   triggerShowAllClick,
   navToggle,
   navToggleButton,

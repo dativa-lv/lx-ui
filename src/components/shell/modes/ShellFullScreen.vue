@@ -1,5 +1,5 @@
 <script setup>
-import { defineAsyncComponent } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
@@ -29,6 +29,7 @@ const {
   touchModeModel,
   customButtonOpenedModal,
   viewSpotlightItems,
+  headerButtonsVisibility,
   focusFirstMainFocusableElement,
   triggerShowAllClick,
   loginClicked,
@@ -47,6 +48,10 @@ const {
   navClick,
   emits,
 } = useShellContext();
+
+const hasHiddenHeaderButtons = computed(() =>
+  Object.values(headerButtonsVisibility.value ?? {}).some((value) => value === false)
+);
 </script>
 
 <template>
@@ -72,6 +77,7 @@ const {
         v-model:hasReducedAnimations="animationsModel"
         v-model:hasReducedTransparency="transparencyModel"
         v-model:isTouchSensitive="touchModeModel"
+        v-model:headerButtonsVisibility="headerButtonsVisibility"
         :mode="props.mode"
         :alternative-profiles-info="props.alternativeProfilesInfo"
         :context-persons-info="props.contextPersonsInfo"
@@ -148,7 +154,7 @@ const {
         </template>
       </LxMainHeader>
     </header>
-    <nav v-if="!props.hideNavBar && width < 500" ref="nav" aria-label="navigation panel">
+    <nav v-if="!props.hideNavBar && hasHiddenHeaderButtons" ref="nav" aria-label="navigation panel">
       <LxNavBar
         v-model:theme="themeModel"
         v-model:selectedLanguage="selectedLanguageModel"
@@ -172,6 +178,7 @@ const {
         :megaMenuGroupDefinitions="props.megaMenuGroupDefinitions"
         :hasSpotlight="viewSpotlightItems?.length > 0"
         :spotlightHasBadge="props.spotlightHasBadge"
+        :headerButtonsVisibility="headerButtonsVisibility"
         @log-in-click="loginClicked"
         @mega-menu-show-all-click="triggerShowAllClick"
         @nav-toggle="navToggle"

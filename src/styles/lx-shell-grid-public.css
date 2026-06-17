@@ -64,14 +64,18 @@
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-main-button {
   display: grid;
-  gap: var(--space-1000);
+  gap: var(--space-0500);
   grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: var(--space-0250);
   height: var(--nav-row-size);
-  padding-right: var(--space-1000);
+  padding-right: var(--space-0500);
   outline: 2px solid transparent;
   outline-offset: -2px;
+}
+
+.lx-layout.lx-layout-public>header>.lx-header .lx-main-button:not(.lx-main-button-collapsed) {
+  min-width: calc(var(--aside-size) - var(--row-size));
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-main-button:focus {
@@ -91,15 +95,6 @@
 .lx-layout.lx-layout-public>header>.lx-header .lx-main-button:hover .lx-primary,
 .lx-layout.lx-layout-public>header>.lx-header .lx-main-button:hover .lx-description {
   color: var(---color-header-hover-foreground) !important;
-}
-
-.lx-layout.lx-layout-public>header .lx-header .lx-main-button .lx-badge {
-  margin-left: var(--space-0500);
-  padding: var(--space-0125) var(--space-0500);
-  border-radius: var(--border-radius-1000);
-  font-weight: var(--font-weight-data);
-  font-size: var(--small-font-size);
-  border: var(--border-width-2) solid transparent;
 }
 
 .lx-layout.lx-layout-public>header .lx-header .lx-main-button .lx-badge.lx-badge-loc {
@@ -125,6 +120,9 @@
   margin-left: var(--space-0);
   line-height: 1em;
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: font-size 0.2s ease-in-out;
 }
 
@@ -146,6 +144,20 @@
   margin-left: var(--space-0);
   line-height: 1em;
   cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button.lx-main-button-collapsed .lx-project-name,
+.lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button.lx-main-button-collapsed .lx-badge {
+  display: none;
+}
+
+.lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button.lx-main-button-collapsed {
+  grid-template-columns: 1fr;
+  padding: var(--space-0250);
 }
 
 .lx-layout.lx-layout-public>header>.lx-header>.lx-group {
@@ -187,6 +199,10 @@
   border: var(--border-width-2) solid transparent;
 }
 
+.lx-layout.lx-layout-public>header>.lx-header .lx-user-menu:not(.lx-user-button-collapsed) .lx-user-button {
+  min-width: 8rem;
+}
+
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button:hover {
   background-color: var(--color-grid-hover-background);
   cursor: pointer;
@@ -197,6 +213,10 @@
   grid-template-columns: 1fr;
   margin-right: var(--space-0750);
   max-width: var(--aside-size);
+}
+
+.lx-layout.lx-layout-public>header>.lx-header .lx-user-menu.lx-user-button-collapsed .lx-user-button .lx-user-info {
+  display: none;
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button:focus {
@@ -564,12 +584,6 @@
   }
 }
 
-@media (max-width: 1000px) {
-  .lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info {
-    display: none;
-  }
-}
-
 @media (max-width: 800px) {
 
   .lx-layout.lx-layout-public,
@@ -596,13 +610,13 @@
     z-index: 8100;
   }
 
-  .lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info {
-    display: none;
-  }
-
   .lx .lx-layout.lx-layout-public>header>.lx-header>.lx-right-group .lx-group,
   .lx .lx-layout.lx-layout-public>header>.lx-header>.lx-group:last-of-type {
     gap: var(--space-0);
+  }
+
+  .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button.lx-main-button-static:not(.lx-main-button-collapsed) {
+    width: calc(var(--aside-size) - var(--row-size));
   }
 
   .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button svg {
@@ -616,7 +630,7 @@
 
   .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-primary,
   .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-badge-text {
-    font-size: calc(var(--font-size) * 1.1);
+    font-size: var(--font-size);
   }
 
   .lx .lx-layout.lx-layout-public>nav {
@@ -632,6 +646,10 @@
 
   .lx .lx-layout.lx-layout-public>header>.lx-header .lx-group.lx-right-group #nav-toggle {
     display: flex;
+  }
+
+  .lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info .lx-secondary {
+    white-space: nowrap;
   }
 
   .lx .lx-layout.lx-layout-public.lx-collapsed > nav {

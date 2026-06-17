@@ -179,6 +179,10 @@ function scrollIntoView({
   });
 }
 
+function getElement() {
+  return buttonRef.value ?? null;
+}
+
 watch([() => props.label, () => props.variant], checkOverflow, { flush: 'post' });
 
 onMounted(() => {
@@ -192,7 +196,7 @@ onBeforeUnmount(() => {
 
 defineOptions({ inheritAttrs: false });
 
-defineExpose({ focus, scrollIntoView });
+defineExpose({ focus, scrollIntoView, getElement });
 </script>
 <template>
   <button

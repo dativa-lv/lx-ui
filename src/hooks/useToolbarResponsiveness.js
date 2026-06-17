@@ -1,10 +1,6 @@
 import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import { useWindowSize } from '@vueuse/core';
-
-function remToPx(remValue) {
-  const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-  return remValue * rootFontSize;
-}
+import { remToPx } from '@/utils/generalUtils';
 
 function toActionGroups(actions = []) {
   const nestedGroupIds = new Set(actions?.map((a) => a.nestedGroupId).filter(Boolean));
@@ -106,14 +102,6 @@ export function useToolbarResponsiveness({
   getActionId,
   isActionDropDown,
 }) {
-  // Width constants - must be synced with CSS
-  const BUTTON_WIDTH = 48; // 48px = 6rem
-  const TOGGLE_WIDTH = 64; // 64px = 8rem
-  const OVERFLOW_BUTTON_WIDTH = BUTTON_WIDTH;
-  const PROMOTED_BUTTON_WIDTH = BUTTON_WIDTH;
-  const SEARCH_COMPACT_WIDTH = BUTTON_WIDTH;
-  const SELECTION_BUTTON_WIDTH = BUTTON_WIDTH;
-
   const rightActionsVisibleGrouped = ref([]);
   const leftActionsVisibleGrouped = ref([]);
   const actionsOverflow = ref([]);
@@ -127,15 +115,33 @@ export function useToolbarResponsiveness({
 
   const lxElement = computed(() => document.querySelector('.lx'));
 
-  const toolbarButtonGroupGap = computed(() =>
+  const buttonWidth = computed(() =>
+    remToPx(
+      Number.parseFloat(
+        getComputedStyle(lxElement.value).getPropertyValue(
+          '--toolbar-button-ghost-icon-only-min-width'
+        )
+      )
+    )
+  );
+  const toggleWidth = computed(() =>
+    remToPx(
+      Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--toggle-width-m')) +
+        2 * Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--space-0500'))
+    )
+  );
+  const overflowButtonWidth = buttonWidth;
+  const promotedIconOnlyButtonWidth = buttonWidth;
+  const compactSearchButtonWidth = buttonWidth;
+  const selectionButtonWidth = buttonWidth;
+  const groupGap = computed(() =>
     remToPx(
       Number.parseFloat(
         getComputedStyle(lxElement.value).getPropertyValue('--toolbar-button-group-gap')
       )
     )
   );
-
-  const toolbarButtonGap = computed(() =>
+  const buttonGap = computed(() =>
     remToPx(
       Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--toolbar-button-gap'))
     )
@@ -304,7 +310,7 @@ export function useToolbarResponsiveness({
     }
 
     if (action.kind === 'toggle') {
-      return TOGGLE_WIDTH;
+      return toggleWidth.value;
     }
 
     if (action.kind === 'slot') {
@@ -313,11 +319,11 @@ export function useToolbarResponsiveness({
       return Math.ceil(slotElement?.getBoundingClientRect?.()?.width ?? 0);
     }
 
-    return BUTTON_WIDTH;
+    return buttonWidth.value;
   }
 
   function getReservedPromotedActionWidth() {
-    return promotedActionBase.value ? PROMOTED_BUTTON_WIDTH : 0;
+    return promotedActionBase.value ? promotedIconOnlyButtonWidth.value : 0;
   }
 
   function getReservedNonResponsiveActionsWidth() {
@@ -346,15 +352,15 @@ export function useToolbarResponsiveness({
       return reservedWidth.slotWidth;
     }
 
-    return reservedWidth.slotWidth + reservedWidth.nonResponsiveCount * BUTTON_WIDTH;
+    return reservedWidth.slotWidth + reservedWidth.nonResponsiveCount * buttonWidth.value;
   }
 
   function getReservedSearchWidth() {
-    return hasSearch.value ? SEARCH_COMPACT_WIDTH : 0;
+    return hasSearch.value ? compactSearchButtonWidth.value : 0;
   }
 
   function getReservedSelectionWidth() {
-    return hasSelectAll.value ? SELECTION_BUTTON_WIDTH : 0;
+    return hasSelectAll.value ? selectionButtonWidth.value : 0;
   }
 
   function getReservedBuiltInSlotWidth() {
@@ -392,7 +398,7 @@ export function useToolbarResponsiveness({
       Boolean
     ).length;
 
-    return Math.max(0, visibleAreaCount - 1) * toolbarButtonGroupGap.value;
+    return Math.max(0, visibleAreaCount - 1) * groupGap.value;
   }
 
   function getAvailableWidthForActions(maxWidthOverride) {
@@ -452,10 +458,10 @@ export function useToolbarResponsiveness({
     let overflowReservation = 0;
 
     if (reserveOverflowButton) {
-      overflowReservation = OVERFLOW_BUTTON_WIDTH;
+      overflowReservation = overflowButtonWidth.value;
 
       if (overflowAreaHasOtherContent) {
-        overflowReservation += toolbarButtonGroupGap.value;
+        overflowReservation += groupGap.value;
       }
     }
 
@@ -474,10 +480,10 @@ export function useToolbarResponsiveness({
       const { groupId } = item.action;
       const groupsInArea = groupsByArea[area];
       const isNewGroup = !groupsInArea.has(groupId);
-      let gapCost = toolbarButtonGap.value;
+      let gapCost = buttonGap.value;
 
       if (isNewGroup) {
-        gapCost = groupsInArea.size > 0 ? toolbarButtonGroupGap.value : 0;
+        gapCost = groupsInArea.size > 0 ? groupGap.value : 0;
       }
 
       const cost = getActionWidth(item.action) + gapCost;
@@ -613,14 +619,16 @@ export function useToolbarResponsiveness({
       rightArea.classList.add('lx-toolbar-combined-divider');
     }
 
-    const minGap = 8 + toolbarButtonGroupGap.value; // 8px = 0.5rem
+    const additionalGapPx = remToPx(
+      Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--space-0500').trim())
+    );
+    const minGap = groupGap.value + additionalGapPx;
 
     const toolbarWidth = toolbar.getBoundingClientRect()?.width ?? 0;
     const leftAreaWidth = leftArea.getBoundingClientRect()?.width ?? 0;
     const rightAreaWidth = rightArea.getBoundingClientRect()?.width ?? 0;
     const defaultAreaWidth = defaultArea.getBoundingClientRect()?.width ?? 0;
-    const defaultAreaGap =
-      areBothAreasVisible && isDefaultAreaVisible ? toolbarButtonGroupGap.value : 0;
+    const defaultAreaGap = areBothAreasVisible && isDefaultAreaVisible ? groupGap.value : 0;
 
     const actualGap =
       toolbarWidth - leftAreaWidth - rightAreaWidth - defaultAreaWidth - defaultAreaGap;

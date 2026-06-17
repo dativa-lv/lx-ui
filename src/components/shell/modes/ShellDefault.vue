@@ -31,6 +31,7 @@ const {
   touchModeModel,
   customButtonOpenedModal,
   viewSpotlightItems,
+  headerButtonsVisibility,
   focusFirstMainFocusableElement,
   triggerShowAllClick,
   loginClicked,
@@ -73,6 +74,7 @@ const {
         v-model:hasReducedAnimations="animationsModel"
         v-model:hasReducedTransparency="transparencyModel"
         v-model:isTouchSensitive="touchModeModel"
+        v-model:headerButtonsVisibility="headerButtonsVisibility"
         :mode="props.mode"
         :alternative-profiles-info="props.alternativeProfilesInfo"
         :context-persons-info="props.contextPersonsInfo"
@@ -176,6 +178,7 @@ const {
         :megaMenuGroupDefinitions="props.megaMenuGroupDefinitions"
         :hasSpotlight="viewSpotlightItems?.length > 0"
         :spotlightHasBadge="props.spotlightHasBadge"
+        :headerButtonsVisibility="headerButtonsVisibility"
         @log-in-click="loginClicked"
         @mega-menu-show-all-click="triggerShowAllClick"
         @nav-toggle="navToggle"

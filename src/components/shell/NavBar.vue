@@ -48,6 +48,8 @@ const props = defineProps({
   hasSpotlight: { type: Boolean, default: false },
   spotlightHasBadge: { type: Boolean, default: true },
 
+  headerButtonsVisibility: { type: Object, default: () => ({}) },
+
   texts: {
     type: Object,
     required: false,
@@ -445,9 +447,8 @@ provide('insideNavBar', insideNavBar);
       </li>
 
       <LxHeaderButtons
-        v-if="width <= 500"
-        mode="cover"
-        :has-nav-bar="true"
+        :mode="layoutMode"
+        :hasNavBar="true"
         :header-nav-disable="headerNavDisable"
         :has-language-picker="hasLanguagePicker"
         :languages="languages"
@@ -455,6 +456,7 @@ provide('insideNavBar', insideNavBar);
         :available-themes="availableThemes"
         :has-spotlight="hasSpotlight"
         :spotlight-has-badge="spotlightHasBadge"
+        :headerButtonsVisibility="headerButtonsVisibility"
         v-model:selectedLanguage="selectedLanguageModel"
         v-model:theme="themeModel"
         v-model:hasReducedAnimations="animationsModel"
@@ -486,7 +488,10 @@ provide('insideNavBar', insideNavBar);
           />
         </div>
       </li>
-      <li v-if="props.hasMegaMenu && width <= 500" class="lx-mega-menu-nav-item lx-mega-menu">
+      <li
+        v-if="props.hasMegaMenu && !headerButtonsVisibility.megaMenu"
+        class="lx-mega-menu-nav-item lx-mega-menu"
+      >
         <LxMegaMenu
           :items="megaMenuItems"
           :groupDefinitions="megaMenuGroupDefinitions"
@@ -501,7 +506,7 @@ provide('insideNavBar', insideNavBar);
         />
       </li>
       <li
-        v-if="props.hasLoginButton && width <= 500 && !userInfo"
+        v-if="props.hasLoginButton && !userInfo && !headerButtonsVisibility.login"
         class="lx-login-button-nav-item lx-login-button"
       >
         <div class="lx-nav-item-wrapper">

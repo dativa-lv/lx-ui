@@ -30,6 +30,7 @@ const {
   selectedAlternativeProfileModel,
   customButtonOpenedModal,
   viewSpotlightItems,
+  headerButtonsVisibility,
   focusFirstMainFocusableElement,
   triggerShowAllClick,
   loginClicked,
@@ -77,6 +78,7 @@ const {
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedContextPerson="selectedContextPersonModel"
         v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+        v-model:headerButtonsVisibility="headerButtonsVisibility"
         :mode="props.mode"
         :userInfo="props.userInfo"
         :nav-items="props.navItems"
@@ -181,6 +183,7 @@ const {
         :megaMenuShowAllHref="props.megaMenuShowAllHref"
         :showPrimaryMegaMenuItems="props.showPrimaryMegaMenuItems"
         :megaMenuGroupDefinitions="props.megaMenuGroupDefinitions"
+        :headerButtonsVisibility="headerButtonsVisibility"
         :texts="displayTexts"
         @mega-menu-show-all-click="triggerShowAllClick"
         @log-in-click="loginClicked"

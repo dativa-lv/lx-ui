@@ -86,6 +86,8 @@ const props = defineProps({
   showIdleBadge: { type: Boolean, default: false },
   secondsToLive: { type: Number, default: null },
 
+  headerButtonsVisibility: { type: Object, default: () => ({}) },
+
   texts: { type: Object, default: () => {} },
 });
 
@@ -184,6 +186,7 @@ const emits = defineEmits([
   'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
   'update:customButtonOpened',
+  'update:headerButtonsVisibility',
   'customButtonClick',
   'toggleSpotlight',
   'settingsClick',
@@ -453,6 +456,25 @@ const customButtonOpenedModal = computed({
   },
 });
 
+const headerButtonsVisibilityModel = computed({
+  get() {
+    return props.headerButtonsVisibility;
+  },
+  set(value) {
+    emits('update:headerButtonsVisibility', { ...(value ?? {}) });
+  },
+});
+
+const headerRef = ref(null);
+const mainButtonRef = ref(null);
+const navToggleRef = ref(null);
+const additionalNavMenuRef = ref(null);
+const scrollUpButtonRef = ref(null);
+const headerActionsVisibility = ref({
+  showGoBackButton: false,
+  showScrollUpButton: false,
+});
+
 onMounted(() => {
   if (width.value <= 1840) {
     navBarShortMode.value = true;
@@ -462,9 +484,18 @@ onMounted(() => {
 });
 
 provide('insideHeader', insideHeader);
+provide('headerRef', headerRef);
+provide('mainButtonRef', mainButtonRef);
+provide('navToggleRef', navToggleRef);
+provide('additionalNavMenuRef', additionalNavMenuRef);
+provide('scrollUpButtonRef', scrollUpButtonRef);
+
+const hasHiddenHeaderButtons = computed(() =>
+  Object.values(props.headerButtonsVisibility ?? {}).some((value) => value === false)
+);
 </script>
 <template>
-  <div class="lx-header">
+  <div ref="headerRef" class="lx-header">
     <div class="lx-group">
       <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
       <LxButton
@@ -472,8 +503,9 @@ provide('insideHeader', insideHeader);
           !hideNavBar &&
           kind !== 'public' &&
           kind !== 'latvijalv' &&
-          (mode !== 'full-screen' || width < 500)
+          (mode !== 'full-screen' || hasHiddenHeaderButtons)
         "
+        ref="navToggleRef"
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
         variant="icon-only"
@@ -483,6 +515,7 @@ provide('insideHeader', insideHeader);
         @click="navToggle"
       />
       <div
+        ref="mainButtonRef"
         id="lx-header-main-button"
         class="lx-main-button"
         :class="[{ 'lx-nav-bar-hidden': !hideNavBar }]"
@@ -524,22 +557,31 @@ provide('insideHeader', insideHeader);
       </div>
     </div>
     <div id="extra-menu" class="lx-group" v-if="kind === 'default'" tabindex="-1">
-      <div class="lx-additional-nav-menu" :class="[{ 'lx-active': y > 140 }]">
+      <div
+        ref="additionalNavMenuRef"
+        class="lx-additional-nav-menu"
+        :class="[{ 'lx-active': y > 140 }]"
+      >
         <LxButton
           v-if="showBackButton"
           icon="back"
           kind="ghost"
           variant="icon-only"
           :label="goBackLabel"
-          :disabled="y <= 140"
+          :disabled="y <= 140 || !headerActionsVisibility.showGoBackButton"
+          :style="{ visibility: headerActionsVisibility.showGoBackButton ? 'visible' : 'hidden' }"
           @click="goBack"
         />
         <div v-else></div>
         <div
+          ref="scrollUpButtonRef"
           class="lx-additional-page-header"
-          aria-hidden="true"
           role="button"
-          :tabindex="y <= 140 ? -1 : 0"
+          :tabindex="y <= 140 || !headerActionsVisibility.showScrollUpButton ? -1 : 0"
+          :aria-hidden="!headerActionsVisibility.showScrollUpButton"
+          :style="{
+            visibility: headerActionsVisibility.showScrollUpButton ? 'visible' : 'hidden',
+          }"
           v-on:keyup.enter="scrollUp"
           v-on:keyup.space="scrollUp"
           @click="scrollUp"
@@ -592,6 +634,8 @@ provide('insideHeader', insideHeader);
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedContextPerson="selectedContextPersonModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+        v-model:headerButtonsVisibility="headerButtonsVisibilityModel"
+        v-model:headerActionsVisibility="headerActionsVisibility"
         :hasSpotlight="hasSpotlight"
         :spotlightHasBadge="spotlightHasBadge"
         :secondsToLive="secondsToLive"
@@ -619,6 +663,7 @@ provide('insideHeader', insideHeader);
       </LxHeaderButtons>
       <LxButton
         v-if="!hideNavBar"
+        ref="navToggleRef"
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
         variant="icon-only"
@@ -670,6 +715,8 @@ provide('insideHeader', insideHeader);
       v-model:hasReducedTransparency="transparencyModel"
       v-model:isTouchSensitive="touchModeModel"
       v-model:selectedContextPerson="selectedContextPersonModel"
+      v-model:headerButtonsVisibility="headerButtonsVisibilityModel"
+      v-model:headerActionsVisibility="headerActionsVisibility"
       :hasSpotlight="hasSpotlight"
       :spotlightHasBadge="spotlightHasBadge"
       :secondsToLive="secondsToLive"
