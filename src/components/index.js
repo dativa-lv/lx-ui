@@ -38,6 +38,7 @@ export const LxDateTimeRange = defineAsyncComponent(() =>
 export const LxDialog = defineAsyncComponent(() => import('@/components/Dialog.vue'));
 export const LxDropDownMenu = defineAsyncComponent(() => import('@/components/DropDownMenu.vue'));
 export const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
+export const LxEmptyValue = defineAsyncComponent(() => import('@/components/EmptyValue.vue'));
 export const LxErrorPage = defineAsyncComponent(() => import('@/components/ErrorPage.vue'));
 export const LxExpander = defineAsyncComponent(() => import('@/components/Expander.vue'));
 export const LxFileUploader = defineAsyncComponent(() =>

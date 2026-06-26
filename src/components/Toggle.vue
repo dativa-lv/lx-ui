@@ -12,6 +12,7 @@ import {
 } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { formatValueBool } from '@/utils/formatUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
@@ -57,7 +58,7 @@ const model = computed({
   },
 });
 
-const textsDefault = { valueYes: 'Jā', valueNo: 'Nē' };
+const textsDefault = { valueYes: 'Jā', valueNo: 'Nē', emptyValue: 'Nav norādīts' };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const input = ref({});
@@ -148,11 +149,24 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
         class="lx-toggle-text"
         v-if="!$slots.on && !$slots.off && !$slots.indeterminate && !$slots.default"
       >
-        <p class="lx-data">{{ formatValueBool(internalModel, booleanTexts) }}</p>
+        <p class="lx-data">
+          <LxEmptyValue
+            v-if="formatValueBool(internalModel, booleanTexts) === '—'"
+            :texts="{ emptyValue: displayTexts.emptyValue }"
+          />
+          <template v-else>{{ formatValueBool(internalModel, booleanTexts) }}</template>
+        </p>
       </span>
       <span class="lx-toggle-text" v-else>
         <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate">
-          <p class="lx-data"><slot />: {{ formatValueBool(internalModel, booleanTexts) }}</p>
+          <p class="lx-data">
+            <slot />:
+            <LxEmptyValue
+              v-if="formatValueBool(internalModel, booleanTexts) === '—'"
+              :texts="{ emptyValue: displayTexts.emptyValue }"
+            />
+            <template v-else>{{ formatValueBool(internalModel, booleanTexts) }}</template>
+          </p>
         </span>
         <span v-show="internalModel === null">
           <slot name="indeterminate" />

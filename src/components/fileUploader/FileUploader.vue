@@ -730,7 +730,7 @@ if (props.builderOptions?.useRegistry) {
     <template v-if="selectionKind === 'single' && !readOnly">
       <input
         :id="id"
-        class="lx-visually-hidden"
+        class="lx-invisible"
         type="file"
         ref="fileInput"
         :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
@@ -804,7 +804,7 @@ if (props.builderOptions?.useRegistry) {
     <template v-if="selectionKind === 'multiple' && !readOnly">
       <input
         :id="id"
-        class="lx-visually-hidden"
+        class="lx-invisible"
         type="file"
         ref="fileInput"
         :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"

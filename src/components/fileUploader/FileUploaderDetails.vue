@@ -13,6 +13,7 @@ import LxAvatar from '@/components/Avatar.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxBadge from '@/components/Badge.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { lxDateUtils, lxFormatUtils } from '@/utils';
 
 const props = defineProps({
@@ -22,6 +23,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   clear: 'Notīrīt',
   buttonLabel: 'Izvēlēties datni',
   uploaderDescription: '',
@@ -200,9 +202,16 @@ const normalizedIconAndType = computed(() => {
       <LxSection id="metaMain" :label="displayTexts.metaMainLabel" :columnCount="3">
         <LxRow :label="displayTexts.metaMainAuthor">
           <template v-if="normalizedAuthors">
-            <LxPersonDisplay v-for="item in normalizedAuthors" :key="item" :value="item" />
+            <LxPersonDisplay
+              v-for="item in normalizedAuthors"
+              :key="item"
+              :value="item"
+              :texts="{ emptyValue: displayTexts.emptyValue }"
+            />
           </template>
-          <p v-else class="lx-data">—</p>
+          <p v-else class="lx-data">
+            <LxEmptyValue :texts="{ emptyValue: displayTexts.emptyValue }" />
+          </p>
         </LxRow>
         <LxRow v-for="(item, key) in mainDataWithoutAuthorAndIcon" :key="key" :label="item.label">
           <p class="lx-data">{{ item.value }}</p>
@@ -262,7 +271,10 @@ const normalizedIconAndType = computed(() => {
 
               <div class="lx-edoc-description-wrapper">
                 <p class="lx-primary">
-                  {{ nameAndSurname || organizationName || '—' }}
+                  <template v-if="nameAndSurname || organizationName">{{
+                    nameAndSurname || organizationName
+                  }}</template>
+                  <LxEmptyValue v-else :texts="{ emptyValue: displayTexts.emptyValue }" />
                   <span v-if="personalCodeOrIdentifier" class="lx-edoc-description-code">
                     {{ `(${personalCodeOrIdentifier})` }}
                   </span>
@@ -301,7 +313,9 @@ const normalizedIconAndType = computed(() => {
               ({{ props.value.locationData?.altitude.ref }})
             </span>
           </p>
-          <p v-else class="lx-data">—</p>
+          <p v-else class="lx-data">
+            <LxEmptyValue :texts="{ emptyValue: displayTexts.emptyValue }" />
+          </p>
         </LxRow>
         <LxRow columnSpan="3" :hideLabel="true">
           <LxMap
@@ -319,7 +333,13 @@ const normalizedIconAndType = computed(() => {
         v-if="props.value?.imageData"
       >
         <LxRow v-for="(row, index) in value.imageData" :key="index" :label="row.label">
-          <p class="lx-data">{{ row.value }}</p>
+          <p class="lx-data">
+            <LxEmptyValue
+              v-if="row.value === '—'"
+              :texts="{ emptyValue: displayTexts.emptyValue }"
+            />
+            <template v-else>{{ row.value }}</template>
+          </p>
         </LxRow>
       </LxSection>
 
@@ -335,7 +355,13 @@ const normalizedIconAndType = computed(() => {
           :label="name?.toString()"
           :key="name"
         >
-          <p class="lx-data">{{ formatAdditionalDataItem(item) }}</p>
+          <p class="lx-data">
+            <LxEmptyValue
+              v-if="formatAdditionalDataItem(item) === '—'"
+              :texts="{ emptyValue: displayTexts.emptyValue }"
+            />
+            <template v-else>{{ formatAdditionalDataItem(item) }}</template>
+          </p>
         </LxRow>
       </LxSection>
 

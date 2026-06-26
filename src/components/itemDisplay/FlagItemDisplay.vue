@@ -1,5 +1,7 @@
 <script setup>
 import LxFlag from '@/components/Flag.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -23,7 +25,14 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  emptyValue: 'Nav norādīts',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const idAttribute = computed(() => {
   if (Array.isArray(props.idAttribute)) {
@@ -58,6 +67,10 @@ const flagTitle = computed(() => {
         {{ value[nameAttribute] }}
       </span>
     </template>
-    <span class="empty-flag-value" v-else>—</span>
+    <LxEmptyValue
+      class="empty-flag-value"
+      v-else
+      :texts="{ emptyValue: displayTexts.emptyValue }"
+    />
   </div>
 </template>

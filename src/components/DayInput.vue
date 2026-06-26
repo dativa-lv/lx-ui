@@ -7,6 +7,7 @@ import LxTextInput from '@/components/TextInput.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -31,6 +32,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   inputDaysPlaceholder: 'Ievadiet dienu skaitu',
   inputMonthsPlaceholder: 'Ievadiet mēnešu skaitu',
   inputYearsPlaceholder: 'Ievadiet gadu skaitu',
@@ -268,7 +270,7 @@ if (props.builderOptions?.useRegistry) {
       ]"
     >
       <p v-if="readOnly" class="lx-data" :title="computedTitle" :aria-labelledby="labelledBy">
-        <span v-if="!result"> — </span>
+        <LxEmptyValue v-if="!result" :texts="{ emptyValue: displayTexts.emptyValue }" />
         <span v-else>
           {{ result }}
         </span>

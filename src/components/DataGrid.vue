@@ -22,6 +22,7 @@ import LxRadioButton from '@/components/RadioButton.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxStateDisplay from '@/components/StateDisplay.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxRating from '@/components/Rating.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxFlag from '@/components/Flag.vue';
@@ -119,6 +120,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   valueYes: 'Jā',
   valueNo: 'Nē',
   items: {
@@ -161,6 +163,14 @@ const textsDefault = {
     description: 'Apraksts',
     role: 'Loma',
     institution: 'Iestāde',
+  },
+  rating: {
+    label: 'Vērtējums',
+    star1: 'Ļoti slikti',
+    star2: 'Slikti',
+    star3: 'Gandrīz labi',
+    star4: 'Labi',
+    star5: 'Izcili',
   },
   placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
   search: 'Meklēt',
@@ -2155,13 +2165,23 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 @keyup.enter="handleKey(col, row)"
                 @click="handleClick(col, row)"
               >
-                {{ formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) }}
+                <LxEmptyValue
+                  v-if="
+                    formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) ===
+                    '—'
+                  "
+                  :texts="{ emptyValue: displayTexts.emptyValue }"
+                />
+                <template v-else>{{
+                  formatValue(row[col.attributeName], col.type, col.options?.fractionDigits)
+                }}</template>
               </component>
 
               <LxStateDisplay
                 v-if="col.type === 'state'"
                 :value="row[col?.attributeName]"
                 :dictionary="col?.dictionary ? col?.dictionary : col?.options"
+                :texts="{ emptyValue: displayTexts.emptyValue }"
               />
               <LxRating
                 v-if="col.type === 'rating'"
@@ -2186,6 +2206,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         )
                     : null
                 "
+                :texts="{ ...displayTexts.rating, emptyValue: displayTexts.emptyValue }"
               />
 
               <template v-if="col.type === 'icon'">
@@ -2272,7 +2293,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         </template>
                       </LxInfoWrapper>
                     </template>
-                    <span class="empty-icon-value" v-else>—</span>
+                    <LxEmptyValue
+                      class="empty-icon-value"
+                      v-else
+                      :texts="{ emptyValue: displayTexts.emptyValue }"
+                    />
                   </div>
                 </template>
 
@@ -2285,7 +2310,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     <LxIcon :value="row?.[col?.attributeName]" customClass="lx-grid-column-icon" />
                   </div>
                 </template>
-                <span class="empty-icon-value" v-else>—</span>
+                <LxEmptyValue
+                  class="empty-icon-value"
+                  v-else
+                  :texts="{ emptyValue: displayTexts.emptyValue }"
+                />
               </template>
 
               <template v-if="col.type === 'flag' || col.type === 'country'">
@@ -2311,9 +2340,14 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     idAttribute="id"
                     :locale="locale"
                     :meaningful="row[col.attributeName]?.meaningful || false"
+                    :texts="{ emptyValue: displayTexts.emptyValue }"
                   />
                 </div>
-                <span class="empty-flag-value" v-else>—</span>
+                <LxEmptyValue
+                  class="empty-flag-value"
+                  v-else
+                  :texts="{ emptyValue: displayTexts.emptyValue }"
+                />
               </template>
 
               <template v-if="col.type === 'person'">
@@ -2322,7 +2356,12 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     :value="row[col.attributeName]"
                     :kind="col.options?.avatarKind"
                     :customAttributes="col.options?.customAttributes"
-                    :texts="row[col.attributeName]?.texts || displayTexts.personDisplay"
+                    :texts="
+                      row[col.attributeName]?.texts || {
+                        ...displayTexts.personDisplay,
+                        emptyValue: displayTexts.emptyValue,
+                      }
+                    "
                     size="s"
                     :customRole="col.kind === 'clickable' ? clickableRole : null"
                     :focusable="
@@ -2453,9 +2492,19 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   "
                 >
                   <div class="lx-indicator">
-                    {{
+                    <LxEmptyValue
+                      v-if="
+                        formatValue(
+                          row[col.attributeName],
+                          col.type,
+                          col.options?.displayItemsCount
+                        ) === '—'
+                      "
+                      :texts="{ emptyValue: displayTexts.emptyValue }"
+                    />
+                    <template v-else>{{
                       formatValue(row[col.attributeName], col.type, col.options?.displayItemsCount)
-                    }}
+                    }}</template>
                   </div>
 
                   <template #panel>
@@ -2469,16 +2518,22 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   </template>
                 </LxInfoWrapper>
 
-                <template
-                  v-else
-                  v-for="i in formatValue(
-                    row[col.attributeName],
-                    col.type,
-                    col.options?.displayItemsCount
-                  )"
-                >
-                  {{ `${i} ` }}</template
-                >
+                <template v-else>
+                  <template
+                    v-for="(i, index) in formatValue(
+                      row[col.attributeName],
+                      col.type,
+                      col.options?.displayItemsCount
+                    )"
+                    :key="index"
+                  >
+                    <LxEmptyValue
+                      v-if="i === '—'"
+                      :texts="{ emptyValue: displayTexts.emptyValue }"
+                    />
+                    <template v-else>{{ `${i} ` }}</template>
+                  </template>
+                </template>
               </template>
             </div>
 
@@ -2744,7 +2799,16 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               @click="handleClick(col, item)"
               @keydown.enter="handleKey(col, item)"
             >
-              {{ formatValue(item[col.attributeName], col.type, col.options?.fractionDigits) }}
+              <LxEmptyValue
+                v-if="
+                  formatValue(item[col.attributeName], col.type, col.options?.fractionDigits) ===
+                  '—'
+                "
+                :texts="{ emptyValue: displayTexts.emptyValue }"
+              />
+              <template v-else>{{
+                formatValue(item[col.attributeName], col.type, col.options?.fractionDigits)
+              }}</template>
             </component>
 
             <template v-if="col.type === 'array'">
@@ -2756,9 +2820,19 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 "
               >
                 <div class="lx-indicator">
-                  {{
+                  <LxEmptyValue
+                    v-if="
+                      formatValue(
+                        item[col.attributeName],
+                        col.type,
+                        col.options?.displayItemsCount
+                      ) === '—'
+                    "
+                    :texts="{ emptyValue: displayTexts.emptyValue }"
+                  />
+                  <template v-else>{{
                     formatValue(item[col.attributeName], col.type, col.options?.displayItemsCount)
-                  }}
+                  }}</template>
                 </div>
                 <template #panel>
                   <ul>
@@ -2770,22 +2844,26 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   </ul>
                 </template>
               </LxInfoWrapper>
-              <template
-                v-else
-                v-for="i in formatValue(
-                  item[col.attributeName],
-                  col.type,
-                  col.options?.displayItemsCount
-                )"
-              >
-                {{ `${i} ` }}</template
-              >
+              <template v-else>
+                <template
+                  v-for="(i, index) in formatValue(
+                    item[col.attributeName],
+                    col.type,
+                    col.options?.displayItemsCount
+                  )"
+                  :key="index"
+                >
+                  <LxEmptyValue v-if="i === '—'" :texts="{ emptyValue: displayTexts.emptyValue }" />
+                  <template v-else>{{ `${i} ` }}</template>
+                </template>
+              </template>
             </template>
 
             <LxStateDisplay
               v-else-if="col.type === 'state'"
               :value="item[col?.attributeName]"
               :dictionary="col?.dictionary ? col?.dictionary : col?.options"
+              :texts="{ emptyValue: displayTexts.emptyValue }"
             />
 
             <LxRating
@@ -2793,6 +2871,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               :disabled="props.busy"
               readOnly
               v-model="item[col.attributeName]"
+              :texts="{ ...displayTexts.rating, emptyValue: displayTexts.emptyValue }"
             />
 
             <template v-if="col.type === 'flag' || col.type === 'country'">
@@ -2811,9 +2890,14 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :value="item[col.attributeName]"
                   nameAttribute="name"
                   idAttribute="id"
+                  :texts="{ emptyValue: displayTexts.emptyValue }"
                 />
               </div>
-              <span class="empty-flag-value" v-else>—</span>
+              <LxEmptyValue
+                class="empty-flag-value"
+                v-else
+                :texts="{ emptyValue: displayTexts.emptyValue }"
+              />
             </template>
             <template v-else-if="col.type === 'person'">
               <div class="lx-cell-person-wrapper">
@@ -2821,7 +2905,12 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :value="item[col.attributeName]"
                   :kind="col.options?.avatarKind"
                   :customAttributes="col.options?.customAttributes"
-                  :texts="item[col.attributeName]?.texts || displayTexts.personDisplay"
+                  :texts="
+                    item[col.attributeName]?.texts || {
+                      ...displayTexts.personDisplay,
+                      emptyValue: displayTexts.emptyValue,
+                    }
+                  "
                   size="s"
                   :customRole="col.kind === 'clickable' ? clickableRole : null"
                   @click="
@@ -2955,7 +3044,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   <LxIcon :value="item?.[col?.attributeName]" customClass="lx-grid-column-icon" />
                 </div>
               </template>
-              <span class="empty-icon-value" v-else>—</span>
+              <LxEmptyValue
+                class="empty-icon-value"
+                v-else
+                :texts="{ emptyValue: displayTexts.emptyValue }"
+              />
             </div>
           </LxRow>
         </template>

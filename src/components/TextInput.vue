@@ -22,6 +22,7 @@ import { loadLibrary } from '@/utils/libLoader';
 import LxIcon from '@/components/Icon.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxButton from '@/components/Button.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -113,6 +114,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   showPassword: 'Rādīt paroli',
   hidePassword: 'Paslēpt paroli',
 };
@@ -618,14 +620,14 @@ defineExpose({ focus });
       <a v-if="isReadOnlyEmail()" class="lx-text-input-link" :href="sanitizedEmail">{{ model }}</a>
       <template v-else>
         {{ forcedMaskedValue }}
-        <span
+        <LxEmptyValue
           v-if="
             model === null ||
             model === undefined ||
             (typeof model === 'string' && model?.trim() === '')
           "
-          >—</span
-        >
+          :texts="{ emptyValue: displayTexts.emptyValue }"
+        />
       </template>
     </p>
     <div

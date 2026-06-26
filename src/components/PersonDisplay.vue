@@ -4,6 +4,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxAvatar from '@/components/Avatar.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxRow from '@/components/forms/Row.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 
@@ -35,6 +36,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   name: 'Vārds, uzvārds',
   description: 'Apraksts',
   role: 'Loma',
@@ -275,7 +277,10 @@ defineExpose({ focus, scrollIntoView });
 <template>
   <div class="lx-person-display-wrapper">
     <div v-if="isEmpty" class="lx-person-display">
-      <span class="lx-empty-person-value">—</span>
+      <LxEmptyValue
+        class="lx-empty-person-value"
+        :texts="{ emptyValue: displayTexts.emptyValue }"
+      />
     </div>
 
     <LxInfoWrapper
@@ -330,14 +335,20 @@ defineExpose({ focus, scrollIntoView });
         </div>
 
         <template v-if="!name && description && size !== 'l' && variant !== 'icon-only'">
-          {{ '—' }}
+          <LxEmptyValue :texts="{ emptyValue: displayTexts.emptyValue }" />
         </template>
 
         <template v-if="variant !== 'icon-only'">
           <p class="lx-data lx-person-display-name">
             {{ name }}
           </p>
-          <p v-if="showDescription" class="lx-description">{{ description }}</p>
+          <p v-if="showDescription" class="lx-description">
+            <LxEmptyValue
+              v-if="description === '—'"
+              :texts="{ emptyValue: displayTexts.emptyValue }"
+            />
+            <template v-else>{{ description }}</template>
+          </p>
         </template>
       </div>
 

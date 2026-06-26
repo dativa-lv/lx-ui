@@ -138,19 +138,6 @@
   grid-area: tag;
 }
 
-.lx-visually-hidden { 
-  position: absolute;
-  overflow: hidden;
-  padding: var(--space-0);
-  border: var(--border-width-0);
-  margin: calc(var(--space-0125) * -1);
-  block-size: 2px;
-  clip: rect(0, 0, 0, 0);
-  inline-size: 2px;
-  visibility: inherit;
-  white-space: nowrap;
-}
-
 .lx-empty {
   padding: var(--popover-item-padding-s);
   min-height: var(--row-size-dynamic);

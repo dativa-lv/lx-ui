@@ -8,6 +8,7 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxToolbar from '@/components/Toolbar.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -37,6 +38,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   clearQuery: 'Notīrīt meklēšanu',
   clearChosen: 'Notīrīt visas izvēlētās vērtības',
   notSelected: 'Nav izvēlēts',
@@ -469,7 +471,10 @@ const wrapperRef = ref();
       <template v-if="readOnly">
         <p v-if="readOnlyRenderType === 'row'" class="lx-data">
           {{ getName(false) }}
-          <template v-if="model === null || model === undefined || model?.length < 1">—</template>
+          <LxEmptyValue
+            v-if="model === null || model === undefined || model?.length < 1"
+            :texts="{ emptyValue: displayTexts.emptyValue }"
+          />
         </p>
         <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
           <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>

@@ -228,7 +228,7 @@ const expandIconTitle = computed(() => {
         </template>
         <div
           v-if="invalid && invalidationMessage"
-          class="lx-visually-hidden"
+          class="lx-invisible"
           :id="`${id}-invalidation-message`"
         >
           {{ invalidationMessage }}

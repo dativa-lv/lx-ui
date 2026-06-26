@@ -187,7 +187,7 @@ onMounted(() => {
           />
           <span
             v-if="t.invalid && t.invalidationMessage"
-            class="lx-visually-hidden"
+            class="lx-invisible"
             :id="`${id}-tab-${t.id}-invalidation-message`"
           >
             {{ t.invalidationMessage }}

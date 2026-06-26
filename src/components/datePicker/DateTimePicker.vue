@@ -25,6 +25,7 @@ import {
 } from '@/components/datePicker/helpers';
 import { generateUUID } from '@/utils/stringUtils';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
@@ -69,6 +70,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   clear: 'Attīrīt',
   todayButton: 'Atgriezties uz šodienu',
   clearButton: 'Attīrīt vērtību',
@@ -486,7 +488,10 @@ if (props.builderOptions?.useRegistry) {
       <p class="lx-data" :aria-labelledby="labelledBy">
         <time class="date-time-readonly" :datetime="modelValueIso">
           {{ getName() }}
-          <span v-if="model === null || model === undefined">—</span>
+          <LxEmptyValue
+            v-if="model === null || model === undefined"
+            :texts="{ emptyValue: displayTexts.emptyValue }"
+          />
         </time>
       </p>
     </template>

@@ -4,6 +4,7 @@ import { onClickOutside } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxIcon from '@/components/Icon.vue';
 import LxPopper from '@/components/Popper.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 
@@ -41,6 +42,7 @@ const highlightedItemId = ref(null);
 const panelRef = ref();
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   noItemsMessage: 'Nav pieejamu vērtību',
 };
 
@@ -398,7 +400,7 @@ const getSelectedItem = computed(
   <div class="lx-field-wrapper" ref="refRoot">
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
       <template v-if="name">{{ name }}</template>
-      <span v-else>—</span>
+      <LxEmptyValue v-else :texts="{ emptyValue: displayTexts.emptyValue }" />
     </p>
 
     <template v-if="props.kind === 'native' && !readOnly">

@@ -29,6 +29,7 @@ import {
   getMonthNameByOrder,
 } from '@/components/datePicker/helpers';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { DATE_VALIDATION_RESULT } from '@/constants';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
@@ -78,6 +79,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   clear: 'Attīrīt',
   clearButton: 'Attīrīt vērtību',
   todayButton: 'Atgriezties uz šodienu',
@@ -488,7 +490,10 @@ if (props.builderOptions?.useRegistry) {
     :data-id="id"
   >
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
-      <span v-if="!startDate && !endDate">—</span>
+      <LxEmptyValue
+        v-if="!startDate && !endDate"
+        :texts="{ emptyValue: displayTexts.emptyValue }"
+      />
       <span v-else>
         <time :datetime="startDate">{{ getNameStart() }}</time
         >–<time :datetime="endDate">{{ getNameEnd() }}</time>

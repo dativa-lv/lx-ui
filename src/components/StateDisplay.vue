@@ -1,11 +1,20 @@
 <script setup>
 import { computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   value: { type: [Object, String, Number], default: null },
   dictionary: { type: Array, default: () => [{}] },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  emptyValue: 'Nav norādīts',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const outlineTypes = [
   'draft',
@@ -140,5 +149,5 @@ const alignedRowSize = computed(() => {
     />
     <p class="lx-primary">{{ definition?.displayName }}</p>
   </div>
-  <span v-else>—</span>
+  <LxEmptyValue v-else :texts="{ emptyValue: displayTexts.emptyValue }" />
 </template>

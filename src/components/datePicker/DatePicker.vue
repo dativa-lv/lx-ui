@@ -1768,7 +1768,7 @@ onMounted(async () => {
     <div
       v-if="invalid"
       class="lx-invalidation-message"
-      :class="{ 'lx-visually-hidden': legacyMode }"
+      :class="{ 'lx-invisible': legacyMode }"
       :id="`${id}-invalidation-message`"
     >
       {{ invalidationMessage }}

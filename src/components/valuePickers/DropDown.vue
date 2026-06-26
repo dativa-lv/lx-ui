@@ -12,6 +12,7 @@ import LxPopper from '@/components/Popper.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxDropDown from '@/components/DropDown.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -60,6 +61,7 @@ const { activate, deactivate } = useFocusTrap(panelRef, {
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   clearQuery: 'Notīrīt meklēšanu',
   clearChosen: 'Notīrīt visas izvēlētās vērtības',
   notSelected: 'Nav izvēlēts',
@@ -607,7 +609,10 @@ function countDigits(number) {
   <template v-if="readOnly">
     <p v-if="readOnlyRenderType === 'row'" class="lx-data">
       {{ getName(false) }}
-      <template v-if="model === null || model === undefined || model?.length < 1">—</template>
+      <LxEmptyValue
+        v-if="model === null || model === undefined || model?.length < 1"
+        :texts="{ emptyValue: displayTexts.emptyValue }"
+      />
     </p>
     <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
       <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>

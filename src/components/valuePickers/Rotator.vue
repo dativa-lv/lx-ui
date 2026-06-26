@@ -7,6 +7,7 @@ import useLx from '@/hooks/useLx';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -34,6 +35,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   clearQuery: 'Notīrīt meklēšanu',
   clearChosen: 'Notīrīt visas atlasītās vērtības',
   notSelected: 'Nav izvēlēts',
@@ -352,7 +354,10 @@ function onUp() {
   <template v-if="readOnly">
     <p v-if="readOnlyRenderType === 'row'" class="lx-data">
       {{ getName(false) }}
-      <template v-if="model === null || model === undefined || model?.length < 1">—</template>
+      <LxEmptyValue
+        v-if="model === null || model === undefined || model?.length < 1"
+        :texts="{ emptyValue: displayTexts.emptyValue }"
+      />
     </p>
 
     <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">

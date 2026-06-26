@@ -84,6 +84,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   clearQuery: 'Notīrīt meklēšanu',
   clearChosen: 'Notīrīt visas izvēlētās vērtības',
   notSelected: 'Nav izvēlēts',

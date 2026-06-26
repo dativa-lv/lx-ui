@@ -2,6 +2,8 @@
 import { ref, computed, watch, nextTick, inject, getCurrentInstance, onUnmounted } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -17,6 +19,7 @@ const props = defineProps({
   dynamicHeight: { type: Boolean, default: false, group: 'main', sequence: 3 },
   tooltip: { type: String, default: null, group: 'main', sequence: 5 },
   labelId: { type: String, default: null },
+  texts: { type: Object, default: () => ({}) },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -27,6 +30,12 @@ const props = defineProps({
     }),
   },
 });
+
+const textsDefault = {
+  emptyValue: 'Nav norādīts',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -109,7 +118,8 @@ if (props.builderOptions?.useRegistry) {
 <template>
   <div class="lx-field-wrapper" ref="wrapperRef" :data-id="id">
     <p v-if="props.readOnly" class="lx-data" :aria-labelledby="labelledBy">
-      {{ model }} <span v-if="!model">—</span>
+      {{ model }}
+      <LxEmptyValue v-if="!model" :texts="{ emptyValue: displayTexts.emptyValue }" />
     </p>
     <template v-else>
       <div class="lx-text-area-wrapper" :data-invalid="invalid ? '' : null">

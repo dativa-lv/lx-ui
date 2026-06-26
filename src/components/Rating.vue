@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
@@ -20,6 +21,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   label: 'Vērtējums',
   star1: 'Ļoti slikti',
   star2: 'Slikti',
@@ -91,7 +93,7 @@ const accessibleLabel = computed(() => {
   if (model.value) {
     return `${displayTexts.value.label}: ${model.value}, ${valueDescription.value}`;
   }
-  return `${displayTexts.value.label}: —`;
+  return `${displayTexts.value.label}: ${displayTexts.value.emptyValue}`;
 });
 
 function setValue(value) {
@@ -329,7 +331,7 @@ defineExpose({ focus, scrollIntoView });
         </div>
 
         <div v-else class="lx-ratings">
-          <p class="lx-data">—</p>
+          <p class="lx-data"><LxEmptyValue :texts="{ emptyValue: displayTexts.emptyValue }" /></p>
         </div>
 
         <template #panel>
@@ -341,7 +343,9 @@ defineExpose({ focus, scrollIntoView });
               ><span class="lx-primary">&nbsp;/ 5:&nbsp;</span> {{ valueDescription }}
             </p>
 
-            <p v-else class="lx-data">—</p>
+            <p v-else class="lx-data">
+              <LxEmptyValue :texts="{ emptyValue: displayTexts.emptyValue }" />
+            </p>
           </div>
         </template>
       </LxInfoWrapper>

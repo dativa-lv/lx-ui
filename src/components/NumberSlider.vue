@@ -247,7 +247,7 @@ if (props.builderOptions?.useRegistry) {
       </div>
       <div
         v-if="!hasInput"
-        class="lx-visually-hidden"
+        class="lx-invisible"
         role="status"
         aria-live="polite"
         aria-atomic="true"
@@ -284,7 +284,7 @@ if (props.builderOptions?.useRegistry) {
         <div class="input-slider-filled" :style="`width: ${fillingUp}%`" />
         <div class="input-slider-full" />
       </div>
-      <div class="lx-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+      <div class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
         {{ liveAnnouncement }}
       </div>
 

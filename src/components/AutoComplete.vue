@@ -32,6 +32,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
+import LxEmptyValue from '@/components/EmptyValue.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -86,6 +87,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
+  emptyValue: 'Nav norādīts',
   clear: 'Notīrīt izvēli',
   empty: 'Nav atrasti rezultāti, kas saturētu tekstu',
   tryEndingWith1: 'Lai sāktu meklēšanu, ievadiet vismaz {0} simbolu',
@@ -1230,7 +1232,10 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
       </template>
 
       <template v-else>
-        <span v-if="displayReadOnlyPlaceholder">—</span>
+        <LxEmptyValue
+          v-if="displayReadOnlyPlaceholder"
+          :texts="{ emptyValue: displayTexts.emptyValue }"
+        />
         <template v-else>
           <p class="lx-input-text">{{ getName(false) }}</p>
         </template>
