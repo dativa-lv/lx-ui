@@ -17,7 +17,6 @@ import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
 import useLx from '@/hooks/useLx';
 import { generateUUID, foldToAscii, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { lxDevUtils } from '@/utils';
-import { logWarn } from '@/utils/devUtils';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
 import useScrollVirtualizer from '@/hooks/useScrollVirtualizer';
@@ -248,33 +247,7 @@ const wantsDefaultListVirtualization = computed(
     props.hasVirtualization &&
     props.kind === 'default' &&
     !props.groupDefinitions &&
-    normalizedListType.value === '1' &&
-    // Virtualization is intentionally disabled together with stickyToolbar: the
-    // sticky toolbar + virtualized rows interact badly (focus-driven scrolling
-    // and row re-measurement make the list jump around). See warning below.
-    !props.stickyToolbar
-);
-
-const virtualizationDisabledByStickyToolbar = computed(
-  () =>
-    props.hasVirtualization &&
-    props.kind === 'default' &&
-    !props.groupDefinitions &&
-    normalizedListType.value === '1' &&
-    props.stickyToolbar
-);
-
-watch(
-  virtualizationDisabledByStickyToolbar,
-  (disabled) => {
-    if (disabled) {
-      logWarn(
-        `LxList [${props.id}]: Temporary limitation: when "stickyToolbar" and "hasVirtualization" are used together, virtualization is automatically disabled. This is a temporary workaround while compatibility between these features is being improved`,
-        useLx().getGlobals()?.environment
-      );
-    }
-  },
-  { immediate: true }
+    normalizedListType.value === '1'
 );
 
 function resolveScrollParent(el) {
@@ -330,6 +303,11 @@ function resolveScrollParent(el) {
 // parent — and the element-vs-window virtualizer choice — resolves on the very
 // first sync), while the `<ul>` (`defaultListRef`) is the scroll-margin anchor:
 // the margin must be measured from where the list content actually starts.
+// True while the compact search is expanded. Used to pause virtualizer layout
+// recalculation, so the toolbar growing/shrinking doesn't reflow the list and
+// jump the scroll position.
+const isSearchExpanded = ref(false);
+
 const {
   isActive: shouldVirtualizeDefaultList,
   totalSize: defaultListTotalSize,
@@ -344,11 +322,12 @@ const {
   cleanup: cleanupDefaultListVirtualization,
 } = useScrollVirtualizer({
   enabled: wantsDefaultListVirtualization,
+  layoutUpdatesPaused: () => isSearchExpanded.value,
   scrollParentSourceRef: listWrapper,
   scrollAnchorRef: defaultListRef,
   positionObserverRef: listWrapper,
   resolveScrollParent,
-  createVirtualizerOptions: ({ scrollMargin }) => ({
+  createVirtualizerOptions: ({ scrollMargin, shouldAdjustScrollPositionOnItemSizeChange }) => ({
     get count() {
       if (!wantsDefaultListVirtualization.value) return 0;
       return filteredItems.value?.length || 0;
@@ -358,6 +337,7 @@ const {
       return scrollMargin.value;
     },
     estimateSize: () => VIRTUALIZED_ESTIMATED_ITEM_HEIGHT,
+    shouldAdjustScrollPositionOnItemSizeChange,
     get gap() {
       return defaultListGap.value;
     },
@@ -400,11 +380,56 @@ function updateDefaultListGap() {
   defaultListGap.value = Number.isFinite(rowGap) ? rowGap : 0;
 }
 
+let lastDefaultListResizeWidth = null;
 function handleDefaultListResize() {
   if (!shouldVirtualizeDefaultList.value) return;
+  // Skip while compact search is expanded (keyboard resizing the viewport).
+  if (isSearchExpanded.value) return;
   updateDefaultListGap();
   scheduleDefaultListLayoutUpdate();
+  // Re-measuring clears all cached row heights and drops a scrolled-to-end list.
+  // Heights only change on width change, so skip height-only resizes (keyboard).
+  const width = globalThis.innerWidth;
+  if (lastDefaultListResizeWidth !== null && width === lastDefaultListResizeWidth) return;
+  lastDefaultListResizeWidth = width;
   measureDefaultList();
+}
+
+// A focused toolbar control makes the browser scroll it back into view, fighting
+// the scroll. Blur it on user scroll (wheel/touch) so scrolling stays clean, then
+// restore focus once scrolling settles (preventScroll, so it doesn't drag again).
+let pendingRefocusElement = null;
+let scrollSettleTimer = null;
+
+function armScrollSettleRestore() {
+  if (!pendingRefocusElement) return;
+  if (scrollSettleTimer) clearTimeout(scrollSettleTimer);
+  scrollSettleTimer = setTimeout(() => {
+    scrollSettleTimer = null;
+    const el = pendingRefocusElement;
+    pendingRefocusElement = null;
+    const doc = globalThis.document;
+    if (!el?.isConnected || typeof el.focus !== 'function') return;
+    // Don't steal focus if the user focused something else while scrolling.
+    if (doc.activeElement && doc.activeElement !== doc.body) return;
+    el.focus({ preventScroll: true });
+  }, 200);
+}
+
+function blurFocusedListControlOnScroll() {
+  if (!shouldVirtualizeDefaultList.value) return;
+  const doc = globalThis.document;
+  const active = doc?.activeElement;
+  if (
+    active &&
+    active !== doc.body &&
+    listWrapper.value?.contains(active) &&
+    typeof active.blur === 'function'
+  ) {
+    pendingRefocusElement = active;
+    active.blur();
+  }
+  armScrollSettleRestore();
 }
 
 function findObjectById(array) {
@@ -1373,7 +1398,12 @@ onMounted(async () => {
 
   observer.observe(listWrapper.value);
 
+  // Seed width so the first (keyboard) resize is skipped, not re-measured.
+  lastDefaultListResizeWidth = globalThis.innerWidth;
   globalThis.addEventListener('resize', handleDefaultListResize);
+  globalThis.addEventListener('wheel', blurFocusedListControlOnScroll, { passive: true });
+  globalThis.addEventListener('touchmove', blurFocusedListControlOnScroll, { passive: true });
+  globalThis.addEventListener('scroll', armScrollSettleRestore, { passive: true, capture: true });
 
   if (wantsDefaultListVirtualization.value) {
     await syncDefaultListVirtualizationContext({ reloadOnScrollParentChange: true });
@@ -1386,6 +1416,10 @@ onBeforeUnmount(() => {
   cleanupDefaultListVirtualization();
   observer?.disconnect();
   globalThis.removeEventListener('resize', handleDefaultListResize);
+  globalThis.removeEventListener('wheel', blurFocusedListControlOnScroll);
+  globalThis.removeEventListener('touchmove', blurFocusedListControlOnScroll);
+  globalThis.removeEventListener('scroll', armScrollSettleRestore, { capture: true });
+  if (scrollSettleTimer) clearTimeout(scrollSettleTimer);
 });
 
 defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
@@ -1428,6 +1462,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         :wrapperRef="listWrapper"
         @actionClick="handleToolbarActionClick"
         @search="search"
+        @searchExpandedChange="(expanded) => (isSearchExpanded = expanded)"
         @update:searchString="(searchString) => (searchStringClientRaw = searchString)"
         @selectAll="selectRows"
         @deselectAll="cancelSelection"

@@ -2540,6 +2540,14 @@
     .lx .lx-sticky-toolbar-list-wrapper {
       position: static;
   }
+
+  /* Keep the LxList toolbar sticky on short viewports. The mobile keyboard
+     shrinks the viewport below this breakpoint; dropping sticky there makes a
+     scrolled list jump, because the toolbar (and the focused search input) fall
+     back to their in-flow position at the top of the list. */
+  .lx .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+    position: sticky;
+  }
 }
 
 /* Shell session timeout badge end */

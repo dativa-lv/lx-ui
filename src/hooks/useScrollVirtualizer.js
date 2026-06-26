@@ -43,6 +43,10 @@ export default function useScrollVirtualizer({
   shouldUseElementVirtualizer = (scrollParent) => !!scrollParent,
   createVirtualizerOptions,
   reloadVirtualizerDuringScrollParentChange = false,
+  // When this resolves truthy, layout-driven scroll-margin/measure recalculation
+  // is paused (e.g. while the compact search is expanded), so the toolbar growing
+  // doesn't reflow the virtualized list and jump the scroll position.
+  layoutUpdatesPaused = () => false,
 }) {
   const virtualizer = shallowRef(null);
   const scrollMargin = ref(0);
@@ -78,8 +82,50 @@ export default function useScrollVirtualizer({
   const getPositionObserverTarget = () =>
     resolveMaybeRef(positionObserverRef) || getScrollParentSource();
 
+  // Read/write the scroll offset of whatever is scrolling (element or window).
+  function getScrollOffset() {
+    const parent = scrollParent.value;
+    if (parent) return parent.scrollTop || 0;
+    return globalThis.scrollY ?? globalThis.pageYOffset ?? 0;
+  }
+  function setScrollOffset(value) {
+    const parent = scrollParent.value;
+    if (parent) {
+      parent.scrollTop = value;
+    } else if (typeof globalThis.scrollTo === 'function') {
+      globalThis.scrollTo(globalThis.scrollX ?? 0, value);
+    }
+  }
   function measure() {
     virtualizer.value?.value.measure();
+  }
+
+  // The scroll margin is invariant under scrolling, so it must NOT be recomputed
+  // mid-scroll: a ResizeObserver fire then reads anchor/offset a beat apart and
+  // produces a wrong margin that flips every row's transform. Track scroll
+  // activity and defer recompute until scrolling settles.
+  let isScrolling = false;
+  let scrollIdleFrames = 0;
+  let scrollIdleRaf = null;
+  let pendingLayoutUpdate = false;
+  let scrollActivityTarget = null;
+  // While the layout viewport is resizing, forbid scroll correction: a resize
+  // fires scroll events that otherwise look like scrolling and let the re-measure
+  // accumulate into a jump. Counts down a few frames after the last resize.
+  let resizeSuppressFrames = 0;
+  let resizeSuppressRaf = null;
+  let resizeActivityAttached = false;
+  let lastScrollParentHeight = null;
+  let lastInnerHeight = null;
+
+  // Correct scroll on row-size change only while actively scrolling (tanstack's
+  // default — keeps the list from wobbling as rows enter); never during a
+  // layout-viewport resize, where the mass re-measure would accumulate a jump.
+  function shouldAdjustScrollPositionOnItemSizeChange(item, _delta, instance) {
+    if (resizeSuppressFrames > 0) return false;
+    if (!isScrolling) return false;
+    const offset = typeof instance?.getScrollOffset === 'function' ? instance.getScrollOffset() : 0;
+    return item.start < offset + (instance?.scrollAdjustments || 0);
   }
 
   async function ensureVirtualLib() {
@@ -103,6 +149,7 @@ export default function useScrollVirtualizer({
           scrollMargin,
           scrollParent,
           virtualizer,
+          shouldAdjustScrollPositionOnItemSizeChange,
         }) || {};
 
       if (shouldUseElementVirtualizer(scrollParent.value)) {
@@ -113,6 +160,15 @@ export default function useScrollVirtualizer({
         virtualizer.value = virtualLib.useVirtualizer(virtualizerOptions);
       } else {
         virtualizer.value = virtualLib.useWindowVirtualizer(virtualizerOptions);
+      }
+
+      const instance = virtualizer.value?.value;
+      if (
+        instance &&
+        typeof virtualizerOptions.shouldAdjustScrollPositionOnItemSizeChange === 'function'
+      ) {
+        instance.shouldAdjustScrollPositionOnItemSizeChange =
+          virtualizerOptions.shouldAdjustScrollPositionOnItemSizeChange;
       }
     });
   }
@@ -129,11 +185,104 @@ export default function useScrollVirtualizer({
   let layoutUpdateRaf = null;
   function scheduleLayoutUpdate() {
     if (!isEnabled() || layoutUpdateRaf !== null) return;
+    if (layoutUpdatesPaused()) return;
 
     layoutUpdateRaf = globalThis.requestAnimationFrame(() => {
       layoutUpdateRaf = null;
-      applyScrollContextUpdate();
+
+      // Defer while actively scrolling — the margin is scroll-invariant, and a
+      // mid-scroll read would compute a wrong value and jump the list. The idle
+      // watcher re-runs this once scrolling settles.
+      if (isScrolling) {
+        pendingLayoutUpdate = true;
+        return;
+      }
+
+      const preservedScrollOffset = getScrollOffset();
+      const { scrollMarginChanged, scrollParentChanged } = applyScrollContextUpdate();
+
+      if (scrollMarginChanged && !scrollParentChanged) {
+        setScrollOffset(preservedScrollOffset);
+        let restoreFrames = 3;
+        const pinScrollOffset = () => {
+          setScrollOffset(preservedScrollOffset);
+          restoreFrames -= 1;
+          if (restoreFrames > 0) globalThis.requestAnimationFrame(pinScrollOffset);
+        };
+        globalThis.requestAnimationFrame(pinScrollOffset);
+      }
     });
+  }
+
+  function runScrollIdleWatcher() {
+    if (scrollIdleRaf !== null) return;
+    const tick = () => {
+      scrollIdleFrames -= 1;
+      if (scrollIdleFrames > 0) {
+        scrollIdleRaf = globalThis.requestAnimationFrame(tick);
+        return;
+      }
+      scrollIdleRaf = null;
+      isScrolling = false;
+      if (pendingLayoutUpdate) {
+        pendingLayoutUpdate = false;
+        scheduleLayoutUpdate();
+      }
+    };
+    scrollIdleRaf = globalThis.requestAnimationFrame(tick);
+  }
+
+  function markScrolling() {
+    isScrolling = true;
+    scrollIdleFrames = 4;
+    runScrollIdleWatcher();
+  }
+
+  function runResizeSuppressWatcher() {
+    if (resizeSuppressRaf !== null) return;
+    const tick = () => {
+      resizeSuppressFrames -= 1;
+      if (resizeSuppressFrames > 0) {
+        resizeSuppressRaf = globalThis.requestAnimationFrame(tick);
+        return;
+      }
+      resizeSuppressRaf = null;
+    };
+    resizeSuppressRaf = globalThis.requestAnimationFrame(tick);
+  }
+
+  // Flag a layout-viewport resize so scroll correction stays off briefly after.
+  function markResize() {
+    resizeSuppressFrames = 12;
+    runResizeSuppressWatcher();
+  }
+
+  function attachScrollActivityListener() {
+    const target = scrollParent.value || globalThis;
+    if (scrollActivityTarget === target) return;
+    if (scrollActivityTarget?.removeEventListener) {
+      scrollActivityTarget.removeEventListener('scroll', markScrolling);
+    }
+    target.addEventListener?.('scroll', markScrolling, { passive: true });
+    scrollActivityTarget = target;
+  }
+
+  // Only a layout-viewport height change (window resize / rotation) suppresses
+  // correction. A visual-viewport-only change (mobile keyboard) must not — its
+  // content scroll needs correction to avoid flicker. So gate on innerHeight.
+  function onWindowResize() {
+    const height = globalThis.innerHeight;
+    if (lastInnerHeight !== null && height !== lastInnerHeight) {
+      markResize();
+    }
+    lastInnerHeight = height;
+  }
+
+  function attachResizeActivityListeners() {
+    if (resizeActivityAttached) return;
+    lastInnerHeight = globalThis.innerHeight;
+    globalThis.addEventListener?.('resize', onWindowResize, { passive: true });
+    resizeActivityAttached = true;
   }
 
   function clearVirtualizer() {
@@ -145,6 +294,29 @@ export default function useScrollVirtualizer({
     positionObserver?.disconnect();
     positionObserver = null;
 
+    if (scrollIdleRaf !== null) {
+      globalThis.cancelAnimationFrame(scrollIdleRaf);
+      scrollIdleRaf = null;
+    }
+    isScrolling = false;
+    pendingLayoutUpdate = false;
+    if (scrollActivityTarget?.removeEventListener) {
+      scrollActivityTarget.removeEventListener('scroll', markScrolling);
+      scrollActivityTarget = null;
+    }
+
+    if (resizeSuppressRaf !== null) {
+      globalThis.cancelAnimationFrame(resizeSuppressRaf);
+      resizeSuppressRaf = null;
+    }
+    resizeSuppressFrames = 0;
+    lastScrollParentHeight = null;
+    lastInnerHeight = null;
+    if (resizeActivityAttached) {
+      globalThis.removeEventListener?.('resize', onWindowResize);
+      resizeActivityAttached = false;
+    }
+
     if (virtualizerScope) {
       virtualizerScope.stop();
       virtualizerScope = null;
@@ -154,6 +326,9 @@ export default function useScrollVirtualizer({
   }
 
   function setupPositionObservers() {
+    attachScrollActivityListener();
+    attachResizeActivityListeners();
+
     const observerTarget = getPositionObserverTarget();
     if (!observerTarget) return;
 
@@ -163,6 +338,15 @@ export default function useScrollVirtualizer({
 
     if (RO) {
       positionObserver = new RO(() => {
+        // A change in the scroll parent's own height is a viewport resize (as
+        // opposed to the inner list content growing as rows are measured) — flag
+        // it so scroll-position correction stays suppressed through the reflow.
+        const parent = scrollParent.value;
+        const parentHeight = parent ? parent.clientHeight : globalThis.innerHeight;
+        if (lastScrollParentHeight !== null && parentHeight !== lastScrollParentHeight) {
+          markResize();
+        }
+        lastScrollParentHeight = parentHeight;
         scheduleLayoutUpdate();
       });
       const targets = new Set([observerTarget, observerTarget.parentElement, scrollParent.value]);
@@ -219,8 +403,6 @@ export default function useScrollVirtualizer({
       if (reloadOnScrollParentChange && isEnabled()) {
         loadVirtualizer();
       }
-    }
-    if (scrollMarginChanged) {
       measure();
     }
 

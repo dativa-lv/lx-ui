@@ -56,6 +56,7 @@ const emits = defineEmits([
   'selectAll',
   'deselectAll',
   'update:searchString',
+  'searchExpandedChange',
 ]);
 
 const GROUP_ID_DEFAULT_RIGHT = 'lx_group_default_right';
@@ -104,6 +105,10 @@ const hasSecondRowSlotContent = ref(false);
 
 const isSearchExpanded = ref(false);
 const searchInputCompact = ref();
+
+watch(isSearchExpanded, (value) => {
+  emits('searchExpandedChange', value);
+});
 
 function updateSlotContentFlags() {
   hasDefaultSlotContent.value = hasSlotContent(slots.default?.() ?? []);

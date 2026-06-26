@@ -1,3 +1,9 @@
+/* The virtualizer manages row positions itself, so browser scroll anchoring
+   inside the list is not needed and can fight it. */
+.lx-list-wrapper {
+  overflow-anchor: none;
+}
+
 .lx-list {
   display: flex;
   flex-direction: column;
