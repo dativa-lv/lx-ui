@@ -20,8 +20,12 @@
   --list-item-border-radius: var(--border-radius-default);
 
   --input-border-radius: var(--border-radius-default);
-  --input-border-width: var(--border-width-2);
-  --color-input-border: transparent;
+  --input-border-width: var(--border-width-1);
+  --color-input-border: var(--color-chrome);
+
+  --popover-item-height: auto;
+  --button-height: auto;
+  --nav-item-height: auto;
 
   --color-nav-item-background-selected: var(--color-highlight);
 
@@ -124,6 +128,10 @@
   --color-background: #18151d;
   --color-region-2: var(--color-background);
   --color-chrome: #0d0c10;
+
+  --color-input-border: var(--color-chrome);
+
+  --color-nav-item-background-selected: var(--color-highlight);
 
   --button-secondary-border: var(--border-width-1) solid var(--color-chrome);
   --color-button-secondary-background: var(--color-region);

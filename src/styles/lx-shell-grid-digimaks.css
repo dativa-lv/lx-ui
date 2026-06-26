@@ -1,3 +1,11 @@
+.lx:has(.lx-layout-digimaks) {
+    --button-height: auto;
+}
+
+.lx-layout-digimaks .lx-button {
+    min-height: 3rem;
+}
+
 .lx-layout-digimaks > header {
   position: fixed;
   top: var(--space-0);
@@ -14,6 +22,10 @@
 .lx-layout-digimaks .nav-toggle {
   opacity: 1;
   margin-left: var(--space-0) !important;
+}
+
+.lx-layout-digimaks .lx-toggle-appearance {
+    outline: none !important;
 }
 
 .lx-layout-digimaks header > .lx-header:not(.lx-nav-panel-expanded) > .lx-group.lx-group-header,
@@ -38,10 +50,6 @@
   position: fixed;
   top: var(--space-0);
   left: var(--space-0);
-}
-
-.lx:not(.lx-no-animations) .lx-layout-digimaks nav .lx-nav-panel {
-  transition: width 0.2s ease;
 }
 
 .lx-layout-digimaks .lx-header.lx-nav-panel-expanded nav .lx-nav-panel {
@@ -111,6 +119,7 @@
 
 .lx-layout-digimaks .lx-nav-panel .lx-nav-group {
   width: 100%;
+  min-width: 100vw;
 }
 
 /* User Info */
@@ -271,7 +280,8 @@
 .lx-layout-digimaks .lx-nav-panel .lx-user-menu-display {
   display: flex;
   flex-direction: column;
-  height: calc(4 * var(--nav-row-size));
+  height: auto;
+  padding-bottom: var(--space-2000);
   padding-top: var(--space-1000);
   align-items: center;
   gap: var(--space-0250);
@@ -510,7 +520,7 @@
   --button-tertiary-border: var(--border-width-0);
   --button-tertiary-border-radius: var(--list-item-border-radius);
   --button-tertiary-padding: var(--space-0500) var(--space-0) var(--space-0250) var(--space-1000);
-  --button-tertiary-height: 100%;
+  --button-tertiary-height: auto;
   --button-icon-width: var(--list-icon-size);
   --button-icon-height: var(--list-icon-size);
   --button-tertiary-text-font-weight: var(--font-weight);
@@ -579,6 +589,15 @@
   --color-button-destructive-icon: var(--color-popover-item-icon);
 }
 
+.lx-layout.lx-layout-digimaks .popper .lx-dropdown-panel {
+    border-radius: var(--border-radius-1000);
+    overflow: hidden;
+}
+
 .lx .lx-layout.lx-layout-digimaks .lx-button {
   outline: none;
+}
+
+.lx-layout-digimaks .lx-component-toolbar {
+    border-bottom: var(--border-width-0);
 }

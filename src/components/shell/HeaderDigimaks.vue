@@ -752,7 +752,7 @@ provide('insideHeader', insideHeader);
               />
             </li>
           </ul>
-          <ul>
+          <ul v-if="navItemsUserMenu?.length">
             <li v-for="item in navItemsUserMenu" :key="item.label" class="lx-user-menu-item">
               <LxButton
                 kind="ghost"

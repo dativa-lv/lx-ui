@@ -351,13 +351,6 @@ code {
   height: var(--row-size);
 }
 
-.lx-context-container {
-  position: inherit;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
 .lx-context-container .lx-button {
   height: var(--nav-row-size);
 }

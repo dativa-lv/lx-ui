@@ -1028,14 +1028,6 @@ border-top: var(--border-width-2) solid var(--color-brand-secondary);
     }
 }
 
-.lx-layout-digives-lite .user-menu-panel .lx-region.user-menu-context {
-  border-bottom: var(--border-width-0);
-}
-
-.lx-layout-digives-lite .lx-dropdown-panel .user-menu-panel ul.lx-group>li:first-child {
-  border-top: var(--border-width-1) solid var(--color-chrome);
-}
-
 @media (max-width: 1260px) {
   .lx-header-digives-lite {
     grid-template-columns: 33rem 1fr;

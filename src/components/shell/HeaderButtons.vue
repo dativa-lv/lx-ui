@@ -1333,7 +1333,7 @@ const loginButtonKind = computed(() => {
               @click="openContextPersonModal"
             />
 
-            <ul class="lx-group" role="group">
+            <ul v-if="navItemsUserMenu?.length" class="lx-button-set" role="group">
               <li v-for="item in navItemsUserMenu" :key="item.label">
                 <LxButton
                   kind="ghost"
@@ -1345,7 +1345,7 @@ const loginButtonKind = computed(() => {
               </li>
             </ul>
 
-            <ul class="lx-group" role="group">
+            <ul class="lx-button-set lx-logout-button-wrapper" role="group">
               <li>
                 <LxButton
                   kind="ghost"

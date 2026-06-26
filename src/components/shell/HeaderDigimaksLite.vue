@@ -37,8 +37,6 @@ const props = defineProps({
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
-  hasReducedAnimations: { type: Boolean, default: false },
-  hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
@@ -109,11 +107,7 @@ const textsDefault = {
   themeLight: 'Gaišs',
   themeDark: 'Tumšs',
   themeContrast: 'Kontrastains',
-  animations: 'Animācijas',
   fonts: 'Iekārtas fonti',
-  transparency: 'Caurspīdīgums',
-  reduceMotionOff: 'Nē',
-  reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
   userTitle: 'Lietotājs',
@@ -145,10 +139,8 @@ const emits = defineEmits([
   'update:selected-language',
   'update:selected-alternative-profile',
   'update:theme',
-  'update:hasReducedAnimations',
   'update:hasDeviceFonts',
   'update:selectedMegaMenuItem',
-  'update:hasReducedTransparency',
 ]);
 
 const alternativeProfilesModal = ref();
@@ -198,30 +190,12 @@ const themeModel = computed({
   },
 });
 
-const animationsModel = computed({
-  get() {
-    return !props.hasReducedAnimations;
-  },
-  set(value) {
-    emits('update:hasReducedAnimations', !value);
-  },
-});
-
 const deviceFontsModel = computed({
   get() {
     return props.hasDeviceFonts;
   },
   set(value) {
     emits('update:hasDeviceFonts', value);
-  },
-});
-
-const transparencyModel = computed({
-  get() {
-    return !props.hasReducedTransparency;
-  },
-  set(value) {
-    emits('update:hasReducedTransparency', !value);
   },
 });
 
@@ -745,12 +719,6 @@ provide('insideHeader', insideHeader);
                   :items="themeItems"
                   v-model="themeModel"
                 />
-              </LxRow>
-              <LxRow :label="displayTexts.animations">
-                <LxToggle v-model="animationsModel" :disabled="headerNavDisable" />
-              </LxRow>
-              <LxRow :label="displayTexts.transparency">
-                <LxToggle v-model="transparencyModel" :disabled="headerNavDisable" />
               </LxRow>
               <LxRow :label="displayTexts.fonts">
                 <LxToggle v-model="deviceFontsModel" :disabled="headerNavDisable" />

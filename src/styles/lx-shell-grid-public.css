@@ -313,8 +313,12 @@
   overflow: visible;
 }
 
-.lx-layout.lx-layout-public .lx-nav-group li .lx-nav-item-wrapper > .lx-button-icon-only {
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button,
+.lx-layout.lx-layout-public .lx-nav-group li .lx-nav-item-wrapper > .lx-button-icon-only,
+.lx-layout.lx-layout-public .lx-nav-group li .lx-nav-item-wrapper .lx-dropdown-toggler > .lx-button-icon-only,
+.lx-layout.lx-layout-public .lx-nav-group li.lx-nav-item-overflow .lx-dropdown-toggler > .lx-button-icon-only {
   --nav-public-item-width: var(--nav-public-item-height);
+  --nav-public-item-padding: var(--space-0);
 }
 
 /* Selected item + unopened selected LxDDM toggler btn + LxDDM toggler, whose child is selected*/
@@ -474,10 +478,6 @@
 .lx-layout.lx-layout-public > .lx-main .lx-error-landing .lx-header {
   margin-top: var(--space-3000);
   margin-bottom: var(--space-1000);
-}
-
-.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button {
-  width: fit-content;
 }
 
 .lx-layout.lx-layout-public .lx-header .lx-user-menu .lx-timeout-badge {

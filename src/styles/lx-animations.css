@@ -808,6 +808,12 @@
   transition: transform 0.25s ease;
 }
 
+.lx:not(.lx-no-animations) .lx-layout-digimaks nav,
+.lx:not(.lx-no-animations) .lx-layout-digimaks nav .lx-nav-panel,
+.lx:not(.lx-no-animations) .lx-layout-digimaks .lx-nav-panel .lx-nav-group {
+    transition: width 0.2s ease;
+}
+
 .slide-enter-from,
 .slide-leave-to {
   transform: translateY(100%);

@@ -917,7 +917,7 @@ watch(
                 <LxInfoBox variant="warning" :label="sessionTimeoutLabel" />
               </div>
 
-              <ul class="lx-group" role="group">
+              <ul v-if="navItemsUserMenu?.length" class="lx-button-set" role="group">
                 <li v-for="item in navItemsUserMenu" :key="item.label">
                   <LxButton
                     kind="ghost"
