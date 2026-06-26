@@ -22,6 +22,7 @@ const props = defineProps({
   variant: { type: String, default: 'default' },
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
+  searchString: { type: String, default: '' },
   tooltip: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
   readOnlyRenderType: { type: String, default: 'row' }, // 'row' || 'column'
@@ -45,7 +46,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'update:searchString']);
 
 const model = computed({
   get() {
@@ -241,7 +242,7 @@ function selectMultiple(id) {
   model.value = res;
 }
 
-const query = ref('');
+const query = ref(props.hasSearch ? props.searchString : '');
 
 const hiddenValues = ref([]);
 
@@ -258,6 +259,7 @@ function attributesSearch(item) {
 
 function search(string) {
   query.value = string;
+  emits('update:searchString', string);
   hiddenValues.value = [];
   itemsDisplay.value?.forEach((val) => {
     if (props.searchAttributes) {
@@ -278,6 +280,17 @@ watch(
   () => props.hasSearch,
   () => {
     query.value = '';
+    emits('update:searchString', '');
+  }
+);
+
+watch(
+  () => props.searchString,
+  (value) => {
+    if (!props.hasSearch) return;
+    if (value !== query.value) {
+      search(value || '');
+    }
   }
 );
 
@@ -494,7 +507,7 @@ const wrapperRef = ref();
               :title="item[descriptionAttribute] || tooltip"
             >
               <div class="lx-slot-wrapper" :id="`${id}-label-${item[idAttribute]}`">
-                <slot name="customItem" v-bind="item"></slot>
+                <slot name="customItem" v-bind="item" />
               </div>
             </div>
             <div
@@ -550,7 +563,7 @@ const wrapperRef = ref();
               :title="item[descriptionAttribute] || tooltip"
             >
               <div class="lx-slot-wrapper" :id="`${id}-label-${item[idAttribute]}`">
-                <slot name="customItem" v-bind="item"></slot>
+                <slot name="customItem" v-bind="item" />
               </div>
             </div>
             <div

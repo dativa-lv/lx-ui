@@ -23,6 +23,7 @@ const props = defineProps({
   nullable: { type: Boolean, default: false }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
+  searchString: { type: String, default: '' },
   alwaysAsArray: { type: Boolean, default: false },
   tooltip: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
@@ -47,7 +48,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'update:searchString']);
 
 const model = computed({
   get() {
@@ -208,7 +209,7 @@ function selectMultiple(id) {
   }
   model.value = res;
 }
-const query = ref('');
+const query = ref(props.hasSearch ? props.searchString : '');
 
 const hiddenValues = ref([]);
 
@@ -225,6 +226,7 @@ function attributesSearch(item) {
 
 function search(string) {
   query.value = string;
+  emits('update:searchString', string);
   hiddenValues.value = [];
   itemsDisplay.value?.forEach((val) => {
     if (props.searchAttributes) {
@@ -245,6 +247,17 @@ watch(
   () => props.hasSearch,
   () => {
     query.value = '';
+    emits('update:searchString', '');
+  }
+);
+
+watch(
+  () => props.searchString,
+  (value) => {
+    if (!props.hasSearch) return;
+    if (value !== query.value) {
+      search(value || '');
+    }
   }
 );
 

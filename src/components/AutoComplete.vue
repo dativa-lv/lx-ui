@@ -72,6 +72,7 @@ const props = defineProps({
   hasSelectAll: { type: Boolean, default: false, group: 'main', sequence: 2 },
   texts: { type: Object, default: () => ({}) },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
+  searchString: { type: String, default: '' },
   enableAdditionalText: { type: Boolean, default: false, group: 'main', sequence: 5 },
   builderOptions: {
     type: Object,
@@ -103,7 +104,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emit = defineEmits(['update:modelValue', 'openDetails']);
+const emit = defineEmits(['update:modelValue', 'openDetails', 'update:searchString']);
 
 const windowSize = useWindowSize();
 
@@ -116,7 +117,7 @@ const refAutocomplete = ref();
 const refQuery = ref();
 const refRoot = ref();
 const refListbox = ref();
-const query = ref(null);
+const query = ref(props.searchString);
 const loadingState = ref(false);
 const allItems = ref([]);
 const itemsModel = ref({});
@@ -272,6 +273,7 @@ const debouncedSearchReq = useDebounceFn(async (val) => {
 watch(
   query,
   async (newValue, oldValue = null) => {
+    emit('update:searchString', newValue || '');
     if (shouldWarnAboutQueryMinLength()) {
       return;
     }
@@ -292,6 +294,15 @@ watch(
     }
   },
   { immediate: true }
+);
+
+watch(
+  () => props.searchString,
+  (value) => {
+    if (value !== query.value) {
+      query.value = value || null;
+    }
+  }
 );
 
 function shouldWarnAboutQueryMinLength() {

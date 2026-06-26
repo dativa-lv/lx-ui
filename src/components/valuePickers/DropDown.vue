@@ -26,6 +26,7 @@ const props = defineProps({
   variant: { type: String, default: 'dropdown' }, // 'dropdown', 'dropdown-custom'
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
+  searchString: { type: String, default: '' },
   alwaysAsArray: { type: Boolean, default: false },
   tooltip: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
@@ -39,13 +40,13 @@ const props = defineProps({
   texts: { type: Object, default: () => ({}) },
 });
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'update:searchString']);
 
 const itemsModel = ref({});
 const notSelectedId = 'notSelected';
 const menuOpen = ref(false);
 const container = ref();
-const query = ref();
+const query = ref(props.hasSearch ? props.searchString : '');
 const hiddenValues = ref([]);
 const highlightedItemId = ref(null);
 const panelWidth = ref();
@@ -308,7 +309,8 @@ function attributesSearch(item) {
 
 watch(
   () => query.value,
-  () => {
+  (value) => {
+    emits('update:searchString', value || '');
     hiddenValues.value = [];
     itemsDisplay.value?.forEach((val) => {
       if (!textSearch(query.value, val.name) && query.value.length !== 0) {
@@ -322,6 +324,17 @@ watch(
   () => props.hasSearch,
   () => {
     query.value = '';
+    emits('update:searchString', '');
+  }
+);
+
+watch(
+  () => props.searchString,
+  (value) => {
+    if (!props.hasSearch) return;
+    if (value !== query.value) {
+      query.value = value || '';
+    }
   }
 );
 
@@ -606,6 +619,7 @@ function countDigits(number) {
       v-if="hasSearch"
       :id="id"
       v-model="model"
+      v-model:searchString="query"
       :selectionKind="selectionKind"
       :items="itemsDisplay"
       :id-attribute="idAttribute"

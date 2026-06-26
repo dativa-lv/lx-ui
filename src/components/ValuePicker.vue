@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, inject, getCurrentInstance, onUnmounted } from 'vue';
+import { computed, onMounted, ref, inject, getCurrentInstance, onUnmounted, watch } from 'vue';
 import { generateUUID, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
@@ -53,6 +53,7 @@ const props = defineProps({
   nullable: { type: Boolean, default: false, group: 'main', sequence: 5 }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   placeholder: { type: String, default: null, group: 'main', sequence: 7 },
   hasSearch: { type: Boolean, default: false, group: 'main', sequence: 6 },
+  searchString: { type: String, default: '' },
   tooltip: { type: String, default: null, group: 'main', sequence: 8 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   readOnlyRenderType: {
@@ -92,7 +93,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'update:searchString']);
 
 const stringifiedItems = computed(() =>
   stringifyItemsByIdAttribute(props.items, props.idAttribute)
@@ -130,6 +131,25 @@ function normalizeModelValue(value) {
 
   return value;
 }
+
+const internalSearchString = ref(props.searchString);
+
+const reactiveSearchString = computed({
+  get() {
+    return internalSearchString.value;
+  },
+  set(value) {
+    internalSearchString.value = value;
+    emits('update:searchString', value);
+  },
+});
+
+watch(
+  () => props.searchString,
+  (val) => {
+    internalSearchString.value = val;
+  }
+);
 
 const model = computed({
   get() {
@@ -209,6 +229,7 @@ if (props.builderOptions?.useRegistry) {
         :placeholder="placeholder"
         :tooltip="tooltip"
         :has-search="hasSearch"
+        v-model:searchString="reactiveSearchString"
         :always-as-array="alwaysAsArray"
         :nullable="nullable"
         :readOnly="readOnly"
@@ -241,6 +262,7 @@ if (props.builderOptions?.useRegistry) {
         :placeholder="placeholder"
         :tooltip="tooltip"
         :has-search="hasSearch"
+        v-model:searchString="reactiveSearchString"
         :always-as-array="alwaysAsArray"
         :nullable="nullable"
         :readOnly="readOnly"
@@ -279,6 +301,7 @@ if (props.builderOptions?.useRegistry) {
         :tooltip="tooltip"
         :always-as-array="alwaysAsArray"
         :has-search="hasSearch"
+        v-model:searchString="reactiveSearchString"
         :nullable="nullable"
         :readOnly="readOnly"
         :readOnlyRenderType="readOnlyRenderType"
@@ -344,6 +367,7 @@ if (props.builderOptions?.useRegistry) {
         :tooltip="tooltip"
         :always-as-array="alwaysAsArray"
         :has-search="hasSearch"
+        v-model:searchString="reactiveSearchString"
         :nullable="nullable"
         :readOnly="readOnly"
         :readOnlyRenderType="readOnlyRenderType"
@@ -374,6 +398,7 @@ if (props.builderOptions?.useRegistry) {
         :placeholder="placeholder"
         :tooltip="tooltip"
         :has-search="hasSearch"
+        v-model:searchString="reactiveSearchString"
         :always-as-array="alwaysAsArray"
         :nullable="nullable"
         :readOnly="readOnly"
