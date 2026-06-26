@@ -409,7 +409,7 @@ const wrapperRef = ref();
         }"
         :sticky="stickyToolbar"
         :wrapperRef="wrapperRef"
-        @search="search"
+        @update:searchString="search"
         @selectAll="selectAll"
         @deselectAll="selectAll"
       />
