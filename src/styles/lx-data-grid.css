@@ -730,13 +730,10 @@
 
 .lx .lx-data-grid-wrapper .lx-cell-header:focus,
 .lx .lx-data-grid-wrapper .lx-cell.lx-cell-not-delegated:focus,
-.lx .lx-data-grid-wrapper .lx-cell-action .lx-toolbar.grid-actions-menu:focus {
+.lx .lx-data-grid-wrapper .lx-cell-action .lx-toolbar.grid-actions-menu:focus,
+.lx .lx-data-grid-wrapper .lx-cell.lx-cell-clickable:focus  {
   outline: 2px solid var(--color-focus-background);
   outline-offset: -2px;
-}
-
-.lx .lx-data-grid-wrapper .lx-cell span.lx-cell-clickable:focus {
-  outline: 2px solid var(--color-focus-background);
 }
 
 .lx-data-grid .lx-skeleton .lx-grid-row:nth-child(3n) .lx-skeleton-placeholder {

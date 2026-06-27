@@ -378,6 +378,14 @@ const gridColumnsDisplay = computed(() => {
 });
 
 function cellNotDelegated(row, col) {
+  const isClickableTextCell =
+    col?.kind === 'clickable' &&
+    !['state', 'rating', 'array', 'flag', 'country', 'person', 'icon'].includes(col?.type);
+
+  if (isClickableTextCell) {
+    return true;
+  }
+
   return !isCellDelegated(
     col,
     (isObject(row?.[col?.attributeName]) &&
@@ -1712,6 +1720,14 @@ const handleKey = (col, row) => {
   }
 };
 
+const handleCellKey = (event, col, row) => {
+  if (event.target !== event.currentTarget) return;
+
+  if (isRenderableTextType(col.type) && col.kind === 'clickable') {
+    handleKey(col, row);
+  }
+};
+
 function handleHeaderClick(colId, colIndex) {
   sortColumn(colId);
   setActiveFromClick(0, props.hasSelecting ? colIndex + 1 : colIndex);
@@ -2129,6 +2145,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   hasSelecting ? colIndex + 1 : colIndex
                 )
               "
+              @keydown.space.prevent
+              @keyup.enter="(event) => handleCellKey(event, col, row)"
+              @keyup.space="(event) => handleCellKey(event, col, row)"
             >
               <component
                 v-if="isRenderableTextType(col.type)"
@@ -2143,14 +2162,16 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   'lx-cell-clickable': col.kind === 'clickable',
                 }"
                 :tabindex="
-                  isCellDelegated(col)
+                  isCellDelegated(col) &&
+                  !(col.kind === 'clickable' && isRenderableTextType(col.type))
                     ? getTabIndex(getGridRowIndex(rowIndex), hasSelecting ? colIndex + 1 : colIndex)
                     : -1
                 "
                 :role="col.kind === 'clickable' ? props.clickableRole : null"
                 :datetime="isDateType(col.type) ? row[col.attributeName] : null"
                 :ref="
-                  isCellDelegated(col)
+                  isCellDelegated(col) &&
+                  !(col.kind === 'clickable' && isRenderableTextType(col.type))
                     ? (el) =>
                         registerCell(
                           el ?? null,
