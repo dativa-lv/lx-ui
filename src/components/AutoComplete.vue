@@ -1474,7 +1474,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                 <transition name="appear-down">
                   <div
                     v-show="menuOpen && !loading"
-                    class="lx-dropdown-panel"
+                    class="lx-dropdown-panel lx-region-component"
                     tabindex="-1"
                     role="listbox"
                   >

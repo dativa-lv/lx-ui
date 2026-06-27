@@ -33,9 +33,8 @@
     color: inherit;
 }
 
-.lx-modal .lx-card-wrapper .lx-card,
 .lx-region .lx-card-wrapper .lx-card,
-.lx-form-grid .lx-card-wrapper .lx-card {
+.lx-region-component .lx-card-wrapper .lx-card {
     background: var(--color-card-background-region);
     border: var(--card-border-region);
 }
@@ -44,6 +43,10 @@
 .lx-form-grid .lx-row .lx-card-wrapper.lx-card-has-button,
 .lx-form-grid .lx-row .lx-card-wrapper.lx-card-clickable {
     margin: var(--space-1000) var(--space-0500);
+}
+
+.lx-card-wrapper .lx-card-face .lx-form-grid {
+    background: transparent;
 }
 
 .lx-card-wrapper.lx-card-interactive .lx-card {

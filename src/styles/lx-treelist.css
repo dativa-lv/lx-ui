@@ -62,7 +62,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--color-list-background);
+    background: var(--color-list-background);
 }
 
 .tree-list .tree-item .tree-item-invalid>.lx-button{
@@ -71,7 +71,7 @@
 
 .lx-region .tree-list .tree-item .tree-item-invalid,
 .lx-region .tree-list-small>.tree-item-invalid {
-    background-color: var(--color-list-region-background);
+    --color-list-background: var(--color-region-2);
 }
 
 .tree-list-small>.tree-item-invalid {

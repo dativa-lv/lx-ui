@@ -56,6 +56,7 @@ dialog.lx-modal > header > .lx-primary,
 }
 
 dialog.lx-modal {
+  overflow: visible;
   margin: auto;
   padding: var(--space-0);
 }

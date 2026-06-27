@@ -185,8 +185,7 @@
 }
 
 .lx-region .lx-data-visualizer .lx-latvia-visualizer > svg,
-.lx-modal .lx-data-visualizer .lx-latvia-visualizer > svg,
-.lx-form-grid .lx-data-visualizer .lx-latvia-visualizer > svg {
+.lx-region-component .lx-data-visualizer .lx-latvia-visualizer > svg {
   fill: var(--color-region-2);
 }
 

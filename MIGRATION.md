@@ -4,6 +4,16 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
+## 2.2.5 → 2.2.6
+
+### Breaking changes
+
+#### LxList, LxDataBlock
+
+**Token removals**
+- `--color-list-region-background` (use `--color-region-2` instead)
+- `--color-data-block-region-background` (use `--color-region-2` instead)
+
 ## 2.2.3 → 2.2.4
 
 ### Breaking changes

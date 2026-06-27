@@ -909,10 +909,12 @@ defineExpose({ toggleSearch, focusAction });
         </LxToolbarGroup>
 
         <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'compact'">
-          <div class="toolbar-search-button" :class="[{ 'is-expanded': isSearchExpanded }]">
+          <div
+            class="lx-toolbar-search-button-wrapper"
+            :class="[{ 'is-expanded': isSearchExpanded }]"
+          >
             <LxButton
-              class="toolbar-search-button"
-              :class="[{ 'is-expanded': isSearchExpanded }]"
+              class="lx-toolbar-search-button"
               kind="ghost"
               variant="icon-only"
               :icon="isSearchExpanded ? 'close' : 'search'"

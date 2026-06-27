@@ -153,7 +153,6 @@
   --color-list-handle-icon: var(--color-label);
   --color-list-icon: var(--color-data);
   --color-list-primary: var(--color-data);
-  --color-list-region-background: var(--color-region-2);
   --color-list-secondary: var(--color-label);
   --color-list-disabled-foreground: var(--color-disabled);
   --color-list-disabled-selected-text: var(--color-disabled);
@@ -477,7 +476,6 @@
   --color-data-block-primary: var(--color-data);
   --color-data-block-secondary: var(--color-label);
   --color-data-block-background: var(--color-region);
-  --color-data-block-region-background: var(--color-region-2);
   --color-data-block-hover-background: var(--color-region-hover);
   --color-data-block-hover-foreground: var(--color-region-hover-foreground);
   --color-data-block-icon: var(--color-label);

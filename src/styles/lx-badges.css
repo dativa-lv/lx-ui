@@ -55,26 +55,13 @@
   justify-self: center;
 }
 
-.lx-tile .lx-badge,
-.lx-modal .lx-badge,
 .lx-region .lx-badge,
-.lx-form-grid .lx-badge,
-.lx-data-block .lx-badge,
-.lx-list-item-wrapper .lx-badge,
-.lx-modal .lx-expander .lx-head .lx-badge,
-.lx-region .lx-expander .lx-head .lx-badge,
-.lx-form-grid .lx-expander .lx-head .lx-badge {
+.lx-region-component .lx-badge {
   --color-badge-background: var(--color-region-2);
 }
 
-.lx-modal .lx-form-grid .lx-badge,
-.lx-region .lx-form-grid .lx-badge,
-.lx-modal .lx-data-block-wrapper .lx-badge,
-.lx-region .lx-data-block-wrapper .lx-badge,
-.lx-form-grid .lx-data-block-wrapper .lx-badge,
-.lx-modal .lx-list-item-wrapper .lx-badge,
-.lx-region .lx-list-item-wrapper .lx-badge,
-.lx-form-grid .lx-list-item-wrapper .lx-badge {
+.lx-region .lx-region-component .lx-badge,
+.lx-region-component .lx-region-component .lx-badge {
   --color-badge-background: unset;
 }
 

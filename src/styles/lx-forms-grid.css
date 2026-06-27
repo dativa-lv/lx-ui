@@ -955,10 +955,6 @@ svg .lx-shade {
   transform: translateZ(0);
 }
 
-.lx-form-grid .lx-appendable-list-item {
-  background-color: var(--color-region-2);
-}
-
 .lx-appendable-list
   .lx-form-grid
   > .lx-main
@@ -984,10 +980,6 @@ svg .lx-shade {
   padding: var(--appendable-list-padding-compact);
 }
 
-.lx-form-grid .lx-appendable-list-item .lx-data-block > .additional-buttons {
-  background-color: var(--color-region-2);
-}
-
 .lx-appendable-list-item > .lx-data-block-wrapper,
 .lx-form-grid .lx-data-block-wrapper {
   margin-bottom: var(--space-0);
@@ -1008,7 +1000,7 @@ svg .lx-shade {
 }
 
 .lx-region .lx-appendable-list > .lx-appendable-list-item,
-.lx-modal .lx-appendable-list > .lx-appendable-list-item {
+.lx-region-component .lx-appendable-list > .lx-appendable-list-item {
   background-color: var(--color-background);
 }
 
@@ -1164,11 +1156,11 @@ svg .lx-shade {
 }
 
 .lx-region .lx-avatar-display,
+.lx-region-component .lx-avatar-display,
 .lx-region .lx-user-icon-display,
+.lx-region-component .lx-user-icon-display,
 .lx-region .lx-person-icon-display,
-.lx-form-grid .lx-row .lx-avatar-display,
-.lx-form-grid .lx-row .lx-user-icon-display,
-.lx-form-grid .lx-row .lx-person-icon-display {
+.lx-region-component .lx-person-icon-display {
   border-color: var(--color-region-2);
 }
 

@@ -64,7 +64,6 @@
 | `--color-list-icon`                          | `--color-data`                            |
 | `--color-list-primary`                       | `--color-data`                            |
 | `--color-list-hover-text-primary`            | `--color-region-hover-foreground`         |
-| `--color-list-region-background`             | `--color-region-2`                        |
 | `--color-list-secondary`                     | `--color-label`                           |
 | `--color-list-hover-text-secondary`          | `--color-region-hover-foreground`         |
 

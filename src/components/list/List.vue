@@ -1603,7 +1603,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           <li
             v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
             :key="item[idAttribute]"
-            class="lx-list-item-container"
+            class="lx-list-item-container lx-region-component"
           >
             <LxListItem
               :id="item[idAttribute]"
@@ -1690,7 +1690,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               >
                 <div class="lx-transition-layer" :key="element[idAttribute]">
                   <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                    <div class="lx-list-item-container">
+                    <div class="lx-list-item-container lx-region-component">
                       <LxDropDownMenu
                         triggerClick="right"
                         :disabled="loading || busy || draggableIsDisabledByQuery"
@@ -1803,7 +1803,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               <li
                 v-for="item in filteredGroupedItems[prepareCode(group.id)]"
                 :key="item[idAttribute]"
-                class="lx-list-item-container"
+                class="lx-list-item-container lx-region-component"
               >
                 <LxListItem
                   :id="item[idAttribute]"
@@ -1914,7 +1914,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             <div
               v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
               :key="item[idAttribute]"
-              class="tree-list-search-item lx-list-item-container"
+              class="tree-list-search-item lx-list-item-container lx-region-component"
               role="listitem"
             >
               <LxListItem
@@ -2071,7 +2071,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 <div
                   v-for="item in filteredGroupedItems[prepareCode(group.id)]"
                   :key="item[idAttribute]"
-                  class="tree-list-search-item lx-list-item-container"
+                  class="tree-list-search-item lx-list-item-container lx-region-component"
                   role="listitem"
                 >
                   <LxListItem
@@ -2149,7 +2149,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             v-for="row in defaultListRows"
             :key="row.virtualKey"
             :data-index="row.virtualRow.index"
-            class="lx-list-item-container"
+            class="lx-list-item-container lx-region-component"
             :ref="measureDefaultListRow"
             :style="{
               position: 'absolute',
@@ -2224,7 +2224,11 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           ]"
           :aria-labelledby="labelledBy"
         >
-          <li v-for="item in filteredItems" :key="item[idAttribute]" class="lx-list-item-container">
+          <li
+            v-for="item in filteredItems"
+            :key="item[idAttribute]"
+            class="lx-list-item-container lx-region-component"
+          >
             <LxListItem
               :id="item[idAttribute]"
               :parentId="props.id"
@@ -2309,7 +2313,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               >
                 <div class="lx-transition-layer" :key="element[idAttribute]">
                   <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                    <div class="lx-list-item-container">
+                    <div class="lx-list-item-container lx-region-component">
                       <LxDropDownMenu
                         triggerClick="right"
                         :disabled="loading || busy || draggableIsDisabledByQuery"
@@ -2428,7 +2432,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 >
                   <div class="lx-transition-layer" :key="element[idAttribute]">
                     <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                      <div class="lx-list-item-container">
+                      <div class="lx-list-item-container lx-region-component">
                         <LxDropDownMenu
                           triggerClick="right"
                           :disabled="loading || busy || draggableIsDisabledByQuery"

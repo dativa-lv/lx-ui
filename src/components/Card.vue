@@ -166,7 +166,7 @@ onMounted(() => {
     "
   >
     <div
-      class="lx-card"
+      class="lx-card lx-region-component"
       ref="cardRef"
       :style="`${hoverTilt}`"
       :tabindex="kind === 'clickable' ? 0 : null"

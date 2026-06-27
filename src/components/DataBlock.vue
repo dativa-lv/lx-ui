@@ -138,7 +138,7 @@ const expandIconTitle = computed(() => {
 </script>
 <template>
   <div
-    class="lx-data-block-wrapper"
+    class="lx-data-block-wrapper lx-region-component"
     :class="[
       { 'lx-data-block-wrapper-m': size === 'm' },
       { 'lx-data-block-wrapper-l': size === 'l' },

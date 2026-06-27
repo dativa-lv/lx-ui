@@ -91,7 +91,7 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
     <router-link
       :id="id"
       :to="to || href"
-      class="lx-tile"
+      class="lx-tile lx-region-component"
       :class="[{ 'lx-mini': kind === 'mini' }, { 'lx-disabled': isDisabled }]"
       :title="tooltipComputed"
       :aria-labelledby="label ? `${id}-label` : null"

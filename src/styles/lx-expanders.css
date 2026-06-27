@@ -338,18 +338,13 @@
   border-radius: var(--data-block-border-radius-expanded);
 }
 
-.lx-data-block-wrapper .lx-data-block-wrapper,
-.lx-form-grid .lx-data-block-wrapper,
 .lx-region .lx-data-block-wrapper,
-.lx-modal .lx-data-block-wrapper,
-.lx-card .lx-data-block-wrapper {
-  background: var(--color-data-block-region-background);
+.lx-region-component .lx-data-block-wrapper {
+  background: var(--color-region-2);
 }
 
-.lx-form-grid .lx-data-block-wrapper .lx-data-block-wrapper,
-.lx-region .lx-data-block-wrapper .lx-data-block-wrapper,
-.lx-modal .lx-data-block-wrapper .lx-data-block-wrapper,
-.lx-card .lx-data-block-wrapper .lx-data-block-wrapper {
+.lx-region .lx-region-component .lx-data-block-wrapper,
+.lx-region-component .lx-region-component .lx-data-block-wrapper {
   background: var(--color-data-block-background);
 }
 

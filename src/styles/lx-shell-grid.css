@@ -853,7 +853,7 @@
 .lx-info-wrapper .lx-info-wrapper-panel .lx-secondary,
 .lx .popper .lx-info-wrapper-panel .lx-secondary,
 .lx .popper .lx-info-wrapper-panel label:not(.lx-state > .lx-primary) {
-  color: var(--color-tooltip-foreground-label)
+  color: var(--color-tooltip-foreground-label);
 }
 
 .lx .lx-info-wrapper .popper:hover {
@@ -2332,17 +2332,15 @@
 }
 
 .lx .lx-region .lx-list-wrapper .lx-sticky-toolbar-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-modal .lx-list-wrapper .lx-sticky-toolbar-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-form-grid .lx-list-wrapper .lx-sticky-toolbar-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region-component .lx-list-wrapper .lx-sticky-toolbar-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-modal .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-form-grid .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region-component .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-form-grid .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-modal .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+.lx .lx-region-component .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
   background-color: var(--color-region);
-} 
+}
+
 .lx .lx-list-wrapper .lx-sticky-toolbar-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky  {
@@ -2879,8 +2877,7 @@
 }
 
 .lx .lx-region .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-modal .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+.lx .lx-region-component .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
   background-color: var(--color-region);
 }
 

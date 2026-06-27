@@ -545,7 +545,7 @@ const getSelectedItem = computed(
               <!-- Since key events are assigned to the whole <div> (lx-dropdown-default-content) already -->
               <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
               <slot name="panel" @click="closeDropDownDefault()">
-                <div class="lx-dropdown-panel" tabindex="-1" role="listbox">
+                <div class="lx-dropdown-panel lx-region-component" tabindex="-1" role="listbox">
                   <template v-if="isItemsEmpty">
                     <div class="lx-empty lx-aligned-row">
                       <LxIcon value="info" />

@@ -255,6 +255,7 @@ code {
 }
 
 .lx-region code,
+.lx-region-component code,
 .lx-form-region code,
 .lx-modal code {
   background: var(--color-background);

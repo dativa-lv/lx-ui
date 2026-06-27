@@ -609,7 +609,11 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
               @click="closeMenu()"
             />
           </div>
-          <div v-if="$slots.clickSafePanel" ref="wrapperPanelRef" class="lx-dropdown-panel">
+          <div
+            v-if="$slots.clickSafePanel"
+            ref="wrapperPanelRef"
+            class="lx-dropdown-panel lx-region-component"
+          >
             <div
               v-for="(group, groupName) in groupedItems"
               :key="groupName"
@@ -725,7 +729,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
           <div
             v-if="$slots.panel || (actionDefinitions?.length > 0 && !$slots.clickSafePanel)"
-            class="lx-dropdown-panel"
+            class="lx-dropdown-panel lx-region-component"
             ref="wrapperPanelRef"
             @click="closeMenu"
           >

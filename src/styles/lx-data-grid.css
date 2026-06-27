@@ -157,7 +157,7 @@
 
 .lx .lx-data-grid .lx-grid-row .lx-cell-selector .lx-checkbox-wrapper,
 .lx .lx-data-grid .lx-grid-row .lx-cell-selector .lx-radio-button-wrapper {
-  margin-left: var(--space-0250);
+  margin-left: var(--space-0750);
   padding-top: var(--space-0250);
 }
 
@@ -1320,14 +1320,13 @@
   min-height: 3rem;
 }
 
-.lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button,
+.lx .lx-data-grid-wrapper .lx-toolbar-search-button-wrapper.is-expanded .lx-button,
 .lx .lx-data-grid-wrapper .second-row .lx-button {
   --color-toolbar-selection-button-icon: var(--color-data);
   --color-toolbar-selection-button-icon-focus: var(--color-data);
 }
 
-.lx .lx-data-grid-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded:hover,
-.lx .lx-data-grid-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded:hover .lx-button {
+.lx .lx-data-grid-wrapper .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded:hover .lx-button {
   background-color: var(--color-interactive-hover-background);
 }
 
@@ -1379,9 +1378,9 @@
 }
 
 .lx-data-grid-wrapper .lx-grid-badge-wrapper .lx-badge,
-.lx-modal .lx-data-grid-wrapper .lx-grid-badge-wrapper .lx-badge,
-.lx-region .lx-data-grid-wrapper .lx-grid-badge-wrapper .lx-badge {
-  --color-badge-background: var(--color-region-2);
+.lx-region .lx-data-grid-wrapper .lx-grid-badge-wrapper .lx-badge,
+.lx-region-component .lx-data-grid-wrapper .lx-grid-badge-wrapper .lx-badge {
+  background: var(--color-region-2);
 }
 
 .lx-data-grid-wrapper .lx-grid-badge-wrapper > .lx-badge > .lx-badge-text {
@@ -1453,7 +1452,7 @@
   }
 
   .lx-data-grid-wrapper .lx-grid-badge-wrapper .lx-badge {
-    --color-badge-background: unset;
+    background: var(--color-badge-background);
   }
 
   .lx-data-grid-wrapper .lx-selection-toolbar .lx-component-toolbar .selection-action-buttons-small .lx-dropdown-panel {

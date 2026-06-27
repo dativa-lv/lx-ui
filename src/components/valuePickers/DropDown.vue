@@ -774,7 +774,7 @@ function countDigits(number) {
               @keydown="handleKeydown"
             >
               <slot name="panel" @click="closeDropDownDefault()">
-                <div class="lx-dropdown-panel" tabindex="-1" role="listbox">
+                <div class="lx-dropdown-panel lx-region-component" tabindex="-1" role="listbox">
                   <template v-if="isItemsEmpty">
                     <div class="lx-empty lx-aligned-row">
                       <LxIcon value="info" />

@@ -283,7 +283,9 @@ defineExpose({ clearModel });
 
     <div
       class="lx-appendable-list"
-      :class="[{ 'lx-appendable-list-compact': kind === 'compact' }]"
+      :class="[
+        { 'lx-appendable-list-compact': kind === 'compact', 'lx-region-component': !expandable },
+      ]"
       :aria-labelledby="labelledBy"
       :id="props.id"
       role="list"

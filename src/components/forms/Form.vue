@@ -11,7 +11,12 @@ import {
   onUnmounted,
   getCurrentInstance,
 } from 'vue';
-import { useElementBounding, useElementSize, useWindowSize } from '@vueuse/core';
+import {
+  useElementBounding,
+  useElementSize,
+  useWindowSize,
+  useMutationObserver,
+} from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -317,6 +322,7 @@ const bounding = useElementBounding(form);
 const windowSize = useWindowSize();
 const headerSize = useElementSize(formHeader);
 const footerSize = useElementSize(formFooter);
+const isInsideRegionContainer = ref(false);
 
 const shellLayoutMode = computed(() => {
   const layoutElement = document.querySelector('.lx-layout');
@@ -903,6 +909,16 @@ watch(height, () => {
   });
 });
 
+useMutationObserver(
+  document.body,
+  () => {
+    isInsideRegionContainer.value = !!form.value?.parentElement?.closest(
+      '#modals, .lx-data-block-wrapper, .lx-region, .lx-form-grid, .lx-card, .lx-appendable-list'
+    );
+  },
+  { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] }
+);
+
 onMounted(() => {
   const elementForm = document.getElementById(props.id);
 
@@ -955,7 +971,10 @@ if (props.builderOptions.useRegistry) {
     :data-id="id"
     class="lx-form-grid"
     :role="role"
-    :class="[{ 'lx-form-grid-stripped': kind === 'stripped' }]"
+    :class="[
+      { 'lx-form-grid-stripped': kind === 'stripped' },
+      { 'lx-region-component': !isInsideRegionContainer },
+    ]"
     ref="form"
     :aria-labelledby="showHeader && kind !== 'stripped' ? `${id}-header` : null"
     :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"

@@ -224,7 +224,7 @@ defineExpose({ open, close });
       >
         <div
           :id="id"
-          class="lx-modal"
+          class="lx-modal lx-region-component"
           :class="[
             { 'lx-modal-s': size === 's' || size === 'default' },
             { 'lx-modal-m': size === 'm' },
@@ -295,7 +295,7 @@ defineExpose({ open, close });
         <dialog
           ref="nativeModal"
           :id="id"
-          class="lx-modal"
+          class="lx-modal lx-region-component"
           :class="[
             { 'lx-modal-s': size === 's' || size === 'default' },
             { 'lx-modal-m': size === 'm' },

@@ -205,7 +205,7 @@ defineExpose({ open, close });
       >
         <div
           :id="id"
-          class="lx-modal lx-modal-form"
+          class="lx-modal lx-modal-form lx-region-component"
           :class="[
             { 'lx-modal-s': size === 's' || size === 'default' },
             { 'lx-modal-m': size === 'm' },

@@ -57,7 +57,6 @@
 | `--color-data-block-primary`             | `--color-data`                    |
 | `--color-data-block-secondary`           | `--color-label`                   |
 | `--color-data-block-background`          | `--color-region`                  |
-| `--color-data-block-region-background`   | `--color-region-2`                |
 | `--color-data-block-hover-background`    | `--color-region-hover`            |
 | `--color-data-block-hover-foreground`    | `--color-region-hover-foreground` |
 | `--color-data-block-icon`                | `--color-label`                   |

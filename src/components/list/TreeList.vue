@@ -242,7 +242,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           :disabled="disabled || states?.[parent[idAttribute]]?.disabled"
           @click="goBack()"
         />
-        <div class="lx-list-item-container">
+        <div class="lx-list-item-container lx-region-component">
           <LxListItem
             :id="parent[idAttribute]"
             :label="parent[nameAttribute]"
@@ -331,7 +331,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           :disabled="disabled || states?.[item[idAttribute]]?.disabled"
           @click="goTo(item[idAttribute], item)"
         />
-        <div class="lx-list-item-container">
+        <div class="lx-list-item-container lx-region-component">
           <LxListItem
             :id="item[idAttribute]"
             :label="item[nameAttribute]"
