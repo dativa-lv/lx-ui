@@ -491,7 +491,7 @@ provide('additionalNavMenuRef', additionalNavMenuRef);
 provide('scrollUpButtonRef', scrollUpButtonRef);
 
 const hasHiddenHeaderButtons = computed(() =>
-  Object.values(props.headerButtonsVisibility ?? {}).some((value) => value === false)
+  Object.values(props.headerButtonsVisibility ?? {}).includes(false)
 );
 </script>
 <template>

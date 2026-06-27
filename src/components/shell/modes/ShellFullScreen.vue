@@ -50,7 +50,7 @@ const {
 } = useShellContext();
 
 const hasHiddenHeaderButtons = computed(() =>
-  Object.values(headerButtonsVisibility.value ?? {}).some((value) => value === false)
+  Object.values(headerButtonsVisibility.value ?? {}).includes(false)
 );
 </script>
 

@@ -423,15 +423,115 @@ function resetButtonsVisibility() {
 
 let buttonsVisibilityFrame = null;
 
+function handlePublicModeVisibility() {
+  const shouldCollapse =
+    windowWidth.value > PUBLIC_MODE_WIDTH_BREAKPOINT && windowWidth.value < 1000;
+
+  isLoginButtonCollapsed.value = shouldCollapse;
+  isUserButtonCollapsed.value = shouldCollapse;
+}
+
+function handleCoverModeVisibility(availableWidth) {
+  const buttonsGroup = headerRef.value?.querySelector('.lx-group:last-of-type');
+
+  if (buttonsGroup === null) return;
+
+  if (windowWidth.value >= 500) {
+    buttonsGroup.style.gap = '';
+    return;
+  }
+
+  const marginPx = remToPx(
+    Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--space-1000').trim())
+  );
+
+  const eligibleButtonKeys = buttonWidthKeys.filter((key) => buttonsEligibility.value[key]);
+
+  const totalButtonsWidth = Math.max(
+    0,
+    eligibleButtonKeys.reduce((total, key) => total + getButtonWidth(key) + marginPx, 0) - marginPx
+  );
+
+  buttonsGroup.style.gap = totalButtonsWidth > availableWidth - 2 * marginPx ? 0 : '';
+}
+
+function handleDefaultModeVisibility(availableWidth) {
+  if (buttonsEligibility.value.login) {
+    const loginButtonWidthMinPx = remToPx(10);
+
+    const otherButtonsWidth = buttonWidthKeys
+      .filter((key) => key !== 'login')
+      .reduce((total, key) => total + getButtonWidth(key), 0);
+
+    if (
+      LOGIN_ICON_ONLY_ALLOWED_MODES.has(props.mode) &&
+      availableWidth - otherButtonsWidth < loginButtonWidthMinPx
+    ) {
+      isLoginButtonCollapsed.value = true;
+    } else {
+      return;
+    }
+  }
+
+  if (buttonsEligibility.value.user) {
+    const userButtonWidthMinPx = remToPx(8);
+
+    const otherButtonsWidth = buttonWidthKeys
+      .filter((key) => key !== 'user')
+      .reduce((total, key) => total + getButtonWidth(key), 0);
+
+    if (availableWidth - otherButtonsWidth < userButtonWidthMinPx) {
+      isUserButtonCollapsed.value = true;
+    } else {
+      return;
+    }
+  }
+
+  const requiredBaseWidth = ALWAYS_VISIBLE_BUTTON_KEYS.reduce(
+    (sum, key) => (buttonsEligibility.value[key] ? sum + getButtonWidth(key) : sum),
+    0
+  );
+
+  let usedWidth = requiredBaseWidth;
+
+  const optionalEligibleKeys = OPTIONAL_BUTTON_KEYS.filter(
+    (key) => buttonsEligibility.value[key]
+  ).sort((a, b) => (buttonsPriority[a] ?? 0) - (buttonsPriority[b] ?? 0));
+
+  const nextVisibility = { ...DEFAULT_BUTTONS_VISIBILITY };
+
+  optionalEligibleKeys.forEach((key) => {
+    const buttonWidth = getButtonWidth(key);
+    if (usedWidth + buttonWidth <= availableWidth) {
+      usedWidth += buttonWidth;
+    } else {
+      nextVisibility[key] = false;
+    }
+  });
+
+  const isChanged = Object.keys(nextVisibility).some(
+    (key) => buttonsVisibility.value[key] !== nextVisibility[key]
+  );
+
+  if (isChanged) {
+    buttonsVisibility.value = nextVisibility;
+  }
+
+  areAllOptionalButtonsHidden.value = availableWidth < requiredBaseWidth;
+
+  mainButtonRef.value?.classList.toggle(
+    'lx-main-button-collapsed',
+    areAllOptionalButtonsHidden.value
+  );
+}
+
 function recalculateButtonsVisibility() {
   if (buttonsVisibilityFrame) {
     cancelAnimationFrame(buttonsVisibilityFrame);
   }
 
   buttonsVisibilityFrame = requestAnimationFrame(() => {
-    if (props.hasNavBar) {
-      return;
-    }
+    if (props.hasNavBar) return;
 
     resetButtonsVisibility();
 
@@ -439,11 +539,7 @@ function recalculateButtonsVisibility() {
       (props.mode === 'public' || props.mode === 'latvijalv') &&
       windowWidth.value > PUBLIC_MODE_WIDTH_BREAKPOINT
     ) {
-      const shouldCollapse =
-        windowWidth.value > PUBLIC_MODE_WIDTH_BREAKPOINT && windowWidth.value < 1000;
-
-      isLoginButtonCollapsed.value = shouldCollapse;
-      isUserButtonCollapsed.value = shouldCollapse;
+      handlePublicModeVisibility();
       return;
     }
 
@@ -453,108 +549,17 @@ function recalculateButtonsVisibility() {
     const rowSizePx = remToPx(
       Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--row-size').trim())
     );
-    const mainButtonWidthMin = asideSizePx - rowSizePx;
-    const reservedWidth = mainButtonWidthMin + navToggleWidth.value;
-    const availableWidth = Math.max(0, headerWidth.value - reservedWidth);
+    const availableWidth = Math.max(
+      0,
+      headerWidth.value - (asideSizePx - rowSizePx) - navToggleWidth.value
+    );
 
     if (props.mode === 'cover') {
-      const buttonsGroup = headerRef.value?.querySelector('.lx-group:last-of-type');
-
-      if (buttonsGroup === null) {
-        return;
-      }
-
-      if (windowWidth.value >= 500) {
-        buttonsGroup.style.gap = '';
-        return;
-      }
-
-      const marginPx = remToPx(
-        Number.parseFloat(getComputedStyle(lxElement.value).getPropertyValue('--space-1000').trim())
-      );
-
-      const eligibleButtonKeys = buttonWidthKeys.filter((key) => buttonsEligibility.value[key]);
-
-      const totalButtonsWidth = Math.max(
-        0,
-        eligibleButtonKeys.reduce((total, key) => total + getButtonWidth(key) + marginPx, 0) -
-          marginPx
-      );
-
-      buttonsGroup.style.gap = totalButtonsWidth > availableWidth - 2 * marginPx ? 0 : '';
-
+      handleCoverModeVisibility(availableWidth);
       return;
     }
 
-    if (buttonsEligibility.value.login) {
-      const loginButtonWidthMinRem = 10;
-      const loginButtonWidthMinPx = remToPx(loginButtonWidthMinRem);
-
-      const otherButtonsWidth = buttonWidthKeys
-        .filter((key) => key !== 'login')
-        .reduce((total, key) => total + getButtonWidth(key), 0);
-
-      if (
-        LOGIN_ICON_ONLY_ALLOWED_MODES.has(props.mode) &&
-        availableWidth - otherButtonsWidth < loginButtonWidthMinPx
-      ) {
-        isLoginButtonCollapsed.value = true;
-      } else {
-        return;
-      }
-    }
-
-    if (buttonsEligibility.value.user) {
-      const userButtonWidthMinRem = 8;
-      const userButtonWidthMinPx = remToPx(userButtonWidthMinRem);
-
-      const otherButtonsWidth = buttonWidthKeys
-        .filter((key) => key !== 'user')
-        .reduce((total, key) => total + getButtonWidth(key), 0);
-
-      if (availableWidth - otherButtonsWidth < userButtonWidthMinPx) {
-        isUserButtonCollapsed.value = true;
-      } else {
-        return;
-      }
-    }
-
-    const requiredBaseWidth = ALWAYS_VISIBLE_BUTTON_KEYS.reduce(
-      (sum, key) => (buttonsEligibility.value[key] ? sum + getButtonWidth(key) : sum),
-      0
-    );
-
-    let usedWidth = requiredBaseWidth;
-
-    const optionalEligibleKeys = OPTIONAL_BUTTON_KEYS.filter(
-      (key) => buttonsEligibility.value[key]
-    ).sort((a, b) => (buttonsPriority[a] ?? 0) - (buttonsPriority[b] ?? 0));
-
-    const nextVisibility = { ...DEFAULT_BUTTONS_VISIBILITY };
-
-    optionalEligibleKeys.forEach((key) => {
-      const buttonWidth = getButtonWidth(key);
-      if (usedWidth + buttonWidth <= availableWidth) {
-        usedWidth += buttonWidth;
-      } else {
-        nextVisibility[key] = false;
-      }
-    });
-
-    const isChanged = Object.keys(nextVisibility).some(
-      (key) => buttonsVisibility.value[key] !== nextVisibility[key]
-    );
-
-    if (isChanged) {
-      buttonsVisibility.value = nextVisibility;
-    }
-
-    areAllOptionalButtonsHidden.value = availableWidth < requiredBaseWidth;
-
-    mainButtonRef.value?.classList.toggle(
-      'lx-main-button-collapsed',
-      areAllOptionalButtonsHidden.value
-    );
+    handleDefaultModeVisibility(availableWidth);
   });
 }
 

@@ -2352,13 +2352,6 @@
   top: calc(var(--nav-row-size) + var(--row-size) * 2);
 }
 
-.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--public-nav-header-size) + var(--row-size) * 2);
-}
-
 .lx-toolbar-sticky.lx-toolbar-hidden-under-header {
   visibility: hidden;
   pointer-events: none;
@@ -2495,21 +2488,20 @@
   top: calc(var(--nav-row-size) + var(--row-size));
 }
 
-
 .lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
 .lx .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper,
 .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
 .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper,
 .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--nav-row-size) + var(--row-size)*2);
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
 }
 
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--public-nav-header-size) + var(--row-size)*2);
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2);
 }
 
 .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar){
