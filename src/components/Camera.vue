@@ -430,42 +430,45 @@ const wrapperRef = ref();
 </script>
 
 <template>
-  <div ref="wrapperRef" class="lx-camera" :aria-labelledby="labelledBy" :data-id="id">
-    <div
-      :id="`${id}-announce`"
-      class="lx-invisible"
-      aria-live="polite"
-      role="status"
-      aria-atomic="true"
-    >
-      {{ announcementMessage }}
-    </div>
+  <div ref="wrapperRef" class="lx-camera-wrapper" :aria-labelledby="labelledBy" :data-id="id">
+    <div class="lx-camera" :class="{ 'lx-complex-input': !error }">
+      <div
+        :id="`${id}-announce`"
+        class="lx-invisible"
+        aria-live="polite"
+        role="status"
+        aria-atomic="true"
+      >
+        {{ announcementMessage }}
+      </div>
 
-    <LxToolbar
-      ref="toolbarRef"
-      v-if="!modelValue"
-      :id="`${id}-toolbar`"
-      :disabled="error || loading"
-      :actionDefinitions="toolbarActions"
-      :sticky="stickyToolbar"
-      :wrapperRef="wrapperRef"
-      @actionClick="toolbarActionClick"
-    />
-    <LxLoader :loading="true" v-if="loading" />
-    <div v-else-if="error" class="lx-camera-error">
-      <LxEmptyState
-        :label="displayTexts.errorLabel"
-        icon="invalid"
-        :description="displayTexts.errorDescription"
-        :actionDefinitions="[{ id: 'refresh', name: displayTexts.reloadPage, icon: 'refresh' }]"
-        @actionClick="handleActionClick"
+      <LxToolbar
+        v-if="!modelValue"
+        ref="toolbarRef"
+        class="lx-embedded-toolbar"
+        :id="`${id}-toolbar`"
+        :disabled="error || loading"
+        :actionDefinitions="toolbarActions"
+        :sticky="stickyToolbar"
+        :wrapperRef="wrapperRef"
+        @actionClick="toolbarActionClick"
       />
-    </div>
-    <div class="lx-camera-frame" v-show="!error && !loading">
-      <!-- eslint-disable-next-line vuejs-accessibility/media-has-caption -->
-      <video ref="video" autoplay playsinline muted v-show="!modelValue" />
-      <canvas ref="canvas" style="display: none" />
-      <img :src="modelValue" alt=" " v-if="modelValue" />
+      <div v-if="error && !loading" class="lx-camera-error">
+        <LxEmptyState
+          :label="displayTexts.errorLabel"
+          icon="invalid"
+          :description="displayTexts.errorDescription"
+          :actionDefinitions="[{ id: 'refresh', name: displayTexts.reloadPage, icon: 'refresh' }]"
+          @actionClick="handleActionClick"
+        />
+      </div>
+      <div v-show="!error" class="lx-camera-frame lx-input-wrapper">
+        <LxLoader v-if="loading" :loading="true" />
+        <!-- eslint-disable-next-line vuejs-accessibility/media-has-caption -->
+        <video v-show="!modelValue && !loading" ref="video" autoplay playsinline muted />
+        <canvas ref="canvas" style="display: none" />
+        <img v-if="modelValue && !loading" :src="modelValue" alt=" " />
+      </div>
     </div>
     <div class="lx-camera-buttons" v-if="!error && !loading">
       <LxButton

@@ -8,6 +8,15 @@ Our goal is to make upgrading predictable, transparent, and worth the effort.
 
 ### Breaking changes
 
+#### LxToolbar
+
+LxToolbar styles have been moved to a separate file - `lx-toolbars.css`. Import this file in your project to ensure correct badge appearance and behavior.
+
+#### Inputs
+
+**Token removals**
+- `--input-icon-invalid-size` (use `--input-icon-size` instead)
+
 #### LxList, LxDataBlock
 
 **Token removals**

@@ -14,6 +14,10 @@ The following input components share these tokens as they are visually and funct
 - LxTextArea
 - LxMarkdownTextArea
 - LxDrawPad
+- LxQrScanner
+- LxCamera
+
+LxMarkdownTextArea, LxQrScanner, LxDrawPad and LxCamera are considered complex inputs - they have separate tokens but appear visually similar to other inputs and [complex displayers](./DisplayerTokens.md) (LxMap, LxFileViewer) by default. Both complex inputs and complex displayers use an [embedded toolbar](./ToolbarTokens.md).
 
 ## Layout
 
@@ -35,7 +39,6 @@ The following input components share these tokens as they are visually and funct
 | `--input-icon-indent-right`         | `--input-icon-wrapper-width`                                                |
 | `--input-icon-wrapper-height`       | 100%                                                                        |
 | `--input-icon-wrapper-width`        | `--input-button-width`                                                      |
-| `--input-icon-invalid-size`         | `--icon-size-s`                                                             |
 | `--input-icon-invalid-indent-left`  | `--space-0`                                                                 |
 | `--input-icon-invalid-indent-right` | `--input-icon-wrapper-width`                                                |
 | `--input-text-font-size`            | `--font-size`                                                               |
@@ -59,6 +62,18 @@ The following input components share these tokens as they are visually and funct
 | `--input-divider-height`            | 1.5rem                                                                      |
 | `--input-divider-border`            | `--border-width-1` solid `--color-chrome`                                   |
 
+### Complex Input
+
+| Variable name                           | Default value                                                               |
+|-----------------------------------------|-----------------------------------------------------------------------------|
+| `--input-complex-row-gap`               | `--space-0`                                                                 |
+| `--input-complex-border-radius`         | `--border-radius-0`                                                         |
+| `--input-complex-border-width`          | `--border-width-0` `--border-width-0` `--border-width-1` `--border-width-0` |
+| `--input-complex-border-style`          | `--input-border-style`                                                      |
+| `--input-complex-content-border-radius` | `--border-radius-0`                                                         |
+| `--input-complex-content-border-width`  | `--border-width-0`                                                          |
+| `--input-complex-content-border-style`  | solid                                                                       |
+
 ## Color
 
 | Variable name                              | Default value                                                     |
@@ -76,15 +91,31 @@ The following input components share these tokens as they are visually and funct
 | `--color-input-button-border`              | `--color-button-ghost-border`                                     |
 | `--color-input-button-border-focus`        | `--color-button-ghost-border-focus`                               |
 | `--color-input-button-border-hover`        | `--color-button-ghost-border-hover`                               |
+| `--color-input-button-border-active`       | `--color-button-ghost-border-active`                              |
 | `--color-input-button-border-disabled`     | `--color-button-ghost-border-disabled`                            |
 | `--color-input-button-background`          | `--color-button-ghost-background`                                 |
 | `--color-input-button-background-focus`    | `--color-button-ghost-background-focus`                           |
 | `--color-input-button-background-hover`    | `--color-button-ghost-background-hover`                           |
+| `--color-input-button-background-active`   | `--color-button-ghost-background-active`                          |
 | `--color-input-button-background-disabled` | `--color-button-ghost-background-disabled`                        |
 | `--color-input-button-icon`                | `--color-data`                                                    |
 | `--color-input-button-icon-focus`          | `--color-data`                                                    |
 | `--color-input-button-icon-hover`          | `--color-button-ghost-icon-hover`                                 |
+| `--color-input-button-icon-active`         | `--color-button-ghost-icon-active`                                |
 | `--color-input-button-icon-disabled`       | `--color-button-ghost-icon-disabled`                              |
+
+### Complex Input
+
+| Variable name                                       | Default value                       |
+|-----------------------------------------------------|-------------------------------------|
+| `--color-input-complex-background`                  | `--color-input-background`          |
+| `--color-input-complex-content-background`          | transparent                         |
+| `--color-input-complex-border`                      | `--color-input-border`              |
+| `--color-input-complex-border-disabled`             | `--color-input-border-disabled`     |
+| `--color-input-complex-content-border`              | transparent                         |
+| `--color-input-complex-content-border-disabled`     | transparent                         |
+| `--color-input-complex-background-disabled`         | `--color-input-background-disabled` |
+| `--color-input-complex-content-background-disabled` | transparent                         |
 
 <br/>
 Customized values for contrast mode:

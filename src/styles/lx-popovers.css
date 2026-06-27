@@ -55,7 +55,7 @@
   border-style: var(--popover-item-border-style);
   border-color: var(--color-popover-item-border);
   border-radius: var(--popover-item-border-radius-inner);
-  background-color: var(--color-popover-item-background);
+  background: var(--color-popover-item-background);
   color: var(--color-popover-item-text);
   outline: 2px solid transparent;
   outline-offset: var(--popover-item-outline-offset);
@@ -180,7 +180,7 @@
 .lx-dropdown-panel .lx-popover-item-selecting {
   --popover-item-grid-areas: '. content';
   --popover-item-grid-template-columns: auto 1fr;
-  --popover-item-gap: unset;
+  --popover-item-gap: inherit;
 }
 
 .lx-layout .lx-dropdown-panel .lx-button.lx-button-icon-only,
@@ -214,7 +214,7 @@
 .lx-layout .lx-dropdown-panel > .lx-button:hover,
 .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover,
 .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover {
-  background-color: var(--color-popover-item-background-hover);
+  background: var(--color-popover-item-background-hover);
   border-color: var(--color-popover-item-border-hover);
   color: var(--color-popover-item-text-hover);
 }
@@ -224,7 +224,7 @@
 .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:active,
 .lx-layout .lx-dropdown-panel > div > .lx-button:active,
 .lx-layout .lx-dropdown-panel > .lx-button:active {
-  background-color: var(--color-popover-item-background-active);
+  background: var(--color-popover-item-background-active);
   border-color: var(--color-popover-item-border-active);
   color: var(--color-popover-item-text-active);
 }
@@ -238,7 +238,7 @@
 .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:focus-visible,
 .lx-layout .popper .lx-dropdown-panel > div > .lx-button:focus-visible,
 .lx-layout .popper .lx-dropdown-panel > .lx-button:focus-visible {
-  background-color: var(--color-popover-item-background-focus);
+  background: var(--color-popover-item-background-focus);
   border-color: var(--color-popover-item-border-focus);
   color: var(--color-popover-item-text-focus);
   outline-color: var(--color-focus-background);
@@ -248,7 +248,7 @@
 .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
 .lx-layout .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
 .lx-layout .popper .lx-dropdown-panel > .lx-button.lx-disabled {
-  background-color: var(--color-popover-item-background-disabled);
+  background: var(--color-popover-item-background-disabled);
   color: var(--color-popover-item-text-disabled);
   border-color: var(--color-popover-item-border-disabled);
 }

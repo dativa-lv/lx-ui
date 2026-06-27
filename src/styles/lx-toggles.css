@@ -49,7 +49,7 @@
 .lx-drawpad-wrapper .lx-component-toolbar .lx-toggle-appearance,
 .lx-map .lx-component-toolbar .lx-toggle-appearance,
 .lx-file-viewer .lx-component-toolbar .lx-toggle-appearance,
-.lx-camera .lx-component-toolbar .lx-toggle-appearance,
+.lx-camera-wrapper .lx-component-toolbar .lx-toggle-appearance,
 .lx-qr-scanner-wrapper .lx-component-toolbar .lx-toggle-appearance {
   --color-toggle-background-off: var(--color-region-2);
   --color-toggle-background-hover-off: var(--color-region-2);
@@ -65,8 +65,8 @@
 .lx-region-component .lx-map .lx-component-toolbar .lx-toggle-appearance,
 .lx-region .lx-file-viewer .lx-component-toolbar .lx-toggle-appearance,
 .lx-region-component .lx-file-viewer .lx-component-toolbar .lx-toggle-appearance,
-.lx-region .lx-camera .lx-component-toolbar .lx-toggle-appearance,
-.lx-region-component .lx-camera .lx-component-toolbar .lx-toggle-appearance,
+.lx-region .lx-camera-wrapper .lx-component-toolbar .lx-toggle-appearance,
+.lx-region-component .lx-camera-wrapper .lx-component-toolbar .lx-toggle-appearance,
 .lx-region .lx-qr-scanner-wrapper .lx-component-toolbar .lx-toggle-appearance,
 .lx-region-component .lx-qr-scanner-wrapper .lx-component-toolbar .lx-toggle-appearance {
   --color-toggle-background-off: inherit;

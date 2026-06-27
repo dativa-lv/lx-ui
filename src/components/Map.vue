@@ -461,7 +461,7 @@ const wrapperRef = ref();
 </script>
 <template>
   <div
-    class="lx-map"
+    class="lx-map lx-complex-displayer"
     ref="wrapperRef"
     :style="grayscaleStyle"
     :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
@@ -469,6 +469,7 @@ const wrapperRef = ref();
     <LxLoaderView :loading="loadingLib" label="">
       <LxToolbar
         v-if="showToolbar"
+        class="lx-embedded-toolbar"
         :actionDefinitions="toolbarActions"
         defaultArea="right"
         :hasSearch="showSearch"
@@ -512,7 +513,7 @@ const wrapperRef = ref();
       <LMap
         v-model:zoom="zoom"
         v-model:center="center"
-        class="map-component"
+        class="map-component lx-complex-displayer-content"
         :options="{ zoomControl: false }"
         v-if="showMap && baseLayerDefinitions?.length > 0"
       >

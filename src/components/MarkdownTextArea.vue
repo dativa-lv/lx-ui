@@ -1031,184 +1031,186 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
   <div :id="props.id" class="lx-field-wrapper" ref="markdownWrapper" :data-id="id">
     <!--eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
     <div
-      v-if="!readOnly"
+      v-if="!readOnly && !loading"
       class="lx-markdown-text-area-wrapper"
       :data-disabled="isDisabled ? '' : null"
       :data-invalid="invalid ? '' : null"
       @click="focus($event)"
     >
-      <LxToolbar
-        v-if="editor"
-        ref="toolbarRef"
-        :disabled="isDisabled"
-        :actionDefinitions="toolbarActions"
-        defaultArea="left"
-        :sticky="stickyToolbar"
-        :wrapperRef="markdownWrapper"
-        @actionClick="toolbarActionClick"
-      >
-        <template #color>
-          <LxDropDownMenu ref="colorDropDown" :disabled="isSelectionEmpty || isDisabled">
-            <LxButton
-              :id="`${props.id}-action-color`"
-              icon="color"
-              kind="ghost"
-              variant="icon-only"
-              tabindex="-1"
-              :label="displayTexts.color"
-              :disabled="isSelectionEmpty || isDisabled"
-              :active="editor.isActive('textStyle')"
-            />
-            <template #panel>
-              <ul class="lx-color-list">
-                <li
-                  v-for="color in colorPickerColors"
-                  :key="color.name"
-                  :class="[
-                    'lx-color-item',
-                    color.name,
-                    { 'lx-selected': editor.isActive('textStyle', { color: color.var }) },
-                  ]"
-                  :title="displayTexts[color.name]"
-                  tabindex="0"
-                  @click="setColor(color)"
-                  @keydown.enter.prevent="setColor(color)"
-                >
-                  <div></div>
-                </li>
-              </ul>
-            </template>
-          </LxDropDownMenu>
-        </template>
-        <template #placeholder>
-          <LxDropDownMenu
-            ref="placeholderDropDown"
-            :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')"
-          >
-            <LxButton
-              :id="`${props.id}-action-placeholder`"
-              icon="tag"
-              kind="ghost"
-              variant="icon-only"
-              tabindex="-1"
-              :label="displayTexts.templatePicker"
+      <div class="lx-complex-input">
+        <LxToolbar
+          v-if="editor"
+          class="lx-embedded-toolbar"
+          ref="toolbarRef"
+          :disabled="isDisabled"
+          :actionDefinitions="toolbarActions"
+          defaultArea="left"
+          :sticky="stickyToolbar"
+          :wrapperRef="markdownWrapper"
+          @actionClick="toolbarActionClick"
+        >
+          <template #color>
+            <LxDropDownMenu ref="colorDropDown" :disabled="isSelectionEmpty || isDisabled">
+              <LxButton
+                :id="`${props.id}-action-color`"
+                icon="color"
+                kind="ghost"
+                variant="icon-only"
+                tabindex="-1"
+                :label="displayTexts.color"
+                :disabled="isSelectionEmpty || isDisabled"
+                :active="editor.isActive('textStyle')"
+              />
+              <template #panel>
+                <ul class="lx-color-list">
+                  <li
+                    v-for="color in colorPickerColors"
+                    :key="color.name"
+                    :class="[
+                      'lx-color-item',
+                      color.name,
+                      { 'lx-selected': editor.isActive('textStyle', { color: color.var }) },
+                    ]"
+                    :title="displayTexts[color.name]"
+                    tabindex="0"
+                    @click="setColor(color)"
+                    @keydown.enter.prevent="setColor(color)"
+                  >
+                    <div></div>
+                  </li>
+                </ul>
+              </template>
+            </LxDropDownMenu>
+          </template>
+          <template #placeholder>
+            <LxDropDownMenu
+              ref="placeholderDropDown"
               :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')"
-              :active="editor.isActive('backgroundColor')"
-            />
-            <template #panel>
-              <div
-                class="lx-markdown-tag-item"
-                v-for="item in dictionary"
-                :key="item.id"
-                :title="item?.description"
-                tabindex="0"
-                @click="postPlaceholder(item.value)"
-                @keydown.enter.prevent="postPlaceholder(item.value)"
-              >
-                <p class="lx-data">{{ item?.name }}</p>
-                <div>
-                  <p :class="`${chooseColor(item.displayType)}`" class="lx-data">
-                    {{ item?.value }}
-                  </p>
+            >
+              <LxButton
+                :id="`${props.id}-action-placeholder`"
+                icon="tag"
+                kind="ghost"
+                variant="icon-only"
+                tabindex="-1"
+                :label="displayTexts.templatePicker"
+                :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')"
+                :active="editor.isActive('backgroundColor')"
+              />
+              <template #panel>
+                <div
+                  class="lx-markdown-tag-item"
+                  v-for="item in dictionary"
+                  :key="item.id"
+                  :title="item?.description"
+                  tabindex="0"
+                  @click="postPlaceholder(item.value)"
+                  @keydown.enter.prevent="postPlaceholder(item.value)"
+                >
+                  <p class="lx-data">{{ item?.name }}</p>
+                  <div>
+                    <p :class="`${chooseColor(item.displayType)}`" class="lx-data">
+                      {{ item?.value }}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </template>
-          </LxDropDownMenu>
-        </template>
-      </LxToolbar>
-      <LxModal
-        ref="editUrlModal"
-        :label="displayTexts.modalLabel"
-        size="s"
-        kind="native"
-        :button-secondary-is-cancel="false"
-        :action-definitions="modalActionDefinitions"
-        @close="handleEditUrlModalClose"
-        @action-click="handleEditUrlActionClick"
-      >
-        <p class="lx-description">{{ displayTexts.modalDescription }}</p>
-        <LxTextInput
-          ref="inputLinkField"
-          v-model="inputLink"
-          :invalid="isNotLink"
-          :invalidation-message="displayTexts.invalidLinkMessage"
-        />
-      </LxModal>
-      <LxModal
-        ref="markdownImageModal"
-        id="imageModal"
-        :label="displayTexts.imageModalLabel"
-        size="s"
-        :button-secondary-is-cancel="false"
-        :action-definitions="modalActionDefinitions"
-        @close="clearModalVariables()"
-        @action-click="handleMarkdownImageActionClick"
-      >
-        <LxContentSwitcher :items="imageInputTypes" v-model="imageModalInputType" />
-        <LxForm :show-header="false" :show-footer="false">
-          <LxRow
-            :label="displayTexts.imageModalLinkDescription"
-            v-if="imageModalInputType === 'url'"
-          >
-            <LxTextInput
-              id="inputImageField"
-              ref="inputImageField"
-              v-model="inputImage"
-              :invalid="isNotImage"
-              :invalidation-message="displayTexts.invalidImageLink"
-            />
-          </LxRow>
+              </template>
+            </LxDropDownMenu>
+          </template>
+        </LxToolbar>
+        <LxModal
+          ref="editUrlModal"
+          :label="displayTexts.modalLabel"
+          size="s"
+          kind="native"
+          :button-secondary-is-cancel="false"
+          :action-definitions="modalActionDefinitions"
+          @close="handleEditUrlModalClose"
+          @action-click="handleEditUrlActionClick"
+        >
+          <p class="lx-description">{{ displayTexts.modalDescription }}</p>
+          <LxTextInput
+            ref="inputLinkField"
+            v-model="inputLink"
+            :invalid="isNotLink"
+            :invalidation-message="displayTexts.invalidLinkMessage"
+          />
+        </LxModal>
+        <LxModal
+          ref="markdownImageModal"
+          id="imageModal"
+          :label="displayTexts.imageModalLabel"
+          size="s"
+          :button-secondary-is-cancel="false"
+          :action-definitions="modalActionDefinitions"
+          @close="clearModalVariables()"
+          @action-click="handleMarkdownImageActionClick"
+        >
+          <LxContentSwitcher :items="imageInputTypes" v-model="imageModalInputType" />
+          <LxForm :show-header="false" :show-footer="false">
+            <LxRow
+              :label="displayTexts.imageModalLinkDescription"
+              v-if="imageModalInputType === 'url'"
+            >
+              <LxTextInput
+                id="inputImageField"
+                ref="inputImageField"
+                v-model="inputImage"
+                :invalid="isNotImage"
+                :invalidation-message="displayTexts.invalidImageLink"
+              />
+            </LxRow>
 
-          <LxRow
-            :label="displayTexts.imageModalFileDescription"
-            v-if="imageModalInputType === 'fileUploader'"
-          >
-            <LxFileUploader
-              ref="fileUploader"
-              v-model="uploadedImage"
-              data-type="content"
-              :disabled="isDisabled"
-              :draggable="true"
-              :allowedFileExtensions="allowedFileExtensions"
-              :maxFileSize="imageMaxSize"
-              @onError="onError"
-            />
-          </LxRow>
+            <LxRow
+              :label="displayTexts.imageModalFileDescription"
+              v-if="imageModalInputType === 'fileUploader'"
+            >
+              <LxFileUploader
+                ref="fileUploader"
+                v-model="uploadedImage"
+                data-type="content"
+                :disabled="isDisabled"
+                :draggable="true"
+                :allowedFileExtensions="allowedFileExtensions"
+                :maxFileSize="imageMaxSize"
+                @onError="onError"
+              />
+            </LxRow>
 
-          <LxRow :label="displayTexts.imageModalAltDescription">
-            <LxTextInput id="inputAltField" v-model="inputAlt" />
-          </LxRow>
+            <LxRow :label="displayTexts.imageModalAltDescription">
+              <LxTextInput id="inputAltField" v-model="inputAlt" />
+            </LxRow>
 
-          <LxRow :label="displayTexts.imageModalTitleDescription">
-            <LxTextInput id="inputTitleField" v-model="inputTitle" />
-          </LxRow>
-        </LxForm>
-      </LxModal>
+            <LxRow :label="displayTexts.imageModalTitleDescription">
+              <LxTextInput id="inputTitleField" v-model="inputTitle" />
+            </LxRow>
+          </LxForm>
+        </LxModal>
 
-      <div
-        class="lx-input-wrapper"
-        :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
-      >
-        <div class="pseudo-input" />
+        <div
+          class="lx-input-wrapper"
+          :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
+        >
+          <div class="pseudo-input" />
 
-        <EditorContent
-          v-if="EditorContent && editor"
-          class="lx-markdown-text-area lx-input-area"
-          :style="{ 'min-height': `${rows * 2.2}rem` }"
-          :editor="editor"
-          :title="tooltip"
-          role="textbox"
-          :aria-invalid="invalid"
-          :aria-labelledby="labelledBy"
-          :aria-errormessage="invalid ? `${props.id}-invalidation-message` : null"
-          :aria-describedby="invalid ? `${props.id}-invalidation-message` : null"
-        />
+          <EditorContent
+            v-if="EditorContent && editor"
+            class="lx-markdown-text-area lx-input-area"
+            :style="{ 'min-height': `${rows * 2.2}rem` }"
+            :editor="editor"
+            :title="tooltip"
+            role="textbox"
+            :aria-invalid="invalid"
+            :aria-labelledby="labelledBy"
+            :aria-errormessage="invalid ? `${props.id}-invalidation-message` : null"
+            :aria-describedby="invalid ? `${props.id}-invalidation-message` : null"
+          />
 
-        <div v-if="invalid" class="lx-invalidation-icon-wrapper">
-          <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+          <div v-if="invalid" class="lx-invalidation-icon-wrapper">
+            <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+          </div>
         </div>
       </div>
-
       <div
         v-if="editor && maxlength"
         class="lx-text-length"

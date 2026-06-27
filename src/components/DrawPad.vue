@@ -433,8 +433,9 @@ const wrapperRef = ref();
 
 <template>
   <div ref="wrapperRef" class="lx-field-wrapper" :data-id="id">
-    <div ref="container" class="lx-drawpad-wrapper">
+    <div ref="container" class="lx-drawpad-wrapper lx-complex-input">
       <LxToolbar
+        class="lx-embedded-toolbar"
         :disabled="props.disabled"
         :actionDefinitions="toolbarActions"
         :sticky="stickyToolbar"

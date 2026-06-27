@@ -62,7 +62,7 @@
 
 .lx-region .lx-region-component .lx-badge,
 .lx-region-component .lx-region-component .lx-badge {
-  --color-badge-background: unset;
+  --color-badge-background: inherit;
 }
 
 .lx-badge .lx-badge-text.lx-badge-type-number {

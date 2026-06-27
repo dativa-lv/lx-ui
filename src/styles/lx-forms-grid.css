@@ -721,17 +721,17 @@ svg .lx-shade {
 
 .lx-form-grid .lx-main .lx-row > div > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-list-wrapper .lx-load-more-button > .lx-button,
-.lx-form-grid .lx-main .lx-row > div > .lx-camera > .lx-camera-buttons > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-camera-wrapper .lx-camera-buttons > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-master-detail > .lx-master > .lx-button,
-.lx-form-grid .lx-main .lx-row > div > .lx-camera > .lx-camera-error .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-camera-wrapper .lx-camera-error .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-appendable-list > div > .lx-button,
 .lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-button,
 .lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-list-wrapper .lx-load-more-button > .lx-button,
-.lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-camera > .lx-camera-buttons > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-camera-wrapper .lx-camera-buttons > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-master-detail > .lx-master > .lx-button,
-.lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-camera > .lx-camera-error .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-camera-wrapper .lx-camera-error .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-appendable-list > div > .lx-button,
 .lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-stack > .lx-button,
 .lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-stack > .lx-button {
@@ -943,7 +943,7 @@ svg .lx-shade {
 }
 
 .lx-appendable-list-item {
-  background-color: var(--color-region);
+  background: var(--color-data-block-background);
 }
 
 .lx-appendable-list-item:has(.appendable-list-remove-button-wrapper) {
@@ -1001,7 +1001,7 @@ svg .lx-shade {
 
 .lx-region .lx-appendable-list > .lx-appendable-list-item,
 .lx-region-component .lx-appendable-list > .lx-appendable-list-item {
-  background-color: var(--color-background);
+  background-color: var(--color-region-2);
 }
 
 .lx-appendable-list-simple > .lx-appendable-list-item .lx-row {

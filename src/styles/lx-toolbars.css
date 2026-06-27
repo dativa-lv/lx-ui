@@ -1,0 +1,1688 @@
+.lx-component-toolbar {
+  display: flex;
+  flex-direction: column;
+  border-width: var(--toolbar-border-width);
+  border-style: var(--toolbar-border-style);
+  border-color: var(--color-toolbar-border);
+  row-gap: var(--toolbar-row-gap);
+}
+
+.lx-embedded-toolbar {
+  border-radius: var(--toolbar-embedded-border-radius);
+  background: var(--color-toolbar-embedded-background);
+  border-width: var(--toolbar-embedded-border-width);
+  border-style: var(--toolbar-embedded-border-style);
+  border-color: var(--color-toolbar-embedded-border);
+  margin-bottom: var(--input-complex-row-gap);
+  padding: var(--toolbar-embedded-padding);
+  --toolbar-gap-top: 0rem;
+}
+
+.lx .lx-complex-displayer .lx-embedded-toolbar {
+  margin-bottom: var(--displayer-complex-row-gap);
+}
+
+.lx .lx-component-toolbar.lx-embedded-toolbar.lx-disabled {
+  --color-toolbar-embedded-background: var(--color-input-background-disabled);
+}
+
+.lx-component-toolbar.lx-toolbar-empty,
+.lx-component-toolbar .lx-toolbar-area-empty,
+.lx-component-toolbar .first-row > :empty {
+  display: none;
+}
+
+.lx-component-toolbar .first-row,
+.lx-component-toolbar .first-row-content,
+.lx-component-toolbar .second-row,
+.lx-component-toolbar .left-area,
+.lx-component-toolbar .right-area,
+.lx-component-toolbar .default-area {
+  display: flex;
+  align-items: center;
+}
+
+.lx-component-toolbar .second-row {
+  border-radius: var(--toolbar-border-radius);
+  overflow: hidden;
+}
+
+.lx-component-toolbar .second-row,
+.lx-component-toolbar .second-row .toolbar-search .lx-field-wrapper,
+.lx-component-toolbar .left-area:has(.lx-toolbar-search),
+.lx-component-toolbar .lx-toolbar-search,
+.lx-component-toolbar .lx-toolbar-search .lx-field-wrapper {
+  width: 100%;
+}
+
+.lx-component-toolbar .first-row-content {
+  flex: 1;
+  justify-content: space-between;
+}
+
+.lx-component-toolbar .first-row-content,
+.lx-component-toolbar .lx-toolbar-search-select-group {
+  background: var(--color-toolbar-background);
+  border-radius: var(--toolbar-border-radius);
+  padding: var(--toolbar-padding);
+}
+
+.lx-component-toolbar.lx-selection-toolbar .first-row-content,
+.lx-component-toolbar.lx-selection-toolbar .lx-toolbar-search-select-group {
+  background: transparent;
+}
+
+.lx-component-toolbar .first-row-content.is-empty {
+  padding: var(--space-0);
+}
+
+.lx-embedded-toolbar .first-row-content,
+.lx-embedded-toolbar .lx-toolbar-search-select-group {
+  background: var(--color-toolbar-embedded-background);
+  border-radius: var(--toolbar-embedded-border-radius);
+}
+
+.lx-component-toolbar .left-area .lx-button[id*="select-all"] {
+  --toolbar-button-ghost-grid-areas: "icon content";
+  --toolbar-button-ghost-grid-template-columns: auto 1fr;
+  --toolbar-embedded-button-ghost-grid-areas: "icon content";
+  --toolbar-embedded-button-ghost-grid-template-columns: auto 1fr;
+}
+
+.lx-component-toolbar.lx-toolbar-default-area-left:not(.lx-selection-toolbar) .right-area,
+.lx-component-toolbar.lx-toolbar-default-area-right:not(.lx-selection-toolbar, .lx-toolbar-has-default-area) .right-area,
+.lx-component-toolbar.lx-toolbar-default-area-right:not(.lx-selection-toolbar) .default-area {
+  margin-left: auto;
+}
+
+.lx-selection-toolbar.lx-component-toolbar .first-row {
+  background-color: var(--color-interactive-background);
+  color: var(--color-interactive-foreground);
+  border-radius: var(--toolbar-border-radius);
+  justify-content: space-between;
+}
+
+.lx-selection-toolbar.lx-component-toolbar.lx-disabled .left-area > .lx-group > p {
+  color: var(--color-toolbar-selection-button-text-disabled);
+}
+
+.lx-component-toolbar.lx-toolbar-no-borders {
+  border-bottom: var(--border-width-0);
+}
+
+.lx-component-toolbar .lx-group {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.lx-component-toolbar .lx-group::before {
+  content: '';
+  height: var(--toolbar-divider-height);
+  position: absolute;
+  left: calc(var(--toolbar-button-group-gap) / -2);
+}
+
+.lx-embedded-toolbar .lx-group::before {
+  height: var(--toolbar-embedded-divider-height);
+  left: calc(var(--toolbar-embedded-button-group-gap) / -2);
+}
+
+/* Divider for groups after first group in same area */
+.lx-component-toolbar:not(.lx-toolbar-no-borders, .lx-selection-toolbar)
+  :is(.left-area, .default-area, .right-area)
+  > .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden)
+  ~ .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden, .lx-toolbar-promoted-action + *)::before,
+
+ /* Divider for first eligible group in default-area */
+.lx-component-toolbar:not(.lx-toolbar-no-borders, .lx-selection-toolbar, .lx-toolbar-default-area-right)
+  .first-row:has(
+    .left-area > .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden, .lx-toolbar-promoted-action + *)
+  )
+  .default-area > .lx-group:first-child::before,
+  
+/* Divider for first eligible group in right-area */
+.lx-component-toolbar:not(.lx-toolbar-no-borders, .lx-selection-toolbar, .lx-toolbar-default-area-left)
+  .first-row:has(
+    :is(.default-area)
+      > .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden, .lx-toolbar-promoted-action + *)
+  )
+  .right-area > .lx-group:not(:empty, .lx-toolbar-promoted-action, .lx-toolbar-overflow-hidden, .lx-toolbar-promoted-action + *):first-child::before,
+
+  /* Divider inside search-select group when it contains 2 groups/buttons */
+.lx-component-toolbar:not(.lx-toolbar-no-borders, .lx-selection-toolbar)
+  .lx-toolbar-search-select-group
+    > .lx-group:first-of-type
+    ~ .lx-group::before {
+  border-right: var(--toolbar-divider-border);
+}
+
+/* Divider for combined toolbar when default area is right */
+.lx-component-toolbar.lx-toolbar-combined.lx-toolbar-default-area-right:not(
+    .lx-toolbar-no-borders,
+    .lx-selection-toolbar
+  )
+  .first-row:has(
+    .left-area
+      > .lx-group:not(
+        :empty,
+        .lx-toolbar-promoted-action,
+        .lx-toolbar-overflow-hidden,
+        .lx-toolbar-promoted-action + *
+      )
+  ):not(
+    :has(
+      .right-area:empty,
+      .right-area > .lx-group.lx-toolbar-promoted-action:first-child
+    )
+  )
+  .lx-toolbar-combined-divider::before,
+  
+/* Divider for combined toolbar when default area is left */
+.lx-component-toolbar.lx-toolbar-combined.lx-toolbar-default-area-left:not(
+    .lx-toolbar-no-borders,
+    .lx-selection-toolbar
+  )
+  .first-row:has(
+    .right-area
+      > .lx-group:not(
+        :empty,
+        .lx-toolbar-promoted-action,
+        .lx-toolbar-overflow-hidden,
+        .lx-toolbar-promoted-action + *
+      )
+  )
+  .lx-toolbar-combined-divider::before {
+  content: '';
+  height: var(--toolbar-divider-height);
+  position: absolute;
+  left: calc(var(--lx-toolbar-free-gap) / -2 - var(--border-width-1) / 2);
+  border-right: var(--toolbar-divider-border);
+}
+
+.lx-list-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-toolbar-combined-divider .lx-group::before {
+  display: none;
+}
+
+.lx-component-toolbar.lx-toolbar-combined .default-area,
+.lx-component-toolbar.lx-toolbar-combined .right-area {
+  position: relative;
+}
+
+.lx-component-toolbar .first-row,
+.lx-component-toolbar .left-area,
+.lx-component-toolbar .right-area,
+.lx-component-toolbar .default-area {
+  column-gap: var(--toolbar-button-group-gap);
+}
+
+.lx-embedded-toolbar .first-row,
+.lx-embedded-toolbar .left-area,
+.lx-embedded-toolbar .right-area,
+.lx-embedded-toolbar .default-area {
+  column-gap: var(--toolbar-embedded-button-group-gap);
+}
+
+.lx-component-toolbar .lx-group {
+  column-gap: var(--toolbar-button-gap);
+}
+
+.lx-embedded-toolbar .lx-group {
+  column-gap: var(--toolbar-embedded-button-gap);
+}
+
+.lx-component-toolbar .lx-toolbar-search {
+  min-width: 10rem;
+}
+
+.lx-component-toolbar .second-row .toolbar-search {
+  display: flex;
+  width: 100%;
+}
+
+.lx-component-toolbar .lx-toggle-wrapper {
+  margin-left: var(--space-0500);
+  margin-right: var(--space-0500);
+}
+
+.lx-component-toolbar .lx-button:not([id$="-select-all"]) {
+  flex-shrink: 0;
+}
+
+.lx-component-toolbar .lx-toolbar-action-slot {
+  display: flex;
+}
+
+.lx-component-toolbar > .first-row > .left-area > .lx-group:empty,
+.lx-component-toolbar > .first-row > .right-area > .lx-group:empty {
+  display: none;
+}
+
+/*** Toolbar button styles ***/
+
+/* Primary toolbar button styles */
+
+.lx-component-toolbar .first-row .lx-button {
+  padding: var(--toolbar-button-primary-padding);
+  margin: var(--space-0);
+  text-decoration: var(--toolbar-button-primary-text-decoration);
+  height: var(--toolbar-button-primary-height);
+  min-width: var(--toolbar-button-primary-min-width);
+  width: var(--toolbar-button-primary-width);
+  font-size: var(--toolbar-button-primary-text-font-size);
+  font-weight: var(--toolbar-button-primary-text-font-weight);
+  border: var(--toolbar-button-primary-border);
+  border-radius: var(--toolbar-button-primary-border-radius);
+  background: var(--color-toolbar-button-primary-background);
+  color: var(--color-toolbar-button-primary-text);
+  outline-offset: var(--toolbar-button-primary-outline-offset);
+}
+
+.lx-component-toolbar .first-row .lx-button > .lx-button-content-wrapper {
+  grid-template-areas: var(--toolbar-button-primary-grid-areas);
+  grid-template-columns: var(--toolbar-button-primary-grid-template-columns);
+  grid-template-rows: var(--toolbar-button-primary-grid-template-rows);
+  gap: var(--toolbar-button-primary-gap);
+}
+
+.lx-component-toolbar .first-row .lx-button .lx-button-content {
+  text-align: var(--toolbar-button-primary-text-alignment);
+}
+
+.lx-component-toolbar .first-row .lx-button:hover {
+  background: var(--color-toolbar-button-primary-background-hover);
+  border-color: var(--color-toolbar-button-primary-border-hover);
+  color: var(--color-toolbar-button-primary-text-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button:focus {
+  background: var(--color-toolbar-button-primary-background-focus);
+  border-color: var(--color-toolbar-button-primary-border-focus);
+  color: var(--color-toolbar-button-primary-text-focus);
+}
+
+.lx-component-toolbar .lx-button:focus:hover {
+  background: var(--color-toolbar-button-primary-background-hover);
+  border-color: var(--color-toolbar-button-primary-border-hover);
+  color: var(--color-toolbar-button-primary-text-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button:active {
+  background: var(--color-toolbar-button-primary-background-active);
+  border-color: var(--color-toolbar-button-primary-border-active);
+  color: var(--color-toolbar-button-primary-text-active);
+}
+
+.lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled,
+.lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled {
+  background: var(--color-toolbar-button-primary-background-disabled);
+  color: var(--color-toolbar-button-primary-text-disabled);
+  border-color: var(--color-toolbar-button-primary-border-disabled);
+}
+
+/* Primary embedded toolbar button styles */
+
+.lx-embedded-toolbar .first-row .lx-button {
+  padding: var(--toolbar-embedded-button-primary-padding);
+  text-decoration: var(--toolbar-embedded-button-primary-text-decoration);
+  height: var(--toolbar-embedded-button-primary-height);
+  min-width: var(--toolbar-embedded-button-primary-min-width);
+  width: var(--toolbar-embedded-button-primary-width);
+  font-size: var(--toolbar-embedded-button-primary-text-font-size);
+  font-weight: var(--toolbar-embedded-button-primary-text-font-weight);
+  border: var(--toolbar-embedded-button-primary-border);
+  border-radius: var(--toolbar-embedded-button-primary-border-radius);
+  background: var(--color-toolbar-embedded-button-primary-background);
+  color: var(--color-toolbar-embedded-button-primary-text);
+  outline-offset: var(--toolbar-embedded-button-primary-outline-offset);
+}
+
+.lx-embedded-toolbar .first-row .lx-button > .lx-button-content-wrapper {
+  grid-template-areas: var(--toolbar-embedded-button-primary-grid-areas);
+  grid-template-columns: var(--toolbar-embedded-button-primary-grid-template-columns);
+  grid-template-rows: var(--toolbar-embedded-button-primary-grid-template-rows);
+  gap: var(--toolbar-embedded-button-primary-gap);
+}
+
+.lx-embedded-toolbar .first-row .lx-button .lx-button-content {
+  text-align: var(--toolbar-embedded-button-primary-text-alignment);
+}
+
+.lx-embedded-toolbar .first-row .lx-button:hover {
+  background: var(--color-toolbar-embedded-button-primary-background-hover);
+  border-color: var(--color-toolbar-embedded-button-primary-border-hover);
+  color: var(--color-toolbar-embedded-button-primary-text-hover);
+}
+
+.lx-embedded-toolbar.first-row .lx-button:focus {
+  background: var(--color-toolbar-embedded-button-primary-background-focus);
+  border-color: var(--color-toolbar-embedded-button-primary-border-focus);
+  color: var(--color-toolbar-embedded-button-primary-text-focus);
+}
+
+.lx-embedded-toolbar .lx-button:focus:hover {
+  background: var(--color-toolbar-embedded-button-primary-background-hover);
+  border-color: var(--color-toolbar-embedded-button-primary-border-hover);
+  color: var(--color-toolbar-embedded-button-primary-text-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button:active {
+  background: var(--color-toolbar-embedded-button-primary-background-active);
+  border-color: var(--color-toolbar-embedded-button-primary-border-active);
+  color: var(--color-toolbar-embedded-button-primary-text-active);
+}
+
+.lx-embedded-toolbar.lx-disabled .lx-group .lx-button.lx-disabled,
+.lx-embedded-toolbar.lx-disabled .lx-group .lx-button.lx-disabled {
+  background: var(--color-toolbar-embedded-button-primary-background-disabled);
+  color: var(--color-toolbar-embedded-button-primary-text-disabled);
+  border-color: var(--color-toolbar-embedded-button-primary-border-disabled);
+}
+
+/* Secondary toolbar button styles */
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary {
+  padding: var(--toolbar-button-secondary-padding);
+  text-decoration: var(--toolbar-button-secondary-text-decoration);
+  height: var(--toolbar-button-secondary-height);
+  min-width: var(--toolbar-button-secondary-min-width);
+  width: var(--toolbar-button-secondary-width);
+  font-size: var(--toolbar-button-secondary-text-font-size);
+  font-weight: var(--toolbar-button-secondary-text-font-weight);
+  border: var(--toolbar-button-secondary-border);
+  border-radius: var(--toolbar-button-secondary-border-radius);
+  background: var(--color-toolbar-button-secondary-background);
+  color: var(--color-toolbar-button-secondary-text);
+  outline-offset: var(--toolbar-button-secondary-outline-offset);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary > .lx-button-content-wrapper {
+  grid-template-areas: var(--toolbar-button-secondary-grid-areas);
+  grid-template-columns: var(--toolbar-button-secondary-grid-template-columns);
+  grid-template-rows: var(--toolbar-button-secondary-grid-template-rows);
+  gap: var(--toolbar-button-secondary-gap);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary .lx-button-content {
+  text-align: var(--toolbar-button-secondary-text-alignment);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary:hover {
+  background: var(--color-toolbar-button-secondary-background-hover);
+  border-color: var(--color-toolbar-button-secondary-border-hover);
+  color: var(--color-toolbar-button-secondary-text-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary:focus {
+  background: var(--color-toolbar-button-secondary-background-focus);
+  border-color: var(--color-toolbar-button-secondary-border-focus);
+  color: var(--color-toolbar-button-secondary-text-focus);
+}
+
+.lx-component-toolbar .first-row .lx-button-secondary:focus:hover {
+  background: var(--color-toolbar-button-secondary-background-hover);
+  border-color: var(--color-toolbar-button-secondary-border-hover);
+  color: var(--color-toolbar-button-secondary-text-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary:active {
+  background: var(--color-toolbar-button-secondary-background-active);
+  border-color: var(--color-toolbar-button-secondary-border-active);
+  color: var(--color-toolbar-button-secondary-text-active);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary.lx-disabled {
+  background: var(--color-toolbar-button-secondary-background-disabled);
+  color: var(--color-toolbar-button-secondary-text-disabled);
+  border-color: var(--color-toolbar-button-secondary-border-disabled);
+}
+
+/* Secondary embedded toolbar button styles */
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary {
+  padding: var(--toolbar-embedded-button-secondary-padding);
+  text-decoration: var(--toolbar-embedded-button-secondary-text-decoration);
+  height: var(--toolbar-embedded-button-secondary-height);
+  min-width: var(--toolbar-embedded-button-secondary-min-width);
+  width: var(--toolbar-embedded-button-secondary-width);
+  font-size: var(--toolbar-embedded-button-secondary-text-font-size);
+  font-weight: var(--toolbar-embedded-button-secondary-text-font-weight);
+  border: var(--toolbar-embedded-button-secondary-border);
+  border-radius: var(--toolbar-embedded-button-secondary-border-radius);
+  background: var(--color-toolbar-embedded-button-secondary-background);
+  color: var(--color-toolbar-embedded-button-secondary-text);
+  outline-offset: var(--toolbar-embedded-button-secondary-outline-offset);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary > .lx-button-content-wrapper {
+  grid-template-areas: var(--toolbar-embedded-button-secondary-grid-areas);
+  grid-template-columns: var(--toolbar-embedded-button-secondary-grid-template-columns);
+  grid-template-rows: var(--toolbar-embedded-button-secondary-grid-template-rows);
+  gap: var(--toolbar-embedded-button-secondary-gap);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary .lx-button-content {
+  text-align: var(--toolbar-embedded-button-secondary-text-alignment);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary:hover {
+  background: var(--color-toolbar-embedded-button-secondary-background-hover);
+  border-color: var(--color-toolbar-embedded-button-secondary-border-hover);
+  color: var(--color-toolbar-embedded-button-secondary-text-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary:focus {
+  background: var(--color-toolbar-embedded-button-secondary-background-focus);
+  border-color: var(--color-toolbar-embedded-button-secondary-border-focus);
+  color: var(--color-toolbar-embedded-button-secondary-text-focus);
+}
+
+.lx-embedded-toolbar .first-row .lx-button-secondary:focus:hover {
+  background: var(--color-toolbar-embedded-button-secondary-background-hover);
+  border-color: var(--color-toolbar-embedded-button-secondary-border-hover);
+  color: var(--color-toolbar-embedded-button-secondary-text-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary:active {
+  background: var(--color-toolbar-embedded-button-secondary-background-active);
+  border-color: var(--color-toolbar-embedded-button-secondary-border-active);
+  color: var(--color-toolbar-embedded-button-secondary-text-active);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary.lx-disabled {
+  background: var(--color-toolbar-embedded-button-secondary-background-disabled);
+  color: var(--color-toolbar-embedded-button-secondary-text-disabled);
+  border-color: var(--color-toolbar-embedded-button-secondary-border-disabled);
+}
+
+/* Tertiary toolbar button styles */
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary {
+  padding: var(--toolbar-button-tertiary-padding);
+  text-decoration: var(--toolbar-button-tertiary-text-decoration);
+  height: var(--toolbar-button-tertiary-height);
+  min-width: var(--toolbar-button-tertiary-min-width);
+  width: var(--toolbar-button-tertiary-width);
+  font-size: var(--toolbar-button-tertiary-text-font-size);
+  font-weight: var(--toolbar-button-tertiary-text-font-weight);
+  border: var(--toolbar-button-tertiary-border);
+  border-radius: var(--toolbar-button-tertiary-border-radius);
+  background: var(--color-toolbar-button-tertiary-background);
+  color: var(--color-toolbar-button-tertiary-text);
+  outline-offset: var(--toolbar-button-tertiary-outline-offset);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary > .lx-button-content-wrapper {
+  grid-template-areas: var(--toolbar-button-tertiary-grid-areas);
+  grid-template-columns: var(--toolbar-button-tertiary-grid-template-columns);
+  grid-template-rows: var(--toolbar-button-tertiary-grid-template-rows);
+  gap: var(--toolbar-button-tertiary-gap);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary .lx-button-content {
+  text-align: var(--toolbar-button-tertiary-text-alignment);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary:hover {
+  background: var(--color-toolbar-button-tertiary-background-hover);
+  border-color: var(--color-toolbar-button-tertiary-border-hover);
+  color: var(--color-toolbar-button-tertiary-text-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary:focus {
+  background: var(--color-toolbar-button-tertiary-background-focus);
+  border-color: var(--color-toolbar-button-tertiary-border-focus);
+  color: var(--color-toolbar-button-tertiary-text-focus);
+}
+
+.lx-component-toolbar .lx-button-tertiary:focus:hover {
+  background: var(--color-toolbar-button-tertiary-background-hover);
+  border-color: var(--color-toolbar-button-tertiary-border-hover);
+  color: var(--color-toolbar-button-tertiary-text-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary:active {
+  background: var(--color-toolbar-button-tertiary-background-active);
+  border-color: var(--color-toolbar-button-tertiary-border-active);
+  color: var(--color-toolbar-button-tertiary-text-active);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary.lx-disabled {
+  background: var(--color-toolbar-button-tertiary-background-disabled);
+  color: var(--color-toolbar-button-tertiary-text-disabled);
+  border-color: var(--color-toolbar-button-tertiary-border-disabled);
+}
+
+/* Tertiary embedded toolbar button styles */
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary {
+  padding: var(--toolbar-embedded-button-tertiary-padding);
+  text-decoration: var(--toolbar-embedded-button-tertiary-text-decoration);
+  height: var(--toolbar-embedded-button-tertiary-height);
+  min-width: var(--toolbar-embedded-button-tertiary-min-width);
+  width: var(--toolbar-embedded-button-tertiary-width);
+  font-size: var(--toolbar-embedded-button-tertiary-text-font-size);
+  font-weight: var(--toolbar-embedded-button-tertiary-text-font-weight);
+  border: var(--toolbar-embedded-button-tertiary-border);
+  border-radius: var(--toolbar-embedded-button-tertiary-border-radius);
+  background: var(--color-toolbar-embedded-button-tertiary-background);
+  color: var(--color-toolbar-embedded-button-tertiary-text);
+  outline-offset: var(--toolbar-embedded-button-tertiary-outline-offset);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary > .lx-button-content-wrapper {
+  grid-template-areas: var(--toolbar-embedded-button-tertiary-grid-areas);
+  grid-template-columns: var(--toolbar-embedded-button-tertiary-grid-template-columns);
+  grid-template-rows: var(--toolbar-embedded-button-tertiary-grid-template-rows);
+  gap: var(--toolbar-embedded-button-tertiary-gap);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary .lx-button-content {
+  text-align: var(--toolbar-embedded-button-tertiary-text-alignment);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary:hover {
+  background: var(--color-toolbar-embedded-button-tertiary-background-hover);
+  border-color: var(--color-toolbar-embedded-button-tertiary-border-hover);
+  color: var(--color-toolbar-embedded-button-tertiary-text-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary:focus {
+  background: var(--color-toolbar-embedded-button-tertiary-background-focus);
+  border-color: var(--color-toolbar-embedded-button-tertiary-border-focus);
+  color: var(--color-toolbar-embedded-button-tertiary-text-focus);
+}
+
+.lx-embedded-toolbar .first-row .lx-button-tertiary:focus:hover {
+  background: var(--color-toolbar-embedded-button-tertiary-background-hover);
+  border-color: var(--color-toolbar-embedded-button-tertiary-border-hover);
+  color: var(--color-toolbar-embedded-button-tertiary-text-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary:active {
+  background: var(--color-toolbar-embedded-button-tertiary-background-active);
+  border-color: var(--color-toolbar-embedded-button-tertiary-border-active);
+  color: var(--color-toolbar-embedded-button-tertiary-text-active);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary.lx-disabled {
+  background: var(--color-toolbar-embedded-button-tertiary-background-disabled);
+  color: var(--color-toolbar-embedded-button-tertiary-text-disabled);
+  border-color: var(--color-toolbar-embedded-button-tertiary-border-disabled);
+}
+
+/* Ghost toolbar button styles */
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost {
+  padding: var(--toolbar-button-ghost-padding);
+  text-decoration: var(--toolbar-button-ghost-text-decoration);
+  height: var(--toolbar-button-ghost-height);
+  min-width: var(--toolbar-button-ghost-min-width);
+  width: var(--toolbar-button-ghost-width);
+  font-size: var(--toolbar-button-ghost-text-font-size);
+  font-weight: var(--toolbar-button-ghost-text-font-weight);
+  border: var(--toolbar-button-ghost-border);
+  border-radius: var(--toolbar-button-ghost-border-radius);
+  background: var(--color-toolbar-button-ghost-background);
+  color: var(--color-toolbar-button-ghost-text);
+  outline-offset: var(--toolbar-button-ghost-outline-offset);
+}
+
+.lx-component-toolbar .lx-group > .lx-button.lx-button-ghost > .lx-button-content-wrapper,
+.lx-component-toolbar .lx-dropdown-toggler > .lx-button.lx-button-ghost > .lx-button-content-wrapper {
+  grid-template-areas: var(--toolbar-button-ghost-grid-areas);
+  grid-template-columns: var(--toolbar-button-ghost-grid-template-columns);
+  grid-template-rows: var(--toolbar-button-ghost-grid-template-rows);
+  gap: var(--toolbar-button-ghost-gap);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost .lx-button-content {
+  text-align: var(--toolbar-button-ghost-text-alignment);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:hover {
+  background: var(--color-toolbar-button-ghost-background-hover);
+  border-color: var(--color-toolbar-button-ghost-border-hover);
+  color: var(--color-toolbar-button-ghost-text-hover);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:focus {
+  background: var(--color-toolbar-button-ghost-background-focus);
+  border-color: var(--color-toolbar-button-ghost-border-focus);
+  color: var(--color-toolbar-button-ghost-text-focus);
+}
+
+.lx-component-toolbar .lx-button.lx-button-ghost:focus:hover {
+  background: var(--color-toolbar-button-ghost-background-hover);
+  color: var(--color-toolbar-button-ghost-text-hover);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:active {
+  background: var(--color-toolbar-button-ghost-background-active);
+  border-color: var(--color-toolbar-button-ghost-border-active);
+  color: var(--color-toolbar-button-ghost-text-active);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-disabled {
+  background: var(--color-toolbar-button-ghost-background-disabled);
+  color: var(--color-toolbar-button-ghost-text-disabled);
+  border-color: var(--color-toolbar-button-ghost-border-disabled);
+}
+
+/* Ghost embedded toolbar button styles */
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost {
+  padding: var(--toolbar-embedded-button-ghost-padding);
+  text-decoration: var(--toolbar-embedded-button-ghost-text-decoration);
+  height: var(--toolbar-embedded-button-ghost-height);
+  min-width: var(--toolbar-embedded-button-ghost-min-width);
+  width: var(--toolbar-embedded-button-ghost-width);
+  font-size: var(--toolbar-embedded-button-ghost-text-font-size);
+  font-weight: var(--toolbar-embedded-button-ghost-text-font-weight);
+  border: var(--toolbar-embedded-button-ghost-border);
+  border-radius: var(--toolbar-embedded-button-ghost-border-radius);
+  background: var(--color-toolbar-embedded-button-ghost-background);
+  color: var(--color-toolbar-embedded-button-ghost-text);
+  outline-offset: var(--toolbar-embedded-button-ghost-outline-offset);
+}
+
+.lx-embedded-toolbar .lx-group > .lx-button.lx-button-ghost > .lx-button-content-wrapper,
+.lx-embedded-toolbar .lx-dropdown-toggler > .lx-button.lx-button-ghost > .lx-button-content-wrapper {
+  grid-template-areas: var(--toolbar-embedded-button-ghost-grid-areas);
+  grid-template-columns: var(--toolbar-embedded-button-ghost-grid-template-columns);
+  grid-template-rows: var(--toolbar-embedded-button-ghost-grid-template-rows);
+  gap: var(--toolbar-embedded-button-ghost-gap);
+}
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost .lx-button-content {
+  text-align: var(--toolbar-embedded-button-ghost-text-alignment);
+}
+
+.lx-embedded-toolbar .lx-toolbar-search-button-wrapper.is-expanded .lx-button:hover,
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost:hover {
+  background: var(--color-toolbar-embedded-button-ghost-background-hover);
+  border-color: var(--color-toolbar-embedded-button-ghost-border-hover);
+  color: var(--color-toolbar-embedded-button-ghost-text-hover);
+}
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost:focus {
+  background: var(--color-toolbar-embedded-button-ghost-background-focus);
+  border-color: var(--color-toolbar-embedded-button-ghost-border-focus);
+  color: var(--color-toolbar-embedded-button-ghost-text-focus);
+}
+
+.lx-embedded-toolbar .lx-button.lx-button-ghost:focus:hover {
+  background: var(--color-toolbar-embedded-button-ghost-background-hover);
+  color: var(--color-toolbar-embedded-button-ghost-text-hover);
+}
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost:active {
+  background: var(--color-toolbar-embedded-button-ghost-background-active);
+  border-color: var(--color-toolbar-embedded-button-ghost-border-active);
+  color: var(--color-toolbar-embedded-button-ghost-text-active);
+}
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost.lx-disabled {
+  background: var(--color-toolbar-embedded-button-ghost-background-disabled);
+  color: var(--color-toolbar-embedded-button-ghost-text-disabled);
+  border-color: var(--color-toolbar-embedded-button-ghost-border-disabled);
+}
+
+/***/
+
+.lx-component-toolbar .lx-button.lx-button-ghost.lx-active {
+  background: var(--color-selected-background);
+  color: var(--color-selected);
+  border-color: var(--color-selected-border);
+}
+
+.lx-component-toolbar .second-row,
+.lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
+  --color-toolbar-button-ghost-icon: var(--color-data);
+  --color-toolbar-button-ghost-icon-focus: var(--color-data);
+  --color-toolbar-button-ghost-background: var(--color-input-background);
+  --color-toolbar-button-ghost-background-focus: var(--color-input-background);
+  --color-toolbar-embedded-button-ghost-icon: var(--color-data);
+  --color-toolbar-embedded-button-ghost-icon-focus: var(--color-data);
+  --color-toolbar-embedded-button-ghost-background: var(--color-input-background);
+  --color-toolbar-embedded-button-ghost-background-focus: var(--color-input-background);
+  --color-toolbar-selection-button-background: var(--color-input-background);
+  --color-toolbar-selection-button-icon: var(--color-data);
+}
+
+.lx-component-toolbar.lx-selection-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
+  --color-toolbar-selection-button-background-focus: var(--color-input-background);
+  --color-toolbar-selection-button-icon-focus: var(--color-data);
+}
+
+.lx-region .lx-component-toolbar .second-row,
+.lx-region-component .lx-component-toolbar .second-row,
+.lx-region .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
+.lx-region-component .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
+.lx-data-grid-wrapper .lx-component-toolbar .second-row,
+.lx-data-grid-wrapper .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
+  --color-toolbar-button-ghost-icon: var(--color-data);
+  --color-toolbar-button-ghost-icon-focus: var(--color-data);
+  --color-toolbar-button-ghost-background: var(--color-region-2);
+  --color-toolbar-button-ghost-background-focus: var(--color-region-2);
+  --color-toolbar-button-ghost-border: var(--color-region-2);
+  --color-toolbar-button-ghost-border-focus: var(--color-region-2);
+  --color-toolbar-embedded-button-ghost-icon: var(--color-data);
+  --color-toolbar-embedded-button-ghost-icon-focus: var(--color-data);
+  --color-toolbar-embedded-button-ghost-background: var(--color-region-2);
+  --color-toolbar-embedded-button-ghost-background-focus: var(--color-region-2);
+  --color-toolbar-embedded-button-ghost-border: var(--color-region-2);
+  --color-toolbar-embedded-button-ghost-border-focus: var(--color-region-2);
+  --color-toolbar-selection-button-icon: var(--color-data);
+  --color-toolbar-selection-button-icon-focus: var(--color-data);
+  --color-toolbar-selection-button-background: var(--color-region-2);
+  --color-toolbar-selection-button-background-focus: var(--color-region-2);
+  --color-toolbar-selection-button-border: var(--color-region-2);
+  --color-toolbar-selection-button-border-focus: var(--color-region-2);
+  --color-input-background: var(--color-region-2);
+}
+
+/* Selection toolbar button styles */
+
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost {
+  padding: var(--toolbar-selection-button-padding);
+  margin: var(--space-0);
+  text-decoration: var(--toolbar-selection-button-text-decoration);
+  height: var(--toolbar-selection-button-height);
+  min-width: var(--toolbar-selection-button-min-width);
+  width: var(--toolbar-selection-button-width);
+  font-size: var(--toolbar-selection-button-text-font-size);
+  font-weight: var(--toolbar-selection-button-text-font-weight);
+  border: var(--toolbar-selection-button-border);
+  border-radius: var(--toolbar-selection-button-border-radius);
+  background: var(--color-toolbar-selection-button-background);
+  color: var(--color-toolbar-selection-button-text);
+  outline-offset: var(--toolbar-selection-button-outline-offset);
+}
+
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost > .lx-button-content-wrapper {
+  grid-template-areas: var(--toolbar-selection-button-grid-areas);
+  grid-template-columns: var(--toolbar-selection-button-grid-template-columns);
+  grid-template-rows: var(--toolbar-selection-button-grid-template-rows);
+  gap: var(--toolbar-selection-button-gap);
+}
+
+.lx-selection-toolbar.lx-component-toolbar .lx-button-ghost .lx-button-content {
+  text-align: var(--toolbar-selection-button-text-alignment);
+}
+
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:hover {
+  background: var(--color-toolbar-selection-button-background-hover);
+  border-color: var(--color-toolbar-selection-button-border-hover);
+  color: var(--color-toolbar-selection-button-text-hover);
+}
+
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus {
+  background: var(--color-toolbar-selection-button-background-focus);
+  border-color: var(--color-toolbar-selection-button-border-focus);
+  color: var(--color-toolbar-selection-button-text-focus);
+  outline-color: var(--color-background);
+}
+
+.lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+.lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus,
+.lx-region .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+.lx-region .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus,
+.lx-region-component .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+.lx-region-component .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus {
+  outline-color: var(--color-region);
+}
+
+.lx-theme-contrast .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+.lx-theme-contrast .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus,
+.lx-theme-contrast .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+.lx-theme-contrast .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus,
+.lx-theme-contrast .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+.lx-theme-contrast .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus,
+.lx-component-toolbar.lx-selection-toolbar .lx-toolbar-search-button-wrapper.is-expanded .lx-button-ghost:focus {
+  outline-color: var(--color-focus-background);
+}
+
+.lx-selection-toolbar .first-row .lx-dropdown-toggler:focus:hover .lx-button-ghost,
+.lx-selection-toolbar .first-row .lx-button:focus:hover {
+  background: var(--color-toolbar-selection-button-background-hover);
+  color: var(--color-toolbar-selection-button-text-hover);
+}
+
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:active {
+  background: var(--color-toolbar-selection-button-background-active);
+  border-color: var(--color-toolbar-selection-button-border-active);
+  color: var(--color-toolbar-selection-button-text-active);
+}
+
+.lx-selection-toolbar.lx-component-toolbar .lx-button.lx-button-ghost.lx-disabled,
+.lx-selection-toolbar.lx-component-toolbar.lx-disabled .left-area,
+.lx-selection-toolbar.lx-component-toolbar.lx-disabled .first-row {
+  background: var(--color-toolbar-selection-button-background-disabled);
+  color: var(--color-toolbar-selection-button-text-disabled);
+  border-color: var(--color-toolbar-selection-button-border-disabled);
+}
+
+/*** Toolbar icon-only styles ***/ 
+
+.lx-component-toolbar .lx-button.lx-button-icon-only {
+  padding: var(--toolbar-button-primary-icon-only-padding);
+  height: var(--toolbar-button-primary-icon-only-height);
+  width: var(--toolbar-button-primary-icon-only-width);
+  min-width: var(--toolbar-button-primary-icon-only-min-width);
+}
+
+.lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-secondary {
+  padding: var(--toolbar-button-secondary-icon-only-padding);
+  height: var(--toolbar-button-secondary-icon-only-height);
+  width: var(--toolbar-button-secondary-icon-only-width);
+  min-width: var(--toolbar-button-secondary-icon-only-min-width);
+}
+
+.lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-tertiary {
+  padding: var(--toolbar-button-tertiary-icon-only-padding);
+  height: var(--toolbar-button-tertiary-icon-only-height);
+  width: var(--toolbar-button-tertiary-icon-only-width);
+  min-width: var(--toolbar-button-tertiary-icon-only-min-width);
+}
+
+.lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-ghost {
+  padding: var(--toolbar-button-ghost-icon-only-padding);
+  height: var(--toolbar-button-ghost-icon-only-height);
+  width: var(--toolbar-button-ghost-icon-only-width);
+  min-width: var(--toolbar-button-ghost-icon-only-min-width);
+}
+
+.lx-selection-toolbar .first-row .lx-button.lx-button-icon-only.lx-button-ghost {
+  padding: var(--toolbar-selection-button-icon-only-padding);
+  height: var(--toolbar-selection-button-icon-only-height);
+  width: var(--toolbar-selection-button-icon-only-width);
+  min-width: var(--toolbar-selection-button-icon-only-min-width);
+}
+
+/* Embedded toolbar icon-only styles */ 
+
+.lx-embedded-toolbar .lx-button.lx-button-icon-only {
+  padding: var(--toolbar-embedded-button-primary-icon-only-padding);
+  height: var(--toolbar-embedded-button-primary-icon-only-height);
+  width: var(--toolbar-embedded-button-primary-icon-only-width);
+  min-width: var(--toolbar-embedded-button-primary-icon-only-min-width);
+}
+
+.lx-embedded-toolbar .lx-button.lx-button-icon-only.lx-button-secondary {
+  padding: var(--toolbar-embedded-button-secondary-icon-only-padding);
+  height: var(--toolbar-embedded-button-secondary-icon-only-height);
+  width: var(--toolbar-embedded-button-secondary-icon-only-width);
+  min-width: var(--toolbar-embedded-button-secondary-icon-only-min-width);
+}
+
+.lx-embedded-toolbar .lx-button.lx-button-icon-only.lx-button-tertiary {
+  padding: var(--toolbar-embedded-button-tertiary-icon-only-padding);
+  height: var(--toolbar-embedded-button-tertiary-icon-only-height);
+  width: var(--toolbar-embedded-button-tertiary-icon-only-width);
+  min-width: var(--toolbar-embedded-button-tertiary-icon-only-min-width);
+}
+
+.lx-embedded-toolbar .lx-button.lx-button-icon-only.lx-button-ghost {
+  padding: var(--toolbar-embedded-button-ghost-icon-only-padding);
+  height: var(--toolbar-embedded-button-ghost-icon-only-height);
+  width: var(--toolbar-embedded-button-ghost-icon-only-width);
+  min-width: var(--toolbar-embedded-button-ghost-icon-only-min-width);
+}
+
+/***/
+
+.lx-component-toolbar .lx-button.lx-button-icon-only .lx-button-content-wrapper {
+  gap: var(--space-0);
+  --toolbar-button-primary-grid-areas: 'icon';
+  --toolbar-button-primary-grid-template-columns: 1fr;
+  --toolbar-embedded-button-primary-grid-areas: 'icon';
+  --toolbar-embedded-button-primary-grid-template-columns: 1fr;
+}
+
+.lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-secondary .lx-button-content-wrapper {
+  --toolbar-button-secondary-grid-areas: 'icon';
+  --toolbar-button-secondary-grid-template-columns: 1fr;
+  --toolbar-embedded-button-secondary-grid-areas: 'icon';
+  --toolbar-embedded-button-secondary-grid-template-columns: 1fr;
+}
+
+.lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-tertiary .lx-button-content-wrapper {
+  --toolbar-button-tertiary-grid-areas: 'icon';
+  --toolbar-button-tertiary-grid-template-columns: 1fr;
+  --toolbar-embedded-button-tertiary-grid-areas: 'icon';
+  --toolbar-embedded-button-tertiary-grid-template-columns: 1fr;
+}
+
+.lx-component-toolbar .lx-button.lx-button-icon-only.lx-button-ghost .lx-button-content-wrapper {
+  --toolbar-button-ghost-grid-areas: 'icon';
+  --toolbar-button-ghost-grid-template-columns: 1fr;
+  --toolbar-embedded-button-ghost-grid-areas: 'icon';
+  --toolbar-embedded-button-ghost-grid-template-columns: 1fr;
+}
+
+.lx-selection-toolbar .first-row .lx-button.lx-button-icon-only.lx-button-ghost .lx-button-content-wrapper {
+  --toolbar-selection-button-grid-areas: 'icon';
+  --toolbar-selection-button-grid-template-columns: 1fr;
+}
+
+/*** Toolbar icon styles ***/
+
+/* Toolbar primary icon styles */
+
+.lx-component-toolbar .first-row .lx-button svg {
+  height: var(--toolbar-button-primary-icon-size);
+  width: var(--toolbar-button-primary-icon-size);
+  fill: var(--color-toolbar-button-primary-icon);
+}
+
+.lx-component-toolbar .first-row .lx-button:hover svg {
+  fill: var(--color-toolbar-button-primary-icon-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button:focus svg {
+  fill: var(--color-toolbar-button-primary-icon-focus);
+}
+
+.lx-component-toolbar .lx-button:focus:hover svg {
+  fill: var(--color-toolbar-button-primary-icon-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button:active svg {
+  fill: var(--color-toolbar-button-primary-icon-active);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-disabled svg {
+  fill: var(--color-toolbar-button-primary-icon-disabled);
+}
+
+/* Embedded toolbar primary icon styles */
+
+.lx-embedded-toolbar .first-row .lx-button svg {
+  height: var(--toolbar-embedded-button-primary-icon-size);
+  width: var(--toolbar-embedded-button-primary-icon-size);
+  fill: var(--color-toolbar-embedded-button-primary-icon);
+}
+
+.lx-embedded-toolbar .first-row .lx-button:hover svg {
+  fill: var(--color-toolbar-embedded-button-primary-icon-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button:focus svg {
+  fill: var(--color-toolbar-embedded-button-primary-icon-focus);
+}
+
+.lx-embedded-toolbar .lx-button:focus:hover svg {
+  fill: var(--color-toolbar-embedded-button-primary-icon-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button:active svg {
+  fill: var(--color-toolbar-embedded-button-primary-icon-active);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-disabled svg {
+  fill: var(--color-toolbar-embedded-button-primary-icon-disabled);
+}
+
+/* Toolbar secondary icon styles */
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary svg {
+  height: var(--toolbar-button-secondary-icon-size);
+  width: var(--toolbar-button-secondary-icon-size);
+  fill: var(--color-toolbar-button-secondary-icon);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary:hover svg {
+  fill: var(--color-toolbar-button-secondary-icon-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary:focus svg {
+  fill: var(--color-toolbar-button-secondary-icon-focus);
+}
+
+.lx-component-toolbar .lx-button.lx-button-secondary:focus:hover svg {
+  fill: var(--color-toolbar-button-secondary-icon-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary:active svg {
+  fill: var(--color-toolbar-button-secondary-icon-active);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-secondary.lx-disabled svg {
+  fill: var(--color-toolbar-button-secondary-icon-disabled);
+}
+
+/* Embedded toolbar secondary icon styles */
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary svg {
+  height: var(--toolbar-embedded-button-secondary-icon-size);
+  width: var(--toolbar-embedded-button-secondary-icon-size);
+  fill: var(--color-toolbar-embedded-button-secondary-icon);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary:hover svg {
+  fill: var(--color-toolbar-embedded-button-secondary-icon-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary:focus svg {
+  fill: var(--color-toolbar-embedded-button-secondary-icon-focus);
+}
+
+.lx-embedded-toolbar .lx-button.lx-button-secondary:focus:hover svg {
+  fill: var(--color-toolbar-embedded-button-secondary-icon-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary:active svg {
+  fill: var(--color-toolbar-embedded-button-secondary-icon-active);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-secondary.lx-disabled svg {
+  fill: var(--color-toolbar-embedded-button-secondary-icon-disabled);
+}
+
+/* Toolbar tertiary icon styles */
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary svg {
+  height: var(--toolbar-button-tertiary-icon-size);
+  width: var(--toolbar-button-tertiary-icon-size);
+  fill: var(--color-toolbar-button-tertiary-icon);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary:hover svg {
+  fill: var(--color-toolbar-button-tertiary-icon-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary:focus svg {
+  fill: var(--color-toolbar-button-tertiary-icon-focus);
+}
+
+.lx-component-toolbar .lx-button.lx-button-tertiary:focus:hover svg {
+  fill: var(--color-toolbar-button-tertiary-icon-hover);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary:active svg {
+  fill: var(--color-toolbar-button-tertiary-icon-active);
+}
+
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary.lx-disabled svg {
+  fill: var(--color-toolbar-button-tertiary-icon-disabled);
+}
+
+/* Embedded toolbar tertiary icon styles */
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary svg {
+  height: var(--toolbar-embedded-button-tertiary-icon-size);
+  width: var(--toolbar-embedded-button-tertiary-icon-size);
+  fill: var(--color-toolbar-embedded-button-tertiary-icon);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary:hover svg {
+  fill: var(--color-toolbar-embedded-button-tertiary-icon-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary:focus svg {
+  fill: var(--color-toolbar-embedded-button-tertiary-icon-focus);
+}
+
+.lx-embedded-toolbar .lx-button.lx-button-tertiary:focus:hover svg {
+  fill: var(--color-toolbar-embedded-button-tertiary-icon-hover);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary:active svg {
+  fill: var(--color-toolbar-embedded-button-tertiary-icon-active);
+}
+
+.lx-embedded-toolbar .first-row .lx-button.lx-button-tertiary.lx-disabled svg {
+  fill: var(--color-toolbar-embedded-button-tertiary-icon-disabled);
+}
+
+/* Toolbar ghost icon styles */
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost svg {
+  height: var(--toolbar-button-ghost-icon-size);
+  width: var(--toolbar-button-ghost-icon-size);
+  fill: var(--color-toolbar-button-ghost-icon);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active svg {
+  fill: var(--color-selected);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:hover svg {
+  fill: var(--color-toolbar-button-ghost-icon-hover);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:focus svg {
+  fill: var(--color-toolbar-button-ghost-icon-focus);
+}
+
+.lx-component-toolbar .lx-button.lx-button-ghost:focus:hover svg {
+  fill: var(--color-toolbar-button-ghost-icon-hover);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:active svg {
+  fill: var(--color-toolbar-button-ghost-icon-active);
+}
+
+.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-disabled svg {
+  fill: var(--color-toolbar-button-ghost-icon-disabled);
+}
+
+/* Embedded toolbar ghost icon styles */
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost svg {
+  height: var(--toolbar-embedded-button-ghost-icon-size);
+  width: var(--toolbar-embedded-button-ghost-icon-size);
+  fill: var(--color-toolbar-embedded-button-ghost-icon);
+}
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost:hover svg {
+  fill: var(--color-toolbar-embedded-button-ghost-icon-hover);
+}
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost:focus svg {
+  fill: var(--color-toolbar-embedded-button-ghost-icon-focus);
+}
+
+.lx-embedded-toolbar .lx-button.lx-button-ghost:focus:hover svg {
+  fill: var(--color-toolbar-embedded-button-ghost-icon-hover);
+}
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost:active svg {
+  fill: var(--color-toolbar-embedded-button-ghost-icon-active);
+}
+
+.lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost.lx-disabled svg {
+  fill: var(--color-toolbar-embedded-button-ghost-icon-disabled);
+}
+
+/* Toolbar selection icon styles */
+
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost svg {
+  height: var(--toolbar-selection-button-icon-size);
+  width: var(--toolbar-selection-button-icon-size);
+  fill: var(--color-toolbar-selection-button-icon);
+}
+
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:hover svg  {
+  fill: var(--color-toolbar-selection-button-icon-hover);
+}
+
+.lx-selection-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost svg,
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus svg {
+  fill: var(--color-toolbar-selection-button-icon-focus);
+}
+
+.lx-selection-toolbar .lx-dropdown-toggler:focus:hover .lx-button-ghost svg,
+.lx-selection-toolbar .first-row .lx-button:focus:hover svg {
+  fill: var(--color-toolbar-selection-button-icon-hover);
+}
+
+.lx-selection-toolbar .first-row .lx-dropdown-toggler:active .lx-button-ghost svg,
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:active svg {
+  fill: var(--color-toolbar-selection-button-icon-active);
+}
+
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button.lx-disabled svg {
+  fill: var(--color-toolbar-selection-button-icon-disabled);
+}
+
+/*** Search toolbar styles ***/
+
+.lx-component-toolbar .lx-input-wrapper {
+  border-radius: var(--toolbar-input-border-radius);
+  color: var(--color-toolbar-input-text);
+  height: var(--toolbar-input-height);
+}
+
+.lx-component-toolbar .first-row .lx-input-wrapper {
+  background: var(--color-toolbar-input-background);
+}
+
+.lx-layout .lx-component-toolbar .lx-input-wrapper .lx-input-area {
+  border-radius: var(--toolbar-input-border-radius);
+  border-width: var(--toolbar-input-border-width);
+  border-style: var(--toolbar-input-border-style);
+  border-color: var(--color-toolbar-input-border);
+  height: var(--toolbar-input-height);
+}
+
+.lx .lx-layout .lx-component-toolbar .lx-input-wrapper.lx-disabled {
+  color: var(--color-toolbar-input-text-disabled);
+  background: var(--color-toolbar-input-background-disabled);
+}
+
+.lx .lx-layout .lx-component-toolbar.lx-selection-toolbar .lx-input-wrapper.lx-disabled {
+  background: transparent;
+}
+
+.lx-component-toolbar .lx-input-wrapper.lx-disabled .lx-input-area {
+  border-color: var(--color-toolbar-input-border-disabled);
+}
+
+.lx-search-toolbar > div {
+  flex-grow: 1;
+}
+
+.lx .lx-layout .lx-toolbar .lx-input-wrapper .lx-search-input {
+  width: 100%;
+  height: var(--row-size);
+  flex-grow: 1;
+}
+
+/*** Sticky toolbar ***/
+
+.lx .lx-sticky-toolbar-list-wrapper,
+.lx .lx-component-toolbar.lx-toolbar-sticky  {
+  position: sticky;
+  top: calc(var(--nav-row-size) + var(--toolbar-gap-top, 0rem));
+  z-index: 10;
+ }
+
+.lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
+.lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--public-nav-header-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+}
+
+.lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-component-toolbar.lx-toolbar-sticky,
+.lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--public-nav-header-size) + var(--toolbar-gap-top, 0rem));
+}
+
+.lx .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+}
+
+.lx-region .lx-embedded-toolbar,
+.lx-region-component .lx-embedded-toolbar {
+  --color-toolbar-embedded-background: var(--color-region-2);
+}
+
+.lx-region .lx-appendable-list .lx-embedded-toolbar,
+.lx-region-component .lx-appendable-list .lx-embedded-toolbar,
+.lx-region .lx-region-component .lx-embedded-toolbar,
+.lx-region-component .lx-region-component .lx-embedded-toolbar {
+  --color-toolbar-embedded-background: inherit;
+}
+
+.lx .lx-region .lx-list-wrapper .lx-sticky-toolbar-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region-component .lx-list-wrapper .lx-sticky-toolbar-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region-component .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region-component .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+  background: var(--color-region);
+} 
+
+.lx .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+  background: var(--color-background);
+} 
+
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--toolbar-gap-top, 0rem));
+}
+
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2 + var(--toolbar-gap-top, 0rem));
+}
+
+.lx-toolbar-sticky.lx-toolbar-hidden-under-header {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.lx-file-viewer.lx-file-viewer-fullscreen .lx-toolbar-sticky.lx-toolbar-hidden-under-header {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .lx-component-toolbar.lx-toolbar-sticky::after {
+  background: linear-gradient(0deg,transparent 0%,var(--color-background) 100%);
+  content: "";
+  height: 3rem;
+  position: absolute;
+  top: var(--row-size);
+  left: var(--space-0);
+  right: var(--space-0);
+  opacity: 0;
+  opacity: var(--toolbar-top-shadow-opacity);
+  pointer-events: none;
+}
+
+/* FileViewer fullscreen mode fix for chrome */
+.lx .lx-layout.lx-layout-public .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky {
+  top: var(--space-0);
+}
+
+.lx.lx-no-transparency:not(.lx-theme-contrast) .lx-component-toolbar.lx-toolbar-sticky::after {
+  background: transparent;
+}
+
+.lx:not(.lx-theme-contrast) .lx-data-grid-wrapper.lx-grid-sticky-toolbar .lx-component-toolbar.lx-toolbar-sticky::after {
+  display: none;
+}
+
+.lx .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size) + var(--sticky-toolbar-additional-height) + var(--toolbar-gap-top, 0rem));
+}
+
+.lx #modals .lx-modal .lx-sticky-toolbar-list-wrapper,
+.lx #modals .lx-modal .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--space-1000)* -1);
+}
+
+.lx #modals .lx-curtain .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+  top: calc(var(--nav-row-size) - var(--space-1000));
+}
+
+.lx .lx-layout.lx-layout-public #modals .lx-curtain .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
+.lx .lx-layout.lx-layout-latvijalv #modals .lx-curtain .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+  top: calc(var(--nav-row-size) - var(--row-size) + var(--toolbar-gap-top, 0rem));
+}
+
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--public-nav-header-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+}
+
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+}
+
+.lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-sticky-toolbar-list-wrapper,
+.lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+}
+
+.lx:not(.lx-theme-contrast) .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky::after {
+  top: var(--toolbar-header-size);
+}
+
+/* Sticky for map will ruin full-screen map view */
+.lx .lx-layout .lx-map.lx-map-fullscreen .lx-component-toolbar.lx-toolbar-sticky {
+  position: fixed;
+  top: 0 !important;
+}
+
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size) + var(--row-size) + var(--sticky-toolbar-additional-height) + var(--toolbar-gap-top, 0rem));
+}
+
+.lx .lx-layout .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky {
+  top: 0;
+}
+
+.lx .lx-layout .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky .first-row-content {
+  border-radius: var(--border-radius-0);
+}
+
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+}
+
+.lx .lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx .lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2);
+}
+
+.lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+  z-index: 9;
+  border-bottom: var(--border-width-1) solid var(--color-chrome);
+  position: sticky;
+}
+
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky  {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+}
+
+.lx .lx-layout.lx-layout-public .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-public .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--nav-row-size) + var(--row-size) * 3);
+}
+
+.lx .lx-form-grid>header.lx-form-with-tabs+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>header.lx-form-with-steps+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-form-grid>header.lx-form-with-tabs+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-steps+.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size));
+}
+
+.lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+.lx-layout.lx-layout-public .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper,
+.lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+}
+
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2);
+}
+
+.lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar){
+  top: calc(var(--nav-row-size) + var(--row-size));
+  z-index: 9;
+}
+
+/*** lxValuePicker toolbar ***/
+
+.lx-value-picker-wrapper .lx-component-toolbar {
+  margin-bottom: var(--space-0500);
+}
+
+.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area,
+.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group:not(:has(.lx-button[id*="select-all"])),
+.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group > .lx-field-wrapper {
+  width: 100%;
+}
+
+.lx-value-picker-default-wrapper.select-all > .lx-component-toolbar > .first-row .lx-button,
+.lx-value-picker-indicators > .lx-component-toolbar > .first-row .lx-button {
+  --toolbar-button-ghost-grid-areas: "icon content";
+  --toolbar-button-ghost-grid-template-columns: auto 1fr;
+}
+
+.lx-value-picker-tile-tag-container > .lx-component-toolbar > .first-row .lx-button {
+  --toolbar-button-ghost-grid-areas: "icon content";
+  --toolbar-button-ghost-grid-template-columns: auto 1fr;
+}
+
+.lx-value-picker-horizontal-container > .lx-component-toolbar > .first-row .lx-button {
+  --toolbar-button-ghost-grid-areas: "icon content";
+  --toolbar-button-ghost-grid-template-columns: auto 1fr;
+}
+
+@media (max-height: 640px) {
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-component-toolbar.lx-toolbar-sticky {
+    top: calc(var(--row-size) + var(--toolbar-gap-top, 0rem));
+  }
+
+  .lx .lx-layout.lx-layout-public.no-nav-items .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv.no-nav-items .lx-component-toolbar.lx-toolbar-sticky {
+    top: 0;
+  }
+
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky {
+    top: calc(var(--row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+  }
+}
+
+@media (max-height: 499px) {
+  .lx .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-sticky-toolbar-list-wrapper {
+      position: static;
+  }
+  
+  /* Keep the LxList toolbar sticky on short viewports. The mobile keyboard
+     shrinks the viewport below this breakpoint; dropping sticky there makes a
+     scrolled list jump, because the toolbar (and the focused search input) fall
+     back to their in-flow position at the top of the list. */
+  .lx .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+    position: sticky;
+  }
+}
+
+@media (max-width: 900px) {
+  .lx .lx-layout.lx-layout-public .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+    top: calc(var(--nav-row-size) + var(--row-size) + var(--sticky-toolbar-additional-height));
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-component-toolbar.lx-toolbar-sticky {
+	  top: var(--row-size);
+	}
+  
+  .lx .lx-layout.lx-layout-public .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper {
+    top: calc(var(--row-size)*2) !important;
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+    top: calc(var(--nav-row-size) + var(--row-size) + var(--sticky-toolbar-additional-height)) !important;
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-data-grid-wrapper .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-data-grid-wrapper .lx-sticky-toolbar-list-wrapper {
+    top: var(--nav-row-size);
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+    top: calc(var(--public-nav-header-size) + var(--row-size));
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky {
+    top: var(--public-nav-header-size);
+  }
+  .lx-layout-public .lx-data-grid-wrapper > .lx-grid-header-wrapper,
+  .lx-layout-latvijalv .lx-data-grid-wrapper > .lx-grid-header-wrapper {
+    top: var(--row-size);
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv.lx-sticky-toolbar-list-wrapper {
+    top: calc(var(--nav-row-size));
+  }
+ 
+  .lx .lx-layout.lx-layout-public .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar,
+  .lx .lx-layout.lx-layout-latvijalv .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
+    top: var(--row-size);
+  }
+
+  .lx .lx-layout-public .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout-public .lx-wizard .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout-latvijalv .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout-latvijalv .lx-wizard .lx-sticky-toolbar-list-wrapper {
+    top: calc(var(--row-size) * 3) !important;
+  }
+
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+    top: calc(var(--row-size) * 3);
+  }
+
+  .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+    top: calc(var(--nav-row-size) + var(--row-size));
+    z-index: 9;
+    border-bottom: var(--border-width-1) solid var(--color-chrome);
+    position: sticky;
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky {
+     top: calc(var(--nav-row-size) + var(--row-size)  * 2);
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-sticky-toolbar-list-wrapper {
+    top: calc(var(--row-size) * 3) !important;
+  }
+
+  .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
+  .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper {
+    top: calc(var(--row-size) * 2) !important;
+  } 
+
+  .lx .lx-component-toolbar.lx-toolbar-sticky.lx-toolbar-hidden-under-footer {
+    z-index: 5;
+  }
+
+  .lx-layout.lx-layout-public .lx-form-grid > .lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-latvijalv .lx-form-grid > .lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-public .lx-form-grid > .lx-form-with-steps:not(.lx-sticky)+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-latvijalv .lx-form-grid > .lx-form-with-steps:not(.lx-sticky)+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+    top: var(--public-nav-header-size);
+  }
+}
+
+@media (max-width: 800px) {
+  .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+  .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus {
+    outline-color: var(--color-background);
+  }
+
+  .lx-region .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+  .lx-region-component .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
+  .lx-region .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus,
+  .lx-region-component .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus {
+    outline-color: var(--color-region);
+  }
+
+  .lx-data-grid-wrapper .lx-component-toolbar:not(.lx-selection-toolbar) .first-row {
+    background: var(--color-region);
+  }
+}

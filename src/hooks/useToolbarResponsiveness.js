@@ -630,8 +630,20 @@ export function useToolbarResponsiveness({
     const defaultAreaWidth = defaultArea.getBoundingClientRect()?.width ?? 0;
     const defaultAreaGap = areBothAreasVisible && isDefaultAreaVisible ? groupGap.value : 0;
 
+    const promotedActionEl = toolbar.querySelector(
+      ':scope > .first-row > .lx-toolbar-promoted-action'
+    );
+    const promotedActionWidth = promotedActionEl
+      ? Math.ceil(promotedActionEl.getBoundingClientRect().width) + groupGap.value
+      : 0;
+
     const actualGap =
-      toolbarWidth - leftAreaWidth - rightAreaWidth - defaultAreaWidth - defaultAreaGap;
+      toolbarWidth -
+      leftAreaWidth -
+      rightAreaWidth -
+      defaultAreaWidth -
+      defaultAreaGap -
+      promotedActionWidth;
 
     const shouldCombine = actualGap < minGap;
 

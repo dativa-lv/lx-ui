@@ -348,9 +348,7 @@ const {
 const isLeftAreaEmpty = computed(
   () =>
     !(
-      (props.hasSelectAll && props.selectAllSide === 'left') ||
       (props.hasSearch && autoSearchMode.value === 'default') ||
-      promotedAction.value?.area === 'left' ||
       hasLeftAreaSlotContent.value ||
       leftActionsVisibleGrouped.value.length > 0 ||
       (defaultAreaComputed.value === 'right' && actionsOverflow.value.length > 0)
@@ -360,9 +358,6 @@ const isLeftAreaEmpty = computed(
 const isRightAreaEmpty = computed(
   () =>
     !(
-      (props.hasSelectAll && props.selectAllSide === 'right') ||
-      (props.hasSearch && autoSearchMode.value === 'compact') ||
-      promotedAction.value?.area === 'right' ||
       hasRightAreaSlotContent.value ||
       rightActionsVisibleGrouped.value.length > 0 ||
       (defaultAreaComputed.value === 'left' && actionsOverflow.value.length > 0)
@@ -556,6 +551,18 @@ const topOutOfBounds = computed(() => {
   return `${keyOpacity}: ${opacity}; ${keySize}: ${toolbarHeight}px;`;
 });
 
+const hasVisibleToolbarContent = computed(
+  () =>
+    leftActionsVisibleGrouped.value.length > 0 ||
+    rightActionsVisibleGrouped.value.length > 0 ||
+    actionsOverflow.value.length > 0 ||
+    hasDefaultSlotContent.value ||
+    hasLeftAreaSlotContent.value ||
+    hasRightAreaSlotContent.value ||
+    props.hasSelectAll ||
+    (props.hasSearch && autoSearchMode.value === 'default')
+);
+
 onUpdated(() => {
   updateSlotContentFlags();
 });
@@ -580,338 +587,369 @@ defineExpose({ toggleSearch, focusAction });
     role="toolbar"
   >
     <div class="first-row">
-      <div
-        ref="leftAreaRef"
-        class="left-area"
-        :class="{ 'lx-toolbar-area-empty': isLeftAreaEmpty }"
+      <LxToolbarGroup
+        v-if="hasSelectAll && selectAllSide === 'left' && defaultAreaComputed === 'left'"
+        class="lx-toolbar-outer-select-all"
       >
-        <LxToolbarGroup v-if="hasSelectAll && selectAllSide === 'left'">
-          <LxButton
-            :id="`${id}-select-all`"
-            :icon="selectionState"
-            kind="ghost"
-            :variant="selectAllVariant"
-            :label="
-              selectionState === 'checkbox'
-                ? displayTexts.selectAllRows
-                : displayTexts.clearSelected
-            "
-            :disabled="isSelectAllDisabled"
-            :loading="loading"
-            @click="selectAll"
-          />
-        </LxToolbarGroup>
+        <LxButton
+          :id="`${id}-select-all`"
+          :icon="selectionState"
+          kind="ghost"
+          :variant="selectAllVariant"
+          :label="
+            selectionState === 'checkbox' ? displayTexts.selectAllRows : displayTexts.clearSelected
+          "
+          :disabled="isSelectAllDisabled"
+          :loading="loading"
+          @click="selectAll"
+        />
+      </LxToolbarGroup>
+      <LxToolbarGroup v-if="promotedAction?.area === 'left'" class="lx-toolbar-promoted-action">
+        <LxButton
+          :id="getActionId(promotedAction.id)"
+          :label="promotedAction.name || promotedAction.label"
+          :title="promotedAction.title || promotedAction.tooltip"
+          :icon="promotedAction.icon"
+          :iconSet="promotedAction.iconSet"
+          :variant="promotedAction.variant"
+          :kind="promotedAction.kind"
+          :loading="promotedAction.loading"
+          :busy="promotedAction.busy"
+          :destructive="promotedAction.destructive"
+          :disabled="promotedAction.disabled || props.disabled || props.loading"
+          :active="promotedAction.active"
+          :badge="promotedAction.badge"
+          :badgeType="promotedAction.badgeType"
+          :badgeIcon="promotedAction.badgeIcon"
+          :badgeTitle="promotedAction.badgeTitle"
+          :customClass="promotedAction.customClass"
+          :href="promotedAction.href"
+          @click="handleActionClick(promotedAction.id)"
+        />
+      </LxToolbarGroup>
 
-        <LxToolbarGroup v-if="promotedAction?.area === 'left'" class="lx-toolbar-promoted-action">
-          <LxButton
-            :id="getActionId(promotedAction.id)"
-            :label="promotedAction.name || promotedAction.label"
-            :title="promotedAction.title || promotedAction.tooltip"
-            :icon="promotedAction.icon"
-            :iconSet="promotedAction.iconSet"
-            :variant="promotedAction.variant"
-            :kind="promotedAction.kind"
-            :loading="promotedAction.loading"
-            :busy="promotedAction.busy"
-            :destructive="promotedAction.destructive"
-            :disabled="promotedAction.disabled || props.disabled || props.loading"
-            :active="promotedAction.active"
-            :badge="promotedAction.badge"
-            :badgeType="promotedAction.badgeType"
-            :badgeIcon="promotedAction.badgeIcon"
-            :badgeTitle="promotedAction.badgeTitle"
-            :customClass="promotedAction.customClass"
-            :href="promotedAction.href"
-            @click="handleActionClick(promotedAction.id)"
-          />
-        </LxToolbarGroup>
-
-        <!-- Both v-if and v-show are necessary -->
-        <LxToolbarGroup
-          v-if="defaultAreaComputed === 'right'"
-          v-show="actionsOverflow.length > 0"
-          :class="actionsOverflow.length === 0 ? 'lx-toolbar-overflow-hidden' : null"
+      <div class="first-row-content" :class="{ 'is-empty': !hasVisibleToolbarContent }">
+        <div
+          ref="leftAreaRef"
+          class="left-area"
+          :class="{ 'lx-toolbar-area-empty': isLeftAreaEmpty }"
         >
-          <LxDropDownMenu
-            :disabled="props.disabled || props.loading"
-            :actionDefinitions="actionsOverflow"
-            @actionClick="(id, value) => handleActionClick(id, { value })"
+          <LxToolbarGroup
+            v-if="hasSelectAll && selectAllSide === 'left' && defaultAreaComputed === 'right'"
+            class="lx-toolbar-outer-select-all"
           >
             <LxButton
-              :id="`${id}-overflow-left`"
+              :id="`${id}-select-all`"
+              :icon="selectionState"
               kind="ghost"
-              :tabindex="-1"
-              icon="overflow-menu"
-              :label="displayTexts.overflowMenu"
-              variant="icon-only"
-              :disabled="props.disabled || props.loading"
+              :variant="selectAllVariant"
+              :label="
+                selectionState === 'checkbox'
+                  ? displayTexts.selectAllRows
+                  : displayTexts.clearSelected
+              "
+              :disabled="isSelectAllDisabled"
+              :loading="loading"
+              @click="selectAll"
             />
-          </LxDropDownMenu>
-        </LxToolbarGroup>
-
-        <LxToolbarGroup
-          v-for="group in leftActionsVisibleGrouped"
-          :key="group.groupId"
-          class="action-definitions-group"
-        >
-          <template v-for="action in group.actions" :key="action?.id">
-            <LxButton
-              v-if="isActionButton(action)"
-              :id="getActionId(action?.id)"
-              :label="action?.name || action?.label"
-              :title="action?.title || action?.tooltip"
-              :icon="action?.icon"
-              :iconSet="action?.iconSet"
-              :kind="action?.kind || 'ghost'"
-              :loading="action?.loading"
-              :busy="action?.busy"
-              :destructive="action?.destructive"
-              :disabled="action?.disabled || props.disabled || props.loading"
-              :active="action?.active"
-              variant="icon-only"
-              :customClass="action?.customClass"
-              :badge="action?.badge"
-              :badgeType="action?.badgeType"
-              :badgeIcon="action?.badgeIcon"
-              :badgeTitle="action?.badgeTitle"
-              :href="action?.href"
-              @click="handleActionClick(action?.id)"
-            />
-            <LxToggle
-              v-else-if="isActionToggle(action)"
-              :id="getActionId(action?.id)"
-              :label="action?.name || action?.label"
-              :disabled="action?.disabled || props.disabled || props.loading"
-              v-model="action.value"
-              :texts="action?.texts"
-              :tooltip="action?.title || action?.tooltip"
-              :builderOptions="{
-                innerComponent: true,
-              }"
-              @update:modelValue="(value) => handleActionClick(action?.id, { value })"
-            />
+          </LxToolbarGroup>
+          <!-- Both v-if and v-show are necessary -->
+          <LxToolbarGroup
+            v-if="defaultAreaComputed === 'right'"
+            v-show="actionsOverflow.length > 0"
+            :class="actionsOverflow.length === 0 ? 'lx-toolbar-overflow-hidden' : null"
+          >
             <LxDropDownMenu
-              v-else-if="isActionDropDown(action)"
-              :disabled="action?.disabled || props.disabled || props.loading"
-              :actionDefinitions="actionsByGroupId.get(action?.nestedGroupId) ?? []"
+              :disabled="props.disabled || props.loading"
+              :actionDefinitions="actionsOverflow"
               @actionClick="(id, value) => handleActionClick(id, { value })"
             >
               <LxButton
-                v-if="isActionDropDown(action)"
+                :id="`${id}-overflow-left`"
+                kind="ghost"
+                :tabindex="-1"
+                icon="overflow-menu"
+                :label="displayTexts.overflowMenu"
+                variant="icon-only"
+                :disabled="props.disabled || props.loading"
+              />
+            </LxDropDownMenu>
+          </LxToolbarGroup>
+
+          <LxToolbarGroup
+            v-for="group in leftActionsVisibleGrouped"
+            :key="group.groupId"
+            class="action-definitions-group"
+          >
+            <template v-for="action in group.actions" :key="action?.id">
+              <LxButton
+                v-if="isActionButton(action)"
                 :id="getActionId(action?.id)"
                 :label="action?.name || action?.label"
                 :title="action?.title || action?.tooltip"
-                :icon="action?.icon || 'menu'"
+                :icon="action?.icon"
                 :iconSet="action?.iconSet"
                 :kind="action?.kind || 'ghost'"
-                :tabindex="-1"
                 :loading="action?.loading"
                 :busy="action?.busy"
                 :destructive="action?.destructive"
                 :disabled="action?.disabled || props.disabled || props.loading"
                 :active="action?.active"
+                variant="icon-only"
+                :customClass="action?.customClass"
                 :badge="action?.badge"
                 :badgeType="action?.badgeType"
                 :badgeIcon="action?.badgeIcon"
                 :badgeTitle="action?.badgeTitle"
-                variant="icon-only"
+                :href="action?.href"
+                @click="handleActionClick(action?.id)"
               />
-            </LxDropDownMenu>
-            <div
-              v-else-if="isActionSlot(action)"
-              :id="getActionId(action?.id)"
-              class="lx-toolbar-action-slot"
-            >
-              <slot :name="action?.id" />
-            </div>
-          </template>
-        </LxToolbarGroup>
+              <LxToggle
+                v-else-if="isActionToggle(action)"
+                :id="getActionId(action?.id)"
+                :label="action?.name || action?.label"
+                :disabled="action?.disabled || props.disabled || props.loading"
+                v-model="action.value"
+                :texts="action?.texts"
+                :tooltip="action?.title || action?.tooltip"
+                :builderOptions="{
+                  innerComponent: true,
+                }"
+                @update:modelValue="(value) => handleActionClick(action?.id, { value })"
+              />
+              <LxDropDownMenu
+                v-else-if="isActionDropDown(action)"
+                :disabled="action?.disabled || props.disabled || props.loading"
+                :actionDefinitions="actionsByGroupId.get(action?.nestedGroupId) ?? []"
+                @actionClick="(id, value) => handleActionClick(id, { value })"
+              >
+                <LxButton
+                  v-if="isActionDropDown(action)"
+                  :id="getActionId(action?.id)"
+                  :label="action?.name || action?.label"
+                  :title="action?.title || action?.tooltip"
+                  :icon="action?.icon || 'menu'"
+                  :iconSet="action?.iconSet"
+                  :kind="action?.kind || 'ghost'"
+                  :tabindex="-1"
+                  :loading="action?.loading"
+                  :busy="action?.busy"
+                  :destructive="action?.destructive"
+                  :disabled="action?.disabled || props.disabled || props.loading"
+                  :active="action?.active"
+                  :badge="action?.badge"
+                  :badgeType="action?.badgeType"
+                  :badgeIcon="action?.badgeIcon"
+                  :badgeTitle="action?.badgeTitle"
+                  variant="icon-only"
+                />
+              </LxDropDownMenu>
+              <div
+                v-else-if="isActionSlot(action)"
+                :id="getActionId(action?.id)"
+                class="lx-toolbar-action-slot"
+              >
+                <slot :name="action?.id" />
+              </div>
+            </template>
+          </LxToolbarGroup>
 
-        <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'default'" class="lx-toolbar-search">
-          <LxTextInput
-            ref="searchInputDefault"
-            :key="searchInputRefresh"
-            role="search"
-            v-model="searchStringRaw"
-            :kind="searchSide === 'server' ? 'default' : 'search'"
-            :placeholder="displayTexts.placeholder"
-            :disabled="disabled || loading || busy"
-            :builderOptions="{
-              innerComponent: true,
-            }"
-            @keydown.enter="serverSideSearch"
-          />
-          <LxButton
-            v-if="searchSide === 'server'"
-            icon="search"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.search"
-            :disabled="disabled || loading || busy"
-            :loading="loading"
-            @click="serverSideSearch"
-          />
-          <LxButton
-            v-if="searchStringRaw"
-            icon="clear"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.clear"
-            :disabled="disabled || loading || busy"
-            :loading="loading"
-            @click="clear"
-          />
-        </LxToolbarGroup>
-
-        <LxToolbarGroup v-if="hasLeftAreaSlotContent" ref="leftAreaSlotRef">
-          <slot name="leftArea" />
-        </LxToolbarGroup>
-      </div>
-
-      <div ref="defaultAreaRef" class="default-area">
-        <LxToolbarGroup v-if="hasDefaultSlotContent" ref="defaultAreaSlotRef">
-          <slot />
-        </LxToolbarGroup>
-      </div>
-
-      <div
-        ref="rightAreaRef"
-        class="right-area"
-        :class="{ 'lx-toolbar-area-empty': isRightAreaEmpty }"
-      >
-        <LxToolbarGroup v-if="hasRightAreaSlotContent" ref="rightAreaSlotRef">
-          <slot name="rightArea" />
-        </LxToolbarGroup>
-
-        <LxToolbarGroup
-          v-for="group in rightActionsVisibleGrouped"
-          :key="group.groupId"
-          class="action-definitions-group"
-        >
-          <template v-for="action in group.actions" :key="action?.id">
-            <LxButton
-              v-if="isActionButton(action)"
-              :id="getActionId(action?.id)"
-              :label="action?.name || action?.label"
-              :title="action?.title || action?.tooltip"
-              :icon="action?.icon"
-              :iconSet="action?.iconSet"
-              :kind="action?.kind || 'ghost'"
-              :loading="action?.loading"
-              :busy="action?.busy"
-              :destructive="action?.destructive"
-              :disabled="action?.disabled || props.disabled || props.loading"
-              :active="action?.active"
-              variant="icon-only"
-              :customClass="action?.customClass"
-              :badge="action?.badge"
-              :badgeType="action?.badgeType"
-              :badgeIcon="action?.badgeIcon"
-              :badgeTitle="action?.badgeTitle"
-              :href="action?.href"
-              @click="handleActionClick(action?.id)"
-            />
-            <LxToggle
-              v-else-if="isActionToggle(action)"
-              :id="getActionId(action?.id)"
-              :label="action?.name || action?.label"
-              :disabled="action?.disabled || props.disabled || props.loading"
-              v-model="action.value"
-              :texts="action?.texts"
-              :tooltip="action?.title || action?.tooltip"
+          <LxToolbarGroup
+            v-if="hasSearch && autoSearchMode === 'default'"
+            class="lx-toolbar-search"
+          >
+            <LxTextInput
+              ref="searchInputDefault"
+              :key="searchInputRefresh"
+              role="search"
+              v-model="searchStringRaw"
+              :kind="searchSide === 'server' ? 'default' : 'search'"
+              :placeholder="displayTexts.placeholder"
+              :disabled="disabled || loading || busy"
               :builderOptions="{
                 innerComponent: true,
               }"
-              @update:modelValue="(value) => handleActionClick(action?.id, { value })"
+              @keydown.enter="serverSideSearch"
             />
-            <LxDropDownMenu
-              v-else-if="isActionDropDown(action)"
-              :disabled="action?.disabled || props.disabled || props.loading"
-              :actionDefinitions="actionsByGroupId.get(action?.nestedGroupId) ?? []"
-              @actionClick="(id, value) => handleActionClick(id, { value })"
-            >
+            <LxButton
+              v-if="searchSide === 'server'"
+              icon="search"
+              kind="ghost"
+              variant="icon-only"
+              :label="displayTexts.search"
+              :disabled="disabled || loading || busy"
+              :loading="loading"
+              @click="serverSideSearch"
+            />
+            <LxButton
+              v-if="searchStringRaw"
+              icon="clear"
+              kind="ghost"
+              variant="icon-only"
+              :label="displayTexts.clear"
+              :disabled="disabled || loading || busy"
+              :loading="loading"
+              @click="clear"
+            />
+          </LxToolbarGroup>
+
+          <LxToolbarGroup v-if="hasLeftAreaSlotContent" ref="leftAreaSlotRef">
+            <slot name="leftArea" />
+          </LxToolbarGroup>
+        </div>
+
+        <div ref="defaultAreaRef" class="default-area">
+          <LxToolbarGroup v-if="hasDefaultSlotContent" ref="defaultAreaSlotRef">
+            <slot />
+          </LxToolbarGroup>
+        </div>
+
+        <div
+          ref="rightAreaRef"
+          class="right-area"
+          :class="{ 'lx-toolbar-area-empty': isRightAreaEmpty }"
+        >
+          <LxToolbarGroup v-if="hasRightAreaSlotContent" ref="rightAreaSlotRef">
+            <slot name="rightArea" />
+          </LxToolbarGroup>
+
+          <LxToolbarGroup
+            v-for="group in rightActionsVisibleGrouped"
+            :key="group.groupId"
+            class="action-definitions-group"
+          >
+            <template v-for="action in group.actions" :key="action?.id">
               <LxButton
-                v-if="isActionDropDown(action)"
+                v-if="isActionButton(action)"
                 :id="getActionId(action?.id)"
                 :label="action?.name || action?.label"
                 :title="action?.title || action?.tooltip"
-                :icon="action?.icon || 'menu'"
+                :icon="action?.icon"
                 :iconSet="action?.iconSet"
                 :kind="action?.kind || 'ghost'"
-                :tabindex="-1"
                 :loading="action?.loading"
                 :busy="action?.busy"
                 :destructive="action?.destructive"
                 :disabled="action?.disabled || props.disabled || props.loading"
                 :active="action?.active"
+                variant="icon-only"
+                :customClass="action?.customClass"
                 :badge="action?.badge"
                 :badgeType="action?.badgeType"
                 :badgeIcon="action?.badgeIcon"
                 :badgeTitle="action?.badgeTitle"
+                :href="action?.href"
+                @click="handleActionClick(action?.id)"
+              />
+              <LxToggle
+                v-else-if="isActionToggle(action)"
+                :id="getActionId(action?.id)"
+                :label="action?.name || action?.label"
+                :disabled="action?.disabled || props.disabled || props.loading"
+                v-model="action.value"
+                :texts="action?.texts"
+                :tooltip="action?.title || action?.tooltip"
+                :builderOptions="{
+                  innerComponent: true,
+                }"
+                @update:modelValue="(value) => handleActionClick(action?.id, { value })"
+              />
+              <LxDropDownMenu
+                v-else-if="isActionDropDown(action)"
+                :disabled="action?.disabled || props.disabled || props.loading"
+                :actionDefinitions="actionsByGroupId.get(action?.nestedGroupId) ?? []"
+                @actionClick="(id, value) => handleActionClick(id, { value })"
+              >
+                <LxButton
+                  v-if="isActionDropDown(action)"
+                  :id="getActionId(action?.id)"
+                  :label="action?.name || action?.label"
+                  :title="action?.title || action?.tooltip"
+                  :icon="action?.icon || 'menu'"
+                  :iconSet="action?.iconSet"
+                  :kind="action?.kind || 'ghost'"
+                  :tabindex="-1"
+                  :loading="action?.loading"
+                  :busy="action?.busy"
+                  :destructive="action?.destructive"
+                  :disabled="action?.disabled || props.disabled || props.loading"
+                  :active="action?.active"
+                  :badge="action?.badge"
+                  :badgeType="action?.badgeType"
+                  :badgeIcon="action?.badgeIcon"
+                  :badgeTitle="action?.badgeTitle"
+                  variant="icon-only"
+                />
+              </LxDropDownMenu>
+              <div
+                v-else-if="isActionSlot(action)"
+                :id="getActionId(action?.id)"
+                class="lx-toolbar-action-slot"
+              >
+                <slot :name="action?.id" />
+              </div>
+            </template>
+          </LxToolbarGroup>
+
+          <!-- Both v-if and v-show are necessary -->
+          <LxToolbarGroup
+            v-if="defaultAreaComputed === 'left'"
+            v-show="actionsOverflow.length > 0"
+            :class="actionsOverflow.length === 0 ? 'lx-toolbar-overflow-hidden' : null"
+          >
+            <LxDropDownMenu
+              :disabled="props.disabled || props.loading"
+              :actionDefinitions="actionsOverflow"
+              @actionClick="(id, value) => handleActionClick(id, { value })"
+            >
+              <LxButton
+                :id="`${id}-overflow-right`"
+                kind="ghost"
+                :tabindex="-1"
+                icon="overflow-menu"
+                :label="displayTexts.overflowMenu"
                 variant="icon-only"
+                :disabled="props.disabled || props.loading"
               />
             </LxDropDownMenu>
-            <div
-              v-else-if="isActionSlot(action)"
-              :id="getActionId(action?.id)"
-              class="lx-toolbar-action-slot"
-            >
-              <slot :name="action?.id" />
-            </div>
-          </template>
-        </LxToolbarGroup>
+          </LxToolbarGroup>
+        </div>
+      </div>
 
-        <!-- Both v-if and v-show are necessary -->
-        <LxToolbarGroup
-          v-if="defaultAreaComputed === 'left'"
-          v-show="actionsOverflow.length > 0"
-          :class="actionsOverflow.length === 0 ? 'lx-toolbar-overflow-hidden' : null"
-        >
-          <LxDropDownMenu
-            :disabled="props.disabled || props.loading"
-            :actionDefinitions="actionsOverflow"
-            @actionClick="(id, value) => handleActionClick(id, { value })"
-          >
-            <LxButton
-              :id="`${id}-overflow-right`"
-              kind="ghost"
-              :tabindex="-1"
-              icon="overflow-menu"
-              :label="displayTexts.overflowMenu"
-              variant="icon-only"
-              :disabled="props.disabled || props.loading"
-            />
-          </LxDropDownMenu>
-        </LxToolbarGroup>
+      <LxToolbarGroup v-if="promotedAction?.area === 'right'" class="lx-toolbar-promoted-action">
+        <LxButton
+          :id="getActionId(promotedAction.id)"
+          :label="promotedAction.name || promotedAction.label"
+          :title="promotedAction.title || promotedAction.tooltip"
+          :icon="promotedAction.icon"
+          :iconSet="promotedAction.iconSet"
+          :variant="promotedAction.variant"
+          :kind="promotedAction.kind"
+          :loading="promotedAction.loading"
+          :busy="promotedAction.busy"
+          :destructive="promotedAction.destructive"
+          :disabled="promotedAction.disabled || props.disabled || props.loading"
+          :active="promotedAction.active"
+          :badge="promotedAction.badge"
+          :badgeType="promotedAction.badgeType"
+          :badgeIcon="promotedAction.badgeIcon"
+          :badgeTitle="promotedAction.badgeTitle"
+          :customClass="promotedAction.customClass"
+          :href="promotedAction.href"
+          @click="handleActionClick(promotedAction.id)"
+        />
+      </LxToolbarGroup>
 
-        <LxToolbarGroup v-if="promotedAction?.area === 'right'" class="lx-toolbar-promoted-action">
-          <LxButton
-            :id="getActionId(promotedAction.id)"
-            :label="promotedAction.name || promotedAction.label"
-            :title="promotedAction.title || promotedAction.tooltip"
-            :icon="promotedAction.icon"
-            :iconSet="promotedAction.iconSet"
-            :variant="promotedAction.variant"
-            :kind="promotedAction.kind"
-            :loading="promotedAction.loading"
-            :busy="promotedAction.busy"
-            :destructive="promotedAction.destructive"
-            :disabled="promotedAction.disabled || props.disabled || props.loading"
-            :active="promotedAction.active"
-            :badge="promotedAction.badge"
-            :badgeType="promotedAction.badgeType"
-            :badgeIcon="promotedAction.badgeIcon"
-            :badgeTitle="promotedAction.badgeTitle"
-            :customClass="promotedAction.customClass"
-            :href="promotedAction.href"
-            @click="handleActionClick(promotedAction.id)"
-          />
-        </LxToolbarGroup>
-
+      <div
+        v-if="
+          (hasSearch && autoSearchMode === 'compact') || (hasSelectAll && selectAllSide === 'right')
+        "
+        class="lx-toolbar-search-select-group lx-group"
+      >
         <LxToolbarGroup v-if="hasSearch && autoSearchMode === 'compact'">
           <div
             class="lx-toolbar-search-button-wrapper"
-            :class="[{ 'is-expanded': isSearchExpanded }]"
+            :class="{ 'is-expanded': isSearchExpanded }"
           >
             <LxButton
               class="lx-toolbar-search-button"

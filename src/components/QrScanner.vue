@@ -328,20 +328,21 @@ const wrapperRef = ref();
 <template>
   <div
     ref="wrapperRef"
-    class="lx-qr-scanner-wrapper"
+    class="lx-qr-scanner-wrapper lx-complex-input"
     :class="{ 'drag-over': dragOver }"
     :aria-labelledby="labelledBy"
     :data-id="id"
   >
     <LxToolbar
       v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"
+      class="lx-embedded-toolbar"
       :disabled="loading || error || refreshError || accepted"
       :actionDefinitions="toolbarActions"
       :sticky="stickyToolbar"
       :wrapperRef="wrapperRef"
       @actionClick="toolbarActionClick"
     />
-    <div class="lx-qr-scanner">
+    <div class="lx-qr-scanner lx-input-wrapper">
       <Transition name="fade">
         <QrcodeStream
           v-if="showPreview"

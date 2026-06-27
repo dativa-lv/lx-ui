@@ -207,6 +207,14 @@
   background: var(--color-list-background);
 }
 
+.lx .lx-layout .lx-component-toolbar.lx-disabled .second-row {
+  background: transparent;
+}
+
+.lx .lx-component-toolbar.lx-disabled.lx-selection-toolbar .second-row {
+  background: var(--color-toolbar-selection-button-background-disabled);
+}
+
 /*** Checkbox + radio button styles ***/
 
 .selecting-block > .lx-checkbox-wrapper {
@@ -674,7 +682,6 @@
 .lx-list-wrapper .lx-component-toolbar,
 .lx-appendable-list-wrapper .lx-component-toolbar {
   margin-bottom: var(--list-item-gap);
-  border-top: var(--border-width-1) solid transparent;
 }
 
 .lx-list-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
@@ -685,10 +692,6 @@
 .lx-list-wrapper:not(.is-narrow) .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons-small,
 .lx-list-wrapper.is-narrow .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
   display: none;
-}
-
-.lx-list-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row {
-  background: var(--color-brand);
 }
 
 .lx-component-toolbar .left-area .lx-group > p,
@@ -713,11 +716,7 @@
 .lx .lx-layout .lx-component-toolbar .second-row .lx-text-input,
 .lx .lx-layout .lx-component-toolbar > .left-area .lx-text-input,
 .lx .lx-layout .lx-component-toolbar > .first-row .lx-text-input {
-  height: var(--row-size);
-}
-
-.lx-list-wrapper .lx-component-toolbar:has(.lx-toolbar-search-button-wrapper.is-expanded) {
-  gap: var(--space-01250);
+  height: var(--toolbar-input-height);
 }
 
 .lx-list-wrapper .lx-selection-toolbar.lx-component-toolbar p {

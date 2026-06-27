@@ -361,6 +361,7 @@ const wrapperRef = ref();
   >
     <LxToolbar
       v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')"
+      class="lx-floating-toolbar"
       :disabled="disabled"
       :hasSearch="hasSearch"
       :searchString="query"

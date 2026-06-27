@@ -1803,13 +1803,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
     <div
       v-if="isToolbarVisible"
       ref="toolbarRef"
-      :class="[
-        { 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length },
-        { 'lx-sticky-toolbar-list-wrapper': props.stickyToolbar },
-      ]"
+      :class="[{ 'lx-sticky-toolbar-list-wrapper': props.stickyToolbar }]"
     >
       <LxToolbar
-        class="lx-grid-toolbar"
+        class="lx-grid-toolbar lx-floating-toolbar"
+        :class="[{ 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length }]"
         :id="`${id}-toolbar`"
         :actionDefinitions="toolbarActions"
         :disabled="busy"

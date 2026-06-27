@@ -275,7 +275,6 @@
   --input-icon-indent-right: var(--input-icon-wrapper-width);
   --input-icon-wrapper-height: 100%;
   --input-icon-wrapper-width: var(--input-button-width);
-  --input-icon-invalid-size: var(--icon-size-s);
   --input-icon-invalid-indent-left: var(--space-0);
   --input-icon-invalid-indent-right: var(--input-icon-wrapper-width);
   --input-text-font-size: var(--font-size);
@@ -296,6 +295,22 @@
   --input-tag-margin: var(--space-0) var(--space-0500);
   --input-text-area-padding-y: var(--space-0500);
   --input-text-area-min-height: 6rem;
+  
+  --input-complex-row-gap: var(--space-0);
+  --input-complex-border-radius: var(--border-radius-0);
+  --input-complex-border-width: var(--border-width-0) var(--border-width-0) var(--border-width-1) var(--border-width-0);
+  --input-complex-border-style: var(--input-border-style);
+  --input-complex-content-border-radius: var(--border-radius-0);
+  --input-complex-content-border-width: var(--border-width-0);
+  --input-complex-content-border-style: solid;
+
+  --displayer-complex-row-gap: var(--space-0);
+  --displayer-complex-border-radius: var(--border-radius-0);
+  --displayer-complex-border-width: var(--border-width-0);
+  --displayer-complex-border-style: solid;
+  --displayer-complex-content-border-radius: var(--border-radius-0);
+  --displayer-complex-content-border-width: var(--border-width-0);
+  --displayer-complex-content-border-style: solid;
 
   --button-cursor: pointer;
   --button-loader-margin: var(--space-0);
@@ -472,6 +487,14 @@
   --popover-item-tag-border-style: solid;
   --popover-item-tag-gap: var(--space-0250);
 
+  --toolbar-gap-top: var(--space-0);
+  --toolbar-row-gap: var(--space-0);
+  --toolbar-divider-height: 2rem;
+  --toolbar-divider-border: var(--border-width-1) solid var(--color-chrome);
+  --toolbar-padding: var(--space-0);
+  --toolbar-border-radius: var(--border-radius-0);
+  --toolbar-border-width: var(--border-width-0) var(--border-width-0) var(--border-width-1) var(--border-width-0);
+  --toolbar-border-style: solid;
   --toolbar-button-group-gap: var(--space-0);
   --toolbar-button-gap: var(--space-0);
 
@@ -558,6 +581,104 @@
   --toolbar-button-ghost-icon-only-min-width: var(--button-ghost-icon-only-min-width);
   --toolbar-button-ghost-icon-only-padding: var(--button-ghost-icon-only-padding);
   --toolbar-button-ghost-icon-only-width: var(--button-ghost-icon-only-min-width);
+
+  --toolbar-input-height: var(--row-size);
+  --toolbar-input-border-radius: var(--input-border-radius);
+  --toolbar-input-border-width: var(--input-border-width);
+  --toolbar-input-border-style: var(--input-border-style);
+
+  --toolbar-embedded-divider-height: 2rem;
+  --toolbar-embedded-divider-border: var(--border-width-1) solid var(--color-chrome);
+  --toolbar-embedded-padding: var(--space-0);
+  --toolbar-embedded-border-radius: var(--border-radius-0);
+  --toolbar-embedded-border-width: var(--border-width-0) var(--border-width-0) var(--border-width-1) var(--border-width-0);
+  --toolbar-embedded-border-style: solid;
+  --toolbar-embedded-button-group-gap: var(--space-0);
+  --toolbar-embedded-button-gap: var(--space-0);
+
+  --toolbar-embedded-button-primary-border: var(--button-primary-border);
+  --toolbar-embedded-button-primary-border-radius: var(--button-primary-border-radius);
+  --toolbar-embedded-button-primary-text-font-size: var(--button-primary-text-font-size);
+  --toolbar-embedded-button-primary-text-font-weight: var(--button-primary-text-font-weight);
+  --toolbar-embedded-button-primary-text-alignment: var(--button-primary-text-alignment);
+  --toolbar-embedded-button-primary-text-decoration: var(--button-primary-text-decoration);
+  --toolbar-embedded-button-primary-gap: var(--button-primary-gap);
+  --toolbar-embedded-button-primary-grid-areas: 'content icon';
+  --toolbar-embedded-button-primary-grid-template-columns: minmax(max-content, 1fr) auto;
+  --toolbar-embedded-button-primary-grid-template-rows: var(--button-primary-grid-template-rows);
+  --toolbar-embedded-button-primary-height: var(--button-primary-height);
+  --toolbar-embedded-button-primary-icon-size: var(--button-primary-icon-size);
+  --toolbar-embedded-button-primary-min-width: var(--button-primary-min-width);
+  --toolbar-embedded-button-primary-outline-offset: var(--button-primary-outline-offset);
+  --toolbar-embedded-button-primary-padding: var(--button-primary-padding);
+  --toolbar-embedded-button-primary-width: var(--button-primary-width);
+  --toolbar-embedded-button-primary-icon-only-height: var(--button-primary-icon-only-height);
+  --toolbar-embedded-button-primary-icon-only-min-width: var(--button-primary-icon-only-min-width);
+  --toolbar-embedded-button-primary-icon-only-padding: var(--button-primary-icon-only-padding);
+  --toolbar-embedded-button-primary-icon-only-width: var(--button-primary-icon-only-min-width);
+
+  --toolbar-embedded-button-secondary-border: var(--button-secondary-border);
+  --toolbar-embedded-button-secondary-border-radius: var(--button-secondary-border-radius);
+  --toolbar-embedded-button-secondary-text-font-size: var(--button-secondary-text-font-size);
+  --toolbar-embedded-button-secondary-text-font-weight: var(--button-secondary-text-font-weight);
+  --toolbar-embedded-button-secondary-text-alignment: var(--button-secondary-text-alignment);
+  --toolbar-embedded-button-secondary-text-decoration: var(--button-secondary-text-decoration);
+  --toolbar-embedded-button-secondary-gap: var(--button-secondary-gap);
+  --toolbar-embedded-button-secondary-grid-areas: 'content icon';
+  --toolbar-embedded-button-secondary-grid-template-columns: minmax(max-content, 1fr) auto;
+  --toolbar-embedded-button-secondary-grid-template-rows: var(--button-secondary-grid-template-rows);
+  --toolbar-embedded-button-secondary-height: var(--button-secondary-height);
+  --toolbar-embedded-button-secondary-icon-size: var(--button-secondary-icon-size);
+  --toolbar-embedded-button-secondary-min-width: var(--button-secondary-min-width);
+  --toolbar-embedded-button-secondary-outline-offset: var(--button-secondary-outline-offset);
+  --toolbar-embedded-button-secondary-padding: var(--button-secondary-padding);
+  --toolbar-embedded-button-secondary-width: var(--button-secondary-width);
+  --toolbar-embedded-button-secondary-icon-only-height: var(--button-secondary-icon-only-height);
+  --toolbar-embedded-button-secondary-icon-only-min-width: var(--button-secondary-icon-only-min-width);
+  --toolbar-embedded-button-secondary-icon-only-padding: var(--button-secondary-icon-only-padding);
+  --toolbar-embedded-button-secondary-icon-only-width: var(--button-secondary-icon-only-min-width);
+
+  --toolbar-embedded-button-tertiary-border: var(--button-tertiary-border);
+  --toolbar-embedded-button-tertiary-border-radius: var(--button-tertiary-border-radius);
+  --toolbar-embedded-button-tertiary-text-font-size: var(--button-tertiary-text-font-size);
+  --toolbar-embedded-button-tertiary-text-font-weight: var(--button-tertiary-text-font-weight);
+  --toolbar-embedded-button-tertiary-text-alignment: var(--button-tertiary-text-alignment);
+  --toolbar-embedded-button-tertiary-text-decoration: var(--button-tertiary-text-decoration);
+  --toolbar-embedded-button-tertiary-gap: var(--button-tertiary-gap);
+  --toolbar-embedded-button-tertiary-grid-areas: 'content icon';
+  --toolbar-embedded-button-tertiary-grid-template-columns: minmax(max-content, 1fr) auto;
+  --toolbar-embedded-button-tertiary-grid-template-rows: var(--button-tertiary-grid-template-rows);
+  --toolbar-embedded-button-tertiary-height: var(--button-tertiary-height);
+  --toolbar-embedded-button-tertiary-icon-size: var(--button-tertiary-icon-size);
+  --toolbar-embedded-button-tertiary-min-width: var(--button-tertiary-min-width);
+  --toolbar-embedded-button-tertiary-outline-offset: var(--button-tertiary-outline-offset);
+  --toolbar-embedded-button-tertiary-padding: var(--button-tertiary-padding);
+  --toolbar-embedded-button-tertiary-width: var(--button-tertiary-width);
+  --toolbar-embedded-button-tertiary-icon-only-height: var(--button-tertiary-icon-only-height);
+  --toolbar-embedded-button-tertiary-icon-only-min-width: var(--button-tertiary-icon-only-min-width);
+  --toolbar-embedded-button-tertiary-icon-only-padding: var(--button-tertiary-icon-only-padding);
+  --toolbar-embedded-button-tertiary-icon-only-width: var(--button-tertiary-icon-only-min-width);
+
+  --toolbar-embedded-button-ghost-border: var(--button-ghost-border);
+  --toolbar-embedded-button-ghost-border-radius: var(--button-ghost-border-radius);
+  --toolbar-embedded-button-ghost-text-font-size: var(--button-ghost-text-font-size);
+  --toolbar-embedded-button-ghost-text-font-weight: var(--button-ghost-text-font-weight);
+  --toolbar-embedded-button-ghost-text-alignment: var(--button-ghost-text-alignment);
+  --toolbar-embedded-button-ghost-text-decoration: var(--button-ghost-text-decoration);
+  --toolbar-embedded-button-ghost-gap: var(--button-ghost-gap);
+  --toolbar-embedded-button-ghost-grid-areas: 'content icon';
+  --toolbar-embedded-button-ghost-grid-template-columns: minmax(max-content, 1fr) auto;
+  --toolbar-embedded-button-ghost-grid-template-rows: var(--button-ghost-grid-template-rows);
+  --toolbar-embedded-button-ghost-height: var(--button-ghost-height);
+  --toolbar-embedded-button-ghost-icon-size: var(--button-ghost-icon-size);
+  --toolbar-embedded-button-ghost-min-width: var(--button-ghost-min-width);
+  --toolbar-embedded-button-ghost-outline-offset: var(--button-ghost-outline-offset);
+  --toolbar-embedded-button-ghost-padding: var(--button-ghost-padding);
+  --toolbar-embedded-button-ghost-width: var(--button-ghost-width);
+  --toolbar-embedded-button-ghost-icon-only-height: var(--button-ghost-icon-only-height);
+  --toolbar-embedded-button-ghost-icon-only-min-width: var(--button-ghost-icon-only-min-width);
+  --toolbar-embedded-button-ghost-icon-only-padding: var(--button-ghost-icon-only-padding);
+  --toolbar-embedded-button-ghost-icon-only-width: var(--button-ghost-icon-only-min-width);
 
   --toolbar-selection-button-border: var(--button-border-width) solid transparent;
   --toolbar-selection-button-border-radius: var(--button-border-radius);

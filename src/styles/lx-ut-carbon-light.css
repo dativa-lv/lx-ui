@@ -187,6 +187,20 @@
   --color-input-button-icon-hover: var(--color-button-ghost-icon-hover);
   --color-input-button-icon-active: var(--color-button-ghost-icon-active);
   --color-input-button-icon-disabled: var(--color-button-ghost-icon-disabled);
+
+  --color-input-complex-background: var(--color-input-background);
+  --color-input-complex-content-background: transparent;
+  --color-input-complex-border: var(--color-input-border);
+  --color-input-complex-border-disabled: var(--color-input-border-disabled);
+  --color-input-complex-content-border: transparent;
+  --color-input-complex-content-border-disabled: transparent;
+  --color-input-complex-background-disabled: var(--color-input-background-disabled);
+  --color-input-complex-content-background-disabled: transparent;
+  
+  --color-displayer-complex-background: var(--color-input-background);
+  --color-displayer-complex-content-background: transparent;
+  --color-displayer-complex-border: var(--color-input-border);
+  --color-displayer-complex-content-border: transparent;
   
   --color-button-active-mode: var(--color-data);
   --color-button-active-mode-background: var(--color-highlight);
@@ -308,6 +322,17 @@
   --color-popover-item-tag-border: var(--color-chrome);
   --color-popover-item-tag-border-selected: var(--color-selected-border);
 
+  --color-toolbar-input-text: var(--color-input-text);
+  --color-toolbar-input-background: transparent;
+  --color-toolbar-input-border: var(--color-input-border);
+
+  --color-toolbar-input-text-disabled: var(--color-input-text-disabled);
+  --color-toolbar-input-background-disabled: var(--color-input-background-disabled);
+  --color-toolbar-input-border-disabled: var(--color-input-border-disabled);
+
+  --color-toolbar-background: transparent;
+  --color-toolbar-border: var(--color-chrome);
+
   --color-toolbar-button-primary-text: var(--color-button-primary-text);
   --color-toolbar-button-primary-background: var(--color-button-primary-background);
   --color-toolbar-button-primary-text-focus: var(--color-button-primary-text-focus);
@@ -388,6 +413,90 @@
   --color-toolbar-button-ghost-icon-focus: var(--color-data);
   --color-toolbar-button-ghost-icon-hover: var(--color-button-ghost-icon-hover);
 
+  --color-toolbar-embedded-background: var(--color-input-background);
+  --color-toolbar-embedded-border: var(--color-chrome);
+  --color-toolbar-embedded-background-disabled: transparent;
+
+  --color-toolbar-embedded-button-primary-text: var(--color-button-primary-text);
+  --color-toolbar-embedded-button-primary-background: var(--color-button-primary-background);
+  --color-toolbar-embedded-button-primary-text-focus: var(--color-button-primary-text-focus);
+  --color-toolbar-embedded-button-primary-background-focus: var(--color-button-primary-background-focus);
+  --color-toolbar-embedded-button-primary-border-focus: var(--color-button-primary-border-focus);
+  --color-toolbar-embedded-button-primary-text-active: var(--color-button-primary-text-active);
+  --color-toolbar-embedded-button-primary-background-active: var(--color-button-primary-background-active);
+  --color-toolbar-embedded-button-primary-border-active: var(--color-button-primary-border-active);
+  --color-toolbar-embedded-button-primary-text-disabled: var(--color-button-primary-text-disabled);
+  --color-toolbar-embedded-button-primary-background-disabled: var(--color-button-primary-background-disabled);
+  --color-toolbar-embedded-button-primary-border-disabled: var(--color-button-primary-border-disabled);
+  --color-toolbar-embedded-button-primary-text-hover: var(--color-button-primary-text-hover);
+  --color-toolbar-embedded-button-primary-background-hover: var(--color-button-primary-background-hover);
+  --color-toolbar-embedded-button-primary-border-hover: var(--color-button-primary-border-hover);
+  --color-toolbar-embedded-button-primary-icon: var(--color-button-primary-icon);
+  --color-toolbar-embedded-button-primary-icon-active: var(--color-button-primary-icon-active);
+  --color-toolbar-embedded-button-primary-icon-disabled: var(--color-button-primary-icon-disabled);
+  --color-toolbar-embedded-button-primary-icon-focus: var(--color-button-primary-icon-focus);
+  --color-toolbar-embedded-button-primary-icon-hover: var(--color-button-primary-icon-hover);
+
+  --color-toolbar-embedded-button-secondary-text: var(--color-button-secondary-text);
+  --color-toolbar-embedded-button-secondary-background: var(--color-button-secondary-background);
+  --color-toolbar-embedded-button-secondary-text-focus: var(--color-button-secondary-text-focus);
+  --color-toolbar-embedded-button-secondary-background-focus: var(--color-button-secondary-background-focus);
+  --color-toolbar-embedded-button-secondary-border-focus: var(--color-button-secondary-border-focus);
+  --color-toolbar-embedded-button-secondary-text-active: var(--color-button-secondary-text-active);
+  --color-toolbar-embedded-button-secondary-background-active: var(--color-button-secondary-background-active);
+  --color-toolbar-embedded-button-secondary-border-active: var(--color-button-secondary-border-active);
+  --color-toolbar-embedded-button-secondary-text-disabled: var(--color-button-secondary-text-disabled);
+  --color-toolbar-embedded-button-secondary-background-disabled: var(--color-button-secondary-background-disabled);
+  --color-toolbar-embedded-button-secondary-border-disabled: var(--color-button-secondary-border-disabled);
+  --color-toolbar-embedded-button-secondary-text-hover: var(--color-button-secondary-text-hover);
+  --color-toolbar-embedded-button-secondary-background-hover: var(--color-button-secondary-background-hover);
+  --color-toolbar-embedded-button-secondary-border-hover: var(--color-button-secondary-border-hover);
+  --color-toolbar-embedded-button-secondary-icon: var(--color-button-secondary-icon);
+  --color-toolbar-embedded-button-secondary-icon-active: var(--color-button-secondary-icon-active);
+  --color-toolbar-embedded-button-secondary-icon-disabled: var(--color-button-secondary-icon-disabled);
+  --color-toolbar-embedded-button-secondary-icon-focus: var(--color-button-secondary-icon-focus);
+  --color-toolbar-embedded-button-secondary-icon-hover: var(--color-button-secondary-icon-hover);
+
+  --color-toolbar-embedded-button-tertiary-text: var(--color-button-tertiary-text);
+  --color-toolbar-embedded-button-tertiary-background: var(--color-button-tertiary-background);
+  --color-toolbar-embedded-button-tertiary-text-focus: var(--color-button-tertiary-text-focus);
+  --color-toolbar-embedded-button-tertiary-background-focus: var(--color-button-tertiary-background-focus);
+  --color-toolbar-embedded-button-tertiary-border-focus: var(--color-button-tertiary-border-focus);
+  --color-toolbar-embedded-button-tertiary-text-active: var(--color-button-tertiary-text-active);
+  --color-toolbar-embedded-button-tertiary-background-active: var(--color-button-tertiary-background-active);
+  --color-toolbar-embedded-button-tertiary-border-active: var(--color-button-tertiary-border-active);
+  --color-toolbar-embedded-button-tertiary-text-disabled: var(--color-button-tertiary-text-disabled);
+  --color-toolbar-embedded-button-tertiary-background-disabled: var(--color-button-tertiary-background-disabled);
+  --color-toolbar-embedded-button-tertiary-border-disabled: var(--color-button-tertiary-border-disabled);
+  --color-toolbar-embedded-button-tertiary-text-hover: var(--color-button-tertiary-text-hover);
+  --color-toolbar-embedded-button-tertiary-background-hover: var(--color-button-tertiary-background-hover);
+  --color-toolbar-embedded-button-tertiary-border-hover: var(--color-button-tertiary-border-hover);
+  --color-toolbar-embedded-button-tertiary-icon: var(--color-button-tertiary-icon);
+  --color-toolbar-embedded-button-tertiary-icon-active: var(--color-button-tertiary-icon-active);
+  --color-toolbar-embedded-button-tertiary-icon-disabled: var(--color-button-tertiary-icon-disabled);
+  --color-toolbar-embedded-button-tertiary-icon-focus: var(--color-button-tertiary-icon-focus);
+  --color-toolbar-embedded-button-tertiary-icon-hover: var(--color-button-tertiary-icon-hover);
+
+  --color-toolbar-embedded-button-ghost-text: var(--color-data);
+  --color-toolbar-embedded-button-ghost-background: var(--color-button-ghost-background);
+  --color-toolbar-embedded-button-ghost-text-focus: var(--color-data);
+  --color-toolbar-embedded-button-ghost-background-focus: var(--color-button-ghost-background-focus);
+  --color-toolbar-embedded-button-ghost-border-focus: var(--color-button-ghost-border-focus);
+  --color-toolbar-embedded-button-ghost-text-active: var(--color-button-ghost-text-active);
+  --color-toolbar-embedded-button-ghost-background-active: var(--color-button-ghost-background-active);
+  --color-toolbar-embedded-button-ghost-border-active: var(--color-button-ghost-border-active);
+  --color-toolbar-embedded-button-ghost-text-disabled: var(--color-button-ghost-text-disabled);
+  --color-toolbar-embedded-button-ghost-background-disabled: var(--color-button-ghost-background-disabled);
+  --color-toolbar-embedded-button-ghost-border-disabled: var(--color-button-ghost-border-disabled);
+  --color-toolbar-embedded-button-ghost-text-hover: var(--color-button-ghost-text-hover);
+  --color-toolbar-embedded-button-ghost-background-hover: var(--color-button-ghost-background-hover);
+  --color-toolbar-embedded-button-ghost-border-hover: var(--color-button-ghost-border-hover);
+  --color-toolbar-embedded-button-ghost-icon: var(--color-data);
+  --color-toolbar-embedded-button-ghost-icon-active: var(--color-button-ghost-icon-active);
+  --color-toolbar-embedded-button-ghost-icon-disabled: var(--color-button-ghost-icon-disabled);
+  --color-toolbar-embedded-button-ghost-icon-focus: var(--color-data);
+  --color-toolbar-embedded-button-ghost-icon-hover: var(--color-button-ghost-icon-hover);
+
   --color-toolbar-selection-button-text: var(--color-interactive-foreground);
   --color-toolbar-selection-button-background: transparent;
   --color-toolbar-selection-button-text-focus: var(--color-interactive-foreground);
@@ -395,7 +504,7 @@
   --color-toolbar-selection-button-border-focus: transparent;
   --color-toolbar-selection-button-text-active: var(--color-interactive-active-foreground);
   --color-toolbar-selection-button-background-active: var(--color-interactive-active-background);
-  --color-toolbar-selection-button-border-active: var(--color-interactive-active-background);
+  --color-toolbar-selection-button-border-active: transparent;
   --color-toolbar-selection-button-text-disabled: var(--color-disabled-foreground);
   --color-toolbar-selection-button-background-disabled: var(--color-disabled-background);
   --color-toolbar-selection-button-border-disabled: var(--color-disabled-background);

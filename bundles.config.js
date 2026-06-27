@@ -43,6 +43,7 @@ export const commonStyles = [
   'lx-content-switchers',
   'lx-badges',
   'lx-popovers',
+  'lx-toolbars',
   // add new style file names here (without .css extension)
 ];
 

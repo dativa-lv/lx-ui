@@ -1055,12 +1055,6 @@
   outline-color: var(--color-focus-background);
 }
 
-.lx-data-grid-wrapper .lx-selection-toolbar .lx-component-toolbar .first-row,
-.lx-data-grid-wrapper .lx-selection-toolbar .lx-component-toolbar .lx-dropdown-panel {
-  background-color: var(--color-interactive-background);
-  color: var(--color-interactive-foreground);
-}
-
 .lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar .lx-group > p,
 .lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-group > p {
   color: var(--color-toolbar-selection-button-text);
@@ -1304,37 +1298,6 @@
   text-decoration: none;
 }
 
-/* 2nd toolbar row for DataGrid.vue */
-
-.lx-data-grid-wrapper > .second-row,
-.lx-data-grid-wrapper > .second-row > .lx-slot-wrapper {
-  display: flex;
-}
-
-.lx-data-grid-wrapper > .second-row > .lx-field-wrapper > .lx-text-input-wrapper,
-.lx-data-grid-wrapper > .second-row > .lx-field-wrapper > .lx-text-input-wrapper > .lx-text-input {
-  height: 100%;
-}
-
-.lx-data-grid-wrapper > .second-row > .lx-field-wrapper {
-  min-height: 3rem;
-}
-
-.lx .lx-data-grid-wrapper .lx-toolbar-search-button-wrapper.is-expanded .lx-button,
-.lx .lx-data-grid-wrapper .second-row .lx-button {
-  --color-toolbar-selection-button-icon: var(--color-data);
-  --color-toolbar-selection-button-icon-focus: var(--color-data);
-}
-
-.lx .lx-data-grid-wrapper .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded:hover .lx-button {
-  background-color: var(--color-interactive-hover-background);
-}
-
-.lx .lx-data-grid-wrapper .second-row .lx-input-wrapper {
-  --color-input-background: var(--color-region-2);
-  --color-input-background-disabled: var(--color-disabled-background);
-}
-
 .lx .lx-data-grid-wrapper .lx-cell-person-wrapper {
   display: flex;
   justify-content: space-between;
@@ -1455,7 +1418,7 @@
     background: var(--color-badge-background);
   }
 
-  .lx-data-grid-wrapper .lx-selection-toolbar .lx-component-toolbar .selection-action-buttons-small .lx-dropdown-panel {
+  .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .selection-action-buttons-small .lx-dropdown-panel {
     background-color: var(--color-background);
   }
 }

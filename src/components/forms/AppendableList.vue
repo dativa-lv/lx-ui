@@ -273,6 +273,7 @@ defineExpose({ clearModel });
 <template>
   <div class="lx-appendable-list-wrapper" ref="wrapperRef">
     <LxToolbar
+      class="lx-floating-toolbar"
       :id="`${props.id}-toolbar`"
       :actionDefinitions="toolbarActions"
       :texts="displayTexts"

@@ -1579,6 +1579,7 @@ watch(
       }
       nextTick(() => {
         drawImage(imgScale.value);
+        isFileUploaded.value = true;
       });
     }
 
@@ -1621,11 +1622,12 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="lx-file-viewer"
+    class="lx-file-viewer lx-complex-displayer"
     :class="[
       { 'lx-file-viewer-fullscreen': isExpanded },
       { image: supportedFileType === 'Image' || supportedFileType === 'SVG' },
       { 'lx-file-viewer-sticky': stickyToolbar && !isExpanded },
+      { 'is-ready': isFileUploaded && !renderingInProgress },
     ]"
     :style="inlineSize"
     ref="fileViewerWrapperRef"
@@ -1635,10 +1637,9 @@ onUnmounted(() => {
       :label="displayTexts.invalidFileUploadedLabel"
       :description="displayTexts.invalidFileUploadedDescription"
     />
-
     <LxToolbar
       v-if="supportedFileType"
-      class="lx-file-viewer-toolbar"
+      class="lx-file-viewer-toolbar lx-embedded-toolbar"
       :loading="renderingInProgress"
       :actionDefinitions="toolbarActions"
       defaultArea="right"
@@ -1723,7 +1724,7 @@ onUnmounted(() => {
 
     <div
       v-if="supportedFileType === 'Binary'"
-      class="lx-binary-wrapper"
+      class="lx-binary-wrapper lx-complex-displayer-content"
       :class="[{ 'lx-binary-wrapper-fullscreen': isExpanded }, fitType]"
       :style="`--font-size-binary-wrapper-default: calc(${fontSizeScale} * 1rem);
       --font-size-binary-wrapper-h1: calc(${fontSizeScale} * 2.5rem);
@@ -1737,7 +1738,7 @@ onUnmounted(() => {
     <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
     <div
       v-show="supportedFileType === 'Image' || supportedFileType === 'SVG'"
-      class="lx-img-wrapper"
+      class="lx-img-wrapper lx-complex-displayer-content"
       :class="[
         { 'lx-img-wrapper-fullscreen': isExpanded },
         fitType,
@@ -1757,7 +1758,7 @@ onUnmounted(() => {
 
     <div
       v-if="showPdf"
-      class="lx-pdf-wrapper"
+      class="lx-pdf-wrapper lx-complex-displayer-content"
       ref="pdfWrapper"
       :class="[
         { 'lx-pdf-wrapper-scrollable': scrollable && !isExpanded },
@@ -1776,8 +1777,7 @@ onUnmounted(() => {
       <div v-else ref="canvasWrapper" class="lx-pdf-canvas-wrapper">
         <canvas v-for="pageNum in totalPages" :key="pageNum" ref="canvasArray" class="pdf-canvas" />
       </div>
+      <LxLoader class="lx-file-viewer-loader" :loading="renderingInProgress" size="l" />
     </div>
-
-    <LxLoader class="lx-file-viewer-loader" :loading="renderingInProgress" size="l" />
   </div>
 </template>

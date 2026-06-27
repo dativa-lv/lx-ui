@@ -13,6 +13,7 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 ## Components
 
 - [Inputs](tokens/InputTokens.md)
+- [Displayers](tokens/DisplayerTokens.md)
 - [LxButton](tokens/ButtonTokens.md)
 - [LxList](tokens/ListTokens.md)
 - [LxTile](tokens/TileTokens.md)

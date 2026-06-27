@@ -1443,6 +1443,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         @click="focusFirstFocusableElementAfter"
       />
       <LxToolbar
+        class="lx-floating-toolbar"
         ref="toolbarRef"
         :customClass="hasSelecting && selectedItems?.length > 0 ? 'lx-selection-toolbar' : ''"
         :id="`${id}-toolbar`"
