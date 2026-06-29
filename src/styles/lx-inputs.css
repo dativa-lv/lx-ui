@@ -4110,6 +4110,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-autocomplete .lx-autocomplete-default-data .lx-text-input-wrapper .lx-stack,
 .lx-value-picker-wrapper .lx-dropdown-default .lx-dropdown-default-data .lx-stack {
   line-height: 1.1em;
+  overflow-y: hidden;
 }
 
 @media (max-height: 499px) {
