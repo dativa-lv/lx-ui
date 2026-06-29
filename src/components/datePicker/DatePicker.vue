@@ -182,975 +182,742 @@ function setActiveInput(type, id, defaultFocus = false) {
   }
 }
 
-function validateIfExact(e, type = 'startInput') {
-  const applyRangeFocus = (rangeValue) => {
-    if (props.pickerType !== 'range') return;
+// Range-focus side effect shared by the valid-date range branches.
+function applyRangeFocus(type, rangeValue) {
+  if (props.pickerType !== 'range') return;
 
-    const hasStart = Boolean(rangeValue?.start);
-    const hasEnd = Boolean(rangeValue?.end);
+  const hasStart = Boolean(rangeValue?.start);
+  const hasEnd = Boolean(rangeValue?.end);
 
-    if (hasStart && !hasEnd) {
-      setActiveInput('endInput', props.id);
-      return;
-    }
+  if (hasStart && !hasEnd) {
+    setActiveInput('endInput', props.id);
+    return;
+  }
 
-    if (!hasStart && hasEnd) {
-      setActiveInput('startInput', props.id);
-      return;
-    }
+  if (!hasStart && hasEnd) {
+    setActiveInput('startInput', props.id);
+    return;
+  }
 
-    if (hasStart && hasEnd) {
-      setActiveInput(type, props.id);
-    }
+  if (hasStart && hasEnd) {
+    setActiveInput(type, props.id);
+  }
+}
+
+// Reset a date/date-mask input to "today" (or clear it) when the entry is not exact.
+function resetDateInputToFallback(e, inputMask, validationResult = null) {
+  const updatedValue = props.clearIfNotExact ? null : new Date();
+
+  if (
+    validationResult &&
+    [DATE_VALIDATION_RESULT.OUT_OF_RANGE_MAX, DATE_VALIDATION_RESULT.OUT_OF_RANGE_MIN].includes(
+      // @ts-ignore TS2345:: value narrowed at runtime via includes();
+      validationResult
+    )
+  ) {
+    emits('outOfRange', validationResult);
+  }
+
+  emits('update:modelValue', updatedValue);
+
+  const newDay = new Date().getDate();
+  const newMonth = new Date().getMonth();
+  const newYear = new Date().getFullYear();
+
+  const newDateString = inputMask
+    .replace('dd', zeroPad(newDay))
+    .replace('MM', zeroPad(newMonth + 1))
+    .replace('yyyy', newYear);
+
+  e.target.value = props.clearIfNotExact ? null : newDateString;
+}
+
+// Range cleanup when the typed value fails the MASK check. Returns true if handled.
+function clearRangeForInvalidDateMask(e, type) {
+  if (type === 'startInput' && model.value.end) {
+    emits('update:modelValue', { start: null, end: model.value.end });
+    e.target.value = null;
+    return true;
+  }
+  if (type === 'startInput' && !model.value.end) {
+    emits('update:modelValue', { start: null, end: null });
+    e.target.value = null;
+    return true;
+  }
+  if (type === 'endInput' && model.value.start) {
+    emits('update:modelValue', { start: model.value.start, end: null });
+    e.target.value = null;
+    return true;
+  }
+  // NOTE: intentionally keyed on `!model.value.end` (mirrors original mask-invalid branch).
+  if (type === 'endInput' && !model.value.end) {
+    emits('update:modelValue', { start: null, end: null });
+    e.target.value = null;
+    return true;
+  }
+  return false;
+}
+
+// Range cleanup when the value is well-formed but INVALID/out-of-range. Returns true if handled.
+function clearRangeForInvalidDateValue(e, type) {
+  if (type === 'startInput' && model.value.end) {
+    emits('update:modelValue', { start: null, end: model.value.end });
+    e.target.value = null;
+    return true;
+  }
+  if (type === 'startInput' && !model.value.end) {
+    emits('update:modelValue', { start: null, end: null });
+    e.target.value = null;
+    return true;
+  }
+  if (type === 'endInput' && model.value.start) {
+    emits('update:modelValue', { start: model.value.start, end: null });
+    e.target.value = null;
+    return true;
+  }
+  // NOTE: intentionally keyed on `!model.value.start` (differs from the mask variant above).
+  if (type === 'endInput' && !model.value.start) {
+    emits('update:modelValue', { start: null, end: null });
+    e.target.value = null;
+    return true;
+  }
+  return false;
+}
+
+function parseDateInput(cleanedDate, cleanedMask) {
+  const dayIndex = cleanedMask?.indexOf('dd');
+  const monthIndex = cleanedMask?.indexOf('MM');
+  const yearIndex = cleanedMask?.indexOf('yyyy');
+
+  const day = Number(cleanedDate.substring(dayIndex, dayIndex + 2));
+  const month = Number(cleanedDate.substring(monthIndex, monthIndex + 2));
+  const year = Number(cleanedDate.substring(yearIndex, yearIndex + 4));
+
+  const normalizedDay = zeroPad(day);
+  const normalizedMonth = zeroPad(month);
+
+  return {
+    dateString: `${year}-${normalizedMonth}-${normalizedDay}`, // "YYYY-MM-DD"
+    hasAllParts: Boolean(day && month && year),
+    updatedValue: day && month && year ? new Date(year, month - 1, day) : null,
   };
+}
 
+// Apply a valid date to the START input of a range. (Branches merged where bodies are identical.)
+function applyValidDateRangeStart(type, updatedValue) {
+  if (!updatedValue && model.value.end) {
+    const updatedDatesObject = { start: null, end: model.value.end };
+    emits('update:modelValue', updatedDatesObject);
+    applyRangeFocus(type, updatedDatesObject);
+    return;
+  }
+  if (!updatedValue && !model.value.end) {
+    emits('update:modelValue', { start: null, end: null });
+    return;
+  }
+  if (updatedValue && model.value.end) {
+    let updatedDatesObject = { start: updatedValue, end: model.value.end };
+    if (updatedValue > model.value.end) {
+      updatedDatesObject = { start: updatedValue, end: null };
+    }
+    emits('update:modelValue', updatedDatesObject);
+    applyRangeFocus(type, updatedDatesObject);
+    return;
+  }
+  if (updatedValue && !model.value.end) {
+    const updatedDatesObject = { start: updatedValue, end: null };
+    emits('update:modelValue', updatedDatesObject);
+    applyRangeFocus(type, updatedDatesObject);
+  }
+}
+
+// Apply a valid date to the END input of a range. (Branches merged where bodies are identical.)
+function applyValidDateRangeEnd(type, updatedValue) {
+  if (!updatedValue && model.value.start) {
+    const updatedDatesObject = { start: model.value.start, end: null };
+    emits('update:modelValue', updatedDatesObject);
+    applyRangeFocus(type, updatedDatesObject);
+    return;
+  }
+  if (!updatedValue && !model.value.start) {
+    emits('update:modelValue', { start: null, end: null });
+    return;
+  }
+  if (updatedValue && model.value.start) {
+    let updatedDatesObject = { start: model.value.start, end: updatedValue };
+    if (updatedValue < model.value.start) {
+      updatedDatesObject = { start: updatedValue, end: null };
+      liveMessage.value = `${displayTexts.value.selectedStartDate}: ${formatLocalizedDate(
+        props.locale,
+        updatedValue
+      )}`;
+    }
+    emits('update:modelValue', updatedDatesObject);
+    applyRangeFocus(type, updatedDatesObject);
+    return;
+  }
+  if (updatedValue && !model.value.start) {
+    const updatedDatesObject = { start: null, end: updatedValue };
+    emits('update:modelValue', updatedDatesObject);
+    applyRangeFocus(type, updatedDatesObject);
+  }
+}
+
+function applyValidDateRange(type, updatedValue) {
+  if (type === 'startInput') applyValidDateRangeStart(type, updatedValue);
+  if (type === 'endInput') applyValidDateRangeEnd(type, updatedValue);
+}
+
+function validateDateInput(e, type) {
+  const rawDate = normalizeFlexibleDateInput(e.target.value, maxDateRef.value);
+  const inputMask = props.masks?.input || 'dd.MM.yyyy.';
+
+  const cleanedDate = removeLastNonAlphanumeric(rawDate);
+  const cleanedMask = removeLastNonAlphanumeric(inputMask);
+
+  if (!rawDate || !validateDateByMask(cleanedDate, cleanedMask)) {
+    if (props.pickerType === 'range' && clearRangeForInvalidDateMask(e, type)) return;
+    resetDateInputToFallback(e, inputMask);
+    return;
+  }
+
+  const { dateString, hasAllParts, updatedValue } = parseDateInput(cleanedDate, cleanedMask);
+
+  // Check if the constructed date is valid
+  if (hasAllParts && !isDateValid(new Date(dateString))) {
+    if (props.pickerType === 'range' && clearRangeForInvalidDateValue(e, type)) return;
+    resetDateInputToFallback(e, inputMask);
+    return;
+  }
+
+  const dateRangeValidationResult = validateDateRange(
+    new Date(dateString),
+    props.minDate,
+    props.maxDate
+  );
+
+  // Check if the date is within the min/max range
+  if (
+    hasAllParts &&
+    dateRangeValidationResult !== DATE_VALIDATION_RESULT.VALID &&
+    dateRangeValidationResult !== DATE_VALIDATION_RESULT.NO_VALUE
+  ) {
+    resetDateInputToFallback(e, inputMask, dateRangeValidationResult);
+    return;
+  }
+
+  if (props.pickerType === 'single') {
+    emits('update:modelValue', updatedValue);
+  }
+  if (props.pickerType === 'range') {
+    applyValidDateRange(type, updatedValue);
+  }
+}
+
+function validateTimeInput(e) {
+  const now = new Date();
+  const inputTime24hrMask = props.masks?.inputTime24hr || 'HH:mm';
+
+  const standardMask = isStandardTimeMask(inputTime24hrMask);
+
+  const rawInput = e.target.value;
+  const normalizedInput = standardMask ? normalizeFlexibleTimeInput(rawInput) : rawInput;
+
+  if (!normalizedInput || !validateDateByMask(normalizedInput, inputTime24hrMask)) {
+    const updatedValue = new Date();
+
+    if (props.clearIfNotExact) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    if (!isTimeWithinMinMax(updatedValue, minDateRef.value, maxDateRef.value)) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    const newHours = zeroPad(updatedValue.getHours());
+    const newMinutes = zeroPad(updatedValue.getMinutes());
+
+    const newTimeString = inputTime24hrMask
+      .replace('HH', zeroPad(newHours))
+      .replace('mm', zeroPad(newMinutes));
+
+    e.target.value = newTimeString;
+    emits('update:modelValue', updatedValue);
+    return;
+  }
+
+  const hoursIndex = inputTime24hrMask.indexOf('HH');
+  const minutesIndex = inputTime24hrMask.indexOf('mm');
+
+  const hours = Number(normalizedInput.substring(hoursIndex, hoursIndex + 2));
+  const minutes = Number(normalizedInput.substring(minutesIndex, minutesIndex + 2));
+
+  const normalizedHours = zeroPad(hours);
+  const normalizedMinutes = zeroPad(minutes);
+
+  if (!isTimeValid(`${normalizedHours}:${normalizedMinutes}`)) {
+    const updatedValue = new Date();
+
+    if (props.clearIfNotExact) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    const newHours = updatedValue.getHours();
+    const newMinutes = updatedValue.getMinutes();
+
+    const newTimeString = inputTime24hrMask
+      .replace('HH', zeroPad(newHours))
+      .replace('mm', zeroPad(newMinutes));
+
+    e.target.value = newTimeString;
+    emits('update:modelValue', updatedValue);
+    return;
+  }
+
+  const updatedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+
+  if (!isTimeWithinMinMax(updatedDate, minDateRef.value, maxDateRef.value)) {
+    e.target.value = null;
+    emits('update:modelValue', null);
+    return;
+  }
+
+  emits('update:modelValue', updatedDate);
+}
+
+function validateTimeFullInput(e) {
+  const now = new Date();
+  const inputTimeFull24hrMask = props.masks?.inputTimeFull24hr || 'HH:mm:ss';
+
+  const standardMask = isStandardTimeMask(inputTimeFull24hrMask);
+
+  const rawInput = e.target.value;
+  const normalizedInput = standardMask ? normalizeFlexibleTimeInput(rawInput, true) : rawInput;
+
+  if (!normalizedInput || !validateDateByMask(normalizedInput, inputTimeFull24hrMask)) {
+    const updatedValue = new Date();
+
+    if (props.clearIfNotExact) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    if (!isTimeWithinMinMax(updatedValue, minDateRef.value, maxDateRef.value)) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    const newHours = updatedValue.getHours();
+    const newMinutes = updatedValue.getMinutes();
+    const newSeconds = updatedValue.getSeconds();
+
+    const newTimeString = inputTimeFull24hrMask
+      .replace('HH', zeroPad(newHours))
+      .replace('mm', zeroPad(newMinutes))
+      .replace('ss', zeroPad(newSeconds));
+
+    e.target.value = newTimeString;
+    emits('update:modelValue', updatedValue);
+    return;
+  }
+
+  const hoursIndex = inputTimeFull24hrMask?.indexOf('HH');
+  const minutesIndex = inputTimeFull24hrMask?.indexOf('mm');
+  const secondsIndex = inputTimeFull24hrMask?.indexOf('ss');
+
+  const hours = Number(normalizedInput.substring(hoursIndex, hoursIndex + 2));
+  const minutes = Number(normalizedInput.substring(minutesIndex, minutesIndex + 2));
+  const seconds = Number(normalizedInput.substring(secondsIndex, secondsIndex + 2));
+
+  const normalizedHours = zeroPad(hours);
+  const normalizedMinutes = zeroPad(minutes);
+  const normalizedSeconds = zeroPad(seconds);
+
+  if (!isTimeFullValid(`${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`)) {
+    const updatedValue = new Date();
+
+    if (props.clearIfNotExact) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    const newHours = updatedValue.getHours();
+    const newMinutes = updatedValue.getMinutes();
+    const newSeconds = updatedValue.getSeconds();
+
+    const newTimeString = inputTimeFull24hrMask
+      .replace('HH', zeroPad(newHours))
+      .replace('mm', zeroPad(newMinutes))
+      .replace('ss', zeroPad(newSeconds));
+
+    e.target.value = newTimeString;
+    emits('update:modelValue', updatedValue);
+    return;
+  }
+
+  const updatedDate = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hours,
+    minutes,
+    seconds
+  );
+
+  if (!isTimeWithinMinMax(updatedDate, minDateRef.value, maxDateRef.value)) {
+    e.target.value = null;
+    emits('update:modelValue', null);
+    return;
+  }
+
+  emits('update:modelValue', updatedDate);
+}
+
+function validateDateTimeInput(e) {
+  const dateTime = e.target.value;
+  const inputDateTime24hrMask = props.masks?.inputDateTime24hr || 'dd.MM.yyyy. HH:mm';
+
+  let [date, time] = dateTime.split(' ');
+  const [dateMask, timeMask] = inputDateTime24hrMask.split(' ');
+
+  date = normalizeFlexibleDateInput(removeLastNonAlphanumeric(date), maxDateRef.value);
+  time = normalizeFlexibleTimeInput(time);
+
+  const cleanedDate = removeLastNonAlphanumeric(date);
+  const cleanedMask = removeLastNonAlphanumeric(dateMask);
+
+  const constructedDateTimeString = `${cleanedDate} ${time}`;
+  const constructedMaskString = `${cleanedMask} ${timeMask}`;
+
+  if (
+    (dateTime && !validateDateByMask(constructedDateTimeString, constructedMaskString)) ||
+    timeMask.length !== time.length ||
+    cleanedDate.length !== cleanedMask.length
+  ) {
+    if (props.clearIfNotExact) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    const updatedValue = new Date();
+
+    const newDay = new Date().getDate();
+    const newMonth = new Date().getMonth();
+    const newYear = new Date().getFullYear();
+    const newHours = new Date().getHours();
+    const newMinutes = new Date().getMinutes();
+
+    const newDateTimeString = inputDateTime24hrMask
+      .replace('dd', zeroPad(newDay))
+      .replace('MM', zeroPad(newMonth + 1))
+      .replace('yyyy', newYear)
+      .replace('HH', newHours)
+      .replace('mm', newMinutes);
+
+    e.target.value = newDateTimeString;
+    emits('update:modelValue', updatedValue);
+    return;
+  }
+
+  const dayIndex = constructedMaskString?.indexOf('dd');
+  const monthIndex = constructedMaskString?.indexOf('MM');
+  const yearIndex = constructedMaskString?.indexOf('yyyy');
+  const hoursIndex = constructedMaskString?.indexOf('HH');
+  const minutesIndex = constructedMaskString?.indexOf('mm');
+
+  const day = constructedDateTimeString?.substring(dayIndex, dayIndex + 2);
+  const month = constructedDateTimeString?.substring(monthIndex, monthIndex + 2);
+  const year = constructedDateTimeString?.substring(yearIndex, yearIndex + 4);
+  const hours = constructedDateTimeString?.substring(hoursIndex, hoursIndex + 2);
+  const minutes = constructedDateTimeString?.substring(minutesIndex, minutesIndex + 2);
+
+  const normalizedDay = zeroPad(day);
+  const normalizedMonth = zeroPad(month);
+  const normalizedHours = zeroPad(hours);
+  const normalizedMinutes = zeroPad(minutes);
+  const normalizedSeconds = zeroPad(0);
+
+  const dateString = `${year}-${normalizedMonth}-${normalizedDay}`; // "YYYY-MM-DD"
+  const timeString = `${normalizedHours}:${normalizedMinutes}`; // "HH:mm"
+  const fullTimeString = `${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`; // "HH:mm:ss"
+
+  // Check if the constructed date and time is valid
+  if (!isDateValid(dateString) || !isTimeValid(timeString)) {
+    const updatedValue = props.clearIfNotExact ? null : new Date();
+    emits('update:modelValue', updatedValue);
+    return;
+  }
+
+  // Combine the date and time strings into a valid ISO string
+  const dateTimeString = `${dateString}T${fullTimeString}`;
+
+  // Check if the date is within the min/max range
+  if (!canSelectDate(new Date(dateTimeString), props.minDate, props.maxDate, props.mode)) {
+    const updatedValue = props.clearIfNotExact ? null : new Date();
+    emits('update:modelValue', updatedValue);
+    modelInput.value = null;
+    return;
+  }
+
+  // Update the value with the valid date
+  const updatedValue = new Date(dateTimeString);
+  emits('update:modelValue', updatedValue);
+}
+
+function validateDateTimeFullInput(e) {
+  const dateTimeFull = e.target.value;
+  const inputDateTimeFull24hrMask = props.masks?.inputDateTimeFull24hr || 'dd.MM.yyyy. HH:mm:ss';
+
+  let [date, time] = dateTimeFull.split(' ');
+  const [dateMask, timeMask] = inputDateTimeFull24hrMask.split(' ');
+
+  date = normalizeFlexibleDateInput(removeLastNonAlphanumeric(date), maxDateRef.value);
+  time = normalizeFlexibleTimeInput(time, true);
+
+  const cleanedDate = removeLastNonAlphanumeric(date);
+  const cleanedMask = removeLastNonAlphanumeric(dateMask);
+
+  const constructedDateTimeString = `${cleanedDate} ${time}`;
+  const constructedMaskString = `${cleanedMask} ${timeMask}`;
+
+  if (
+    (dateTimeFull && !validateDateByMask(constructedDateTimeString, constructedMaskString)) ||
+    timeMask.length !== time.length ||
+    cleanedDate.length !== cleanedMask.length
+  ) {
+    if (props.clearIfNotExact) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    const updatedValue = new Date();
+
+    const newDay = new Date().getDate();
+    const newMonth = new Date().getMonth();
+    const newYear = new Date().getFullYear();
+    const newHours = new Date().getHours();
+    const newMinutes = new Date().getMinutes();
+    const newSeconds = new Date().getSeconds();
+
+    const newDateTimeFullString = inputDateTimeFull24hrMask
+      .replace('dd', zeroPad(newDay))
+      .replace('MM', zeroPad(newMonth + 1))
+      .replace('yyyy', newYear)
+      .replace('HH', newHours)
+      .replace('mm', newMinutes)
+      .replace('ss', newSeconds);
+
+    e.target.value = newDateTimeFullString;
+    emits('update:modelValue', updatedValue);
+    return;
+  }
+
+  const dayIndex = constructedMaskString?.indexOf('dd');
+  const monthIndex = constructedMaskString?.indexOf('MM');
+  const yearIndex = constructedMaskString?.indexOf('yyyy');
+  const hoursIndex = constructedMaskString?.indexOf('HH');
+  const minutesIndex = constructedMaskString?.indexOf('mm');
+  const secondsIndex = constructedMaskString?.indexOf('ss');
+
+  const day = constructedDateTimeString?.substring(dayIndex, dayIndex + 2);
+  const month = constructedDateTimeString?.substring(monthIndex, monthIndex + 2);
+  const year = constructedDateTimeString?.substring(yearIndex, yearIndex + 4);
+  const hours = constructedDateTimeString?.substring(hoursIndex, hoursIndex + 2);
+  const minutes = constructedDateTimeString?.substring(minutesIndex, minutesIndex + 2);
+  const seconds = constructedDateTimeString?.substring(secondsIndex, secondsIndex + 2);
+
+  const normalizedDay = zeroPad(day);
+  const normalizedMonth = zeroPad(month);
+  const normalizedHours = zeroPad(hours);
+  const normalizedMinutes = zeroPad(minutes);
+  const normalizedSeconds = zeroPad(seconds);
+
+  const dateString = `${year}-${normalizedMonth}-${normalizedDay}`; // "YYYY-MM-DD"
+  const fullTimeString = `${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`; // "HH:mm:ss"
+
+  // Check if the constructed date and time is valid
+  if (!isDateValid(dateString) || !isTimeFullValid(fullTimeString)) {
+    const updatedValue = props.clearIfNotExact ? null : new Date();
+    emits('update:modelValue', updatedValue);
+    return;
+  }
+
+  // Combine the date and time strings into a valid ISO string
+  const dateTimeString = `${dateString}T${fullTimeString}`;
+
+  // Check if the date is within the min/max range
+  if (!canSelectDate(new Date(dateTimeString), props.minDate, props.maxDate, props.mode)) {
+    const updatedValue = props.clearIfNotExact ? null : new Date();
+    emits('update:modelValue', updatedValue);
+    modelInput.value = null;
+    return;
+  }
+
+  // Update the value with the valid date
+  const updatedValue = new Date(dateTimeString);
+  emits('update:modelValue', updatedValue);
+}
+
+// Reset a year input to the current year (or clear it) when the entry is not exact.
+function resetYearInputToFallback(e) {
+  const updatedValue = props.clearIfNotExact ? null : new Date();
+  emits('update:modelValue', updatedValue);
+  e.target.value = props.clearIfNotExact ? null : new Date().getFullYear();
+}
+
+// b3 of year-end: clamp with focus side effect when the new end precedes the start.
+function emitYearEndWithStart(updatedValue) {
+  let updatedDatesObject = { start: model.value.start, end: updatedValue };
+  if (updatedValue < model.value.start) {
+    updatedDatesObject = { start: updatedValue, end: null };
+    setActiveInput('endInput', props.id);
+  }
+  emits('update:modelValue', updatedDatesObject);
+}
+
+// b4 of year-end: clamp without the focus side effect.
+function emitYearEndStartOnly(updatedValue) {
+  let updatedDatesObject = { start: model.value.start, end: updatedValue };
+  if (updatedValue < model.value.start) {
+    updatedDatesObject = { start: updatedValue, end: null };
+  }
+  emits('update:modelValue', updatedDatesObject);
+}
+
+function resolveYearStartWithEnd(updatedValue) {
+  if (updatedValue > model.value.end) {
+    setActiveInput('endInput', props.id);
+    return { start: updatedValue, end: null };
+  }
+  return { start: updatedValue, end: model.value.end };
+}
+
+function applyValidYearRangeStart(updatedValue) {
+  if (!updatedValue && model.value.end) {
+    emits('update:modelValue', { start: null, end: model.value.end });
+    setActiveInput('endInput', props.id);
+    return;
+  }
+  if (!updatedValue && !model.value.end) {
+    emits('update:modelValue', { start: null, end: null });
+    return;
+  }
+  if (updatedValue && model.value.start && model.value.end) {
+    emits('update:modelValue', resolveYearStartWithEnd(updatedValue));
+    setActiveInput('endInput', props.id);
+    return;
+  }
+  if (updatedValue && !model.value.start && model.value.end) {
+    emits('update:modelValue', resolveYearStartWithEnd(updatedValue));
+    return;
+  }
+  if (updatedValue && !model.value.end) {
+    emits('update:modelValue', { start: updatedValue, end: null });
+    setActiveInput('endInput', props.id);
+  }
+}
+
+function applyValidYearRangeEnd(updatedValue) {
+  if (!updatedValue && model.value.start) {
+    emits('update:modelValue', { start: props.modelValue.start, end: null });
+    return;
+  }
+  if (!updatedValue && !model.value.start) {
+    emits('update:modelValue', { start: null, end: null });
+    return;
+  }
+  if (updatedValue && model.value.start && model.value.end) {
+    emitYearEndWithStart(updatedValue);
+    return;
+  }
+  if (updatedValue && model.value.start && !model.value.end) {
+    emitYearEndStartOnly(updatedValue);
+    return;
+  }
+  if (updatedValue && !model.value.start && model.value.end) {
+    emits('update:modelValue', { start: null, end: updatedValue });
+    setActiveInput('startInput', props.id);
+    return;
+  }
+  if (updatedValue && !model.value.start && !model.value.end) {
+    emits('update:modelValue', { start: null, end: updatedValue });
+  }
+}
+
+function applyValidYearRange(type, updatedValue) {
+  if (type === 'startInput') applyValidYearRangeStart(updatedValue);
+  if (type === 'endInput') applyValidYearRangeEnd(updatedValue);
+}
+
+function validateYearInput(e, type) {
+  const year = e.target.value;
+  const inputYear = props.masks?.inputYear || 'yyyy';
+
+  if (inputYear.length !== year.length || !validateDateByMask(year, inputYear)) {
+    if (props.pickerType === 'range' && clearRangeForInvalidDateMask(e, type)) return;
+    resetYearInputToFallback(e);
+    return;
+  }
+
+  const dateString = `${year}-${1}-${1}`; // "YYYY-MM-DD"
+
+  // Check if the year is within the min/max range
+  if (year && !canSelectDate(new Date(dateString), props.minDate, props.maxDate, 'year')) {
+    if (props.pickerType === 'range' && clearRangeForInvalidDateValue(e, type)) return;
+    resetYearInputToFallback(e);
+    return;
+  }
+
+  // Update the value with the valid date
+  const updatedValue = new Date(year, 1, 1, 0, 0);
+
+  if (props.pickerType === 'single') {
+    emits('update:modelValue', updatedValue);
+  }
+  if (props.pickerType === 'range') {
+    applyValidYearRange(type, updatedValue);
+  }
+}
+
+function validateIfExact(e, type = 'startInput') {
   if (props.pickerType === 'single' && !e.target.value) {
     emits('update:modelValue', null);
     return;
   }
 
   if (props.mode === 'date') {
-    const rawDate = normalizeFlexibleDateInput(e.target.value, maxDateRef.value);
-
-    const inputMask = props.masks?.input || 'dd.MM.yyyy.';
-
-    const cleanedDate = removeLastNonAlphanumeric(rawDate);
-    const cleanedMask = removeLastNonAlphanumeric(inputMask);
-
-    if (!rawDate || !validateDateByMask(cleanedDate, cleanedMask)) {
-      if (props.pickerType === 'range') {
-        if (type === 'startInput' && model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: model.value.end,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-
-        if (type === 'startInput' && !model.value.end && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-
-        if (type === 'endInput' && model.value.start) {
-          const updatedDatesObject = {
-            start: model.value.start,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-
-        if (type === 'endInput' && !model.value.end && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-      }
-
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
-
-      const newDay = new Date().getDate();
-      const newMonth = new Date().getMonth();
-      const newYear = new Date().getFullYear();
-
-      const newDateString = inputMask
-        .replace('dd', zeroPad(newDay))
-        .replace('MM', zeroPad(newMonth + 1))
-        .replace('yyyy', newYear);
-
-      e.target.value = props.clearIfNotExact ? null : newDateString;
-      return;
-    }
-
-    const dayIndex = cleanedMask?.indexOf('dd');
-    const monthIndex = cleanedMask?.indexOf('MM');
-    const yearIndex = cleanedMask?.indexOf('yyyy');
-
-    const day = Number(cleanedDate.substring(dayIndex, dayIndex + 2));
-    const month = Number(cleanedDate.substring(monthIndex, monthIndex + 2));
-    const year = Number(cleanedDate.substring(yearIndex, yearIndex + 4));
-
-    const normalizedDay = zeroPad(day);
-    const normalizedMonth = zeroPad(month);
-
-    const dateString = `${year}-${normalizedMonth}-${normalizedDay}`; // "YYYY-MM-DD"
-
-    // Check if the constructed date is valid
-    if (day && month && year && !isDateValid(new Date(dateString))) {
-      if (props.pickerType === 'range') {
-        if (type === 'startInput' && model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: model.value.end,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-        if (type === 'startInput' && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-
-        if (type === 'endInput' && model.value.start) {
-          const updatedDatesObject = {
-            start: model.value.start,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-        if (type === 'endInput' && !model.value.start) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-      }
-
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
-
-      const newDay = new Date().getDate();
-      const newMonth = new Date().getMonth();
-      const newYear = new Date().getFullYear();
-
-      const newDateString = inputMask
-        .replace('dd', zeroPad(newDay))
-        .replace('MM', zeroPad(newMonth + 1))
-        .replace('yyyy', newYear);
-
-      e.target.value = props.clearIfNotExact ? null : newDateString;
-      return;
-    }
-    const dateRangeValidationResult = validateDateRange(
-      new Date(dateString),
-      props.minDate,
-      props.maxDate
-    );
-
-    // Check if the date is within the min/max range
-    if (
-      day &&
-      month &&
-      year &&
-      dateRangeValidationResult !== DATE_VALIDATION_RESULT.VALID &&
-      dateRangeValidationResult !== DATE_VALIDATION_RESULT.NO_VALUE
-    ) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      if (
-        [DATE_VALIDATION_RESULT.OUT_OF_RANGE_MAX, DATE_VALIDATION_RESULT.OUT_OF_RANGE_MIN].includes(
-          // @ts-ignore TS2345:: value narrowed at runtime via includes();
-          dateRangeValidationResult
-        )
-      ) {
-        emits('outOfRange', dateRangeValidationResult);
-      }
-      emits('update:modelValue', updatedValue);
-
-      const newDay = new Date().getDate();
-      const newMonth = new Date().getMonth();
-      const newYear = new Date().getFullYear();
-
-      const newDateString = inputMask
-        .replace('dd', zeroPad(newDay))
-        .replace('MM', zeroPad(newMonth + 1))
-        .replace('yyyy', newYear);
-
-      e.target.value = props.clearIfNotExact ? null : newDateString;
-      return;
-    }
-
-    // Update the value with the valid date
-    const updatedValue = day && month && year ? new Date(year, month - 1, day) : null;
-
-    if (props.pickerType === 'single') {
-      emits('update:modelValue', updatedValue);
-    }
-
-    if (props.pickerType === 'range') {
-      if (type === 'startInput') {
-        if (!updatedValue && model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: model.value.end,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-        if (!updatedValue && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          return;
-        }
-        if (updatedValue && model.value.start && model.value.end) {
-          let updatedDatesObject = {
-            start: updatedValue,
-            end: model.value.end,
-          };
-
-          if (updatedValue > model.value.end) {
-            updatedDatesObject = {
-              start: updatedValue,
-              end: null,
-            };
-          }
-
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-        if (updatedValue && !model.value.start && model.value.end) {
-          let updatedDatesObject = {
-            start: updatedValue,
-            end: model.value.end,
-          };
-
-          if (updatedValue > model.value.end) {
-            updatedDatesObject = {
-              start: updatedValue,
-              end: null,
-            };
-          }
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-        if (updatedValue && model.value.start && !model.value.end) {
-          const updatedDatesObject = {
-            start: updatedValue,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-        if (updatedValue && !model.value.start && !model.value.end) {
-          const updatedDatesObject = {
-            start: updatedValue,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-      }
-
-      if (type === 'endInput') {
-        if (!updatedValue && model.value.start) {
-          const updatedDatesObject = {
-            start: model.value.start,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-        if (!updatedValue && !model.value.start) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          return;
-        }
-        if (updatedValue && model.value.start && model.value.end) {
-          let updatedDatesObject = {
-            start: model.value.start,
-            end: updatedValue,
-          };
-
-          if (updatedValue < model.value.start) {
-            updatedDatesObject = {
-              start: updatedValue,
-              end: null,
-            };
-            liveMessage.value = `${displayTexts.value.selectedStartDate}: ${formatLocalizedDate(
-              props.locale,
-              updatedValue
-            )}`;
-          }
-
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-        if (updatedValue && model.value.start && !model.value.end) {
-          let updatedDatesObject = {
-            start: model.value.start,
-            end: updatedValue,
-          };
-
-          if (updatedValue < model.value.start) {
-            updatedDatesObject = {
-              start: updatedValue,
-              end: null,
-            };
-            liveMessage.value = `${displayTexts.value.selectedStartDate}: ${formatLocalizedDate(
-              props.locale,
-              updatedValue
-            )}`;
-          }
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-        if (updatedValue && !model.value.start && model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: updatedValue,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-        if (updatedValue && !model.value.start && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: updatedValue,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          applyRangeFocus(updatedDatesObject);
-          return;
-        }
-      }
-    }
+    validateDateInput(e, type);
+    return;
   }
-
   if (props.mode === 'time') {
-    const now = new Date();
-    const inputTime24hrMask = props.masks?.inputTime24hr || 'HH:mm';
-
-    const standardMask = isStandardTimeMask(inputTime24hrMask);
-
-    const rawInput = e.target.value;
-    const normalizedInput = standardMask ? normalizeFlexibleTimeInput(rawInput) : rawInput;
-
-    if (!normalizedInput || !validateDateByMask(normalizedInput, inputTime24hrMask)) {
-      const updatedValue = new Date();
-
-      if (props.clearIfNotExact) {
-        e.target.value = null;
-        emits('update:modelValue', null);
-        return;
-      }
-
-      if (!isTimeWithinMinMax(updatedValue, minDateRef.value, maxDateRef.value)) {
-        e.target.value = null;
-        emits('update:modelValue', null);
-        return;
-      }
-
-      const newHours = zeroPad(updatedValue.getHours());
-      const newMinutes = zeroPad(updatedValue.getMinutes());
-
-      const newTimeString = inputTime24hrMask
-        .replace('HH', zeroPad(newHours))
-        .replace('mm', zeroPad(newMinutes));
-
-      e.target.value = newTimeString;
-      emits('update:modelValue', updatedValue);
-      return;
-    }
-
-    const hoursIndex = inputTime24hrMask.indexOf('HH');
-    const minutesIndex = inputTime24hrMask.indexOf('mm');
-
-    const hours = Number(normalizedInput.substring(hoursIndex, hoursIndex + 2));
-    const minutes = Number(normalizedInput.substring(minutesIndex, minutesIndex + 2));
-
-    const normalizedHours = zeroPad(hours);
-    const normalizedMinutes = zeroPad(minutes);
-
-    if (!isTimeValid(`${normalizedHours}:${normalizedMinutes}`)) {
-      const updatedValue = new Date();
-
-      if (props.clearIfNotExact) {
-        e.target.value = null;
-        emits('update:modelValue', null);
-        return;
-      }
-
-      const newHours = updatedValue.getHours();
-      const newMinutes = updatedValue.getMinutes();
-
-      const newTimeString = inputTime24hrMask
-        .replace('HH', zeroPad(newHours))
-        .replace('mm', zeroPad(newMinutes));
-
-      e.target.value = newTimeString;
-      emits('update:modelValue', updatedValue);
-      return;
-    }
-
-    const updatedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-
-    if (!isTimeWithinMinMax(updatedDate, minDateRef.value, maxDateRef.value)) {
-      e.target.value = null;
-      emits('update:modelValue', null);
-      return;
-    }
-
-    emits('update:modelValue', updatedDate);
+    validateTimeInput(e);
+    return;
   }
-
   if (props.mode === 'time-full') {
-    const now = new Date();
-    const inputTimeFull24hrMask = props.masks?.inputTimeFull24hr || 'HH:mm:ss';
-
-    const standardMask = isStandardTimeMask(inputTimeFull24hrMask);
-
-    const rawInput = e.target.value;
-    const normalizedInput = standardMask ? normalizeFlexibleTimeInput(rawInput, true) : rawInput;
-
-    if (!normalizedInput || !validateDateByMask(normalizedInput, inputTimeFull24hrMask)) {
-      const updatedValue = new Date();
-
-      if (props.clearIfNotExact) {
-        e.target.value = null;
-        emits('update:modelValue', null);
-        return;
-      }
-
-      if (!isTimeWithinMinMax(updatedValue, minDateRef.value, maxDateRef.value)) {
-        e.target.value = null;
-        emits('update:modelValue', null);
-        return;
-      }
-
-      const newHours = updatedValue.getHours();
-      const newMinutes = updatedValue.getMinutes();
-      const newSeconds = updatedValue.getSeconds();
-
-      const newTimeString = inputTimeFull24hrMask
-        .replace('HH', zeroPad(newHours))
-        .replace('mm', zeroPad(newMinutes))
-        .replace('ss', zeroPad(newSeconds));
-
-      e.target.value = newTimeString;
-      emits('update:modelValue', updatedValue);
-      return;
-    }
-
-    const hoursIndex = inputTimeFull24hrMask?.indexOf('HH');
-    const minutesIndex = inputTimeFull24hrMask?.indexOf('mm');
-    const secondsIndex = inputTimeFull24hrMask?.indexOf('ss');
-
-    const hours = Number(normalizedInput.substring(hoursIndex, hoursIndex + 2));
-    const minutes = Number(normalizedInput.substring(minutesIndex, minutesIndex + 2));
-    const seconds = Number(normalizedInput.substring(secondsIndex, secondsIndex + 2));
-
-    const normalizedHours = zeroPad(hours);
-    const normalizedMinutes = zeroPad(minutes);
-    const normalizedSeconds = zeroPad(seconds);
-
-    if (!isTimeFullValid(`${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`)) {
-      const updatedValue = new Date();
-
-      if (props.clearIfNotExact) {
-        e.target.value = null;
-        emits('update:modelValue', null);
-        return;
-      }
-
-      const newHours = updatedValue.getHours();
-      const newMinutes = updatedValue.getMinutes();
-      const newSeconds = updatedValue.getSeconds();
-
-      const newTimeString = inputTimeFull24hrMask
-        .replace('HH', zeroPad(newHours))
-        .replace('mm', zeroPad(newMinutes))
-        .replace('ss', zeroPad(newSeconds));
-
-      e.target.value = newTimeString;
-      emits('update:modelValue', updatedValue);
-      return;
-    }
-
-    const updatedDate = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      hours,
-      minutes,
-      seconds
-    );
-
-    if (!isTimeWithinMinMax(updatedDate, minDateRef.value, maxDateRef.value)) {
-      e.target.value = null;
-      emits('update:modelValue', null);
-      return;
-    }
-
-    emits('update:modelValue', updatedDate);
+    validateTimeFullInput(e);
+    return;
   }
-
   if (props.mode === 'date-time') {
-    const dateTime = e.target.value;
-    const inputDateTime24hrMask = props.masks?.inputDateTime24hr || 'dd.MM.yyyy. HH:mm';
-
-    let [date, time] = dateTime.split(' ');
-    const [dateMask, timeMask] = inputDateTime24hrMask.split(' ');
-
-    date = normalizeFlexibleDateInput(removeLastNonAlphanumeric(date), maxDateRef.value);
-    time = normalizeFlexibleTimeInput(time);
-
-    const cleanedDate = removeLastNonAlphanumeric(date);
-    const cleanedMask = removeLastNonAlphanumeric(dateMask);
-
-    const constructedDateTimeString = `${cleanedDate} ${time}`;
-    const constructedMaskString = `${cleanedMask} ${timeMask}`;
-
-    if (
-      (dateTime && !validateDateByMask(constructedDateTimeString, constructedMaskString)) ||
-      timeMask.length !== time.length ||
-      cleanedDate.length !== cleanedMask.length
-    ) {
-      if (props.clearIfNotExact) {
-        e.target.value = null;
-        emits('update:modelValue', null);
-        return;
-      }
-
-      const updatedValue = new Date();
-
-      const newDay = new Date().getDate();
-      const newMonth = new Date().getMonth();
-      const newYear = new Date().getFullYear();
-      const newHours = new Date().getHours();
-      const newMinutes = new Date().getMinutes();
-
-      const newDateTimeString = inputDateTime24hrMask
-        .replace('dd', zeroPad(newDay))
-        .replace('MM', zeroPad(newMonth + 1))
-        .replace('yyyy', newYear)
-        .replace('HH', newHours)
-        .replace('mm', newMinutes);
-
-      e.target.value = newDateTimeString;
-      emits('update:modelValue', updatedValue);
-      return;
-    }
-
-    const dayIndex = constructedMaskString?.indexOf('dd');
-    const monthIndex = constructedMaskString?.indexOf('MM');
-    const yearIndex = constructedMaskString?.indexOf('yyyy');
-    const hoursIndex = constructedMaskString?.indexOf('HH');
-    const minutesIndex = constructedMaskString?.indexOf('mm');
-
-    const day = constructedDateTimeString?.substring(dayIndex, dayIndex + 2);
-    const month = constructedDateTimeString?.substring(monthIndex, monthIndex + 2);
-    const year = constructedDateTimeString?.substring(yearIndex, yearIndex + 4);
-    const hours = constructedDateTimeString?.substring(hoursIndex, hoursIndex + 2);
-    const minutes = constructedDateTimeString?.substring(minutesIndex, minutesIndex + 2);
-
-    const normalizedDay = zeroPad(day);
-    const normalizedMonth = zeroPad(month);
-    const normalizedHours = zeroPad(hours);
-    const normalizedMinutes = zeroPad(minutes);
-    const normalizedSeconds = zeroPad(0);
-
-    const dateString = `${year}-${normalizedMonth}-${normalizedDay}`; // "YYYY-MM-DD"
-    const timeString = `${normalizedHours}:${normalizedMinutes}`; // "HH:mm"
-    const fullTimeString = `${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`; // "HH:mm:ss"
-
-    // Check if the constructed date and time is valid
-    if (!isDateValid(dateString) || !isTimeValid(timeString)) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
-      return;
-    }
-
-    // Combine the date and time strings into a valid ISO string
-    const dateTimeString = `${dateString}T${fullTimeString}`;
-
-    // Check if the date is within the min/max range
-    if (!canSelectDate(new Date(dateTimeString), props.minDate, props.maxDate, props.mode)) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
-      modelInput.value = null;
-      return;
-    }
-
-    // Update the value with the valid date
-    const updatedValue = new Date(dateTimeString);
-    emits('update:modelValue', updatedValue);
+    validateDateTimeInput(e);
+    return;
   }
-
   if (props.mode === 'date-time-full') {
-    const dateTimeFull = e.target.value;
-    const inputDateTimeFull24hrMask = props.masks?.inputDateTimeFull24hr || 'dd.MM.yyyy. HH:mm:ss';
-
-    let [date, time] = dateTimeFull.split(' ');
-    const [dateMask, timeMask] = inputDateTimeFull24hrMask.split(' ');
-
-    date = normalizeFlexibleDateInput(removeLastNonAlphanumeric(date), maxDateRef.value);
-    time = normalizeFlexibleTimeInput(time, true);
-
-    const cleanedDate = removeLastNonAlphanumeric(date);
-    const cleanedMask = removeLastNonAlphanumeric(dateMask);
-
-    const constructedDateTimeString = `${cleanedDate} ${time}`;
-    const constructedMaskString = `${cleanedMask} ${timeMask}`;
-
-    if (
-      (dateTimeFull && !validateDateByMask(constructedDateTimeString, constructedMaskString)) ||
-      timeMask.length !== time.length ||
-      cleanedDate.length !== cleanedMask.length
-    ) {
-      if (props.clearIfNotExact) {
-        e.target.value = null;
-        emits('update:modelValue', null);
-        return;
-      }
-
-      const updatedValue = new Date();
-
-      const newDay = new Date().getDate();
-      const newMonth = new Date().getMonth();
-      const newYear = new Date().getFullYear();
-      const newHours = new Date().getHours();
-      const newMinutes = new Date().getMinutes();
-      const newSeconds = new Date().getSeconds();
-
-      const newDateTimeFullString = inputDateTimeFull24hrMask
-        .replace('dd', zeroPad(newDay))
-        .replace('MM', zeroPad(newMonth + 1))
-        .replace('yyyy', newYear)
-        .replace('HH', newHours)
-        .replace('mm', newMinutes)
-        .replace('ss', newSeconds);
-
-      e.target.value = newDateTimeFullString;
-      emits('update:modelValue', updatedValue);
-      return;
-    }
-
-    const dayIndex = constructedMaskString?.indexOf('dd');
-    const monthIndex = constructedMaskString?.indexOf('MM');
-    const yearIndex = constructedMaskString?.indexOf('yyyy');
-    const hoursIndex = constructedMaskString?.indexOf('HH');
-    const minutesIndex = constructedMaskString?.indexOf('mm');
-    const secondsIndex = constructedMaskString?.indexOf('ss');
-
-    const day = constructedDateTimeString?.substring(dayIndex, dayIndex + 2);
-    const month = constructedDateTimeString?.substring(monthIndex, monthIndex + 2);
-    const year = constructedDateTimeString?.substring(yearIndex, yearIndex + 4);
-    const hours = constructedDateTimeString?.substring(hoursIndex, hoursIndex + 2);
-    const minutes = constructedDateTimeString?.substring(minutesIndex, minutesIndex + 2);
-    const seconds = constructedDateTimeString?.substring(secondsIndex, secondsIndex + 2);
-
-    const normalizedDay = zeroPad(day);
-    const normalizedMonth = zeroPad(month);
-    const normalizedHours = zeroPad(hours);
-    const normalizedMinutes = zeroPad(minutes);
-    const normalizedSeconds = zeroPad(seconds);
-
-    const dateString = `${year}-${normalizedMonth}-${normalizedDay}`; // "YYYY-MM-DD"
-    const fullTimeString = `${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`; // "HH:mm:ss"
-
-    // Check if the constructed date and time is valid
-    if (!isDateValid(dateString) || !isTimeFullValid(fullTimeString)) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
-      return;
-    }
-
-    // Combine the date and time strings into a valid ISO string
-    const dateTimeString = `${dateString}T${fullTimeString}`;
-
-    // Check if the date is within the min/max range
-    if (!canSelectDate(new Date(dateTimeString), props.minDate, props.maxDate, props.mode)) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
-      modelInput.value = null;
-      return;
-    }
-
-    // Update the value with the valid date
-    const updatedValue = new Date(dateTimeString);
-    emits('update:modelValue', updatedValue);
+    validateDateTimeFullInput(e);
+    return;
   }
-
   if (props.mode === 'year') {
-    const now = new Date();
-    const year = e.target.value;
-    const inputYear = props.masks?.inputYear || 'yyyy';
-
-    if (inputYear.length !== year.length || !validateDateByMask(year, inputYear)) {
-      if (props.pickerType === 'range') {
-        if (type === 'startInput' && model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: model.value.end,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-
-        if (type === 'startInput' && !model.value.end && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-
-        if (type === 'endInput' && model.value.start) {
-          const updatedDatesObject = {
-            start: model.value.start,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-
-        if (type === 'endInput' && !model.value.end && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-      }
-
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
-
-      e.target.value = props.clearIfNotExact ? null : now.getFullYear();
-      return;
-    }
-
-    const dateString = `${year}-${1}-${1}`; // "YYYY-MM-DD"
-
-    // Check if the year is within the min/max range
-    if (year && !canSelectDate(new Date(dateString), props.minDate, props.maxDate, 'year')) {
-      if (props.pickerType === 'range') {
-        if (type === 'startInput' && model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: model.value.end,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-        if (type === 'startInput' && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-
-        if (type === 'endInput' && model.value.start) {
-          const updatedDatesObject = {
-            start: model.value.start,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-        if (type === 'endInput' && !model.value.start) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          e.target.value = null;
-          return;
-        }
-      }
-
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
-
-      e.target.value = props.clearIfNotExact ? null : now.getFullYear();
-      return;
-    }
-
-    // Update the value with the valid date
-    const updatedValue = new Date(year, 1, 1, 0, 0);
-
-    if (props.pickerType === 'single') {
-      emits('update:modelValue', updatedValue);
-    }
-    if (props.pickerType === 'range') {
-      if (type === 'startInput') {
-        if (!updatedValue && model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: model.value.end,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput', props.id);
-          return;
-        }
-        if (!updatedValue && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          return;
-        }
-        if (updatedValue && model.value.start && model.value.end) {
-          let updatedDatesObject = {
-            start: updatedValue,
-            end: model.value.end,
-          };
-
-          if (updatedValue > model.value.end) {
-            updatedDatesObject = {
-              start: updatedValue,
-              end: null,
-            };
-            setActiveInput('endInput', props.id);
-          }
-
-          emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput', props.id);
-          return;
-        }
-        if (updatedValue && !model.value.start && model.value.end) {
-          let updatedDatesObject = {
-            start: updatedValue,
-            end: model.value.end,
-          };
-
-          if (updatedValue > model.value.end) {
-            updatedDatesObject = {
-              start: updatedValue,
-              end: null,
-            };
-            setActiveInput('endInput', props.id);
-          }
-          emits('update:modelValue', updatedDatesObject);
-          return;
-        }
-        if (updatedValue && model.value.start && !model.value.end) {
-          const updatedDatesObject = {
-            start: updatedValue,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput', props.id);
-          return;
-        }
-        if (updatedValue && !model.value.start && !model.value.end) {
-          const updatedDatesObject = {
-            start: updatedValue,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput', props.id);
-          return;
-        }
-      }
-
-      if (type === 'endInput') {
-        if (!updatedValue && model.value.start) {
-          const updatedDatesObject = {
-            start: props.modelValue.start,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          return;
-        }
-        if (!updatedValue && !model.value.start) {
-          const updatedDatesObject = {
-            start: null,
-            end: null,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          return;
-        }
-        if (updatedValue && model.value.start && model.value.end) {
-          let updatedDatesObject = {
-            start: model.value.start,
-            end: updatedValue,
-          };
-
-          if (updatedValue < model.value.start) {
-            updatedDatesObject = {
-              start: updatedValue,
-              end: null,
-            };
-            setActiveInput('endInput', props.id);
-          }
-
-          emits('update:modelValue', updatedDatesObject);
-          return;
-        }
-        if (updatedValue && model.value.start && !model.value.end) {
-          let updatedDatesObject = {
-            start: model.value.start,
-            end: updatedValue,
-          };
-
-          if (updatedValue < model.value.start) {
-            updatedDatesObject = {
-              start: updatedValue,
-              end: null,
-            };
-          }
-          emits('update:modelValue', updatedDatesObject);
-          return;
-        }
-        if (updatedValue && !model.value.start && model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: updatedValue,
-          };
-          emits('update:modelValue', updatedDatesObject);
-          setActiveInput('startInput', props.id);
-          return;
-        }
-        if (updatedValue && !model.value.start && !model.value.end) {
-          const updatedDatesObject = {
-            start: null,
-            end: updatedValue,
-          };
-          emits('update:modelValue', updatedDatesObject);
-        }
-      }
-    }
+    validateYearInput(e, type);
   }
 }
 

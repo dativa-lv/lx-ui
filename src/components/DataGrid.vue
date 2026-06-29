@@ -1239,6 +1239,12 @@ function remeasureRenderedDataGridRows() {
   measureDataGridVirtualElements(rowElements);
 }
 
+// Schedules a frame callback, skipping it where requestAnimationFrame is absent (SSR / torn-down test DOM).
+function scheduleFrame(callback) {
+  if (typeof globalThis.requestAnimationFrame !== 'function') return;
+  globalThis.requestAnimationFrame(callback);
+}
+
 const pagesTotal = computed(() => Math.ceil(props.itemsTotal / props.itemsPerPage));
 
 const itemsLabel = computed(() => {
@@ -1588,7 +1594,7 @@ watch([rows, () => props.loading], async () => {
   if (!wantsDataGridVirtualization.value) return;
   updateDataGridScrollContext();
   dataGridVirtualizer.value?.value.measure();
-  globalThis.requestAnimationFrame(() => remeasureRenderedDataGridRows());
+  scheduleFrame(() => remeasureRenderedDataGridRows());
 });
 
 watch([width, height], async () => {
@@ -1597,7 +1603,7 @@ watch([width, height], async () => {
   syncColumnWidths();
   if (!wantsDataGridVirtualization.value) return;
   await syncDataGridVirtualizationContext({ reloadOnScrollParentChange: true });
-  globalThis.requestAnimationFrame(() => remeasureRenderedDataGridRows());
+  scheduleFrame(() => remeasureRenderedDataGridRows());
 });
 
 useMutationObserver(
@@ -1671,7 +1677,7 @@ onMounted(() => {
     // Settle initial row heights after the first layout frame and after web
     // fonts finish loading, both of which can change row height after the
     // virtualizer's first measurement.
-    globalThis.requestAnimationFrame(() => remeasureRenderedDataGridRows());
+    scheduleFrame(() => remeasureRenderedDataGridRows());
     globalThis.document?.fonts?.ready?.then(() => remeasureRenderedDataGridRows());
   });
 });

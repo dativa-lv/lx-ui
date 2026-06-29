@@ -1273,289 +1273,221 @@ function getFirstFocusableVisibleDay() {
   return null;
 }
 
+function isDateMode(mode) {
+  return mode === 'date' || mode === 'date-time' || mode === 'date-time-full';
+}
+
+function tryFocusDay(targetDate, attempt = 0) {
+  const activeDate = targetDate ? new Date(targetDate) : getActiveCalendarDate();
+  const coordinates = getDayCellCoordinates(activeDate, {
+    allowOtherMonthFallback: false,
+  });
+
+  if (coordinates) {
+    setCalendarActiveFromClick(coordinates.row, coordinates.col);
+    return;
+  }
+
+  if (attempt === 0 && !targetDate) {
+    const fallbackDate = getFirstFocusableVisibleDay();
+    if (fallbackDate) {
+      setActiveCalendarDate(fallbackDate);
+    }
+  }
+
+  if (attempt < 4) {
+    clearFocusDayRetryTimeout();
+    focusDayRetryTimeout.value = setTimeout(() => {
+      focusDayRetryTimeout.value = null;
+      tryFocusDay(targetDate, attempt + 1);
+    }, 20);
+  }
+}
+
+// Walk the month grid (year -> row -> month) and return the first matching cell, or null.
+function findMonthCellInGrid(monthGrid, rowsPerYear, predicate) {
+  for (let yearIndex = 0; yearIndex < monthGrid.length; yearIndex += 1) {
+    const yearRows = monthGrid[yearIndex];
+
+    for (let monthsRowIndex = 0; monthsRowIndex < yearRows.length; monthsRowIndex += 1) {
+      const months = yearRows[monthsRowIndex];
+
+      for (let monthIndex = 0; monthIndex < months.length; monthIndex += 1) {
+        const month = months[monthIndex];
+
+        if (predicate(month)) {
+          return {
+            row: yearIndex * rowsPerYear + monthsRowIndex,
+            col: monthIndex,
+            date: new Date(month.year, month.orderIndex, 1, 0, 0, 0),
+          };
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+function isActiveCalendarMonth(month) {
+  const activeDate = getActiveCalendarDate();
+  return month.orderIndex === activeDate.getMonth() && month.year === activeDate.getFullYear();
+}
+
+function getYearSelectionDate(year) {
+  return new Date(
+    year,
+    selectedMonth.value !== null && selectedMonth.value !== undefined
+      ? selectedMonth.value
+      : todayDate.value.getMonth(),
+    1
+  );
+}
+
+function isYearSelectable(year) {
+  return canSelectDate(getYearSelectionDate(year), props.minDateRef, props.maxDateRef, 'year');
+}
+
+function focusMonthsLayout() {
+  const monthGrid = getMonthGrid(
+    props.pickerType,
+    props.mode,
+    currentDate.value.getFullYear(),
+    3,
+    props.localizedMonthsList,
+    isMobileScreen.value
+  );
+  const rowsPerYear = monthGrid[0]?.length || 1;
+
+  const focusedMonth =
+    findMonthCellInGrid(monthGrid, rowsPerYear, (month) => isActiveCalendarMonth(month)) ??
+    findMonthCellInGrid(monthGrid, rowsPerYear, (month) =>
+      canSelectDate(
+        new Date(month.year, month.orderIndex, 1, 0, 0, 0),
+        props.minDateRef,
+        props.maxDateRef,
+        'month-year'
+      )
+    );
+
+  if (focusedMonth) {
+    setActiveCalendarDate(focusedMonth.date);
+    syncCalendarActiveCell(focusedMonth.row, focusedMonth.col);
+  }
+}
+
+// Walk the year grid (row -> year) and return the first matching cell, or null.
+function findYearCellInGrid(yearGrid, predicate) {
+  for (let yearsRowIndex = 0; yearsRowIndex < yearGrid.length; yearsRowIndex += 1) {
+    const years = yearGrid[yearsRowIndex];
+
+    for (let yearIndex = 0; yearIndex < years.length; yearIndex += 1) {
+      const year = years[yearIndex];
+
+      if (predicate(year)) {
+        return { row: yearsRowIndex, col: yearIndex, year };
+      }
+    }
+  }
+
+  return null;
+}
+
+function focusYearsLayout() {
+  const yearGrid = getGrid('years', 3, startYear.value, endYear.value).map((row) =>
+    Array.isArray(row) ? row : []
+  );
+  const activeDate = getActiveCalendarDate();
+  const preferredYear = Number(selectedYear.value ?? activeDate.getFullYear());
+
+  const focusedYear =
+    findYearCellInGrid(yearGrid, (year) => year === preferredYear && isYearSelectable(year)) ??
+    findYearCellInGrid(yearGrid, (year) => isYearSelectable(year));
+
+  if (focusedYear) {
+    setActiveCalendarDate(
+      new Date(focusedYear.year, activeDate.getMonth(), Math.min(activeDate.getDate(), 28), 0, 0, 0)
+    );
+    syncCalendarActiveCell(focusedYear.row, focusedYear.col);
+  }
+}
+
+// Walk the quarter grid (row -> quarter) and return the first matching cell, or null.
+// predicate receives (rowYear, quarterItem).
+function findQuarterCellInGrid(quarterGrid, predicate) {
+  for (let rowIndex = 0; rowIndex < quarterGrid.length; rowIndex += 1) {
+    const row = quarterGrid[rowIndex];
+    const rowYear = Number(Array.isArray(row) ? null : row?.year);
+    let rowItems = [];
+    if (!Array.isArray(row) && Array.isArray(row?.items)) {
+      rowItems = row.items;
+    }
+
+    for (let colIndex = 0; colIndex < rowItems.length; colIndex += 1) {
+      const quarterItem = rowItems[colIndex];
+
+      if (predicate(rowYear, quarterItem)) {
+        return { row: rowIndex, col: colIndex, year: rowYear, quarter: quarterItem };
+      }
+    }
+  }
+
+  return null;
+}
+
+function focusQuartersLayout() {
+  const quarterGrid = getGrid('quarters', 5, startQuarterYear.value, endQuarterYear.value);
+  const activeDate = getActiveCalendarDate();
+  const preferredYear = activeDate.getFullYear();
+  const preferredQuarter = quarterFromMonth(activeDate.getMonth());
+
+  const isSelectable = (rowYear, quarterItem) =>
+    isQuarterValid({ year: rowYear, quarter: quarterItem }, props.minDateRef, props.maxDateRef);
+
+  const focusedQuarter =
+    findQuarterCellInGrid(
+      quarterGrid,
+      (rowYear, quarterItem) =>
+        isSelectable(rowYear, quarterItem) &&
+        rowYear === preferredYear &&
+        Number(quarterItem) === Number(preferredQuarter)
+    ) ?? findQuarterCellInGrid(quarterGrid, isSelectable);
+
+  if (focusedQuarter) {
+    setActiveCalendarDate(dateFromYearAndQuarter(focusedQuarter.year, focusedQuarter.quarter));
+    syncCalendarActiveCell(focusedQuarter.row, focusedQuarter.col);
+  }
+}
+
+function runInitialFocus(targetDate) {
+  if (regularLayout.value && isDateMode(props.mode)) {
+    tryFocusDay(targetDate);
+    return;
+  }
+
+  if (monthsLayout.value) {
+    focusMonthsLayout();
+    return;
+  }
+
+  if (yearsLayout.value) {
+    focusYearsLayout();
+    return;
+  }
+
+  if (quartersLayout.value) {
+    focusQuartersLayout();
+    return;
+  }
+
+  if (monthsLayout.value) {
+    syncCalendarActiveCell(0, 0);
+  }
+}
+
 function focusInitialPickerCell(targetDate = null) {
   clearFocusDayRetryTimeout();
-
-  const tryFocusDay = (attempt = 0) => {
-    const activeDate = targetDate ? new Date(targetDate) : getActiveCalendarDate();
-    const coordinates = getDayCellCoordinates(activeDate, {
-      allowOtherMonthFallback: false,
-    });
-
-    if (coordinates) {
-      setCalendarActiveFromClick(coordinates.row, coordinates.col);
-      return;
-    }
-
-    if (attempt === 0 && !targetDate) {
-      const fallbackDate = getFirstFocusableVisibleDay();
-      if (fallbackDate) {
-        setActiveCalendarDate(fallbackDate);
-      }
-    }
-
-    if (attempt < 4) {
-      clearFocusDayRetryTimeout();
-      focusDayRetryTimeout.value = setTimeout(() => {
-        focusDayRetryTimeout.value = null;
-        tryFocusDay(attempt + 1);
-      }, 20);
-    }
-  };
-
-  nextTick(() => {
-    if (
-      regularLayout.value &&
-      (props.mode === 'date' || props.mode === 'date-time' || props.mode === 'date-time-full')
-    ) {
-      tryFocusDay();
-      return;
-    }
-
-    if (monthsLayout.value) {
-      const activeDate = getActiveCalendarDate();
-      const monthGrid = getMonthGrid(
-        props.pickerType,
-        props.mode,
-        currentDate.value.getFullYear(),
-        3,
-        props.localizedMonthsList,
-        isMobileScreen.value
-      );
-      const rowsPerYear = monthGrid[0]?.length || 1;
-      let focusedMonth = null;
-
-      for (let yearIndex = 0; yearIndex < monthGrid.length; yearIndex += 1) {
-        const yearRows = monthGrid[yearIndex];
-
-        for (let monthsRowIndex = 0; monthsRowIndex < yearRows.length; monthsRowIndex += 1) {
-          const months = yearRows[monthsRowIndex];
-
-          for (let monthIndex = 0; monthIndex < months.length; monthIndex += 1) {
-            const month = months[monthIndex];
-
-            if (
-              month.orderIndex === activeDate.getMonth() &&
-              month.year === activeDate.getFullYear()
-            ) {
-              focusedMonth = {
-                row: yearIndex * rowsPerYear + monthsRowIndex,
-                col: monthIndex,
-                date: new Date(month.year, month.orderIndex, 1, 0, 0, 0),
-              };
-              break;
-            }
-          }
-
-          if (focusedMonth) break;
-        }
-      }
-
-      if (!focusedMonth) {
-        for (let yearIndex = 0; yearIndex < monthGrid.length && !focusedMonth; yearIndex += 1) {
-          const yearRows = monthGrid[yearIndex];
-
-          for (
-            let monthsRowIndex = 0;
-            monthsRowIndex < yearRows.length && !focusedMonth;
-            monthsRowIndex += 1
-          ) {
-            const months = yearRows[monthsRowIndex];
-
-            for (let monthIndex = 0; monthIndex < months.length; monthIndex += 1) {
-              const month = months[monthIndex];
-              const monthDate = new Date(month.year, month.orderIndex, 1, 0, 0, 0);
-
-              if (canSelectDate(monthDate, props.minDateRef, props.maxDateRef, 'month-year')) {
-                focusedMonth = {
-                  row: yearIndex * rowsPerYear + monthsRowIndex,
-                  col: monthIndex,
-                  date: monthDate,
-                };
-                break;
-              }
-            }
-          }
-        }
-      }
-
-      if (focusedMonth) {
-        setActiveCalendarDate(focusedMonth.date);
-        syncCalendarActiveCell(focusedMonth.row, focusedMonth.col);
-      }
-      return;
-    }
-
-    if (yearsLayout.value) {
-      const yearGrid = getGrid('years', 3, startYear.value, endYear.value).map((row) =>
-        Array.isArray(row) ? row : []
-      );
-      const activeDate = getActiveCalendarDate();
-      const preferredYear = Number(selectedYear.value ?? activeDate.getFullYear());
-      let focusedYear = null;
-
-      for (let yearsRowIndex = 0; yearsRowIndex < yearGrid.length; yearsRowIndex += 1) {
-        const years = yearGrid[yearsRowIndex];
-
-        for (let yearIndex = 0; yearIndex < years.length; yearIndex += 1) {
-          const year = years[yearIndex];
-          const selectable = canSelectDate(
-            new Date(
-              year,
-              selectedMonth.value !== null && selectedMonth.value !== undefined
-                ? selectedMonth.value
-                : todayDate.value.getMonth(),
-              1
-            ),
-            props.minDateRef,
-            props.maxDateRef,
-            'year'
-          );
-
-          if (year === preferredYear && selectable) {
-            focusedYear = { row: yearsRowIndex, col: yearIndex, year };
-            break;
-          }
-        }
-
-        if (focusedYear) break;
-      }
-
-      if (!focusedYear) {
-        for (let yearsRowIndex = 0; yearsRowIndex < yearGrid.length; yearsRowIndex += 1) {
-          const years = yearGrid[yearsRowIndex];
-
-          for (let yearIndex = 0; yearIndex < years.length; yearIndex += 1) {
-            const year = years[yearIndex];
-            const selectable = canSelectDate(
-              new Date(
-                year,
-                selectedMonth.value !== null && selectedMonth.value !== undefined
-                  ? selectedMonth.value
-                  : todayDate.value.getMonth(),
-                1
-              ),
-              props.minDateRef,
-              props.maxDateRef,
-              'year'
-            );
-
-            if (selectable) {
-              focusedYear = { row: yearsRowIndex, col: yearIndex, year };
-              break;
-            }
-          }
-
-          if (focusedYear) break;
-        }
-      }
-
-      if (focusedYear) {
-        setActiveCalendarDate(
-          new Date(
-            focusedYear.year,
-            activeDate.getMonth(),
-            Math.min(activeDate.getDate(), 28),
-            0,
-            0,
-            0
-          )
-        );
-        syncCalendarActiveCell(focusedYear.row, focusedYear.col);
-      }
-      return;
-    }
-
-    if (quartersLayout.value) {
-      const quarterGrid = getGrid('quarters', 5, startQuarterYear.value, endQuarterYear.value);
-      const activeDate = getActiveCalendarDate();
-      const preferredYear = activeDate.getFullYear();
-      const preferredQuarter = quarterFromMonth(activeDate.getMonth());
-      let focusedQuarter = null;
-
-      for (let rowIndex = 0; rowIndex < quarterGrid.length; rowIndex += 1) {
-        const row = quarterGrid[rowIndex];
-        const rowYear = Number(Array.isArray(row) ? null : row?.year);
-        let rowItems = [];
-        if (!Array.isArray(row) && Array.isArray(row?.items)) {
-          rowItems = row.items;
-        }
-
-        for (let colIndex = 0; colIndex < rowItems.length; colIndex += 1) {
-          const quarterItem = rowItems[colIndex];
-          const selectable = isQuarterValid(
-            {
-              year: rowYear,
-              quarter: quarterItem,
-            },
-            props.minDateRef,
-            props.maxDateRef
-          );
-
-          if (
-            selectable &&
-            rowYear === preferredYear &&
-            Number(quarterItem) === Number(preferredQuarter)
-          ) {
-            focusedQuarter = {
-              row: rowIndex,
-              col: colIndex,
-              year: rowYear,
-              quarter: quarterItem,
-            };
-            break;
-          }
-        }
-
-        if (focusedQuarter) break;
-      }
-
-      if (!focusedQuarter) {
-        for (let rowIndex = 0; rowIndex < quarterGrid.length; rowIndex += 1) {
-          const row = quarterGrid[rowIndex];
-          const rowYear = Number(Array.isArray(row) ? null : row?.year);
-          let rowItems = [];
-          if (!Array.isArray(row) && Array.isArray(row?.items)) {
-            rowItems = row.items;
-          }
-
-          for (let colIndex = 0; colIndex < rowItems.length; colIndex += 1) {
-            const quarterItem = rowItems[colIndex];
-            const selectable = isQuarterValid(
-              {
-                year: rowYear,
-                quarter: quarterItem,
-              },
-              props.minDateRef,
-              props.maxDateRef
-            );
-
-            if (selectable) {
-              focusedQuarter = {
-                row: rowIndex,
-                col: colIndex,
-                year: rowYear,
-                quarter: quarterItem,
-              };
-              break;
-            }
-          }
-
-          if (focusedQuarter) break;
-        }
-      }
-
-      if (focusedQuarter) {
-        setActiveCalendarDate(dateFromYearAndQuarter(focusedQuarter.year, focusedQuarter.quarter));
-        syncCalendarActiveCell(focusedQuarter.row, focusedQuarter.col);
-      }
-      return;
-    }
-
-    if (monthsLayout.value) {
-      syncCalendarActiveCell(0, 0);
-    }
-  });
+  nextTick(() => runInitialFocus(targetDate));
 }
 
 // Update visible hours
@@ -3581,25 +3513,6 @@ function handleCalendarKeydown(e) {
   }
 
   onCalendarKeydown(e, calendarGridRowCount.value, calendarGridColCount.value);
-}
-
-function isActiveCalendarMonth(month) {
-  const activeDate = getActiveCalendarDate();
-  return month.orderIndex === activeDate.getMonth() && month.year === activeDate.getFullYear();
-}
-
-function getYearSelectionDate(year) {
-  return new Date(
-    year,
-    selectedMonth.value !== null && selectedMonth.value !== undefined
-      ? selectedMonth.value
-      : todayDate.value.getMonth(),
-    1
-  );
-}
-
-function isYearSelectable(year) {
-  return canSelectDate(getYearSelectionDate(year), props.minDateRef, props.maxDateRef, 'year');
 }
 
 function getFirstSelectableYearCell() {
@@ -5876,6 +5789,7 @@ if (typeof globalThis !== 'undefined') {
                 variant="icon-only"
                 kind="ghost"
                 icon="caret-up"
+                :label="displayTexts.scrollUp"
                 :title="displayTexts.scrollUp"
                 @click="stepTimeColumn(column, -1, false)"
               />
@@ -5915,6 +5829,7 @@ if (typeof globalThis !== 'undefined') {
                 variant="icon-only"
                 kind="ghost"
                 icon="caret-down"
+                :label="displayTexts.scrollDown"
                 :title="displayTexts.scrollDown"
                 @click="stepTimeColumn(column, 1, false)"
               />
