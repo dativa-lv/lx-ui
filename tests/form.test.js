@@ -294,6 +294,23 @@ test('LxForm header slot', () => {
   expect(headerSlot.text()).toBe('Header');
 });
 
+test('LxForm header text has heading semantics', () => {
+  expect(LxForm).toBeTruthy();
+
+  wrapper = mount(LxForm, {
+    props: {
+      id: 'form',
+    },
+    slots: {
+      header: 'Header',
+    },
+  });
+
+  const headerText = wrapper.find('#form-header');
+  expect(headerText.attributes('role')).toBe('heading');
+  expect(headerText.attributes('aria-level')).toBe('2');
+});
+
 test('LxForm default slot test', () => {
   expect(LxForm).toBeTruthy();
 

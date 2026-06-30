@@ -1077,7 +1077,7 @@ if (props.builderOptions.useRegistry) {
       </div>
 
       <div class="lx-group lx-primary">
-        <div class="lx-toolbar-chip" :id="`${id}-header`">
+        <div class="lx-toolbar-chip" :id="`${id}-header`" role="heading" aria-level="2">
           <slot name="header" />
         </div>
       </div>
