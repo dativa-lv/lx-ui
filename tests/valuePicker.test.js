@@ -141,6 +141,91 @@ test('LxValuePicker tags items labels', () => {
   expect(items[2].text()).toBe('Three');
 });
 
+test('LxValuePicker tags single-select radio group ARIA', () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'tags',
+      selectionKind: 'single',
+      modelValue: 'two',
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+        { id: 'three', name: 'Three' },
+      ],
+    },
+  });
+
+  // Container is exposed as a radio group
+  expect(wrapper.find('.lx-tag-set[role="radiogroup"]').exists()).toBe(true);
+
+  const items = wrapper.find('.lx-value-picker-tags').findAll('.lx-tag');
+  expect(items.every((item) => item.attributes('role') === 'radio')).toBe(true);
+
+  // aria-checked reflects the selected item
+  expect(items[1].attributes('aria-checked')).toBe('true');
+
+  // Roving tabindex: only the checked radio is focusable
+  expect(items[0].attributes('tabindex')).toBe('-1');
+  expect(items[1].attributes('tabindex')).toBe('0');
+  expect(items[2].attributes('tabindex')).toBe('-1');
+});
+
+test('LxValuePicker tags single-select arrow navigation selects', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'tags',
+      selectionKind: 'single',
+      modelValue: 'two',
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+        { id: 'three', name: 'Three' },
+      ],
+    },
+  });
+
+  let items = wrapper.find('.lx-value-picker-tags').findAll('.lx-tag');
+
+  // ArrowRight moves selection to the next item
+  await items[1].trigger('keydown.right');
+  expect(wrapper.emitted('update:modelValue').at(-1)).toEqual(['three']);
+
+  // ArrowRight from the last item wraps to the first
+  items = wrapper.find('.lx-value-picker-tags').findAll('.lx-tag');
+  await items[2].trigger('keydown.right');
+  expect(wrapper.emitted('update:modelValue').at(-1)).toEqual(['one']);
+
+  // ArrowLeft from the first item wraps to the last
+  items = wrapper.find('.lx-value-picker-tags').findAll('.lx-tag');
+  await items[0].trigger('keydown.left');
+  expect(wrapper.emitted('update:modelValue').at(-1)).toEqual(['three']);
+});
+
+test('LxValuePicker tags single-select arrow navigation includes search-dimmed items', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'tags',
+      selectionKind: 'single',
+      modelValue: 'two',
+      hasSearch: true,
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+        { id: 'three', name: 'Three' },
+      ],
+    },
+  });
+
+  const search = wrapper.get('.lx-component-toolbar .lx-search-input');
+  await search.setValue('o');
+
+  const items = wrapper.find('.lx-value-picker-tags').findAll('.lx-tag');
+  expect(items[2].classes()).toContain('lx-value-hidden');
+
+  await items[1].trigger('keydown.right');
+  expect(wrapper.emitted('update:modelValue').at(-1)).toEqual(['three']);
+});
+
 test('LxValuePicker tiles items labels, descriptions', () => {
   expect(LxValuePicker).toBeTruthy();
 

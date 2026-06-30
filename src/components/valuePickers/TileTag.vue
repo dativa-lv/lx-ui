@@ -65,6 +65,7 @@ onMounted(() => {
   nextTick(() => updateDescriptionTabIndexes(props.items));
 });
 
+const highlightedItemId = ref(null);
 const itemsModel = ref({});
 const itemsDisplay = computed(() => {
   const res = [...props.items];
@@ -152,6 +153,8 @@ function getItemId(id) {
 
 function selectSingle(id) {
   if (props.disabled) return;
+
+  highlightedItemId.value = id;
 
   // Deselect previously selected item
   if (model.value && !Array.isArray(model.value) && model.value !== notSelectedId) {
@@ -292,6 +295,48 @@ function isElementHidden(item) {
 function checkNull(value) {
   if (!value) return 'notSelected';
   return value;
+}
+
+const navigableItems = computed(() => itemsDisplay.value);
+
+function getSelectedSingleId() {
+  if (Array.isArray(model.value)) {
+    return model.value.length > 0 ? model.value[0] : null;
+  }
+  return model.value ?? null;
+}
+
+function getTabIndex(id) {
+  const current =
+    highlightedItemId.value ??
+    getSelectedSingleId() ??
+    navigableItems.value[0]?.[props.idAttribute];
+  return current === id ? '0' : '-1';
+}
+
+function focusRadio(offset) {
+  const list = navigableItems.value;
+  if (!list.length) return;
+  const currentId = highlightedItemId.value ?? getSelectedSingleId() ?? list[0][props.idAttribute];
+  let index = list.findIndex((item) => item[props.idAttribute] === currentId);
+  if (index === -1) index = 0;
+  let next = index + offset;
+  if (next < 0) next = list.length - 1;
+  if (next >= list.length) next = 0;
+  const nextId = list[next][props.idAttribute];
+  highlightedItemId.value = nextId;
+  selectSingle(nextId);
+  nextTick(() => {
+    document.getElementById(getItemId(nextId))?.focus();
+  });
+}
+
+function focusNextRadio() {
+  focusRadio(1);
+}
+
+function focusPreviousRadio() {
+  focusRadio(-1);
 }
 
 const columnReadOnly = computed(() =>
@@ -438,7 +483,7 @@ const wrapperRef = ref();
             }"
             :id="getItemId(item[idAttribute])"
             :group-id="groupId"
-            :tabindex="disabled ? '-1' : '0'"
+            :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])"
             :disabled="disabled"
             @click="disabled ? null : selectSingle(item[idAttribute])"
             role="radio"
@@ -448,6 +493,11 @@ const wrapperRef = ref();
               item[idAttribute] === checkNull(model)
             "
             @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
+            @keydown.enter.prevent="disabled ? null : selectSingle(item[idAttribute])"
+            @keydown.right.prevent="disabled ? null : focusNextRadio()"
+            @keydown.down.prevent="disabled ? null : focusNextRadio()"
+            @keydown.left.prevent="disabled ? null : focusPreviousRadio()"
+            @keydown.up.prevent="disabled ? null : focusPreviousRadio()"
           >
             <template v-if="variant === 'tiles'">
               <div class="lx-value-picker-tile-header">
@@ -547,6 +597,8 @@ const wrapperRef = ref();
           class="lx-tag-set"
           v-if="selectionKind === 'single'"
           :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
+          role="radiogroup"
+          :aria-labelledby="labelId"
         >
           <li
             v-for="item in itemsDisplay"
@@ -563,7 +615,7 @@ const wrapperRef = ref();
               'lx-value-hidden': isElementHidden(item),
             }"
             :disabled="disabled"
-            :tabindex="disabled ? '-1' : '0'"
+            :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])"
             @click="disabled ? null : selectSingle(item[idAttribute])"
             role="radio"
             :aria-checked="
@@ -572,6 +624,11 @@ const wrapperRef = ref();
               item[idAttribute] === checkNull(model)
             "
             @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
+            @keydown.enter.prevent="disabled ? null : selectSingle(item[idAttribute])"
+            @keydown.right.prevent="disabled ? null : focusNextRadio()"
+            @keydown.down.prevent="disabled ? null : focusNextRadio()"
+            @keydown.left.prevent="disabled ? null : focusPreviousRadio()"
+            @keydown.up.prevent="disabled ? null : focusPreviousRadio()"
           >
             <template v-if="variant === 'tags'">
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
