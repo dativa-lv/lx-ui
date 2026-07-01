@@ -1042,6 +1042,17 @@ function preventDefaultFocus(e) {
   }
 }
 
+function preventCloseOnInputArea(e) {
+  if (e.target !== e.currentTarget) {
+    dropDownMenuRef.value?.preventClose(e);
+    return;
+  }
+  e.stopPropagation();
+  if (dropDownMenuRef.value?.menuOpen) {
+    dropDownMenuRef.value.closeMenu();
+  }
+}
+
 function onTouchStart(e, type) {
   const t = e.touches && e.touches[0];
   if (!t) return;
@@ -1358,7 +1369,7 @@ onMounted(async () => {
           { 'month-year': mode === 'month-year' },
         ]"
         :aria-labelledby="pickerType === 'range' ? labelledBy : null"
-        @click="dropDownMenuRef?.preventClose"
+        @click="preventCloseOnInputArea"
         @keyup="dropDownMenuRef?.preventClose"
         @keydown="dropDownMenuRef?.preventClose"
       >

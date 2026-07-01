@@ -61,3 +61,52 @@ describe.each([
     expect(unitContent.textContent).toMatch(regEx);
   });
 });
+
+describe('LxDateTimeRange close on click beside vertically wrapped inputs', () => {
+  function mountRange() {
+    return mount(LxDateTimeRange, {
+      props: { kind: 'date' },
+      global: {
+        stubs: ['router-link'],
+        directives: { ClickAway: dummyClickAway },
+      },
+    });
+  }
+
+  async function openCalendar() {
+    const startInput = wrapper.find('.lx-date-time-picker.lx-input-area');
+    await startInput.trigger('keyup', { key: 'ArrowDown' });
+    expect(document.body.querySelector('.lx-calendar-container')).toBeTruthy();
+  }
+
+  test('clicking the stretched empty area of the input container closes the calendar', async () => {
+    wrapper = mountRange();
+    await openCalendar();
+
+    // The container stretches full width when inputs wrap vertically (responsive).
+    // A click on the container itself (target === currentTarget) must fall through
+    // to the toggler and close the menu instead of being swallowed by preventClose.
+    await wrapper.find('.lx-datepicker-input-container').trigger('click');
+
+    expect(document.body.querySelector('.lx-calendar-container')).toBeFalsy();
+  });
+
+  test('clicking an inner element (separator) keeps the calendar open', async () => {
+    wrapper = mountRange();
+    await openCalendar();
+
+    await wrapper.find('.lx-date-time-range-separator').trigger('click');
+
+    expect(document.body.querySelector('.lx-calendar-container')).toBeTruthy();
+  });
+
+  test('clicking the stretched empty area while closed does not open the calendar', async () => {
+    wrapper = mountRange();
+
+    expect(document.body.querySelector('.lx-calendar-container')).toBeFalsy();
+
+    await wrapper.find('.lx-datepicker-input-container').trigger('click');
+
+    expect(document.body.querySelector('.lx-calendar-container')).toBeFalsy();
+  });
+});
