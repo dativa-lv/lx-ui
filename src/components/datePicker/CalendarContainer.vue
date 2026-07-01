@@ -1912,6 +1912,8 @@ function handleDateTimePartSelection(updatedDate, selectedValue, key, mode) {
   applyTimeBounds(selectedValue, isFullTimeMode);
   syncTimeViewport();
 
+  hasCommittedDateTimeSelection.value = true;
+
   if (isTimeSelectionComplete(isFullTimeMode)) {
     buildAndEmitFinalDateTime(updatedDate, selectedValue, isFullTimeMode, key);
   }

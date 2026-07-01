@@ -124,6 +124,98 @@ describe('LxDateTimePicker', () => {
     });
   });
 
+  describe('date-time entry order', () => {
+    const openCalendar = async (kind) => {
+      wrapper = mount(LxDateTimePicker, {
+        props: {
+          modelValue: null,
+          variant: 'default',
+          kind,
+        },
+        global: {
+          stubs: ['router-link'],
+          directives: {
+            ClickAway: dummyClickAway,
+          },
+        },
+      });
+
+      const pickerInput = wrapper.find('.lx-date-time-picker.lx-input-area');
+      await pickerInput.trigger('keyup', { key: 'ArrowDown' });
+
+      const container = document.body.querySelector('.lx-calendar-container');
+      expect(container).toBeTruthy();
+      return container;
+    };
+
+    const clickTime = async (container, column) => {
+      const item = container.querySelector(
+        `.lx-time-list-item[data-column="${column}"]:not(.is-disabled)`
+      );
+      expect(item).toBeTruthy();
+      item.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+      return Number(item.getAttribute('data-value'));
+    };
+
+    const clickDay = async (container) => {
+      const day = container.querySelector(
+        '.lx-calendar-day:not(.lx-other-month):not(.lx-disabled-date)'
+      );
+      expect(day).toBeTruthy();
+      const dayNumber = Number(day.querySelector('.lx-calendar-day-content').textContent.trim());
+      day.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+      return dayNumber;
+    };
+
+    const lastEmittedDate = () => {
+      const emitted = wrapper.emitted('update:modelValue');
+      expect(emitted).toBeTruthy();
+      const last = emitted[emitted.length - 1][0];
+      expect(last).toBeTruthy();
+      const date = last instanceof Date ? last : new Date(last);
+      expect(Number.isNaN(date.getTime())).toBe(false);
+      return date;
+    };
+
+    describe.each(['date-time', 'date-time-full'])('%s', (kind) => {
+      const isFull = kind === 'date-time-full';
+
+      it('emits the value when time is entered before the day (time-first)', async () => {
+        const container = await openCalendar(kind);
+
+        const hour = await clickTime(container, 'hours');
+        const minute = await clickTime(container, 'minutes');
+        const second = isFull ? await clickTime(container, 'seconds') : null;
+
+        const dayNumber = await clickDay(container);
+
+        const value = lastEmittedDate();
+        expect(value.getDate()).toBe(dayNumber);
+        expect(value.getHours()).toBe(hour);
+        expect(value.getMinutes()).toBe(minute);
+        if (isFull) expect(value.getSeconds()).toBe(second);
+      });
+
+      it('emits the value when the day is selected before the time (date-first)', async () => {
+        const container = await openCalendar(kind);
+
+        const dayNumber = await clickDay(container);
+
+        const hour = await clickTime(container, 'hours');
+        const minute = await clickTime(container, 'minutes');
+        const second = isFull ? await clickTime(container, 'seconds') : null;
+
+        const value = lastEmittedDate();
+        expect(value.getDate()).toBe(dayNumber);
+        expect(value.getHours()).toBe(hour);
+        expect(value.getMinutes()).toBe(minute);
+        if (isFull) expect(value.getSeconds()).toBe(second);
+      });
+    });
+  });
+
   it('readOnly', () => {
     expect(LxDateTimePicker).toBeTruthy();
 
