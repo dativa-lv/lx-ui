@@ -573,6 +573,7 @@ defineExpose({ toggleSearch, focusAction });
 <template>
   <div
     ref="toolbarRef"
+    :id="id"
     class="lx-component-toolbar"
     :class="[
       customClass,
