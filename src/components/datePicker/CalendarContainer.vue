@@ -1372,7 +1372,7 @@ function focusMonthsLayout() {
 
   if (focusedMonth) {
     setActiveCalendarDate(focusedMonth.date);
-    syncCalendarActiveCell(focusedMonth.row, focusedMonth.col);
+    setCalendarActiveFromClick(focusedMonth.row, focusedMonth.col);
   }
 }
 

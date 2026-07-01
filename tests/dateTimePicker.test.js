@@ -332,13 +332,17 @@ describe('LxDateTimePicker', () => {
   it('min/max outside of today in future different year', async () => {
     expect(LxDateTimePicker).toBeTruthy();
 
+    const now = new Date();
+    const futureYear = now.getFullYear() + 2;
+    const today = now.toISOString().slice(0, 10);
+
     wrapper = mount(LxDateTimePicker, {
       props: {
-        modelValue: '2025-05-14',
+        modelValue: today,
         variant: 'picker',
         kind: 'date',
-        minDate: new Date('2026-06-01'),
-        maxDate: new Date('2026-07-28'),
+        minDate: new Date(futureYear, 5, 1),
+        maxDate: new Date(futureYear, 6, 28),
       },
       global: {
         stubs: ['router-link'],
@@ -354,7 +358,7 @@ describe('LxDateTimePicker', () => {
 
     const yearSelectButton = wrapper.find('.lx-button.lx-calendar-years-select-button');
     expect(yearSelectButton).toBeTruthy();
-    expect(yearSelectButton.attributes('aria-label')).toBe('2026');
+    expect(yearSelectButton.attributes('aria-label')).toBe(String(futureYear));
   });
 
   it('min/max outside of today in future different year', async () => {
