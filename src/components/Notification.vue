@@ -28,6 +28,10 @@ const displayNotification = (notification) => {
   }
 };
 
+function getRole(type) {
+  return type === 'warning' || type === 'error' ? 'alert' : 'status';
+}
+
 function getIcon(type) {
   let ret;
   switch (type) {
@@ -63,7 +67,7 @@ watch(
   <ul class="lx-notifications-list">
     <transition-group name="slide-left">
       <li
-        role="alert"
+        :role="getRole(notification.type)"
         :id="`notification-${notification.uid}`"
         v-for="notification in model"
         :key="notification.uid"
