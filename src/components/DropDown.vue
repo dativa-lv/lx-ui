@@ -493,7 +493,7 @@ const getSelectedItem = computed(
             >
               <div class="pseudo-input" />
 
-              <template v-if="$slots.customItem">
+              <template v-if="$slots.customItem && !isPlaceholderVisible()">
                 <div class="lx-dropdown-default-data lx-input-area">
                   <span class="lx-input-text">
                     <slot name="customItem" v-bind="getSelectedItem"></slot>

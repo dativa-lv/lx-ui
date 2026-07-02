@@ -1246,6 +1246,62 @@ test('LxValuePicker default hasSelectAll', async () => {
   expect(wrapper.props('modelValue')).toStrictEqual([]);
 });
 
+test('LxValuePicker dropdown-custom does not render customItem slot in input when modelValue is null', () => {
+  expect(LxValuePicker).toBeTruthy();
+
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'dropdown-custom',
+      selectionKind: 'single',
+      placeholder: 'Pick one',
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+      ],
+      modelValue: null,
+    },
+    slots: {
+      // Mimics a slot that always renders content (e.g. LxFlag with a fallback),
+      // regardless of the bound item being empty.
+      customItem: '<span class="test-custom-item">flag</span>',
+    },
+    global: {
+      stubs: ['router-link'],
+    },
+  });
+
+  // Nothing is selected: the input must show the placeholder, not the custom slot.
+  expect(wrapper.find('.lx-dropdown-default-data .test-custom-item').exists()).toBe(false);
+  expect(wrapper.find('.lx-placeholder').text()).toBe('Pick one');
+});
+
+test('LxValuePicker dropdown-custom renders customItem slot in input when a value is selected', () => {
+  expect(LxValuePicker).toBeTruthy();
+
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'dropdown-custom',
+      selectionKind: 'single',
+      placeholder: 'Pick one',
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+      ],
+      modelValue: 'one',
+    },
+    slots: {
+      customItem: '<span class="test-custom-item">flag</span>',
+    },
+    global: {
+      stubs: ['router-link'],
+    },
+  });
+
+  // A value is selected: the custom slot renders in the input, no placeholder.
+  expect(wrapper.find('.lx-dropdown-default-data .test-custom-item').exists()).toBe(true);
+  expect(wrapper.find('.lx-placeholder').exists()).toBe(false);
+});
+
 test('LxValuePicker dropdown hasSelectAll', async () => {
   expect(LxValuePicker).toBeTruthy();
 
