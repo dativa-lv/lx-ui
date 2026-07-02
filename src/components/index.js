@@ -2,6 +2,9 @@ import { defineAsyncComponent } from 'vue';
 
 /* shell */
 export const LxShell = defineAsyncComponent(() => import('@/components/shell/Shell.vue'));
+export const LxShellHeaderButtons = defineAsyncComponent(() =>
+  import('@/components/shell/ShellHeaderButtons.vue')
+);
 
 /* forms */
 export const LxRow = defineAsyncComponent(() => import('@/components/forms/Row.vue'));

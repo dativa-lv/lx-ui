@@ -81,6 +81,10 @@ const props = defineProps({
   headerButtonsVisibility: { type: Object, default: () => ({}) },
   headerActionsVisibility: { type: Object, default: () => ({}) },
 
+  // When false, skip width-based collapsing and keep all eligible buttons visible (e.g. custom
+  // mode, where there's no nav bar to offload overflow to and the header width can't be measured).
+  enableResponsivity: { type: Boolean, default: true },
+
   texts: {
     type: Object,
     required: false,
@@ -531,7 +535,7 @@ function recalculateButtonsVisibility() {
   }
 
   buttonsVisibilityFrame = requestAnimationFrame(() => {
-    if (props.hasNavBar) return;
+    if (props.hasNavBar || !props.enableResponsivity) return;
 
     resetButtonsVisibility();
 

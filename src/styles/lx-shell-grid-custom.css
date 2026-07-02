@@ -1,0 +1,60 @@
+.lx-layout.lx-layout-custom {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, var(--body-column-size)) 1fr;
+  grid-template-rows: var(--nav-row-size) 1fr auto;
+  grid-template-areas:
+    'header header header'
+    'aside-left main aside-right'
+    'footer footer footer';
+  min-height: 100dvh;
+}
+
+/*
+ * Minimal default header styling, matching the built-in modes. Lays the header content in a
+ * row, right-aligned, at the standard nav height, with the nav background. Override anything
+ * here in your own CSS (e.g. set `justify-content: space-between` if you add a left-side logo).
+ */
+.lx-layout.lx-layout-custom > .lx-layout-custom-header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1000);
+  height: var(--nav-row-size);
+  background-color: var(--color-region);
+  color: var(--color-data);
+  border-bottom: var(--region-border);
+  position: fixed;
+  top: var(--space-0);
+  width: 100%;
+  z-index: 8100;
+}
+
+/* Lay the LxShellHeaderButtons group out as a centered row. */
+.lx-layout.lx-layout-custom > .lx-layout-custom-header .lx-group {
+  display: flex;
+  align-items: center;
+  height: var(--nav-row-size);
+}
+
+.lx-layout.lx-layout-custom > .lx-layout-custom-aside-left {
+  grid-area: aside-left;
+}
+
+.lx-layout.lx-layout-custom > .lx-main {
+  grid-area: main;
+}
+
+/* Default page-header spacing, matching the built-in modes. Override with custom CSS. */
+.lx-layout.lx-layout-custom > .lx-main > .lx-layout-custom-page-header {
+  margin-top: var(--space-3000);
+  margin-bottom: var(--space-1000);
+}
+
+.lx-layout.lx-layout-custom > .lx-layout-custom-aside-right {
+  grid-area: aside-right;
+}
+
+.lx-layout.lx-layout-custom > footer {
+  grid-area: footer;
+}

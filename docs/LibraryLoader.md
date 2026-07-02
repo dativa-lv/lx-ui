@@ -4,7 +4,7 @@ A reusable, performant utility for lazy-loading heavy JavaScript libraries (e.g.
 
 ## Importing the Loader
 ```js
-import { lxLibLoader } from '@wntr/lx-ui';
+import { lxLibLoader } from '@dativa-lv/lx-ui';
 ```
 
 ## Loading a Library (Caching Enabled by Default)

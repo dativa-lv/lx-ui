@@ -50,6 +50,7 @@ const LxShellModeDigivesLite = defineAsyncComponent(shellModeLoaders['digives-li
 const LxShellModeDigimaks = defineAsyncComponent(shellModeLoaders.digimaks);
 const LxShellModeDigimaksLite = defineAsyncComponent(shellModeLoaders['digimaks-lite']);
 const LxShellModeFullScreen = defineAsyncComponent(shellModeLoaders['full-screen']);
+const LxShellModeCustom = defineAsyncComponent(shellModeLoaders.custom);
 const LxShellModeDefault = defineAsyncComponent(shellModeLoaders.default);
 
 const LxSpotlight = defineAsyncComponent(() => import('@/components/Spotlight.vue'));
@@ -229,6 +230,7 @@ const shellModeComponents = {
   digimaks: LxShellModeDigimaks,
   'digimaks-lite': LxShellModeDigimaksLite,
   'full-screen': LxShellModeFullScreen,
+  custom: LxShellModeCustom,
   default: LxShellModeDefault,
 };
 
@@ -1422,6 +1424,18 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
       </template>
       <template #coverArea>
         <slot name="coverArea" />
+      </template>
+      <template #page-header v-if="$slots['page-header']">
+        <slot name="page-header" />
+      </template>
+      <template #header v-if="$slots.header">
+        <slot name="header" />
+      </template>
+      <template #aside-left v-if="$slots['aside-left']">
+        <slot name="aside-left" />
+      </template>
+      <template #aside-right v-if="$slots['aside-right']">
+        <slot name="aside-right" />
       </template>
       <template #footer>
         <slot name="footer" />

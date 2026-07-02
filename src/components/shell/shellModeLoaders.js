@@ -8,5 +8,6 @@ export const shellModeLoaders = {
   digimaks: () => import('@/components/shell/modes/ShellDigimaks.vue'),
   'digimaks-lite': () => import('@/components/shell/modes/ShellDigimaksLite.vue'),
   'full-screen': () => import('@/components/shell/modes/ShellFullScreen.vue'),
+  custom: () => import('@/components/shell/modes/ShellCustom.vue'),
   default: () => import('@/components/shell/modes/ShellDefault.vue'),
 };

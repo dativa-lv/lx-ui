@@ -217,3 +217,90 @@ test('mounts dialog wrappers only when opened', async () => {
 
   expect(wrapper.findAll('[data-testid="dialog"]')).toHaveLength(2);
 });
+
+test('renders the custom mode layout when requested', async () => {
+  wrapper = mountShell({ mode: 'custom' });
+
+  await settleShell();
+
+  expect(wrapper.find('.lx-layout-custom').exists()).toBe(true);
+  expect(wrapper.find('.lx-layout-default').exists()).toBe(false);
+  // The default LX header/navbar are not auto-rendered in custom mode.
+  expect(wrapper.find('[data-stub="LxMainHeader"]').exists()).toBe(false);
+  // Standard shell scaffolding is still present.
+  expect(wrapper.find('.lx-main').exists()).toBe(true);
+  expect(wrapper.find('#modals').exists()).toBe(true);
+  expect(wrapper.find('#poppers').exists()).toBe(true);
+});
+
+test('renders custom mode header/aside slots only when provided, each with its class', async () => {
+  wrapper = mountShell({ mode: 'custom' });
+  await settleShell();
+
+  // No slot content -> regions are not rendered.
+  expect(wrapper.find('.lx-layout-custom-header').exists()).toBe(false);
+  expect(wrapper.find('.lx-layout-custom-aside-left').exists()).toBe(false);
+  expect(wrapper.find('.lx-layout-custom-aside-right').exists()).toBe(false);
+
+  wrapper.unmount();
+
+  wrapper = mount(LxShell, {
+    props: { ...baseProps, mode: 'custom' },
+    slots: {
+      header: '<div class="my-header">H</div>',
+      'aside-left': '<div class="my-left">L</div>',
+      'aside-right': '<div class="my-right">R</div>',
+      default: '<div class="my-content">C</div>',
+    },
+    global: { stubs: globalStubs },
+  });
+  await settleShell();
+
+  const header = wrapper.find('.lx-layout-custom-header');
+  const asideLeft = wrapper.find('.lx-layout-custom-aside-left');
+  const asideRight = wrapper.find('.lx-layout-custom-aside-right');
+
+  expect(header.exists()).toBe(true);
+  expect(header.find('.my-header').exists()).toBe(true);
+  expect(asideLeft.exists()).toBe(true);
+  expect(asideLeft.find('.my-left').exists()).toBe(true);
+  expect(asideRight.exists()).toBe(true);
+  expect(asideRight.find('.my-right').exists()).toBe(true);
+  expect(wrapper.find('.lx-main .my-content').exists()).toBe(true);
+});
+
+test('renders the page-header slot inside main, outside the route transition', async () => {
+  wrapper = mountShell({ mode: 'custom' });
+  await settleShell();
+  expect(wrapper.find('.lx-layout-custom-page-header').exists()).toBe(false);
+
+  wrapper.unmount();
+
+  wrapper = mount(LxShell, {
+    props: { ...baseProps, mode: 'custom' },
+    slots: {
+      'page-header': '<h1 class="my-title">Title</h1>',
+      default: '<div class="my-content">C</div>',
+    },
+    global: { stubs: globalStubs },
+  });
+  await settleShell();
+
+  const pageHeader = wrapper.find('.lx-main > .lx-layout-custom-page-header');
+  expect(pageHeader.exists()).toBe(true);
+  expect(pageHeader.find('.my-title').exists()).toBe(true);
+});
+
+test('keeps notifications working in custom mode', async () => {
+  wrapper = mountShell({ mode: 'custom', notifications: [] });
+  await settleShell();
+
+  expect(wrapper.find('[data-testid="notification"]').exists()).toBe(false);
+
+  await wrapper.setProps({
+    notifications: [{ id: 'note-1', name: 'Test notification' }],
+  });
+  await settleShell();
+
+  expect(wrapper.find('[data-testid="notification"]').exists()).toBe(true);
+});
