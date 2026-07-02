@@ -71,7 +71,7 @@ const props = defineProps({
   preloadedItems: { type: Array, default: null }, // used for preloading items if items is a function and there is need to show items before user starts typing
   labelId: { type: String, default: null },
   hasSelectAll: { type: Boolean, default: false, group: 'main', sequence: 2 },
-  texts: { type: Object, default: () => ({}) },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
   searchString: { type: String, default: '' },
   enableAdditionalText: { type: Boolean, default: false, group: 'main', sequence: 5 },
@@ -1206,6 +1206,8 @@ function clearFilteredItems() {
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxAutoComplete',
     instance,

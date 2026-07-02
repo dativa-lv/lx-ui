@@ -66,7 +66,7 @@ const props = defineProps({
     type: Object,
     default: () => ({ schemaPath: null, componentStack: null, useRegistry: false }),
   },
-  texts: { type: Object, default: () => ({}) },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
 });
 
 const textsDefault = {
@@ -466,6 +466,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxDateTimePicker',
     instance,

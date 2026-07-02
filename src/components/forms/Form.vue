@@ -282,7 +282,7 @@ const props = defineProps({
    * @type {Object}
    * @since 0.3.5
    */
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => {}, group: 'additional', sequence: 100 },
   role: { type: String, default: 'form' }, // form || group
   builderOptions: {
     type: Object,
@@ -952,6 +952,8 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
 
 if (props.builderOptions.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxForm',
     instance,

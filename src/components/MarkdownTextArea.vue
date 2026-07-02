@@ -37,7 +37,7 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
   placeholder: { type: String, default: null, group: 'main', sequence: 8 },
-  rows: { type: Number, default: 3, group: 'additional', sequence: 3 },
+  rows: { type: Number, default: 3, group: 'additional', sequence: 1 },
   maxlength: { type: Number, default: null, group: 'main', sequence: 7 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   showColorPicker: { type: Boolean, default: false, group: 'main', sequence: 1 },
@@ -50,12 +50,12 @@ const props = defineProps({
   showImagePicker: { type: Boolean, default: false, group: 'main', sequence: 3 },
   showUnderlineToggle: { type: Boolean, default: false, group: 'main', sequence: 5 },
   showHeadingPicker: { type: Boolean, default: false, group: 'main', sequence: 6 },
-  imageMaxSize: { type: Number, default: 3000000, group: 'additional', sequence: 4 }, // 3MB
+  imageMaxSize: { type: Number, default: 3000000, group: 'additional', sequence: 2 }, // 3MB
   dictionary: { type: Object, default: null },
   labelId: { type: String, default: null },
-  stickyToolbar: { type: Boolean, default: false },
+  stickyToolbar: { type: Boolean, default: false, group: 'additional', sequence: 3 },
   actionDefinitions: { type: Array, default: () => [] },
-  texts: { type: Object, default: () => ({}) },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -1009,6 +1009,8 @@ function getPlainText() {
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxMarkdownTextArea',
     instance,

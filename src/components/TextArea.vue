@@ -19,7 +19,7 @@ const props = defineProps({
   dynamicHeight: { type: Boolean, default: false, group: 'main', sequence: 3 },
   tooltip: { type: String, default: null, group: 'main', sequence: 5 },
   labelId: { type: String, default: null },
-  texts: { type: Object, default: () => ({}) },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -99,6 +99,8 @@ defineExpose({ focus });
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxTextArea',
     instance,

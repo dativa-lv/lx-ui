@@ -40,9 +40,9 @@ const props = defineProps({
   hasFlashlightToggle: { type: Boolean, default: false, group: 'main', sequence: 3 },
   showAlerts: { type: Boolean, default: true, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
-  stickyToolbar: { type: Boolean, default: false },
+  stickyToolbar: { type: Boolean, default: false, group: 'additional', sequence: 2 },
   actionDefinitions: { type: Array, default: () => [] },
-  texts: { type: Object, default: () => ({}) },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -308,6 +308,8 @@ onMounted(async () => {
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxQrScanner',
     instance,

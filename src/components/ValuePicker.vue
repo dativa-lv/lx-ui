@@ -17,7 +17,7 @@ const props = defineProps({
   items: { type: Array, default: () => [], group: 'main', sequence: 1 },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
-  iconAttribute: { type: String, default: 'icon', group: 'additional', sequence: 4 },
+  iconAttribute: { type: String, default: 'icon' },
   iconSetAttribute: { type: String, default: 'iconSet' },
   categoryAttribute: { type: String, default: 'category' },
   descriptionAttribute: { type: String, default: 'description' },
@@ -63,15 +63,15 @@ const props = defineProps({
     group: 'mode',
     sequence: 3,
   }, // 'row' || 'column'
-  alwaysAsArray: { type: Boolean, default: false, group: 'additional', sequence: 3 },
+  alwaysAsArray: { type: Boolean, default: false, group: 'additional', sequence: 1 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
-  invalid: { type: Boolean, default: false, sequence: 1 },
-  invalidationMessage: { type: String, default: null, sequence: 2 },
+  invalid: { type: Boolean, default: false },
+  invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
-  stickyToolbar: { type: Boolean, default: false },
-  texts: { type: Object, default: () => ({}) },
+  stickyToolbar: { type: Boolean, default: false, group: 'additional', sequence: 2 },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -193,6 +193,8 @@ onMounted(() => {
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxValuePicker',
     instance,

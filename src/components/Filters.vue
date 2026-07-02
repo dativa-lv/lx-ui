@@ -61,6 +61,8 @@ const props = defineProps({
   texts: {
     type: Object,
     default: () => ({}),
+    group: 'additional',
+    sequence: 100,
   },
   builderOptions: {
     type: Object,
@@ -202,6 +204,8 @@ defineExpose({ toggleExpander, focus });
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = defaultTexts;
   registerBuilderInstance({
     name: 'LxFilters',
     instance,

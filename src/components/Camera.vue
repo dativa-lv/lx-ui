@@ -40,8 +40,8 @@ const props = defineProps({
   preferencesId: { type: String, default: 'lx-camera-settings' },
   labelId: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
-  stickyToolbar: { type: Boolean, default: false },
-  texts: { type: Object, default: () => ({}) },
+  stickyToolbar: { type: Boolean, default: false, group: 'main', sequence: 4 },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -412,6 +412,8 @@ onUnmounted(() => {
 
 if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxCamera',
     instance,

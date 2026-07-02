@@ -218,6 +218,8 @@ const props = defineProps({
   texts: {
     type: Object,
     default: () => ({}),
+    group: 'additional',
+    sequence: 100,
   },
 
   builderOptions: {
@@ -350,9 +352,12 @@ provide('sectionOrientation', sectionOrientation);
 const instance = getCurrentInstance();
 
 function registerCurrentInstance() {
+  const updatedInstance = instance;
+  // Adds default texts to ensure they are available in the builder instance
+  updatedInstance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxSection',
-    instance,
+    instance: updatedInstance,
     props,
     builderName: props.builderOptions?.schemaPath,
     componentStack: props.builderOptions?.componentStack?.concat([

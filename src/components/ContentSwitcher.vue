@@ -22,10 +22,12 @@ const props = defineProps({
     group: 'main',
     sequence: 1,
   }, // default, icon-only, combo
-  icon: { type: String, default: null },
+  icon: { type: String, default: null, group: 'main', sequence: 4 },
   iconSet: {
     type: String,
     default: () => useLx().getGlobals()?.iconSet,
+    group: 'main',
+    sequence: 5,
   },
   tooltip: { type: String, default: null, group: 'main', sequence: 3 },
   labelId: { type: String, default: null },

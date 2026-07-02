@@ -28,7 +28,7 @@ const props = defineProps({
   tooltip: { type: String, default: null, group: 'main', sequence: 2 },
   label: { type: String, default: null },
   labelId: { type: String, default: null },
-  texts: { type: Object, default: () => ({}) },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   role: { type: String, default: 'switch' },
   builderOptions: {
     type: Object,
@@ -126,6 +126,8 @@ onMounted(() => {
 
 if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxToggle',
     instance,

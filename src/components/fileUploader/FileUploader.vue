@@ -73,6 +73,8 @@ const props = defineProps({
   texts: {
     type: Object,
     default: () => ({}),
+    group: 'additional',
+    sequence: 100,
   },
   builderOptions: {
     type: Object,
@@ -698,6 +700,8 @@ defineExpose({ getFiles, isUploading });
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxFileUploader',
     instance,

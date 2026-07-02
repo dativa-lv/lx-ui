@@ -60,7 +60,7 @@ const props = defineProps({
     sequence: 3,
   }, // single, multiple
   labelId: { type: String, default: null },
-  texts: { type: Object, default: () => ({}) },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -406,6 +406,8 @@ defineExpose({ addTitles });
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxVisualPicker',
     instance,

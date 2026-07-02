@@ -66,7 +66,7 @@ const props = defineProps({
   }, // next, previous
   clearIfNotExact: { type: Boolean, default: false, group: 'additional', sequence: 3 },
   labelId: { type: String, default: null },
-  texts: { type: Object, default: () => ({}) },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -466,6 +466,8 @@ onBeforeMount(() => {
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
     name: 'LxDateTimeRange',
     instance,
