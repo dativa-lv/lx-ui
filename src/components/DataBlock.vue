@@ -30,6 +30,7 @@ const props = defineProps({
   ariaLabel: { type: String, default: null },
   hasSelecting: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'single' }, // 'single' or 'multiple'
+  selectable: { type: Boolean, default: true },
   selected: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
@@ -177,7 +178,7 @@ const expandIconTitle = computed(() => {
       >
         <slot name="customHeader" v-if="$slots.customHeader" />
         <template v-else>
-          <div class="lx-icons" v-if="hasSelecting" @click.stop>
+          <div class="lx-icons" v-if="hasSelecting && selectable" @click.stop>
             <LxRadioButton
               v-if="selectionKind === 'single'"
               v-model="selected"
@@ -193,6 +194,7 @@ const expandIconTitle = computed(() => {
               @click="emits('selectingClick', id)"
             />
           </div>
+          <div class="lx-icons" v-else-if="hasSelecting && !selectable" aria-hidden="true"><span /></div>
           <div class="lx-icons" v-else>
             <LxIcon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
             <div class="lx-loader-container" v-if="busy">

@@ -30,6 +30,7 @@ const props = defineProps({
   uppercase: { type: Boolean, default: true },
   hasSelecting: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'single' }, // single, multiple
+  selectableAttribute: { type: String, default: 'selectable' },
   defaultExpanded: { type: Boolean, default: true },
   expandedAttribute: { type: String, default: 'extended' },
   invalidAttribute: { type: String, default: 'invalid' },
@@ -47,6 +48,10 @@ const defaultTexts = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
+
+const isSelectable = (item) => item?.[props.selectableAttribute] !== false;
+const selectableItems = computed(() => props.modelValue?.filter(isSelectable) ?? []);
+const showSelecting = computed(() => props.hasSelecting && selectableItems.value.length > 0);
 
 const emits = defineEmits([
   'update:modelValue',
@@ -315,7 +320,8 @@ defineExpose({ clearModel });
             :expandable="true"
             :actionDefinitions="changeActions([...allActions], item)"
             :uppercase="uppercase"
-            :hasSelecting="hasSelecting"
+            :hasSelecting="showSelecting"
+            :selectable="isSelectable(item)"
             :selectionKind="selectionKind"
             :invalid="item[invalidAttribute]"
             :ariaLabel="

@@ -97,6 +97,7 @@ const props = defineProps({
   hasSorting: { type: Boolean, default: false },
   hasSelecting: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'multiple' }, // 'multiple' (with checkboxes; can select many rows) or 'single' (with radio buttons; can select one row)
+  selectableAttribute: { type: String, default: 'selectable' },
   sortingSide: { type: String, default: 'client' }, // 'client' (sorting is done on client side) or 'server' (sorting is done on server side)
   sortingIgnoreEmpty: { type: Boolean, default: true },
   pageCurrent: { type: Number, default: 0 },
@@ -706,6 +707,12 @@ function cancelSelection() {
   selectedRowsRaw.value = {};
 }
 
+const isSelectable = (item) => item?.[props.selectableAttribute] !== false;
+
+const selectableItems = computed(() => props.items?.filter(isSelectable) ?? []);
+
+const showSelecting = computed(() => props.hasSelecting && selectableItems.value.length > 0);
+
 const toolbarActions = computed(() => {
   if (selectedRows.value.length > 0) {
     return [];
@@ -722,7 +729,7 @@ const selectionState = computed(() => {
     return 'checkbox';
   }
 
-  if (selectedRows.value.length === props.items.length) {
+  if (selectedRows.value.length === selectableItems.value.length) {
     return 'checkbox-filled';
   }
 
@@ -1313,7 +1320,9 @@ function arrayToObject(arr) {
 
 function selectRows(arr = null) {
   if (arr === null) {
-    selectedRowsRaw.value = arrayToObject(props.items?.map((x) => x[props.idAttribute].toString()));
+    selectedRowsRaw.value = arrayToObject(
+      selectableItems.value?.map((x) => x[props.idAttribute].toString())
+    );
   } else {
     selectedRowsRaw.value = arrayToObject(arr.map((x) => x[props.idAttribute].toString()));
   }
@@ -1420,7 +1429,7 @@ function updateGridTemplateColumns() {
   const actionColumnWidth = props.actionDefinitions?.length > 1 ? '5rem' : '2.5rem';
 
   modifyColumn(templateColumns, hasActionButtons.value, actionColumnWidth, false);
-  modifyColumn(templateColumns, props.hasSelecting, '3rem', true);
+  modifyColumn(templateColumns, showSelecting.value, '3rem', true);
 
   gridTemplateColumns.value = templateColumns.join(' ');
 }
@@ -1736,7 +1745,7 @@ const handleCellKey = (event, col, row) => {
 
 function handleHeaderClick(colId, colIndex) {
   sortColumn(colId);
-  setActiveFromClick(0, props.hasSelecting ? colIndex + 1 : colIndex);
+  setActiveFromClick(0, showSelecting.value ? colIndex + 1 : colIndex);
 }
 
 function getGridRowIndex(rowIndex) {
@@ -1746,7 +1755,7 @@ function getGridRowIndex(rowIndex) {
 function handleMenuClick(rowIndex, rowKey) {
   setActiveFromClick(
     getGridRowIndex(rowIndex),
-    props.hasSelecting ? colCount.value + 2 : colCount.value + 1,
+    showSelecting.value ? colCount.value + 2 : colCount.value + 1,
     false
   );
 
@@ -1776,14 +1785,14 @@ const isToolbarVisible = computed(() => {
 });
 
 const computedGridHeaderColumnCount = computed(() => {
-  const selectingColumn = props.hasSelecting ? 0 : 1;
+  const selectingColumn = showSelecting.value ? 0 : 1;
   const actionButtonsColumn = hasActionButtons.value ? 1 : 0;
   return colCount.value + actionButtonsColumn - selectingColumn;
 });
 
 const computedGridColumnCount = computed(() => {
   const actionColumns = hasActionButtons.value ? Math.min(props.actionDefinitions.length, 2) : 0;
-  const selectingColumn = props.hasSelecting ? 0 : 1;
+  const selectingColumn = showSelecting.value ? 0 : 1;
   return colCount.value + actionColumns - selectingColumn;
 });
 
@@ -1839,7 +1848,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :searchSide="searchSide"
         :searchMode="autoSearchMode"
         v-model:searchString="reactiveSearchString"
-        :hasSelectAll="hasSelecting && (selectionKind !== 'single' || selectedRows.length > 0)"
+        :hasSelectAll="showSelecting && (selectionKind !== 'single' || selectedRows.length > 0)"
         :selectionState="selectionState"
         selectAllSide="left"
         :texts="{
@@ -1934,7 +1943,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         @scroll="scheduleContainerScroll"
       >
         <div
-          v-if="hasSelecting"
+          v-if="showSelecting"
           class="lx-cell-header lx-cell-selector"
           :tabindex="hasSorting ? getTabIndex(0, 0) : null"
           :ref="(el) => (hasSorting ? registerCell(el, 0, 0) : null)"
@@ -1951,10 +1960,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
           "
           role="button"
-          :tabindex="hasSorting ? getTabIndex(0, hasSelecting ? colIndex + 1 : colIndex) : null"
+          :tabindex="hasSorting ? getTabIndex(0, showSelecting ? colIndex + 1 : colIndex) : null"
           :ref="
             (el) =>
-              hasSorting ? registerCell(el, 0, hasSelecting ? colIndex + 1 : colIndex) : null
+              hasSorting ? registerCell(el, 0, showSelecting ? colIndex + 1 : colIndex) : null
           "
           :class="[
             {
@@ -2023,10 +2032,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           v-if="hasActionButtons"
           class="lx-cell-header lx-cell-action"
           :title="displayTexts.actions"
-          :tabindex="hasSorting ? getTabIndex(0, hasSelecting ? colCount + 1 : colCount) : null"
+          :tabindex="hasSorting ? getTabIndex(0, showSelecting ? colCount + 1 : colCount) : null"
           :ref="
             (el) =>
-              hasSorting ? registerCell(el, 0, hasSelecting ? colCount + 1 : colCount) : null
+              hasSorting ? registerCell(el, 0, showSelecting ? colCount + 1 : colCount) : null
           "
         />
       </div>
@@ -2053,7 +2062,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :aria-describedby="`${id}-description`"
       >
         <div class="lx-invisible" role="row">
-          <div v-if="hasSelecting" class="lx-cell-header" role="columnheader" />
+          <div v-if="showSelecting" class="lx-cell-header" role="columnheader" />
           <div
             v-for="col in gridColumnsDisplay"
             :key="col.id"
@@ -2089,30 +2098,33 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           >
             <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
             <div
-              v-if="hasSelecting"
+              v-if="showSelecting"
               class="lx-cell lx-cell-selector"
               role="cell"
               @click="setActiveFromClick(getGridRowIndex(rowIndex), 0)"
             >
-              <LxCheckbox
-                v-if="selectionKind === 'multiple'"
-                :id="`select-${id}-${row[idAttribute]}`"
-                v-model="selectedRowsRaw[row[idAttribute]]"
-                :value="row[idAttribute]?.toString()"
-                :disabled="isDisabled"
-                :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0).toString()"
-                :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
-              />
-              <LxRadioButton
-                v-if="selectionKind === 'single'"
-                :id="`select-${id}-${row[idAttribute]}`"
-                v-model="selectedRowsRaw[row[idAttribute]]"
-                :value="row[idAttribute]?.toString()"
-                :disabled="isDisabled"
-                :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0)"
-                :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
-                @click="selectRow(row[idAttribute])"
-              />
+              <template v-if="isSelectable(row)">
+                <LxCheckbox
+                  v-if="selectionKind === 'multiple'"
+                  :id="`select-${id}-${row[idAttribute]}`"
+                  v-model="selectedRowsRaw[row[idAttribute]]"
+                  :value="row[idAttribute]?.toString()"
+                  :disabled="isDisabled"
+                  :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0).toString()"
+                  :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
+                />
+                <LxRadioButton
+                  v-if="selectionKind === 'single'"
+                  :id="`select-${id}-${row[idAttribute]}`"
+                  v-model="selectedRowsRaw[row[idAttribute]]"
+                  :value="row[idAttribute]?.toString()"
+                  :disabled="isDisabled"
+                  :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0)"
+                  :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
+                  @click="selectRow(row[idAttribute])"
+                />
+              </template>
+              <p v-else class="lx-checkbox-placeholder"></p>
             </div>
             <!-- Since key events are assigned to the whole <div> (lx-grid-row) already -->
             <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
@@ -2124,7 +2136,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               role="cell"
               :tabindex="
                 cellIsInteractive(row, col)
-                  ? getTabIndex(getGridRowIndex(rowIndex), hasSelecting ? colIndex + 1 : colIndex)
+                  ? getTabIndex(getGridRowIndex(rowIndex), showSelecting ? colIndex + 1 : colIndex)
                   : -1
               "
               :ref="
@@ -2133,7 +2145,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       registerCell(
                         el,
                         getGridRowIndex(rowIndex),
-                        hasSelecting ? colIndex + 1 : colIndex
+                        showSelecting ? colIndex + 1 : colIndex
                       )
                   : null
               "
@@ -2148,7 +2160,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               @click="
                 setActiveFromClick(
                   getGridRowIndex(rowIndex),
-                  hasSelecting ? colIndex + 1 : colIndex
+                  showSelecting ? colIndex + 1 : colIndex
                 )
               "
               @keydown.space.prevent
@@ -2170,7 +2182,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :tabindex="
                   isCellDelegated(col) &&
                   !(col.kind === 'clickable' && isRenderableTextType(col.type))
-                    ? getTabIndex(getGridRowIndex(rowIndex), hasSelecting ? colIndex + 1 : colIndex)
+                    ? getTabIndex(
+                        getGridRowIndex(rowIndex),
+                        showSelecting ? colIndex + 1 : colIndex
+                      )
                     : -1
                 "
                 :role="col.kind === 'clickable' ? props.clickableRole : null"
@@ -2182,7 +2197,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         registerCell(
                           el ?? null,
                           getGridRowIndex(rowIndex),
-                          hasSelecting ? colIndex + 1 : colIndex
+                          showSelecting ? colIndex + 1 : colIndex
                         )
                     : null
                 "
@@ -2217,7 +2232,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   isCellDelegated(col)
                     ? getFocusable(
                         getGridRowIndex(rowIndex),
-                        hasSelecting ? colIndex + 1 : colIndex
+                        showSelecting ? colIndex + 1 : colIndex
                       )
                     : false
                 "
@@ -2227,7 +2242,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         registerCell(
                           el ?? null,
                           getGridRowIndex(rowIndex),
-                          hasSelecting ? colIndex + 1 : colIndex
+                          showSelecting ? colIndex + 1 : colIndex
                         )
                     : null
                 "
@@ -2263,7 +2278,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                           )
                             ? getFocusable(
                                 getGridRowIndex(rowIndex),
-                                hasSelecting ? colIndex + 1 : colIndex
+                                showSelecting ? colIndex + 1 : colIndex
                               )
                             : false
                         "
@@ -2277,7 +2292,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                                 registerCell(
                                   el ?? null,
                                   getGridRowIndex(rowIndex),
-                                  hasSelecting ? colIndex + 1 : colIndex
+                                  showSelecting ? colIndex + 1 : colIndex
                                 )
                             : null
                         "
@@ -2393,7 +2408,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
                         ? getFocusable(
                             getGridRowIndex(rowIndex),
-                            hasSelecting ? colIndex + 1 : colIndex,
+                            showSelecting ? colIndex + 1 : colIndex,
                             0
                           )
                         : false
@@ -2404,7 +2419,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                             registerCell(
                               el ?? null,
                               getGridRowIndex(rowIndex),
-                              hasSelecting ? colIndex + 1 : colIndex,
+                              showSelecting ? colIndex + 1 : colIndex,
                               0
                             )
                         : null
@@ -2457,7 +2472,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     :tabindex="
                       getTabIndex(
                         getGridRowIndex(rowIndex),
-                        hasSelecting ? colIndex + 1 : colIndex,
+                        showSelecting ? colIndex + 1 : colIndex,
                         1
                       )
                     "
@@ -2466,7 +2481,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         registerCell(
                           el ?? null,
                           getGridRowIndex(rowIndex),
-                          hasSelecting ? colIndex + 1 : colIndex,
+                          showSelecting ? colIndex + 1 : colIndex,
                           1
                         )
                     "
@@ -2496,7 +2511,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     )
                       ? getFocusable(
                           getGridRowIndex(rowIndex),
-                          hasSelecting ? colIndex + 1 : colIndex
+                          showSelecting ? colIndex + 1 : colIndex
                         )
                       : false
                   "
@@ -2511,7 +2526,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                           registerCell(
                             el ?? null,
                             getGridRowIndex(rowIndex),
-                            hasSelecting ? colIndex + 1 : colIndex
+                            showSelecting ? colIndex + 1 : colIndex
                           )
                       : null
                   "
@@ -2576,7 +2591,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 @click="
                   setActiveFromClick(
                     getGridRowIndex(rowIndex),
-                    hasSelecting ? colCount + 1 : colCount
+                    showSelecting ? colCount + 1 : colCount
                   )
                 "
               >
@@ -2604,14 +2619,14 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :badgeIcon="action.badgeIcon"
                   :badgeTitle="action.badgeTitle"
                   :tabindex="
-                    getTabIndex(getGridRowIndex(rowIndex), hasSelecting ? colCount + 1 : colCount)
+                    getTabIndex(getGridRowIndex(rowIndex), showSelecting ? colCount + 1 : colCount)
                   "
                   :ref="
                     (el) =>
                       registerCell(
                         el ?? null,
                         getGridRowIndex(rowIndex),
-                        hasSelecting ? colCount + 1 : colCount
+                        showSelecting ? colCount + 1 : colCount
                       )
                   "
                   :href="action.href"
@@ -2627,7 +2642,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 @click="
                   setActiveFromClick(
                     getGridRowIndex(rowIndex),
-                    hasSelecting ? colCount + 1 : colCount
+                    showSelecting ? colCount + 1 : colCount
                   )
                 "
               >
@@ -2659,14 +2674,14 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
                   :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
                   :tabindex="
-                    getTabIndex(getGridRowIndex(rowIndex), hasSelecting ? colCount + 1 : colCount)
+                    getTabIndex(getGridRowIndex(rowIndex), showSelecting ? colCount + 1 : colCount)
                   "
                   :ref="
                     (el) =>
                       registerCell(
                         el ?? null,
                         getGridRowIndex(rowIndex),
-                        hasSelecting ? colCount + 1 : colCount
+                        showSelecting ? colCount + 1 : colCount
                       )
                   "
                   :href="actionDefinitions?.[0]?.href"
@@ -2695,7 +2710,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     :tabindex="
                       getTabIndex(
                         getGridRowIndex(rowIndex),
-                        hasSelecting ? colCount + 2 : colCount + 1
+                        showSelecting ? colCount + 2 : colCount + 1
                       )
                     "
                     :ref="
@@ -2703,7 +2718,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         registerCell(
                           el ?? null,
                           getGridRowIndex(rowIndex),
-                          hasSelecting ? colCount + 2 : colCount + 1
+                          showSelecting ? colCount + 2 : colCount + 1
                         )
                     "
                     @click.stop.prevent="handleMenuClick(rowIndex, rowKey)"
@@ -2775,8 +2790,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       :nameAttribute="primaryColumnDisplayAttribute()"
       kind="compact"
       :readOnly="true"
-      :hasSelecting="hasSelecting"
+      :hasSelecting="showSelecting"
       :selectionKind="selectionKind"
+      :selectableAttribute="selectableAttribute"
       :actionDefinitions="actionDefinitions"
       :uppercase="false"
       :columnCount="2"
