@@ -22,6 +22,11 @@ const sizeComp = computed(() => map?.[props.size] || 'L');
 
 <template>
   <div class="lx-qr-wrapper" :id="id" :class="[{ 'lx-ignore-theme': ignoreTheme }]">
-    <QrcodeSvg :value="value" :level="sizeComp" />
+    <QrcodeSvg
+      :value="value"
+      :level="sizeComp"
+      :foreground="ignoreTheme ? '#000' : null"
+      :background="ignoreTheme ? '#fff' : null"
+    />
   </div>
 </template>
