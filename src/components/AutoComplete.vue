@@ -10,15 +10,8 @@ import {
   onUnmounted,
 } from 'vue';
 import { onClickOutside, useDebounceFn, useWindowSize } from '@vueuse/core';
-import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
-import {
-  focusNextFocusableElement,
-  getDisplayTexts,
-  isBoolean,
-  isDefined,
-  isNil,
-} from '@/utils/generalUtils';
+import { getDisplayTexts, isBoolean, isDefined, isNil } from '@/utils/generalUtils';
 import { logWarn, logError } from '@/utils/devUtils';
 import { objectClone } from '@/utils/formatUtils';
 import useLx from '@/hooks/useLx';
@@ -129,13 +122,7 @@ const panelWidth = ref();
 const inputReadonly = ref(false);
 const highlightedItemId = ref(null);
 const infoWrapperRef = ref();
-const isTrapActive = ref(false);
 const tapStage = ref(0);
-
-const { activate, deactivate } = useFocusTrap(refListbox, {
-  allowOutsideClick: true,
-  initialFocus: false,
-});
 
 const globalEnvironment = useLx().getGlobals()?.environment;
 
@@ -412,15 +399,9 @@ function handleMenuAndInputKeydown(e) {
 
 function handleTabKey(e) {
   if (e.key === 'Tab' && menuOpen.value && filteredItems.value.length > 0) {
-    const tabPressed = e.shiftKey ? 'backward' : 'forward';
-
     query.value = null;
+    highlightedItemId.value = null;
     menuOpen.value = false;
-
-    nextTick(() => {
-      focusNextFocusableElement(refQuery.value, tabPressed === 'forward');
-      return true;
-    });
   }
   return false;
 }
@@ -677,20 +658,6 @@ function getSelectedValue() {
   return null;
 }
 
-function handleEnterSelection() {
-  const selectedValue = getSelectedValue();
-  if (!selectedValue) {
-    return;
-  }
-
-  if (props.selectionKind === 'multiple') {
-    handleSelection(selectedValue);
-  } else {
-    model.value = selectedValue;
-    closeMenu();
-  }
-}
-
 function onEnter() {
   if (handleClearButton()) return;
   if (handleMenuOpening()) return;
@@ -751,23 +718,29 @@ function openDetails() {
 
 function focusNextInputElement(e) {
   if (e.shiftKey && e.key === 'ArrowDown') return;
-
   onDown();
-  nextTick(() => {
-    // @ts-ignore
-    document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
-  });
 }
 
 function focusPreviousInputElement(e) {
   if (e.shiftKey && e.key === 'ArrowUp') return;
-
   onUp();
-  nextTick(() => {
-    // @ts-ignore
-    document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
-  });
 }
+
+watch(highlightedItemId, (newId) => {
+  if (!newId) return;
+  nextTick(() => {
+    const el = document.getElementById(getItemId(newId));
+    if (!el) return;
+    const container = el.closest('.lx-dropdown-default-content');
+    if (!container) return;
+    const elRect = el.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const isFullyVisible = elRect.top >= containerRect.top && elRect.bottom <= containerRect.bottom;
+    if (!isFullyVisible) {
+      el.scrollIntoView({ block: 'center' });
+    }
+  });
+});
 
 function handleShiftArrow(inputElement, direction) {
   if (inputElement && inputElement.setSelectionRange) {
@@ -1013,12 +986,6 @@ const displayReadOnlyPlaceholder = computed(
 
 const showListOptions = computed(() => displaySelectedItems.value.length > 0);
 
-const firstFocusableIndex = computed(() =>
-  props.hasSelectAll && typeof props.items !== 'function' && props.selectionKind === 'multiple'
-    ? 1
-    : 0
-);
-
 watch(
   () => [props.items, props.preloadedItems],
   (newValue, oldValue) => {
@@ -1069,34 +1036,6 @@ watch(
     }
   }
 );
-
-const activateTrap = () => {
-  try {
-    if (!refListbox.value) return;
-    if (!filteredItems.value?.length) return;
-    activate();
-    isTrapActive.value = true;
-  } catch (err) {
-    logWarn(`LxAutoComplete [${props.id}]: Trap activate skipped, ${err}`, globalEnvironment);
-  }
-};
-
-const deactivateTrap = () => {
-  if (!isTrapActive.value) return;
-  try {
-    deactivate({ returnFocus: false });
-  } catch (err) {
-    logWarn(`LxAutoComplete [${props.id}]: Trap deactivate skipped, ${err}`, globalEnvironment);
-  } finally {
-    isTrapActive.value = false;
-  }
-};
-
-watch(menuOpen, async (isOpen) => {
-  await nextTick();
-  if (isOpen) activateTrap();
-  else deactivateTrap();
-});
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
@@ -1150,6 +1089,25 @@ function selectAll() {
 
     model.value = res;
     itemsModel.value = itemModelClone;
+  }
+}
+
+function handleEnterSelection() {
+  const selectedValue = getSelectedValue();
+  if (!selectedValue) {
+    return;
+  }
+
+  if (selectedValue === 'select-all') {
+    selectAll();
+    return;
+  }
+
+  if (props.selectionKind === 'multiple') {
+    handleSelection(selectedValue);
+  } else {
+    model.value = selectedValue;
+    closeMenu();
   }
 }
 
@@ -1248,22 +1206,16 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
       <div
         class="lx-autocomplete-default"
         ref="refContainer"
-        :class="[{ 'lx-opened': menuOpen }, { 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
+        :class="[
+          { 'lx-opened': menuOpen },
+          { 'lx-invalid': invalid },
+          { 'lx-disabled': disabled },
+          { 'lx-navigating': !!highlightedItemId },
+        ]"
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
-        role="combobox"
-        :aria-expanded="menuOpen"
-        :aria-controls="`${id}-popper`"
-        :aria-labelledby="labelledBy"
-        tabindex="-1"
       >
-        <LxPopper
-          :id="`${id}-popper`"
-          offset-distance="0"
-          :disabled="disabled"
-          :show="menuOpen"
-          role="listbox"
-        >
+        <LxPopper :id="`${id}-popper`" offset-distance="0" :disabled="disabled" :show="menuOpen">
           <div class="lx-autocomplete-input-icon-container">
             <div
               ref="refAutocomplete"
@@ -1337,6 +1289,13 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       :id="id"
                       v-model="query"
                       class="lx-text-input lx-value-picker-placeholder lx-input-area"
+                      role="combobox"
+                      :aria-expanded="menuOpen"
+                      :aria-controls="`${id}-listbox`"
+                      aria-haspopup="listbox"
+                      :aria-activedescendant="
+                        menuOpen && highlightedItemId ? getItemId(highlightedItemId) : undefined
+                      "
                       :aria-labelledby="labelledBy"
                       :aria-label="getName(false)"
                       :aria-invalid="invalid"
@@ -1345,7 +1304,6 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       :aria-busy="loadingState || loading"
                       :maxlength="queryMaxLength || null"
                       :tabindex="disabled ? '-1' : '0'"
-                      :readonly="inputReadonly"
                       :disabled="disabled"
                       @focusout="handleFocusOut"
                       @touchstart="handleTouchStart"
@@ -1477,13 +1435,13 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                   <div
                     v-show="menuOpen && !loading"
                     class="lx-dropdown-panel lx-region-component"
-                    tabindex="-1"
+                    :id="`${id}-listbox`"
                     role="listbox"
                   >
                     <template v-if="props.enableAdditionalText">
                       <div class="lx-empty additional-text lx-aligned-row">
                         <LxIcon value="info" />
-                        <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
+                        <div class="lx-invisible" aria-hidden="true"></div>
                         <p>
                           {{ displayTexts.additionalText }}
                         </p>
@@ -1506,19 +1464,13 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                         >
                           <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
                           <div
-                            id="select-all"
+                            :id="getItemId('select-all')"
                             class="lx-value-picker-item select-all lx-popover-item-selecting"
                             :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
-                            :tabindex="
-                              highlightedItemId === 'select-all'
-                                ? '0'
-                                : !highlightedItemId
-                                ? '0'
-                                : '-1'
-                            "
-                            role="button"
+                            tabindex="-1"
+                            role="option"
+                            :aria-selected="areAllSelected"
                             @keydown.enter.prevent="selectAll"
-                            @keydown.space.prevent="selectAll"
                             @click="selectAll"
                             :title="
                               areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
@@ -1544,15 +1496,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
                         <div
                           v-if="getIdAttributeString(item) !== 'select-all'"
-                          :tabindex="
-                            highlightedItemId && highlightedItemId === getIdAttributeString(item)
-                              ? '0'
-                              : !highlightedItemId
-                              ? index === firstFocusableIndex
-                                ? '0'
-                                : '-1'
-                              : '-1'
-                          "
+                          tabindex="-1"
                           role="option"
                           :aria-selected="isItemSelected(item)"
                           class="lx-value-picker-item lx-popover-item-text-only"
@@ -1625,7 +1569,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     >
                       <div class="lx-empty lx-aligned-row">
                         <LxIcon value="info" />
-                        <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
+                        <div class="lx-invisible" aria-hidden="true"></div>
                         <p>
                           {{ displayTexts.empty }} "<span class="lx-highlighted-item">{{
                             query.toLowerCase()
@@ -1645,7 +1589,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     >
                       <div class="lx-empty lx-aligned-row">
                         <LxIcon value="info" />
-                        <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
+                        <div class="lx-invisible" aria-hidden="true"></div>
                         <p>
                           {{
                             queryMinLength % 10 === 1 && queryMinLength !== 11

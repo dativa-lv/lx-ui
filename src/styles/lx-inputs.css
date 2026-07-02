@@ -156,6 +156,11 @@
   outline-color: transparent;
 }
 
+.lx-autocomplete-default.lx-navigating .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus,
+.lx-autocomplete-default.lx-navigating .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus-visible {
+  outline-color: transparent;
+}
+
 .lx-field-wrapper .lx-input-wrapper:not(.lx-complex-input .lx-input-wrapper).lx-invalid .lx-input-area,
 .lx .lx-layout .lx-complex-input:has(.lx-input-wrapper.lx-invalid) {
   border-width: var(--border-width-2);
@@ -2392,6 +2397,10 @@ h2.lx-section-header + p.lx-invalidation-message,
   padding: var(--space-0);
   color: inherit;
   margin-top: initial;
+}
+
+.lx-autocomplete-default:not(.lx-opened):not(:has(.lx-placeholder)) .lx-text-input {
+  caret-color: transparent;
 }
 
 .lx-autocomplete .lx-autocomplete-default-panel .lx-text-input-wrapper .lx-text-input,

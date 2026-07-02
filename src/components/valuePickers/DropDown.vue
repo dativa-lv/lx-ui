@@ -692,6 +692,7 @@ function countDigits(number) {
         @keydown.down.prevent="focusNextInputElement"
         @keydown.up.prevent="focusPreviousInputElement"
         @keydown="handleKeydown"
+        @click="openDropDownDefault"
       >
         <LxPopper
           :id="`${id}-popper`"
@@ -705,7 +706,6 @@ function countDigits(number) {
             :class="[{ 'lx-invalid': invalid && !hasSearch }, { 'lx-disabled': disabled }]"
             :title="tooltip"
             tabindex="-1"
-            @click="openDropDownDefault"
           >
             <slot>
               <div class="pseudo-input" />

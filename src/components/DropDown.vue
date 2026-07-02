@@ -473,6 +473,7 @@ const getSelectedItem = computed(
         @keydown.down.prevent="focusNextInputElement"
         @keydown.up.prevent="focusPreviousInputElement"
         @keydown="handleKeydown"
+        @click="openDropDownDefault"
       >
         <LxPopper
           :id="`${id}-popper`"
@@ -482,7 +483,7 @@ const getSelectedItem = computed(
           role="listbox"
         >
           <!--eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
-          <div class="lx-dropdown-input-wrapper" @click="openDropDownDefault">
+          <div class="lx-dropdown-input-wrapper">
             <div
               class="lx-dropdown-default-panel lx-input-wrapper"
               :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"

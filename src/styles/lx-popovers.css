@@ -237,7 +237,8 @@
 .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:focus-visible,
 .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:focus-visible,
 .lx-layout .popper .lx-dropdown-panel > div > .lx-button:focus-visible,
-.lx-layout .popper .lx-dropdown-panel > .lx-button:focus-visible {
+.lx-layout .popper .lx-dropdown-panel > .lx-button:focus-visible,
+.lx-dropdown-default-content .lx-value-picker-item.lx-highlighted-item {
   background: var(--color-popover-item-background-focus);
   border-color: var(--color-popover-item-border-focus);
   color: var(--color-popover-item-text-focus);
@@ -319,6 +320,7 @@
   border-color: var(--color-popover-item-border-selected);
   border-radius: var(--popover-item-border-radius-selected);
 }
+
 
 .lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all,
 .lx-dropdown-default-content .lx-value-picker-item.select-all {
