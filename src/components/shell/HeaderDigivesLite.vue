@@ -578,8 +578,8 @@ watch(
         class="header-display-logo"
         tabindex="0"
         role="button"
-        v-on:keyup.enter="goHome"
-        v-on:keyup.space="goHome"
+        @keyup.enter="goHome"
+        @keyup.space="goHome"
         @click="goHome"
       >
         <LxIcon

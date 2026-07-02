@@ -311,7 +311,9 @@ describe('Action definitions', () => {
         slots: { [slotAction.id]: slotContents },
       });
 
-      const elements = wrapper.get('.action-definitions-group').findAll(':scope > *');
+      const elements = wrapper
+        .get('.action-definitions-group')
+        .findAll(':scope > *:not(.lx-invisible)');
 
       expect(elements.length).toBe(actions.length);
       expect(elements[0].attributes('id')).toContain(actions[0].id);

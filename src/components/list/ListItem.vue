@@ -131,9 +131,9 @@ defineExpose({ focus });
       :aria-labelledby="label && clickable ? `${id}-label` : null"
       :aria-describedby="description && clickable ? `${id}-desc` : null"
       :aria-invalid="invalid"
-      v-on:keyup.enter="performClick"
-      v-on:keyup.space="performClick"
-      v-on:keydown.space.prevent
+      @keyup.enter="performClick"
+      @keyup.space="performClick"
+      @keydown.space.prevent
       :title="clickable ? tooltip : ''"
       :class="[
         { 'lx-list-item-interactive': href || clickable },
@@ -251,7 +251,7 @@ defineExpose({ focus });
       :aria-describedby="description && clickable ? `${id}-desc` : null"
       :aria-invalid="invalid"
       :to="safeTo"
-      v-on:keydown.space.prevent
+      @keydown.space.prevent
       :title="tooltip"
       :class="[
         { 'lx-list-item-interactive': href || clickable },

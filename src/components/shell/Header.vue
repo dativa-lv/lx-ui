@@ -522,8 +522,8 @@ const hasHiddenHeaderButtons = computed(() =>
         tabindex="0"
         role="button"
         :aria-label="systemNameShort"
-        v-on:keyup.enter="goHome"
-        v-on:keyup.space="goHome"
+        @keyup.enter="goHome"
+        @keyup.space="goHome"
         @click="goHome"
       >
         <div v-if="!systemIcon" class="lx-logo">
@@ -582,8 +582,8 @@ const hasHiddenHeaderButtons = computed(() =>
           :style="{
             visibility: headerActionsVisibility.showScrollUpButton ? 'visible' : 'hidden',
           }"
-          v-on:keyup.enter="scrollUp"
-          v-on:keyup.space="scrollUp"
+          @keyup.enter="scrollUp"
+          @keyup.space="scrollUp"
           @click="scrollUp"
         >
           {{ pageLabel }}

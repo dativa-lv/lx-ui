@@ -334,7 +334,7 @@ defineExpose({ focus, scrollIntoView, getElement });
     </div>
   </router-link>
   <div class="lx-invisible" aria-live="polite" v-if="props.busy">{{ props.busyTooltip }}</div>
-  <p :id="`${id}-description`" class="lx-invisible" v-if="accessibleTitle && !isIconOnly">
+  <p :id="`${id}-description`" class="lx-invisible" v-if="accessibleTitle">
     {{ accessibleTitle }}
   </p>
 </template>

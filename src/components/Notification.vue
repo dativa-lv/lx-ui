@@ -79,8 +79,6 @@ watch(
           { 'lx-notification-error': notification.type === 'error' },
         ]"
         @click="deleteNotification(notification.uid)"
-        v-on:keyup.enter="deleteNotification(notification.uid)"
-        v-on:keyup.space="deleteNotification(notification.uid)"
       >
         <div class="lx-main">
           <LxIcon :value="getIcon(notification.type)" />

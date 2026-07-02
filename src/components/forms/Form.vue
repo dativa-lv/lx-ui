@@ -1001,15 +1001,16 @@ if (props.builderOptions.useRegistry) {
           :key="i.id"
           ref="indexItems"
           :class="[{ 'lx-selected': findIfSectionSelected(i.id) }]"
-          tabindex="0"
-          v-on:keyup.enter="scrollTo(i.id)"
-          v-on:keyup.space="scrollTo(i.id)"
-          @click="scrollTo(i.id)"
         >
           <div
             class="index-text"
             :class="{ 'lx-invalid': i?.invalid }"
             :title="i.invalid ? i.invalidationMessage : ''"
+            role="button"
+            tabindex="0"
+            @keyup.enter="scrollTo(i.id)"
+            @keydown.space.prevent="scrollTo(i.id)"
+            @click="scrollTo(i.id)"
           >
             {{ sectionLocations[`${props.id}-${i.id}`] }}
             <p>{{ i.name }}</p>
@@ -1030,15 +1031,16 @@ if (props.builderOptions.useRegistry) {
           :key="i.id"
           ref="indexItems"
           :class="[{ 'lx-selected': findIfSectionSelected(i.id) }]"
-          tabindex="0"
-          v-on:keyup.enter="scrollTo(i.id)"
-          v-on:keyup.space="scrollTo(i.id)"
-          @click="scrollTo(i.id)"
         >
           <div
             class="index-text"
             :class="{ 'lx-invalid': i?.invalid }"
             :title="i.invalid ? i.invalidationMessage : ''"
+            role="button"
+            tabindex="0"
+            @keyup.enter="scrollTo(i.id)"
+            @keydown.space.prevent="scrollTo(i.id)"
+            @click="scrollTo(i.id)"
           >
             <div class="inner-text">
               {{ sectionLocations[`${props.id}-${i.id}`] }}
@@ -1235,8 +1237,8 @@ if (props.builderOptions.useRegistry) {
                   :title="i.invalid ? i.invalidationMessage : ''"
                   tabindex="0"
                   role="button"
-                  v-on:keyup.enter="scrollTo(i.id)"
-                  v-on:keyup.space="scrollTo(i.id)"
+                  @keyup.enter="scrollTo(i.id)"
+                  @keyup.space="scrollTo(i.id)"
                   @click="scrollTo(i.id)"
                 >
                   <div class="lx-button-content-wrapper">
@@ -1281,8 +1283,8 @@ if (props.builderOptions.useRegistry) {
                 :title="i.invalid ? i.invalidationMessage : ''"
                 tabindex="0"
                 role="button"
-                v-on:keyup.enter="scrollTo(i.id)"
-                v-on:keyup.space="scrollTo(i.id)"
+                @keyup.enter="scrollTo(i.id)"
+                @keyup.space="scrollTo(i.id)"
                 @click="scrollTo(i.id)"
               >
                 <div class="lx-button-content-wrapper">
