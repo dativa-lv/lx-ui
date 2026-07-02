@@ -51,7 +51,7 @@ const footerSize = useElementSize(modalFooter);
 
 const { y: scrollYPos } = useScroll(modalContent);
 
-const { activate, deactivate } = useFocusTrap(modalRef, {
+const { activate, deactivate, pause, unpause } = useFocusTrap(modalRef, {
   allowOutsideClick: true,
   initialFocus: false,
   escapeDeactivates: false, // handled manually
@@ -190,6 +190,7 @@ onUnmounted(() => {
 });
 
 provide('insideModal', insideModal);
+provide('parentFocusTrap', { pause, unpause });
 defineExpose({ open, close });
 </script>
 <template>
