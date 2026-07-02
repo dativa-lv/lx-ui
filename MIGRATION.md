@@ -10,7 +10,7 @@ Our goal is to make upgrading predictable, transparent, and worth the effort.
 
 #### LxToolbar
 
-LxToolbar styles have been moved to a separate file - `lx-toolbars.css`. Import this file in your project to ensure correct badge appearance and behavior.
+`LxToolbar` styles have been moved to a separate file - `lx-toolbars.css`. Import this file in your project to ensure correct badge appearance and behavior.
 
 #### Inputs
 
@@ -22,6 +22,10 @@ LxToolbar styles have been moved to a separate file - `lx-toolbars.css`. Import 
 **Token removals**
 - `--color-list-region-background` (use `--color-region-2` instead)
 - `--color-data-block-region-background` (use `--color-region-2` instead)
+
+#### LxDayInput
+
+`LxDayInput` no longer accepts string values in `modelValue`. Convert them to numbers before passing them to the component (this does not apply to `unit` parameter when `modelValue` is object; `unit` remains a string).
 
 ## 2.2.3 → 2.2.4
 

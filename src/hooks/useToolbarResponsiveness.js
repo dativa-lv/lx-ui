@@ -1,6 +1,7 @@
 import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import { remToPx } from '@/utils/generalUtils';
+import { hasOverflow, getClosestExceededParent } from '@/utils/overflowUtils';
 
 function toActionGroups(actions = []) {
   const nestedGroupIds = new Set(actions?.map((a) => a.nestedGroupId).filter(Boolean));
@@ -196,67 +197,13 @@ export function useToolbarResponsiveness({
     };
   });
 
-  function getClosestExceededParent() {
-    const target = toolbarRef.value?.$el ?? toolbarRef.value;
-    if (!(target instanceof HTMLElement)) {
-      return null;
-    }
-
-    const targetWidth = target.getBoundingClientRect().width;
-
-    let parent = target.parentElement;
-
-    while (parent) {
-      const parentRect = parent.getBoundingClientRect();
-      const exceedsHorizontally = targetWidth > parentRect.width;
-
-      if (exceedsHorizontally) {
-        return parent;
-      }
-
-      parent = parent.parentElement;
-    }
-
-    return null;
-  }
-
-  function hasInternalHorizontalOverflow() {
-    const target = toolbarRef.value?.$el ?? toolbarRef.value;
-    if (!(target instanceof HTMLElement)) {
-      return false;
-    }
-
-    const tolerance = 1; // 1px - to account for minor measurement discrepancies
-
-    // Detect overflow even when CSS clips content and parent boundaries are not exceeded.
-    if (target.scrollWidth - target.clientWidth > tolerance) {
-      return true;
-    }
-
-    const targetRect = target.getBoundingClientRect();
-
-    return Array.from(target.children).some((child) => {
-      if (!(child instanceof HTMLElement)) {
-        return false;
-      }
-
-      const childRect = child.getBoundingClientRect();
-
-      return childRect.width > targetRect.width;
-    });
-  }
-
-  function hasHorizontalOverflowPressure() {
-    return Boolean(getClosestExceededParent()) || hasInternalHorizontalOverflow();
-  }
-
   function getToolbarMaxWidth() {
     const target = toolbarRef.value?.$el ?? toolbarRef.value;
     if (!(target instanceof HTMLElement)) {
       return 0;
     }
 
-    const exceededParent = getClosestExceededParent();
+    const exceededParent = getClosestExceededParent(target);
     const exceededParentWidth = Math.floor(exceededParent?.getBoundingClientRect?.()?.width ?? 0);
     const toolbarWidth = Math.floor(target?.getBoundingClientRect?.()?.width ?? 0);
 
@@ -729,7 +676,7 @@ export function useToolbarResponsiveness({
       resetLayout();
       await nextTick();
 
-      if (!hasHorizontalOverflowPressure()) {
+      if (!hasOverflow(toolbarRef.value)) {
         checkFreeGap();
         return;
       }
@@ -738,7 +685,7 @@ export function useToolbarResponsiveness({
         forceCompactSearchByWidth.value = true;
         await nextTick();
 
-        if (!hasHorizontalOverflowPressure()) {
+        if (!hasOverflow(toolbarRef.value)) {
           checkFreeGap();
           return;
         }
@@ -748,7 +695,7 @@ export function useToolbarResponsiveness({
         promotedActionVariant.value = 'icon-only';
         await nextTick();
 
-        if (!hasHorizontalOverflowPressure()) {
+        if (!hasOverflow(toolbarRef.value)) {
           checkFreeGap();
           return;
         }

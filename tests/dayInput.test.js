@@ -90,6 +90,26 @@ describe('LxDayInput', () => {
       });
     });
 
+    describe('variant', () => {
+      test('should have the correct default value', () => {
+        wrapper = mount(LxDayInput);
+        const props = wrapper.props();
+        expect(props.variant).toBe('default');
+      });
+
+      test('should accept provided value', () => {
+        ['default', 'hours', 'days', 'months'].forEach((variant) => {
+          wrapper = mount(LxDayInput, {
+            props: { variant },
+          });
+          const props = wrapper.props();
+          expect(props.variant).toBe(variant);
+          expect(props.variant).toBeTypeOf('string');
+          wrapper.unmount();
+        });
+      });
+    });
+
     describe('invalid', () => {
       test('should have the correct default value', () => {
         wrapper = mount(LxDayInput);
@@ -175,7 +195,7 @@ describe('LxDayInput', () => {
       });
 
       expect(wrapper.text()).not.toContain('NaN');
-      expect(wrapper.find('.lx-day-input-tooltip-text').text()).toBe('');
+      expect(wrapper.find('.lx-duration-result-label').exists()).toBe(false);
       expect(wrapper.emitted('update:modelValue')).toBeFalsy();
     });
   });

@@ -1,5 +1,5 @@
-import { test, expect } from 'vitest';
-import { formatAddress } from '@/utils/formatUtils';
+import { describe, test, expect } from 'vitest';
+import { formatAddress, pluralize } from '@/utils/formatUtils';
 
 test('Format address city', async () => {
   const address = {
@@ -144,4 +144,98 @@ test('Format address no city', async () => {
 
   const addressLine = formatAddress(address, false);
   expect(addressLine).toBe('LIMBAŽU NOVADS, LATVIJA');
+});
+
+describe('pluralize', () => {
+  const localeLv = 'lv';
+  const localeEn = 'en';
+
+  test('selects Latvian plural forms', () => {
+    const forms = {
+      zero: 'dienu',
+      one: 'diena',
+      other: 'dienas',
+    };
+
+    expect(pluralize(0, forms, localeLv)).toBe(forms.zero);
+    expect(pluralize(1, forms, localeLv)).toBe(forms.one);
+    expect(pluralize(2, forms, localeLv)).toBe(forms.other);
+    expect(pluralize(11, forms, localeLv)).toBe(forms.zero);
+    expect(pluralize(21, forms, localeLv)).toBe(forms.one);
+  });
+
+  test('selects English plural forms', () => {
+    const forms = {
+      one: 'day',
+      other: 'days',
+    };
+
+    expect(pluralize(0, forms, localeEn)).toBe(forms.other);
+    expect(pluralize(1, forms, localeEn)).toBe(forms.one);
+    expect(pluralize(2, forms, localeEn)).toBe(forms.other);
+    expect(pluralize(11, forms, localeEn)).toBe(forms.other);
+    expect(pluralize(21, forms, localeEn)).toBe(forms.other);
+  });
+
+  test('supports numeric strings', () => {
+    const forms = {
+      one: 'month',
+      other: 'months',
+    };
+
+    expect(pluralize('1', forms, localeEn)).toBe(forms.one);
+    expect(pluralize('2', forms, localeEn)).toBe(forms.other);
+  });
+
+  test('supports negative values', () => {
+    const forms = {
+      one: 'day',
+      other: 'days',
+    };
+
+    expect(pluralize(-1, forms, localeEn)).toBe(forms.one);
+    expect(pluralize(-2, forms, localeEn)).toBe(forms.other);
+  });
+
+  test('falls back to other form', () => {
+    const forms = {
+      other: 'items',
+    };
+
+    expect(pluralize(1, forms, localeEn)).toBe(forms.other);
+    expect(pluralize(Number.NaN, forms, localeEn)).toBe(forms.other);
+    expect(pluralize(1, forms, 'invalid locale')).toBe(forms.other);
+  });
+
+  test('returns empty string when fallback is unavailable', () => {
+    const invalidForms = [{}, null, /** @type {any} */ ([]), /** @type {any} */ ({ other: 123 })];
+    const result = '';
+
+    invalidForms.forEach((forms) => {
+      expect(pluralize(1, forms)).toBe(result);
+    });
+  });
+
+  test('falls back when selected plural form is not string', () => {
+    const forms = /** @type {any} */ ({
+      one: 123,
+      other: 'items',
+    });
+
+    expect(pluralize(1, forms, localeEn)).toBe(forms.other);
+  });
+
+  test('does not throw for values that cannot be converted to numbers', () => {
+    const forms = {
+      other: 'items',
+    };
+    const value = {
+      valueOf() {
+        throw new Error('Cannot convert value');
+      },
+    };
+
+    expect(pluralize(/** @type {any} */ (value), forms)).toBe(forms.other);
+    expect(() => pluralize(/** @type {any} */ (Symbol('value')), forms)).not.toThrow();
+  });
 });
