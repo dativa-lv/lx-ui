@@ -2185,10 +2185,9 @@ p .lx-person-display-wrapper {
 }
 
 @media (max-height: 499px) {
-  .lx-form-grid > .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
-  .lx-form-grid > .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
-  .lx-form-grid>footer.lx-sticky,
-  .lx-form-grid>header.lx-sticky {
-    position: static;
+  .lx-form-grid .lx-sticky,
+  .lx-form-grid .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-form-grid .lx-wizard .lx-wizard-container {
+    position: static !important;
   }
 }
