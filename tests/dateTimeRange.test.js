@@ -62,6 +62,80 @@ describe.each([
   });
 });
 
+describe('ArrowDown opens the range picker without scrolling the page', () => {
+  function mountRange() {
+    return mount(LxDateTimeRange, {
+      props: { kind: 'date' },
+      global: {
+        stubs: ['router-link'],
+        directives: { ClickAway: dummyClickAway },
+      },
+    });
+  }
+
+  test.each([
+    ['start input', 0],
+    ['end input', 1],
+  ])(
+    'prevents the default ArrowDown action on keydown for the %s so the page does not scroll',
+    (_label, index) => {
+      wrapper = mountRange();
+
+      const inputs = wrapper.findAll('.lx-date-time-picker.lx-input-area');
+      expect(inputs.length).toBeGreaterThan(1);
+
+      // Cancelable so we can read defaultPrevented, which `wrapper.trigger` does not expose.
+      const event = new KeyboardEvent('keydown', {
+        key: 'ArrowDown',
+        bubbles: true,
+        cancelable: true,
+      });
+      inputs[index].element.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(true);
+    }
+  );
+});
+
+describe('Space does not scroll the range picker page in non-input modes', () => {
+  function mountRange(kind) {
+    return mount(LxDateTimeRange, {
+      props: { kind },
+      global: {
+        stubs: ['router-link'],
+        directives: { ClickAway: dummyClickAway },
+      },
+    });
+  }
+
+  test('does not prevent the default Space action in input modes (e.g. date)', () => {
+    wrapper = mountRange('date');
+
+    const input = wrapper.find('.lx-date-time-picker.lx-input-area').element;
+    const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+    input.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  test.each(['month', 'month-year', 'quarters'])(
+    'prevents the default Space action on keydown for kind %s',
+    (kind) => {
+      wrapper = mountRange(kind);
+
+      const inputs = wrapper.findAll('.lx-date-time-picker.lx-input-area');
+      expect(inputs.length).toBeGreaterThan(0);
+
+      inputs.forEach((input) => {
+        const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+        input.element.dispatchEvent(event);
+
+        expect(event.defaultPrevented).toBe(true);
+      });
+    }
+  );
+});
+
 describe('LxDateTimeRange close on click beside vertically wrapped inputs', () => {
   function mountRange() {
     return mount(LxDateTimeRange, {

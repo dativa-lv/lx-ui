@@ -1042,6 +1042,12 @@ function preventDefaultFocus(e) {
   }
 }
 
+function preventSpaceScrollInNonInputMode(e) {
+  if (props.mode === 'month' || props.mode === 'month-year' || props.mode === 'quarters') {
+    e.preventDefault();
+  }
+}
+
 function preventCloseOnInputArea(e) {
   if (e.target !== e.currentTarget) {
     dropDownMenuRef.value?.preventClose(e);
@@ -1411,6 +1417,9 @@ onMounted(async () => {
             @touchmove="onTouchMove($event)"
             @touchend="onTouchEnd($event, 'startInput')"
             @click="toggleMenu('startInput', 'click')"
+            @keydown.arrow-up.prevent
+            @keydown.arrow-down.prevent
+            @keydown.space="preventSpaceScrollInNonInputMode"
             @keyup.arrow-down.prevent="openMenu('startInput', 'keyboard')"
             @keyup.enter.stop="validateIfExact($event, 'startInput')"
             @keydown.esc.prevent="closeMenu"
@@ -1470,6 +1479,9 @@ onMounted(async () => {
               @touchmove="onTouchMove($event)"
               @touchend="onTouchEnd($event, 'endInput')"
               @click="toggleMenu('endInput', 'click')"
+              @keydown.arrow-up.prevent
+              @keydown.arrow-down.prevent
+              @keydown.space="preventSpaceScrollInNonInputMode"
               @keyup.arrow-down.prevent="openMenu('endInput', 'keyboard')"
               @keyup.enter.stop="validateIfExact($event, 'endInput')"
               @keydown.esc.prevent="closeMenu"

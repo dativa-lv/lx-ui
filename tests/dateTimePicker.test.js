@@ -124,6 +124,105 @@ describe('LxDateTimePicker', () => {
     });
   });
 
+  describe('ArrowDown opens the picker without scrolling the page', () => {
+    function mountPicker() {
+      return mount(LxDateTimePicker, {
+        props: {
+          modelValue: '2025-05-14',
+          variant: 'default',
+          kind: 'date',
+        },
+        global: {
+          stubs: ['router-link'],
+          directives: {
+            ClickAway: dummyClickAway,
+          },
+        },
+      });
+    }
+
+    function dispatchKeydown(element, key) {
+      // Cancelable so we can read defaultPrevented, which `wrapper.trigger` does not expose.
+      const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+      element.dispatchEvent(event);
+      return event;
+    }
+
+    it('prevents the default ArrowDown action on keydown so the page does not scroll', () => {
+      wrapper = mountPicker();
+      const input = wrapper.find('.lx-date-time-picker.lx-input-area').element;
+
+      const event = dispatchKeydown(input, 'ArrowDown');
+
+      // Mirrors LxDropDownMenu's @keydown.down.prevent: native scroll suppressed at keydown.
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('prevents the default ArrowUp action on keydown so the page does not scroll', () => {
+      wrapper = mountPicker();
+      const input = wrapper.find('.lx-date-time-picker.lx-input-area').element;
+
+      expect(dispatchKeydown(input, 'ArrowUp').defaultPrevented).toBe(true);
+    });
+
+    it('does not prevent the default for unrelated keys on keydown', () => {
+      wrapper = mountPicker();
+      const input = wrapper.find('.lx-date-time-picker.lx-input-area').element;
+
+      expect(dispatchKeydown(input, 'a').defaultPrevented).toBe(false);
+    });
+
+    it('does not prevent the default Space action in input modes (e.g. date)', () => {
+      wrapper = mountPicker();
+      const input = wrapper.find('.lx-date-time-picker.lx-input-area').element;
+
+      expect(dispatchKeydown(input, ' ').defaultPrevented).toBe(false);
+    });
+
+    it('still opens the calendar on ArrowDown keyup', async () => {
+      wrapper = mountPicker();
+      const pickerInput = wrapper.find('.lx-date-time-picker.lx-input-area');
+
+      await pickerInput.trigger('keyup', { key: 'ArrowDown' });
+
+      expect(document.body.querySelector('.lx-calendar-container')).toBeTruthy();
+    });
+  });
+
+  describe('Space does not scroll the page in non-input modes', () => {
+    function mountPicker(kind) {
+      return mount(LxDateTimePicker, {
+        props: {
+          modelValue: '2025-05-14',
+          variant: 'default',
+          kind,
+        },
+        global: {
+          stubs: ['router-link'],
+          directives: {
+            ClickAway: dummyClickAway,
+          },
+        },
+      });
+    }
+
+    function dispatchKeydown(element, key) {
+      const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+      element.dispatchEvent(event);
+      return event;
+    }
+
+    test.each(['month', 'month-year', 'quarters'])(
+      'prevents the default Space action on keydown for kind %s',
+      (kind) => {
+        wrapper = mountPicker(kind);
+        const input = wrapper.find('.lx-date-time-picker.lx-input-area').element;
+
+        expect(dispatchKeydown(input, ' ').defaultPrevented).toBe(true);
+      }
+    );
+  });
+
   describe('date-time entry order', () => {
     const openCalendar = async (kind) => {
       wrapper = mount(LxDateTimePicker, {
