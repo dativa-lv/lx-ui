@@ -66,7 +66,7 @@ const props = defineProps({
   hasSelectAll: { type: Boolean, default: false, group: 'main', sequence: 2 },
   texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
-  searchString: { type: String, default: '' },
+  searchString: { type: String, default: null },
   enableAdditionalText: { type: Boolean, default: false, group: 'main', sequence: 5 },
   builderOptions: {
     type: Object,
@@ -262,7 +262,9 @@ const debouncedSearchReq = useDebounceFn(async (val) => {
 watch(
   query,
   async (newValue, oldValue = null) => {
-    emit('update:searchString', newValue || '');
+    if (newValue !== oldValue) {
+      emit('update:searchString', newValue || '');
+    }
     if (shouldWarnAboutQueryMinLength()) {
       return;
     }
