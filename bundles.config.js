@@ -44,6 +44,7 @@ export const commonStyles = [
   'lx-badges',
   'lx-popovers',
   'lx-toolbars',
+  'lx-day-input',
   // add new style file names here (without .css extension)
 ];
 
