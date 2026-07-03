@@ -41,19 +41,20 @@ export function getClosestExceededParent(target, { direction = 'horizontal' } = 
   while (parent) {
     const parentRect = parent.getBoundingClientRect();
     const parentStyle = getComputedStyle(parent);
-    const parentContentLeft = parentRect.left + Number.parseFloat(parentStyle.paddingLeft) || 0;
-    const parentContentRight = parentRect.right - Number.parseFloat(parentStyle.paddingRight) || 0;
-    const parentContentTop = parentRect.top + Number.parseFloat(parentStyle.paddingTop) || 0;
-    const parentContentBottom =
-      parentRect.bottom - Number.parseFloat(parentStyle.paddingBottom) || 0;
+    const parentContentWidth =
+      parentRect.width -
+      (Number.parseFloat(parentStyle.paddingLeft) || 0) -
+      (Number.parseFloat(parentStyle.paddingRight) || 0);
+    const parentContentHeight =
+      parentRect.height -
+      (Number.parseFloat(parentStyle.paddingTop) || 0) -
+      (Number.parseFloat(parentStyle.paddingBottom) || 0);
 
     const exceedsParentBounds =
       (resolvedDirection === 'horizontal' &&
-        (targetRect.left < parentContentLeft - OVERFLOW_TOLERANCE_PX ||
-          targetRect.right > parentContentRight + OVERFLOW_TOLERANCE_PX)) ||
+        targetRect.width - parentContentWidth > OVERFLOW_TOLERANCE_PX) ||
       (resolvedDirection === 'vertical' &&
-        (targetRect.top < parentContentTop - OVERFLOW_TOLERANCE_PX ||
-          targetRect.bottom > parentContentBottom + OVERFLOW_TOLERANCE_PX));
+        targetRect.height - parentContentHeight > OVERFLOW_TOLERANCE_PX);
 
     if (exceedsParentBounds) {
       return parent;
