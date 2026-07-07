@@ -204,10 +204,10 @@ async function updateCameraSettings() {
   applyStreamSettings(track, capabilities);
 }
 
-function handleCameraError() {
+function handleCameraError(error_) {
   error.value = true;
   lxDevUtils.logError(
-    `LxCamera [${props.id}]: Error switching cameras`,
+    `LxCamera [${props.id}]: Error switching cameras: ${error_}`,
     useLx().getGlobals()?.environment
   );
 }
@@ -223,7 +223,7 @@ async function switchCamera(val) {
     await startCameraStream(constraints);
     await updateCameraSettings();
   } catch (error_) {
-    handleCameraError();
+    handleCameraError(error_);
   } finally {
     loading.value = false;
   }
@@ -328,7 +328,10 @@ const toolbarActions = computed(() => {
   }
 
   const actionsBuiltIn = actionsDefault.map((a) => ({ ...a, builtIn: true }));
-  const actionsExtra = props.actionDefinitions.map((a) => ({ ...Object(a), extra: true }));
+  const actionsExtra = props.actionDefinitions.map((a) => ({
+    ...(a && typeof a === 'object' ? a : {}),
+    extra: true,
+  }));
 
   return [...actionsBuiltIn, ...actionsExtra];
 });

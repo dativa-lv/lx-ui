@@ -836,13 +836,9 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-markdown-text-area-wrapper .lx-invalidation-icon-wrapper,
 .lx-text-area-wrapper .lx-invalidation-icon-wrapper {
+  padding: var(--input-text-area-padding-y) var(--space-0);
   align-items: flex-start;
   z-index: 1;
-}
-
-.lx-text-area-wrapper .lx-invalidation-icon-wrapper,
-.lx-markdown-text-area-wrapper .lx-invalidation-icon-wrapper {
-  padding: var(--input-text-area-padding-y) var(--space-0);
 }
 
 .lx-input-wrapper .lx-invalidation-icon-wrapper,
@@ -3376,6 +3372,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   --badge-padding-s: var(--space-0);
   --badge-padding-icon-only-s: var(--space-0);
   --badge-border-s: var(--border-width-0);
+  --badge-icon-size-s: var(--icon-size-xs);
 }
 
 .lx-file-wrapper
@@ -3392,10 +3389,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   .lx-file-name-main-data-wrapper
   .lx-badge.lx-compact-badge.lx-created-using-ai-badge {
   border-color: var(--color-purple);
-}
-
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge {
-  --badge-icon-size-s: var(--icon-size-xs);
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-esign-badge,

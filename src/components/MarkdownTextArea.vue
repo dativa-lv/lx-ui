@@ -925,7 +925,10 @@ const toolbarActions = computed(() => {
   }
 
   const actionsBuiltIn = actionsDefault.map((a) => ({ ...a, builtIn: true }));
-  const actionsExtra = props.actionDefinitions.map((a) => ({ ...Object(a), extra: true }));
+  const actionsExtra = props.actionDefinitions.map((a) => ({
+    ...(a && typeof a === 'object' ? a : {}),
+    extra: true,
+  }));
 
   return [...actionsBuiltIn, ...actionsExtra];
 });

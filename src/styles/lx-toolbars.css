@@ -313,7 +313,6 @@
   color: var(--color-toolbar-button-primary-text-active);
 }
 
-.lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled,
 .lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled {
   background: var(--color-toolbar-button-primary-background-disabled);
   color: var(--color-toolbar-button-primary-text-disabled);
@@ -372,7 +371,6 @@
   color: var(--color-toolbar-embedded-button-primary-text-active);
 }
 
-.lx-embedded-toolbar.lx-disabled .lx-group .lx-button.lx-disabled,
 .lx-embedded-toolbar.lx-disabled .lx-group .lx-button.lx-disabled {
   background: var(--color-toolbar-embedded-button-primary-background-disabled);
   color: var(--color-toolbar-embedded-button-primary-text-disabled);
@@ -838,8 +836,6 @@
 .lx-theme-contrast .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus,
 .lx-theme-contrast .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
 .lx-theme-contrast .lx-data-grid-wrapper .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus,
-.lx-theme-contrast .lx-selection-toolbar.lx-component-toolbar .first-row .lx-dropdown-toggler:focus .lx-button-ghost,
-.lx-theme-contrast .lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:focus,
 .lx-component-toolbar.lx-selection-toolbar .lx-toolbar-search-button-wrapper.is-expanded .lx-button-ghost:focus {
   outline-color: var(--color-focus-background);
 }
@@ -1553,11 +1549,6 @@
 }
 
 @media (max-width: 900px) {
-  .lx .lx-layout.lx-layout-public .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
-  .lx .lx-layout.lx-layout-latvijalv .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
-    top: calc(var(--nav-row-size) + var(--row-size) + var(--sticky-toolbar-additional-height));
-  }
-
   .lx .lx-layout.lx-layout-public .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv .lx-component-toolbar.lx-toolbar-sticky {
 	  top: var(--row-size);

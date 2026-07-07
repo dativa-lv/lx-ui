@@ -1,5 +1,62 @@
 import { ref, nextTick } from 'vue';
 
+function isDisabledCell(target) {
+  if (!target) return true;
+
+  if (target.disabled || target.getAttribute?.('aria-disabled') === 'true') {
+    return true;
+  }
+
+  return [
+    'lx-disabled-date',
+    'lx-disabled-month',
+    'lx-disabled-year',
+    'lx-disabled-quarter',
+    'is-disabled',
+  ].some((className) => target.classList?.contains(className));
+}
+
+function createFocusableCandidate(currentRow, currentCol, row, col, target, item) {
+  if (isDisabledCell(target)) return null;
+
+  const rowDistance = Math.abs(currentRow - row);
+  const colDistance = Math.abs(currentCol - col);
+
+  return {
+    row: currentRow,
+    col: currentCol,
+    item,
+    target,
+    distance: rowDistance + colDistance,
+    rowDistance,
+    colDistance,
+  };
+}
+
+function pickBestFocusableCandidate(bestMatch, candidate) {
+  if (!bestMatch) return candidate;
+
+  if (candidate.distance < bestMatch.distance) return candidate;
+  if (candidate.distance > bestMatch.distance) return bestMatch;
+
+  if (candidate.rowDistance < bestMatch.rowDistance) return candidate;
+  if (candidate.rowDistance > bestMatch.rowDistance) return bestMatch;
+
+  if (candidate.colDistance < bestMatch.colDistance) return candidate;
+
+  return bestMatch;
+}
+
+function isCellDelegated(col, customVal = false) {
+  return (
+    col.type === 'rating' ||
+    col.kind === 'clickable' ||
+    (col.type === 'person' && customVal) ||
+    (col.type === 'icon' && customVal) ||
+    (col.type === 'array' && customVal)
+  );
+}
+
 export function useGridKeyboardNavigation() {
   const activeRow = ref(0);
   const activeCol = ref(0);
@@ -29,22 +86,6 @@ export function useGridKeyboardNavigation() {
     return activeRow.value === row && activeCol.value === col && activeItem.value === item;
   }
 
-  function isDisabledCell(target) {
-    if (!target) return true;
-
-    if (target.disabled || target.getAttribute?.('aria-disabled') === 'true') {
-      return true;
-    }
-
-    return [
-      'lx-disabled-date',
-      'lx-disabled-month',
-      'lx-disabled-year',
-      'lx-disabled-quarter',
-      'is-disabled',
-    ].some((className) => target.classList?.contains(className));
-  }
-
   function getCellTargets(row, col) {
     const targets = cellRefs.value[row]?.[col];
 
@@ -58,36 +99,6 @@ export function useGridKeyboardNavigation() {
     return [{ target: targets, item: 0 }];
   }
 
-  function createFocusableCandidate(currentRow, currentCol, row, col, target, item) {
-    if (isDisabledCell(target)) return null;
-
-    const rowDistance = Math.abs(currentRow - row);
-    const colDistance = Math.abs(currentCol - col);
-
-    return {
-      row: currentRow,
-      col: currentCol,
-      item,
-      target,
-      distance: rowDistance + colDistance,
-      rowDistance,
-      colDistance,
-    };
-  }
-
-  function pickBestFocusableCandidate(bestMatch, candidate) {
-    if (!bestMatch) return candidate;
-
-    if (candidate.distance < bestMatch.distance) return candidate;
-    if (candidate.distance > bestMatch.distance) return bestMatch;
-
-    if (candidate.rowDistance < bestMatch.rowDistance) return candidate;
-    if (candidate.rowDistance > bestMatch.rowDistance) return bestMatch;
-
-    if (candidate.colDistance < bestMatch.colDistance) return candidate;
-
-    return bestMatch;
-  }
   function collectCellFocusableCandidates(currentRow, currentCol, row, col) {
     return getCellTargets(currentRow, currentCol)
       .map(({ target, item }) =>
@@ -218,16 +229,6 @@ export function useGridKeyboardNavigation() {
 
   function getFocusable(row, col, item = 0) {
     return !!isActiveCell(row, col, item);
-  }
-
-  function isCellDelegated(col, customVal = false) {
-    return (
-      col.type === 'rating' ||
-      col.kind === 'clickable' ||
-      (col.type === 'person' && customVal) ||
-      (col.type === 'icon' && customVal) ||
-      (col.type === 'array' && customVal)
-    );
   }
 
   return {

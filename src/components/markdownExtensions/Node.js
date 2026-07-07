@@ -129,12 +129,11 @@ const HiddenIdNode = Node.create({
           });
 
           // Sort positions in descending order and delete nodes (without sorting, it would cause a bug with lost positions)
-          positions
-            .sort((a, b) => b - a)
-            .forEach((pos) => {
-              const transaction = state.tr.delete(pos, pos + state.doc.nodeAt(pos).nodeSize);
-              dispatch(transaction);
-            });
+          positions.sort((a, b) => b - a);
+          positions.forEach((pos) => {
+            const transaction = state.tr.delete(pos, pos + state.doc.nodeAt(pos).nodeSize);
+            dispatch(transaction);
+          });
         },
     };
   },
