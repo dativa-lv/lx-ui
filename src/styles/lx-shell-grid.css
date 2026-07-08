@@ -877,7 +877,7 @@
   height: 0.625rem;
   background-color: var(--color-tooltip-background);
   transform: rotate(45deg);
-  z-index: 8000;
+  z-index: 8100;
   pointer-events: none;
 }
 
@@ -886,7 +886,7 @@
 }
 
 .lx .lx-layout .popper {
-  z-index: 8000;
+  z-index: 8100;
 }
 
 .lx .lx-layout .popper.higher-z-index,
@@ -2356,7 +2356,7 @@
 
   .lx-layout.lx-layout-default > nav {
     width: var(--row-size);
-    z-index: 8100;
+    z-index: 8101;
   }
 
   .lx-layout.lx-layout-default > nav .lx-nav-panel {

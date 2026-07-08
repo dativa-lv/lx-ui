@@ -166,6 +166,7 @@ const {
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
         layoutMode="public"
+        :nav-bar-hidden="navBarSwitchBasic"
         :userInfo="props.userInfo"
         :nav-items="props.navItems"
         :headerNavDisable="props.headerNavDisable"

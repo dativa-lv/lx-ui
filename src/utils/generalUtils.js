@@ -280,3 +280,27 @@ export const isBoolean = (v) => typeof v === 'boolean';
  */
 export const remToPx = (rem) =>
   rem * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+export function cssLengthToPx(value, element) {
+  const normalizedValue = value.trim();
+  const numericValue = Number.parseFloat(normalizedValue);
+
+  if (!Number.isFinite(numericValue)) {
+    return 0;
+  }
+
+  if (normalizedValue.endsWith('px')) {
+    return numericValue;
+  }
+
+  if (normalizedValue.endsWith('rem')) {
+    return remToPx(numericValue);
+  }
+
+  if (normalizedValue.endsWith('em')) {
+    const fontSize = Number.parseFloat(getComputedStyle(element).fontSize);
+    return numericValue * fontSize;
+  }
+
+  return numericValue;
+}

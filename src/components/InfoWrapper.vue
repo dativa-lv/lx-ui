@@ -458,6 +458,7 @@ defineExpose({ handleOpen, handleClose, showPopper, focus, scrollIntoView });
     :fullScreenPanel="responsiveView"
     @update:placement="handlePlacementChange"
     @curtainTouched="curtainTouched"
+    @referenceHidden="handleClose(false)"
   >
     <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
     <div

@@ -211,9 +211,15 @@ watch(width, (newWidth) => {
 });
 
 function navToggle(ev) {
-  if (!props.navBarHidden && ev.target.id !== 'nav-toggle') {
-    emits('nav-toggle', true);
+  const clickTarget = ev?.target;
+  const clickedNavToggle = clickTarget instanceof Element && clickTarget.closest('#nav-toggle');
+  const clickedInsidePopper = clickTarget instanceof Element && clickTarget.closest('#poppers');
+
+  if (props.navBarHidden || clickedNavToggle || clickedInsidePopper) {
+    return;
   }
+
+  emits('nav-toggle', true);
 }
 
 const selectedLanguageModel = computed({

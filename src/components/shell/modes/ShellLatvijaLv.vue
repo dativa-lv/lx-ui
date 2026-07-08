@@ -171,6 +171,7 @@ const {
         v-model:hasReducedTransparency="transparencyModel"
         v-model:isTouchSensitive="touchModeModel"
         layoutMode="latvijalv"
+        :nav-bar-hidden="navBarSwitchBasic"
         :nav-items="props.navItems"
         :headerNavDisable="props.headerNavDisable"
         :userInfo="props.userInfo"

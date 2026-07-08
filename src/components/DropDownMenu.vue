@@ -512,6 +512,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       :show="menuOpen"
       :fullScreenPanel="datePickerType ? responsiveView : false"
       @curtainTouched="handleClose()"
+      @referenceHidden="handleClose(false)"
     >
       <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
       <div

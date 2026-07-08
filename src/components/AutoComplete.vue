@@ -1217,7 +1217,13 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
       >
-        <LxPopper :id="`${id}-popper`" offset-distance="0" :disabled="disabled" :show="menuOpen">
+        <LxPopper
+          :id="`${id}-popper`"
+          offset-distance="0"
+          :disabled="disabled"
+          :show="menuOpen"
+          @referenceHidden="closeMenu"
+        >
           <div class="lx-autocomplete-input-icon-container">
             <div
               ref="refAutocomplete"

@@ -700,6 +700,7 @@ function countDigits(number) {
           :disabled="disabled"
           :show="menuOpen"
           role="listbox"
+          @referenceHidden="closeDropDownDefault"
         >
           <div
             class="lx-dropdown-default-panel lx-input-wrapper"

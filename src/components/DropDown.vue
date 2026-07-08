@@ -481,6 +481,7 @@ const getSelectedItem = computed(
           :disabled="disabled"
           :show="menuOpen"
           role="listbox"
+          @referenceHidden="closeDropDownDefault(false)"
         >
           <!--eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
           <div class="lx-dropdown-input-wrapper">

@@ -314,16 +314,19 @@ function navClick(id) {
 }
 
 function toggleNavBar(event) {
-  if (
+  const clickTarget = event?.target;
+  const clickedNavToggle = clickTarget instanceof Element && clickTarget.closest('#lx_nav-toggle');
+  const clickedInsidePopper = clickTarget instanceof Element && clickTarget.closest('#poppers');
+  const shouldClose =
     !props.navBarSwitch &&
     windowSize.width.value < 1800 &&
     windowSize.width.value >= 1000 &&
-    event?.target?.parentNode?.parentNode?.id !== 'lx_nav-toggle' &&
-    event?.target?.parentNode?.id !== 'lx_nav-toggle' &&
-    event?.target?.id !== 'lx_nav-toggle' &&
-    event?.target?.className !== 'lx-button-label'
-  )
+    !clickedNavToggle &&
+    !clickedInsidePopper;
+
+  if (shouldClose) {
     emits('nav-toggle', true);
+  }
 }
 const dropDownMenu = ref(null);
 function triggerUserMenu() {

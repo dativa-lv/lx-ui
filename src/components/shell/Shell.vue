@@ -770,7 +770,7 @@ const navBarSwitchModel = computed({
 const navBarSwitchBasic = shallowRef(true);
 
 function navToggle(value) {
-  if (props.mode === 'digives-lite' && globalThis.innerWidth < 1000) {
+  if (props.mode === 'digives-lite') {
     navBarSwitchModel.value = value;
     return;
   }

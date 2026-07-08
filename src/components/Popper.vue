@@ -2,6 +2,7 @@
 import { computed, inject, onMounted, ref, watch } from 'vue';
 import { useFloating, flip, shift, arrow, offset, autoUpdate } from '@floating-ui/vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { useLayoutInfo } from '@/hooks/useLayoutInfo';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -19,11 +20,18 @@ const props = defineProps({
   fullScreenPanel: { type: Boolean, default: false },
 });
 
-const emits = defineEmits(['update:placement', 'curtainTouched']);
+const emits = defineEmits(['update:placement', 'curtainTouched', 'referenceHidden']);
 
 const reference = ref(null);
 const floating = ref(null);
 const floatingArrow = ref(null);
+const isReferenceVisible = ref(false);
+const wasReferenceVisibleBelowHeader = ref(false);
+const referenceRect = ref(null);
+
+const { shellKind, headerOverallHeight, isHeaderSticky, navWidth } = useLayoutInfo();
+
+const leftSafeZoneBorder = computed(() => Number(navWidth.value) || 0);
 
 const basePlacement = computed(() => {
   switch (props.placement) {
@@ -97,6 +105,61 @@ const middleware = computed(() => {
   return middlewares;
 });
 
+function setReferenceVisibility() {
+  const element = reference.value;
+
+  if (!element) {
+    referenceRect.value = null;
+    isReferenceVisible.value = false;
+    return;
+  }
+
+  const rect = element.getBoundingClientRect();
+  referenceRect.value = rect;
+  const viewportWidth = globalThis.innerWidth || document.documentElement.clientWidth;
+  const viewportHeight = globalThis.innerHeight || document.documentElement.clientHeight;
+  const headerAutoCloseEnabled = viewportHeight >= 500;
+  const hasPublicTopSafeZone = shellKind.value === 'public' || shellKind.value === 'latvijalv';
+  const safeZoneBorder =
+    headerAutoCloseEnabled && (isHeaderSticky.value || hasPublicTopSafeZone)
+      ? Number(headerOverallHeight.value)
+      : 0;
+  const leftSafeZone = leftSafeZoneBorder.value;
+  const isFullyPastSafeZone = rect.bottom <= safeZoneBorder;
+  const isFullyPastLeftSafeZone = leftSafeZone > 0 && rect.right <= leftSafeZone;
+
+  const nextIsReferenceVisible =
+    !isFullyPastSafeZone &&
+    !isFullyPastLeftSafeZone &&
+    rect.bottom > safeZoneBorder &&
+    rect.right > 0 &&
+    rect.top < viewportHeight &&
+    rect.left < viewportWidth;
+
+  isReferenceVisible.value = nextIsReferenceVisible;
+
+  if (props.show && nextIsReferenceVisible) {
+    wasReferenceVisibleBelowHeader.value = true;
+  }
+
+  if (
+    props.show &&
+    wasReferenceVisibleBelowHeader.value &&
+    (isFullyPastSafeZone || isFullyPastLeftSafeZone)
+  ) {
+    emits('referenceHidden');
+  }
+}
+
+watch(
+  () => props.show,
+  (show) => {
+    if (!show) {
+      wasReferenceVisibleBelowHeader.value = false;
+    }
+  }
+);
+
 const {
   floatingStyles: defaultFloatingStyles,
   middlewareData,
@@ -107,7 +170,12 @@ const {
   // @ts-ignore
   placement: basePlacement,
   middleware,
-  whileElementsMounted: autoUpdate,
+  whileElementsMounted(referenceElement, floatingElement, updatePosition) {
+    return autoUpdate(referenceElement, floatingElement, () => {
+      setReferenceVisibility();
+      updatePosition();
+    });
+  },
 });
 
 // Manually calculate floating styles if clientPosition is provided
@@ -122,18 +190,18 @@ const floatingStyles = computed(() => {
     const adjustedX = Math.min(Math.max(props.clientPosition.x, 0), viewportWidth - popperWidth);
     const adjustedY = Math.min(Math.max(props.clientPosition.y, 0), viewportHeight - popperHeight);
 
-    return {
+    return /** @type {import('vue').CSSProperties} */ ({
       position: 'fixed',
       left: `${adjustedX}px`,
       top: `${adjustedY}px`,
-    };
+    });
   }
   if (props.fullScreenPanel) {
-    return {
+    return /** @type {import('vue').CSSProperties} */ ({
       position: 'fixed',
       left: '0px',
       bottom: '0px',
-    };
+    });
   }
   return defaultFloatingStyles.value;
 });
@@ -162,6 +230,7 @@ const needsHighZ = computed(
 
 onMounted(() => {
   emits('update:placement', basePlacement.value);
+  setReferenceVisibility();
 });
 
 function emitCurtainTouched() {
@@ -171,8 +240,7 @@ function emitCurtainTouched() {
 
 <template>
   <div :id="id" ref="reference" class="popper-wrapper">
-    <slot />
-
+    <slot :is-reference-visible="isReferenceVisible" />
     <Teleport to="#poppers" v-if="show && !disabled">
       <div
         v-if="show && !disabled"

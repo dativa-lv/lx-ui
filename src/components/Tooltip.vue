@@ -172,6 +172,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
     :show="showPopper"
     emitPlacement
     @update:placement="handlePlacementChange"
+    @referenceHidden="handleClose"
   >
     <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
     <div

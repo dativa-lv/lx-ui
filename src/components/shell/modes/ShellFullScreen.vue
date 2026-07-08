@@ -162,6 +162,7 @@ const hasHiddenHeaderButtons = computed(() =>
         v-model:hasReducedTransparency="transparencyModel"
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+        :nav-bar-hidden="navBarSwitchBasic"
         :userInfo="props.userInfo"
         :headerNavDisable="props.headerNavDisable"
         :has-theme-picker="props.hasThemePicker"

@@ -160,6 +160,7 @@ const {
         v-model:hasReducedTransparency="transparencyModel"
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+        :nav-bar-hidden="navBarSwitchBasic"
         :userInfo="props.userInfo"
         :nav-items="props.navItems"
         :headerNavDisable="props.headerNavDisable"
