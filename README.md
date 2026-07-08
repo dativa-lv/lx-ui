@@ -23,8 +23,7 @@
 
 ## Play around
 
-Check out our [🌐&nbsp;Demo](https://lx-ui.dev/) and 
-[ℹ️&nbsp;List of Components](https://github.com/dativa-lv/lx-ui/blob/main/docs/Components.md) for live demo sandbox.
+Check out our [🌐&nbsp;Demo](https://lx-ui.dev/) and [ℹ️&nbsp;List of Components](https://github.com/dativa-lv/lx-ui/blob/main/docs/Components.md) for live demo sandbox.
 
 ## Read the docs
 - [ℹ️ Design Tokens](https://github.com/dativa-lv/lx-ui/blob/main/docs/DesignTokens.md)
@@ -33,6 +32,7 @@ Check out our [🌐&nbsp;Demo](https://lx-ui.dev/) and
 - [ℹ️ Progressive Web App](https://github.com/dativa-lv/lx-ui/blob/main/docs/PWA.md)
 - [ℹ️ Component Preload](https://github.com/dativa-lv/lx-ui/blob/main/docs/ComponentPreload.md)
 - [ℹ️ Library Preload](https://github.com/dativa-lv/lx-ui/blob/main/docs/LibraryLoader.md)
+- [ℹ️ Shell Custom Mode](https://github.com/dativa-lv/lx-ui/blob/main/docs/ShellCustomMode.md)
 - [🌐 Forms](https://lx-ui.dev/resources/forms)
 - [🌐 Colors](https://lx-ui.dev/resources/colors)
 - [🌐 Icons](https://lx-ui.dev/resources/icons)
@@ -54,7 +54,7 @@ For migration tips refer to [ℹ️&nbsp;Migration Guide](https://github.com/dat
 
 ## Use
 
-install with pinia store:
+Install with pinia store:
 
 ```js
 import { createPinia } from 'pinia';
@@ -66,6 +66,39 @@ myApp.use(createPinia());
 myApp.use(createLx());
 …
 ```
+
+Make sure to import a proper [CSS bundle](https://github.com/dativa-lv/lx-ui/blob/main/docs/BUNDLES.md) in your main entry file such as `main.js`:
+
+```js
+import '@dativa-lv/lx-ui/dist/bundles/lx-bt-demo.css';
+```
+
+LX/UI styles apply only within an element that has the `.lx` class. Usually, this should be the application root element:
+
+```
+<body class="lx">
+  <div id="app"></div>
+</body>
+```
+One can also embed LX inside another application by wrapping it in a `.lx` element
+
+```
+<div class="lx">
+  <LxButton label="Click me" />
+</div>
+```
+
+
+Most convenient way of using the components is by using them inside LxShell:
+
+```vue
+<template>
+  <LxShell>
+    <RouterView />
+  </LxShell>
+</template>
+```
+
 ## Extend
 
  - [lx/builders](https://www.npmjs.com/package/@dativa-lv/lx-builders) - a companion library containing declarative design tools for views, forms, etc.
