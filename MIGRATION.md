@@ -4,6 +4,42 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
+## 2.2.7 → 2.2.8
+
+### Breaking changes
+
+#### `lxLogoUtils.getLogo` is now async
+
+Logos are now loaded on demand instead of being bundled eagerly, so `lxLogoUtils.getLogo()` returns a `Promise<string>` (the resolved image URL) rather than the URL string directly.
+
+If you only use the `LxLogoDisplay` component, **no changes are needed** — it resolves logos internally.
+
+If you call `getLogo()` directly, `await` the result. Because templates cannot `await`, resolve it into a ref outside the template.
+
+**Before:**
+```js
+const src = lxLogoUtils.getLogo('swedbank', 'square', 'm', 'light');
+```
+
+**After:**
+```js
+import { ref, watch } from 'vue';
+
+const logoName = ref('swedbank');
+const src = ref('');
+watch(
+  logoName,
+  async (name) => {
+    src.value = await lxLogoUtils.getLogo(name, 'square', 'm', 'light');
+  },
+  { immediate: true }
+);
+```
+
+`lxLogoUtils.getAltText()` and `lxLogoUtils.getAvailableLogos()` are unchanged (still synchronous).
+
+**Minor behavior change:** when a requested logo does not exist, `getLogo()` now resolves to an empty string (`''`), instead of the literal string `'dativa'` it returned previously.
+
 ## 2.2.5 → 2.2.6
 
 ### Breaking changes

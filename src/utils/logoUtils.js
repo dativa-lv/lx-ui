@@ -1,4 +1,4 @@
-const logos = import.meta.glob('@/assets/logos/**/*.{png,jpg,jpeg,svg}', { eager: true });
+const logos = import.meta.glob('@/assets/logos/**/*.{png,jpg,jpeg,svg}');
 
 const logoAltTexts = {
   zzdats: 'ZZ Dats logo',
@@ -21,7 +21,7 @@ const logoAltTexts = {
 
 const logoMap = {};
 
-Object.entries(logos).forEach(([path, image]) => {
+Object.entries(logos).forEach(([path, loader]) => {
   const squareMatch = /\/([^/]+)-square-logo(-dark)?(@\d+x)?\.png$/.exec(path);
   const defaultMatch = /\/([^/]+)-logo(-dark)?(@\d+x)?\.png$/.exec(path);
 
@@ -75,18 +75,43 @@ Object.entries(logos).forEach(([path, image]) => {
     };
   }
 
-  // @ts-ignore
-  logoMap[baseName][kind][theme][size] = image.default;
+  // store the lazy loader; the image is fetched on demand via getLogo.
+  logoMap[baseName][kind][theme][size] = loader;
 });
 
-export function getLogo(name, kind, size, theme = 'light') {
-  return logoMap?.[name]?.[kind]?.[theme]?.[size] || 'dativa';
+/**
+ * Resolves the URL for a logo, loading it on demand.
+ *
+ * Logos are loaded lazily, so this is asynchronous. Returns an empty string
+ * if the requested logo does not exist.
+ *
+ * @param {string} name - Logo base name, e.g. `'dativa'`, `'swedbank'` (see {@link getAvailableLogos}).
+ * @param {string} kind - `'default'` (16:9) or `'square'` (1:1).
+ * @param {string} size - Resolution variant: `'s'` (1x), `'m'` (2x), `'l'` (3x).
+ * @param {string} [theme='light'] - Theme variant: `'light'` or `'dark'`.
+ * @returns {Promise<string>} The resolved image URL, or `''` if the requested logo does not exist.
+ */
+export async function getLogo(name, kind, size, theme = 'light') {
+  const loader = logoMap?.[name]?.[kind]?.[theme]?.[size];
+  if (!loader) return '';
+  return (await loader()).default;
 }
 
+/**
+ * Returns the accessible alt text for a logo.
+ *
+ * @param {string} name - Logo base name, e.g. `'dativa'`, `'swedbank'`.
+ * @returns {string} The alt text, or `''` if the logo has none.
+ */
 export function getAltText(name) {
   return logoMap?.[name]?.altText || '';
 }
 
+/**
+ * Returns the list of available logo base names.
+ *
+ * @returns {string[]} Logo names usable as the `name` argument of {@link getLogo}.
+ */
 export function getAvailableLogos() {
   const logoNames = new Set();
 

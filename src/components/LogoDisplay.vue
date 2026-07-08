@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { getLogo, getAltText } from '@/utils/logoUtils';
 
 const props = defineProps({
@@ -18,44 +18,38 @@ const resolvedTheme = computed(() => {
   }
   return props.theme;
 });
+
+const altText = computed(() => getAltText(props.value));
+
+// Logos are loaded lazily, so getLogo is async — resolve URLs into refs.
+const srcS = ref('');
+const srcM = ref('');
+const srcL = ref('');
+const srcFixed = ref('');
+
+watch(
+  [() => props.value, () => props.kind, () => props.size, resolvedTheme],
+  async ([value, kind, size, theme]) => {
+    if (size === 'auto') {
+      [srcS.value, srcM.value, srcL.value] = await Promise.all([
+        getLogo(value, kind, 's', theme),
+        getLogo(value, kind, 'm', theme),
+        getLogo(value, kind, 'l', theme),
+      ]);
+    } else {
+      srcFixed.value = await getLogo(value, kind, size, theme);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-  <template v-if="size === 'auto'">
-    <picture>
-      <img
-        :src="getLogo(props.value, props.kind, 's', resolvedTheme)"
-        :alt="getAltText(props.value)"
-      />
-      <source
-        :srcset="getLogo(props.value, props.kind, 'm', resolvedTheme)"
-        media="(min-resolution: 2dppx)"
-      />
-      <source
-        :srcset="getLogo(props.value, props.kind, 'l', resolvedTheme)"
-        media="(min-resolution: 3dppx)"
-      />
-    </picture>
-  </template>
+  <picture v-if="size === 'auto'">
+    <source :srcset="srcL" media="(min-resolution: 3dppx)" />
+    <source :srcset="srcM" media="(min-resolution: 2dppx)" />
+    <img :src="srcS" :alt="altText" />
+  </picture>
 
-  <template v-else-if="size === 's'">
-    <img
-      :src="getLogo(props.value, props.kind, props.size, resolvedTheme)"
-      :alt="getAltText(props.value)"
-    />
-  </template>
-
-  <template v-else-if="size === 'm'">
-    <img
-      :src="getLogo(props.value, props.kind, props.size, resolvedTheme)"
-      :alt="getAltText(props.value)"
-    />
-  </template>
-
-  <template v-else-if="size === 'l'">
-    <img
-      :src="getLogo(props.value, props.kind, props.size, resolvedTheme)"
-      :alt="getAltText(props.value)"
-    />
-  </template>
+  <img v-else :src="srcFixed" :alt="altText" />
 </template>
