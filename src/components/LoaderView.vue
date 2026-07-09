@@ -1,8 +1,9 @@
 <script setup>
-import { computed, watch } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import LxLoader from '@/components/Loader.vue';
 
 import { generateUUID } from '@/utils/stringUtils';
+import { LOADER_VIEW_CONSTANTS } from '@/constants';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -30,6 +31,17 @@ const model = computed({
   },
 });
 
+const shouldAnnounceLoading = ref(false);
+const shouldAnnounceDone = ref(false);
+const hasShownLoading = ref(false);
+const canAnnounceDone = ref(false);
+const pendingDoneAnnouncement = ref(false);
+let loadingDelayTimer = null;
+let minDoneDelayTimer = null;
+let hasUsedInitialMountedLoadingThreshold = false;
+
+const mountedWithLoading = props.loading;
+
 watch(
   () => model.value,
   (newVal) => {
@@ -41,12 +53,87 @@ watch(
     }
   }
 );
+
+watch(
+  () => props.loading,
+  (isLoading) => {
+    if (loadingDelayTimer) {
+      clearTimeout(loadingDelayTimer);
+      loadingDelayTimer = null;
+    }
+
+    if (isLoading) {
+      if (minDoneDelayTimer) {
+        clearTimeout(minDoneDelayTimer);
+        minDoneDelayTimer = null;
+      }
+
+      shouldAnnounceDone.value = false;
+      shouldAnnounceLoading.value = false;
+      hasShownLoading.value = false;
+      canAnnounceDone.value = false;
+      pendingDoneAnnouncement.value = false;
+
+      const loadingAnnounceDelay =
+        mountedWithLoading && !hasUsedInitialMountedLoadingThreshold
+          ? LOADER_VIEW_CONSTANTS.INITIAL_MOUNTED_LOADING_DELAY
+          : LOADER_VIEW_CONSTANTS.DEFAULT_LOADING_DELAY;
+
+      if (mountedWithLoading && !hasUsedInitialMountedLoadingThreshold) {
+        hasUsedInitialMountedLoadingThreshold = true;
+      }
+
+      loadingDelayTimer = setTimeout(() => {
+        if (props.loading) {
+          shouldAnnounceLoading.value = true;
+          hasShownLoading.value = true;
+          canAnnounceDone.value = false;
+
+          minDoneDelayTimer = setTimeout(() => {
+            canAnnounceDone.value = true;
+            if (pendingDoneAnnouncement.value && !props.loading) {
+              shouldAnnounceDone.value = true;
+              hasShownLoading.value = false;
+              pendingDoneAnnouncement.value = false;
+            }
+          }, LOADER_VIEW_CONSTANTS.MIN_BETWEEN_LOADING_DELAY);
+        }
+      }, loadingAnnounceDelay);
+      return;
+    }
+
+    shouldAnnounceLoading.value = false;
+    if (hasShownLoading.value) {
+      if (canAnnounceDone.value) {
+        shouldAnnounceDone.value = true;
+        hasShownLoading.value = false;
+        pendingDoneAnnouncement.value = false;
+      } else {
+        shouldAnnounceDone.value = false;
+        pendingDoneAnnouncement.value = true;
+      }
+    } else {
+      shouldAnnounceDone.value = false;
+      pendingDoneAnnouncement.value = false;
+    }
+  },
+  { immediate: true }
+);
+
+onUnmounted(() => {
+  if (loadingDelayTimer) {
+    clearTimeout(loadingDelayTimer);
+  }
+  if (minDoneDelayTimer) {
+    clearTimeout(minDoneDelayTimer);
+  }
+});
 </script>
 
 <template>
   <div class="lx-loader-view-wrapper" :id="props.id">
     <div v-if="props.loading" class="lx-loader-view-loader-wrapper" :aria-label="props.label">
-      <div aria-live="polite" role="status" class="lx-invisible">
+      <div v-if="shouldAnnounceLoading" aria-live="polite" role="status" class="lx-invisible">
         {{ props.label }} <span v-if="kind === 'progress'">- {{ Number(model) * 100 }}%</span>
       </div>
       <LxLoader
@@ -61,10 +148,10 @@ watch(
         :faked="props.faked"
         :state="props.state"
         :aria-hidden="!props.loading"
-      ></LxLoader>
+      />
     </div>
     <div v-show="!props.loading" class="lx-loader-view-content-wrapper">
-      <div v-if="!props.loading" aria-live="polite" role="status" class="lx-invisible">
+      <div v-if="shouldAnnounceDone" aria-live="polite" role="status" class="lx-invisible">
         {{ props.labelDone }}
       </div>
       <slot />

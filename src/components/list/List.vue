@@ -109,6 +109,7 @@ const textsDefault = {
   skipLinkLabel: 'Izlaist sarakstu',
   skipLinkTitle: 'Izlaist sarakstu',
   overflowMenu: 'Atvērt papildu iespējas',
+  labelDone: 'Ielāde ir pabeigta',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -1434,7 +1435,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
       'list-inside-form': insideForm,
     }"
   >
-    <LxLoaderView :loading="loadingLib" label="">
+    <LxLoaderView :loading="loadingLib" label="" :labelDone="displayTexts.labelDone">
       <LxSkipLink
         v-if="props.hasSkipLink"
         :label="displayTexts.skipLinkLabel"

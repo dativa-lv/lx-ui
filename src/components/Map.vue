@@ -86,6 +86,7 @@ const textsDefault = {
   errorTitle: 'Kļūda kartes attēlošanā',
   errorDescription: 'Nav definēts neviens kartes pamata slānis',
   overflowMenu: 'Atvērt papildu iespējas',
+  labelDone: 'Ielāde ir pabeigta',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -469,7 +470,7 @@ const wrapperRef = ref();
     :style="grayscaleStyle"
     :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
   >
-    <LxLoaderView :loading="loadingLib" label="">
+    <LxLoaderView :loading="loadingLib" label="" :labelDone="displayTexts.labelDone">
       <LxToolbar
         v-if="showToolbar"
         class="lx-embedded-toolbar"

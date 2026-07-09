@@ -77,3 +77,15 @@ export const TYPED_INPUT_DEFAULT_MASKS = Object.freeze({
   inputDateTime24hr: 'dd.MM.yyyy. HH:mm',
   inputDateTimeFull24hr: 'dd.MM.yyyy. HH:mm:ss',
 });
+
+/**
+ * LxLoaderView delay announcement delay constants
+ * DEFAULT_LOADING_DELAY - default delay before announcing loading state
+ * INITIAL_MOUNTED_LOADING_DELAY - delay before announcing loading state on initial mount
+ * MIN_BETWEEN_LOADING_DELAY - delay between announcing loading state changes, to minimize announcement collision
+ */
+export const LOADER_VIEW_CONSTANTS = Object.freeze({
+  DEFAULT_LOADING_DELAY: 700,
+  INITIAL_MOUNTED_LOADING_DELAY: 2000,
+  MIN_BETWEEN_LOADING_DELAY: 1000,
+});
