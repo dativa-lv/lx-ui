@@ -631,6 +631,7 @@ provide('insideHeader', insideHeader);
             </div>
             <div class="lx-mega-menu" v-if="hasMegaMenu">
               <LxMegaMenu
+                id="lx-shell-mega-menu"
                 :show-label="false"
                 :items="megaMenuItems"
                 :groupDefinitions="megaMenuGroupDefinitions"
@@ -706,6 +707,7 @@ provide('insideHeader', insideHeader);
             <LxForm kind="stripped">
               <LxRow :label="displayTexts.languagesTitle">
                 <LxValuePicker
+                  id="lx-shell-language-picker"
                   variant="tags"
                   :disabled="headerNavDisable"
                   :items="languages"
@@ -714,6 +716,7 @@ provide('insideHeader', insideHeader);
               </LxRow>
               <LxRow v-if="hasThemePicker" :label="displayTexts.themeLabel">
                 <LxValuePicker
+                  id="lx-shell-theme-picker"
                   variant="tags"
                   :disabled="headerNavDisable"
                   :items="themeItems"
@@ -721,7 +724,11 @@ provide('insideHeader', insideHeader);
                 />
               </LxRow>
               <LxRow :label="displayTexts.fonts">
-                <LxToggle v-model="deviceFontsModel" :disabled="headerNavDisable" />
+                <LxToggle
+                  id="lx-shell-device-fonts-toggle"
+                  v-model="deviceFontsModel"
+                  :disabled="headerNavDisable"
+                />
               </LxRow>
             </LxForm>
             <div
@@ -827,6 +834,7 @@ provide('insideHeader', insideHeader);
 
   <LxModal
     ref="alternativeProfilesModal"
+    id="alternative-profiles-modal"
     :label="displayTexts.alternativeProfilesLabel"
     size="m"
     :action-definitions="modalActionDefinitions"
@@ -856,6 +864,7 @@ provide('insideHeader', insideHeader);
 
   <LxModal
     ref="contextPersonModal"
+    id="context-person-modal"
     :label="displayTexts.contextPersonsLabel"
     size="m"
     :action-definitions="modalActionDefinitions"

@@ -244,6 +244,7 @@ provide('insideHeader', insideHeader);
           <div class="header-profile-name" v-if="alternativeProfilesInfo">
             <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
             <LxValuePicker
+              id="alternative-profiles-picker"
               variant="dropdown"
               :tabindex="1"
               :items="alternativeProfilesComputed"

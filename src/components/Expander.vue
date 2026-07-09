@@ -203,6 +203,7 @@ defineExpose({ focus });
         </div>
 
         <LxBadge
+          :id="`${id}-badge`"
           :icon="badgeIcon"
           :icon-set="iconSet"
           :value="badge"
@@ -220,6 +221,7 @@ defineExpose({ focus });
         </div>
         <LxButton
           v-if="hasShortlistReset && !isExpandedRaw"
+          :id="`${id}-clear-button`"
           customClass="lx-expander-action"
           kind="ghost"
           variant="icon-only"
@@ -232,6 +234,7 @@ defineExpose({ focus });
 
         <LxButton
           v-if="hasSelectButton"
+          :id="`${id}-select-button`"
           customClass="lx-expander-action"
           kind="ghost"
           :icon="

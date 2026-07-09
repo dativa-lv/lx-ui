@@ -190,6 +190,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
           {{ item[props.nameAttribute] }}
         </div>
         <LxBadge
+          :id="`${id}-${item[props.idAttribute]}-badge`"
           :icon="isWideScreen ? item.badgeIcon : null"
           :icon-set="item.badgeIconSet ? item.badgeIconSet : iconSet"
           :value="isWideScreen ? item.badge : ' '"

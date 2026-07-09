@@ -21,7 +21,7 @@ describe('LxCheckbox', () => {
       wrapper = mount(LxCheckbox);
       const props = wrapper.props();
 
-      expect(props.id).toBe(null);
+      expect(props.id).toBeTypeOf('string');
       expect(props.groupId).toBe(null);
       expect(props.modelValue).toBe(false);
       expect(props.label).toBe(null);

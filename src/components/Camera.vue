@@ -470,7 +470,7 @@ const wrapperRef = ref();
       <div v-show="!error" class="lx-camera-frame lx-input-wrapper">
         <LxLoader v-if="loading" :loading="true" />
         <!-- eslint-disable-next-line vuejs-accessibility/media-has-caption -->
-        <video v-show="!modelValue && !loading" ref="video" autoplay playsinline muted />
+        <video :id="id" v-show="!modelValue && !loading" ref="video" autoplay playsinline muted />
         <canvas ref="canvas" style="display: none" />
         <img v-if="modelValue && !loading" :src="modelValue" alt=" " />
       </div>

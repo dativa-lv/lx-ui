@@ -1,11 +1,11 @@
 <script setup>
-import { ref, computed, onMounted, inject, getCurrentInstance, onUnmounted } from 'vue';
+import { ref, computed, inject, getCurrentInstance, onUnmounted } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   groupId: { type: String, default: null },
   modelValue: { type: Boolean, default: false },
   label: { type: String, default: null, group: 'main', sequence: 1 },
@@ -35,7 +35,6 @@ const model = computed({
   },
 });
 
-const idValue = ref('');
 const inputRef = ref(null);
 
 const rowId = inject('rowId', ref(null));
@@ -63,14 +62,6 @@ function scrollIntoView({
   });
 }
 
-onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
-});
-
 defineExpose({ focus, scrollIntoView });
 
 if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
@@ -97,7 +88,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
       ref="inputRef"
       type="checkbox"
       class="lx-checkbox"
-      :id="idValue"
+      :id="id"
       :name="groupId"
       v-model="model"
       :checked="model"
@@ -110,7 +101,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
       @click="click"
     />
     <label
-      :for="idValue"
+      :for="id"
       class="lx-checkbox-label-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-2"
     >
       <span class="lx-checkbox-appearance">

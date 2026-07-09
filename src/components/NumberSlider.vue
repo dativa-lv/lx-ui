@@ -13,9 +13,10 @@ import LxButton from '@/components/Button.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { makeIntegerValidator } from '@/utils/numberSliderUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: {
     type: Number,
     default: 0,
@@ -225,6 +226,7 @@ if (props.builderOptions?.useRegistry) {
           {{ model }}
         </p>
         <LxButton
+          :id="`${id}-decrease`"
           customClass="lx-number-stepper-decrease"
           kind="ghost"
           variant="icon-only"
@@ -236,6 +238,7 @@ if (props.builderOptions?.useRegistry) {
           @click="onDecreaseStep"
         />
         <LxButton
+          :id="`${id}-increase`"
           customClass="lx-number-stepper-increase"
           kind="ghost"
           variant="icon-only"
@@ -304,6 +307,7 @@ if (props.builderOptions?.useRegistry) {
         @keydown.page-down.prevent="onDecreasePage"
       >
         <LxTextInput
+          :id="`${id}-text`"
           type="text"
           v-model="model"
           mask="integer"

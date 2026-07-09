@@ -71,7 +71,7 @@ const {
 
 <template>
   <Teleport to="#poppers" v-if="show && !disabled">
-    <div v-if="show && !disabled" ref="floating" :style="floatingStyles" class="popper">
+    <div v-if="show && !disabled" :id="id" ref="floating" :style="floatingStyles" class="popper">
       <slot v-if="$slots.content" name="content" />
 
       <div

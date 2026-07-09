@@ -1045,6 +1045,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
       <div class="lx-complex-input">
         <LxToolbar
           v-if="editor"
+          :id="`${id}-toolbar`"
           class="lx-embedded-toolbar"
           ref="toolbarRef"
           :disabled="isDisabled"
@@ -1125,6 +1126,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
         </LxToolbar>
         <LxModal
           ref="editUrlModal"
+          :id="`${id}-link-modal`"
           :label="displayTexts.modalLabel"
           size="s"
           kind="native"
@@ -1136,6 +1138,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
           <p class="lx-description">{{ displayTexts.modalDescription }}</p>
           <LxTextInput
             ref="inputLinkField"
+            :id="`${id}-link-input`"
             v-model="inputLink"
             :invalid="isNotLink"
             :invalidation-message="displayTexts.invalidLinkMessage"
@@ -1143,7 +1146,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
         </LxModal>
         <LxModal
           ref="markdownImageModal"
-          id="imageModal"
+          :id="`${id}-image-modal`"
           :label="displayTexts.imageModalLabel"
           size="s"
           :button-secondary-is-cancel="false"
@@ -1158,7 +1161,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
               v-if="imageModalInputType === 'url'"
             >
               <LxTextInput
-                id="inputImageField"
+                :id="`${id}-image-link`"
                 ref="inputImageField"
                 v-model="inputImage"
                 :invalid="isNotImage"
@@ -1183,11 +1186,11 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
             </LxRow>
 
             <LxRow :label="displayTexts.imageModalAltDescription">
-              <LxTextInput id="inputAltField" v-model="inputAlt" />
+              <LxTextInput :id="`${id}-image-alt`" v-model="inputAlt" />
             </LxRow>
 
             <LxRow :label="displayTexts.imageModalTitleDescription">
-              <LxTextInput id="inputTitleField" v-model="inputTitle" />
+              <LxTextInput :id="`${id}-image-title`" v-model="inputTitle" />
             </LxRow>
           </LxForm>
         </LxModal>

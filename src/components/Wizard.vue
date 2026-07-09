@@ -2,8 +2,10 @@
 import { ref, computed } from 'vue';
 import LxSteps from '@/components/Steps.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
   items: { type: Array, default: () => [] },
 });
@@ -56,10 +58,10 @@ const modifiedItems = computed(() =>
 );
 </script>
 <template>
-  <div class="lx-wizard" :style="`${topOutOfBounds}`" ref="wizard">
+  <div :id="id" class="lx-wizard" :style="`${topOutOfBounds}`" ref="wizard">
     <header ref="wizardHeader" class="lx-toolbar lx-sticky">
       <div class="lx-wizard-container">
-        <LxSteps v-model="model" :items="modifiedItems" kind="compact" />
+        <LxSteps :id="`${id}-steps`" v-model="model" :items="modifiedItems" kind="compact" />
       </div>
     </header>
 

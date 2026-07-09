@@ -5,9 +5,10 @@ import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
   placeholder: { type: String, default: null, group: 'main', sequence: 4 },
   rows: { type: Number, default: 3, group: 'main', sequence: 2 },

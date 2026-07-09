@@ -10,7 +10,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Array, String], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -368,6 +368,7 @@ function onUp() {
   <template v-else>
     <div
       v-if="rotatorItemsArray"
+      :id="id"
       class="lx-value-picker-tags lx-rotator"
       :class="[{ 'lx-invalid': invalid }]"
       :title="tooltip"

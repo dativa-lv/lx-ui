@@ -257,6 +257,7 @@ defineExpose({ open, close });
 
               <template #headerAdditional v-if="!disableClosing">
                 <LxButton
+                  :id="`${id}-close-button`"
                   kind="ghost"
                   icon="close"
                   variant="icon-only"

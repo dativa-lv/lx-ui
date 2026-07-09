@@ -171,6 +171,7 @@ defineExpose({ open, close });
             </div>
             <LxButton
               v-if="!disableClosing"
+              :id="`${id}-close-button`"
               icon="close"
               kind="ghost"
               :label="displayTexts?.close"

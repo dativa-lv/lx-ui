@@ -141,7 +141,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="lx-tab-control" :style="`${topOutOfBounds}`" ref="tabControl">
+  <div :id="id" class="lx-tab-control" :style="`${topOutOfBounds}`" ref="tabControl">
     <header
       ref="tabHeader"
       class="lx-toolbar"
@@ -197,6 +197,7 @@ onMounted(() => {
 
       <div class="lx-group">
         <LxButton
+          :id="`${id}-prev-button`"
           icon="previous-page"
           kind="ghost"
           :label="displayTexts.previous"
@@ -206,6 +207,7 @@ onMounted(() => {
         />
 
         <LxButton
+          :id="`${id}-next-button`"
           icon="next-page"
           kind="ghost"
           :label="displayTexts.next"
@@ -217,6 +219,7 @@ onMounted(() => {
 
       <div class="lx-dropdown-container">
         <LxValuePicker
+          :id="`${id}-dropdown`"
           variant="dropdown"
           :items="props.items"
           :modelValue="model"

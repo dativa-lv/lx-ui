@@ -440,6 +440,7 @@ const wrapperRef = ref();
   <div ref="wrapperRef" class="lx-field-wrapper" :data-id="id">
     <div ref="container" class="lx-drawpad-wrapper lx-complex-input">
       <LxToolbar
+        :id="`${id}-toolbar`"
         class="lx-embedded-toolbar"
         :disabled="props.disabled"
         :actionDefinitions="toolbarActions"
@@ -450,6 +451,7 @@ const wrapperRef = ref();
         <template #color>
           <LxDropDownMenu :disabled="props.disabled">
             <LxButton
+              :id="`${id}-action-color`"
               icon="color"
               kind="ghost"
               variant="icon-only"
@@ -462,6 +464,7 @@ const wrapperRef = ref();
                 <li
                   v-for="color in colorsList"
                   :key="color.id"
+                  :id="`${id}-color-${color.label}`"
                   class="lx-color-item"
                   :class="[
                     {
@@ -483,6 +486,7 @@ const wrapperRef = ref();
       </LxToolbar>
       <div class="lx-input-wrapper" :class="{ 'lx-disabled': disabled }">
         <canvas
+          :id="id"
           ref="canvas"
           class="lx-canvas-element lx-input-area"
           :height="canvasHeight"

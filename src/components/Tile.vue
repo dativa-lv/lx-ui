@@ -113,6 +113,7 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
 
         <div class="badge-wrapper">
           <LxBadge
+            :id="`${id}-badge`"
             :icon="badgeIcon"
             :iconSet="iconSet"
             :value="badge"
@@ -128,10 +129,11 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
       </div>
 
       <div class="lx-tile-item-loader" v-else>
-        <LxLoader :loading="true" size="s" @click.stop />
+        <LxLoader :id="`${id}-loader`" :loading="true" size="s" @click.stop />
 
         <div class="badge-wrapper">
           <LxBadge
+            :id="`${id}-badge`"
             :icon="badgeIcon"
             :iconSet="iconSet"
             :value="badge"

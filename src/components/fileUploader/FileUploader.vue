@@ -758,6 +758,7 @@ if (props.builderOptions?.useRegistry) {
 
         <LxButton
           v-if="showCameraButton"
+          :id="`${id}-action-camera`"
           customClass="camera-button"
           icon="camera"
           kind="tertiary"
@@ -794,6 +795,7 @@ if (props.builderOptions?.useRegistry) {
 
         <LxButton
           v-if="showCameraButton"
+          :id="`${id}-action-camera`"
           customClass="camera-button"
           icon="camera"
           kind="tertiary"
@@ -832,6 +834,7 @@ if (props.builderOptions?.useRegistry) {
         />
         <LxButton
           v-if="showCameraButton"
+          :id="`${id}-action-camera`"
           customClass="camera-button"
           icon="camera"
           kind="tertiary"
@@ -868,6 +871,7 @@ if (props.builderOptions?.useRegistry) {
 
         <LxButton
           v-if="showCameraButton"
+          :id="`${id}-action-camera`"
           customClass="camera-button"
           icon="camera"
           kind="tertiary"
@@ -882,7 +886,7 @@ if (props.builderOptions?.useRegistry) {
     <div class="lx-uploaded-file-list-wrapper">
       <LxList
         v-if="readOnly || !(advancedFilesData.length === 0 && selectionKind === 'single')"
-        id="FilesList"
+        :id="`${id}-list`"
         :items="filesWithStates"
         :has-search="hasSearch && selectionKind === 'multiple'"
         listType="1"
@@ -948,6 +952,7 @@ if (props.builderOptions?.useRegistry) {
 
   <LxModal
     ref="infoModal"
+    :id="`${id}-info-modal`"
     :label="openedItem?.name"
     size="m"
     :action-definitions="infoModalActionDefinitions"
@@ -968,12 +973,14 @@ if (props.builderOptions?.useRegistry) {
 
   <LxModal
     ref="cameraModal"
+    :id="`${id}-camera-modal`"
     :label="displayTexts.addPhoto"
     :button-secondary-is-cancel="false"
     :action-definitions="cameraModalActionDefinitions"
     @action-click="handleCameraActionClick"
   >
     <LxCamera
+      :id="`${id}-camera`"
       v-model="cameraPhoto"
       :cameraSwitcherMode="cameraSwitcherMode"
       :hasFlashlightToggle="hasFlashlightToggle"

@@ -1,9 +1,9 @@
 <script setup>
-import { ref, computed, onMounted, inject } from 'vue';
+import { ref, computed, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   groupId: { type: String, default: null },
   modelValue: { type: Boolean, default: false },
   label: { type: String, default: null },
@@ -24,7 +24,6 @@ const model = computed({
   },
 });
 
-const idValue = ref('');
 const inputRef = ref(null);
 
 const rowId = inject('rowId', ref(null));
@@ -52,14 +51,6 @@ function scrollIntoView({
   });
 }
 
-onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
-});
-
 defineExpose({ focus, scrollIntoView });
 </script>
 
@@ -69,7 +60,7 @@ defineExpose({ focus, scrollIntoView });
       ref="inputRef"
       type="radio"
       class="lx-radio-button"
-      :id="idValue"
+      :id="id"
       :name="groupId"
       v-model="model"
       :checked="model"
@@ -82,7 +73,7 @@ defineExpose({ focus, scrollIntoView });
       @click="click"
     />
     <label
-      :for="idValue"
+      :for="id"
       class="lx-radio-button-label-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-2"
     >
       <span class="lx-radio-button-appearance">

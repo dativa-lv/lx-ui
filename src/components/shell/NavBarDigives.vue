@@ -209,6 +209,7 @@ onClickOutside(navPanel, toggleNavBar);
         <p>{{ displayTexts.userTitle }}</p>
         <li>
           <LxValuePicker
+            id="nav-alternative-profiles-picker"
             variant="dropdown"
             :items="alternativeProfilesComputed"
             v-model="dropDownModelAlternatives"

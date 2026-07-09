@@ -1,10 +1,12 @@
 <script setup>
 import { computed } from 'vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 import LxIllustration from '@/components/Illustration.vue';
 import LxButton from '@/components/Button.vue';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   kind: { type: String, default: '400' },
   icon: { type: String, default: null },
   title: { type: String, default: null },
@@ -91,11 +93,11 @@ const titleDescription = computed(() => {
 });
 </script>
 <template>
-  <article class="lx-error-landing">
+  <article :id="id" class="lx-error-landing">
     <div class="lx-header lx-error">
       <LxIllustration class="lx-illustration" :value="pictogram" />
-      <div class="heading-1">{{ titleText }}</div>
-      <div class="lx-description">
+      <div :id="`${id}-title`" class="heading-1">{{ titleText }}</div>
+      <div :id="`${id}-description`" class="lx-description">
         <p>{{ titleDescription }}</p>
       </div>
     </div>
@@ -105,7 +107,7 @@ const titleDescription = computed(() => {
         <LxButton
           v-for="action in actionDefinitions"
           :key="action.id"
-          :id="action.id"
+          :id="`${id}-action-${action.id}`"
           :label="action.name || action.label"
           :title="action.title || action.tooltip"
           :icon="action.icon"

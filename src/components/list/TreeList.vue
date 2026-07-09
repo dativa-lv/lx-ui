@@ -235,6 +235,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
       >
         <LxButton
           v-if="isExpandable(parent)"
+          :id="`${id}-go-back`"
           kind="ghost"
           icon="collapse-left"
           variant="icon-only"
@@ -303,6 +304,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           {{ texts?.loadingError }}
         </div>
         <LxButton
+          :id="`${parent[idAttribute]}-reload`"
           kind="ghost"
           icon="refresh"
           variant="icon-only"
@@ -324,6 +326,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
       >
         <LxButton
           v-if="isExpandable(item)"
+          :id="`${item[idAttribute]}-expand`"
           kind="ghost"
           icon="collapse-right"
           variant="icon-only"

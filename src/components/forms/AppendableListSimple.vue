@@ -3,8 +3,10 @@ import { computed, onMounted } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxForm from '@/components/forms/Form.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: Array, default: null },
   readOnly: { type: Boolean, default: false },
   columnCount: { type: Number, default: 1 },
@@ -50,6 +52,7 @@ onMounted(() => {
 </script>
 <template>
   <div
+    :id="id"
     class="lx-appendable-list lx-appendable-list-simple"
     :class="[{ 'lx-appendable-list-compact': kind === 'compact' }]"
   >
@@ -62,6 +65,7 @@ onMounted(() => {
         <div class="appendable-list-remove">
           <LxButton
             v-if="!readOnly"
+            :id="`${id}-remove-${index}`"
             icon="remove-item"
             variant="icon-only"
             :label="displayTexts.removeItem"
@@ -75,6 +79,7 @@ onMounted(() => {
     <div>
       <LxButton
         v-if="!readOnly && canAddItems"
+        :id="`${id}-add-button`"
         kind="tertiary"
         :label="displayTexts.addButtonLabel"
         icon="add-item"

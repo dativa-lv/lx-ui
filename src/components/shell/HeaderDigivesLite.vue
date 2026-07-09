@@ -605,6 +605,7 @@ watch(
     <div class="lx-digives-header-row end-section">
       <div class="shell-buttons lx-spotlight-button" v-if="hasSpotlight">
         <LxButton
+          id="lx-shell-spotlight-button"
           kind="ghost"
           icon="information"
           :label="displayTexts.spotlight.label"
@@ -616,6 +617,7 @@ watch(
       </div>
       <div class="shell-buttons help" v-if="hasHelp">
         <LxButton
+          id="lx-shell-help-button"
           customClass="lx-header-button"
           kind="ghost"
           icon="help"
@@ -680,6 +682,7 @@ watch(
         >
           <div class="lx-toolbar">
             <LxButton
+              id="lx-shell-theme-button"
               tabindex="-1"
               customClass="lx-header-button"
               variant="icon-only"
@@ -695,6 +698,7 @@ watch(
       <div class="shell-buttons language-menu" v-if="hasLanguagePicker">
         <LxDropDownMenu ref="languageMenu" :disabled="headerNavDisable">
           <LxButton
+            id="lx-shell-language-button"
             tabindex="-1"
             customClass="lx-header-button"
             variant="icon-only"
@@ -708,6 +712,7 @@ watch(
             <div class="lx-button-set">
               <LxButton
                 v-for="item in languages"
+                :id="`lx-shell-language-${item.id}`"
                 kind="ghost"
                 :key="item?.languages"
                 :disabled="headerNavDisable"
@@ -727,6 +732,7 @@ watch(
             :disabled="headerNavDisable"
           >
             <LxButton
+              id="lx-shell-alerts-button"
               customClass="lx-header-button"
               variant="icon-only"
               kind="ghost"
@@ -743,6 +749,7 @@ watch(
             <template v-if="clickSafeAlerts" v-slot:clickSafePanel>
               <div class="lx-button-set" role="toolbar">
                 <LxButton
+                  id="lx-shell-alerts-open-button"
                   v-if="alertsKind === 'combo'"
                   kind="ghost"
                   :label="displayTexts.openAlerts"
@@ -781,6 +788,7 @@ watch(
             <template v-else v-slot:panel>
               <div class="lx-button-set" role="toolbar">
                 <LxButton
+                  id="lx-shell-alerts-open-button"
                   v-if="alertsKind === 'combo'"
                   kind="ghost"
                   :label="displayTexts.openAlerts"
@@ -818,6 +826,7 @@ watch(
           </LxDropDownMenu>
 
           <LxButton
+            id="lx-shell-alerts-button"
             v-if="alertsKind === 'button'"
             customClass="lx-header-button"
             variant="icon-only"
@@ -935,6 +944,7 @@ watch(
       </div>
       <div class="shell-buttons logout-button" v-if="userInfo">
         <LxButton
+          id="lx-shell-logout-button"
           kind="ghost"
           icon="logout"
           :label="displayTexts.logOut"

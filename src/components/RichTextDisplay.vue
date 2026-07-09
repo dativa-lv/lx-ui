@@ -3,11 +3,12 @@ import LxLoader from '@/components/Loader.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { ref, watch } from 'vue';
 import { loadLibrary } from '@/utils/libLoader';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
   value: { type: String, default: '' },
   loading: { type: Boolean, default: false },
-  id: { type: String, default: '' },
+  id: { type: String, default: () => generateUUID() },
 });
 
 const markdownLoading = ref(false);
@@ -56,11 +57,12 @@ watch(
 <template>
   <article
     v-if="!markdownLoading && !props.loading"
+    :id="id"
     v-clean-html="markdown"
     class="lx-article lx-rich-text-wrapper"
   />
 
-  <article v-else class="lx-article lx-rich-text-loader">
+  <article v-else :id="id" class="lx-article lx-rich-text-loader">
     <LxLoader :loading="markdownLoading || props.loading" />
   </article>
 </template>

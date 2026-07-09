@@ -3,9 +3,10 @@ import { computed, ref } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
   items: { type: Array, required: true },
   kind: { type: String, default: 'default' }, // 'default', 'compact'
@@ -45,7 +46,11 @@ const color = ref('--color-brand');
 </script>
 
 <template>
-  <div class="lx-steps-container-wrapper" :class="{ 'lx-steps-compact': kind === 'compact' }">
+  <div
+    :id="id"
+    class="lx-steps-container-wrapper"
+    :class="{ 'lx-steps-compact': kind === 'compact' }"
+  >
     <div v-if="kind === 'default'" class="lx-steps-slider">
       <div
         class="lx-steps-filled-slider"
@@ -59,6 +64,7 @@ const color = ref('--color-brand');
         class="lx-steps-data-block lx-aligned-row lx-aligned-row-4"
         v-for="item in items"
         :key="item[idAttribute]"
+        :id="`${id}-step-${item[idAttribute]}`"
       >
         <LxIcon
           v-show="(busy && item[stateAttribute] !== 'current') || !busy"
@@ -109,8 +115,9 @@ const color = ref('--color-brand');
         :class="{ 'lx-selected': item[idAttribute] === model }"
         v-for="item in items"
         :key="item[idAttribute]"
+        :id="`${id}-step-small-${item[idAttribute]}`"
       >
-        <LxInfoWrapper>
+        <LxInfoWrapper :id="`${id}-step-small-${item[idAttribute]}-info`">
           <div
             class="lx-steps-data-block-small-content"
             :class="{ 'lx-aligned-row lx-aligned-row-4': kind === 'compact' }"

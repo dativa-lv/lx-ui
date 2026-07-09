@@ -549,6 +549,7 @@ defineExpose({ handleOpen, handleClose, showPopper, focus, scrollIntoView });
             </div>
 
             <LxButton
+              :id="`${id}-close-button`"
               kind="ghost"
               icon="chevron-down"
               variant="icon-only"

@@ -10,6 +10,7 @@ import {
   sessionEndsInText,
   secondsToMinutesAndSeconds,
 } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
 const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
@@ -311,6 +312,19 @@ function logOut() {
 function navClick(id) {
   emits('navClick', id);
   emits('nav-toggle', true);
+}
+
+// navItems are provided by consuming apps and historically don't always carry an id,
+// so a fallback is generated (and cached per item) to avoid duplicate DOM ids.
+const navItemIdFallbacks = new WeakMap();
+function getNavItemDomId(item) {
+  if (item?.id) {
+    return `nav-item-${item.id}`;
+  }
+  if (!navItemIdFallbacks.has(item)) {
+    navItemIdFallbacks.set(item, `nav-item-${generateUUID()}`);
+  }
+  return navItemIdFallbacks.get(item);
 }
 
 function toggleNavBar(event) {
@@ -818,7 +832,12 @@ onClickOutside(navPanel, toggleNavBar);
           :key="item.label"
           :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
         >
-          <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)" />
+          <LxButton
+            :id="getNavItemDomId(item)"
+            :label="item.label"
+            :href="item.to"
+            @click="navClick(item?.id)"
+          />
         </li>
       </template>
     </ul>
@@ -828,12 +847,18 @@ onClickOutside(navPanel, toggleNavBar);
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)" />
+        <LxButton
+          :id="getNavItemDomId(item)"
+          :label="item.label"
+          :href="item.to"
+          @click="navClick(item?.id)"
+        />
       </li>
     </ul>
     <ul class="lx-nav-group">
       <li v-if="hasSpotlight">
         <LxButton
+          id="lx-shell-spotlight-button"
           customClass="lx-header-button"
           kind="ghost"
           icon="information"
@@ -845,6 +870,7 @@ onClickOutside(navPanel, toggleNavBar);
       </li>
       <li class="lx-help-button" v-if="props.hasHelp">
         <LxButton
+          id="lx-shell-help-button"
           customClass="lx-header-button"
           kind="ghost"
           icon="help"
@@ -899,6 +925,7 @@ onClickOutside(navPanel, toggleNavBar);
       <li v-if="hasLanguagePicker" class="lx-language-menu">
         <LxDropDownMenu>
           <LxButton
+            id="lx-shell-language-button"
             customClass="lx-header-button"
             kind="ghost"
             icon="language"
@@ -911,6 +938,7 @@ onClickOutside(navPanel, toggleNavBar);
             <div class="lx-button-set">
               <LxButton
                 v-for="item in languages"
+                :id="`lx-shell-language-${item.id}`"
                 kind="ghost"
                 :key="item?.languages"
                 :active="selectedLanguageModel.id === item.id ? true : false"
@@ -930,6 +958,7 @@ onClickOutside(navPanel, toggleNavBar);
           >
             <div class="lx-toolbar">
               <LxButton
+                id="lx-shell-theme-button"
                 customClass="lx-header-button"
                 :label="displayTexts.themeLabel"
                 :title="displayTexts.themeTitle"
@@ -945,6 +974,7 @@ onClickOutside(navPanel, toggleNavBar);
       <li class="lx-alert-menu" v-if="hasAlerts">
         <LxDropDownMenu v-if="alertsKind === 'menu' || alertsKind === 'combo'">
           <LxButton
+            id="lx-shell-alerts-button"
             customClass="lx-header-button"
             kind="ghost"
             icon="notifications"
@@ -961,6 +991,7 @@ onClickOutside(navPanel, toggleNavBar);
             <div class="lx-button-set" role="toolbar">
               <LxButton
                 v-if="alertsKind === 'combo'"
+                id="lx-shell-alerts-open-button"
                 kind="ghost"
                 :label="displayTexts.openAlerts"
                 :disabled="headerNavDisable"
@@ -999,6 +1030,7 @@ onClickOutside(navPanel, toggleNavBar);
             <div class="lx-button-set" role="toolbar">
               <LxButton
                 v-if="alertsKind === 'combo'"
+                id="lx-shell-alerts-open-button"
                 kind="ghost"
                 :label="displayTexts.openAlerts"
                 :disabled="headerNavDisable"
@@ -1036,6 +1068,7 @@ onClickOutside(navPanel, toggleNavBar);
 
         <LxButton
           v-if="alertsKind === 'button'"
+          id="lx-shell-alerts-button"
           customClass="lx-header-button"
           variant="icon-only"
           kind="ghost"
@@ -1051,6 +1084,7 @@ onClickOutside(navPanel, toggleNavBar);
       </li>
       <li class="lx-logout-button" v-if="userInfo">
         <LxButton
+          id="lx-shell-logout-button"
           kind="ghost"
           icon="logout"
           :label="displayTexts.logOut"

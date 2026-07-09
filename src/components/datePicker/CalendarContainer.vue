@@ -4,7 +4,7 @@ import { subYears, addYears, subMonths, addMonths, addDays } from 'date-fns';
 import { useWindowSize, onClickOutside, useMediaQuery, useDebounceFn } from '@vueuse/core';
 import { useGridKeyboardNavigation } from '@/hooks/useGridKeyboardNavigation';
 import { formatLocalizedDate } from '@/utils/dateUtils';
-import { capitalizeFirstLetter } from '@/utils/stringUtils';
+import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts, isDefined, isNil, findFocusableElements } from '@/utils/generalUtils';
 import {
   normalizeDate,
@@ -48,7 +48,7 @@ import LxRow from '@/components/forms/Row.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [String, Date, Object], default: null },
   mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full' 'date-time', 'date-time-full' 'month', 'year', 'month-year', 'quarters'
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
@@ -4648,6 +4648,7 @@ if (typeof globalThis !== 'undefined') {
 <template>
   <div
     ref="containerRef"
+    :id="id"
     class="lx-calendar-container"
     :class="[`mode-${props.mode}`]"
     tabindex="-1"
@@ -4666,6 +4667,7 @@ if (typeof globalThis !== 'undefined') {
         v-if="
           responsiveView && (mode === 'date' || mode === 'date-time' || mode === 'date-time-full')
         "
+        :id="`${id}-special-days-button`"
         customClass="lx-calendar-special-days-button"
         kind="ghost"
         icon="calendar-special"
@@ -4690,6 +4692,7 @@ if (typeof globalThis !== 'undefined') {
           mode !== 'month-year' &&
           mode !== 'quarters'
         "
+        :id="`${id}-months-select-button`"
         customClass="lx-calendar-months-select-button"
         :label="monthsSelectButtonLabel"
         kind="ghost"
@@ -4707,6 +4710,7 @@ if (typeof globalThis !== 'undefined') {
           mode !== 'year' &&
           mode !== 'quarters'
         "
+        :id="`${id}-years-select-button`"
         customClass="lx-calendar-years-select-button"
         :label="yearsSelectButtonLabel"
         kind="ghost"
@@ -4721,6 +4725,7 @@ if (typeof globalThis !== 'undefined') {
       </div>
 
       <LxButton
+        :id="`${id}-today-button`"
         customClass="lx-calendar-return-to-today-button"
         kind="ghost"
         icon="reset"
@@ -4774,6 +4779,7 @@ if (typeof globalThis !== 'undefined') {
       >
         <LxButton
           v-if="(isMobileScreen && !mobileTimeLayout) || (mode !== 'month' && !isMobileScreen)"
+          :id="`${id}-previous-slide-button`"
           customClass="lx-previous-slide-button"
           :label="previousSlideButtonLabel"
           kind="ghost"
@@ -5736,6 +5742,7 @@ if (typeof globalThis !== 'undefined') {
 
         <LxButton
           v-if="(isMobileScreen && !mobileTimeLayout) || (mode !== 'month' && !isMobileScreen)"
+          :id="`${id}-next-slide-button`"
           customClass="lx-next-slide-button"
           :label="nextSlideButtonLabel"
           kind="ghost"
@@ -5763,6 +5770,7 @@ if (typeof globalThis !== 'undefined') {
           <template v-for="(column, columnIndex) in timeModeColumns" :key="column">
             <div class="lx-time-column" @wheel="onTimeWheel($event, column)">
               <LxButton
+                :id="`${id}-${column}-scroll-up`"
                 tabindex="-1"
                 variant="icon-only"
                 kind="ghost"
@@ -5803,6 +5811,7 @@ if (typeof globalThis !== 'undefined') {
               </div>
 
               <LxButton
+                :id="`${id}-${column}-scroll-down`"
                 tabindex="-1"
                 variant="icon-only"
                 kind="ghost"
@@ -5828,6 +5837,7 @@ if (typeof globalThis !== 'undefined') {
       class="lx-mobile-time-selection-button-wrapper"
     >
       <LxButton
+        :id="`${id}-mobile-time-selection-button`"
         customClass="lx-mobile-time-selection-button"
         :label="timeSelectButtonLabel"
         kind="ghost"
@@ -5852,6 +5862,7 @@ if (typeof globalThis !== 'undefined') {
     >
       <LxButton
         v-if="pickerType === 'range'"
+        :id="`${id}-min-date-button`"
         custom-class="min-date-button"
         :label="displayTexts.doNotIndicateStart"
         kind="ghost"
@@ -5871,6 +5882,7 @@ if (typeof globalThis !== 'undefined') {
       />
 
       <LxButton
+        :id="`${id}-clear-button`"
         :title="displayTexts.clearButton"
         :label="displayTexts.clear"
         kind="ghost"
@@ -5887,6 +5899,7 @@ if (typeof globalThis !== 'undefined') {
 
       <LxButton
         v-if="pickerType === 'range'"
+        :id="`${id}-max-date-button`"
         custom-class="max-date-button"
         :label="displayTexts.doNotIndicateEnd"
         kind="ghost"

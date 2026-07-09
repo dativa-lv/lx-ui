@@ -1245,6 +1245,7 @@ const loginButtonKind = computed(() => {
       class="lx-mega-menu"
     >
       <LxMegaMenu
+        id="lx-shell-mega-menu"
         :items="megaMenuItems"
         :groupDefinitions="megaMenuGroupDefinitions"
         :hasShowAll="megaMenuHasShowAll"

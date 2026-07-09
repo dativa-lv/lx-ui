@@ -1163,6 +1163,7 @@ if (props.builderOptions.useRegistry) {
       >
         <LxDropDownMenu>
           <LxButton
+            :id="`${id}-header-actions-button`"
             icon="overflow-menu"
             kind="ghost"
             variant="icon-only"
@@ -1172,6 +1173,7 @@ if (props.builderOptions.useRegistry) {
             :disabled="allAdditionalButtonsDisabled"
           />
           <LxButton
+            :id="`${id}-header-menu-button`"
             :icon="index?.length > 0 && props.indexType === 'default' ? 'menu' : 'overflow-menu'"
             kind="ghost"
             variant="icon-only"
@@ -1262,6 +1264,7 @@ if (props.builderOptions.useRegistry) {
       >
         <LxDropDownMenu>
           <LxButton
+            :id="`${id}-index-menu-button`"
             icon="menu"
             kind="ghost"
             variant="icon-only"
@@ -1301,6 +1304,7 @@ if (props.builderOptions.useRegistry) {
     <LxTabControl
       v-if="props.indexType === 'tabs' && index?.length > 0"
       ref="tabControl"
+      :id="`${id}-tab-control`"
       v-model="tabModel"
       :items="itemsCopy"
       :kind="indexHasIcons ? 'combo' : 'default'"
@@ -1331,6 +1335,7 @@ if (props.builderOptions.useRegistry) {
 
     <LxWizard
       ref="wizard"
+      :id="`${id}-wizard`"
       v-model="wizardModel"
       :items="props.index"
       @update:modelValue="hideAll"
@@ -1419,6 +1424,7 @@ if (props.builderOptions.useRegistry) {
           @actionClick="(id) => clickHandler(id)"
         >
           <LxButton
+            :id="`${id}-footer-overflow-button`"
             kind="secondary"
             icon="overflow-menu"
             :label="displayTexts?.otherActions"

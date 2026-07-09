@@ -647,6 +647,7 @@ provide('insideHeader', insideHeader);
             </div>
             <div class="lx-mega-menu" v-if="hasMegaMenu">
               <LxMegaMenu
+                id="lx-shell-mega-menu"
                 :items="megaMenuItems"
                 :groupDefinitions="megaMenuGroupDefinitions"
                 :hasShowAll="megaMenuHasShowAll"
@@ -818,6 +819,7 @@ provide('insideHeader', insideHeader);
 
   <LxModal
     ref="alternativeProfilesModal"
+    id="alternative-profiles-modal"
     :label="displayTexts.alternativeProfilesLabel"
     size="m"
     :action-definitions="modalActionDefinitions"
@@ -847,6 +849,7 @@ provide('insideHeader', insideHeader);
 
   <LxModal
     ref="contextPersonModal"
+    id="context-person-modal"
     :label="displayTexts.contextPersonsLabel"
     size="m"
     :action-definitions="modalActionDefinitions"

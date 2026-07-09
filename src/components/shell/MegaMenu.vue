@@ -157,7 +157,7 @@ const safeShowAllHref = computedAsync(() => computeSafeTo(props.showAllHref), nu
   >
     <div class="lx-toolbar">
       <LxButton
-        id="lx-shell-mega-menu-button"
+        :id="`${id}-button`"
         customClass="lx-header-button"
         :variant="buttonVariant"
         kind="ghost"

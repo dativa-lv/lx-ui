@@ -175,6 +175,7 @@ const additionalInfoTitle = computed(() => {
       <div class="lx-upload-buttons">
         <LxButton
           v-if="!props.readOnly"
+          :id="`${customItem.id}-remove-button`"
           kind="ghost"
           variant="icon-only"
           icon="remove"
@@ -244,6 +245,7 @@ const additionalInfoTitle = computed(() => {
               v-if="props.showMeta && reactiveContainerElementWidth < 280"
             >
               <LxButton
+                :id="`${customItem.id}-info-button`"
                 kind="ghost"
                 :label="displayTexts.infoButton"
                 :disabled="props.disabled || props.busy || isItemBusy"
@@ -281,6 +283,7 @@ const additionalInfoTitle = computed(() => {
           >
             <LxButton
               v-if="props.showMeta"
+              :id="`${customItem.id}-info-button`"
               kind="ghost"
               :label="displayTexts.infoButton"
               :disabled="props.disabled || props.busy || isItemBusy"
@@ -394,6 +397,7 @@ const additionalInfoTitle = computed(() => {
         <div class="lx-upload-buttons">
           <LxButton
             v-if="props.showMeta && !props.readOnly && props.mode === 'compact'"
+            :id="`${customItem.id}-info-button`"
             kind="ghost"
             variant="icon-only"
             :disabled="props.disabled || props.busy || isItemBusy"
@@ -404,6 +408,7 @@ const additionalInfoTitle = computed(() => {
           />
           <LxButton
             v-if="!props.readOnly"
+            :id="`${customItem.id}-remove-button`"
             kind="ghost"
             variant="icon-only"
             icon="remove"

@@ -522,6 +522,7 @@ watch(
 <template>
   <div class="lx-data-visualizer" :id="id">
     <LxContentSwitcher
+      :id="`${id}-view-switcher`"
       :items="contentItems"
       v-model="contentModel"
       v-if="mode === 'default' && items?.length > 0"
@@ -880,6 +881,7 @@ watch(
 
     <LxDataGrid
       v-else-if="mode === 'default' && contentModel === 'table'"
+      :id="`${id}-table`"
       :columnDefinitions="columnDef"
       :items="dataGridItems"
       :hasSorting="true"

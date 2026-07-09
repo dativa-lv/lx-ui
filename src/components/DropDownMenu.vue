@@ -21,6 +21,7 @@ import {
 import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   placement: { type: String, default: 'bottom' },
   customClass: { type: String, default: '' },
   disabled: { type: Boolean, default: false },
@@ -43,9 +44,8 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const emits = defineEmits(['actionClick']);
 
 const togglerRef = ref(null);
-const togglerId = generateUUID();
 const panelRef = ref(null);
-const panelId = generateUUID();
+const panelId = computed(() => `${props.id}-panel`);
 const firstFocusableElement = ref(null);
 const menuOpen = ref(false);
 const isTouchSensitive = inject('isTouchMode', ref(false));
@@ -517,7 +517,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
       <div
         ref="togglerRef"
-        :id="togglerId"
+        :id="id"
         class="lx-dropdown-toggler"
         role="button"
         aria-haspopup="menu"
@@ -571,7 +571,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           ]"
           role="menu"
           tabindex="-1"
-          :aria-labelledby="togglerId"
+          :aria-labelledby="id"
           @keydown="handlePanelKeydown"
           @keyup="handlePanelKeyup"
         >

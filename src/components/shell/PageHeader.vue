@@ -82,6 +82,7 @@ function goBack() {
         <transition name="fade">
           <div v-if="showBackButton">
             <LxButton
+              id="lx-page-header-back-button"
               icon="back"
               kind="ghost"
               :variant="breadcrumbs.length > 1 ? 'icon-only' : 'default'"

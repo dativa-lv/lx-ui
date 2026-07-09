@@ -2,8 +2,10 @@
 import { ref, watch } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   alerts: {
     type: Array,
     default: () => [],
@@ -68,7 +70,7 @@ function pickwidget(level) {
 </script>
 
 <template>
-  <div class="lx-cover-alert" :class="pickwidget(message.level)">
+  <div :id="id" class="lx-cover-alert" :class="pickwidget(message.level)">
     <div class="lx-cover-alert-content">
       <div class="lx-cover-alert-left-group">
         <LxIcon
@@ -83,6 +85,7 @@ function pickwidget(level) {
       </div>
       <div class="lx-cover-alert-right-group" v-if="alerts.length > 1">
         <LxButton
+          :id="`${id}-previous-button`"
           :label="previousAlertTitle"
           @click="changeCurrentAlert('previous')"
           variant="icon-only"
@@ -90,6 +93,7 @@ function pickwidget(level) {
           kind="ghost"
         />
         <LxButton
+          :id="`${id}-next-button`"
           :label="nextAlertTitle"
           @click="changeCurrentAlert('next')"
           variant="icon-only"

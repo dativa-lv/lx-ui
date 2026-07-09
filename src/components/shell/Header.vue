@@ -745,6 +745,7 @@ const hasHiddenHeaderButtons = computed(() =>
 
   <LxModal
     ref="alternativeProfilesModal"
+    id="alternative-profiles-modal"
     :label="displayTexts.alternativeProfilesLabel"
     size="m"
     :action-definitions="modalActionDefinitions"
@@ -774,6 +775,7 @@ const hasHiddenHeaderButtons = computed(() =>
 
   <LxModal
     ref="contextPersonModal"
+    id="context-person-modal"
     :label="displayTexts.contextPersonsLabel"
     size="m"
     :action-definitions="modalActionDefinitions"

@@ -9,6 +9,7 @@ import { generateUUID } from '@/utils/stringUtils';
 const emits = defineEmits(['update:modelValue']);
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: Number, default: 0 },
   kind: { type: String, default: '5stars' },
   variant: { type: String, default: 'default' }, // 'default' or 'colorful'
@@ -33,8 +34,6 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const infoWrapperRef = ref(null);
-
-const ratingId = ref(generateUUID());
 
 const model = computed({
   get() {
@@ -209,6 +208,7 @@ defineExpose({ focus, scrollIntoView });
     <div class="lx-ratings-wrapper">
       <LxInfoWrapper
         ref="infoWrapperRef"
+        :id="id"
         :disabled="disabled && !readOnly"
         :focusable="focusable"
         :label="accessibleLabel"
@@ -219,8 +219,8 @@ defineExpose({ focus, scrollIntoView });
           role="radiogroup"
           :aria-disabled="disabled"
           :aria-invalid="showInvalid"
-          :aria-errormessage="showInvalid ? `${ratingId}-invalidation-message` : null"
-          :aria-describedby="showInvalid ? `${ratingId}-invalidation-message` : null"
+          :aria-errormessage="showInvalid ? `${id}-invalidation-message` : null"
+          :aria-describedby="showInvalid ? `${id}-invalidation-message` : null"
           :class="[
             { 'lx-disabled': disabled },
             { 'lx-read-only': readOnly },
@@ -353,11 +353,7 @@ defineExpose({ focus, scrollIntoView });
         <LxIcon customClass="lx-invalidation-icon" value="invalid" />
       </div>
     </div>
-    <div
-      class="lx-invalidation-message"
-      v-if="showInvalid"
-      :id="`${ratingId}-invalidation-message`"
-    >
+    <div class="lx-invalidation-message" v-if="showInvalid" :id="`${id}-invalidation-message`">
       {{ invalidationMessage }}
     </div>
   </div>

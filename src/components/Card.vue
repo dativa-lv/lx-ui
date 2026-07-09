@@ -186,6 +186,7 @@ onMounted(() => {
         <LxButton
           v-if="kind === 'button'"
           ref="flipButtonFrontRef"
+          :id="`${id}-flip-button-front`"
           kind="ghost"
           variant="icon-only"
           :label="displayTexts.flipCard"
@@ -205,6 +206,7 @@ onMounted(() => {
         <LxButton
           v-if="kind === 'button'"
           ref="flipButtonBackRef"
+          :id="`${id}-flip-button-back`"
           kind="ghost"
           variant="icon-only"
           :label="displayTexts.flipCardBack"

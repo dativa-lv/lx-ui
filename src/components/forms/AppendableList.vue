@@ -374,6 +374,7 @@ defineExpose({ clearModel });
                   (!hideRemoveAttribute || !item[hideRemoveAttribute]) &&
                   (!removeVisibleByAttribute || item[removeVisibleByAttribute])
                 "
+                :id="`${item[idAttribute]}-remove-button`"
                 icon="remove-item"
                 variant="icon-only"
                 :label="displayTexts.removeItem"

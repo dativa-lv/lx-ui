@@ -109,6 +109,7 @@ const {
     </header>
     <div class="small-nav-bar-button">
       <LxButton
+        id="lx-shell-nav-toggle-button"
         :icon="navBarSwitchModel === null ? 'menu' : navBarSwitchModel ? 'menu' : 'close'"
         variant="icon-only"
         kind="ghost"

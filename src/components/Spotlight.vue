@@ -298,6 +298,7 @@ defineExpose({ setSpotlightItem, spotlightEnd });
             </span>
             <LxButton
               ref="closeButtonRef"
+              id="spotlight-close-button"
               icon="close"
               kind="ghost"
               :label="displayTexts.close"
@@ -321,6 +322,7 @@ defineExpose({ setSpotlightItem, spotlightEnd });
           <LxButton
             v-for="action in actions"
             :key="action.id"
+            :id="`spotlight-action-${action.id}`"
             :kind="action.kind"
             :disabled="action.disabled"
             :label="action.name"

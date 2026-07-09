@@ -9,6 +9,7 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const emits = defineEmits([
   'filter',
@@ -20,7 +21,7 @@ const emits = defineEmits([
 ]);
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   label: { type: String, default: null, group: 'main', sequence: 1 },
   description: { type: String, default: null, group: 'main', sequence: 2 },
   usesFilters: { type: Boolean, default: false, group: 'additional', sequence: 1 },
@@ -261,7 +262,7 @@ if (props.builderOptions?.useRegistry) {
 
         <div class="lx-button-set">
           <LxButton
-            id="filter-search-button"
+            :id="`${id}-search-button`"
             :kind="filterButtonKind"
             :label="displayTexts.search"
             :title="displayTexts.searchTitle"
@@ -276,7 +277,7 @@ if (props.builderOptions?.useRegistry) {
             @actionClick="(id) => fastFilterClick(id)"
           >
             <LxButton
-              id="fast-filter-menu"
+              :id="`${id}-fast-filter-menu`"
               kind="tertiary"
               icon="flash"
               :label="displayTexts.fastFiltersLabel"
@@ -286,7 +287,7 @@ if (props.builderOptions?.useRegistry) {
           </LxDropDownMenu>
           <LxButton
             v-if="fastFilters && fastFilters.length === 1 && !enableFilterEditing"
-            id="fast-filter-button"
+            :id="`${id}-fast-filter-button`"
             kind="tertiary"
             icon="flash"
             :disabled="disabled"
@@ -294,7 +295,7 @@ if (props.builderOptions?.useRegistry) {
             @click="fastFilterClick(fastFilters[0][fastIdAttribute])"
           />
           <LxButton
-            id="filter-clear-button"
+            :id="`${id}-clear-button`"
             kind="tertiary"
             :label="displayTexts.clear"
             :title="displayTexts.clearTitle"

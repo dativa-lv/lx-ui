@@ -6,6 +6,7 @@ import { useWindowSize, useScroll } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 
 const LxMegaMenu = defineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
@@ -189,6 +190,19 @@ function canShowChildren(item) {
   return (!item?.type || item.type === 'primary') && item?.children?.length;
 }
 
+// navItems are provided by consuming apps and historically don't always carry an id,
+// so a fallback is generated (and cached per item) to avoid duplicate DOM ids.
+const navItemIdFallbacks = new WeakMap();
+function getNavItemDomId(item) {
+  if (item?.id) {
+    return `nav-item-${item.id}`;
+  }
+  if (!navItemIdFallbacks.has(item)) {
+    navItemIdFallbacks.set(item, `nav-item-${generateUUID()}`);
+  }
+  return navItemIdFallbacks.get(item);
+}
+
 function getNavItemClasses(item, index) {
   const isPublic = props.layoutMode === 'public';
 
@@ -353,6 +367,7 @@ provide('insideNavBar', insideNavBar);
       >
         <div class="lx-nav-item-wrapper">
           <LxButton
+            :id="getNavItemDomId(item)"
             :label="item.label"
             :href="item.to"
             :icon="
@@ -422,6 +437,7 @@ provide('insideNavBar', insideNavBar);
             :class="{ 'lx-selected': selectedNavItems[child?.to?.name] }"
           >
             <LxButton
+              :id="getNavItemDomId(child)"
               :label="child?.label"
               :href="child?.to"
               :tabindex="nestedNavOpen[index] ? getTabIndex : -1"
@@ -444,6 +460,7 @@ provide('insideNavBar', insideNavBar);
           @action-click="(id) => navClick(id)"
         >
           <LxButton
+            id="lx-shell-nav-overflow-button"
             icon="overflow-menu"
             :label="displayTexts?.overflowNavItems"
             variant="icon-only"
@@ -485,6 +502,7 @@ provide('insideNavBar', insideNavBar);
       >
         <div class="lx-nav-item-wrapper">
           <LxButton
+            :id="getNavItemDomId(item)"
             :label="item.label"
             :href="item.to"
             :icon="item.icon"
@@ -532,6 +550,7 @@ provide('insideNavBar', insideNavBar);
   </div>
   <LxButton
     v-if="layoutMode === 'public' && y > 120 && width > 900"
+    id="lx-shell-scroll-up-button"
     icon="scroll-up"
     kind="ghost"
     customClass="scroll-up-button"

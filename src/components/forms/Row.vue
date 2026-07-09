@@ -284,6 +284,7 @@ if (props.builderOptions.useRegistry) {
         <template v-if="actionDefinitions?.length === 1">
           <LxToggle
             v-if="actionDefinitions?.[0]?.kind === 'toggle'"
+            :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
             size="s"
             :modelValue="actionDefinitions?.[0]?.value || false"
             :tooltip="actionDefinitions?.[0].name"
@@ -296,6 +297,7 @@ if (props.builderOptions.useRegistry) {
           />
           <LxButton
             v-else
+            :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
             kind="ghost"
             variant="icon-only"
             :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
@@ -362,6 +364,7 @@ if (props.builderOptions.useRegistry) {
         <template v-if="actionDefinitions?.length === 1">
           <LxToggle
             v-if="actionDefinitions?.[0]?.kind === 'toggle'"
+            :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
             size="s"
             :modelValue="actionDefinitions?.[0].value || false"
             :tooltip="actionDefinitions?.[0].name"
@@ -374,6 +377,7 @@ if (props.builderOptions.useRegistry) {
           />
           <LxButton
             v-else
+            :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
             kind="ghost"
             variant="icon-only"
             :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"

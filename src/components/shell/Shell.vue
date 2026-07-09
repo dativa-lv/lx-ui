@@ -1492,6 +1492,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
 
   <LxModal
     ref="settingsModal"
+    id="settings-modal"
     :label="displayTexts.accessibilitySettings.title"
     size="l"
     :action-definitions="[
@@ -1505,6 +1506,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
   >
     <LxAccessibilitySettings
       v-if="settingsModalMounted"
+      id="settings-modal-content"
       :texts="displayTexts.accessibilitySettings"
     />
   </LxModal>

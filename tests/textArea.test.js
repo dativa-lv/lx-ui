@@ -20,7 +20,7 @@ describe('MyComponent', () => {
     test('should have the correct default props', () => {
       wrapper = mount(LxTextArea);
 
-      expect(wrapper.props().id).toBe(null);
+      expect(wrapper.props().id).toBeTypeOf('string');
       expect(wrapper.props().modelValue).toBe(null);
       expect(wrapper.props().placeholder).toBe(null);
       expect(wrapper.props().rows).toBe(3);

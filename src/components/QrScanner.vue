@@ -340,6 +340,7 @@ const wrapperRef = ref();
   >
     <LxToolbar
       v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"
+      :id="`${id}-toolbar`"
       class="lx-embedded-toolbar"
       :disabled="loading || error || refreshError || accepted"
       :actionDefinitions="toolbarActions"

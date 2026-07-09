@@ -1615,9 +1615,15 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
         </LxPopper>
       </div>
 
-      <LxModal ref="detailedModeModal" :label="displayTexts.detailsModalLabel" size="m">
+      <LxModal
+        ref="detailedModeModal"
+        :id="`${id}-details-modal`"
+        :label="displayTexts.detailsModalLabel"
+        size="m"
+      >
         <template v-if="$slots.details && selectionKind === 'multiple'">
           <LxContentSwitcher
+            :id="`${id}-details-switcher`"
             :items="detailsSwitchTypes"
             v-model="detailsSwitchType"
             kind="combo"
@@ -1643,6 +1649,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
         >
           <LxList
             ref="listRef"
+            :id="`${id}-details-list`"
             :items="displaySelectedItems"
             :idAttribute="props.idAttribute"
             :nameAttribute="props.nameAttribute"

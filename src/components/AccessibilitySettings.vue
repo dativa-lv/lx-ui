@@ -9,9 +9,10 @@ import LxValuePicker from '@/components/ValuePicker.vue';
 import LxLink from '@/components/Link.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { getInitialProps } from '@/utils/accessibilityUtils';
-import { capitalizeFirstLetter } from '@/utils/stringUtils';
+import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   headingTag: { type: String, default: 'div' }, // h1, h2, h3, h4, h5, h6, div
   headingLevel: { type: Number, default: 2 }, // 1-6
   texts: { type: Object, default: () => ({}) },
@@ -197,15 +198,16 @@ const headingAttrs = computed(() => {
 </script>
 
 <template>
-  <div class="lx-accessibility-settings-wrapper">
+  <div :id="id" class="lx-accessibility-settings-wrapper">
     <template v-for="(blocksInSection, section) in sections" :key="section">
-      <div class="lx-accessibility-settings-block">
+      <div :id="`${id}-section-${section}`" class="lx-accessibility-settings-block">
         <component :is="headingTag" v-bind="headingAttrs" class="heading-2">
           {{ displayTexts[section] }}
         </component>
         <template v-for="block in blocksInSection" :key="block.id">
           <LxDataBlock
             v-if="block.id !== 'theme' || themeDisplayItems.length > 0"
+            :id="`${id}-${block.id}`"
             size="l"
             :expandable="true"
             v-model="blockExpanderModels[block.id]"
@@ -233,7 +235,7 @@ const headingAttrs = computed(() => {
                   >
                     <div class="lx-icons"><LxIcon :value="block.icon" /></div>
                     <LxStack verticalAlignment="center" kind="compact">
-                      <div :id="`${block.id}-label`" class="lx-primary">
+                      <div :id="`${id}-${block.id}-label`" class="lx-primary">
                         {{ displayTexts[block.label] }}
                       </div>
                       <div v-if="block.id !== 'theme'" class="lx-secondary">
@@ -243,9 +245,10 @@ const headingAttrs = computed(() => {
                   </LxStack>
                   <LxToggle
                     v-if="block.id !== 'theme'"
+                    :id="`${id}-${block.id}-toggle`"
                     v-model="blockToggleModels[block.id]"
                     :tooltip="displayTexts[block.label]"
-                    :labelId="`${block.id}-label`"
+                    :labelId="`${id}-${block.id}-label`"
                     :texts="{
                       valueYes: displayTexts[toggleTextMap[block.id].yes],
                       valueNo: displayTexts[toggleTextMap[block.id].no],
@@ -256,9 +259,10 @@ const headingAttrs = computed(() => {
                   <LxValuePicker
                     variant="dropdown"
                     v-else-if="block.id === 'theme' && !blockExpanderModels[block.id]"
+                    :id="`${id}-${block.id}-dropdown`"
                     v-model="blockToggleModels[block.id]"
                     :items="themeDisplayItems"
-                    :labelId="`${block.id}-label`"
+                    :labelId="`${id}-${block.id}-label`"
                     @click.stop
                   >
                     <template #customItem="{ icon, name }">
@@ -284,6 +288,7 @@ const headingAttrs = computed(() => {
               </div>
               <LxLink
                 v-if="block.id === 'transparency' || block.id === 'animations'"
+                :id="`${id}-${block.id}-guideline-link`"
                 :href="guidelineLinks[block.id]"
               >
                 <template v-if="block.id === 'transparency'">
@@ -297,10 +302,11 @@ const headingAttrs = computed(() => {
             <div v-else-if="block.id === 'theme'" class="lx-theme-item-wrapper">
               <LxValuePicker
                 variant="tiles-custom"
+                :id="`${id}-${block.id}-tiles`"
                 v-model="blockToggleModels[block.id]"
                 :items="themeDisplayItems"
                 selectionKind="single"
-                :labelId="`${block.id}-label`"
+                :labelId="`${id}-${block.id}-label`"
               >
                 <template #customItem="{ icon, name, iconSet, description }">
                   <div class="lx-theme-item-content">
@@ -316,6 +322,7 @@ const headingAttrs = computed(() => {
       </div>
     </template>
     <LxButton
+      :id="`${id}-reset-button`"
       :label="displayTexts.reset"
       icon="reset"
       kind="tertiary"

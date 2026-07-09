@@ -465,6 +465,7 @@ const wrapperRef = ref();
 </script>
 <template>
   <div
+    :id="id"
     class="lx-map lx-complex-displayer"
     ref="wrapperRef"
     :style="grayscaleStyle"
@@ -473,6 +474,7 @@ const wrapperRef = ref();
     <LxLoaderView :loading="loadingLib" label="" :labelDone="displayTexts.labelDone">
       <LxToolbar
         v-if="showToolbar"
+        :id="`${id}-toolbar`"
         class="lx-embedded-toolbar"
         :actionDefinitions="toolbarActions"
         defaultArea="right"

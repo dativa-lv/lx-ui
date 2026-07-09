@@ -49,6 +49,7 @@ const initials = computed(() => getInitials(safeInitialsValue.value));
 </script>
 <template>
   <div
+    :id="id"
     class="lx-avatar-display"
     :aria-hidden="true"
     :class="[

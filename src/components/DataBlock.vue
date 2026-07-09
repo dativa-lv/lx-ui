@@ -8,10 +8,11 @@ import useLx from '@/hooks/useLx';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
-  id: { type: [String, Number], default: 'default' },
+  id: { type: [String, Number], default: () => generateUUID() },
   modelValue: { type: Boolean, default: false },
   size: { type: String, default: 'm' }, // 'm' medium or 'l' large
   icon: { type: String, default: null },
@@ -139,6 +140,7 @@ const expandIconTitle = computed(() => {
 </script>
 <template>
   <div
+    :id="id"
     class="lx-data-block-wrapper lx-region-component"
     :class="[
       { 'lx-data-block-wrapper-m': size === 'm' },

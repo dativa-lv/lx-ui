@@ -7,7 +7,7 @@ import LxButton from '@/components/Button.vue';
 import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
-  id: { type: String, default: generateUUID() },
+  id: { type: String, default: () => generateUUID() },
   label: { type: String, default: null },
   description: { type: String, default: null },
   variant: {
@@ -88,6 +88,7 @@ function handleClick(event) {
 
 <template>
   <div
+    :id="id"
     :class="containerClasses"
     :role="kind === 'clickable' ? 'button' : undefined"
     :tabindex="kind === 'clickable' ? '0' : '-1'"
@@ -146,6 +147,7 @@ function handleClick(event) {
       >
         <div class="lx-toolbar">
           <LxButton
+            :id="`${id}-overflow-button`"
             icon="overflow-menu"
             kind="ghost"
             :label="displayTexts.overflowMenu"

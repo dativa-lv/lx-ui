@@ -239,6 +239,7 @@ defineExpose({ open, close });
             <div :id="`${id}-label`" class="lx-primary" :title="label">{{ label }}</div>
             <LxButton
               v-if="!disableClosing"
+              :id="`${id}-close-button`"
               icon="close"
               kind="ghost"
               :label="displayTexts.close"
@@ -313,6 +314,7 @@ defineExpose({ open, close });
             <p :id="`${id}-label`" class="lx-primary">{{ label }}</p>
             <LxButton
               v-if="!disableClosing"
+              :id="`${id}-close-button`"
               icon="close"
               kind="ghost"
               :label="displayTexts.close"

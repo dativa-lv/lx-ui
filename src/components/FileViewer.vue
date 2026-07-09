@@ -1625,6 +1625,7 @@ onUnmounted(() => {
 
 <template>
   <div
+    :id="id"
     class="lx-file-viewer lx-complex-displayer"
     :class="[
       { 'lx-file-viewer-fullscreen': isExpanded },
@@ -1642,6 +1643,7 @@ onUnmounted(() => {
     />
     <LxToolbar
       v-if="supportedFileType"
+      :id="`${id}-toolbar`"
       class="lx-file-viewer-toolbar lx-embedded-toolbar"
       :loading="renderingInProgress"
       :actionDefinitions="toolbarActions"
@@ -1685,6 +1687,7 @@ onUnmounted(() => {
           <LxTextInput
             v-if="showInput && !renderingInProgress"
             ref="inputRef"
+            :id="`${id}-page-input`"
             mask="integer"
             v-model.number="inputPage"
             @keydown.enter="goToPage"

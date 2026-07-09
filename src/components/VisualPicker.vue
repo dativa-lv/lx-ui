@@ -434,6 +434,7 @@ if (props.builderOptions?.useRegistry) {
   >
     <LxContentSwitcher
       v-if="isImageVisible && mode === 'default'"
+      :id="`${id}-content-switcher`"
       :items="contentSwitcherItems"
       v-model="contentSwitcherModel"
       kind="combo"
@@ -463,6 +464,7 @@ if (props.builderOptions?.useRegistry) {
             </div>
             <LxButton
               v-if="!readOnly"
+              :id="`${id}-remove-${item?.id}`"
               icon="close"
               kind="ghost"
               variant="icon-only"
@@ -478,6 +480,7 @@ if (props.builderOptions?.useRegistry) {
       <div class="visual-select" v-show="!loading && !errorState">
         <LxList
           ref="listRef"
+          :id="`${id}-list`"
           :items="!readOnly ? items : selectedItems"
           :hasSelecting="!readOnly"
           :selectionKind="selectionKind"

@@ -402,7 +402,7 @@ onUnmounted(() => {
     :badge-title="badgeTitle"
     :customClass="customClass"
     :render-mode="expanderRenderMode"
-    :id="id"
+    :id="`${sectionUUID}-expander`"
   >
     <section
       :id="sectionUUID"

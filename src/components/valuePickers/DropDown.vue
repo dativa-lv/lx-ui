@@ -15,7 +15,7 @@ import LxDropDown from '@/components/DropDown.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Array, String, Number], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -415,7 +415,7 @@ onClickOutside(refRoot, closeOnClickOutside, {
 });
 
 function onEnter() {
-  if (document.activeElement?.id === 'clearButton') {
+  if (document.activeElement?.id === `${props.id}-clear-button`) {
     clear();
     return;
   }
@@ -719,7 +719,7 @@ function countDigits(number) {
                 <div class="lx-tag-button">
                   <LxInfoWrapper ref="infoWrapperRef" :disabled="disabled" :focusable="false">
                     <LxButton
-                      id="clearButton"
+                      :id="`${id}-clear-button`"
                       :label="displayTexts.clearChosen"
                       :disabled="disabled"
                       kind="secondary"
@@ -792,7 +792,7 @@ function countDigits(number) {
                       class="select-all-wrapper"
                     >
                       <div
-                        id="select-all"
+                        :id="`${id}-select-all`"
                         class="lx-value-picker-item select-all lx-popover-item-selecting"
                         :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
                         :tabindex="

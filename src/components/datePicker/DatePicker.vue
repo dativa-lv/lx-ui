@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, inject, nextTick } from 'vue';
 import { useMediaQuery, useWindowSize } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 import {
   parseDate,
@@ -40,7 +41,7 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxIcon from '@/components/Icon.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [String, Date, Object], default: null },
   mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters', ('day-month' is handled by LxDayMonthPicker, not here)
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'

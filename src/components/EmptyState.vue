@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -8,6 +9,7 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 const emits = defineEmits(['actionClick']);
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   label: { type: String, default: '' },
   description: { type: String, default: '' },
   icon: { type: String, default: '' },
@@ -28,7 +30,7 @@ function handleActionClick(actionName) {
 </script>
 
 <template>
-  <div class="lx-empty-state-wrapper">
+  <div :id="id" class="lx-empty-state-wrapper">
     <div class="lx-empty-state-data">
       <LxIcon v-if="icon" :value="icon" />
       <p class="lx-primary">{{ label }}</p>
@@ -65,6 +67,7 @@ function handleActionClick(actionName) {
           @actionClick="(id) => handleActionClick(id)"
         >
           <LxButton
+            :id="`${id}-overflow-button`"
             icon="overflow-menu"
             kind="tertiary"
             :label="displayTexts.overflowMenu"

@@ -761,6 +761,7 @@ defineExpose({ toggleSearch, focusAction });
           >
             <LxTextInput
               ref="searchInputDefault"
+              :id="`${id}-search-input`"
               :key="searchInputRefresh"
               role="search"
               v-model="searchStringRaw"
@@ -774,6 +775,7 @@ defineExpose({ toggleSearch, focusAction });
             />
             <LxButton
               v-if="searchSide === 'server'"
+              :id="`${id}-search-button`"
               icon="search"
               kind="ghost"
               variant="icon-only"
@@ -784,6 +786,7 @@ defineExpose({ toggleSearch, focusAction });
             />
             <LxButton
               v-if="searchStringRaw"
+              :id="`${id}-search-clear-button`"
               icon="clear"
               kind="ghost"
               variant="icon-only"
@@ -953,6 +956,7 @@ defineExpose({ toggleSearch, focusAction });
             :class="{ 'is-expanded': isSearchExpanded }"
           >
             <LxButton
+              :id="`${id}-search-toggle-button`"
               class="lx-toolbar-search-button"
               kind="ghost"
               variant="icon-only"
@@ -991,6 +995,7 @@ defineExpose({ toggleSearch, focusAction });
       >
         <LxTextInput
           ref="searchInputCompact"
+          :id="`${id}-search-input`"
           role="search"
           v-model="searchStringRaw"
           :kind="searchSide === 'server' ? 'default' : 'search'"
@@ -1005,6 +1010,7 @@ defineExpose({ toggleSearch, focusAction });
         <div class="lx-group lx-slot-wrapper">
           <LxButton
             v-if="searchSide === 'server'"
+            :id="`${id}-search-button`"
             icon="search"
             kind="ghost"
             variant="icon-only"
@@ -1016,6 +1022,7 @@ defineExpose({ toggleSearch, focusAction });
 
           <LxButton
             v-if="searchStringRaw"
+            :id="`${id}-search-clear-button`"
             icon="clear"
             kind="ghost"
             variant="icon-only"

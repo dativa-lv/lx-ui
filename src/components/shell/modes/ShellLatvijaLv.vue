@@ -235,6 +235,7 @@ const {
             <p v-if="alert?.description" class="lx-secondary">{{ alert?.description }}</p>
           </div>
           <LxButton
+            :id="`${alert.id}-close`"
             icon="close"
             kind="ghost"
             variant="icon-only"

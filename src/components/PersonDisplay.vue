@@ -6,9 +6,11 @@ import LxIcon from '@/components/Icon.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   value: { type: [String, Object], default: null },
   kind: { type: String, default: null }, // 'default', 'initials'
   name: { type: String, default: null },
@@ -286,6 +288,7 @@ defineExpose({ focus, scrollIntoView });
     <LxInfoWrapper
       v-else
       ref="infoWrapperRef"
+      :id="id"
       :label="ariaLabel"
       :customRole
       :class="showMultiple ? 'lx-aligned-row lx-aligned-row-4 lx-aligned-row-inverse' : ''"

@@ -72,6 +72,7 @@ function handleActionClick(id) {
         v-if="actionDefinitions && actionDefinitions?.length === 1"
       >
         <LxButton
+          :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
           kind="ghost"
           :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
           :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
@@ -98,6 +99,7 @@ function handleActionClick(id) {
       >
         <div class="lx-widget-toolbar-button">
           <LxButton
+            :id="`${id}-overflow-button`"
             icon="overflow-menu"
             kind="ghost"
             :label="displayTexts.overflowMenu"

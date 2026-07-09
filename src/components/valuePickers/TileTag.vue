@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { textSearch } from '@/utils/stringUtils';
+import { textSearch, generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxIcon from '@/components/Icon.vue';
@@ -9,7 +9,7 @@ import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Array, String], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },

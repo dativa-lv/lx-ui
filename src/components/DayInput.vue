@@ -604,6 +604,7 @@ watch(
 
         <div v-else-if="variant === 'default'" class="lx-duration-fields">
           <LxTextInput
+            :id="`${id}-value`"
             v-model="singleValue"
             :mask="singleInputMask"
             :kind="singleInputKind"
@@ -617,6 +618,7 @@ watch(
             :builderOptions="{ innerComponent: true }"
           />
           <LxValuePicker
+            :id="`${id}-unit`"
             v-model="singleUnit"
             :items="singleUnitOptions"
             :placeholder="displayTexts.dropdownPlaceholder"

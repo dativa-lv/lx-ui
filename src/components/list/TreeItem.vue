@@ -179,6 +179,7 @@ watch(
     >
       <LxButton
         v-if="isExpandable(item)"
+        :id="`${item[idAttribute]}-expand-toggle`"
         kind="ghost"
         :icon="isExpanded(item?.[idAttribute]) ? 'chevron-up' : 'chevron-down'"
         variant="icon-only"
@@ -247,6 +248,7 @@ watch(
         {{ texts?.loadingError }}
       </div>
       <LxButton
+        :id="`${item[idAttribute]}-reload`"
         kind="ghost"
         icon="refresh"
         variant="icon-only"

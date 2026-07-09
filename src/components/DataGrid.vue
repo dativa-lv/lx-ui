@@ -1915,6 +1915,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 @actionClick="(id) => handleSelectionActionClick(id, selectedRows)"
               >
                 <LxButton
+                  :id="`${id}-selection-actions-button`"
                   icon="menu"
                   kind="ghost"
                   :label="displayTexts.overflowMenu"
@@ -3107,6 +3108,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         {{ displayTexts.itemsPerPage }}
         <LxDropDownMenu :disabled="isDisabled">
           <LxButton
+            :id="`${id}-items-per-page-button`"
             :label="itemsPerPage.toString()"
             icon="chevron-down"
             kind="ghost"
@@ -3118,6 +3120,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               <LxButton
                 v-for="i in itemsCountSelector"
                 :key="i"
+                :id="`${id}-items-per-page-${i}`"
                 :label="`${i.toString()} ${displayTexts.itemsPerPageLabel}`"
                 :disabled="itemsPerPage === i || isDisabled"
                 @click="changeItemsPerPage(i)"
