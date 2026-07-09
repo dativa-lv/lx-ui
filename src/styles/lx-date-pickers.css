@@ -264,7 +264,8 @@
   width: 35rem;
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.quarters-only {
+.lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.quarters-only,
+.lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.mobile-quarters {
   height: 24rem;
 }
 
@@ -412,7 +413,7 @@
 .lx .lx-layout .lx-calendar-container .lx-calendar-year-wrapper {
   display: flex;
   justify-content: center;
-  width: 5.13rem;
+  width: 5.215rem;
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-month-wrapper.full-layout {
@@ -1184,6 +1185,34 @@
   width: 16rem;
 }
 
+/* Responsive date-time "time open": match the time picker to the calendar layout footprint. */
+.lx .lx-layout .lx-calendar-container.mode-date-time:has(.lx-calendar-layouts-wrapper.date-time-only) .lx-time-picker-container,
+.lx .lx-layout .lx-calendar-container.mode-date-time-full:has(.lx-calendar-layouts-wrapper.date-time-only) .lx-time-picker-container {
+  border-left: var(--border-width-0);
+}
+
+.lx .lx-layout .lx-calendar-container.mode-date-time:has(.lx-calendar-layouts-wrapper.date-time-only) .lx-time-columns,
+.lx .lx-layout .lx-calendar-container.mode-date-time-full:has(.lx-calendar-layouts-wrapper.date-time-only) .lx-time-columns {
+  height: 16.125rem;
+  margin: 1.5rem var(--space-0);
+  padding: var(--space-0) 6rem;
+}
+
+.lx .lx-layout .lx-calendar-container.mode-date-time-full:has(.lx-calendar-layouts-wrapper.date-time-only) .lx-time-columns {
+  padding: var(--space-0) calc(3.25rem + 1px);
+}
+
+/* 7 visible items (14rem) — keep in sync with getVisibleCount() in CalendarContainer.vue. */
+.lx .lx-layout .lx-calendar-container.mode-date-time:has(.lx-calendar-layouts-wrapper.date-time-only) .lx-time-list-viewport,
+.lx .lx-layout .lx-calendar-container.mode-date-time-full:has(.lx-calendar-layouts-wrapper.date-time-only) .lx-time-list-viewport {
+  height: 14rem;
+}
+
+.lx .lx-layout .lx-calendar-container.mode-date-time:has(.lx-calendar-layouts-wrapper.date-time-only) .lx-time-list,
+.lx .lx-layout .lx-calendar-container.mode-date-time-full:has(.lx-calendar-layouts-wrapper.date-time-only) .lx-time-list {
+  grid-template-rows: repeat(7, 2rem);
+}
+
 .lx-calendar-quarter-inner-wrapper.hovering-range.start-quarter:not(.lx-selected-start-quarter-wrapper)::before {
   background: var(--color-input-background-selected);
 }
@@ -1217,30 +1246,6 @@
 }
 
 @media (max-width: 640px) {
-  .lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.mobile-quarters {
-    height: 30.5rem;
-  }
-
-  .lx .lx-layout .lx-calendar-container .lx-calendar-layouts:not(.date-time-only) {
-    margin: var(--space-3000) var(--space-1500) var(--space-0);
-  }
-
-  .lx .lx-layout .lx-calendar-container .lx-calendar-main .lx-calendar-layouts-wrapper .lx-button.lx-previous-slide-button {
-    position: absolute;
-    left: var(--space-0);
-    z-index: 100;
-  }
-
-  .lx .lx-layout .lx-calendar-container .lx-calendar-main .lx-calendar-layouts-wrapper .lx-button.lx-next-slide-button {
-    position: absolute;
-    right: var(--space-0);
-    z-index: 100;
-  }
-
-  .lx .lx-layout .lx-calendar-container .lx-calendar-header .lx-button.lx-calendar-years-select-button {
-    margin-right: var(--space-1000);
-  }
-  
   .lx .lx-layout .lx-calendar-container:has(.lx-full-rows) .lx-calendar-header {
     justify-content: flex-start;
   }
@@ -1294,6 +1299,39 @@
   }
 }
 
+@media (max-width: 350px) {
+  .lx .lx-layout .lx-calendar-container .lx-calendar-header .lx-button.lx-calendar-months-select-button {
+    max-width: 8rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .lx .lx-layout .lx-calendar-container .lx-time-columns {
+    height: 16rem;
+    margin: 3rem auto var(--space-0);
+  }
+
+  .lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper.mobile-quarters {
+    height: 30.5rem;
+  }
+
+  .lx .lx-layout .lx-calendar-container:not(.mode-month) .lx-calendar-layouts:not(.date-time-only) {
+    margin: var(--space-3000) var(--space-1500) var(--space-0);
+  }
+
+  .lx .lx-layout .lx-calendar-container .lx-calendar-main .lx-calendar-layouts-wrapper .lx-button.lx-previous-slide-button {
+    position: absolute;
+    left: var(--space-0);
+    z-index: 100;
+  }
+
+  .lx .lx-layout .lx-calendar-container .lx-calendar-main .lx-calendar-layouts-wrapper .lx-button.lx-next-slide-button {
+    position: absolute;
+    right: var(--space-0);
+    z-index: 100;
+  }
+}
+ 
 .lx .lx-layout .lx-day-month-picker {
   display: flex;
   flex-direction: column;

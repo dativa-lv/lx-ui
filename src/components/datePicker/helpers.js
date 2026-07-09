@@ -16,7 +16,7 @@ import { DATE_VALIDATION_RESULT, DAYS_IN_MONTH } from '@/constants';
 import { isDefined, isNil } from '@/utils/generalUtils';
 
 export const constants = {
-  MOBILE_SCREEN_WIDTH: 690,
+  MOBILE_SCREEN_WIDTH: 700,
 };
 
 export const normalizeDate = (d, mode = 'date') => {

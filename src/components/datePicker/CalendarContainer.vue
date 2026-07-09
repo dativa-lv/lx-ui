@@ -200,8 +200,18 @@ const selectedSecond = ref(null);
 
 // Settings for time picker scrolling and focus management
 const timeContainerRef = ref(null);
-const VISIBLE_COUNT = 5;
-const INITIAL_ACTIVE_OFFSET = Math.floor(VISIBLE_COUNT / 2);
+// 7 visible items in the responsive date-time "time open" layout, 5 otherwise.
+function getVisibleCount() {
+  const isMobile = windowSize.width.value < constants.MOBILE_SCREEN_WIDTH;
+  return (props.mode === 'date-time' || props.mode === 'date-time-full') &&
+    isMobile &&
+    mobileTimeLayout.value
+    ? 7
+    : 5;
+}
+function getActiveOffset() {
+  return Math.floor(getVisibleCount() / 2);
+}
 
 const columnOrder = ['hours', 'minutes', 'seconds'];
 const baseRanges = {
@@ -222,9 +232,10 @@ const timeStarts = ref({
 });
 
 const timeActiveOffsets = ref({
-  hours: INITIAL_ACTIVE_OFFSET,
-  minutes: INITIAL_ACTIVE_OFFSET,
-  seconds: INITIAL_ACTIVE_OFFSET,
+  // Centered offset for the default 5-item layout; re-centered on count change.
+  hours: 2,
+  minutes: 2,
+  seconds: 2,
 });
 
 const activeTimeColumn = ref(null);
@@ -276,7 +287,7 @@ function getVisibleTimeItems(column) {
   const max = itemsArray.length;
   const start = timeStarts.value[column];
 
-  return Array.from({ length: VISIBLE_COUNT }, (_, offset) => {
+  return Array.from({ length: getVisibleCount() }, (_, offset) => {
     const virtualIndex = start + offset;
     const index = positiveMod(virtualIndex, max);
     const item = itemsArray[index];
@@ -296,8 +307,9 @@ function timeTransitionName(column) {
 }
 
 function centerTimeColumnOnIndex(column, index) {
-  timeStarts.value[column] = Number(index) - INITIAL_ACTIVE_OFFSET;
-  timeActiveOffsets.value[column] = INITIAL_ACTIVE_OFFSET;
+  const activeOffset = getActiveOffset();
+  timeStarts.value[column] = Number(index) - activeOffset;
+  timeActiveOffsets.value[column] = activeOffset;
 }
 
 function centerTimeColumnOnValue(column, value) {
@@ -551,13 +563,14 @@ function initializeTimePicker() {
   const minute = selectedMinute.value ?? anchorDate.getMinutes();
   const second = selectedSecond.value ?? anchorDate.getSeconds();
 
-  timeStarts.value.hours = hour - INITIAL_ACTIVE_OFFSET;
-  timeStarts.value.minutes = minute - INITIAL_ACTIVE_OFFSET;
-  timeStarts.value.seconds = second - INITIAL_ACTIVE_OFFSET;
+  const activeOffset = getActiveOffset();
+  timeStarts.value.hours = hour - activeOffset;
+  timeStarts.value.minutes = minute - activeOffset;
+  timeStarts.value.seconds = second - activeOffset;
 
-  timeActiveOffsets.value.hours = INITIAL_ACTIVE_OFFSET;
-  timeActiveOffsets.value.minutes = INITIAL_ACTIVE_OFFSET;
-  timeActiveOffsets.value.seconds = INITIAL_ACTIVE_OFFSET;
+  timeActiveOffsets.value.hours = activeOffset;
+  timeActiveOffsets.value.minutes = activeOffset;
+  timeActiveOffsets.value.seconds = activeOffset;
 
   ensureTimeColumnSelectableFocus('hours');
   ensureTimeColumnSelectableFocus('minutes');
@@ -3973,6 +3986,14 @@ watch(
   }
 );
 
+// Re-center columns when the visible time-item count changes (5 <-> 7).
+watch(
+  () => getVisibleCount(),
+  () => {
+    nextTick(() => syncTimeColumnViewportWithSelection());
+  }
+);
+
 watch(
   () => props.mode,
   (newKind) => {
@@ -4658,10 +4679,7 @@ if (typeof globalThis !== 'undefined') {
   >
     <div
       class="lx-calendar-header"
-      v-if="
-        (mode !== 'month' && !isMobileScreen) ||
-        (mode !== 'time' && isMobileScreen && !mobileTimeLayout)
-      "
+      v-if="mode !== 'month' && (!isMobileScreen || !mobileTimeLayout)"
     >
       <LxButton
         v-if="
@@ -4745,9 +4763,10 @@ if (typeof globalThis !== 'undefined') {
           {
             'date-only':
               pickerType === 'single' &&
-              (mode === 'date' || mode === 'date-time' || mode === 'date-time-full') &&
-              !isMobileScreen &&
-              (variant === 'default' || variant === 'picker'),
+              (variant === 'default' || variant === 'picker') &&
+              !responsiveView &&
+              (mode === 'date' ||
+                ((mode === 'date-time' || mode === 'date-time-full') && !mobileTimeLayout)),
             'lx-quarters': mode === 'quarters',
             'quarters-only': mode === 'quarters' && !isMobileScreen,
             'mobile-quarters': mode === 'quarters' && isMobileScreen,
@@ -4768,7 +4787,7 @@ if (typeof globalThis !== 'undefined') {
               (mode === 'date-time' || mode === 'date-time-full') &&
               isMobileScreen &&
               mobileTimeLayout,
-            'months-only': mode === 'month' && !isMobileScreen,
+            'months-only': mode === 'month',
             'years-and-month-year-only':
               (mode === 'year' || mode === 'month-year') && !isMobileScreen,
             'range-month-year': pickerType === 'range' && mode === 'month-year' && !isMobileScreen,
@@ -4778,7 +4797,7 @@ if (typeof globalThis !== 'undefined') {
         :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
       >
         <LxButton
-          v-if="(isMobileScreen && !mobileTimeLayout) || (mode !== 'month' && !isMobileScreen)"
+          v-if="mode !== 'month' && (!isMobileScreen || !mobileTimeLayout)"
           :id="`${id}-previous-slide-button`"
           customClass="lx-previous-slide-button"
           :label="previousSlideButtonLabel"
@@ -5741,7 +5760,7 @@ if (typeof globalThis !== 'undefined') {
         </div>
 
         <LxButton
-          v-if="(isMobileScreen && !mobileTimeLayout) || (mode !== 'month' && !isMobileScreen)"
+          v-if="mode !== 'month' && (!isMobileScreen || !mobileTimeLayout)"
           :id="`${id}-next-slide-button`"
           customClass="lx-next-slide-button"
           :label="nextSlideButtonLabel"
