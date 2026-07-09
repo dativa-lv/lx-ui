@@ -805,7 +805,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   position: fixed;
   top: var(--space-0);
   left: var(--space-0);
-  z-index: 8100;
+  z-index: 8101;
   background-color: var(--color-region);
   display: grid;
   grid-template-rows: 1fr;

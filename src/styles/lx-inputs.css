@@ -3474,7 +3474,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   position: fixed;
   top: var(--space-0);
   left: var(--space-0);
-  z-index: 8100;
+  z-index: 8101;
   background-color: var(--color-region);
   display: grid;
   grid-template-rows: var(--row-size) 1fr;
@@ -3944,7 +3944,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   }
 }
 
-.lx .lx-file-viewer.lx-complex-displayer.is-ready {
+.lx .lx-file-viewer.lx-complex-displayer.is-ready:not(.lx-file-viewer-fullscreen) {
   background: transparent;
 }
 
