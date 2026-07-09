@@ -35,7 +35,7 @@ svg .lx-shade {
   position: sticky;
   top: var(--nav-row-size);
   background-color: var(--color-region);
-  z-index: 10;
+  z-index: 11;
 }
 
 .lx-modal .lx-form-grid > header.lx-sticky,
@@ -758,7 +758,7 @@ svg .lx-shade {
   padding-right: var(--space-0);
 }
 
-.lx-modal > .lx-main .lx-form-grid > .lx-main .lx-row {
+.lx-modal > .lx-main .lx-form-grid > .lx-main .lx-row:not(:has(.lx-toolbar-sticky)) {
   overflow-x: hidden;
 }
 
@@ -2189,5 +2189,12 @@ p .lx-person-display-wrapper {
   .lx-form-grid .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
   .lx-form-grid .lx-wizard .lx-wizard-container {
     position: static !important;
+  }
+
+  .lx-form-grid > header.lx-sticky::after,
+  .lx-form-grid > footer.lx-sticky::before,
+  .lx-form-grid .lx-tab-control > header.lx-sticky.lx-toolbar::after,
+  .lx-form-grid .lx-wizard > header.lx-sticky.lx-toolbar::after {
+    opacity: 0 !important;
   }
 }

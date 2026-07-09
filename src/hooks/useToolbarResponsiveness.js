@@ -752,7 +752,7 @@ export function useToolbarResponsiveness({
     });
     resizeObserver.observe(toolbar);
 
-    globalThis.addEventListener('scroll', handleScroll, { passive: true });
+    globalThis.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     recalculateLayout();
   });
 
@@ -762,7 +762,7 @@ export function useToolbarResponsiveness({
       resizeObserver = null;
     }
 
-    globalThis.removeEventListener('scroll', handleScroll);
+    globalThis.removeEventListener('scroll', handleScroll, { capture: true });
 
     if (frame) {
       cancelAnimationFrame(frame);

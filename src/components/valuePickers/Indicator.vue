@@ -128,10 +128,6 @@ function getItemId(id) {
   return `${props.id}-item-${id}`;
 }
 
-function getLabelId(id) {
-  return `${id}-${props.id}-icon`;
-}
-
 function selectSingle(id) {
   if (props.disabled || props.readOnly) return;
 
@@ -407,12 +403,11 @@ const wrapperRef = ref();
           (!alwaysAsArray && item[idAttribute] === model) ||
           item[idAttribute] === checkNull(model)
         "
-        :aria-labelledby="getLabelId(item[idAttribute])"
+        :aria-label="indicatorTooltips[item[idAttribute]]"
         @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
       >
         <template v-if="variant === 'indicator'">
           <LxIcon
-            :id="getLabelId(item[idAttribute])"
             :value="getIcon(item, iconAttribute)"
             :title="indicatorTooltips[item[idAttribute]]"
             :iconSet="getIconSet(item, iconSetAttribute)"
@@ -442,12 +437,11 @@ const wrapperRef = ref();
         @click="selectMultiple(item[idAttribute])"
         role="checkbox"
         :aria-checked="itemsModel[item[idAttribute]]"
-        :aria-labelledby="getLabelId(item[idAttribute])"
+        :aria-label="indicatorTooltips[item[idAttribute]]"
         @keydown.space.prevent="selectMultiple(item[idAttribute])"
       >
         <template v-if="variant === 'indicator'">
           <LxIcon
-            :id="getLabelId(item[idAttribute])"
             :value="getIcon(item, iconAttribute)"
             :title="indicatorTooltips[item[idAttribute]]"
             :iconSet="getIconSet(item, iconSetAttribute)"

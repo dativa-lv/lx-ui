@@ -1273,22 +1273,26 @@
 .lx .lx-component-toolbar.lx-toolbar-sticky  {
   position: sticky;
   top: calc(var(--nav-row-size) + var(--toolbar-gap-top, 0rem));
-  z-index: 10;
+  z-index: 11;
  }
+
+.lx .lx-component-toolbar.lx-toolbar-sticky.lx-toolbar-hidden-under-footer {
+  z-index: 5;
+}
 
 .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
 .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--public-nav-header-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+  top: calc(var(--public-nav-header-size) + var(--row-size) + var(--toolbar-gap-top, 0rem) + var(--border-width-1)); /* +1px for form border */
 }
 
 .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-component-toolbar.lx-toolbar-sticky,
 .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--public-nav-header-size) + var(--toolbar-gap-top, 0rem));
+  top: calc(var(--public-nav-header-size) + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
 }
 
 .lx .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper {
-  top: calc(var(--nav-row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+  top: calc(var(--nav-row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
 }
 
 .lx-region .lx-embedded-toolbar,
@@ -1303,32 +1307,32 @@
   --color-toolbar-embedded-background: inherit;
 }
 
-.lx .lx-region .lx-list-wrapper .lx-sticky-toolbar-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-region-component .lx-list-wrapper .lx-sticky-toolbar-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region-component .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region-component .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region-component .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
   background: var(--color-region);
-} 
+}
 
 .lx .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
   background: var(--color-background);
-} 
+}
 
 .lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--toolbar-gap-top, 0rem));
+  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
 }
 
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--public-nav-header-size) + var(--row-size) * 2 + var(--toolbar-gap-top, 0rem));
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2 + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
 }
 
 .lx-toolbar-sticky.lx-toolbar-hidden-under-header {
@@ -1377,6 +1381,11 @@
   top: calc(var(--space-1000)* -1);
 }
 
+.lx #modals .lx-modal .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
+.lx #modals .lx-modal .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper {
+  top: calc(var(--row-size) + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
+}
+
 .lx #modals .lx-curtain .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
   top: calc(var(--nav-row-size) - var(--space-1000));
 }
@@ -1388,7 +1397,7 @@
 
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper {
-  top: calc(var(--public-nav-header-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+  top: calc(var(--public-nav-header-size) + var(--row-size) + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
 }
 
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
@@ -1398,7 +1407,7 @@
 
 .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-sticky-toolbar-list-wrapper,
 .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-sticky-toolbar-list-wrapper {
-  top: calc(var(--nav-row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+  top: calc(var(--nav-row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
 }
 
 .lx:not(.lx-theme-contrast) .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky::after {
@@ -1426,14 +1435,14 @@
 
 .lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
 .lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper {
-  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--border-width-1));
 }
 
 .lx .lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
 .lx .lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper,
 .lx .lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
 .lx .lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper {
-  top: calc(var(--public-nav-header-size) + var(--row-size) * 2);
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2 + var(--border-width-1));
 }
 
 .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
@@ -1448,12 +1457,12 @@
 .lx .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-sticky-toolbar-list-wrapper,
 .lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky  {
-  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--border-width-1));
 }
 
 .lx .lx-layout.lx-layout-public .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-public .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--nav-row-size) + var(--row-size) * 3);
+  top: calc(var(--nav-row-size) + var(--row-size) * 3 + var(--border-width-1));
 }
 
 .lx .lx-form-grid>header.lx-form-with-tabs+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
@@ -1464,7 +1473,7 @@
 .lx .lx-form-grid>header.lx-form-with-steps+.lx-wizard .lx-sticky-toolbar-list-wrapper,
 .lx .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
 .lx .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper {
-  top: calc(var(--nav-row-size) + var(--row-size));
+  top: calc(var(--nav-row-size) + var(--row-size) + var(--border-width-1));
 }
 
 .lx .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
@@ -1473,14 +1482,14 @@
 .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper,
 .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--border-width-1));
 }
 
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--public-nav-header-size) + var(--row-size) * 2);
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2 + var(--border-width-1));
 }
 
 .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar){
@@ -1519,7 +1528,7 @@
 @media (max-height: 640px) {
   .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-component-toolbar.lx-toolbar-sticky {
-    top: calc(var(--row-size) + var(--toolbar-gap-top, 0rem));
+    top: calc(var(--row-size) + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
   }
 
   .lx .lx-layout.lx-layout-public.no-nav-items .lx-component-toolbar.lx-toolbar-sticky,
@@ -1529,7 +1538,7 @@
 
   .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky {
-    top: calc(var(--row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
+    top: calc(var(--row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
   }
 }
 
@@ -1538,25 +1547,21 @@
   .lx .lx-sticky-toolbar-list-wrapper {
       position: static;
   }
-  
-  /* Keep the LxList toolbar sticky on short viewports. The mobile keyboard
-     shrinks the viewport below this breakpoint; dropping sticky there makes a
-     scrolled list jump, because the toolbar (and the focused search input) fall
-     back to their in-flow position at the top of the list. */
-  .lx .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
-    position: sticky;
+
+  .lx .lx-component-toolbar.lx-toolbar-sticky::after {
+    opacity: 0 !important;
   }
 }
 
 @media (max-width: 900px) {
   .lx .lx-layout.lx-layout-public .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv .lx-component-toolbar.lx-toolbar-sticky {
-	  top: var(--row-size);
+	  top: calc(var(--row-size) + var(--border-width-1));
 	}
   
   .lx .lx-layout.lx-layout-public .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper {
-    top: calc(var(--row-size)*2) !important;
+    top: calc(var(--row-size)*2 + var(--border-width-1)) !important;
   }
 
   .lx .lx-layout.lx-layout-public .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
@@ -1566,19 +1571,19 @@
 
   .lx .lx-layout.lx-layout-public .lx-data-grid-wrapper .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout.lx-layout-latvijalv .lx-data-grid-wrapper .lx-sticky-toolbar-list-wrapper {
-    top: var(--nav-row-size);
+    top: calc(var(--nav-row-size) + var(--border-width-1));
   }
 
   .lx .lx-layout.lx-layout-public .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-public .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv .lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-    top: calc(var(--public-nav-header-size) + var(--row-size));
+    top: calc(var(--public-nav-header-size) + var(--row-size) + var(--border-width-1));
   }
 
   .lx .lx-layout.lx-layout-public .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid header.lx-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky {
-    top: var(--public-nav-header-size);
+    top: calc(var(--public-nav-header-size) + var(--border-width-1));
   }
   .lx-layout-public .lx-data-grid-wrapper > .lx-grid-header-wrapper,
   .lx-layout-latvijalv .lx-data-grid-wrapper > .lx-grid-header-wrapper {
@@ -1587,7 +1592,7 @@
 
   .lx .lx-layout.lx-layout-public .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout.lx-layout-latvijalv.lx-sticky-toolbar-list-wrapper {
-    top: calc(var(--nav-row-size));
+    top: calc(var(--nav-row-size) + var(--border-width-1));
   }
  
   .lx .lx-layout.lx-layout-public .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar,
@@ -1599,14 +1604,14 @@
   .lx .lx-layout-public .lx-wizard .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout-latvijalv .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout-latvijalv .lx-wizard .lx-sticky-toolbar-list-wrapper {
-    top: calc(var(--row-size) * 3) !important;
+    top: calc(var(--row-size) * 3 + var(--border-width-1)) !important;
   }
 
   .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-    top: calc(var(--row-size) * 3);
+    top: calc(var(--row-size) * 3 + var(--border-width-1));
   }
 
   .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
@@ -1623,7 +1628,7 @@
   .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky {
-     top: calc(var(--nav-row-size) + var(--row-size)  * 2);
+     top: calc(var(--nav-row-size) + var(--row-size)  * 2 + var(--border-width-1));
   }
 
   .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
@@ -1634,7 +1639,7 @@
   .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard .lx-sticky-toolbar-list-wrapper {
-    top: calc(var(--row-size) * 3) !important;
+    top: calc(var(--row-size) * 3 + var(--border-width-1)) !important;
   }
 
   .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
@@ -1645,12 +1650,8 @@
   .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-tab-control .lx-tab-body .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-wizard .lx-sticky-toolbar-list-wrapper {
-    top: calc(var(--row-size) * 2) !important;
+    top: calc(var(--row-size) * 2 + var(--border-width-1)) !important;
   } 
-
-  .lx .lx-component-toolbar.lx-toolbar-sticky.lx-toolbar-hidden-under-footer {
-    z-index: 5;
-  }
 
   .lx-layout.lx-layout-public .lx-form-grid > .lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
   .lx-layout.lx-layout-latvijalv .lx-form-grid > .lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
