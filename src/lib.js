@@ -15,6 +15,25 @@ import { shellModeLoaders } from '@/components/shell/shellModeLoaders';
  * @property {string} authClientId - OAuth client ID
  * @property {string} publicUrl - Public base URL of the application
  * @property {string} environment - Current environment ('dev', 'test', 'prod', etc.)
+ * @property {string} [dateFormat] - Default date format
+ * @property {string} [dateTimeFormat] - Default date and time format
+ * @property {string} [dateTimeFullFormat] - Default full date and time format
+ * @property {string} [iconSet] - Default icon set
+ * @property {string} [avatarKind] - Default avatar kind
+ * @property {string} [currency] - Default currency code
+ * @property {Object} [locale] - Locale configuration
+ * @property {string} [locale.locale] - Locale identifier (e.g. 'lv-LV')
+ * @property {number} [locale.firstDayOfTheWeek] - First day of week for date picker calendars (1-7)
+ * @property {Object} [locale.masks] - Date picker mask configuration
+ * @property {string} [locale.masks.input] - Date input mask
+ * @property {string} [locale.masks.inputDateTime24hr] - Date and time input mask
+ * @property {string} [locale.masks.inputDateTimeFull24hr] - Full date and time input mask
+ * @property {string} [locale.masks.inputTime24hr] - Time input mask
+ * @property {string} [locale.masks.inputTimeFull24hr] - Full time input mask
+ * @property {string} [locale.masks.inputMonthYear] - Month and year input mask
+ * @property {string} [locale.masks.inputQuarters] - Quarter input mask
+ * @property {string} [locale.masks.inputYear] - Year input mask
+ * @property {string} [locale.masks.monthYearFormat] - Month and year output format
  * @property {Object} [preload] - Configuration for preloading async components
  * @property {string[]} [preload.components] - Array of actual components to preload (e.g. [LxModal, LxDataGrid])
  * @property {string[]} [preload.shellModes] - Array of shell mode names to preload (e.g. ['default', 'digimaks'])

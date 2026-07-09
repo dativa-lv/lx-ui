@@ -33,6 +33,7 @@ Check out our [🌐&nbsp;Demo](https://lx-ui.dev/) and [ℹ️&nbsp;List of Comp
 - [ℹ️ Component Preload](https://github.com/dativa-lv/lx-ui/blob/main/docs/ComponentPreload.md)
 - [ℹ️ Library Preload](https://github.com/dativa-lv/lx-ui/blob/main/docs/LibraryLoader.md)
 - [ℹ️ Shell Custom Mode](https://github.com/dativa-lv/lx-ui/blob/main/docs/ShellCustomMode.md)
+- [ℹ️ Create LX Plugin](https://github.com/dativa-lv/lx-ui/blob/main/docs/CreateLx.md)
 - [🌐 Forms](https://lx-ui.dev/resources/forms)
 - [🌐 Colors](https://lx-ui.dev/resources/colors)
 - [🌐 Icons](https://lx-ui.dev/resources/icons)
