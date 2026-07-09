@@ -1,3 +1,5 @@
+import { TEXT_MAX_LENGTH } from '@/constants';
+
 const focusableSelectors = [
   'a:not([disabled])',
   'button:not([disabled])',
@@ -263,6 +265,18 @@ export const isDefined = (v) => v !== null && v !== undefined;
  * @returns {boolean} `true` if the value is empty, otherwise `false`.
  */
 export const isEmpty = (v) => v === null || v === undefined || v === '';
+
+/**
+ * Clamps a text value to a maximum character length (defaults to `TEXT_MAX_LENGTH`). Used for
+ * input helper text and validation messages. Returns the value unchanged if it is nil or already
+ * within the limit.
+ *
+ * @param {string} value - The text to clamp.
+ * @param {number} [max=TEXT_MAX_LENGTH] - Maximum allowed length.
+ * @returns {string} The clamped text.
+ */
+export const clampText = (value, max = TEXT_MAX_LENGTH) =>
+  value && value.length > max ? value.slice(0, max) : value;
 
 /**
  * Checks whether a value is a boolean.

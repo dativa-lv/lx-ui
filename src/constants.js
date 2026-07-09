@@ -1,4 +1,10 @@
 /**
+ * Maximum length (in characters) for input helper text and validation messages.
+ * Longer strings are clamped to this length.
+ */
+export const TEXT_MAX_LENGTH = 200;
+
+/**
  * MIME types used in the application.
  * @enum {string}
  */

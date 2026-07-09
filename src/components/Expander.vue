@@ -1,7 +1,7 @@
 <script setup>
 import { shallowRef, watch, computed, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -66,6 +66,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const emits = defineEmits(['update:modelValue', 'selectAll', 'resetFilters']);
 
@@ -260,7 +261,7 @@ defineExpose({ focus });
         class="lx-body"
       >
         <div v-if="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
-          {{ invalidationMessage }}
+          {{ invalidationMessageClamped }}
         </div>
         <slot></slot>
       </article>

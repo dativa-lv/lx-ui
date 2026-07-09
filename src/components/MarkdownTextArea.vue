@@ -17,6 +17,7 @@ import HiddenIdNode from '@/components/markdownExtensions/Node';
 import LxButton from '@/components/Button.vue';
 import LxModal from '@/components/Modal.vue';
 import LxIcon from '@/components/Icon.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxFileUploader from '@/components/fileUploader/FileUploader.vue';
@@ -28,7 +29,7 @@ import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxLoader from '@/components/Loader.vue';
 import { isUrl, isUri, generateUUID, isEmail, isPhone } from '@/utils/stringUtils';
 import { checkArrayObjectProperty } from '@/utils/arrayUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, clampText } from '@/utils/generalUtils';
 import { formatValue, formatUrl } from '@/utils/formatUtils';
 import { loadLibrary } from '@/utils/libLoader';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
@@ -43,6 +44,14 @@ const props = defineProps({
   showColorPicker: { type: Boolean, default: false, group: 'main', sequence: 1 },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
+  helperText: { type: String, default: null, group: 'main', sequence: 10 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 11,
+  },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   showLinkEditor: { type: Boolean, default: true, group: 'main', sequence: 2 },
   tooltip: { type: String, default: null, group: 'main', sequence: 9 },
@@ -112,9 +121,28 @@ const textsDefault = {
   blue: 'Zils',
   purple: 'Violets',
   grey: 'Pelēks',
+  helperTextLabel: 'Papildu informācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
+const hasHelperText = computed(() => Boolean(props.helperText));
+const helperTextClamped = computed(() => clampText(props.helperText));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInlineHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
+);
+const showInfoHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'icon' && !props.invalid
+);
+const describedBy = computed(() => {
+  const ids = [];
+  if ((showInlineHelper.value || showInfoHelper.value) && !props.readOnly) {
+    ids.push(`${props.id}-helper`);
+  }
+  if (props.invalid && !props.readOnly) ids.push(`${props.id}-invalidation-message`);
+  return ids.length ? ids.join(' ') : null;
+});
 
 const loading = ref(true);
 
@@ -291,7 +319,9 @@ const colorPickerColors = [
 function shouldKeepToolbarFocus(target) {
   return target instanceof Element
     ? Boolean(
-        target.closest('.lx-component-toolbar, .lx-dropdown-panel-wrapper, .lx-dropdown-panel')
+        target.closest(
+          '.lx-component-toolbar, .lx-dropdown-panel-wrapper, .lx-dropdown-panel, .lx-input-helper-wrapper'
+        )
       )
     : false;
 }
@@ -1211,27 +1241,49 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
             :aria-invalid="invalid"
             :aria-labelledby="labelledBy"
             :aria-errormessage="invalid ? `${props.id}-invalidation-message` : null"
-            :aria-describedby="invalid ? `${props.id}-invalidation-message` : null"
+            :aria-describedby="describedBy"
           />
 
           <div v-if="invalid" class="lx-invalidation-icon-wrapper">
             <LxIcon customClass="lx-invalidation-icon" value="invalid" />
           </div>
+
+          <div v-if="showInfoHelper" class="lx-input-helper-wrapper">
+            <LxInfoWrapper
+              placement="top"
+              :disabled="disabled"
+              :label="displayTexts.helperTextLabel"
+            >
+              <LxIcon customClass="lx-helper-icon" value="info" />
+              <template #panel>
+                <p class="lx-data">{{ helperTextClamped }}</p>
+              </template>
+            </LxInfoWrapper>
+          </div>
         </div>
       </div>
-      <div
-        v-if="editor && maxlength"
-        class="lx-text-length"
-        :class="[{ 'lx-exceeded': maxlengthExceeded }]"
-      >
-        {{ characterCount }}/{{ maxlength }}
+      <div v-if="(editor && maxlength) || invalid || showInlineHelper" class="lx-input-footer">
+        <div
+          class="lx-invalidation-message"
+          v-if="invalid && !readOnly"
+          :id="`${props.id}-invalidation-message`"
+        >
+          {{ invalidationMessageClamped }}
+        </div>
+        <div v-else-if="showInlineHelper" class="lx-helper-text" :id="`${props.id}-helper`">
+          {{ helperTextClamped }}
+        </div>
+        <div
+          v-if="editor && maxlength"
+          class="lx-text-length"
+          :class="[{ 'lx-exceeded': maxlengthExceeded }]"
+        >
+          {{ characterCount }}/{{ maxlength }}
+        </div>
       </div>
-      <div
-        class="lx-invalidation-message"
-        v-if="invalid && !readOnly"
-        :id="`${props.id}-invalidation-message`"
-      >
-        {{ invalidationMessage }}
+
+      <div v-if="showInfoHelper" class="lx-invisible" :id="`${props.id}-helper`">
+        {{ helperTextClamped }}
       </div>
     </div>
 

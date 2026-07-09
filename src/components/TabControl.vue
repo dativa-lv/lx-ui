@@ -4,7 +4,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
@@ -160,7 +160,7 @@ onMounted(() => {
           ref="itemRefs"
           class="lx-tab"
           :class="[{ 'lx-selected': t.id === model }, { 'lx-invalid': t.invalid }]"
-          :title="t.invalid ? t.invalidationMessage : ''"
+          :title="t.invalid ? clampText(t.invalidationMessage) : ''"
           :tabindex="t.id === model ? '0' : '-1'"
           role="tab"
           :aria-selected="t.id === model"
@@ -190,7 +190,7 @@ onMounted(() => {
             class="lx-invisible"
             :id="`${id}-tab-${t.id}-invalidation-message`"
           >
-            {{ t.invalidationMessage }}
+            {{ clampText(t.invalidationMessage) }}
           </span>
         </div>
       </div>

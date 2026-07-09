@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
 const emits = defineEmits(['update:modelValue']);
@@ -32,6 +32,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const infoWrapperRef = ref(null);
 
@@ -354,7 +355,7 @@ defineExpose({ focus, scrollIntoView });
       </div>
     </div>
     <div class="lx-invalidation-message" v-if="showInvalid" :id="`${id}-invalidation-message`">
-      {{ invalidationMessage }}
+      {{ invalidationMessageClamped }}
     </div>
   </div>
 </template>

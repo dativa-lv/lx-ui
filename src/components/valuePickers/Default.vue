@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch, generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 
 import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
@@ -51,6 +51,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const model = computed({
   get() {
@@ -528,7 +529,7 @@ const wrapperRef = ref();
       </div>
 
       <div v-show="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
-        {{ invalidationMessage }}
+        {{ invalidationMessageClamped }}
       </div>
     </template>
   </div>

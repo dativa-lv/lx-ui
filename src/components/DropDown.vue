@@ -6,7 +6,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxPopper from '@/components/Popper.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -47,6 +47,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const noItemsMessage = computed(
   () => displayTexts.value.noItemsMessage ?? textsDefault.noItemsMessage
@@ -451,7 +452,7 @@ const getSelectedItem = computed(
         </div>
       </div>
       <div v-if="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
-        {{ invalidationMessage }}
+        {{ invalidationMessageClamped }}
       </div>
     </template>
 
@@ -527,7 +528,7 @@ const getSelectedItem = computed(
               @click.stop
               @mousedown.prevent
             >
-              {{ invalidationMessage }}
+              {{ invalidationMessageClamped }}
             </div>
           </div>
 

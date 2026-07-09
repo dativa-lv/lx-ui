@@ -20,23 +20,22 @@ const props = defineProps({
     group: 'main',
     sequence: 1,
   }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters', 'day-month'
-  placeholder: { type: String, default: null, group: 'main', sequence: 8 },
-  tooltip: { type: String, default: null, group: 'main', sequence: 7 },
+  placeholder: { type: String, default: null, group: 'main', sequence: 7 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 8 },
   minDate: { type: Date, default: null, group: 'main', sequence: 3 },
   maxDate: { type: Date, default: null, group: 'main', sequence: 4 },
-  required: { type: Boolean, default: false, group: 'additional', sequence: 4 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
-  helperText: { type: String, default: null, group: 'additional', sequence: 5 },
+  helperText: { type: String, default: null, group: 'main', sequence: 9 },
   helperTextKind: {
     type: String,
     default: 'label',
     options: ['label', 'icon'],
-    group: 'additional',
-    sequence: 6,
-  }, // 'label', 'icon'
+    group: 'main',
+    sequence: 10,
+  },
   clearIfNotExact: { type: Boolean, default: false, group: 'additional', sequence: 3 },
   locale: { type: Object, default: () => useLx().getGlobals()?.locale },
   specialDates: { type: Array, default: () => [] },
@@ -281,6 +280,8 @@ if (props.builderOptions?.useRegistry) {
           :disabled="disabled"
           :invalid="invalid"
           :invalidationMessage="invalidationMessage"
+          :helper-text="helperText"
+          :helper-text-kind="helperTextKind"
           :min-date="minDate"
           :max-date="maxDate"
           :locale="localeComputed"

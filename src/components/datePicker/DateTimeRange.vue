@@ -30,7 +30,7 @@ import {
 } from '@/components/datePicker/helpers';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { DATE_VALIDATION_RESULT } from '@/constants';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
@@ -46,15 +46,22 @@ const props = defineProps({
     sequence: 1,
   }, // 'date', 'month', 'year', 'month-year', 'quarters'
   placeholder: { type: String, default: null, group: 'main', sequence: 2 },
-  tooltip: { type: String, default: null, group: 'main', sequence: 3 },
-  minDate: { type: String, default: null, group: 'main', sequence: 4 },
-  maxDate: { type: String, default: null, group: 'main', sequence: 5 },
+  minDate: { type: String, default: null, group: 'main', sequence: 3 },
+  maxDate: { type: String, default: null, group: 'main', sequence: 4 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 5 },
   maxRangeLength: { type: Number, default: null },
-  required: { type: Boolean, default: false, group: 'additional', sequence: 4 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
+  helperText: { type: String, default: null, group: 'main', sequence: 6 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 7,
+  },
   timeAdjust: { type: String, default: null },
   locale: { type: Object, default: () => useLx().getGlobals()?.locale },
   rangeMonth: {
@@ -105,6 +112,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 const rangeWrapper = ref();
 const emits = defineEmits([
   'update:startDate',
@@ -530,6 +538,8 @@ if (props.builderOptions?.useRegistry) {
           :disabled="disabled"
           :invalid="invalid"
           :invalidation-message="invalidationMessage"
+          :helper-text="helperText"
+          :helper-text-kind="helperTextKind"
           :min-date="minDate"
           :max-date="maxDate"
           :locale="localeComputed"
@@ -551,6 +561,8 @@ if (props.builderOptions?.useRegistry) {
             :disabled="disabled"
             :invalid="invalid"
             :invalidationMessage="invalidationMessage"
+            :helper-text="helperText"
+            :helper-text-kind="helperTextKind"
             :min-date="minDate"
             :max-date="startMaxDate"
             :locale="localeComputed"
@@ -573,6 +585,8 @@ if (props.builderOptions?.useRegistry) {
             :disabled="disabled"
             :invalid="invalid"
             :invalidationMessage="invalidationMessage"
+            :helper-text="helperText"
+            :helper-text-kind="helperTextKind"
             :min-date="endMinDate"
             :max-date="maxDate"
             :locale="localeComputed"
@@ -586,7 +600,7 @@ if (props.builderOptions?.useRegistry) {
         </div>
 
         <div v-if="invalid && kind === 'legacy'" class="lx-invalidation-message">
-          {{ invalidationMessage }}
+          {{ invalidationMessageClamped }}
         </div>
       </div>
     </template>

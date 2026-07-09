@@ -15,7 +15,7 @@ import { computedAsync } from '@vueuse/core';
 
 import { generateUUID, isEmail } from '@/utils/stringUtils';
 import { flagMap } from '@/utils/flagUtils';
-import { getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
+import { getDisplayTexts, isDefined, isNil, clampText } from '@/utils/generalUtils';
 import { PHONE_MAX_LENGTH_BY_PREFIX } from '@/constants';
 import { loadLibrary } from '@/utils/libLoader';
 
@@ -23,6 +23,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxButton from '@/components/Button.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -35,8 +36,16 @@ const props = defineProps({
   uppercase: { type: Boolean, default: false, group: 'additional', sequence: 3 },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
+  helperText: { type: String, default: null, group: 'main', sequence: 6 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 7,
+  },
   maxlength: { type: [Number, String], default: null, group: 'main', sequence: 3 },
-  tooltip: { type: String, default: null, group: 'main', sequence: 6 },
+  tooltip: { type: String, default: null, group: 'main', sequence: 5 },
   mask: {
     type: String,
     default: null,
@@ -117,6 +126,7 @@ const textsDefault = {
   emptyValue: 'Nav norādīts',
   showPassword: 'Rādīt paroli',
   hidePassword: 'Paslēpt paroli',
+  helperTextLabel: 'Papildu informācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -409,6 +419,24 @@ const matchedFlags = computed(() => {
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInlineHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
+);
+const showInfoHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'icon' && !props.invalid
+);
+const describedBy = computed(() => {
+  const ids = [];
+  if ((showInlineHelper.value || showInfoHelper.value) && !props.readOnly) {
+    ids.push(`${props.id}-helper`);
+  }
+  if (props.invalid && !props.readOnly) ids.push(`${props.id}-invalidation-message`);
+  return ids.length ? ids.join(' ') : null;
+});
+
 const sanitizedEmail = computedAsync(async () => {
   if (isEmail(model.value)) {
     const lib = await loadLibrary('sanitizeUrl');
@@ -692,11 +720,20 @@ defineExpose({ focus });
         :title="tooltip"
         :aria-labelledby="labelledBy"
         :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+        :aria-describedby="describedBy"
         :inputmode="inputMode"
         @accept="onAccept"
         @blur="onBlur"
       />
+
+      <div v-if="showInfoHelper" class="lx-input-helper-wrapper">
+        <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
+          <LxIcon customClass="lx-helper-icon" value="info" />
+          <template #panel>
+            <p class="lx-data">{{ helperTextClamped }}</p>
+          </template>
+        </LxInfoWrapper>
+      </div>
 
       <LxButton
         :id="hidePassword ? `${id}-show-password` : `${id}-hide-password`"
@@ -718,7 +755,7 @@ defineExpose({ focus });
         :placeholder="placeholder"
         :aria-invalid="invalid"
         :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+        :aria-describedby="describedBy"
         class="lx-text-input lx-input-area"
         :class="[{ 'lx-invalid': invalid }, { 'lx-search-input': props.kind === 'search' }]"
       />
@@ -729,7 +766,13 @@ defineExpose({ focus });
       v-if="invalid && !readOnly"
       :id="`${id}-invalidation-message`"
     >
-      {{ invalidationMessage }}
+      {{ invalidationMessageClamped }}
+    </div>
+    <div class="lx-helper-text" v-if="showInlineHelper && !readOnly" :id="`${id}-helper`">
+      {{ helperTextClamped }}
+    </div>
+    <div class="lx-invisible" v-else-if="showInfoHelper && !readOnly" :id="`${id}-helper`">
+      {{ helperTextClamped }}
     </div>
   </div>
 </template>

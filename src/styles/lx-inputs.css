@@ -233,7 +233,7 @@
   --input-icon-indent-right: 0rem;
 }
 
-.lx .lx-layout div.lx-input-wrapper:not(:has(.lx-invalidation-icon-wrapper)) .lx-input-area {
+.lx .lx-layout div.lx-input-wrapper:not(:has(.lx-invalidation-icon-wrapper)):not(:has(.lx-input-helper-wrapper)) .lx-input-area {
   --input-icon-invalid-indent-left: 0rem;
   --input-icon-invalid-indent-right: 0rem;
 }
@@ -246,10 +246,10 @@
 /* Multiple, valid */
 
 .lx .lx-layout div.lx-input-wrapper:has(.lx-tag) .lx-input-area {
-  padding-left: max(var(--input-padding-left), 
+  padding-left: max(var(--input-padding-left),
                 calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
-  padding-right: max(var(--input-padding-right), 
-                 calc(var(--input-tag-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
+  padding-right: max(var(--input-padding-right),
+                 calc(var(--input-tag-indent-right) + var(--input-icon-invalid-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
 .lx-autocomplete .lx-input-wrapper .lx-tag,
@@ -290,10 +290,10 @@
 
 .lx .lx-layout div.lx-input-wrapper:not(:has(.lx-tag)) .lx-input-area,
 .lx-input-wrapper .lx-markdown-text-area .ProseMirror {
-  padding-left: max(var(--input-padding-left), 
+  padding-left: max(var(--input-padding-left),
                 calc(var(--input-icon-indent-left) + var(--input-button-indent-left)));
-  padding-right: max(var(--input-padding-right), 
-                 calc(var(--input-icon-indent-right) + var(--input-button-indent-right)));
+  padding-right: max(var(--input-padding-right),
+                 calc(var(--input-icon-invalid-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
 /* Single, invalid */
@@ -336,8 +336,8 @@
   z-index: 1;
 }
 
-.lx-markdown-text-area-wrapper .lx-input-wrapper.lx-disabled ~ .lx-text-length,
-.lx-text-area-wrapper .lx-input-wrapper.lx-disabled ~ .lx-text-length {
+.lx-markdown-text-area-wrapper:has(.lx-input-wrapper.lx-disabled) .lx-text-length,
+.lx-text-area-wrapper:has(.lx-input-wrapper.lx-disabled) .lx-text-length {
   color: var(--color-input-text-disabled);
 }
 
@@ -364,6 +364,15 @@
   margin-top: calc(var(--space-0250) * -1);
 }
 
+.lx-field-wrapper .lx-helper-text {
+  display: block;
+  color: var(--color-label);
+  font-size: var(--small-font-size);
+  font-weight: var(--font-weight);
+  letter-spacing: var(--letter-spacing-1);
+  margin-top: var(--space-0125);
+}
+
 .lx-text-length {
   font-size: var(--small-font-size);
   letter-spacing: var(--letter-spacing-2);
@@ -378,6 +387,26 @@
   color: var(--color-bad);
 }
 
+.lx-text-area-wrapper .lx-input-footer,
+.lx-markdown-text-area-wrapper .lx-input-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-0250);
+  margin-top: var(--space-0250);
+}
+
+.lx-input-footer .lx-text-length {
+  margin-top: var(--space-0);
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.lx .lx-field-wrapper .lx-input-footer .lx-invalidation-message,
+.lx .lx-field-wrapper .lx-input-footer .lx-helper-text {
+  margin-top: var(--space-0);
+  flex: 1 1 auto;
+}
+
 .lx .lx-input-wrapper .lx-dropdown,
 .lx .lx-input-wrapper input,
 .lx .lx-input-wrapper textarea {
@@ -388,6 +417,13 @@
 .lx-field-wrapper .lx-invalidation-message {
   color: var(--color-bad);
   font-size: var(--small-font-size);
+}
+
+.lx-invalidation-message,
+.lx-helper-text {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 90ch;
 }
 
 .lx-text-input.lx-uppercase,
@@ -861,6 +897,68 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-input-icon-wrapper {
   grid-area: icon;
+}
+
+.lx-input-wrapper .lx-input-helper-wrapper {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: var(--input-icon-wrapper-width);
+  height: var(--input-button-height);
+  align-self: start;
+  grid-area: invalid-icon;
+  pointer-events: auto;
+  cursor: help;
+  z-index: 1;
+}
+
+.lx-markdown-text-area-wrapper .lx-input-helper-wrapper {
+  z-index: 2;
+}
+.lx:not(.lx-theme-contrast) .lx-input-helper-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
+.lx:not(.lx-theme-contrast) .lx-input-helper-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
+  background-color: transparent;
+}
+
+.lx-input-helper-wrapper .popper-wrapper,
+.lx-input-helper-wrapper .lx-info-wrapper-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.lx-input-helper-wrapper .lx-helper-icon {
+  height: var(--input-icon-size);
+  width: var(--input-icon-size);
+  fill: var(--color-input-icon);
+}
+
+.lx .lx-input-wrapper .lx-input-helper-wrapper .lx-info-wrapper-content.lx-rich-kind:focus,
+.lx .lx-input-wrapper .lx-input-icon-wrapper:has(.lx-info-wrapper-content) .lx-info-wrapper-content.lx-rich-kind:focus {
+  outline: var(--border-width-2) solid var(--color-focus-background);
+  outline-offset: calc(var(--border-width-2) * -1);
+}
+
+.lx .lx-input-wrapper.lx-disabled .lx-input-helper-wrapper .lx-helper-icon {
+  fill: var(--color-input-icon-disabled);
+}
+
+.lx-input-wrapper .lx-input-icon-wrapper:has(.lx-info-wrapper-content) {
+  pointer-events: auto;
+  cursor: help;
+  z-index: 2;
+}
+
+.lx-input-icon-wrapper:has(.lx-info-wrapper-content) .popper-wrapper,
+.lx-input-icon-wrapper:has(.lx-info-wrapper-content) .lx-info-wrapper-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .lx-autocomplete .lx-value .lx-state-icon {

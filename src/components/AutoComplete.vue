@@ -11,7 +11,7 @@ import {
 } from 'vue';
 import { onClickOutside, useDebounceFn, useWindowSize } from '@vueuse/core';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
-import { getDisplayTexts, isBoolean, isDefined, isNil } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isBoolean, isDefined, isNil } from '@/utils/generalUtils';
 import { logWarn, logError } from '@/utils/devUtils';
 import { objectClone } from '@/utils/formatUtils';
 import useLx from '@/hooks/useLx';
@@ -98,6 +98,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const emit = defineEmits(['update:modelValue', 'openDetails', 'update:searchString']);
 
@@ -1414,7 +1415,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     :id="`${id}-invalidation-message`"
                     @click.stop
                   >
-                    {{ invalidationMessage }}
+                    {{ invalidationMessageClamped }}
                   </div>
                 </div>
               </div>

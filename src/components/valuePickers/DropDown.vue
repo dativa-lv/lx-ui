@@ -9,7 +9,7 @@ import LxAutoComplete from '@/components/AutoComplete.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { onClickOutside } from '@vueuse/core';
 import LxPopper from '@/components/Popper.vue';
-import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxDropDown from '@/components/DropDown.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
@@ -73,6 +73,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const noItemsMessage = computed(() => displayTexts.value.noItemsMessage);
 
@@ -889,7 +890,7 @@ function countDigits(number) {
         </LxPopper>
       </div>
       <div v-show="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
-        {{ invalidationMessage }}
+        {{ invalidationMessageClamped }}
       </div>
     </div>
   </template>

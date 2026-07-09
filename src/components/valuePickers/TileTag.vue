@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch, generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 
 import LxIcon from '@/components/Icon.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
@@ -48,6 +48,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const model = computed({
   get() {
@@ -671,7 +672,7 @@ const wrapperRef = ref();
         </ul>
       </div>
       <div v-show="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
-        {{ invalidationMessage }}
+        {{ invalidationMessageClamped }}
       </div>
     </template>
   </div>

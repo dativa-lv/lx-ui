@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, inject, nextTick } from 'vue';
 import { useMediaQuery, useWindowSize } from '@vueuse/core';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, clampText } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
 import {
@@ -39,6 +39,7 @@ import { DATE_VALIDATION_RESULT, TYPED_INPUT_DEFAULT_MASKS } from '@/constants';
 import LxCalendarContainer from '@/components/datePicker/CalendarContainer.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxIcon from '@/components/Icon.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -50,9 +51,14 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
+  helperText: { type: String, default: null },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+  },
   minDate: { type: [String, Date], default: null },
   maxDate: { type: [String, Date], default: null },
-  required: { type: Boolean, default: false },
   locale: { type: String, default: 'lv-LV' },
   firstDayOfTheWeek: { type: Number, default: 2 },
   specialDatesAttributes: { type: Array, default: null },
@@ -96,9 +102,33 @@ const textsDefault = {
   inputManual: 'Ievadīt manuāli',
   bottomSheetClose: 'Paslēpt paneli',
   scrollUpDown: 'Ritināt uz augšu vai leju',
+  helperTextLabel: 'Papildu informācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
+// Helper text: label (below the field, like the validation message but --color-label) or icon
+// (an infoWrapper layered on the calendar/time icon — hovering the icon reveals the text).
+const hasHelperText = computed(() => Boolean(props.helperText));
+const helperTextClamped = computed(() => clampText(props.helperText));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInlineHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
+);
+const showInfoHelper = computed(
+  () =>
+    hasHelperText.value &&
+    props.helperTextKind === 'icon' &&
+    !props.invalid &&
+    props.variant === 'default'
+);
+// A single describedby target at a time: the helper while valid, the validation message while invalid.
+const describedBy = computed(() => {
+  const ids = [`${props.id}-lx-input-description`];
+  if (hasHelperText.value && !props.invalid) ids.push(`${props.id}-helper`);
+  if (props.invalid) ids.push(`${props.id}-invalidation-message`);
+  return ids.join(' ');
+});
 
 const emits = defineEmits(['update:modelValue', 'outOfRange']);
 
@@ -1380,11 +1410,7 @@ onMounted(async () => {
                 : null
             "
             :aria-labelledby="pickerType === 'single' && !legacyMode ? labelledBy : null"
-            :aria-describedby="
-              invalid
-                ? `${id}-lx-input-description ${id}-invalidation-message`
-                : `${id}-lx-input-description`
-            "
+            :aria-describedby="describedBy"
             @mousedown="preventDefaultFocus"
             @touchstart="onTouchStart($event, 'startInput')"
             @touchmove="onTouchMove($event)"
@@ -1402,17 +1428,26 @@ onMounted(async () => {
           <div v-if="invalid && variant === 'default'" class="lx-input-icon-wrapper">
             <LxIcon customClass="lx-invalidation-icon" value="invalid" />
           </div>
-          <div
-            v-if="!invalid && mode !== 'time' && variant === 'default'"
-            class="lx-input-icon-wrapper"
-          >
-            <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="calendar" />
-          </div>
-          <div
-            v-if="!invalid && mode === 'time' && variant === 'default'"
-            class="lx-input-icon-wrapper"
-          >
-            <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="time" />
+          <div v-if="!invalid && variant === 'default'" class="lx-input-icon-wrapper">
+            <LxInfoWrapper
+              v-if="showInfoHelper"
+              placement="top"
+              :disabled="disabled"
+              :label="displayTexts.helperTextLabel"
+            >
+              <LxIcon
+                customClass="lx-date-time-icon lx-modifier-icon"
+                :value="mode === 'time' ? 'time' : 'calendar'"
+              />
+              <template #panel>
+                <p class="lx-data">{{ helperTextClamped }}</p>
+              </template>
+            </LxInfoWrapper>
+            <LxIcon
+              v-else
+              customClass="lx-date-time-icon lx-modifier-icon"
+              :value="mode === 'time' ? 'time' : 'calendar'"
+            />
           </div>
         </div>
 
@@ -1442,11 +1477,7 @@ onMounted(async () => {
               :aria-invalid="invalid"
               :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
               :aria-label="displayTexts.endDateLabel"
-              :aria-describedby="
-                invalid
-                  ? `${id}-lx-input-description ${id}-invalidation-message`
-                  : `${id}-lx-input-description`
-              "
+              :aria-describedby="describedBy"
               @mousedown="preventDefaultFocus"
               @touchstart="onTouchStart($event, 'endInput')"
               @touchmove="onTouchMove($event)"
@@ -1465,7 +1496,18 @@ onMounted(async () => {
               <LxIcon customClass="lx-invalidation-icon" value="invalid" />
             </div>
             <div v-if="!invalid" class="lx-input-icon-wrapper">
-              <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="calendar" />
+              <LxInfoWrapper
+                v-if="showInfoHelper"
+                placement="top"
+                :disabled="disabled"
+                :label="displayTexts.helperTextLabel"
+              >
+                <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="calendar" />
+                <template #panel>
+                  <p class="lx-data">{{ helperTextClamped }}</p>
+                </template>
+              </LxInfoWrapper>
+              <LxIcon v-else customClass="lx-date-time-icon lx-modifier-icon" value="calendar" />
             </div>
           </div>
         </template>
@@ -1534,7 +1576,19 @@ onMounted(async () => {
       :class="{ 'lx-invisible': legacyMode }"
       :id="`${id}-invalidation-message`"
     >
-      {{ invalidationMessage }}
+      {{ invalidationMessageClamped }}
+    </div>
+
+    <div
+      v-if="showInlineHelper"
+      class="lx-helper-text"
+      :class="{ 'lx-invisible': legacyMode }"
+      :id="`${id}-helper`"
+    >
+      {{ helperTextClamped }}
+    </div>
+    <div v-else-if="showInfoHelper" class="lx-invisible" :id="`${id}-helper`">
+      {{ helperTextClamped }}
     </div>
   </div>
 </template>

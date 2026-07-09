@@ -14,7 +14,7 @@ import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { formatValueBool } from '@/utils/formatUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -60,6 +60,7 @@ const model = computed({
 
 const textsDefault = { valueYes: 'Jā', valueNo: 'Nē', emptyValue: 'Nav norādīts' };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const input = ref({});
 
@@ -250,7 +251,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
       class="lx-invalidation-message"
       :id="`${id}-invalidation-message`"
     >
-      {{ invalidationMessage }}
+      {{ invalidationMessageClamped }}
     </div>
   </div>
 </template>

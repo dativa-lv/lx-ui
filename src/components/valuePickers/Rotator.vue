@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -43,6 +43,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -453,7 +454,7 @@ function onUp() {
         :id="`${id}-invalidation-message`"
         @contextmenu.stop
       >
-        {{ invalidationMessage }}
+        {{ invalidationMessageClamped }}
       </div>
     </div>
   </template>

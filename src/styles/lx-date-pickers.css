@@ -568,6 +568,11 @@
   background-color: transparent;
 }
 
+.lx:not(.lx-theme-contrast) .lx-input-icon-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
+.lx:not(.lx-theme-contrast) .lx-input-icon-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
+  background-color: transparent;
+}
+
 .lx .lx-layout .lx-calendar-container .lx-calendar-weeks.first-month .lx-calendar-week.first-week .lx-calendar-day.lx-other-month:not(.lx-disabled-date),
 .lx .lx-layout .lx-calendar-container .lx-calendar-year.other-decade-year:not(.lx-disabled-year) {
   pointer-events: all;

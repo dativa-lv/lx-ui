@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch, generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -47,6 +47,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const emits = defineEmits(['update:modelValue', 'update:searchString']);
 
@@ -600,6 +601,6 @@ const wrapperRef = ref();
     class="lx-invalidation-message"
     :id="`${id}-invalidation-message`"
   >
-    {{ invalidationMessage }}
+    {{ invalidationMessageClamped }}
   </div>
 </template>

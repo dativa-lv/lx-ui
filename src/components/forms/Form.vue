@@ -26,7 +26,12 @@ import LxWizard from '@/components/Wizard.vue';
 import LxIcon from '@/components/Icon.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxSkipLink from '@/components/SkipLink.vue';
-import { focusNextFocusableElement, getDisplayTexts, remToPx } from '@/utils/generalUtils';
+import {
+  clampText,
+  focusNextFocusableElement,
+  getDisplayTexts,
+  remToPx,
+} from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const slots = useSlots();
@@ -1005,12 +1010,12 @@ if (props.builderOptions.useRegistry) {
           <div
             class="index-text"
             :class="{ 'lx-invalid': i?.invalid }"
-            :title="i.invalid ? i.invalidationMessage : ''"
             role="button"
             tabindex="0"
             @keyup.enter="scrollTo(i.id)"
             @keydown.space.prevent="scrollTo(i.id)"
             @click="scrollTo(i.id)"
+            :title="i.invalid ? clampText(i.invalidationMessage) : ''"
           >
             {{ sectionLocations[`${props.id}-${i.id}`] }}
             <p>{{ i.name }}</p>
@@ -1035,7 +1040,7 @@ if (props.builderOptions.useRegistry) {
           <div
             class="index-text"
             :class="{ 'lx-invalid': i?.invalid }"
-            :title="i.invalid ? i.invalidationMessage : ''"
+            :title="i.invalid ? clampText(i.invalidationMessage) : ''"
             role="button"
             tabindex="0"
             @keyup.enter="scrollTo(i.id)"
@@ -1236,7 +1241,7 @@ if (props.builderOptions.useRegistry) {
                     { 'lx-active': findIfSectionSelected(i.id) },
                     { 'lx-invalid': i?.invalid },
                   ]"
-                  :title="i.invalid ? i.invalidationMessage : ''"
+                  :title="i.invalid ? clampText(i.invalidationMessage) : ''"
                   tabindex="0"
                   role="button"
                   @keyup.enter="scrollTo(i.id)"
@@ -1283,7 +1288,7 @@ if (props.builderOptions.useRegistry) {
                   { 'lx-active': findIfSectionSelected(i.id) },
                   { 'lx-invalid': i?.invalid },
                 ]"
-                :title="i.invalid ? i.invalidationMessage : ''"
+                :title="i.invalid ? clampText(i.invalidationMessage) : ''"
                 tabindex="0"
                 role="button"
                 @keyup.enter="scrollTo(i.id)"

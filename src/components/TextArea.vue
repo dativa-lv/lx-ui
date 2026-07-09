@@ -3,7 +3,8 @@ import { ref, computed, watch, nextTick, inject, getCurrentInstance, onUnmounted
 import { useResizeObserver } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import { getDisplayTexts, clampText } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
@@ -16,6 +17,14 @@ const props = defineProps({
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
+  helperText: { type: String, default: null, group: 'main', sequence: 6 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 7,
+  },
   maxlength: { type: Number, default: null, group: 'main', sequence: 1 },
   dynamicHeight: { type: Boolean, default: false, group: 'main', sequence: 3 },
   tooltip: { type: String, default: null, group: 'main', sequence: 5 },
@@ -34,9 +43,28 @@ const props = defineProps({
 
 const textsDefault = {
   emptyValue: 'Nav norādīts',
+  helperTextLabel: 'Papildu informācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
+const hasHelperText = computed(() => Boolean(props.helperText));
+const helperTextClamped = computed(() => clampText(props.helperText));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInlineHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
+);
+const showInfoHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'icon' && !props.invalid
+);
+const describedBy = computed(() => {
+  const ids = [];
+  if ((showInlineHelper.value || showInfoHelper.value) && !props.readOnly) {
+    ids.push(`${props.id}-helper`);
+  }
+  if (props.invalid && !props.readOnly) ids.push(`${props.id}-invalidation-message`);
+  return ids.length ? ids.join(' ') : null;
+});
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -148,7 +176,7 @@ if (props.builderOptions?.useRegistry) {
             :title="props.tooltip"
             :aria-labelledby="labelledBy"
             :aria-errormessage="invalid ? `${props.id}-invalidation-message` : null"
-            :aria-describedby="invalid ? `${props.id}-invalidation-message` : null"
+            :aria-describedby="describedBy"
             @input="triggerResize"
           />
 
@@ -167,16 +195,36 @@ if (props.builderOptions?.useRegistry) {
           <div v-if="invalid" class="lx-invalidation-icon-wrapper">
             <LxIcon customClass="lx-invalidation-icon" value="invalid" />
           </div>
+          <div v-if="showInfoHelper" class="lx-input-helper-wrapper">
+            <LxInfoWrapper
+              placement="top"
+              :disabled="disabled"
+              :label="displayTexts.helperTextLabel"
+            >
+              <LxIcon customClass="lx-helper-icon" value="info" />
+              <template #panel>
+                <p class="lx-data">{{ helperTextClamped }}</p>
+              </template>
+            </LxInfoWrapper>
+          </div>
         </div>
-        <div v-if="props.maxlength" class="lx-text-length">
-          {{ model?.toString()?.length || 0 }}/{{ props.maxlength }}
+        <div v-if="props.maxlength || invalid || showInlineHelper" class="lx-input-footer">
+          <div
+            v-if="invalid && !readOnly"
+            class="lx-invalidation-message"
+            :id="`${props.id}-invalidation-message`"
+          >
+            {{ invalidationMessageClamped }}
+          </div>
+          <div v-else-if="showInlineHelper" class="lx-helper-text" :id="`${props.id}-helper`">
+            {{ helperTextClamped }}
+          </div>
+          <div v-if="props.maxlength" class="lx-text-length">
+            {{ model?.toString()?.length || 0 }}/{{ props.maxlength }}
+          </div>
         </div>
-        <div
-          v-if="invalid && !readOnly"
-          class="lx-invalidation-message"
-          :id="`${props.id}-invalidation-message`"
-        >
-          {{ props.invalidationMessage }}
+        <div v-if="showInfoHelper" class="lx-invisible" :id="`${props.id}-helper`">
+          {{ helperTextClamped }}
         </div>
       </div>
     </template>

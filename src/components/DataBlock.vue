@@ -7,7 +7,7 @@ import LxLoader from '@/components/Loader.vue';
 import useLx from '@/hooks/useLx';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 import { useWindowSize } from '@vueuse/core';
 
@@ -47,6 +47,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const emits = defineEmits([
   'actionClick',
@@ -130,7 +131,7 @@ const expandIcon = computed(() => {
 
 const expandIconTitle = computed(() => {
   if (props.invalid) {
-    return props.invalidationMessage;
+    return invalidationMessageClamped.value;
   }
   if (expanded.value) {
     return displayTexts.value.collapse;
@@ -196,7 +197,9 @@ const expandIconTitle = computed(() => {
               @click="emits('selectingClick', id)"
             />
           </div>
-          <div class="lx-icons" v-else-if="hasSelecting && !selectable" aria-hidden="true"><span /></div>
+          <div class="lx-icons" v-else-if="hasSelecting && !selectable" aria-hidden="true">
+            <span />
+          </div>
           <div class="lx-icons" v-else>
             <LxIcon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
             <div class="lx-loader-container" v-if="busy">
@@ -235,7 +238,7 @@ const expandIconTitle = computed(() => {
           class="lx-invisible"
           :id="`${id}-invalidation-message`"
         >
-          {{ invalidationMessage }}
+          {{ invalidationMessageClamped }}
         </div>
       </header>
       <div class="additional-buttons" v-if="Number(actionDefinitionsLength) > 0">
