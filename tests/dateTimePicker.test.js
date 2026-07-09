@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { test, expect, describe, afterEach, beforeEach, it } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
+import LxDayMonthPicker from '@/components/datePicker/DayMonthPicker.vue';
 
 let wrapper;
 
@@ -120,6 +122,69 @@ describe('LxDateTimePicker', () => {
         const unitContent = calendarContainer.querySelector(unit);
         expect(unitContent).toBeTruthy();
         expect(unitContent.textContent).toMatch(regEx);
+      });
+    });
+
+    describe('day-month', () => {
+      function mountDayMonth(props) {
+        return mount(LxDateTimePicker, {
+          props: { modelValue: '06-15', kind: 'day-month', ...props },
+          global: {
+            stubs: ['router-link'],
+            directives: { ClickAway: dummyClickAway },
+          },
+        });
+      }
+
+      test('renders the composite day + month picker (no calendar)', () => {
+        wrapper = mountDayMonth();
+
+        expect(wrapper.find('.lx-day-month-picker').exists()).toBe(true);
+        expect(wrapper.find('.lx-day-month-day').exists()).toBe(true);
+        expect(wrapper.find('.lx-day-month-month').exists()).toBe(true);
+        // day-month never renders the calendar-based date picker
+        expect(wrapper.find('.lx-datepicker-input-container').exists()).toBe(false);
+      });
+
+      test('read-only shows day and lowercase month name', () => {
+        wrapper = mountDayMonth({ readOnly: true });
+
+        readOnlyTest(wrapper);
+        expect(wrapper.find('.lx-data time').text()).toContain('15. jūnijs');
+      });
+
+      test('renders a single shared invalidation message for both fields', () => {
+        wrapper = mountDayMonth({ invalid: true, invalidationMessage: 'Bad date' });
+
+        const messages = wrapper
+          .findAll('.lx-invalidation-message')
+          .filter((m) => m.text() === 'Bad date');
+        expect(messages).toHaveLength(1);
+      });
+
+      test('inline helper text renders below the fields', () => {
+        wrapper = mountDayMonth({ helperText: 'Pick a recurring date' });
+        expect(wrapper.find('.lx-day-month-helper').text()).toBe('Pick a recurring date');
+        expect(wrapper.find('.lx-invalidation-message').exists()).toBe(false);
+      });
+
+      test('invalid message replaces inline helper text', () => {
+        wrapper = mountDayMonth({
+          helperText: 'Pick a recurring date',
+          invalid: true,
+          invalidationMessage: 'Required',
+        });
+        const withText = wrapper
+          .findAll('.lx-invalidation-message')
+          .filter((m) => m.text() === 'Required');
+        expect(withText).toHaveLength(1);
+        expect(wrapper.find('.lx-day-month-helper').exists()).toBe(false);
+      });
+
+      test('icon helper text renders an info wrapper after the month, not inline', () => {
+        wrapper = mountDayMonth({ helperText: 'Some info', helperTextKind: 'icon' });
+        expect(wrapper.find('.lx-day-month-info').exists()).toBe(true);
+        expect(wrapper.find('.lx-day-month-helper').exists()).toBe(false);
       });
     });
   });
@@ -1486,6 +1551,168 @@ describe('LxDateTimePicker', () => {
         expect(pickerInput.exists()).toBe(true);
         expect(pickerInput.text()).toBe(readOnlyDate);
       });
+    });
+  });
+
+  // LxDayMonthPicker is the composite UI behind kind="day-month"; these unit
+  // tests drive it directly (value pickers stubbed) to cover the emit/reconcile
+  // logic that can't easily be exercised through the parent.
+  describe('LxDayMonthPicker', () => {
+    const ValuePickerStub = {
+      name: 'LxValuePicker',
+      props: ['modelValue', 'items', 'placeholder'],
+      emits: ['update:modelValue'],
+      template: '<div class="vp-stub"></div>',
+    };
+
+    function mountPicker(props = {}) {
+      return mount(LxDayMonthPicker, {
+        props,
+        global: { stubs: { LxValuePicker: ValuePickerStub } },
+      });
+    }
+
+    // pickers[0] = day, pickers[1] = month (template order)
+    function pickers() {
+      return wrapper.findAllComponents(ValuePickerStub);
+    }
+    async function emitDay(value) {
+      pickers()[0].vm.$emit('update:modelValue', value);
+      await nextTick();
+    }
+    async function emitMonth(value) {
+      pickers()[1].vm.$emit('update:modelValue', value);
+      await nextTick();
+    }
+    function lastEmitted() {
+      const events = wrapper.emitted('update:modelValue');
+      return events ? events[events.length - 1][0] : undefined;
+    }
+
+    test('emits MM-dd only once both month and day are chosen', async () => {
+      wrapper = mountPicker({ modelValue: null });
+
+      await emitMonth('06');
+      // still incomplete: no value is emitted (and no redundant null emit)
+      expect(wrapper.emitted('update:modelValue')).toBeFalsy();
+
+      await emitDay('15');
+      expect(lastEmitted()).toBe('06-15');
+    });
+
+    test('splits an incoming MM-dd value into the two sub-pickers', () => {
+      wrapper = mountPicker({ modelValue: '02-15' });
+      expect(pickers()[0].props('modelValue')).toBe('15');
+      expect(pickers()[1].props('modelValue')).toBe('02');
+    });
+
+    test('rejects an impossible incoming value (02-31) — clears both and emits null', () => {
+      wrapper = mountPicker({ modelValue: '02-31' });
+      expect(lastEmitted()).toBe(null);
+      expect(pickers()[0].props('modelValue')).toBe(null);
+      expect(pickers()[1].props('modelValue')).toBe(null);
+    });
+
+    test('rejects a partial/malformed incoming value — clears both and emits null', () => {
+      wrapper = mountPicker({ modelValue: '06' });
+      expect(lastEmitted()).toBe(null);
+      expect(pickers()[0].props('modelValue')).toBe(null);
+      expect(pickers()[1].props('modelValue')).toBe(null);
+    });
+
+    test('rejects an invalid value and emits null even right after a prior null emit', async () => {
+      wrapper = mountPicker({ modelValue: '06-15' });
+      await emitDay(null); // internally emits null (our last emitted value is now null)
+      const countBefore = wrapper.emitted('update:modelValue').length;
+
+      await wrapper.setProps({ modelValue: '02-31' }); // impossible date pushed via code
+      const events = wrapper.emitted('update:modelValue');
+      expect(events.length).toBeGreaterThan(countBefore); // a fresh null emit happened
+      expect(events[events.length - 1][0]).toBe(null);
+      expect(pickers()[0].props('modelValue')).toBe(null);
+      expect(pickers()[1].props('modelValue')).toBe(null);
+    });
+
+    test('clearing the value via code (null) clears both sub-selections', async () => {
+      wrapper = mountPicker({ modelValue: '06-15' });
+      expect(pickers()[0].props('modelValue')).toBe('15');
+      expect(pickers()[1].props('modelValue')).toBe('06');
+
+      await wrapper.setProps({ modelValue: null });
+      expect(pickers()[0].props('modelValue')).toBe(null);
+      expect(pickers()[1].props('modelValue')).toBe(null);
+    });
+
+    test('day options always show the full 1..31 range (even for February)', () => {
+      wrapper = mountPicker({ modelValue: '02-01' });
+      expect(pickers()[0].props('items')).toHaveLength(31);
+    });
+
+    test('clamps the day to the month max when clearIfNotExact is false', async () => {
+      wrapper = mountPicker({ modelValue: '01-31', clearIfNotExact: false });
+      await emitMonth('04'); // April has 30 days
+      await nextTick();
+      expect(lastEmitted()).toBe('04-30');
+    });
+
+    test('clears the day on an impossible date when clearIfNotExact is true', async () => {
+      wrapper = mountPicker({ modelValue: '01-31', clearIfNotExact: true });
+      await emitMonth('04');
+      await nextTick();
+      expect(lastEmitted()).toBe(null);
+    });
+
+    test('keeps the day when it fits the newly selected month', async () => {
+      wrapper = mountPicker({ modelValue: '01-15' });
+      await emitMonth('04');
+      await nextTick();
+      expect(lastEmitted()).toBe('04-15');
+    });
+
+    test('month picked last: an incompatible day clamps to the month max (clearIfNotExact false)', async () => {
+      wrapper = mountPicker({ modelValue: null });
+      await emitDay('31');
+      await emitMonth('02'); // February picked last → day clamps
+      expect(lastEmitted()).toBe('02-29');
+    });
+
+    test('month picked last: an incompatible day is cleared (clearIfNotExact true)', async () => {
+      wrapper = mountPicker({ modelValue: null, clearIfNotExact: true });
+      await emitDay('31');
+      await emitMonth('02');
+      expect(pickers()[0].props('modelValue')).toBe(null); // day cleared
+      expect(pickers()[1].props('modelValue')).toBe('02'); // month kept
+    });
+
+    test('day picked last: an incompatible day shifts the month to the closest fit, ties preferring the previous month (28.Feb → 31 → January)', async () => {
+      wrapper = mountPicker({ modelValue: '02-28' });
+      await emitDay('31'); // day picked last → month adapts
+      expect(lastEmitted()).toBe('01-31');
+    });
+
+    test('day picked last: clears the month when clearIfNotExact is true', async () => {
+      wrapper = mountPicker({ modelValue: '02-28', clearIfNotExact: true });
+      await emitDay('31');
+      expect(pickers()[0].props('modelValue')).toBe('31'); // day kept
+      expect(pickers()[1].props('modelValue')).toBe(null); // month cleared
+    });
+
+    test('deselecting one field keeps the other (no cross-clear)', async () => {
+      wrapper = mountPicker({ modelValue: '06-15' });
+
+      // Deselect the month; the parent round-trips the now-null model back.
+      await emitMonth(null);
+      await wrapper.setProps({ modelValue: lastEmitted() });
+      expect(pickers()[1].props('modelValue')).toBe(null); // month cleared
+      expect(pickers()[0].props('modelValue')).toBe('15'); // day preserved
+
+      // Re-select the month, then deselect the day.
+      await emitMonth('06');
+      await wrapper.setProps({ modelValue: lastEmitted() });
+      await emitDay(null);
+      await wrapper.setProps({ modelValue: lastEmitted() });
+      expect(pickers()[0].props('modelValue')).toBe(null); // day cleared
+      expect(pickers()[1].props('modelValue')).toBe('06'); // month preserved
     });
   });
 });

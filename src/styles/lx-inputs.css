@@ -71,6 +71,10 @@
   width: var(--input-width-s);
 }
 
+.lx .lx-date-time-picker-wrapper.lx-day-month .lx-input-wrapper {
+  width: 100%;
+}
+
 .lx .lx-date-time .lx-date-time-picker-wrapper .lx-input-wrapper,
 .lx .lx-date-time-range-wrapper.lx-date.month-year .lx-input-wrapper,
 .lx .lx-date-time-full .lx-date-time-picker-wrapper .lx-input-wrapper {

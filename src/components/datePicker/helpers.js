@@ -12,7 +12,7 @@ import {
   addDays,
 } from 'date-fns';
 import useLx from '@/hooks/useLx';
-import { DATE_VALIDATION_RESULT } from '@/constants';
+import { DATE_VALIDATION_RESULT, DAYS_IN_MONTH } from '@/constants';
 import { isDefined, isNil } from '@/utils/generalUtils';
 
 export const constants = {
@@ -1088,6 +1088,15 @@ export function extractYearFromDate(dateObj) {
 export function extractYearMonthFromDate(dateObj, mask = 'yyyy-MM') {
   if (!dateObj) return null;
   return format(dateObj, mask);
+}
+
+export function extractMonthDayFromDate(dateObj, mask = 'MM-dd') {
+  if (!dateObj) return null;
+  return format(dateObj, mask);
+}
+
+export function maxDayOfMonth(monthIndex) {
+  return DAYS_IN_MONTH[monthIndex] ?? 31;
 }
 
 export function extractQuarterFromDate(dateObj, mask = 'yyyy-QQQ') {

@@ -33,7 +33,8 @@ import {
   normalizeFlexibleDateInput,
   constants,
 } from '@/components/datePicker/helpers';
-import { DATE_VALIDATION_RESULT } from '@/constants';
+import { getKindConfig } from '@/components/datePicker/kindConfig';
+import { DATE_VALIDATION_RESULT, TYPED_INPUT_DEFAULT_MASKS } from '@/constants';
 import LxCalendarContainer from '@/components/datePicker/CalendarContainer.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -41,7 +42,7 @@ import LxIcon from '@/components/Icon.vue';
 const props = defineProps({
   id: { type: String, default: null },
   modelValue: { type: [String, Date, Object], default: null },
-  mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters',
+  mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters', ('day-month' is handled by LxDayMonthPicker, not here)
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   masks: { type: Object, default: () => {} },
   placeholder: { type: String, default: null },
@@ -1132,20 +1133,7 @@ const placeholderComputed = computed(() => {
   if (props.placeholder !== null) {
     return props.placeholder;
   }
-  switch (props.mode) {
-    case 'date':
-      return 'dd.mm.gggg.';
-    case 'date-time':
-      return 'dd.mm.gggg. st:mi';
-    case 'date-time-full':
-      return 'dd.mm.gggg. st:mi:ss';
-    case 'time':
-      return 'st:mi';
-    case 'time-full':
-      return 'st:mi:ss';
-    default:
-      return null;
-  }
+  return getKindConfig(props.mode).placeholder;
 });
 
 const isMobileScreen = computed(() => windowSize.width.value < constants.MOBILE_SCREEN_WIDTH);
@@ -1167,29 +1155,13 @@ const endInputIndex = computed(() => {
   return '0';
 });
 
-// Function to determine maxLength based on mode
+// Function to determine maxLength based on mode. Only the free-typing modes
+// (date/time/…-full) get a limit; grid-based modes (month/year/…) return null.
 const getMaxLength = computed(() => {
-  if (mode.value === 'date') {
-    const inputMask = props.masks?.input || 'dd.MM.yyyy.';
-    return inputMask.length;
-  }
-  if (mode.value === 'time') {
-    const inputTime24hrMask = props.masks?.inputTime24hr || 'HH:mm';
-    return inputTime24hrMask.length;
-  }
-  if (mode.value === 'time-full') {
-    const inputTime24hrMask = props.masks?.inputTimeFull24hr || 'HH:mm:ss';
-    return inputTime24hrMask.length;
-  }
-  if (mode.value === 'date-time') {
-    const inputDateTime24hrMask = props.masks?.inputDateTime24hr || 'dd.MM.yyyy. HH:mm';
-    return inputDateTime24hrMask.length;
-  }
-  if (mode.value === 'date-time-full') {
-    const inputDateTime24hrMask = props.masks?.inputDateTimeFull24hr || 'dd.MM.yyyy. HH:mm:ss';
-    return inputDateTime24hrMask.length;
-  }
-  return null; // No limit if not a specific mode
+  const conf = getKindConfig(mode.value);
+  const key = conf.maskKey;
+  if (!key || !(conf.isDateBased || conf.hasTime)) return null;
+  return (props.masks?.[key] || TYPED_INPUT_DEFAULT_MASKS[key])?.length ?? null;
 });
 
 function focusInput(type) {

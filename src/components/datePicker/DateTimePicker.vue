@@ -1,30 +1,11 @@
 <script setup>
 import { computed, inject, ref, getCurrentInstance, onUnmounted } from 'vue';
-import {
-  parseDate,
-  formatJSON,
-  formatDate,
-  formatDateTime,
-  formatDateJSON,
-  isDateValid,
-  isTimeValid,
-  getMonthYearString,
-  getMonthNames,
-  formatFull,
-} from '@/utils/dateUtils';
 import { lxDateUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
-import {
-  dateFromYearAndQuarter,
-  extractMonthFromDate,
-  extractQuarterFromDate,
-  extractYearFromDate,
-  extractYearMonthFromDate,
-  getMonthNameByOrder,
-  parseExact,
-} from '@/components/datePicker/helpers';
+import { getKindConfig } from '@/components/datePicker/kindConfig';
 import { generateUUID } from '@/utils/stringUtils';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
+import LxDayMonthPicker from '@/components/datePicker/DayMonthPicker.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
@@ -35,10 +16,10 @@ const props = defineProps({
   kind: {
     type: String,
     default: 'date',
-    options: ['date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'],
+    options: ['date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters', 'day-month'],
     group: 'main',
     sequence: 1,
-  }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'
+  }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters', 'day-month'
   placeholder: { type: String, default: null, group: 'main', sequence: 8 },
   tooltip: { type: String, default: null, group: 'main', sequence: 7 },
   minDate: { type: Date, default: null, group: 'main', sequence: 3 },
@@ -48,6 +29,14 @@ const props = defineProps({
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
+  helperText: { type: String, default: null, group: 'additional', sequence: 5 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'additional',
+    sequence: 6,
+  }, // 'label', 'icon'
   clearIfNotExact: { type: Boolean, default: false, group: 'additional', sequence: 3 },
   locale: { type: Object, default: () => useLx().getGlobals()?.locale },
   specialDates: { type: Array, default: () => [] },
@@ -89,19 +78,15 @@ const textsDefault = {
   closeSpecialDatesButton: 'Aizvērt notikumus',
   bottomSheetClose: 'Paslēpt paneli',
   scrollUpDown: 'Ritināt uz augšu vai leju',
+  dayPlaceholder: 'dd',
+  monthPlaceholder: 'Mēnesis',
+  notSelected: 'Nav izvēlēts',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
 const { dateFormat, dateTimeFormat, dateTimeFullFormat } = useLx().getGlobals();
-
-function extractTime(datetimeStr) {
-  const timeRegex = /(\d{2}:\d{2}(:\d{2})?(\s?[APMapm]{2})?)/;
-  const match = datetimeStr.match(timeRegex);
-  if (match) return match[0];
-  return null;
-}
 
 const localeComputed = computed(() => (props.locale?.locale ? props.locale?.locale : 'lv-LV'));
 const localeFirstDay = computed(() =>
@@ -126,176 +111,23 @@ const localeMasks = computed(() => {
   return props.locale?.masks ? props.locale.masks : defaultMasks;
 });
 
-const createFirstDayDate = () => {
-  const newDate = new Date();
-  newDate.setDate(1); // Set to the first day of the month
-  return newDate;
-};
+// Central per-kind configuration (parse/emit/getName/mode/cssClass/panel/…).
+const cfg = computed(() => getKindConfig(props.kind));
 
-const isStringWithLength = (value, length) => typeof value === 'string' && value?.length === length;
+// Context passed to the kind's pure parse/emit/getName functions.
+const kindCtx = computed(() => ({
+  locale: localeComputed.value,
+  masks: localeMasks.value,
+}));
 
-const parseTimeModelValue = (value) => {
-  if (!isStringWithLength(value, 5)) return parseDate(value);
-
-  const newDate = createFirstDayDate();
-  newDate.setHours(Number(value?.slice(0, 2)));
-  newDate.setMinutes(Number(value?.slice(3, 5)));
-
-  return newDate;
-};
-
-const parseFullTimeModelValue = (value) => {
-  if (!isStringWithLength(value, 8)) return parseDate(value);
-
-  const newDate = createFirstDayDate();
-  newDate.setHours(Number(value?.slice(0, 2)));
-  newDate.setMinutes(Number(value?.slice(3, 5)));
-  newDate.setSeconds(Number(value?.slice(6, 8)));
-
-  return newDate;
-};
-
-const parseMonthModelValue = (value) => {
-  if (!isStringWithLength(value, 2)) return parseDate(value);
-
-  const newDate = createFirstDayDate();
-  newDate.setMonth(Number(value) - 1);
-
-  return newDate;
-};
-
-const parseYearModelValue = (value) => {
-  if (!isStringWithLength(value, 4)) return parseDate(value);
-
-  const newDate = createFirstDayDate();
-  newDate.setFullYear(Number(value));
-
-  return newDate;
-};
-
-const parseMonthYearModelValue = (value) => {
-  if (!isStringWithLength(value, 7)) return parseDate(value);
-
-  const newDate = createFirstDayDate();
-  newDate.setFullYear(Number(value?.slice(0, 4)));
-  newDate.setMonth(Number(value?.slice(5, 7)) - 1);
-
-  return newDate;
-};
-
-const parseQuarterModelValue = (value) => {
-  if (!isStringWithLength(value, 7)) return parseDate(value);
-
-  const [year, quarter] = value.split('-');
-  const normalizedQuarter = quarter.split('Q');
-  const newDate = dateFromYearAndQuarter(year, normalizedQuarter[1]);
-
-  return newDate;
-};
-
-const getModelValue = () => {
-  switch (props.kind) {
-    case 'time':
-      return parseTimeModelValue(props.modelValue);
-    case 'time-full':
-      return parseFullTimeModelValue(props.modelValue);
-    case 'month':
-      return parseMonthModelValue(props.modelValue);
-    case 'year':
-      return parseYearModelValue(props.modelValue);
-    case 'month-year':
-      return parseMonthYearModelValue(props.modelValue);
-    case 'quarters':
-      return parseQuarterModelValue(props.modelValue);
-    default:
-      return parseExact(props.modelValue);
-  }
-};
+const getModelValue = () => cfg.value.parse(props.modelValue, kindCtx.value);
 
 const emitModelValue = (value) => {
   emits('update:modelValue', value);
 };
 
-const setTimeModelValue = (newValue) => {
-  const nv = extractTime(formatDateTime(newValue));
-  emitModelValue(nv);
-};
-
-const setFullTimeModelValue = (newValue) => {
-  const nv = extractTime(formatFull(newValue));
-  emitModelValue(nv);
-};
-
-const setDateModelValue = (newValue) => {
-  const nv = formatDateJSON(newValue);
-  emitModelValue(nv);
-};
-
-const setDateTimeModelValue = (newValue) => {
-  const nv = formatJSON(newValue);
-  emitModelValue(nv);
-};
-
-const setMonthModelValue = (newValue) => {
-  const nv = extractMonthFromDate(newValue);
-  emitModelValue(nv);
-};
-
-const setYearModelValue = (newValue) => {
-  const nv = extractYearFromDate(newValue);
-  emitModelValue(nv);
-};
-
-const setMonthYearModelValue = (newValue) => {
-  const nv = extractYearMonthFromDate(newValue, localeMasks.value.monthYearFormat);
-  emitModelValue(nv);
-};
-
-const setQuarterModelValue = (newValue) => {
-  const nv = extractQuarterFromDate(newValue);
-  emitModelValue(nv);
-};
-
-const setDefaultModelValue = (newValue) => {
-  const nv = formatJSON(newValue);
-
-  if (nv === props.modelValue) return;
-
-  emitModelValue(nv);
-};
-
 const setModelValue = (newValue) => {
-  switch (props.kind) {
-    case 'time':
-      setTimeModelValue(newValue);
-      break;
-    case 'time-full':
-      setFullTimeModelValue(newValue);
-      break;
-    case 'date':
-      setDateModelValue(newValue);
-      break;
-    case 'dateTime':
-    case 'date-time':
-    case 'date-time-full':
-      setDateTimeModelValue(newValue);
-      break;
-    case 'month':
-      setMonthModelValue(newValue);
-      break;
-    case 'year':
-      setYearModelValue(newValue);
-      break;
-    case 'month-year':
-      setMonthYearModelValue(newValue);
-      break;
-    case 'quarters':
-      setQuarterModelValue(newValue);
-      break;
-    default:
-      setDefaultModelValue(newValue);
-      break;
-  }
+  emitModelValue(cfg.value.emit(newValue, kindCtx.value));
 };
 
 const model = computed({
@@ -303,96 +135,16 @@ const model = computed({
   set: setModelValue,
 });
 
-function getNameDate() {
-  if (isDateValid(props.modelValue)) {
-    return formatDate(props.modelValue);
-  }
-  if (typeof props.modelValue !== 'string') {
-    return formatDate(props.modelValue);
-  }
-  return null;
-}
-
-function getNameTime() {
-  if (isTimeValid(props.modelValue)) {
-    return props.modelValue;
-  }
-  if (typeof props.modelValue !== 'string') {
-    return extractTime(formatDateTime(props.modelValue));
-  }
-  return null;
-}
-
-function getNameDateTime() {
-  if (isDateValid(props.modelValue)) {
-    return formatDateTime(props.modelValue);
-  }
-  return null;
-}
-
-function getNameDateTimeFull() {
-  if (isDateValid(props.modelValue)) {
-    return formatFull(props.modelValue);
-  }
-  return null;
-}
-
-function getNameMonth() {
-  if (typeof props.modelValue === 'string') {
-    const monthsList = getMonthNames(localeComputed.value);
-    return getMonthNameByOrder(monthsList, new Date(props.modelValue)?.getMonth(), true);
-  }
-  if (typeof props.modelValue !== 'string') {
-    const monthsList = getMonthNames(localeComputed.value);
-    return getMonthNameByOrder(monthsList, props.modelValue?.getMonth(), true);
-  }
-  return null;
-}
-
-function getNameMonthYear() {
-  if (typeof props.modelValue === 'string') {
-    return getMonthYearString(
-      localeComputed.value,
-      new Date(props.modelValue)?.getMonth(),
-      new Date(props.modelValue)?.getFullYear()
-    );
-  }
-  if (typeof props.modelValue !== 'string') {
-    return getMonthYearString(
-      localeComputed.value,
-      props.modelValue?.getMonth(),
-      props.modelValue?.getFullYear()
-    );
-  }
-  return null;
-}
+// Composite kinds (day-month) own the raw string model value directly, so they
+// bypass the Date-based `model` above and pass the value straight through.
+const rawModel = computed({
+  get: () => props.modelValue,
+  set: emitModelValue,
+});
 
 function getName() {
   if (props.modelValue === '') return null;
-
-  switch (props.kind) {
-    case 'date':
-      return getNameDate();
-
-    case 'time':
-      return getNameTime();
-
-    case 'dateTime':
-    case 'date-time':
-      return getNameDateTime();
-
-    case 'date-time-full':
-      return getNameDateTimeFull();
-
-    case 'month':
-      return getNameMonth();
-
-    case 'month-year':
-      return getNameMonthYear();
-
-    default:
-      return props.modelValue;
-  }
+  return cfg.value.getName(props.modelValue, kindCtx.value);
 }
 
 const modelValueIso = computed(() => {
@@ -451,15 +203,11 @@ const attributesComputed = computed(() => {
   return res;
 });
 
-const mode = computed(() => {
-  switch (props.kind) {
-    case 'date-time':
-    case 'dateTime':
-      return 'date-time';
-    default:
-      return props.kind;
-  }
-});
+const mode = computed(() => cfg.value.mode);
+
+// Kinds whose UI is a composite of plain selects (e.g. day-month) rather than
+// the calendar-based LxDatePicker.
+const isComposite = computed(() => cfg.value.panel === 'composite');
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
@@ -501,17 +249,29 @@ if (props.builderOptions?.useRegistry) {
     <template v-else>
       <div
         class="lx-date-time-picker-wrapper"
-        :class="{
-          'lx-date': kind === 'date' || kind === 'month' || kind === 'year' || kind === 'quarters',
-          'lx-time': kind === 'time' || kind === 'time-full',
-          'lx-date-time': kind === 'dateTime' || kind === 'date-time' || kind === 'month-year',
-          'lx-date-time-full': kind === 'dateTimeFull' || kind === 'date-time-full',
-        }"
+        :class="cfg.cssClass"
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
-        :title="tooltip"
+        :title="isComposite ? null : tooltip"
       >
+        <LxDayMonthPicker
+          v-if="isComposite"
+          v-model="rawModel"
+          :id="id"
+          :disabled="disabled"
+          :invalid="invalid"
+          :invalidationMessage="invalidationMessage"
+          :clearIfNotExact="clearIfNotExact"
+          :locale="localeComputed"
+          :placeholder="placeholder"
+          :tooltip="tooltip"
+          :helperText="helperText"
+          :helperTextKind="helperTextKind"
+          :texts="displayTexts"
+          :labelled-by="labelledBy"
+        />
         <LxDatePicker
+          v-else
           :id="id"
           v-model="model"
           :mode="mode"

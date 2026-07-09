@@ -36,6 +36,12 @@ import {
   getCadencedTimeItems,
   constants,
 } from '@/components/datePicker/helpers';
+import {
+  isDateBasedMode,
+  getCalendarLayout,
+  hasTimeColumns,
+  modeHasSeconds,
+} from '@/components/datePicker/kindConfig';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxRow from '@/components/forms/Row.vue';
@@ -241,7 +247,7 @@ function getColumnMax(column) {
 }
 
 const timeModeColumns = computed(() =>
-  props.mode === 'time-full' || props.mode === 'date-time-full' ? columnOrder : ['hours', 'minutes']
+  modeHasSeconds(props.mode) ? columnOrder : ['hours', 'minutes']
 );
 
 function syncTimeSelected(column) {
@@ -603,7 +609,7 @@ const isCurrentTimeVisibleInPicker = computed(() => {
     (item) => item.value === now.getMinutes()
   );
 
-  if (props.mode === 'time-full' || props.mode === 'date-time-full') {
+  if (modeHasSeconds(props.mode)) {
     const secondsVisible = getVisibleTimeItems('seconds').some(
       (item) => item.value === now.getSeconds()
     );
@@ -617,11 +623,7 @@ const isMobileScreen = computed(() => windowSize.width.value < constants.MOBILE_
 
 const isTimePickerVisible = computed(
   () =>
-    ((props.mode === 'time' ||
-      props.mode === 'date-time' ||
-      props.mode === 'time-full' ||
-      props.mode === 'date-time-full') &&
-      !isMobileScreen.value) ||
+    (hasTimeColumns(props.mode) && !isMobileScreen.value) ||
     ((props.mode === 'time' || props.mode === 'time-full') && isMobileScreen.value) ||
     ((props.mode === 'date-time' || props.mode === 'date-time-full') &&
       isMobileScreen.value &&
@@ -765,10 +767,6 @@ const computedPrevTransitionName = computed(() =>
 const computedNextTransitionName = computed(() =>
   props.variant === 'full-rows' ? 'lx-next-full-row-slide' : 'lx-next-slide'
 );
-
-function isDateBasedMode(mode) {
-  return mode === 'date' || mode === 'date-time' || mode === 'date-time-full';
-}
 
 function syncActiveMonthToYear(targetYear) {
   const referenceDate =
@@ -1105,23 +1103,19 @@ function handleDoNotIndicateEnd() {
 
 function handleLayoutDisplay() {
   if (showCalendar.value) {
-    // Case when month only selection active
-    if (props.mode === 'month') {
+    const layout = getCalendarLayout(props.mode);
+    // Month-only and month-year both use the months grid.
+    if (layout === 'month') {
       monthsLayout.value = true;
       yearsLayout.value = false;
       return;
     }
     // Case when year only selection active
-    if (props.mode === 'year') {
+    if (layout === 'year') {
       yearsLayout.value = true;
       return;
     }
-    if (props.mode === 'month-year') {
-      yearsLayout.value = false;
-      monthsLayout.value = true;
-      return;
-    }
-    if (props.mode === 'quarters') {
+    if (layout === 'quarters') {
       yearsLayout.value = false;
       monthsLayout.value = false;
       quartersLayout.value = true;
@@ -1271,10 +1265,6 @@ function getFirstFocusableVisibleDay() {
   }
 
   return null;
-}
-
-function isDateMode(mode) {
-  return mode === 'date' || mode === 'date-time' || mode === 'date-time-full';
 }
 
 function tryFocusDay(targetDate, attempt = 0) {
@@ -1460,7 +1450,7 @@ function focusQuartersLayout() {
 }
 
 function runInitialFocus(targetDate) {
-  if (regularLayout.value && isDateMode(props.mode)) {
+  if (regularLayout.value && isDateBasedMode(props.mode)) {
     tryFocusDay(targetDate);
     return;
   }
@@ -2519,12 +2509,7 @@ function getReturnToTodayTransition(newDate) {
 function returnToToday() {
   const newDate = new Date();
 
-  if (
-    props.mode === 'time' ||
-    props.mode === 'time-full' ||
-    props.mode === 'date-time' ||
-    props.mode === 'date-time-full'
-  ) {
+  if (hasTimeColumns(props.mode)) {
     moveTimeColumnsToNow();
   }
 
@@ -4141,12 +4126,7 @@ watch(
         }
       }
 
-      if (
-        props.mode === 'time' ||
-        props.mode === 'time-full' ||
-        props.mode === 'date-time' ||
-        props.mode === 'date-time-full'
-      ) {
+      if (hasTimeColumns(props.mode)) {
         initializeTimePicker();
       }
 
@@ -5769,11 +5749,7 @@ if (typeof globalThis !== 'undefined') {
 
       <div
         v-if="
-          ((mode === 'time' ||
-            mode === 'date-time' ||
-            mode === 'time-full' ||
-            mode === 'date-time-full') &&
-            !isMobileScreen) ||
+          (hasTimeColumns(mode) && !isMobileScreen) ||
           ((mode === 'time' || mode === 'time-full') && isMobileScreen) ||
           ((mode === 'date-time' || mode === 'date-time-full') &&
             isMobileScreen &&

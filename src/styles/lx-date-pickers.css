@@ -1294,4 +1294,58 @@
   }
 }
 
+.lx .lx-layout .lx-day-month-picker {
+  display: flex;
+  flex-direction: column;
+}
+
+.lx .lx-layout .lx-day-month-picker .lx-day-month-fields {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-0500);
+}
+
+.lx .lx-layout .lx-day-month-picker .lx-day-month-day {
+  flex: 0 0 auto;
+  width: 9rem;
+}
+
+.lx .lx-layout .lx-day-month-picker .lx-day-month-month {
+  flex: 0 0 auto;
+  width: var(--input-width-l);
+}
+
+.lx .lx-layout .lx-day-month-picker .lx-day-month-info svg {
+  height: var(--icon-size-m);
+  width: var(--icon-size-m);
+  margin: var(--space-0500);
+}
+
+.lx .lx-layout .lx-day-month-picker .lx-day-month-info .lx-info-wrapper-content {
+  height: var(--input-height);
+}
+
+.lx .lx-layout .lx-day-month-picker .lx-day-month-info .popper-wrapper {
+  width: fit-content;
+}
+
+.lx .lx-layout .lx-day-month-picker .lx-day-month-helper {
+  font-size: var(--small-font-size);
+  letter-spacing: var(--letter-spacing-2);
+  display: inline-block;
+  color: var(--color-label);
+  font-weight: var(--font-weight);
+  vertical-align: baseline;
+  margin-top: var(--space-0125);
+}
+
+.lx .lx-layout .lx-day-month-picker.lx-day-month-responsive .lx-day-month-fields {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.lx .lx-layout .lx-day-month-picker.lx-day-month-responsive .lx-day-month-info {
+  align-self: flex-start;
+}
+
 
