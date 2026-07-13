@@ -1714,6 +1714,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                           @keydown.down.prevent="moveGroupedItem(element, 'backward')"
                           @keydown.right.prevent="moveGroupedItem(element, 'backward')"
                           @keydown.left.prevent="moveGroupedItem(element, 'forward')"
+                          @keyup.up.stop
+                          @keyup.down.stop
                         >
                           <LxIcon class="lx-icon" value="drag"></LxIcon>
                         </div>
@@ -2337,6 +2339,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                           @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
                           @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
                           @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
+                          @keyup.up.stop
+                          @keyup.down.stop
                         >
                           <LxIcon class="lx-icon" value="drag"></LxIcon>
                         </div>
@@ -2456,6 +2460,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                             @keydown.down.prevent="moveGroupedItem(element, 'backward')"
                             @keydown.right.prevent="moveGroupedItem(element, 'backward')"
                             @keydown.left.prevent="moveGroupedItem(element, 'forward')"
+                            @keyup.up.stop
+                            @keyup.down.stop
                           >
                             <LxIcon class="lx-icon" value="drag"></LxIcon>
                           </div>
