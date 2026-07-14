@@ -109,6 +109,7 @@ const textsDefault = {
   dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
   selectedStartDate: 'Izvēlēts sākuma datums',
   scrollUpDown: 'Ritināt uz augšu vai leju',
+  helperTextLabel: 'Papildu informācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

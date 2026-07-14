@@ -7,7 +7,7 @@ import LxIcon from '@/components/Icon.vue';
 import { getMonthNames } from '@/utils/dateUtils';
 import { maxDayOfMonth } from '@/components/datePicker/helpers';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { hasOverflow } from '@/utils/overflowUtils';
 
 const props = defineProps({
@@ -34,6 +34,8 @@ const textsDefault = {
   notSelected: 'Nav izvēlēts',
 };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const helperTextClamped = computed(() => clampText(props.helperText));
+const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const pad = (value) => String(value).padStart(2, '0');
 
@@ -190,16 +192,16 @@ watch([selectedMonth, selectedDay], () => emitValue(currentValue()));
       >
         <LxIcon value="info" />
         <template #panel>
-          <p class="lx-data">{{ helperText }}</p>
+          <p class="lx-data">{{ helperTextClamped }}</p>
         </template>
       </LxInfoWrapper>
     </div>
     <!-- Shared message area: the invalidation message replaces inline helper text. -->
     <div v-if="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
-      {{ invalidationMessage }}
+      {{ invalidationMessageClamped }}
     </div>
-    <p v-else-if="helperTextKind === 'label' && helperText" class="lx-day-month-helper">
-      {{ helperText }}
+    <p v-else-if="helperTextKind === 'label' && helperText" class="lx-helper-text">
+      {{ helperTextClamped }}
     </p>
   </div>
 </template>

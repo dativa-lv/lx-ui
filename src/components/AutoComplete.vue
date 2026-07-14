@@ -1533,7 +1533,8 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                         >
                           <LxCheckbox
                             v-if="selectionKind === 'multiple'"
-                            :id="getItemId(item[idAttribute])"
+                            aria-hidden="true"
+                            :id="`${getItemId(item[idAttribute])}-checkbox`"
                             :group-id="groupId"
                             v-model="itemsModel[item[idAttribute]]"
                             :disabled="disabled"

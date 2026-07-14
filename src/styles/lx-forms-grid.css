@@ -35,7 +35,7 @@ svg .lx-shade {
   position: sticky;
   top: var(--nav-row-size);
   background-color: var(--color-region);
-  z-index: 11;
+  z-index: 10;
 }
 
 .lx-modal .lx-form-grid > header.lx-sticky,

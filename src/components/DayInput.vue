@@ -72,6 +72,7 @@ const textsDefault = {
   daysSingular: 'diena',
   monthsSingular: 'mēnesis',
   yearsSingular: 'gads',
+  helperTextLabel: 'Papildu informācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -674,7 +675,7 @@ watch(
         </div>
 
         <div v-if="infoText" class="lx-duration-result-icon">
-          <LxInfoWrapper placement="top">
+          <LxInfoWrapper placement="top" :label="displayTexts.helperTextLabel">
             <LxIcon value="info" />
 
             <template #panel>

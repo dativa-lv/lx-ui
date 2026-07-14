@@ -164,7 +164,7 @@ describe('LxDateTimePicker', () => {
 
       test('inline helper text renders below the fields', () => {
         wrapper = mountDayMonth({ helperText: 'Pick a recurring date' });
-        expect(wrapper.find('.lx-day-month-helper').text()).toBe('Pick a recurring date');
+        expect(wrapper.find('.lx-helper-text').text()).toBe('Pick a recurring date');
         expect(wrapper.find('.lx-invalidation-message').exists()).toBe(false);
       });
 
@@ -178,13 +178,13 @@ describe('LxDateTimePicker', () => {
           .findAll('.lx-invalidation-message')
           .filter((m) => m.text() === 'Required');
         expect(withText).toHaveLength(1);
-        expect(wrapper.find('.lx-day-month-helper').exists()).toBe(false);
+        expect(wrapper.find('.lx-helper-text').exists()).toBe(false);
       });
 
       test('icon helper text renders an info wrapper after the month, not inline', () => {
         wrapper = mountDayMonth({ helperText: 'Some info', helperTextKind: 'icon' });
         expect(wrapper.find('.lx-day-month-info').exists()).toBe(true);
-        expect(wrapper.find('.lx-day-month-helper').exists()).toBe(false);
+        expect(wrapper.find('.lx-helper-text').exists()).toBe(false);
       });
     });
   });

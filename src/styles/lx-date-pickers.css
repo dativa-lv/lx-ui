@@ -1372,16 +1372,6 @@
   width: fit-content;
 }
 
-.lx .lx-layout .lx-day-month-picker .lx-day-month-helper {
-  font-size: var(--small-font-size);
-  letter-spacing: var(--letter-spacing-2);
-  display: inline-block;
-  color: var(--color-label);
-  font-weight: var(--font-weight);
-  vertical-align: baseline;
-  margin-top: var(--space-0125);
-}
-
 .lx .lx-layout .lx-day-month-picker.lx-day-month-responsive .lx-day-month-fields {
   flex-direction: column;
   align-items: flex-start;

@@ -1273,7 +1273,7 @@
 .lx .lx-component-toolbar.lx-toolbar-sticky  {
   position: sticky;
   top: calc(var(--nav-row-size) + var(--toolbar-gap-top, 0rem));
-  z-index: 11;
+  z-index: 10;
  }
 
 .lx .lx-component-toolbar.lx-toolbar-sticky.lx-toolbar-hidden-under-footer {

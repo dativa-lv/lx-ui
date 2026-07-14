@@ -80,6 +80,7 @@ const textsDefault = {
   dayPlaceholder: 'dd',
   monthPlaceholder: 'Mēnesis',
   notSelected: 'Nav izvēlēts',
+  helperTextLabel: 'Papildu informācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

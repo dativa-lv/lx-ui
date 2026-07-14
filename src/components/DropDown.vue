@@ -468,6 +468,9 @@ const getSelectedItem = computed(
         :aria-expanded="ariaExpandedState"
         aria-controls="popper-id"
         :aria-labelledby="labelledBy"
+        :aria-invalid="invalid"
+        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
         @keydown.esc.prevent="closeDropDownDefaultOnEsc"
         @keydown.enter.prevent="onEnter"
         @keydown.space.prevent="onEnter"
@@ -490,9 +493,6 @@ const getSelectedItem = computed(
               class="lx-dropdown-default-panel lx-input-wrapper"
               :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
               :title="tooltip"
-              :aria-invalid="invalid"
-              :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-              :aria-describedby="invalid ? `${id}-invalidation-message` : null"
             >
               <div class="pseudo-input" />
 
