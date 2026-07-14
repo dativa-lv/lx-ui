@@ -561,6 +561,13 @@ function scrollToContainer(canvasElement) {
   });
 }
 
+function scrollWrapperToTop() {
+  const container = pdfWrapper.value;
+  if (container) {
+    container.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }
+}
+
 async function goToPage() {
   showInput.value = false;
 
@@ -574,7 +581,11 @@ async function goToPage() {
 
   const canvasElement = canvasArray.value[currentPage.value - 1];
   if (!canvasElement) {
-    renderPage(currentPage.value);
+    await renderPage(currentPage.value);
+    // In non-scrollable mode a new page replaces the single canvas, so reset the
+    // wrapper scroll to the top of the freshly rendered page instead of keeping
+    // the previous scroll offset (which would show the bottom of the new page).
+    scrollWrapperToTop();
     return;
   }
 
