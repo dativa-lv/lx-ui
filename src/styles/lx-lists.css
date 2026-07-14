@@ -741,10 +741,10 @@
   padding-top: var(--space-0500);
 }
 
-.lx-list-wrapper > .lx-list-loader {
+.lx-list-loader {
   display: flex;
   justify-content: center;
-  padding: var(--space-2000) var(--space-0);
+  padding: var(--space-1000) var(--space-0);
 }
 
 .lx-list-wrapper .lx-load-more-button > .lx-button {
