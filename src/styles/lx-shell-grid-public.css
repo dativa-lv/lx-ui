@@ -23,6 +23,7 @@
 
 .lx:not(.lx-theme-contrast) .lx-layout.lx-layout-public>header>.lx-header .lx-group .lx-button:not(.lx-context-container .popper .lx-button):hover,
 .lx:not(.lx-theme-contrast) .lx-layout.lx-layout-public>header>.lx-header .lx-group .lx-button:not(.lx-context-container .popper .lx-button):active,
+.lx:not(.lx-theme-contrast) .lx-layout.lx-layout-public>header>.lx-header .lx-group .lx-dropdown-toggler:active .lx-button:not(.lx-context-container .popper .lx-button),
 .lx:not(.lx-theme-contrast) .lx-layout.lx-layout-public>header>.lx-header .lx-right-group #nav-toggle:hover {
   background-color: var(--color-header-hover-background);
   border-color: var(--color-header-hover-background);
