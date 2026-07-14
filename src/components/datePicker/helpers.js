@@ -7,6 +7,7 @@ import {
   endOfWeek,
   eachDayOfInterval,
   addMonths,
+  subMonths,
   format,
   isMatch,
   addDays,
@@ -1458,4 +1459,65 @@ export function parseExact(value) {
   }
 
   return null;
+}
+
+// Whether a month other than the current one is reachable within [min, max].
+export function hasOtherSelectableMonth(prev, next, min, max) {
+  let canGoPrev = true;
+  let canGoNext = true;
+
+  if (min) {
+    const py = prev.getFullYear();
+    const pm = prev.getMonth();
+    const minY = min.getFullYear();
+    const minM = min.getMonth();
+
+    canGoPrev = py > minY || (py === minY && pm >= minM);
+  }
+
+  if (max) {
+    const ny = next.getFullYear();
+    const nm = next.getMonth();
+    const maxY = max.getFullYear();
+    const maxM = max.getMonth();
+
+    canGoNext = ny < maxY || (ny === maxY && nm <= maxM);
+  }
+
+  return canGoPrev || canGoNext;
+}
+
+// Whether a year other than the current one is reachable within [min, max].
+export function hasOtherSelectableYear(currentYear, min, max) {
+  let canGoPrev = true;
+  let canGoNext = true;
+
+  if (min) canGoPrev = currentYear - 1 >= min.getFullYear();
+  if (max) canGoNext = currentYear + 1 <= max.getFullYear();
+
+  return canGoPrev || canGoNext;
+}
+
+export function isSingleChoiceKind(mode, currentDate, min, max) {
+  if (mode === 'year' || mode === 'month' || mode === 'quarters') {
+    return true;
+  }
+
+  const canPickOtherYear = hasOtherSelectableYear(currentDate.getFullYear(), min, max);
+
+  if (mode === 'month-year') {
+    return !canPickOtherYear;
+  }
+
+  if (mode === 'date') {
+    const canPickOtherMonth = hasOtherSelectableMonth(
+      subMonths(currentDate, 1),
+      addMonths(currentDate, 1),
+      min,
+      max
+    );
+    return !canPickOtherYear && !canPickOtherMonth;
+  }
+
+  return false;
 }

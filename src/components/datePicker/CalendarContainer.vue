@@ -35,6 +35,9 @@ import {
   formatTimeValue,
   getCadencedTimeItems,
   constants,
+  hasOtherSelectableMonth,
+  hasOtherSelectableYear,
+  isSingleChoiceKind,
 } from '@/components/datePicker/helpers';
 import {
   isDateBasedMode,
@@ -1153,6 +1156,11 @@ const monthsList = computed(() =>
   getMonths(currentDate.value, props.variant, props.mode, props.pickerType, isMobileScreen.value)
 );
 
+const committedMonthYear = computed(() => {
+  const d = props.modelValue instanceof Date ? props.modelValue : null;
+  return d ? { month: d.getMonth(), year: d.getFullYear() } : null;
+});
+
 const currentHourIndex = ref(getTimeOrderIndex(hours.value, todayDate.value.getHours()));
 const currentMinuteIndex = ref(
   getTimeOrderIndex(filteredMinutes.value, todayDate.value.getMinutes(), props.cadenceOfMinutes)
@@ -1924,6 +1932,16 @@ function handleDateTimePartSelection(updatedDate, selectedValue, key, mode) {
   handleEnterKeyFocus(key);
 }
 
+function maybeCloseAfterSelection(key) {
+  if (key === 'space') return;
+  if (
+    key === 'enter' ||
+    isSingleChoiceKind(props.mode, currentDate.value, props.minDateRef, props.maxDateRef)
+  ) {
+    props.closeMenu();
+  }
+}
+
 function handleDateOnlySelection(updatedDate, key) {
   const { id, setActiveInput } = props;
 
@@ -1935,9 +1953,7 @@ function handleDateOnlySelection(updatedDate, key) {
     setActiveInput('startInput', id);
   }
 
-  if (key === 'enter') {
-    props.closeMenu();
-  }
+  maybeCloseAfterSelection(key);
 }
 
 function updateSelectedDateParts(selectedValue) {
@@ -1997,9 +2013,7 @@ function handleMonthSelection(selectedValue, newDate, key) {
     if (key !== 'space') {
       props.setActiveInput('startInput', props.id);
     }
-    if (key === 'enter') {
-      props.closeMenu();
-    }
+    maybeCloseAfterSelection(key);
     return;
   }
 
@@ -2013,6 +2027,7 @@ function handleMonthSelection(selectedValue, newDate, key) {
       if (key !== 'space') {
         props.setActiveInput('startInput', props.id);
       }
+      maybeCloseAfterSelection(key);
     } else {
       monthsLayout.value = false;
       yearsLayout.value = true;
@@ -2035,7 +2050,7 @@ function handleMonthSelection(selectedValue, newDate, key) {
   props.setActiveInput(props.activeInput, props.id);
 }
 
-function handleMonthYearSelection(numericYear, key) {
+function handleMonthYearSelection(numericYear) {
   if (
     selectedMonth.value !== null &&
     !canSelectDate(
@@ -2046,15 +2061,6 @@ function handleMonthYearSelection(numericYear, key) {
     )
   ) {
     selectedMonth.value = null;
-    emits('update:modelValue', null);
-  } else if (selectedMonth.value !== null) {
-    const updatedDate = new Date(numericYear, selectedMonth.value, 1);
-    emits('update:modelValue', updatedDate);
-    handleLayoutDisplay();
-    if (key !== 'space') {
-      props.setActiveInput('startInput', props.id);
-    }
-    return;
   }
   syncActiveMonthToYear(numericYear);
   yearsLayout.value = false;
@@ -2088,14 +2094,12 @@ function handleYearSelection(selectedValue, newDate, key) {
     if (key !== 'space') {
       props.setActiveInput('startInput', props.id);
     }
-    if (key === 'enter') {
-      props.closeMenu();
-    }
+    maybeCloseAfterSelection(key);
     return;
   }
 
   if (props.mode === 'month-year') {
-    handleMonthYearSelection(numericYear, key);
+    handleMonthYearSelection(numericYear);
     return;
   }
 
@@ -2124,12 +2128,10 @@ function handleQuarterSelection(selectedValue, key) {
 
   const updatedDate = dateFromYearAndQuarter(selectedYear.value, selectedQuarter.value);
   emits('update:modelValue', updatedDate);
-  if (key === 'enter') {
-    props.closeMenu();
-  }
   if (key !== 'space') {
     props.setActiveInput('startInput', props.id);
   }
+  maybeCloseAfterSelection(key);
 }
 
 function handleSingleSelection(selectedValue, selectionType, isNotSelectable = false, key = null) {
@@ -2814,28 +2816,6 @@ function setTimeSelected(column, offset, keepFocus = false) {
   }
 }
 
-function onTimeContainerKeydown(event) {
-  const { target } = event;
-  const column = target?.dataset.column || activeTimeColumn.value;
-  if (!column) return;
-
-  activeTimeColumn.value = column;
-
-  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-    event.preventDefault();
-    handleTimeArrowKey(column, event.key);
-    return;
-  }
-
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    const value = Number(target?.dataset.value);
-    if (isTimeValueSelectable(column, value)) {
-      setTimeSelected(column, timeActiveOffsets.value[column], true);
-    }
-  }
-}
-
 function moveCalendar(minDate, maxDate) {
   const now = normalizeDate(new Date(), props.mode);
 
@@ -3141,6 +3121,52 @@ function handleDateTimeSelection() {
   }
 }
 
+function timeValueCompleteAfter(column) {
+  const needsSeconds = props.mode === 'time-full' || props.mode === 'date-time-full';
+  const needsDay = props.mode === 'date-time' || props.mode === 'date-time-full';
+
+  const filled = {
+    hours: isDefined(selectedHour.value),
+    minutes: isDefined(selectedMinute.value),
+    seconds: isDefined(selectedSecond.value),
+  };
+  filled[column] = true; // the column being committed right now
+
+  const missingDay = needsDay && !isDefined(selectedDay.value);
+  const missingTime = !filled.hours || !filled.minutes;
+  const missingSeconds = needsSeconds && !filled.seconds;
+
+  if (missingDay || missingTime || missingSeconds) return false;
+
+  return true;
+}
+
+function onTimeContainerKeydown(event) {
+  const { target, key } = event;
+  const column = target?.dataset.column || activeTimeColumn.value;
+  if (!column) return;
+
+  activeTimeColumn.value = column;
+
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+    event.preventDefault();
+    handleTimeArrowKey(column, key);
+    return;
+  }
+
+  if (key === 'Enter' || key === ' ') {
+    event.preventDefault();
+    const value = Number(target?.dataset.value);
+    if (!isTimeValueSelectable(column, value)) return;
+
+    const finalize = key === 'Enter' && timeValueCompleteAfter(column);
+    // Keep focus only while the panel stays open; when finalizing we close, so drop it.
+    setTimeSelected(column, timeActiveOffsets.value[column], !finalize);
+
+    if (finalize) props.closeMenu();
+  }
+}
+
 function handleOutsideClickRangeSelection() {
   if (props.activeInput === 'startInput' && !selectedStartDate.value && selectedEndDate.value) {
     if (props.clearIfNotExact) {
@@ -3345,41 +3371,6 @@ const canSelectNext = computed(() => {
   // Always enable in other cases
   return true;
 });
-
-function hasOtherSelectableMonth(prev, next, min, max) {
-  let canGoPrev = true;
-  let canGoNext = true;
-
-  if (min) {
-    const py = prev.getFullYear();
-    const pm = prev.getMonth();
-    const minY = min.getFullYear();
-    const minM = min.getMonth();
-
-    canGoPrev = py > minY || (py === minY && pm >= minM);
-  }
-
-  if (max) {
-    const ny = next.getFullYear();
-    const nm = next.getMonth();
-    const maxY = max.getFullYear();
-    const maxM = max.getMonth();
-
-    canGoNext = ny < maxY || (ny === maxY && nm <= maxM);
-  }
-
-  return canGoPrev || canGoNext;
-}
-
-function hasOtherSelectableYear(currentYear, min, max) {
-  let canGoPrev = true;
-  let canGoNext = true;
-
-  if (min) canGoPrev = currentYear - 1 >= min.getFullYear();
-  if (max) canGoNext = currentYear + 1 <= max.getFullYear();
-
-  return canGoPrev || canGoNext;
-}
 
 function applyRangeDate(date) {
   const year = date.getFullYear();
@@ -5224,7 +5215,13 @@ if (typeof globalThis !== 'undefined') {
                             },
                             {
                               'lx-selected-month':
-                                (month.orderIndex === selectedMonth &&
+                                (mode === 'month-year' &&
+                                  pickerType === 'single' &&
+                                  !!committedMonthYear &&
+                                  month.orderIndex === committedMonthYear.month &&
+                                  month.year === committedMonthYear.year) ||
+                                (mode !== 'month-year' &&
+                                  month.orderIndex === selectedMonth &&
                                   month.year === (selectedYear || tempSelectedYear) &&
                                   pickerType === 'single') ||
                                 (month.orderIndex === selectedMonth &&

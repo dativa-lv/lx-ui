@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
 import LxDayMonthPicker from '@/components/datePicker/DayMonthPicker.vue';
+import { isSingleChoiceKind } from '@/components/datePicker/helpers';
 
 let wrapper;
 
@@ -286,6 +287,291 @@ describe('LxDateTimePicker', () => {
         expect(dispatchKeydown(input, ' ').defaultPrevented).toBe(true);
       }
     );
+  });
+
+  describe('isSingleChoiceKind (pure)', () => {
+    const cur = new Date(2025, 4, 14); // 14 May 2025
+
+    it('treats year / month / quarters as single-choice regardless of range', () => {
+      expect(isSingleChoiceKind('year', cur, null, null)).toBe(true);
+      expect(isSingleChoiceKind('month', cur, null, null)).toBe(true);
+      expect(isSingleChoiceKind('quarters', cur, null, null)).toBe(true);
+    });
+
+    it('treats time / date-time as multi-choice regardless of range', () => {
+      expect(isSingleChoiceKind('time', cur, cur, cur)).toBe(false);
+      expect(isSingleChoiceKind('time-full', cur, cur, cur)).toBe(false);
+      expect(isSingleChoiceKind('date-time', cur, cur, cur)).toBe(false);
+      expect(isSingleChoiceKind('date-time-full', cur, cur, cur)).toBe(false);
+    });
+
+    it('month-year is single-choice only when the year is fixed', () => {
+      expect(isSingleChoiceKind('month-year', cur, null, null)).toBe(false);
+      expect(
+        isSingleChoiceKind('month-year', cur, new Date(2025, 0, 1), new Date(2025, 11, 31))
+      ).toBe(true);
+      expect(
+        isSingleChoiceKind('month-year', cur, new Date(2024, 0, 1), new Date(2026, 11, 31))
+      ).toBe(false);
+    });
+
+    it('date is single-choice only when both month and year are fixed', () => {
+      expect(isSingleChoiceKind('date', cur, null, null)).toBe(false);
+      // one year, many months -> still multi-choice
+      expect(isSingleChoiceKind('date', cur, new Date(2025, 0, 1), new Date(2025, 11, 31))).toBe(
+        false
+      );
+      // one month -> single (day) choice
+      expect(isSingleChoiceKind('date', cur, new Date(2025, 4, 1), new Date(2025, 4, 31))).toBe(
+        true
+      );
+    });
+  });
+
+  describe('auto-close on single choice', () => {
+    const openCalendar = async (kind, extraProps = {}) => {
+      wrapper = mount(LxDateTimePicker, {
+        props: {
+          variant: 'default',
+          kind,
+          ...extraProps,
+        },
+        global: {
+          stubs: ['router-link'],
+          directives: {
+            ClickAway: dummyClickAway,
+          },
+        },
+      });
+
+      const pickerInput = wrapper.find('.lx-date-time-picker.lx-input-area');
+      await pickerInput.trigger('keyup', { key: 'ArrowDown' });
+
+      const container = document.body.querySelector('.lx-calendar-container');
+      expect(container).toBeTruthy();
+      return container;
+    };
+
+    const clickCell = async (container, selector) => {
+      const cell = container.querySelector(selector);
+      expect(cell).toBeTruthy();
+      cell.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+    };
+
+    const isOpen = () => Boolean(document.body.querySelector('.lx-calendar-container'));
+
+    test.each([
+      ['year', '.lx-calendar-year:not(.lx-disabled-year)'],
+      ['month', '.lx-calendar-month:not(.lx-disabled-month)'],
+      ['quarters', '.lx-calendar-quarter:not(.lx-disabled-quarter)'],
+    ])('kind %s closes the picker when the choice is clicked', async (kind, selector) => {
+      const container = await openCalendar(kind, { modelValue: null });
+      await clickCell(container, selector);
+      expect(isOpen()).toBe(false);
+    });
+
+    test('month-year with a selectable year stays open on month click', async () => {
+      const container = await openCalendar('month-year', { modelValue: '2026-02' });
+      await clickCell(container, '.lx-calendar-month:not(.lx-disabled-month)');
+      expect(isOpen()).toBe(true);
+    });
+
+    test('month-year closes on month click when the year is disabled (single year range)', async () => {
+      const container = await openCalendar('month-year', {
+        modelValue: '2026-06',
+        minDate: new Date(2026, 0, 1),
+        maxDate: new Date(2026, 11, 31),
+      });
+      // The whole selectable range sits in one year, so the year selector is
+      // disabled and the picker collapses to a single (month) choice.
+      expect(container.querySelector('.lx-calendar-years-select-button').disabled).toBe(true);
+      await clickCell(container, '.lx-calendar-month:not(.lx-disabled-month)');
+      expect(isOpen()).toBe(false);
+    });
+
+    test('kind date stays open on day click (multi-choice, unchanged)', async () => {
+      const container = await openCalendar('date', { modelValue: '2025-05-14' });
+      await clickCell(container, '.lx-calendar-day:not(.lx-other-month):not(.lx-disabled-date)');
+      expect(isOpen()).toBe(true);
+    });
+
+    test('kind date stays open when only the year is fixed but months are navigable', async () => {
+      // Whole of 2025 is selectable: the year selector is disabled but the month
+      // selector is not, so the picker still offers more than one choice.
+      const container = await openCalendar('date', {
+        modelValue: '2025-05-14',
+        minDate: new Date(2025, 0, 1),
+        maxDate: new Date(2025, 11, 31),
+      });
+      expect(container.querySelector('.lx-calendar-years-select-button').disabled).toBe(true);
+      expect(container.querySelector('.lx-calendar-months-select-button').disabled).toBe(false);
+      await clickCell(container, '.lx-calendar-day:not(.lx-other-month):not(.lx-disabled-date)');
+      expect(isOpen()).toBe(true);
+    });
+
+    test('kind date closes on day click when confined to a single month', async () => {
+      // min/max sit inside one month, disabling both the month and year selectors,
+      // so the only remaining choice is the day.
+      const container = await openCalendar('date', {
+        modelValue: '2025-05-14',
+        minDate: new Date(2025, 4, 1),
+        maxDate: new Date(2025, 4, 31),
+      });
+      expect(container.querySelector('.lx-calendar-years-select-button').disabled).toBe(true);
+      expect(container.querySelector('.lx-calendar-months-select-button').disabled).toBe(true);
+      await clickCell(container, '.lx-calendar-day:not(.lx-other-month):not(.lx-disabled-date)');
+      expect(isOpen()).toBe(false);
+    });
+  });
+
+  describe('keyboard: enter closes, space keeps open', () => {
+    const open = async (kind, extraProps = {}) => {
+      wrapper = mount(LxDateTimePicker, {
+        props: { variant: 'default', kind, modelValue: null, ...extraProps },
+        global: {
+          stubs: ['router-link'],
+          directives: { ClickAway: dummyClickAway },
+        },
+      });
+      const input = wrapper.find('.lx-date-time-picker.lx-input-area');
+      await input.trigger('keyup', { key: 'ArrowDown' });
+      const container = document.body.querySelector('.lx-calendar-container');
+      expect(container).toBeTruthy();
+      return container;
+    };
+
+    const isOpen = () => Boolean(document.body.querySelector('.lx-calendar-container'));
+
+    const press = async (el, type, key) => {
+      expect(el).toBeTruthy();
+      el.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true, cancelable: true }));
+      await wrapper.vm.$nextTick();
+    };
+
+    const timeItem = (c, column) =>
+      c.querySelector(`.lx-time-list-item[data-column="${column}"]:not(.is-disabled)`);
+    const monthCell = (c) => c.querySelector('.lx-calendar-month:not(.lx-disabled-month)');
+    const clickDay = async (c) => {
+      const day = c.querySelector('.lx-calendar-day:not(.lx-other-month):not(.lx-disabled-date)');
+      expect(day).toBeTruthy();
+      day.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+    };
+
+    // Selects every part except the last, then presses Enter on the last -> should close.
+    // key/value: the ordered columns to fill; the final one is committed with Enter.
+    const timeColumns = {
+      time: ['hours', 'minutes'],
+      'time-full': ['hours', 'minutes', 'seconds'],
+      'date-time': ['hours', 'minutes'],
+      'date-time-full': ['hours', 'minutes', 'seconds'],
+    };
+
+    test.each(['time', 'time-full', 'date-time', 'date-time-full'])(
+      'kind %s: Enter closes only once the last part is selected',
+      async (kind) => {
+        const c = await open(kind);
+        if (kind === 'date-time' || kind === 'date-time-full') await clickDay(c);
+
+        const cols = timeColumns[kind];
+        // Select all but the last part with Space; the picker must stay open.
+        for (let i = 0; i < cols.length - 1; i += 1) {
+          // eslint-disable-next-line no-await-in-loop
+          await press(timeItem(c, cols[i]), 'keydown', ' ');
+          expect(isOpen()).toBe(true);
+        }
+        // Enter on the last part completes the value and closes.
+        await press(timeItem(c, cols[cols.length - 1]), 'keydown', 'Enter');
+        expect(isOpen()).toBe(false);
+      }
+    );
+
+    test.each(['time', 'time-full', 'date-time', 'date-time-full'])(
+      'kind %s: Enter on the first part does NOT close (incomplete)',
+      async (kind) => {
+        const c = await open(kind);
+        if (kind === 'date-time' || kind === 'date-time-full') await clickDay(c);
+        await press(timeItem(c, 'hours'), 'keydown', 'Enter');
+        expect(isOpen()).toBe(true);
+      }
+    );
+
+    test('time: Space on the last part selects but keeps the picker open', async () => {
+      const c = await open('time');
+      await press(timeItem(c, 'hours'), 'keydown', ' ');
+      await press(timeItem(c, 'minutes'), 'keydown', ' ');
+      expect(isOpen()).toBe(true);
+    });
+
+    test('month-year: Enter on a month closes the picker', async () => {
+      const c = await open('month-year', { modelValue: '2026-02' });
+      await press(monthCell(c), 'keyup', 'Enter');
+      expect(isOpen()).toBe(false);
+    });
+
+    test('month-year: Space on a month keeps the picker open', async () => {
+      const c = await open('month-year', { modelValue: '2026-02' });
+      await press(monthCell(c), 'keyup', ' ');
+      expect(isOpen()).toBe(true);
+    });
+  });
+
+  describe('month-year finalizes on the month, not the year', () => {
+    const open = async (extraProps = {}) => {
+      wrapper = mount(LxDateTimePicker, {
+        props: { variant: 'default', kind: 'month-year', modelValue: '2026-02', ...extraProps },
+        global: {
+          stubs: ['router-link'],
+          directives: { ClickAway: dummyClickAway },
+        },
+      });
+      const input = wrapper.find('.lx-date-time-picker.lx-input-area');
+      await input.trigger('keyup', { key: 'ArrowDown' });
+      const container = document.body.querySelector('.lx-calendar-container');
+      expect(container).toBeTruthy();
+      return container;
+    };
+    const click = async (el) => {
+      expect(el).toBeTruthy();
+      el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+    };
+    const emitCount = () => wrapper.emitted('update:modelValue')?.length ?? 0;
+
+    it('selecting a year does not emit; picking a month afterwards does', async () => {
+      const c = await open();
+
+      // Open the year layout and pick a year.
+      await click(c.querySelector('.lx-calendar-years-select-button'));
+      const before = emitCount();
+      await click(c.querySelector('.lx-calendar-year:not(.lx-disabled-year)'));
+
+      // Year alone must NOT emit and must return to the month grid.
+      expect(emitCount()).toBe(before);
+      expect(c.querySelector('.lx-calendar-month')).toBeTruthy();
+
+      // Picking a month finalizes the value and emits.
+      await click(c.querySelector('.lx-calendar-month:not(.lx-disabled-month)'));
+      expect(emitCount()).toBe(before + 1);
+    });
+
+    it('keeps the month highlight on the committed year while browsing another year', async () => {
+      const c = await open(); // committed 2026-02
+
+      // The committed month is highlighted in its own (2026) grid.
+      expect(c.querySelector('.lx-calendar-month.lx-selected-month')).toBeTruthy();
+
+      // Browse to a different year without picking a month.
+      await click(c.querySelector('.lx-calendar-years-select-button'));
+      const otherYear = [...c.querySelectorAll('.lx-calendar-year:not(.lx-disabled-year)')].find(
+        (el) => el.textContent.trim() !== '2026'
+      );
+      await click(otherYear);
+
+      // The other year's grid shows no selected month (the value still belongs to 2026).
+      expect(c.querySelector('.lx-calendar-month.lx-selected-month')).toBeNull();
+    });
   });
 
   describe('date-time entry order', () => {
