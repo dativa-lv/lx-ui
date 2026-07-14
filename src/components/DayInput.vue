@@ -124,7 +124,7 @@ const isResponsive = ref(false);
 async function updateResponsiveState() {
   isResponsive.value = false;
 
-  if (props.variant === 'default' || props.readOnly) {
+  if (props.readOnly) {
     return;
   }
 
@@ -605,6 +605,7 @@ watch(
 
         <div v-else-if="variant === 'default'" class="lx-duration-fields">
           <LxTextInput
+            class="lx-duration-single-value"
             :id="`${id}-value`"
             v-model="singleValue"
             :mask="singleInputMask"
@@ -619,6 +620,7 @@ watch(
             :builderOptions="{ innerComponent: true }"
           />
           <LxValuePicker
+            class="lx-duration-single-unit"
             :id="`${id}-unit`"
             v-model="singleUnit"
             :items="singleUnitOptions"
