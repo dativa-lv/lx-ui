@@ -234,6 +234,7 @@ const bounding = useElementBounding(container, {
   windowScroll: false,
   windowResize: false,
 });
+const containerSize = useElementSize(container);
 const headerSize = useElementSize(header);
 const lxElement = document.querySelector('.lx');
 const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -1606,7 +1607,7 @@ watch([rows, () => props.loading], async () => {
   scheduleFrame(() => remeasureRenderedDataGridRows());
 });
 
-watch([width, height], async () => {
+watch([width, height, containerSize.width], async () => {
   await nextTick();
   syncDataGridLayoutVisibility();
   syncColumnWidths();
