@@ -182,36 +182,17 @@ function canSelectDateModeTime(date, minDateParsed, maxDateParsed) {
   return true;
 }
 
+function getSecondsSinceMidnight(date) {
+  return date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds();
+}
+
 function canSelectDateModeTimeFull(date, minDateParsed, maxDateParsed) {
-  const selectedHours = date.getHours();
-  const selectedMinutes = date.getMinutes();
-  const selectedSeconds = date.getSeconds();
+  const selectedTime = getSecondsSinceMidnight(date);
 
-  const minHour = minDateParsed?.getHours();
-  const minMinute = minDateParsed?.getMinutes();
-  const minSecond = minDateParsed?.getSeconds();
-
-  const maxHour = maxDateParsed?.getHours();
-  const maxMinute = maxDateParsed?.getMinutes();
-  const maxSecond = maxDateParsed?.getSeconds();
-
-  if (minDateParsed) {
-    if (selectedHours < minHour) return false;
-    if (selectedHours === minHour) {
-      if (selectedMinutes < minMinute) return false;
-      if (selectedMinutes === minMinute && selectedSeconds < minSecond) return false;
-    }
-  }
-
-  if (maxDateParsed) {
-    if (selectedHours > maxHour) return false;
-    if (selectedHours === maxHour) {
-      if (selectedMinutes > maxMinute) return false;
-      if (selectedMinutes === maxMinute && selectedSeconds > maxSecond) return false;
-    }
-  }
-
-  return true;
+  return (
+    (!minDateParsed || selectedTime >= getSecondsSinceMidnight(minDateParsed)) &&
+    (!maxDateParsed || selectedTime <= getSecondsSinceMidnight(maxDateParsed))
+  );
 }
 
 function canSelectDateModeYear(date, minDateParsed, maxDateParsed) {

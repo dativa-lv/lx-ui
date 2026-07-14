@@ -319,7 +319,7 @@ provide('insideHeader', insideHeader);
                     role="button"
                   >
                     <div class="person-custom-button">
-                      <label>{{ item?.name }}</label>
+                      <div class="lx-primary">{{ item?.name }}</div>
                       <div class="lx-description">
                         {{ item?.description }}
                       </div>

@@ -305,7 +305,6 @@ defineExpose({ open, close });
           ]"
           tabindex="-1"
           :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
-          role="dialog"
           :aria-labelledby="`${id}-label`"
           @close="close"
           @keydown="handleKeyDown"

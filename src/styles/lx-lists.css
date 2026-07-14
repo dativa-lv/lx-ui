@@ -687,11 +687,6 @@
   align-items: center;
 }
 
-.lx-list-wrapper:not(.is-narrow) .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons-small,
-.lx-list-wrapper.is-narrow .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
-  display: none;
-}
-
 .lx-component-toolbar .left-area .lx-group > p,
 .lx-component-toolbar .right-area .lx-group > p {
   padding-left: var(--space-1000);
@@ -707,7 +702,10 @@
 
 .lx-component-toolbar .first-row > .left-area > .lx-group:only-child:has(> .lx-group:empty),
 .lx-list-wrapper .lx-component-toolbar:has(> .first-row > .left-area > .lx-group:only-child:empty):has(> .first-row > .right-area > .lx-group:only-child:empty),
-.lx-data-grid-wrapper .lx-component-toolbar:has(> .first-row > .left-area > .lx-group:only-child:empty):has(> .first-row > .right-area > .lx-group:only-child:empty) {
+.lx-data-grid-wrapper .lx-component-toolbar:has(> .first-row > .left-area > .lx-group:only-child:empty):has(> .first-row > .right-area > .lx-group:only-child:empty),
+.lx-list-wrapper:not(.is-narrow) .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons-small,
+.lx-list-wrapper.is-narrow .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons,
+.lx-list-wrapper .lx-load-more-button > .lx-button > .lx-button-content-wrapper svg {
   display: none;
 }
 
@@ -754,10 +752,6 @@
 
 .lx-list-wrapper .lx-load-more-button > .lx-button.lx-busy {
   flex-direction: row-reverse;
-}
-
-.lx-list-wrapper .lx-load-more-button > .lx-button > .lx-button-content-wrapper svg {
-  display: none;
 }
 
 /*** Loader styles ***/
@@ -1127,13 +1121,11 @@ a.lx-tile:not(.lx-disabled):hover {
   margin: var(--tile-mini-text-primary-margin);
 }
 
-.lx-tile.lx-mini .lx-description {
-  display: none;
-}
-
+.lx-tile.lx-mini .lx-description,
 .lx-tile.lx-mini > .lx-main {
   display: none;
 }
+
 
 /*** Misc styles ***/
 
@@ -1176,13 +1168,11 @@ li .lx-list-item.lx-inactive {
 }
 
 .lx-list-item-wrapper .compact-actions .lx-list-item-actions .lx-button,
-.lx-list-item-wrapper .compact-actions:has(.lx-list-item-actions) .lx-list-icon-wrapper {
+.lx-list-item-wrapper .compact-actions:has(.lx-list-item-actions) .lx-list-icon-wrapper,
+.lx-list-item-wrapper .compact-actions .lx-list-item-actions .lx-button  {
   height: var(--list-button-max-height);
 }
 
-.lx-list-item-wrapper .compact-actions .lx-list-item-actions .lx-button {
-  height: var(--list-button-max-height);
-}
 
 .lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions {
   display: flex;

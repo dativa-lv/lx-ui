@@ -218,7 +218,7 @@ function startWindowResizeObserver() {
     return;
   }
 
-  window.addEventListener('resize', scheduleUpdate);
+  globalThis.addEventListener('resize', scheduleUpdate);
   isWindowResizeObserved = true;
 }
 
@@ -227,7 +227,7 @@ function stopWindowResizeObserver() {
     return;
   }
 
-  window.removeEventListener('resize', scheduleUpdate);
+  globalThis.removeEventListener('resize', scheduleUpdate);
   isWindowResizeObserved = false;
 }
 

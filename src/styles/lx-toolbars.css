@@ -110,11 +110,6 @@
   border-bottom: var(--border-width-0);
 }
 
-.lx-component-toolbar .lx-group {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
 
 .lx-component-toolbar .lx-group::before {
   content: '';
@@ -224,6 +219,9 @@
 }
 
 .lx-component-toolbar .lx-group {
+  display: flex;
+  align-items: center;
+  position: relative;
   column-gap: var(--toolbar-button-gap);
 }
 
@@ -1328,13 +1326,6 @@
   top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
 }
 
-.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--public-nav-header-size) + var(--row-size) * 2 + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
-}
-
 .lx-toolbar-sticky.lx-toolbar-hidden-under-header {
   visibility: hidden;
   pointer-events: none;
@@ -1398,11 +1389,6 @@
 .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper,
 .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid header.lx-sticky + .lx-main .lx-sticky-toolbar-list-wrapper {
   top: calc(var(--public-nav-header-size) + var(--row-size) + var(--toolbar-gap-top, 0rem) + var(--border-width-1));
-}
-
-.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper,
-.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
-  top: calc(var(--nav-row-size) + var(--row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
 }
 
 .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-sticky-toolbar-list-wrapper,

@@ -24,10 +24,7 @@
   --input-border-radius: var(--border-radius-0);
 }
 
-.lx .lx-complex-input:has(.lx-input-wrapper.lx-disabled) {
-  background: var(--color-input-complex-background-disabled);
-  border-color: var(--color-input-complex-border-disabled);
-}
+
 
 .lx .lx-complex-input .lx-input-wrapper {
   border-radius: var(--input-complex-content-border-radius);
@@ -777,6 +774,7 @@
 }
 
 .lx .lx-complex-input:has(.lx-input-wrapper.lx-disabled) {
+  background: var(--color-input-complex-background-disabled);
   border-color: var(--color-input-complex-border-disabled);
 }
 

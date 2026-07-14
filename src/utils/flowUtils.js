@@ -1,6 +1,8 @@
 import { hasScope, hasScopeAtLeast, hasAnyScopeWithNamespace } from '@/utils/permissionUtils';
 import { trackNavigationState, resetNavigationTracking } from '@/utils/navigationState';
 import { isAppVersionChanged } from '@/utils/versionCheckUtils';
+import { logError } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
 
 const has = (needed, value) => {
   if (!needed) {
@@ -54,9 +56,7 @@ const validationMsg = {
   required: 'validation.required',
   numeric: 'validation.numeric',
 };
-const logError = () => {
-  // TODO: log error
-};
+
 const extractValidatorMessage = (msg) => {
   let match = msg.match(validatorMsgRegex);
   if (match) {
@@ -80,8 +80,7 @@ const getError = (error) => {
     return { status: 499, data: null };
   }
   if (typeof response === 'undefined') {
-    // @ts-ignore
-    logError(error);
+    logError(`${error.message}`, useLx().getGlobals()?.environment);
     return { status: 500, data: null };
   }
   const { request, ...errorObject } = response;

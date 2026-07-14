@@ -73,11 +73,6 @@ header.lx.lx-layout-public>.lx-header .lx-main-button:hover svg {
   fill: var(--color-header-hover-foreground) !important;
 }
 
-header.lx.lx-layout-public>.lx-header .lx-main-button:hover .lx-primary,
-header.lx.lx-layout-public>.lx-header .lx-main-button:hover .lx-description {
-  color: var(---color-header-hover-foreground) !important;
-}
-
 .lx p {
   margin: var(--space-0);
   color: var(--color-data);
@@ -198,10 +193,6 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button:hover::after {
   margin-block: 0;
 }
 
-header.lx.lx-layout-default .lx-header .lx-main-button > div {
-  font-weight: var(--font-weight-bold);
-  color: inherit;
-}
 
 header.lx .lx-header .lx-main-button .lx-primary {
     overflow: hidden;
@@ -233,6 +224,8 @@ header.lx.lx-layout-public > .lx-header .lx-main-button:hover .lx-description {
 }
 
 header.lx.lx-layout-default .lx-header .lx-main-button > div {
+  font-weight: var(--font-weight-bold);
+  color: inherit;
   overflow: hidden;
 }
 

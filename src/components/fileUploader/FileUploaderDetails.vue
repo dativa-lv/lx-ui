@@ -349,7 +349,6 @@ const normalizedIconAndType = computed(() => {
         :columnCount="3"
         v-if="props.value?.additionalData"
       >
-        <!-- <LxFormBuilder v-model="additionalData" mode="mixed" :readOnly="true"></LxFormBuilder> -->
         <LxRow
           v-for="(item, name) in props.value.additionalData"
           :label="name?.toString()"

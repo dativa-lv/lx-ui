@@ -160,7 +160,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const { y } = useScroll(window);
+const { y } = useScroll(globalThis);
 
 const { width } = useWindowSize();
 

@@ -11,7 +11,7 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
     const normalizedBasePath = basePath.replace(/\/$/, '');
 
     const resp = await axios.get(
-      `${window.location.origin}${normalizedBasePath}/version.json?anti-cache=${Date.now()}`
+      `${globalThis.location.origin}${normalizedBasePath}/version.json?anti-cache=${Date.now()}`
     );
 
     if (resp.data?.version) {
