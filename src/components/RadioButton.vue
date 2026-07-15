@@ -55,7 +55,7 @@ defineExpose({ focus, scrollIntoView });
 </script>
 
 <template>
-  <div class="lx-radio-button-wrapper">
+  <div class="lx-radio-button-wrapper" data-component="lx-radio-button" :data-id="id">
     <input
       ref="inputRef"
       type="radio"

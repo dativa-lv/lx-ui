@@ -409,6 +409,7 @@ const wrapperRef = ref();
     role="radiogroup"
     :title="tooltip"
     :id="id"
+    data-container="value-picker-items-wrapper"
   >
     <template v-if="readOnly">
       <p v-if="readOnlyRenderType === 'row'" class="lx-data">
@@ -457,6 +458,7 @@ const wrapperRef = ref();
           { 'lx-value-hidden': isElementHidden(item) },
           { 'lx-value-picker-item-disabled': disabled },
         ]"
+        data-container="value-picker-item"
       >
         <LxRadioButton
           v-if="selectionKind === 'single'"

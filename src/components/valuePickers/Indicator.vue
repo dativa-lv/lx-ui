@@ -379,7 +379,11 @@ const wrapperRef = ref();
       @selectAll="selectAll"
       @deselectAll="selectAll"
     />
-    <ul class="lx-indicator-set" v-if="selectionKind === 'single'">
+    <ul
+      v-if="selectionKind === 'single'"
+      class="lx-indicator-set"
+      data-container="value-picker-items-wrapper"
+    >
       <li
         v-for="item in itemsDisplay"
         :key="item[idAttribute]"
@@ -396,7 +400,6 @@ const wrapperRef = ref();
         :aria-disabled="disabled"
         :readOnly="readOnly"
         :tabindex="disabled ? '-1' : readOnly ? '-1' : '0'"
-        @click="disabled ? null : selectSingle(item[idAttribute])"
         role="radio"
         :aria-checked="
           itemsModel[item[idAttribute]] ||
@@ -404,6 +407,7 @@ const wrapperRef = ref();
           item[idAttribute] === checkNull(model)
         "
         :aria-label="indicatorTooltips[item[idAttribute]]"
+        data-container="value-picker-item"
         @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
       >
         <template v-if="variant === 'indicator'">
@@ -416,7 +420,11 @@ const wrapperRef = ref();
         </template>
       </li>
     </ul>
-    <ul class="lx-indicator-set" v-if="selectionKind === 'multiple'">
+    <ul
+      v-if="selectionKind === 'multiple'"
+      class="lx-indicator-set"
+      data-container="value-picker-items-wrapper"
+    >
       <li
         v-for="item in itemsDisplay"
         :key="item[idAttribute]"
@@ -434,10 +442,10 @@ const wrapperRef = ref();
         :aria-disabled="disabled"
         :readOnly="readOnly"
         :tabindex="disabled ? '-1' : readOnly ? '-1' : '0'"
-        @click="selectMultiple(item[idAttribute])"
         role="checkbox"
         :aria-checked="itemsModel[item[idAttribute]]"
         :aria-label="indicatorTooltips[item[idAttribute]]"
+        data-container="value-picker-item"
         @keydown.space.prevent="selectMultiple(item[idAttribute])"
       >
         <template v-if="variant === 'indicator'">

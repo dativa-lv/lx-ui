@@ -94,6 +94,14 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 
+const dataState = computed(() =>
+  JSON.stringify({
+    variant: props.variant,
+    selectionKind: props.selectionKind,
+    readOnlyRenderType: props.readOnlyRenderType,
+  })
+);
+
 const emits = defineEmits(['update:modelValue', 'update:searchString']);
 
 const stringifiedItems = computed(() =>
@@ -213,7 +221,12 @@ if (props.builderOptions?.useRegistry) {
 
 <template>
   <div class="lx-field-wrapper" ref="refRoot">
-    <div class="lx-value-picker-wrapper" :data-id="id">
+    <div
+      class="lx-value-picker-wrapper"
+      data-component="lx-value-picker"
+      :data-id="id"
+      :data-state="dataState"
+    >
       <LxValuePickerDefault
         v-if="variant === 'default' || variant === 'default-custom'"
         :role="selectionKind === 'single' ? 'radiogroup' : 'group'"

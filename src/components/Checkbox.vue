@@ -83,7 +83,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
 </script>
 
 <template>
-  <div class="lx-checkbox-wrapper" :data-id="id">
+  <div class="lx-checkbox-wrapper" data-component="lx-checkbox" :data-id="id">
     <input
       ref="inputRef"
       type="checkbox"

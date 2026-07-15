@@ -471,6 +471,7 @@ const wrapperRef = ref();
         :aria-describedby="invalid ? `${id}-invalidation-message` : null"
         :title="tooltip"
         :aria-labelledby="labelId"
+        data-container="value-picker-items-wrapper"
       >
         <div v-for="item in itemsDisplay" :key="item[idAttribute]">
           <div
@@ -486,13 +487,14 @@ const wrapperRef = ref();
             :group-id="groupId"
             :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])"
             :disabled="disabled"
-            @click="disabled ? null : selectSingle(item[idAttribute])"
             role="radio"
             :aria-checked="
               itemsModel[item[idAttribute]] ||
               (!alwaysAsArray && item[idAttribute] === model) ||
               item[idAttribute] === checkNull(model)
             "
+            data-container="value-picker-item"
+            @click="disabled ? null : selectSingle(item[idAttribute])"
             @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
             @keydown.enter.prevent="disabled ? null : selectSingle(item[idAttribute])"
             @keydown.right.prevent="disabled ? null : focusNextRadio()"
@@ -550,9 +552,10 @@ const wrapperRef = ref();
               'lx-value-picker-tile-selected': itemsModel[item[idAttribute]],
             }"
             :disabled="disabled"
-            @click="selectMultiple(item[idAttribute])"
             role="checkbox"
             :aria-checked="itemsModel[item[idAttribute]]"
+            data-container="value-picker-item"
+            @click="selectMultiple(item[idAttribute])"
             @keydown.space.prevent="selectMultiple(item[idAttribute])"
           >
             <template v-if="variant === 'tiles'">
@@ -600,6 +603,7 @@ const wrapperRef = ref();
           :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
           role="radiogroup"
           :aria-labelledby="labelId"
+          data-container="value-picker-items-wrapper"
         >
           <li
             v-for="item in itemsDisplay"
@@ -617,13 +621,14 @@ const wrapperRef = ref();
             }"
             :disabled="disabled"
             :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])"
-            @click="disabled ? null : selectSingle(item[idAttribute])"
             role="radio"
             :aria-checked="
               itemsModel[item[idAttribute]] ||
               (!alwaysAsArray && item[idAttribute] === model) ||
               item[idAttribute] === checkNull(model)
             "
+            data-container="value-picker-item"
+            @click="disabled ? null : selectSingle(item[idAttribute])"
             @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
             @keydown.enter.prevent="disabled ? null : selectSingle(item[idAttribute])"
             @keydown.right.prevent="disabled ? null : focusNextRadio()"
@@ -643,6 +648,7 @@ const wrapperRef = ref();
           class="lx-tag-set"
           v-if="selectionKind === 'multiple'"
           :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
+          data-container="value-picker-items-wrapper"
         >
           <li
             v-for="item in itemsDisplay"
@@ -657,9 +663,10 @@ const wrapperRef = ref();
             }"
             :disabled="disabled"
             :tabindex="disabled ? '-1' : '0'"
-            @click="selectMultiple(item[idAttribute])"
             role="checkbox"
             :aria-checked="itemsModel[item[idAttribute]]"
+            data-container="value-picker-item"
+            @click="selectMultiple(item[idAttribute])"
             @keydown.space.prevent="selectMultiple(item[idAttribute])"
           >
             <template v-if="variant === 'tags'">

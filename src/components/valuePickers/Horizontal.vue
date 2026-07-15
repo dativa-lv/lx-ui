@@ -469,6 +469,7 @@ const wrapperRef = ref();
       :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
       :aria-describedby="invalid ? `${id}-invalidation-message` : null"
       tabindex="-1"
+      data-container="value-picker-items-wrapper"
     >
       <template v-if="readOnly">
         <p v-if="readOnlyRenderType === 'row'" class="lx-data">
@@ -494,6 +495,7 @@ const wrapperRef = ref();
             { 'lx-value-hidden': isElementHidden(item) },
             { 'lx-value-picker-item-disabled': disabled },
           ]"
+          data-container="value-picker-item"
         >
           <div v-if="selectionKind === 'single'" class="lx-label-wrapper" :group-id="groupId">
             <div

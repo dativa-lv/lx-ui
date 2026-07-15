@@ -3,8 +3,10 @@ import { shallowRef, computed, watch, defineAsyncComponent } from 'vue';
 import IconDefault from '@/components/icons/Default.vue';
 import useLx from '@/hooks/useLx';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   value: { type: String, default: 'default' },
   iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet },
   variant: { type: String, default: 'default' }, // 'default', 'gradient-brand', 'gradient-brand-vertical'
@@ -96,6 +98,8 @@ const gradientComputed = computed(() => {
     :style="gradientComputed"
     :aria-hidden="value === 'none' ? true : !meaningful"
     focusable="false"
+    data-component="lx-icon"
+    :data-id="id"
   >
     <title>{{ props.title }}</title>
     <desc>{{ props.desc ? props.desc : `${displayTexts.iconLabel} "${icon}"` }}</desc>
