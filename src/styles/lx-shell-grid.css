@@ -506,19 +506,25 @@
   color: var(--color-label);
 }
 
+.lx-breadcrumbs-group {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .lx-breadcrumbs {
   display: flex;
   align-items: center;
   list-style: none;
   padding-inline-start: 0;
-  margin-top: var(--space-0);
-  margin-bottom: var(--space-0);
-  margin-left: var(--space-1000);
-  align-self: center;
+  margin: var(--space-0) var(--space-0) var(--space-0) var(--space-1000);
+  min-width: 0;
+  max-width: var(--body-column-size);
+  white-space: nowrap;
 }
 
 .lx-breadcrumbs .lx-breadcrumb {
   margin-right: var(--space-0500);
+  flex-shrink: 0;
 }
 
 .lx-breadcrumbs .lx-breadcrumb a {
@@ -526,11 +532,48 @@
   font-size: var(--small-font-size);
 }
 
+.lx-breadcrumbs .lx-breadcrumb a:focus-visible,
+.lx-breadcrumbs .lx-breadcrumb-overflow .lx-dropdown-toggler:focus-visible .lx-breadcrumb-overflow-toggle {
+  outline: 2px solid var(--color-focus-background);
+}
+
 .lx-breadcrumbs .lx-breadcrumb:after {
   margin-left: var(--space-0500);
   content: '/';
   color: var(--color-label);
   font-size: var(--small-font-size);
+}
+
+.lx-breadcrumbs-truncate-first .lx-breadcrumb:first-child {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.lx-breadcrumbs-truncate-first .lx-breadcrumb:first-child a {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx-breadcrumbs .lx-breadcrumb-overflow {
+  display: flex;
+  align-items: center;
+}
+
+.lx-breadcrumbs .lx-breadcrumb-overflow-toggle {
+  color: var(--color-interactive-background);
+  font-weight: var(--font-weight-interactive);
+  font-size: var(--small-font-size);
+  cursor: pointer;
+  padding: var(--space-0) var(--space-0500);
+}
+
+.lx-breadcrumbs .lx-breadcrumb-overflow .lx-dropdown-toggler:hover .lx-breadcrumb-overflow-toggle,
+.lx-breadcrumbs .lx-breadcrumb-overflow .lx-context-container.lx-selected .lx-breadcrumb-overflow-toggle {
+  color: var(--color-interactive-hover-foreground);
+  background: var(--color-interactive-hover-background);
 }
 
 .lx-page-header .lx-toolbar {

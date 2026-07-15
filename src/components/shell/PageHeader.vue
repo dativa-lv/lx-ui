@@ -1,5 +1,6 @@
 <script setup>
 import LxButton from '@/components/Button.vue';
+import LxBreadcrumbs from '@/components/Breadcrumbs.vue';
 import { computed } from 'vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
@@ -43,6 +44,7 @@ const props = defineProps({
 const defaultTexts = {
   defaultBack: 'Atpakaļ',
   defaultBackTooltip: 'Atgriezties uz',
+  breadcrumbsTooltip: 'Papildu sadaļas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts, 'LxShell'));
@@ -74,6 +76,10 @@ function goBack() {
   }
   emits('goBack', -1);
 }
+
+const showBreadcrumbs = computed(() => props.breadcrumbs.length > 1 && props.showBackButton);
+
+const breadcrumbsTexts = computed(() => ({ tooltip: displayTexts.value.breadcrumbsTooltip }));
 </script>
 <template>
   <header class="lx-header lx-page-header">
@@ -93,12 +99,8 @@ function goBack() {
           </div>
         </transition>
       </div>
-      <div class="lx-group">
-        <ul class="lx-breadcrumbs" v-if="breadcrumbs.length > 1 && showBackButton">
-          <li class="lx-breadcrumb" v-for="breadcrumb in breadcrumbs" :key="breadcrumb">
-            <router-link :to="breadcrumb.to">{{ breadcrumb.label }}</router-link>
-          </li>
-        </ul>
+      <div class="lx-group lx-breadcrumbs-group">
+        <LxBreadcrumbs v-if="showBreadcrumbs" :items="breadcrumbs" :texts="breadcrumbsTexts" />
       </div>
 
       <div class="lx-group">

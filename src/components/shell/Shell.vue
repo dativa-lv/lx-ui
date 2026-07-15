@@ -240,6 +240,7 @@ const currentModeComponent = computed(() => shellModeComponents[resolvedMode.val
 const textsDefault = {
   defaultBack: 'Atpakaļ',
   defaultBackTooltip: 'Atgriezties uz',
+  breadcrumbsTooltip: 'Papildu sadaļas',
   logOut: 'Iziet',
   openAlerts: 'Atvērt sarakstu',
   noAlerts: 'Nav paziņojumu',
