@@ -1125,7 +1125,7 @@
 
 .lx-data-grid svg.lx-grid-column-icon.deleting,
 .lx-vertical svg.lx-grid-column-icon.deleted{
-  fill: var(--color-state-error);
+  fill: var(--color-deleted);
 }
 
 .lx-data-grid svg.lx-grid-column-icon.red,

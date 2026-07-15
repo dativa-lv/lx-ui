@@ -287,11 +287,11 @@
 
 .lx-state-deleting .lx-state-indicator {
   background-color: var(--color-region);
-  border-color: var(--color-state-error);
+  border-color: var(--color-deleted);
 }
 
 .lx .lx-state-deleting .lx-primary {
-  color: var(--color-state-error);
+  color: var(--color-deleted);
 }
 
 .lx-state-default .lx-state-indicator {

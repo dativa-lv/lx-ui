@@ -115,8 +115,8 @@ const emits = defineEmits([
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
-  systemNameShort: { type: String, required: true },
-  systemName: { type: String, required: true },
+  systemNameShort: { type: String, default: '' },
+  systemName: { type: String, default: '' },
   systemSubheader: { type: String, default: null },
   systemNameFormatted: { type: String, default: null },
   navItems: { type: Array, default: null },

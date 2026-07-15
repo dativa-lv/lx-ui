@@ -16,10 +16,21 @@ const props = defineProps({
   kind: {
     type: String,
     default: 'date',
-    options: ['date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters', 'day-month'],
+    options: [
+      'date',
+      'time',
+      'time-full',
+      'date-time',
+      'date-time-full',
+      'month',
+      'year',
+      'month-year',
+      'quarters',
+      'day-month',
+    ],
     group: 'main',
     sequence: 1,
-  }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters', 'day-month'
+  }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters', 'day-month'
   placeholder: { type: String, default: null, group: 'main', sequence: 7 },
   tooltip: { type: String, default: null, group: 'main', sequence: 8 },
   minDate: { type: Date, default: null, group: 'main', sequence: 3 },
