@@ -24,7 +24,7 @@ const defaultTexts = {
   close: 'Aizvērt',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts, 'LxModal'));
 
 const emits = defineEmits(['close', 'actionClick']);
 

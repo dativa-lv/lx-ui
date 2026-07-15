@@ -47,7 +47,7 @@ const props = defineProps({
 });
 
 const textsDefault = { overflowMenu: 'Atvērt papildu iespējas' };
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxWidget'));
 
 const emits = defineEmits(['actionClick']);
 
@@ -62,7 +62,7 @@ function handleActionClick(id) {
     :id="id"
     class="lx-widget"
     :class="[size, { 'fancy-background': kind === 'fancy' }]"
-    :style="{ backgroundImage: kind === 'fancy' ? 'url(' + coverImage + ')' : 'none' }"
+    :style="{ backgroundImage: kind === 'fancy' ? `url(${coverImage})` : 'none' }"
     v-if="!href"
   >
     <header v-if="showHeader">
@@ -120,7 +120,7 @@ function handleActionClick(id) {
     class="lx-widget lx-widget-router"
     :class="size"
     v-else
-    :style="{ backgroundImage: kind === 'fancy' ? 'url(' + coverImage + ')' : 'none' }"
+    :style="{ backgroundImage: kind === 'fancy' ? `url(${coverImage})` : 'none' }"
   >
     <header v-if="showHeader">{{ label }}</header>
     <article class="lx-main">

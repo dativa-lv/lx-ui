@@ -83,7 +83,7 @@ const textsDefault = {
   helperTextLabel: 'Papildu informācija',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDateTimePicker'));
 
 const emits = defineEmits(['update:modelValue']);
 const { dateFormat, dateTimeFormat, dateTimeFullFormat } = useLx().getGlobals();

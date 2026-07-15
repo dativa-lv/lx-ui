@@ -65,7 +65,7 @@ const textsDefault = {
   photoDeleted: 'Attēls dzēsts',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxCamera'));
 
 const system = useLx().getGlobals()?.systemId;
 

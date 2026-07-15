@@ -51,7 +51,7 @@ const textsDefault = {
   },
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxPersonDisplay'));
 const resolvedKind = computed(() => props.kind || useLx().getGlobals()?.avatarKind || 'default');
 const infoWrapperRef = ref(null);
 

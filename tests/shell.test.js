@@ -16,6 +16,7 @@ vi.mock('@vueuse/core', () => ({
 vi.mock('@/hooks/useLx', () => ({
   default: () => ({
     getGlobals: () => ({ systemId: 'shell-test', environment: 'test' }),
+    getComponentTexts: () => undefined,
   }),
 }));
 

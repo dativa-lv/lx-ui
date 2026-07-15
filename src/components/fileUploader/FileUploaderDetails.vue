@@ -69,7 +69,7 @@ const textsDefault = {
   metaEDocContentSystemErrorLabel: 'Neizdevās pārbaudīt datnes parakstus!',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxFileUploader'));
 
 const mainDataWithoutAuthorAndIcon = computed(() => {
   if (!props.value.mainData) return {};

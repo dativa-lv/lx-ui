@@ -92,7 +92,7 @@ const textsDefault = {
   },
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxShell'));
 
 const width = ref(useWindowSize().width);
 const insideNavBar = ref(true);

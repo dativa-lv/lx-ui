@@ -128,7 +128,7 @@ const textsDefault = {
   },
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxShell'));
 
 const emits = defineEmits([
   'nav-toggle',

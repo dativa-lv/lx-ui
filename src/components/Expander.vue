@@ -65,7 +65,7 @@ const textsDefault = {
   clearTitle: '',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxExpander'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const emits = defineEmits(['update:modelValue', 'selectAll', 'resetFilters']);

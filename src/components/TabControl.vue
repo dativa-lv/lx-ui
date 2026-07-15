@@ -22,7 +22,7 @@ const textsDefault = {
   tabSelected: 'Tika izvēlēta cilne',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxTabControl'));
 
 const emits = defineEmits(['update:modelValue']);
 

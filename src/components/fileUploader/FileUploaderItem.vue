@@ -44,7 +44,7 @@ const textsDefault = {
   metaPreviewDescription: 'priekšskatījums',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxFileUploader'));
 
 const emits = defineEmits(['downloadFile', 'openModal', 'removeFile']);
 const isItemBusy = computed(

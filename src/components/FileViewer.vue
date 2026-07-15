@@ -56,7 +56,7 @@ const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxFileViewer'));
 
 const imgCanvasRef = ref(null);
 let observer = null;

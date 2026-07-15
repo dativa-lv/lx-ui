@@ -35,7 +35,7 @@ const textsDefault = {
   flipCardBack: 'Apgriezt kartīti atpakaļ',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxCard'));
 
 const BASE_PERSPECTIVE = 3000;
 const MAX_ROTATE = 5;

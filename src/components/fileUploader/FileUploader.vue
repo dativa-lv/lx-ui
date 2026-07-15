@@ -161,7 +161,7 @@ const textsDefault = {
   metaEdocArchiveContentLabel: 'Saturs',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxFileUploader'));
 
 // states:
 // id - id of the file

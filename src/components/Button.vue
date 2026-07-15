@@ -61,7 +61,7 @@ const textsDefault = {
   },
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxButton'));
 
 const labelEl = ref(null);
 const overflowCheckTrigger = ref(0);

@@ -44,7 +44,7 @@ const textsDefault = {
   },
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxErrorPage'));
 
 const pictogram = computed(() => {
   if (props.icon) {

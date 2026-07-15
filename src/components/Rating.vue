@@ -31,7 +31,7 @@ const textsDefault = {
   star5: 'Izcili',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxRating'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const infoWrapperRef = ref(null);

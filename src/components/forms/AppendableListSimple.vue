@@ -32,7 +32,9 @@ const textsDefault = {
   addButtonLabel: 'Pievienot ierakstu',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() =>
+  getDisplayTexts(props.texts, textsDefault, 'LxAppendableListSimple')
+);
 
 function removeItem(index) {
   model.value.splice(index, 1);

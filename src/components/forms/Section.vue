@@ -238,7 +238,7 @@ const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxSection'));
 
 const emits = defineEmits(['actionClick']);
 

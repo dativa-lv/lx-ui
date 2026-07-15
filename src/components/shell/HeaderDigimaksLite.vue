@@ -117,7 +117,7 @@ const textsDefault = {
   settings: 'Iestatījumi',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxShell'));
 const resolvedKind = computed(
   () => props.avatarKind || useLx().getGlobals()?.avatarKind || 'initials'
 );

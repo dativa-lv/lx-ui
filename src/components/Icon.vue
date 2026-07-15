@@ -23,7 +23,7 @@ const defaultTexts = {
   iconLabel: 'Piktogramma',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts, 'LxIcon'));
 
 const iconPath = shallowRef(null);
 

@@ -45,7 +45,7 @@ const defaultTexts = {
   defaultBackTooltip: 'Atgriezties uz',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts, 'LxShell'));
 
 const goBackLabel = computed(() => {
   if (props.breadcrumbs.length === 1) {

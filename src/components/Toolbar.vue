@@ -74,7 +74,7 @@ const textsDefault = {
   selectAllRows: 'Izvēlēties visu',
   clearSelected: 'Attīrīt izvēles',
 };
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxToolbar'));
 
 const globalEnvironment = useLx().getGlobals()?.environment;
 const slots = useSlots();

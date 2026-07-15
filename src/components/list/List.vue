@@ -110,9 +110,10 @@ const textsDefault = {
   skipLinkTitle: 'Izlaist sarakstu',
   overflowMenu: 'Atvērt papildu iespējas',
   labelDone: 'Ielāde ir pabeigta',
+  draggableItem: 'Pārvietojams rokturis',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxList'));
 
 const emits = defineEmits([
   'update:searchString',

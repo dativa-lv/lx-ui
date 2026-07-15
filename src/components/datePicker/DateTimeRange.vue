@@ -112,7 +112,7 @@ const textsDefault = {
   helperTextLabel: 'Papildu informācija',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDateTimeRange'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 const rangeWrapper = ref();
 const emits = defineEmits([

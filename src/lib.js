@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import useLx from '@/hooks/useLx';
 import { logWarn } from '@/utils/devUtils';
-import { setGlobalProperties } from '@/utils/global';
+import { setGlobalProperties, setComponentTexts } from '@/utils/global';
 import { shellModeLoaders } from '@/components/shell/shellModeLoaders';
 
 /**
@@ -37,6 +37,9 @@ import { shellModeLoaders } from '@/components/shell/shellModeLoaders';
  * @property {Object} [preload] - Configuration for preloading async components
  * @property {string[]} [preload.components] - Array of actual components to preload (e.g. [LxModal, LxDataGrid])
  * @property {string[]} [preload.shellModes] - Array of shell mode names to preload (e.g. ['default', 'digimaks'])
+ * @property {Record<string, Object>} [texts] - Global component texts overrides, keyed by component name
+ *   (e.g. { LxDataGrid: { search: 'Search' } }). Applied on top of each component's hardcoded default
+ *   texts, without needing a per-instance `texts` prop. For runtime updates call setLxComponentTexts(...).
  */
 function install(Vue, options) {
   // Don't install more than once
@@ -45,6 +48,10 @@ function install(Vue, options) {
   // @ts-ignore
   install.installed = true;
   setGlobalProperties(options);
+
+  if (options.texts) {
+    setComponentTexts(options.texts);
+  }
 
   const preloadConfig = options.preload ?? {};
   const globalEnvironment = useLx().getGlobals()?.environment;
@@ -101,6 +108,10 @@ if (GlobalVue && typeof GlobalVue.use === 'function') {
 
 // Default export is library as a whole, registered via Vue.use()
 export const createLx = plugin;
+
+// Set/replace the global component texts overrides at runtime (e.g. on locale change).
+// Mirrors the `texts` option of createLx; reactive – mounted components update automatically.
+export { setComponentTexts as setLxComponentTexts } from '@/utils/global';
 
 // Exports for individual use
 export * from '@/stores';

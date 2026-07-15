@@ -47,7 +47,7 @@ const textsDefault = {
   selectAll: 'Izvēlēties visu',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const model = computed({

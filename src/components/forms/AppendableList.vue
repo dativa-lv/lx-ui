@@ -47,7 +47,7 @@ const defaultTexts = {
   addButtonLabel: 'Pievienot ierakstu',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts, 'LxAppendableList'));
 
 const isSelectable = (item) => item?.[props.selectableAttribute] !== false;
 const selectableItems = computed(() => props.modelValue?.filter(isSelectable) ?? []);

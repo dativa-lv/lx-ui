@@ -46,7 +46,7 @@ async function computeSafeTo(href) {
   return cleaned ?? null;
 }
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxShell'));
 
 const emits = defineEmits(['megaMenuShowAllClick', 'update:selectedMegaMenuItem']);
 

@@ -46,7 +46,7 @@ const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxListItem'));
 
 const itemRef = ref(null);
 const safeTo = ref(null);

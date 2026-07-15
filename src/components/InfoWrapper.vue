@@ -39,7 +39,7 @@ const textsDefault = {
   bottomSheetClose: 'Paslēpt paneli',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxInfoWrapper'));
 
 const popperRef = ref(null);
 const panelRef = ref(null);

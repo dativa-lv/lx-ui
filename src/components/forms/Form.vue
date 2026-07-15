@@ -315,7 +315,7 @@ const textsDefault = {
 };
 
 // Merge texts prop with defaults
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxForm'));
 
 const { width } = useWindowSize();
 const form = ref();

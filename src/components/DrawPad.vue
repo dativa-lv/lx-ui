@@ -64,7 +64,7 @@ const textsDefault = {
   grey: 'Pelēks',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDrawPad'));
 
 const emits = defineEmits([
   'update:modelValue',

@@ -59,7 +59,7 @@ const model = computed({
 });
 
 const textsDefault = { valueYes: 'Jā', valueNo: 'Nē', emptyValue: 'Nav norādīts' };
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxToggle'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const input = ref({});

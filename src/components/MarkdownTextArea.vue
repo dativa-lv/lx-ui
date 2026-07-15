@@ -124,7 +124,9 @@ const textsDefault = {
   helperTextLabel: 'Papildu informācija',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() =>
+  getDisplayTexts(props.texts, textsDefault, 'LxMarkdownTextArea')
+);
 
 const hasHelperText = computed(() => Boolean(props.helperText));
 const helperTextClamped = computed(() => clampText(props.helperText));

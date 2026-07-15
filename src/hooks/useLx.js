@@ -1,4 +1,4 @@
-import { getGlobalProperties } from '@/utils/global';
+import { getGlobalProperties, getComponentTexts } from '@/utils/global';
 
 export default () => {
   /**
@@ -25,5 +25,6 @@ export default () => {
 
   return {
     getGlobals,
+    getComponentTexts,
   };
 };

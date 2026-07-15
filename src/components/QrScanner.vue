@@ -69,7 +69,7 @@ const textsDefault = {
   toggleFlashlight: 'Zibspuldze',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxQrScanner'));
 
 const emits = defineEmits(['update', 'error', 'actionClick']);
 

@@ -4,6 +4,7 @@ import LxButton from '@/components/Button.vue';
 import LxIllustration from '@/components/Illustration.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { logWarn } from '@/utils/devUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 
@@ -20,11 +21,11 @@ const props = defineProps({
   texts: { type: Object, default: () => ({}) },
 });
 
-const defaultTexts = {
+const textsDefault = {
   close: 'Aizvērt',
 };
 
-const displayTexts = computed(() => ({ ...defaultTexts, ...props.texts }));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDialog'));
 
 const emits = defineEmits(['close', 'actionClick']);
 

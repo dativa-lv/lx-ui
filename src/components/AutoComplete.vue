@@ -97,7 +97,7 @@ const textsDefault = {
   additionalText: 'Mēģiniet meklēt, izmantojot citu vārdu vai frāzi',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxAutoComplete'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const emit = defineEmits(['update:modelValue', 'openDetails', 'update:searchString']);

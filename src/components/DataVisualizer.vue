@@ -42,7 +42,7 @@ const textsDefault = {
   iconColumn: 'Ikona',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDataVisualizer'));
 
 const emits = defineEmits(['click']);
 

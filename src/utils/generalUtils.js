@@ -1,5 +1,7 @@
 import { TEXT_MAX_LENGTH } from '@/constants';
 
+import useLx from '@/hooks/useLx';
+
 const focusableSelectors = [
   'a:not([disabled])',
   'button:not([disabled])',
@@ -185,8 +187,17 @@ export function focusPreviousElementInContainer(container) {
   }
 }
 
-// Calculates a dictionary of texts to be displayed in a component, replacing default texts with any passed by property
-export function getDisplayTexts(textsPassed, textsDefault) {
+// Calculates a dictionary of texts to be displayed in a component, replacing default texts with any passed by property.
+// When componentKey is provided, texts are layered in increasing priority:
+//   textsDefault (hardcoded in the component)
+//     < global component texts overridden by the consuming app (createLx `texts` option / setLxComponentTexts)
+//       < textsPassed (instance `texts` prop)
+export function getDisplayTexts(textsPassed, textsDefault, componentKey) {
+  if (componentKey) {
+    const globalTexts = useLx().getComponentTexts(componentKey);
+    if (globalTexts)
+      return getDisplayTexts(textsPassed, getDisplayTexts(globalTexts, textsDefault));
+  }
   const ret = {};
   Object.keys(textsDefault).forEach((key) => {
     const defaultVal = textsDefault[key];

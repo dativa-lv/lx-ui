@@ -46,7 +46,7 @@ const defaultTexts = {
   alternativeProfilesLabel: 'Izvēlieties saistīto personu',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts, 'LxShell'));
 
 const navItemsPrimary = computed(() =>
   props.navItems.filter((item) => !item.type || item.type === 'primary')

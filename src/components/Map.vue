@@ -89,7 +89,7 @@ const textsDefault = {
   labelDone: 'Ielāde ir pabeigta',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxMap'));
 
 const zoom = computed({
   get() {

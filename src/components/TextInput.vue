@@ -129,7 +129,7 @@ const textsDefault = {
   helperTextLabel: 'Papildu informācija',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxTextInput'));
 
 const emits = defineEmits(['update:modelValue']);
 

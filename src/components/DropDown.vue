@@ -46,7 +46,7 @@ const textsDefault = {
   noItemsMessage: 'Nav pieejamu vērtību',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const noItemsMessage = computed(

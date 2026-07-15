@@ -94,7 +94,7 @@ const defaultTexts = {
   },
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts, 'LxFilters'));
 
 const filterSearch = (e) => {
   emits('filter', e);

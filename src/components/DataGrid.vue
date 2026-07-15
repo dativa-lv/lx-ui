@@ -187,7 +187,7 @@ const textsDefault = {
   },
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDataGrid'));
 
 const sortedColumns = ref({});
 const dataGridWrapperRef = ref(null);

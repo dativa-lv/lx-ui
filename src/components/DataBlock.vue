@@ -46,7 +46,7 @@ const textsDefault = {
   collapse: 'Aizvērt',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDataBlock'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 
 const emits = defineEmits([

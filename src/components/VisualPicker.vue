@@ -78,7 +78,9 @@ const textsDefault = ref({
   removeCountry: 'Noņemt valsti',
   errorLabel: 'Neizdevās ielādēt attēlu',
 });
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault.value));
+const displayTexts = computed(() =>
+  getDisplayTexts(props.texts, textsDefault.value, 'LxVisualPicker')
+);
 
 const emits = defineEmits(['update:modelValue']);
 

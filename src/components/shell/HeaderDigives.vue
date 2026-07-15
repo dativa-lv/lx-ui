@@ -73,7 +73,7 @@ const textsDefault = {
   menu: 'Izvēlne',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxShell'));
 
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 const windowSize = useWindowSize();
