@@ -352,7 +352,7 @@
   border-color: var(--contrast-background);
 }
 
-.lx-list-wrapper .lx-radio-button-wrapper
+.lx-list-wrapper .lx-radio-button-wrapper:not(:hover)
   .lx-radio-button:not(:disabled):checked
   + .lx-radio-button-label-wrapper
   .lx-radio-button-appearance
@@ -360,8 +360,8 @@
   background-color: var(--color-data);
 }
 
-.lx-theme-contrast 
-  .lx-list-wrapper .lx-radio-button-wrapper
+.lx-theme-contrast
+  .lx-list-wrapper .lx-radio-button-wrapper:not(:hover)
   .lx-radio-button:not(:disabled):checked
   + .lx-radio-button-label-wrapper
   .lx-radio-button-appearance
