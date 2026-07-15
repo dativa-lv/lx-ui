@@ -19,7 +19,7 @@ const {
   modals,
   poppers,
   displayTexts,
-  navBarSwitchBasic,
+  navBarSwitchModel,
   pageTitle,
   selectedContextPersonModel,
   selectedAlternativeProfileModel,
@@ -55,7 +55,7 @@ const {
 <template>
   <div
     class="lx-layout lx-layout-default"
-    :class="[{ 'lx-collapsed': navBarSwitchBasic }, { 'lx-override': props.overrideDefaultStyles }]"
+    :class="[{ 'lx-collapsed': navBarSwitchModel }, { 'lx-override': props.overrideDefaultStyles }]"
   >
     <LxSkipLink
       v-if="props.hasSkipLink"
@@ -82,7 +82,7 @@ const {
         :has-avatar="props.hasAvatar"
         :avatar-kind="props.avatarKind"
         :nav-items="props.navItems"
-        :nav-bar-switch="navBarSwitchBasic"
+        :nav-bar-switch="navBarSwitchModel"
         :hideNavBar="props.hideNavBar"
         :systemNameShort="props.systemNameShort"
         :page-label="pageTitle"
@@ -160,7 +160,7 @@ const {
         v-model:hasReducedTransparency="transparencyModel"
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
-        :nav-bar-hidden="navBarSwitchBasic"
+        :nav-bar-hidden="navBarSwitchModel"
         :userInfo="props.userInfo"
         :nav-items="props.navItems"
         :headerNavDisable="props.headerNavDisable"

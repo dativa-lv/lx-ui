@@ -1,14 +1,5 @@
 <script setup>
-import {
-  computed,
-  shallowRef,
-  onMounted,
-  watch,
-  ref,
-  nextTick,
-  provide,
-  defineAsyncComponent,
-} from 'vue';
+import { computed, onMounted, watch, ref, nextTick, provide, defineAsyncComponent } from 'vue';
 import {
   useColorMode,
   usePreferredReducedMotion,
@@ -21,7 +12,7 @@ import {
 import useLx from '@/hooks/useLx';
 import LxModal from '@/components/Modal.vue';
 import { lxDevUtils } from '@/utils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, isNil } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 import { shellContextKey } from '@/components/shell/shellContext';
 import { shellModeLoaders } from '@/components/shell/shellModeLoaders';
@@ -759,36 +750,35 @@ watch(
   { immediate: true }
 );
 
+const modesWithAutoNavState = ['digives', 'digives-lite', 'digimaks', 'digimaks-lite'];
+function resolveNavBarSwitch(value) {
+  if (isNil(value) && !modesWithAutoNavState.includes(resolvedMode.value)) {
+    return true;
+  }
+  return value;
+}
+
 const navBarSwitchModel = computed({
   get() {
-    return props.navBarSwitch;
+    return resolveNavBarSwitch(props.navBarSwitch);
   },
   set(value) {
     emits('update:nav-bar-switch', value);
   },
 });
 
-const navBarSwitchBasic = shallowRef(true);
-
 function navToggle(value) {
-  if (props.mode === 'digives-lite') {
-    navBarSwitchModel.value = value;
-    return;
-  }
-  if (props.mode === 'digives' || props.mode === 'digimaks' || props.mode === 'digimaks-lite') {
-    navBarSwitchModel.value = value;
-  } else {
-    navBarSwitchBasic.value = value;
-  }
+  navBarSwitchModel.value = value;
 }
 
 const semiResponsiveView = computed(() => globalThis.innerWidth < 1840);
 
 function navToggleButton() {
-  if (props.mode === 'digives') {
-    if (navBarSwitchModel.value === null) navBarSwitchModel.value = false;
-    else navBarSwitchModel.value = !navBarSwitchModel.value;
-  } else navBarSwitchBasic.value = !navBarSwitchBasic.value;
+  if (props.mode === 'digives' && navBarSwitchModel.value === null) {
+    navBarSwitchModel.value = false;
+  } else {
+    navBarSwitchModel.value = !navBarSwitchModel.value;
+  }
 }
 
 function goBack(route) {
@@ -1315,9 +1305,6 @@ function closeEverything() {
   if (navBarSwitchModel.value !== true) {
     navBarSwitchModel.value = true;
   }
-  if (navBarSwitchBasic.value !== true) {
-    navBarSwitchBasic.value = true;
-  }
 
   closeSignal.value = !closeSignal.value;
 }
@@ -1359,7 +1346,6 @@ provide(shellContextKey, {
   selectedAlternativeProfileModel,
   pageTitle,
   navBarSwitchModel,
-  navBarSwitchBasic,
   semiResponsiveView,
   selectedMegaMenuItemModel,
   visibleAlerts,

@@ -18,7 +18,7 @@ const {
   modals,
   poppers,
   displayTexts,
-  navBarSwitchBasic,
+  navBarSwitchModel,
   pageTitle,
   selectedMegaMenuItemModel,
   selectedLanguageModel,
@@ -55,7 +55,7 @@ const {
   <div
     class="lx-layout lx-layout-public"
     :class="[
-      { 'lx-collapsed': navBarSwitchBasic },
+      { 'lx-collapsed': navBarSwitchModel },
       { 'lx-hide-nav-bar': props.hideNavBar },
       { 'no-nav-items': !props.navItems || props.navItems?.length === 0 },
       { 'lx-override': props.overrideDefaultStyles },
@@ -82,7 +82,7 @@ const {
         :mode="props.mode"
         :userInfo="props.userInfo"
         :nav-items="props.navItems"
-        :nav-bar-switch="navBarSwitchBasic"
+        :nav-bar-switch="navBarSwitchModel"
         :hideNavBar="props.hideNavBar"
         :systemNameShort="props.systemNameShort"
         :systemSubheader="props.systemSubheader"
@@ -166,7 +166,7 @@ const {
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
         layoutMode="public"
-        :nav-bar-hidden="navBarSwitchBasic"
+        :nav-bar-hidden="navBarSwitchModel"
         :userInfo="props.userInfo"
         :nav-items="props.navItems"
         :headerNavDisable="props.headerNavDisable"
