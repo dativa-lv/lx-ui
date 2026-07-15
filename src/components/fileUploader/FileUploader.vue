@@ -784,7 +784,8 @@ if (props.builderOptions?.useRegistry) {
           @keyup.enter="triggerFileUpload"
           @click="triggerFileUpload"
           role="button"
-          tabindex="0"
+          :tabindex="disabled || loading || busy || isAtMaxLength ? -1 : 0"
+          :aria-disabled="disabled || loading || busy || isAtMaxLength"
           :aria-label="displayTexts.draggablePlaceholder"
         >
           <p>{{ displayTexts.draggablePlaceholder }}</p>
@@ -860,7 +861,8 @@ if (props.builderOptions?.useRegistry) {
           @keyup.enter="triggerFileUpload"
           @click="triggerFileUpload"
           role="button"
-          tabindex="0"
+          :tabindex="disabled || loading || busy || isAtMaxLength ? -1 : 0"
+          :aria-disabled="disabled || loading || busy || isAtMaxLength"
           :aria-label="displayTexts.draggablePlaceholder"
         >
           <p>{{ displayTexts.draggablePlaceholder }}</p>

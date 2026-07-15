@@ -50,6 +50,10 @@ const emits = defineEmits(['downloadFile', 'openModal', 'removeFile']);
 const isItemBusy = computed(
   () => props.customItem.state === 'busy' || props.customItem.state === 'loading'
 );
+const isDownloadInteractive = computed(
+  () =>
+    props.hasDownloadButton && !props.disabled && !props.loading && !props.busy && !isItemBusy.value
+);
 const loaderValue = ref(props.customItem.value);
 
 watch(
@@ -116,18 +120,14 @@ const additionalInfoTitle = computed(() => {
     <div class="lx-file-main-part">
       <div
         class="lx-list-item"
-        :tabindex="
-          props.hasDownloadButton && !props.disabled && !props.loading && !props.busy && !isItemBusy
-            ? 0
-            : -1
+        :tabindex="isDownloadInteractive ? 0 : -1"
+        :role="props.hasDownloadButton ? 'button' : null"
+        :aria-label="
+          props.hasDownloadButton ? `${displayTexts.download} ${props.customItem.name}` : null
         "
+        :aria-disabled="props.hasDownloadButton && !isDownloadInteractive"
         :class="{
-          'lx-list-item-interactive':
-            props.hasDownloadButton &&
-            !props.disabled &&
-            !props.loading &&
-            !props.busy &&
-            !isItemBusy,
+          'lx-list-item-interactive': isDownloadInteractive,
         }"
         :title="props.hasDownloadButton ? displayTexts.download : ''"
         :aria-invalid="props.customItem.state === 'invalid'"
@@ -311,23 +311,15 @@ const additionalInfoTitle = computed(() => {
         <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview"></div>
         <div
           v-else
-          :tabindex="
-            props.hasDownloadButton &&
-            !props.disabled &&
-            !props.loading &&
-            !props.busy &&
-            !isItemBusy
-              ? 0
-              : -1
+          :tabindex="isDownloadInteractive ? 0 : -1"
+          :role="props.hasDownloadButton ? 'button' : null"
+          :aria-label="
+            props.hasDownloadButton ? `${displayTexts.download} ${props.customItem.name}` : null
           "
+          :aria-disabled="props.hasDownloadButton && !isDownloadInteractive"
           class="lx-list-item"
           :class="{
-            'lx-list-item-interactive':
-              props.hasDownloadButton &&
-              !props.disabled &&
-              !props.loading &&
-              !props.busy &&
-              !isItemBusy,
+            'lx-list-item-interactive': isDownloadInteractive,
           }"
           :title="props.hasDownloadButton ? displayTexts.download : ''"
           @keyup.space="downloadFile(props.customItem.id)"
