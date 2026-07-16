@@ -3204,7 +3204,8 @@ function handleClose(e) {
 }
 
 function handleContainerTabTrap(e) {
-  if (responsiveView.value) {
+  // Only trap Tab for the dropdown; inline variants must let focus flow out to the page
+  if (responsiveView.value || props.variant !== 'default') {
     return;
   }
 
@@ -3539,7 +3540,6 @@ const activeSelectableYearCell = computed(() => {
 });
 
 function getYearCellTabIndex(year, row, col) {
-  if (isTouchMode.value) return -1;
   if (!isYearSelectable(year)) return -1;
 
   const activeCell = activeSelectableYearCell.value;
@@ -5284,7 +5284,7 @@ if (typeof globalThis !== 'undefined') {
                           "
                           :aria-label="`${capitalizeFirstLetter(month.fullName)}, ${month.year}`"
                           role="cell"
-                          :tabindex="isTouchMode ? -1 : isActiveCalendarMonth(month) ? 0 : -1"
+                          :tabindex="isActiveCalendarMonth(month) ? 0 : -1"
                           :ref="
                             (el) =>
                               registerCalendarCell(
@@ -5653,16 +5653,14 @@ if (typeof globalThis !== 'undefined') {
                         :aria-label="quarterItem"
                         role="cell"
                         :tabindex="
-                          isTouchMode
-                            ? -1
-                            : isQuarterValid(
-                                {
-                                  year: quarter.year,
-                                  quarter: quarterItem,
-                                },
-                                minDateRef,
-                                maxDateRef
-                              ) && isActiveCalendarQuarter(quarter.year, quarterItem)
+                          isQuarterValid(
+                            {
+                              year: quarter.year,
+                              quarter: quarterItem,
+                            },
+                            minDateRef,
+                            maxDateRef
+                          ) && isActiveCalendarQuarter(quarter.year, quarterItem)
                             ? 0
                             : -1
                         "

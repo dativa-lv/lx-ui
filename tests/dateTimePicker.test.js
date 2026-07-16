@@ -256,6 +256,117 @@ describe('LxDateTimePicker', () => {
     });
   });
 
+  describe('Tab focus trap is limited to the dropdown variant', () => {
+    function dispatchTab(element, shiftKey = false) {
+      const event = new KeyboardEvent('keydown', {
+        key: 'Tab',
+        shiftKey,
+        bubbles: true,
+        cancelable: true,
+      });
+      element.dispatchEvent(event);
+      return event;
+    }
+
+    function mountPicker(variant) {
+      return mount(LxDateTimePicker, {
+        props: {
+          modelValue: '2025-05-14',
+          variant,
+          kind: 'date',
+        },
+        global: {
+          stubs: ['router-link'],
+          directives: {
+            ClickAway: dummyClickAway,
+          },
+        },
+      });
+    }
+
+    it('does not trap Tab for the inline "full" variant so focus can leave the calendar', () => {
+      wrapper = mountPicker('full');
+      const container = wrapper.find('.lx-calendar-container').element;
+
+      expect(dispatchTab(container).defaultPrevented).toBe(false);
+      expect(dispatchTab(container, true).defaultPrevented).toBe(false);
+    });
+
+    it('does not trap Tab for the inline "picker" variant', () => {
+      wrapper = mountPicker('picker');
+      const container = wrapper.find('.lx-calendar-container').element;
+
+      expect(dispatchTab(container).defaultPrevented).toBe(false);
+    });
+
+    it('still traps Tab within the dropdown "default" variant', async () => {
+      wrapper = mountPicker('default');
+      await wrapper
+        .find('.lx-date-time-picker.lx-input-area')
+        .trigger('keyup', { key: 'ArrowDown' });
+
+      const container = document.body.querySelector('.lx-calendar-container');
+      expect(container).toBeTruthy();
+
+      expect(dispatchTab(container).defaultPrevented).toBe(true);
+    });
+  });
+
+  describe('Touch mode keeps the active unit-grid cell keyboard-focusable', () => {
+    let originalMatchMedia;
+
+    beforeEach(() => {
+      originalMatchMedia = window.matchMedia;
+      // Simulate a coarse/no pointer (e.g. a Windows touch/hybrid device) so isTouchMode is true.
+      window.matchMedia = (query) => ({
+        matches: /pointer:\s*coarse|pointer:\s*none/.test(query),
+        media: query,
+        onchange: null,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+      });
+    });
+
+    afterEach(() => {
+      window.matchMedia = originalMatchMedia;
+    });
+
+    async function openPicker(kind) {
+      wrapper = mount(LxDateTimePicker, {
+        props: { modelValue: '2025-05-14', variant: 'default', kind },
+        global: {
+          stubs: ['router-link'],
+          directives: { ClickAway: dummyClickAway },
+        },
+      });
+      await wrapper
+        .find('.lx-date-time-picker.lx-input-area')
+        .trigger('keyup', { key: 'ArrowDown' });
+      await nextTick();
+      return document.body.querySelector('.lx-calendar-container');
+    }
+
+    // Quarters/months/years used to force every cell to tabindex="-1" in touch mode, which
+    // trapped keyboard focus on the header nav buttons with no way to reach a cell to select.
+    it.each([
+      ['quarters', '.lx-calendar-quarter'],
+      ['month', '.lx-calendar-month'],
+      ['year', '.lx-calendar-year'],
+    ])(
+      '%s: at least one cell stays tabbable when a coarse pointer is reported',
+      async (kind, cell) => {
+        const container = await openPicker(kind);
+        expect(container).toBeTruthy();
+
+        const tabbable = container.querySelectorAll(`${cell}[tabindex="0"]`);
+        expect(tabbable.length).toBeGreaterThan(0);
+      }
+    );
+  });
+
   describe('Space does not scroll the page in non-input modes', () => {
     function mountPicker(kind) {
       return mount(LxDateTimePicker, {
