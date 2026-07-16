@@ -140,7 +140,15 @@ watch(isFlipped, (newFlipped, oldFlipped) => {
 });
 
 onMounted(() => {
+  if (cardRef.value) {
+    cardRef.value.classList.add('lx-card-no-transition');
+  }
+
   applyTilt(0, isFlipped.value ? -180 : 0);
+
+  nextTick(() => {
+    cardRef.value?.classList.remove('lx-card-no-transition');
+  });
 });
 </script>
 <template>

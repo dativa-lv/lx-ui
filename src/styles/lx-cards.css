@@ -23,11 +23,15 @@
 
 .lx.lx-no-animations .lx-card {
     transform: none;
-}  
+}
+
+.lx .lx-card-wrapper .lx-card.lx-card-no-transition {
+    transition: none;
+}
 
 .lx.lx-no-animations .lx-card-flipped .lx-card {
     transform: rotateY(-180deg);
-} 
+}
 
 .lx-card-wrapper .lx-card p {
     color: inherit;
