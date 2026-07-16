@@ -15,6 +15,16 @@ import { generateUUID } from '@/utils/stringUtils';
 const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
 const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
 
+// This component renders two conditional root <div>s (the standard nav panel and
+// the responsive one), which makes it a multi-root "fragment" component. Fragment
+// components have no single root element for Vue to fall attributes through to, so
+// any attribute or listener the parent (Shell) passes that isn't a declared prop or
+// emit produces a runtime "Extraneous non-props attributes / non-emits event
+// listeners ... could not be automatically inherited" dev warning on every render.
+// This nav bar exposes its full API through explicit props/emits and never needs to
+// forward stray attributes, so we opt out of automatic attribute inheritance.
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps({
   navItems: {
     type: Array,
