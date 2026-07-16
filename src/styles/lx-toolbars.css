@@ -1331,7 +1331,8 @@
   pointer-events: none;
 }
 
-.lx-file-viewer.lx-file-viewer-fullscreen .lx-toolbar-sticky.lx-toolbar-hidden-under-header {
+.lx-file-viewer.lx-file-viewer-fullscreen .lx-toolbar-sticky.lx-toolbar-hidden-under-header,
+.lx-map.lx-map-fullscreen .lx-toolbar-sticky.lx-toolbar-hidden-under-header {
   visibility: visible;
   pointer-events: auto;
 }
@@ -1347,12 +1348,6 @@
   opacity: 0;
   opacity: var(--toolbar-top-shadow-opacity);
   pointer-events: none;
-}
-
-/* FileViewer fullscreen mode fix for chrome */
-.lx .lx-layout.lx-layout-public .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-layout.lx-layout-latvijalv .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky {
-  top: var(--space-0);
 }
 
 .lx.lx-no-transparency:not(.lx-theme-contrast) .lx-component-toolbar.lx-toolbar-sticky::after {
@@ -1411,8 +1406,8 @@
   top: calc(var(--nav-row-size) + var(--row-size) + var(--row-size) + var(--sticky-toolbar-additional-height) + var(--toolbar-gap-top, 0rem));
 }
 
-.lx .lx-layout .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky {
-  top: 0;
+.lx.lx.lx.lx.lx.lx .lx-layout .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky {
+  top: var(--space-0) !important;
 }
 
 .lx .lx-layout .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-toolbar-sticky .first-row-content {
