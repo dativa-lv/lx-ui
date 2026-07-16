@@ -200,6 +200,15 @@ All the header-button behaviour (props like `:user-info`, `:alerts`, `:languages
 `:has-theme-picker`, `has-custom-button`, … and the matching events) is configured on
 `LxShell` exactly as in the other modes — `LxShellHeaderButtons` simply renders them.
 
+By default the spotlight, custom, theme, alerts, language and mega menu buttons render
+icon-only. Set `LxShellHeaderButtons`' own `button-variant` prop to `'default'` to show their
+labels as well (the login button ignores this and stays icon-only when it collapses under
+narrow widths):
+
+```vue
+<LxShellHeaderButtons button-variant="default" />
+```
+
 ### Building the full header
 
 `LxShellHeaderButtons` is **only the right-hand action cluster** of the built-in main header.

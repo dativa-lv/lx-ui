@@ -3,6 +3,10 @@ import { ref } from 'vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
 import { useShellContext } from '@/components/shell/shellContext';
 
+const componentProps = defineProps({
+  buttonVariant: { type: String, default: 'icon-only' }, // default, icon-only
+});
+
 const {
   props,
   displayTexts,
@@ -69,6 +73,7 @@ const headerActionsVisibility = ref({
     :customButtonBadgeType="props.customButtonBadgeType"
     :customButtonBadgeIcon="props.customButtonBadgeIcon"
     :customButtonKind="props.customButtonKind"
+    :button-variant="componentProps.buttonVariant"
     :hasSpotlight="viewSpotlightItems?.length > 0"
     :spotlightHasBadge="props.spotlightHasBadge"
     :secondsToLive="props.secondsToLive"

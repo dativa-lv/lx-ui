@@ -71,6 +71,7 @@ const props = defineProps({
   customButtonOpened: { type: Boolean, default: false },
   customButtonBlink: { type: Boolean, default: false },
   customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
+  buttonVariant: { type: String, default: 'icon-only' }, // default, icon-only
 
   hasSpotlight: { type: Boolean, default: false },
   spotlightHasBadge: { type: Boolean, default: true },
@@ -1020,7 +1021,7 @@ const loginButtonKind = computed(() => {
         kind="ghost"
         icon="information"
         :label="displayTexts.spotlight.label"
-        :variant="'icon-only'"
+        :variant="buttonVariant"
         :disabled="headerNavDisable"
         :badge="spotlightHasBadge ? ' ' : null"
         @click="toggleSpotlight"
@@ -1033,7 +1034,7 @@ const loginButtonKind = computed(() => {
         kind="ghost"
         icon="help"
         :label="helpLabel || displayTexts.helpTitle"
-        :variant="mode === 'cover' || mode === 'cover-digives-lite' ? 'default' : 'icon-only'"
+        :variant="mode === 'cover' || mode === 'cover-digives-lite' ? 'default' : buttonVariant"
         :disabled="headerNavDisable"
         @click="helpClicked"
       />
@@ -1048,7 +1049,7 @@ const loginButtonKind = computed(() => {
         v-if="customButtonKind === 'button'"
         id="lx-shell-custom-button"
         kind="ghost"
-        variant="icon-only"
+        :variant="buttonVariant"
         :label="displayTexts.customButton"
         :icon="customButtonIcon"
         :badge="customButtonBadge"
@@ -1062,7 +1063,7 @@ const loginButtonKind = computed(() => {
         <LxButton
           id="lx-shell-custom-button"
           kind="ghost"
-          variant="icon-only"
+          :variant="buttonVariant"
           tabindex="-1"
           :label="displayTexts.customButton"
           :icon="customButtonIcon"
@@ -1097,7 +1098,7 @@ const loginButtonKind = computed(() => {
           <LxButton
             id="lx-shell-theme-button"
             customClass="lx-header-button"
-            variant="icon-only"
+            :variant="buttonVariant"
             kind="ghost"
             :icon="themeIcon"
             :disabled="headerNavDisable"
@@ -1118,7 +1119,7 @@ const loginButtonKind = computed(() => {
         <LxButton
           id="lx-shell-alerts-button"
           customClass="lx-header-button"
-          variant="icon-only"
+          :variant="buttonVariant"
           kind="ghost"
           icon="notifications"
           :label="displayTexts.alertsTitle"
@@ -1201,7 +1202,7 @@ const loginButtonKind = computed(() => {
         v-if="alertsKind === 'button'"
         id="lx-shell-alerts-button"
         customClass="lx-header-button"
-        variant="icon-only"
+        :variant="buttonVariant"
         kind="ghost"
         icon="notifications"
         :disabled="headerNavDisable"
@@ -1229,7 +1230,7 @@ const loginButtonKind = computed(() => {
         <LxButton
           id="lx-shell-language-button"
           customClass="lx-header-button"
-          variant="icon-only"
+          :variant="buttonVariant"
           kind="ghost"
           icon="language"
           :label="displayTexts.languagesTitle"
@@ -1251,6 +1252,7 @@ const loginButtonKind = computed(() => {
         :hasShowAll="megaMenuHasShowAll"
         :showAllHref="megaMenuShowAllHref"
         :showPrimaryMegaMenuItems="showPrimaryMegaMenuItems"
+        :buttonVariant="buttonVariant"
         :disabled="headerNavDisable"
         :texts="displayTexts"
         @mega-menu-show-all-click="triggerShowAllClick"
