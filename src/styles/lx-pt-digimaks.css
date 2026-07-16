@@ -22,12 +22,15 @@
   --input-border-radius: var(--border-radius-default);
   --input-border-width: var(--border-width-1);
   --color-input-border: var(--color-chrome);
+  --color-input-border-disabled: transparent;
 
   --popover-item-height: auto;
   --button-height: auto;
   --nav-item-height: auto;
 
   --color-nav-item-background-selected: var(--color-highlight);
+
+  --button-height: auto;
 
   --button-secondary-border: var(--border-width-1) solid var(--color-chrome);
   --color-button-secondary-background: var(--color-region);
@@ -89,15 +92,35 @@
   --color-modal-button-primary-text-hover: var(--color-modal-button-primary-text);
   --color-modal-button-primary-background-hover: var(--color-modal-button-primary-background);
   --color-modal-button-primary-border-hover: var(--color-modal-button-primary-background);
-  --color-modal-button-secondary-text-hover: var(--color-modal-button-secondary-text);
-  --color-modal-button-secondary-background-hover: var(--color-modal-button-secondary-background);
-  --color-modal-button-secondary-border-hover: var(--color-modal-button-secondary-background);
   --color-modal-button-primary-text-active: var(--color-modal-button-primary-text);
   --color-modal-button-primary-background-active: var(--color-modal-button-primary-background);
   --color-modal-button-primary-border-active: var(--color-modal-button-primary-background);
-  --color-modal-button-secondary-text-active: var(--color-modal-button-secondary-text);
-  --color-modal-button-secondary-background-active: var(--color-modal-button-secondary-background);
-  --color-modal-button-secondary-border-active: var(--color-modal-button-secondary-background);
+
+  --color-modal-button-secondary-background: var(--color-interactive-secondary-background);
+  --color-modal-button-secondary-text: var(--color-interactive-secondary-foreground);
+  --color-modal-button-secondary-background-hover: var(--color-interactive-secondary-background);
+  --color-modal-button-secondary-text-hover: var(--color-interactive-secondary-foreground);
+  --color-modal-button-secondary-background-focus: var(--color-interactive-secondary-background);
+  --color-modal-button-secondary-text-focus: var(--color-interactive-secondary-foreground);
+  --color-modal-button-secondary-background-active: var(--color-interactive-secondary-background);
+  --color-modal-button-secondary-text-active: var(--color-interactive-secondary-foreground);
+  --color-modal-button-secondary-border-hover: transparent;
+  --color-modal-button-secondary-border-focus: transparent;
+  --color-modal-button-secondary-border-active: transparent;
+
+  --color-modal-button-header-background-hover: transparent;
+  --color-modal-button-header-background-focus:transparent;
+  --color-modal-button-header-background-active: transparent;
+  --color-modal-button-header-icon-hover: var(--color-data);
+  --color-modal-button-header-icon-focus: var(--color-data);
+  --color-modal-button-header-icon-active: var(--color-data);
+
+  --modal-button-primary-border-radius: var(--border-radius-0);
+  --modal-button-secondary-border-radius: var(--border-radius-0);
+  --modal-button-primary-height: 5rem;
+  --modal-button-secondary-height: 5rem;
+  --modal-button-secondary-border: var(--border-width-2) solid transparent;
+  --modal-content-padding: var(--space-0) var(--space-1000) var(--space-1000) var(--space-1000);
 
   --color-button-primary-text-active: var(--color-button-primary-text);
   --color-button-primary-background-active: var(--color-button-primary-background);
@@ -182,15 +205,28 @@
   --color-modal-button-primary-text-hover: var(--color-modal-button-primary-text);
   --color-modal-button-primary-background-hover: var(--color-modal-button-primary-background);
   --color-modal-button-primary-border-hover: var(--color-modal-button-primary-background);
-  --color-modal-button-secondary-text-hover: var(--color-modal-button-secondary-text);
-  --color-modal-button-secondary-background-hover: var(--color-modal-button-secondary-background);
-  --color-modal-button-secondary-border-hover: var(--color-modal-button-secondary-background);
   --color-modal-button-primary-text-active: var(--color-modal-button-primary-text);
   --color-modal-button-primary-background-active: var(--color-modal-button-primary-background);
   --color-modal-button-primary-border-active: var(--color-modal-button-primary-background);
-  --color-modal-button-secondary-text-active: var(--color-modal-button-secondary-text);
-  --color-modal-button-secondary-background-active: var(--color-modal-button-secondary-background);
-  --color-modal-button-secondary-border-active: var(--color-modal-button-secondary-background);
+
+  --color-modal-button-secondary-background: var(--color-interactive-secondary-background);
+  --color-modal-button-secondary-text: var(--color-interactive-secondary-foreground);
+  --color-modal-button-secondary-background-hover: var(--color-interactive-secondary-background);
+  --color-modal-button-secondary-text-hover: var(--color-interactive-secondary-foreground);
+  --color-modal-button-secondary-background-focus: var(--color-interactive-secondary-background);
+  --color-modal-button-secondary-text-focus: var(--color-interactive-secondary-foreground);
+  --color-modal-button-secondary-background-active: var(--color-interactive-secondary-background);
+  --color-modal-button-secondary-text-active: var(--color-interactive-secondary-foreground);
+  --color-modal-button-secondary-border-hover: transparent;
+  --color-modal-button-secondary-border-focus: transparent;
+  --color-modal-button-secondary-border-active: transparent;
+
+  --color-modal-button-header-background-hover: transparent;
+  --color-modal-button-header-background-focus: transparent;
+  --color-modal-button-header-background-active: transparent;
+  --color-modal-button-header-icon-hover: var(--color-data);
+  --color-modal-button-header-icon-focus: var(--color-data);
+  --color-modal-button-header-icon-active: var(--color-data);
 
   --color-button-primary-text-active: var(--color-button-primary-text);
   --color-button-primary-background-active: var(--color-button-primary-background);
