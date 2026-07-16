@@ -14,6 +14,7 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { makeIntegerValidator } from '@/utils/numberSliderUtils';
 import { generateUUID } from '@/utils/stringUtils';
+import { ARIA_LIVE_ANNOUNCEMENT_CONSTANTS } from '@/constants';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -162,7 +163,7 @@ watch(
     clearTimeout(announcementTimeout);
     announcementTimeout = globalThis.setTimeout(() => {
       liveAnnouncement.value = newValue.toString();
-    }, 250);
+    }, ARIA_LIVE_ANNOUNCEMENT_CONSTANTS.DELAY);
   },
   { immediate: true }
 );

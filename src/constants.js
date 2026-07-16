@@ -95,3 +95,12 @@ export const LOADER_VIEW_CONSTANTS = Object.freeze({
   INITIAL_MOUNTED_LOADING_DELAY: 2000,
   MIN_BETWEEN_LOADING_DELAY: 1000,
 });
+
+/**
+ * aria-live announcement constants.
+ * DELAY - delay (ms) before writing text into an aria-live region, so assistive
+ * tech reliably registers the change (and to debounce rapid consecutive updates).
+ */
+export const ARIA_LIVE_ANNOUNCEMENT_CONSTANTS = Object.freeze({
+  DELAY: 250,
+});

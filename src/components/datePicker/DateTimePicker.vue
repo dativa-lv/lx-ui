@@ -91,6 +91,10 @@ const textsDefault = {
   dayPlaceholder: 'dd',
   monthPlaceholder: 'Mēnesis',
   notSelected: 'Nav izvēlēts',
+  dayAdjustedAnnouncement: 'Diena mainīta uz {0}',
+  dayClearedAnnouncement: 'Diena attīrīta, jo neeksistē izvēlētajā mēnesī',
+  monthChangedAnnouncement: 'Mēnesis mainīts uz {0}',
+  monthClearedAnnouncement: 'Mēnesis attīrīts, jo izvēlētā diena tajā neeksistē',
   helperTextLabel: 'Papildu informācija',
 };
 

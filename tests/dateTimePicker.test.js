@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
 import LxDayMonthPicker from '@/components/datePicker/DayMonthPicker.vue';
+import { ARIA_LIVE_ANNOUNCEMENT_CONSTANTS } from '@/constants';
 import { isSingleChoiceKind } from '@/components/datePicker/helpers';
 
 let wrapper;
@@ -1981,6 +1982,46 @@ describe('LxDateTimePicker', () => {
       await emitDay('31');
       expect(pickers()[0].props('modelValue')).toBe('31'); // day kept
       expect(pickers()[1].props('modelValue')).toBe(null); // month cleared
+    });
+
+    function liveRegionText() {
+      return wrapper.find('[role="status"]').text();
+    }
+    // Extra ms waited on top of the announce delay, so the component's (imprecise)
+    // setTimeout has definitely fired before we assert — avoids a timing race.
+    const ANNOUNCE_TIMER_BUFFER = 50;
+    // announce() clears then re-sets after ARIA_LIVE_ANNOUNCEMENT_CONSTANTS.DELAY, so wait it out.
+    const flushAnnounce = () =>
+      new Promise((resolve) => {
+        setTimeout(resolve, ARIA_LIVE_ANNOUNCEMENT_CONSTANTS.DELAY + ANNOUNCE_TIMER_BUFFER);
+      });
+
+    test('announces the day adjustment when a month change clamps the day', async () => {
+      wrapper = mountPicker({ modelValue: '01-31' });
+      await emitMonth('02'); // February → day clamps to 29
+      await flushAnnounce();
+      expect(liveRegionText()).toContain('29');
+    });
+
+    test('announces the month change when a day change shifts the month', async () => {
+      wrapper = mountPicker({ modelValue: '02-28' });
+      await emitDay('31'); // shifts month to January
+      await flushAnnounce();
+      expect(liveRegionText()).toContain('Janvāris');
+    });
+
+    test('announces day cleared when clearIfNotExact clears the day on a month change', async () => {
+      wrapper = mountPicker({ modelValue: '01-31', clearIfNotExact: true });
+      await emitMonth('02');
+      await flushAnnounce();
+      expect(liveRegionText()).toContain('attīrīta');
+    });
+
+    test('announces month cleared when clearIfNotExact clears the month on a day change', async () => {
+      wrapper = mountPicker({ modelValue: '02-28', clearIfNotExact: true });
+      await emitDay('31');
+      await flushAnnounce();
+      expect(liveRegionText()).toContain('attīrīts');
     });
 
     test('deselecting one field keeps the other (no cross-clear)', async () => {

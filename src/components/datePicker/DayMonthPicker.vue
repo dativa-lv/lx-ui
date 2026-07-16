@@ -9,6 +9,7 @@ import { maxDayOfMonth } from '@/components/datePicker/helpers';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { hasOverflow } from '@/utils/overflowUtils';
+import { ARIA_LIVE_ANNOUNCEMENT_CONSTANTS } from '@/constants';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -32,6 +33,10 @@ const textsDefault = {
   dayPlaceholder: 'dd',
   monthPlaceholder: 'Mēnesis',
   notSelected: 'Nav izvēlēts',
+  dayAdjustedAnnouncement: 'Diena mainīta uz {0}',
+  dayClearedAnnouncement: 'Diena attīrīta, jo neeksistē izvēlētajā mēnesī',
+  monthChangedAnnouncement: 'Mēnesis mainīts uz {0}',
+  monthClearedAnnouncement: 'Mēnesis attīrīts, jo izvēlētā diena tajā neeksistē',
 };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const helperTextClamped = computed(() => clampText(props.helperText));
@@ -53,6 +58,17 @@ watch(windowWidth, updateResponsiveState, { immediate: true, flush: 'post' });
 
 const selectedMonth = ref(null); // 'MM' | null
 const selectedDay = ref(null); // 'dd' | null
+
+const liveAnnouncement = ref('');
+let announceTimer;
+
+function announce(message) {
+  liveAnnouncement.value = '';
+  clearTimeout(announceTimer);
+  announceTimer = setTimeout(() => {
+    liveAnnouncement.value = message;
+  }, ARIA_LIVE_ANNOUNCEMENT_CONSTANTS.DELAY);
+}
 
 function currentValue() {
   return selectedMonth.value && selectedDay.value
@@ -123,23 +139,37 @@ function closestMonthForDay(day, fromMonth) {
   return best === null ? fromMonth : pad(best + 1);
 }
 
-// Month changed → keep month, adapt the day (clamp to month max, or clear if clearIfNotExact).
+// Month changed → keep month, adapt the day (clamp to month max, or clear if
+// clearIfNotExact), and announce the adjustment for screen readers.
 watch(selectedMonth, () => {
   if (!selectedMonth.value || !selectedDay.value) return;
   const max = maxDayOfMonth(Number(selectedMonth.value) - 1);
   if (Number(selectedDay.value) > max) {
-    selectedDay.value = props.clearIfNotExact ? null : pad(max);
+    if (props.clearIfNotExact) {
+      selectedDay.value = null;
+      announce(displayTexts.value.dayClearedAnnouncement);
+    } else {
+      selectedDay.value = pad(max);
+      announce(displayTexts.value.dayAdjustedAnnouncement.replace('{0}', max));
+    }
   }
 });
 
-// Day changed → keep day, adapt the month (shift to closest fitting month, or clear).
+// Day changed → keep day, adapt the month (shift to closest fitting month, or
+// clear), and announce the adjustment for screen readers.
 watch(selectedDay, () => {
   if (!selectedDay.value || !selectedMonth.value) return;
   const max = maxDayOfMonth(Number(selectedMonth.value) - 1);
   if (Number(selectedDay.value) > max) {
-    selectedMonth.value = props.clearIfNotExact
-      ? null
-      : closestMonthForDay(selectedDay.value, selectedMonth.value);
+    if (props.clearIfNotExact) {
+      selectedMonth.value = null;
+      announce(displayTexts.value.monthClearedAnnouncement);
+    } else {
+      const nextMonth = closestMonthForDay(selectedDay.value, selectedMonth.value);
+      selectedMonth.value = nextMonth;
+      const monthName = monthItems.value.find((m) => m.id === nextMonth)?.name ?? nextMonth;
+      announce(displayTexts.value.monthChangedAnnouncement.replace('{0}', monthName));
+    }
   }
 });
 
@@ -203,5 +233,8 @@ watch([selectedMonth, selectedDay], () => emitValue(currentValue()));
     <p v-else-if="helperTextKind === 'label' && helperText" class="lx-helper-text">
       {{ helperTextClamped }}
     </p>
+    <div class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
+      {{ liveAnnouncement }}
+    </div>
   </div>
 </template>
