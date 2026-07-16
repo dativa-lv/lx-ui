@@ -182,29 +182,6 @@ function debounce(func, delay) {
   };
 }
 
-function calculateThreshold(heightValue, isLandscape) {
-  const numericValue = Number.parseFloat(heightValue);
-  const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-  if (heightValue.endsWith('px')) {
-    const heightInRem = numericValue / rootFontSize;
-    return heightInRem >= 100 ? 0.8 : heightInRem / 100 - 0.25;
-  }
-
-  if (heightValue.endsWith('rem')) {
-    return numericValue >= 100 ? 0.8 : numericValue / 100 - 0.25;
-  }
-
-  if (scale.value >= 2.5) return 0.25;
-  if (scale.value <= 1) return 0.9;
-
-  if (isLandscape && scale.value >= 2) return 0.6;
-  if (isLandscape && scale.value >= 1.5) return 0.7;
-  if (isLandscape) return 0.9;
-
-  return 0.5;
-}
-
 const rootMargin = computed(() => {
   // Dynamically calculate the combined height of lx-header, navigation, and toolbar
   const header = document.querySelector('.lx-header');
@@ -250,8 +227,6 @@ function setupIntersectionObserver() {
       return;
     }
 
-    const isLandscape = canvasElement.clientHeight < canvasElement.clientWidth;
-
     if (observer) {
       observer.disconnect();
     }
@@ -261,27 +236,43 @@ function setupIntersectionObserver() {
 
     const options = {
       root: isScrollable ? rootElement : null, // Use the container if scrollable, otherwise viewport
-      threshold: calculateThreshold(props.height, isLandscape),
+      threshold: Array.from({ length: 21 }, (_, i) => i / 20), // Dense thresholds so the callback fires often as pages slide through
       rootMargin: rootMargin.value,
     };
 
-    // If the container is scrollable, observe the container
-    observer = new IntersectionObserver(
-      (entries) => {
-        if (isNavigating.value) return; // Block observer updates during navigation
+    // Latest visible area per observed canvas; persists across this observer's callbacks
+    const visibleByElement = new Map();
+    canvasArray.value.forEach((el) => visibleByElement.set(el, 0));
 
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const pageNumber = canvasArray.value.indexOf(entry.target) + 1;
-            currentPage.value = pageNumber;
-            inputPage.value = pageNumber;
-          }
-        });
-      },
-      {
-        ...options,
+    // If the container is scrollable, observe the container
+    observer = new IntersectionObserver((entries) => {
+      if (isNavigating.value) return; // Block observer updates during navigation
+
+      // Update every entry in the batch (pages leaving report area 0)
+      entries.forEach((entry) => {
+        const r = entry.intersectionRect;
+        visibleByElement.set(entry.target, entry.isIntersecting ? r.width * r.height : 0);
+      });
+
+      // Pick the most-visible page; strict '>' over DOM order keeps the topmost on ties
+      let bestEl = null;
+      let bestVisible = 0;
+      canvasArray.value.forEach((el) => {
+        const v = visibleByElement.get(el) ?? 0;
+        if (v > bestVisible) {
+          bestVisible = v;
+          bestEl = el;
+        }
+      });
+
+      if (bestEl && bestVisible > 0) {
+        const pageNumber = canvasArray.value.indexOf(bestEl) + 1;
+        if (pageNumber !== currentPage.value) {
+          currentPage.value = pageNumber;
+          inputPage.value = pageNumber;
+        }
       }
-    );
+    }, options);
 
     canvasArray.value.forEach((canvasElementArg) => {
       observer.observe(canvasElementArg);
