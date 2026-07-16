@@ -124,6 +124,92 @@ describe('Scrollable performance', () => {
     expect(header.element.scrollLeft).toBe(120);
   });
 
+  test('does not write a stale header echo back onto the content during momentum', async () => {
+    const callbacks = [];
+    vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((callback) => {
+      callbacks.push(callback);
+      return callbacks.length;
+    });
+    vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(() => {});
+
+    wrapper = mountComponent({ props });
+
+    const grid = wrapper.find('.lx-data-grid');
+    const header = wrapper.find('.lx-grid-header-wrapper > .lx-grid-row[role="toolbar"]');
+
+    await flushVirtualizationSetup();
+    callbacks.length = 0;
+
+    // Body scrolls; the header mirrors it.
+    grid.element.scrollLeft = 120;
+    await grid.trigger('scroll');
+    callbacks.shift()();
+    expect(header.element.scrollLeft).toBe(120);
+
+    // Momentum carries the body further before the header's mirrored scroll
+    // event is processed. That echo (header still at 120) must NOT drag the body
+    // back — this is the Safari jiggle.
+    grid.element.scrollLeft = 200;
+    await header.trigger('scroll');
+    callbacks.shift()();
+    expect(grid.element.scrollLeft).toBe(200);
+  });
+
+  test('still mirrors a genuine header scroll onto the content', async () => {
+    const callbacks = [];
+    vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((callback) => {
+      callbacks.push(callback);
+      return callbacks.length;
+    });
+    vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(() => {});
+
+    wrapper = mountComponent({ props });
+
+    const grid = wrapper.find('.lx-data-grid');
+    const header = wrapper.find('.lx-grid-header-wrapper > .lx-grid-row[role="toolbar"]');
+
+    await flushVirtualizationSetup();
+    callbacks.length = 0;
+
+    // A real header scroll (not an echo) still drives the content both ways.
+    header.element.scrollLeft = 250;
+    await header.trigger('scroll');
+    callbacks.shift()();
+    expect(grid.element.scrollLeft).toBe(250);
+  });
+
+  test('does not force a layout read on the grid own horizontal scroll', async () => {
+    const callbacks = [];
+    vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((callback) => {
+      callbacks.push(callback);
+      return callbacks.length;
+    });
+    vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(() => {});
+
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    const grid = wrapper.find('.lx-data-grid');
+
+    await flushVirtualizationSetup();
+
+    const boundingRead = vi.spyOn(grid.element, 'getBoundingClientRect');
+    const flush = () => callbacks.splice(0).forEach((cb) => cb());
+
+    // Horizontal scroll of the grid itself must not trigger the vertical-shadow
+    // bounding update — that getBoundingClientRect, interleaved with the scroll
+    // sync, is wasted layout work every frame.
+    flush();
+    boundingRead.mockClear();
+    grid.element.dispatchEvent(new Event('scroll'));
+    flush();
+    expect(boundingRead).not.toHaveBeenCalled();
+
+    // A page/ancestor scroll still refreshes the bounding for the top shadow.
+    document.dispatchEvent(new Event('scroll'));
+    flush();
+    expect(boundingRead).toHaveBeenCalled();
+  });
+
   test('renders rows without transition wrappers', async () => {
     wrapper = mountComponent({ props });
 

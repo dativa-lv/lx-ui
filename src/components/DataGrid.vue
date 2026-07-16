@@ -225,6 +225,9 @@ const isDataGridLayoutVisible = ref(false);
 let pendingHeaderScrollRaf = null;
 let pendingContainerScrollRaf = null;
 let pendingBoundingRaf = null;
+// scrollLeft we last mirrored onto each element; a matching scroll event is our echo
+let mirroredHeaderLeft = null;
+let mirroredContainerLeft = null;
 
 const { width, height } = useWindowSize();
 
@@ -621,16 +624,23 @@ function resolveDataGridScrollParent(el) {
   return null;
 }
 
+// Body and header mirror each other, but each ignores the echo of its own sync so the write-back can't fight Safari's momentum (the jiggle)
 function syncHeaderScroll() {
-  if (header.value && container.value) {
-    header.value.scrollLeft = container.value.scrollLeft;
-  }
+  if (!header.value || !container.value) return;
+  const target = container.value.scrollLeft;
+  if (mirroredContainerLeft !== null && Math.abs(target - mirroredContainerLeft) < 1) return;
+  if (Math.abs(header.value.scrollLeft - target) < 1) return;
+  header.value.scrollLeft = target;
+  mirroredHeaderLeft = header.value.scrollLeft;
 }
 
 function syncContainerScroll() {
-  if (header.value && container.value) {
-    container.value.scrollLeft = header.value.scrollLeft;
-  }
+  if (!header.value || !container.value) return;
+  const target = header.value.scrollLeft;
+  if (mirroredHeaderLeft !== null && Math.abs(target - mirroredHeaderLeft) < 1) return;
+  if (Math.abs(container.value.scrollLeft - target) < 1) return;
+  container.value.scrollLeft = target;
+  mirroredContainerLeft = container.value.scrollLeft;
 }
 
 function scheduleHeaderScroll() {
@@ -643,7 +653,11 @@ function scheduleHeaderScroll() {
   });
 }
 
-function scheduleBoundingUpdate() {
+function scheduleBoundingUpdate(event) {
+  // skip the grid's own horizontal scroll: it never moves the vertical top-shadow, so don't force a layout read per frame
+  if (event && (event.target === container.value || event.target === header.value)) {
+    return;
+  }
   if (pendingBoundingRaf !== null) {
     return;
   }
