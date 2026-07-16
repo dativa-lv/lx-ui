@@ -422,6 +422,7 @@ if (props.builderOptions?.useRegistry) {
         :variant="variant"
         :search-attributes="searchAttributes"
         :hasSelectAll="hasSelectAll"
+        :labelId="labelledBy"
         :stickyToolbar="stickyToolbar"
       >
         <template v-slot:customItem="slotData" v-if="$slots.customItem">

@@ -466,7 +466,7 @@ const getSelectedItem = computed(
         :tabindex="disabled ? '-1' : tabindex"
         role="combobox"
         :aria-expanded="ariaExpandedState"
-        aria-controls="popper-id"
+        :aria-controls="`${id}-listbox`"
         :aria-labelledby="labelledBy"
         :aria-invalid="invalid"
         :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
@@ -484,7 +484,6 @@ const getSelectedItem = computed(
           offset-distance="0"
           :disabled="disabled"
           :show="menuOpen"
-          role="listbox"
           @referenceHidden="closeDropDownDefault(false)"
         >
           <!--eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
@@ -548,7 +547,12 @@ const getSelectedItem = computed(
               <!-- Since key events are assigned to the whole <div> (lx-dropdown-default-content) already -->
               <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
               <slot name="panel" @click="closeDropDownDefault()">
-                <div class="lx-dropdown-panel lx-region-component" tabindex="-1" role="listbox">
+                <div
+                  :id="`${id}-listbox`"
+                  class="lx-dropdown-panel lx-region-component"
+                  tabindex="-1"
+                  role="listbox"
+                >
                   <template v-if="isItemsEmpty">
                     <div class="lx-empty lx-aligned-row">
                       <LxIcon value="info" />

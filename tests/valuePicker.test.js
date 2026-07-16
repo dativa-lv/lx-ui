@@ -505,7 +505,7 @@ test('LxValuePicker tags tooltip', () => {
     },
   });
 
-  expect(wrapper.find('.lx-value-picker-tags').attributes('title')).toBe('Tooltip text');
+  expect(wrapper.find('.lx-tag-set').attributes('title')).toBe('Tooltip text');
 });
 
 test('LxValuePicker tiles tooltip', () => {

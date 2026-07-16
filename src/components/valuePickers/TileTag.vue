@@ -152,6 +152,10 @@ function getItemId(id) {
   return `${props.id}-item-${id}`;
 }
 
+function getTagLabelId(id) {
+  return `${getItemId(id)}-label`;
+}
+
 function selectSingle(id) {
   if (props.disabled) return;
 
@@ -465,7 +469,7 @@ const wrapperRef = ref();
         :class="[{ 'lx-invalid': invalid }, { 'lx-tile-custom': variant === 'tiles-custom' }]"
         v-if="variant === 'tiles' || variant === 'tiles-custom'"
         tabindex="-1"
-        role="radiogroup"
+        :role="selectionKind === 'single' ? 'radiogroup' : 'group'"
         :aria-invalid="invalid"
         :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
         :aria-describedby="invalid ? `${id}-invalidation-message` : null"
@@ -592,10 +596,6 @@ const wrapperRef = ref();
         class="lx-value-picker-tags"
         :class="[{ 'lx-invalid': invalid }]"
         v-if="variant === 'tags' || variant === 'tags-custom'"
-        :aria-invalid="invalid"
-        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
-        :title="tooltip"
       >
         <ul
           class="lx-tag-set"
@@ -603,6 +603,10 @@ const wrapperRef = ref();
           :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
           role="radiogroup"
           :aria-labelledby="labelId"
+          :aria-invalid="invalid"
+          :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+          :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+          :title="tooltip"
           data-container="value-picker-items-wrapper"
         >
           <li
@@ -627,6 +631,7 @@ const wrapperRef = ref();
               (!alwaysAsArray && item[idAttribute] === model) ||
               item[idAttribute] === checkNull(model)
             "
+            :aria-labelledby="getTagLabelId(item[idAttribute])"
             data-container="value-picker-item"
             @click="disabled ? null : selectSingle(item[idAttribute])"
             @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
@@ -636,18 +641,29 @@ const wrapperRef = ref();
             @keydown.left.prevent="disabled ? null : focusPreviousRadio()"
             @keydown.up.prevent="disabled ? null : focusPreviousRadio()"
           >
-            <template v-if="variant === 'tags'">
-              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-            </template>
-            <template v-else-if="variant === 'tags-custom'">
-              <slot name="customItem" v-bind="item" />
-            </template>
+            <span :id="getTagLabelId(item[idAttribute])">
+              <template v-if="variant === 'tags'">
+                <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+              </template>
+              <template v-else-if="variant === 'tags-custom'">
+                <slot name="customItem" v-bind="item" />
+              </template>
+              <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
+                {{ item[descriptionAttribute] }}
+              </span>
+            </span>
           </li>
         </ul>
         <ul
           class="lx-tag-set"
           v-if="selectionKind === 'multiple'"
           :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
+          role="group"
+          :aria-labelledby="labelId"
+          :aria-invalid="invalid"
+          :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+          :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+          :title="tooltip"
           data-container="value-picker-items-wrapper"
         >
           <li
@@ -665,16 +681,22 @@ const wrapperRef = ref();
             :tabindex="disabled ? '-1' : '0'"
             role="checkbox"
             :aria-checked="itemsModel[item[idAttribute]]"
+            :aria-labelledby="getTagLabelId(item[idAttribute])"
             data-container="value-picker-item"
             @click="selectMultiple(item[idAttribute])"
             @keydown.space.prevent="selectMultiple(item[idAttribute])"
           >
-            <template v-if="variant === 'tags'">
-              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-            </template>
-            <template v-else-if="variant === 'tags-custom'">
-              <slot name="customItem" v-bind="item"></slot>
-            </template>
+            <span :id="getTagLabelId(item[idAttribute])">
+              <template v-if="variant === 'tags'">
+                <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+              </template>
+              <template v-else-if="variant === 'tags-custom'">
+                <slot name="customItem" v-bind="item"></slot>
+              </template>
+              <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
+                {{ item[descriptionAttribute] }}
+              </span>
+            </span>
           </li>
         </ul>
       </div>

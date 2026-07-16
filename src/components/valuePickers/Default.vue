@@ -407,6 +407,7 @@ const wrapperRef = ref();
     :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
     :aria-describedby="invalid ? `${id}-invalidation-message` : null"
     role="radiogroup"
+    :aria-labelledby="labelId"
     :title="tooltip"
     :id="id"
     data-container="value-picker-items-wrapper"

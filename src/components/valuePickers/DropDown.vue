@@ -682,7 +682,7 @@ function countDigits(number) {
         :tabindex="disabled ? '-1' : '0'"
         role="combobox"
         :aria-expanded="menuOpen"
-        aria-controls="popper-id"
+        :aria-controls="`${id}-listbox`"
         :aria-invalid="invalid"
         :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
         :aria-describedby="invalid ? `${id}-invalidation-message` : null"
@@ -700,7 +700,6 @@ function countDigits(number) {
           offset-distance="0"
           :disabled="disabled"
           :show="menuOpen"
-          role="listbox"
           @referenceHidden="closeDropDownDefault"
         >
           <div
@@ -776,7 +775,12 @@ function countDigits(number) {
               @keydown="handleKeydown"
             >
               <slot name="panel" @click="closeDropDownDefault()">
-                <div class="lx-dropdown-panel lx-region-component" tabindex="-1" role="listbox">
+                <div
+                  :id="`${id}-listbox`"
+                  class="lx-dropdown-panel lx-region-component"
+                  tabindex="-1"
+                  role="listbox"
+                >
                   <template v-if="isItemsEmpty">
                     <div class="lx-empty lx-aligned-row">
                       <LxIcon value="info" />

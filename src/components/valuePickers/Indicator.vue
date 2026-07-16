@@ -351,6 +351,7 @@ const wrapperRef = ref();
     v-if="variant === 'indicator'"
     :id="id"
     :title="tooltip"
+    :role="selectionKind === 'single' ? 'radiogroup' : 'group'"
     :aria-invalid="invalid"
     :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
     :aria-describedby="invalid ? `${id}-invalidation-message` : null"
@@ -380,6 +381,7 @@ const wrapperRef = ref();
       @deselectAll="selectAll"
     />
     <ul
+      role="presentation"
       v-if="selectionKind === 'single'"
       class="lx-indicator-set"
       data-container="value-picker-items-wrapper"
@@ -388,7 +390,6 @@ const wrapperRef = ref();
         v-for="item in itemsDisplay"
         :key="item[idAttribute]"
         class="lx-indicator"
-        :title="indicatorTooltips[item[idAttribute]]"
         :id="getItemId(item[idAttribute])"
         :group-id="groupId"
         :class="{
@@ -421,6 +422,7 @@ const wrapperRef = ref();
       </li>
     </ul>
     <ul
+      role="presentation"
       v-if="selectionKind === 'multiple'"
       class="lx-indicator-set"
       data-container="value-picker-items-wrapper"
@@ -429,7 +431,6 @@ const wrapperRef = ref();
         v-for="item in itemsDisplay"
         :key="item[idAttribute]"
         class="lx-indicator"
-        :title="indicatorTooltips[item[idAttribute]]"
         :id="getItemId(item[idAttribute])"
         :group-id="groupId"
         :class="{

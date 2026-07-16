@@ -33,6 +33,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
+  labelId: { type: String, default: null },
   stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => {} },
 });
@@ -465,6 +466,8 @@ const wrapperRef = ref();
         { 'select-all': hasSelectAll && selectionKind === 'multiple' },
       ]"
       :role="props.selectionKind === 'single' ? 'radiogroup' : 'group'"
+      :aria-labelledby="labelId"
+      :title="tooltip"
       :aria-invalid="invalid"
       :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
       :aria-describedby="invalid ? `${id}-invalidation-message` : null"
@@ -502,21 +505,29 @@ const wrapperRef = ref();
               v-if="variant === 'horizontal'"
               class="lx-value-picker-horizontal-item-container"
               :title="item[descriptionAttribute] || tooltip"
+              aria-hidden="true"
             >
               <div
                 class="lx-value-picker-horizontal-item-label"
                 :id="`${id}-label-${item[idAttribute]}`"
               >
                 <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+                <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
+                  {{ item[descriptionAttribute] }}
+                </span>
               </div>
             </div>
             <div
               v-else-if="variant === 'horizontal-custom'"
               class="lx-value-picker-horizontal-item-container"
               :title="item[descriptionAttribute] || tooltip"
+              aria-hidden="true"
             >
               <div class="lx-slot-wrapper" :id="`${id}-label-${item[idAttribute]}`">
                 <slot name="customItem" v-bind="item" />
+                <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
+                  {{ item[descriptionAttribute] }}
+                </span>
               </div>
             </div>
             <div
@@ -558,21 +569,29 @@ const wrapperRef = ref();
               class="lx-value-picker-horizontal-item-container"
               v-if="variant === 'horizontal'"
               :title="item[descriptionAttribute] || tooltip"
+              aria-hidden="true"
             >
               <div
                 class="lx-value-picker-horizontal-item-label"
                 :id="`${id}-label-${item[idAttribute]}`"
               >
                 <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+                <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
+                  {{ item[descriptionAttribute] }}
+                </span>
               </div>
             </div>
             <div
               class="lx-value-picker-horizontal-item-container"
               v-else-if="variant === 'horizontal-custom'"
               :title="item[descriptionAttribute] || tooltip"
+              aria-hidden="true"
             >
               <div class="lx-slot-wrapper" :id="`${id}-label-${item[idAttribute]}`">
                 <slot name="customItem" v-bind="item" />
+                <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
+                  {{ item[descriptionAttribute] }}
+                </span>
               </div>
             </div>
             <div
