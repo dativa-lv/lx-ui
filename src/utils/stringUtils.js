@@ -1,6 +1,7 @@
 import CyrillicToTranslit from 'cyrillic-to-translit-js';
 
-const cyrillicToTranslit = CyrillicToTranslit();
+// lazily created on first foldToAscii() call to keep this module side-effect-free
+let cyrillicToTranslit;
 
 export function generateUUID() {
   let uuid = 'LX';
@@ -103,6 +104,7 @@ export function isValidFileName(fileName) {
 }
 
 export function foldToAscii(v) {
+  cyrillicToTranslit ??= CyrillicToTranslit();
   return cyrillicToTranslit
     .transform(v)
     ?.normalize('NFKD')

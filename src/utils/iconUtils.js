@@ -1,34 +1,19 @@
 import { getFileNameFromPath, camelToKebab, removeExtension } from '@/utils/stringUtils';
 
 export function getAvailableIcons(iconSet = 'cds') {
-  let icons = [];
+  // non-eager globs: we only read the path keys, so no icon module is loaded
+  let icons = {};
   if (iconSet === 'cds') {
-    icons = import.meta.glob('@/components/icons/cds/*.vue', {
-      eager: true,
-      query: '?url',
-      import: 'default',
-    });
+    icons = import.meta.glob('@/components/icons/cds/*.vue');
   }
   if (iconSet === 'material') {
-    icons = import.meta.glob('@/components/icons/material/*.vue', {
-      eager: true,
-      query: '?url',
-      import: 'default',
-    });
+    icons = import.meta.glob('@/components/icons/material/*.vue');
   }
   if (iconSet === 'phosphor') {
-    icons = import.meta.glob('@/components/icons/phosphor/*.vue', {
-      eager: true,
-      query: '?url',
-      import: 'default',
-    });
+    icons = import.meta.glob('@/components/icons/phosphor/*.vue');
   }
   if (iconSet === 'brand') {
-    icons = import.meta.glob('@/components/icons/brand/*.vue', {
-      eager: true,
-      query: '?url',
-      import: 'default',
-    });
+    icons = import.meta.glob('@/components/icons/brand/*.vue');
   }
 
   return Object.keys(icons).map((o) => camelToKebab(removeExtension(getFileNameFromPath(o))));
@@ -63,10 +48,6 @@ export function getAvailableIconSets() {
 }
 
 export function getAvailableIllustrations() {
-  const icons = import.meta.glob('@/components/pictograms/*.vue', {
-    eager: true,
-    query: '?url',
-    import: 'default',
-  });
+  const icons = import.meta.glob('@/components/pictograms/*.vue');
   return Object.keys(icons).map((o) => camelToKebab(removeExtension(getFileNameFromPath(o))));
 }

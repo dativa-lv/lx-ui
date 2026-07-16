@@ -3,10 +3,17 @@ import countries from 'i18n-iso-countries';
 import lv from 'i18n-iso-countries/langs/lv.json';
 import en from 'i18n-iso-countries/langs/en.json';
 
-countries.registerLocale(lv);
-countries.registerLocale(en);
+// register locales lazily so importing this module has no side effect
+let localesRegistered = false;
+function ensureLocales() {
+  if (localesRegistered) return;
+  countries.registerLocale(lv);
+  countries.registerLocale(en);
+  localesRegistered = true;
+}
 
 export function countryCodeToName(countryCode, lang = 'lv') {
+  ensureLocales();
   const SUPPORTED_LANGUAGES = ['lv', 'en'];
 
   // check if lang is in format xx-XX
