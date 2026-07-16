@@ -85,8 +85,9 @@ function triggerResize() {
   if (!textarea.value || !shadowTextarea.value) return;
 
   shadowTextarea.value.value = model.value || '';
-  const newHeight = `${shadowTextarea.value.scrollHeight}px`;
-  textarea.value.style.height = newHeight;
+  const { borderTopWidth, borderBottomWidth } = getComputedStyle(textarea.value);
+  const borderY = parseFloat(borderTopWidth) + parseFloat(borderBottomWidth);
+  textarea.value.style.height = `${shadowTextarea.value.scrollHeight + borderY}px`;
 }
 
 function focus() {
@@ -111,6 +112,8 @@ watch(
   (newValue) => {
     if (newValue) {
       nextTick(triggerResize);
+    } else if (textarea.value) {
+      textarea.value.style.height = '';
     }
   }
 );

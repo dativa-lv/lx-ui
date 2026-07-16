@@ -648,6 +648,10 @@
            var(--input-padding-left);
 }
 
+.lx .lx-layout .lx-text-area-wrapper div.lx-input-wrapper {
+  position: relative;
+}
+
 .lx .lx-layout .lx-text-area-wrapper div.lx-input-wrapper .lx-text-area.lx-text-area-template {
   position: absolute;
   top: var(--space-0);
