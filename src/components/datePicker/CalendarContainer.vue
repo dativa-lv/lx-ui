@@ -3970,7 +3970,12 @@ watch(
 
 watch(
   () => isMobileScreen.value,
-  () => {
+  (isMobile) => {
+    if (!isMobile && mobileTimeLayout.value) {
+      mobileTimeLayout.value = false;
+      regularLayout.value = true;
+    }
+
     updateVisibleHours();
     updateVisibleMinutes();
     updateVisibleSeconds();
