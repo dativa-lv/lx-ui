@@ -262,17 +262,6 @@ function languageChange(locale) {
   selectedLanguageModel.value = locale;
 }
 
-const iconMap = {
-  success: 'notification-success',
-  warning: 'notification-warning',
-  error: 'notification-error',
-  info: 'notification-info',
-};
-
-function pickIcon(level) {
-  return iconMap[level] || iconMap.info;
-}
-
 const fullName = computed(() => {
   if (props.userInfo && props.userInfo.firstName && props.userInfo.lastName) {
     return `${props.userInfo.firstName} ${props.userInfo.lastName}`.toUpperCase();
@@ -311,7 +300,9 @@ function logOut() {
 
 function navClick(id) {
   emits('navClick', id);
-  emits('nav-toggle', true);
+  if (windowSize.width.value < 1800) {
+    emits('nav-toggle', true);
+  }
 }
 
 // navItems are provided by consuming apps and historically don't always carry an id,
