@@ -283,4 +283,5 @@
 .lx-toggle-read-only {
   font-size: var(--font-size);
   color: var(--color-data);
+  margin: var(--space-0);
 }

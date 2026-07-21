@@ -110,7 +110,6 @@
   border-bottom: var(--border-width-0);
 }
 
-
 .lx-component-toolbar .lx-group::before {
   content: '';
   height: var(--toolbar-divider-height);

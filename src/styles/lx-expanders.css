@@ -152,10 +152,9 @@
   color: var(--color-bad);
 }
 
-.lx-expander.lx-invalid > .lx-head svg {
-  height: auto;
-  flex-shrink: 0;
-  flex-grow: 0;
+.lx-expander.lx-invalid .lx-head .lx-modifier-icon,
+.lx-expander.lx-invalid .lx-head .lx-chevron-icon svg,
+.lx-expander.lx-invalid .lx-head .lx-expander-additional-info svg {
   fill: var(--color-bad);
 }
 

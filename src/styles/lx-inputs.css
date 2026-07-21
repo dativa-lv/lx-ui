@@ -788,8 +788,6 @@
 
 .lx-region .lx-input-wrapper,
 .lx-region-component .lx-input-wrapper,
-.lx-region .lx-rotator-set .lx-rotator-tag,
-.lx-region-component .lx-rotator-set .lx-rotator-tag,
 .lx-override .lx-region input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
 .lx-override .lx-region-component input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
 .lx-override .lx-region textarea,
@@ -806,8 +804,6 @@
 
 .lx-region .lx-region-component .lx-input-wrapper,
 .lx-region-component .lx-region-component .lx-input-wrapper,
-.lx-region .lx-region-component .lx-rotator-tag,
-.lx-region-component .lx-region-component .lx-rotator-tag,
 .lx-override .lx-region .lx-region-component input,
 .lx-override .lx-region-component .lx-region-component input,
 .lx-override .lx-region .lx-region-component textarea,

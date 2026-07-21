@@ -259,7 +259,7 @@ const headingAttrs = computed(() => {
                     @keyup.space.stop
                   />
                   <LxValuePicker
-                    variant="dropdown"
+                    variant="dropdown-custom"
                     v-else-if="block.id === 'theme' && !blockExpanderModels[block.id]"
                     :id="`${id}-${block.id}-dropdown`"
                     v-model="blockToggleModels[block.id]"
