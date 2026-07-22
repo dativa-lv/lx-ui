@@ -102,6 +102,13 @@ const isPanelAvailable = computed(() => {
   return (panelSlot && panelSlot.length > 0) || props.content;
 });
 
+const isDescriptionRendered = computed(
+  () => isPanelAvailable.value && showPopper.value && !props.disabled
+);
+const describedBy = computed(() =>
+  isDescriptionRendered.value ? `${props.id}-description` : null
+);
+
 const panelAreaScrolled = () => {
   if (!responsiveView.value) return;
   const panelArea = panelAreaRef.value;
@@ -406,11 +413,22 @@ const tabIndex = computed(() => {
   return props.focusable ? 0 : -1;
 });
 
-onMounted(() => {
-  const el = triggerRef.value?.firstElementChild;
-  if (el && el instanceof HTMLElement) {
+const labelledByTarget = ref(null);
+function updateLabelledBy() {
+  const el = labelledByTarget.value;
+  if (!(el instanceof HTMLElement)) return;
+  if (isDescriptionRendered.value) {
     el.setAttribute('aria-labelledby', `${props.id}-description`);
+  } else {
+    el.removeAttribute('aria-labelledby');
   }
+}
+
+watch(isDescriptionRendered, updateLabelledBy);
+
+onMounted(() => {
+  labelledByTarget.value = triggerRef.value?.firstElementChild;
+  updateLabelledBy();
   globalThis.addEventListener('keydown', handleGlobalKeydown);
   globalThis.addEventListener('click', handleClickOutside);
 
@@ -469,7 +487,7 @@ defineExpose({ handleOpen, handleClose, showPopper, focus, scrollIntoView });
         { 'lx-responsive-view': responsiveView },
       ]"
       :aria-label="ariaLabel"
-      :aria-describedby="`${id}-description`"
+      :aria-describedby="describedBy"
       :tabindex="tabIndex"
       :role="customRole"
       @focusin="handleFocusIn"

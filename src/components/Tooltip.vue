@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 
 import LxPopper from '@/components/Popper.vue';
 import { generateUUID } from '@/utils/stringUtils';
@@ -43,6 +43,13 @@ const ariaLabel = computed(() => {
   }
   return props.label || props.description || null;
 });
+
+const isDescriptionRendered = computed(
+  () => Boolean(props.value) && showPopper.value && !props.disabled
+);
+const describedBy = computed(() =>
+  isDescriptionRendered.value ? `${props.id}-description` : null
+);
 
 const spacerStyle = computed(() => '--info-popper-spacer-size: 13px');
 
@@ -152,11 +159,22 @@ function closeOnPopperTooltipMove() {
   handleClose();
 }
 
-onMounted(() => {
-  const el = triggerRef.value?.firstElementChild;
-  if (el && el instanceof HTMLElement) {
+const labelledByTarget = ref(null);
+function updateLabelledBy() {
+  const el = labelledByTarget.value;
+  if (!(el instanceof HTMLElement)) return;
+  if (isDescriptionRendered.value) {
     el.setAttribute('aria-labelledby', `${props.id}-description`);
+  } else {
+    el.removeAttribute('aria-labelledby');
   }
+}
+
+watch(isDescriptionRendered, updateLabelledBy);
+
+onMounted(() => {
+  labelledByTarget.value = triggerRef.value?.firstElementChild;
+  updateLabelledBy();
 });
 
 defineExpose({ handleOpen, handleClose, showPopper });
@@ -180,7 +198,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
       class="lx-info-wrapper-content lx-tooltip-kind"
       :class="[{ 'lx-disabled': disabled }]"
       :aria-label="ariaLabel"
-      :aria-describedby="`${id}-description`"
+      :aria-describedby="describedBy"
       :role="customRole"
       @mouseleave="handleMouseLeave"
       @mousemove="handleMouseMove"
