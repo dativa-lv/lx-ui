@@ -16,7 +16,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const outlineTypes = [
+const outlineTypes = new Set([
   'draft',
   'editing',
   'finishing',
@@ -29,7 +29,36 @@ const outlineTypes = [
   'purple',
   'orange',
   'yellow',
-];
+]);
+
+const availableIcons = new Set([
+  'draft',
+  'new',
+  'edited',
+  'disabled',
+  'inactive',
+  'finished',
+  'deleted',
+  'ongoing',
+  'incomplete',
+  'waiting',
+  'signed',
+  'error',
+  'default',
+]);
+
+const numDictionary = {
+  0: 'zero',
+  1: 'one',
+  2: 'two',
+  3: 'three',
+  4: 'four',
+  5: 'five',
+  6: 'six',
+  7: 'seven',
+  8: 'eight',
+  9: 'nine',
+};
 
 const definition = computed(() =>
   props.dictionary?.find((o) => o.value?.toString() === props.value?.toString())
@@ -54,43 +83,14 @@ function getStatusIcon(displayType) {
     default:
       break;
   }
-  const availableIcons = [
-    'draft',
-    'new',
-    'edited',
-    'disabled',
-    'inactive',
-    'finished',
-    'deleted',
-    'ongoing',
-    'incomplete',
-    'waiting',
-    'signed',
-    'error',
-    'default',
-  ];
-  return availableIcons.includes(iconName) ? `status-${iconName}` : 'status-default';
+  return availableIcons.has(iconName) ? `status-${iconName}` : 'status-default';
 }
 
 function getCustomStatusIcon(options, displayType) {
-  const numDictionary = {
-    0: 'zero',
-    1: 'one',
-    2: 'two',
-    3: 'three',
-    4: 'four',
-    5: 'five',
-    6: 'six',
-    7: 'seven',
-    8: 'eight',
-    9: 'nine',
-  };
   const numIcon = numDictionary[options?.num];
 
   if (numIcon) {
-    return outlineTypes.includes(displayType)
-      ? `status-${numIcon}-outline`
-      : `status-${numIcon}-filled`;
+    return outlineTypes.has(displayType) ? `status-${numIcon}-outline` : `status-${numIcon}-filled`;
   }
   return 'status-default';
 }

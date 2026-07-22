@@ -1168,8 +1168,7 @@ li .lx-list-item.lx-inactive {
 }
 
 .lx-list-item-wrapper .compact-actions .lx-list-item-actions .lx-button,
-.lx-list-item-wrapper .compact-actions:has(.lx-list-item-actions) .lx-list-icon-wrapper,
-.lx-list-item-wrapper .compact-actions .lx-list-item-actions .lx-button  {
+.lx-list-item-wrapper .compact-actions:has(.lx-list-item-actions) .lx-list-icon-wrapper {
   height: var(--list-button-max-height);
 }
 

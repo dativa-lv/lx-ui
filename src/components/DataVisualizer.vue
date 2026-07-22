@@ -420,7 +420,7 @@ async function getImage() {
   try {
     loading.value = true;
     await loadImage();
-  } catch (e) {
+  } catch {
     return;
   } finally {
     setTimeout(() => {

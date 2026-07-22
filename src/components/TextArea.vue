@@ -86,7 +86,7 @@ function triggerResize() {
 
   shadowTextarea.value.value = model.value || '';
   const { borderTopWidth, borderBottomWidth } = getComputedStyle(textarea.value);
-  const borderY = parseFloat(borderTopWidth) + parseFloat(borderBottomWidth);
+  const borderY = Number.parseFloat(borderTopWidth) + Number.parseFloat(borderBottomWidth);
   textarea.value.style.height = `${shadowTextarea.value.scrollHeight + borderY}px`;
 }
 

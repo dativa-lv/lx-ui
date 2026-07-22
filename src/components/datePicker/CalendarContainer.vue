@@ -3136,9 +3136,7 @@ function timeValueCompleteAfter(column) {
   const missingTime = !filled.hours || !filled.minutes;
   const missingSeconds = needsSeconds && !filled.seconds;
 
-  if (missingDay || missingTime || missingSeconds) return false;
-
-  return true;
+  return !(missingDay || missingTime || missingSeconds);
 }
 
 function onTimeContainerKeydown(event) {

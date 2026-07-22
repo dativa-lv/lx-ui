@@ -305,7 +305,7 @@ export async function extractC2paMetadata(arrayBuffer, fileType) {
           : '',
       },
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
