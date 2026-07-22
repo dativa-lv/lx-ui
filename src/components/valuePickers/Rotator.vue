@@ -196,7 +196,7 @@ function getName(returnPlaceholder = true) {
 }
 
 function selectSingle(id) {
-  if (!props.disabled) {
+  if (!props.disabled && rotatorItemsArray.value.length > 0) {
     if (id) {
       const selectedIndex = rotatorItemsArray.value?.findIndex(
         (item) => item[props.idAttribute] === id
@@ -235,6 +235,12 @@ onMounted(() => {
 const keyedItemsArray = computed(() => {
   let items = rotatorItemsArray.value;
 
+  // Nothing to rotate through - avoid the infinite loop below (concatenating an
+  // empty array never reaches length 3, which freezes the page).
+  if (!items || items.length === 0) {
+    return [];
+  }
+
   while (items.length < 3) {
     items = items.concat(rotatorItemsArray.value);
   }
@@ -248,6 +254,10 @@ const keyedItemsArray = computed(() => {
 
 const queueItems = computed(() => {
   const itemsLength = keyedItemsArray.value.length;
+
+  if (itemsLength === 0) {
+    return [];
+  }
 
   const last = (currentIndex.value - 1 + itemsLength) % itemsLength;
   const current = currentIndex.value;
