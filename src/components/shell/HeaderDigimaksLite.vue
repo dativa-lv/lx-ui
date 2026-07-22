@@ -679,7 +679,7 @@ provide('insideHeader', insideHeader);
           </ul>
         </div>
         <transition name="slide">
-          <div class="lx-settings-menu" v-if="settings">
+          <div class="lx-settings-menu lx-region" v-if="settings">
             <div class="lx-settings-header">
               <p>{{ displayTexts.settings }}</p>
               <LxButton

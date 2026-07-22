@@ -67,6 +67,13 @@
     height: var(--icon-size-xs);
 }
 
+.lx-steps-loader {
+    width: var(--icon-size-xs);
+    height: var(--icon-size-xs);
+    --loader-width-s: var(--icon-size-xs);
+    --loader-height-s: var(--icon-height-xs);
+}
+
 .lx-steps-description {
     line-height: 1.1em;
     font-size: var(--small-font-size);

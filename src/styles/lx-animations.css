@@ -621,7 +621,7 @@
   }
 }
 
-.lx-loader-indeterminate:not(.lx-loader-state-error):not(.lx-loader-state-success) .lx-loader {
+.lx-loader-indeterminate:not(.lx-loader-state-error):not(.lx-loader-state-success) .lx-loader svg {
   -webkit-animation-duration: 690ms;
   animation-duration: 690ms;
   -webkit-animation-fill-mode: forwards;

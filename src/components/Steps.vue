@@ -48,6 +48,8 @@ const color = ref('--color-brand');
 <template>
   <div
     :id="id"
+    :data-id="id"
+    data-component="lx-steps"
     class="lx-steps-container-wrapper"
     :class="{ 'lx-steps-compact': kind === 'compact' }"
   >
@@ -93,7 +95,7 @@ const color = ref('--color-brand');
             })()
           "
         />
-        <div class="lx-steps-icon" v-if="busy && item[stateAttribute] === 'current'">
+        <div class="lx-steps-loader" v-if="busy && item[stateAttribute] === 'current'">
           <LxLoader :loading="true" size="s" />
         </div>
 
@@ -149,7 +151,7 @@ const color = ref('--color-brand');
                 })()
               "
             />
-            <div class="lx-steps-icon" v-if="busy && item[stateAttribute] === 'current'">
+            <div class="lx-steps-loader" v-if="busy && item[stateAttribute] === 'current'">
               <LxLoader :loading="true" size="s" />
             </div>
 
@@ -182,7 +184,7 @@ const color = ref('--color-brand');
                   })()
                 "
               />
-              <div class="lx-steps-icon" v-if="busy && item[stateAttribute] === 'current'">
+              <div class="lx-steps-loader" v-if="busy && item[stateAttribute] === 'current'">
                 <LxLoader :loading="true" size="s" />
               </div>
 

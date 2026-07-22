@@ -310,7 +310,7 @@
   color: var(--color-toolbar-button-primary-text-active);
 }
 
-.lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled {
+.lx-component-toolbar .first-row .lx-group .lx-button.lx-disabled {
   background: var(--color-toolbar-button-primary-background-disabled);
   color: var(--color-toolbar-button-primary-text-disabled);
   border-color: var(--color-toolbar-button-primary-border-disabled);
