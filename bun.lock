@@ -32,7 +32,7 @@
         "c2pa": "^0.22.3",
         "cyrillic-to-translit-js": "^3.2.1",
         "date-fns": "4.0.0",
-        "exifreader": "4.39.0",
+        "exifreader": "4.40.1",
         "focus-trap": "^7",
         "glob": "^10.5.0",
         "i18n-iso-countries": "^7.14.0",
@@ -943,7 +943,7 @@
 
     "execa": ["execa@5.1.1", "", { "dependencies": { "cross-spawn": "^7.0.3", "get-stream": "^6.0.0", "human-signals": "^2.1.0", "is-stream": "^2.0.0", "merge-stream": "^2.0.0", "npm-run-path": "^4.0.1", "onetime": "^5.1.2", "signal-exit": "^3.0.3", "strip-final-newline": "^2.0.0" } }, "sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg=="],
 
-    "exifreader": ["exifreader@4.39.0", "", { "optionalDependencies": { "@xmldom/xmldom": "^0.9.9" } }, "sha512-lP/BslNNbT3zZDtNyVli8XaPCxKE8f0OXb5hGhPVqaoIGCvOVanICwM3FXO45MkDjI3KHgFBk0KKVAw/W4xP2A=="],
+    "exifreader": ["exifreader@4.40.1", "", { "optionalDependencies": { "@xmldom/xmldom": "^0.9.9" } }, "sha512-Xavsts17ZYZoxUsUn+HCvGf8LB2ry7/pLSk2bYhXPGNLKciQDOxsY2EoytnKWfGmBRm4yvHVkw8RWsG5J8s3pA=="],
 
     "exit": ["exit@0.1.2", "", {}, "sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ=="],
 
