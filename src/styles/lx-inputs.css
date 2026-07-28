@@ -618,6 +618,7 @@
   width: 100%;
   padding: var(--input-text-area-padding-y) var(--space-0);
   z-index: 2;
+  overflow-wrap: break-word;
 }
 
 .lx .lx-layout .lx-field-wrapper .lx-markdown-text-area-wrapper .lx-input-wrapper .lx-markdown-text-area.lx-input-area {
