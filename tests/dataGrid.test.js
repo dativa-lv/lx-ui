@@ -480,6 +480,60 @@ describe('Virtualization', () => {
     }
   });
 
+  test('pins the active roving tab-stop into the range when scrolled out of the window', async () => {
+    const requestAnimationFrameSpy = vi
+      .spyOn(globalThis, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0);
+        return 1;
+      });
+    const cancelAnimationFrameSpy = vi
+      .spyOn(globalThis, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
+
+    // Resolve the actually-rendered indexes through the component's own
+    // rangeExtractor so the pinning logic is exercised. The scroll window
+    // (rows 40..46) deliberately excludes the default active cell (row 0).
+    const useWindowVirtualizerMock = vi.fn((options) => {
+      const indexes = options.rangeExtractor({
+        startIndex: 40,
+        endIndex: 46,
+        overscan: 6,
+        count: 50,
+      });
+      return createVirtualizerRef({
+        rows: indexes.map((index) => ({ index, start: index * 72 })),
+        totalSize: 3600,
+        options,
+      });
+    });
+
+    tanstackVirtual.useWindowVirtualizer = useWindowVirtualizerMock;
+
+    try {
+      wrapper = mountComponent({
+        props: {
+          hasVirtualization: true,
+          idAttribute: 'id',
+          items: Array.from({ length: 50 }, (_, i) => ({
+            id: `row-${i + 1}`,
+            name: `Row ${i + 1}`,
+          })),
+        },
+      });
+
+      await flushVirtualizationSetup();
+
+      // The active row (row 0) is far outside the scroll window but must still be
+      // rendered so the grid keeps a tabindex="0" entry point for Tab/Shift+Tab.
+      expect(wrapper.find('#row-row-1').exists()).toBe(true);
+      expect(wrapper.findAll('.lx-grid-content [tabindex="0"]').length).toBe(1);
+    } finally {
+      requestAnimationFrameSpy.mockRestore();
+      cancelAnimationFrameSpy.mockRestore();
+    }
+  });
+
   test('delegates rendered virtual row measurement to the virtualizer', async () => {
     const makeRect = ({ top = 0, height = 0, width = 100 } = {}) => ({
       x: 0,

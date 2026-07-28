@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { test, expect, describe, afterEach, beforeEach, it } from 'vitest';
+import { test, expect, describe, afterEach, beforeEach, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
@@ -89,6 +89,7 @@ describe('LxDateTimePicker', () => {
   describe('kind', () => {
     describe.each([
       ['date', '.lx-calendar-container', '.lx-calendar-day-content', /\d+/],
+      ['birth-date', '.lx-calendar-container', '.lx-calendar-day-content', /\d+/],
       ['time', '.lx-calendar-container', '.lx-time-list-item', /\d+/],
       ['date-time', '.lx-calendar-container', '.lx-calendar-day-content', /\d+/],
       ['month', '.lx-calendar-container', '.lx-calendar-month', /Janv\./i],
@@ -124,6 +125,103 @@ describe('LxDateTimePicker', () => {
         const unitContent = calendarContainer.querySelector(unit);
         expect(unitContent).toBeTruthy();
         expect(unitContent.textContent).toMatch(regEx);
+      });
+    });
+
+    describe('birth-date drill-down', () => {
+      const mountBirthDate = (extraProps = {}) =>
+        mount(LxDateTimePicker, {
+          props: { variant: 'default', kind: 'birth-date', ...extraProps },
+          global: {
+            stubs: ['router-link'],
+            directives: { ClickAway: dummyClickAway },
+          },
+        });
+
+      const openPicker = async (wrp) => {
+        const pickerInput = wrp.find('.lx-date-time-picker.lx-input-area');
+        expect(pickerInput.exists()).toBe(true);
+        await pickerInput.trigger('keyup', { key: 'ArrowDown' });
+        const container = document.body.querySelector('.lx-calendar-container');
+        expect(container).toBeTruthy();
+        return container;
+      };
+
+      const clickCell = async (wrp, container, selector) => {
+        const cell = container.querySelector(selector);
+        expect(cell).toBeTruthy();
+        cell.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await wrp.vm.$nextTick();
+      };
+
+      const inMonthDay = (container) =>
+        [
+          ...container.querySelectorAll(
+            '.lx-calendar-day:not(.lx-different-month) .lx-calendar-day-content'
+          ),
+        ].find((d) => !d.closest('.lx-disabled-day')) ||
+        container.querySelector('.lx-calendar-day-content');
+
+      test('empty picker does not open on render', async () => {
+        wrapper = mountBirthDate({ modelValue: null });
+        await wrapper.vm.$nextTick();
+        await wrapper.vm.$nextTick();
+
+        expect(document.body.querySelector('.lx-calendar-container')).toBeFalsy();
+      });
+
+      test('empty picker drills years -> month -> day and stays on the day view after selecting a day', async () => {
+        wrapper = mountBirthDate({ modelValue: null });
+        const container = await openPicker(wrapper);
+
+        // Opens on the year view.
+        expect(container.querySelector('.lx-calendar-years')).toBeTruthy();
+
+        // Year click -> months grid.
+        await clickCell(wrapper, container, '.lx-calendar-year:not(.lx-disabled-year)');
+        expect(container.querySelector('.lx-calendar-months')).toBeTruthy();
+
+        // Month click -> days grid.
+        await clickCell(wrapper, container, '.lx-calendar-month:not(.lx-disabled-month)');
+        expect(container.querySelector('.lx-calendar-regular-layout')).toBeTruthy();
+
+        // Day click -> stays on the days grid (does not jump back to years).
+        const day = inMonthDay(container);
+        day.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await wrapper.vm.$nextTick();
+        expect(container.querySelector('.lx-calendar-regular-layout')).toBeTruthy();
+        expect(container.querySelector('.lx-calendar-years')).toBeFalsy();
+      });
+
+      test('picker with a value opens on the days grid (not years)', async () => {
+        wrapper = mountBirthDate({ modelValue: '2000-05-14' });
+
+        const container = await openPicker(wrapper);
+        expect(container.querySelector('.lx-calendar-regular-layout')).toBeTruthy();
+        expect(container.querySelector('.lx-calendar-years')).toBeFalsy();
+      });
+
+      test('inline variant (picker) starts on years when empty and drills to the days grid', async () => {
+        wrapper = mountBirthDate({ modelValue: null, variant: 'picker' });
+        await wrapper.vm.$nextTick();
+
+        const container = wrapper.find('.lx-calendar-container').element;
+        expect(container.querySelector('.lx-calendar-years')).toBeTruthy();
+
+        await clickCell(wrapper, container, '.lx-calendar-year:not(.lx-disabled-year)');
+        expect(container.querySelector('.lx-calendar-months')).toBeTruthy();
+
+        await clickCell(wrapper, container, '.lx-calendar-month:not(.lx-disabled-month)');
+        expect(container.querySelector('.lx-calendar-regular-layout')).toBeTruthy();
+      });
+
+      test('inline variant (full) with a value starts on the days grid (not years)', async () => {
+        wrapper = mountBirthDate({ modelValue: '2000-05-14', variant: 'full' });
+        await wrapper.vm.$nextTick();
+
+        const container = wrapper.find('.lx-calendar-container').element;
+        expect(container.querySelector('.lx-calendar-regular-layout')).toBeTruthy();
+        expect(container.querySelector('.lx-calendar-years')).toBeFalsy();
       });
     });
 
@@ -570,6 +668,8 @@ describe('LxDateTimePicker', () => {
       day.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       await wrapper.vm.$nextTick();
     };
+    const dayCell = (c) =>
+      c.querySelector('.lx-calendar-day:not(.lx-other-month):not(.lx-disabled-date)');
 
     // Selects every part except the last, then presses Enter on the last -> should close.
     // key/value: the ordered columns to fill; the final one is committed with Enter.
@@ -606,6 +706,24 @@ describe('LxDateTimePicker', () => {
         if (kind === 'date-time' || kind === 'date-time-full') await clickDay(c);
         await press(timeItem(c, 'hours'), 'keydown', 'Enter');
         expect(isOpen()).toBe(true);
+      }
+    );
+
+    // Reverse order: fill the time first, then select the day last with Enter -> should close.
+    test.each(['date-time', 'date-time-full'])(
+      'kind %s: Enter on the day closes when time was selected first',
+      async (kind) => {
+        const c = await open(kind);
+
+        // Fill every time part first; without a day the picker must stay open.
+        await timeColumns[kind].reduce(async (previousSelection, col) => {
+          await previousSelection;
+          await press(timeItem(c, col), 'keydown', 'Enter');
+          expect(isOpen()).toBe(true);
+        }, Promise.resolve());
+        // Day selected last completes the value and closes.
+        await press(dayCell(c), 'keyup', 'Enter');
+        expect(isOpen()).toBe(false);
       }
     );
 
@@ -2152,5 +2270,74 @@ describe('LxDateTimePicker', () => {
       expect(pickers()[0].props('modelValue')).toBe(null); // day cleared
       expect(pickers()[1].props('modelValue')).toBe('06'); // month preserved
     });
+  });
+});
+
+// Regression: month-year must only allow months inside [minDate, maxDate].
+// Bug was a probe date built with currentDate.getDate(): when currentDate landed on
+// day 31 (e.g. maxDate = May 31), `new Date(year, 3 /*Apr*/, 31)` overflowed into May,
+// so April was wrongly reported selectable. Covers past/present/future because
+// moveCalendar picks currentDate differently in each (max / today / min).
+describe('LxDateTimePicker month-year min/max selectability', () => {
+  // Fixed "now" = 31 May 2026 so the present window's currentDate lands on day 31,
+  // reproducing the same overflow the past window hits via maxDate.
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 31, 12, 0, 0));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Build dates from local components so getMonth()/getDate() are timezone-independent.
+  function mayWindow(year) {
+    return { minDate: new Date(year, 4, 1), maxDate: new Date(year, 4, 31) };
+  }
+
+  function mountMonthYear({ minDate, maxDate }) {
+    return mount(LxDateTimePicker, {
+      props: { kind: 'month-year', variant: 'default', minDate, maxDate },
+      global: {
+        stubs: ['router-link'],
+        directives: { ClickAway: dummyClickAway },
+      },
+    });
+  }
+
+  // Opens the calendar and returns the 12 month cells in Jan..Dec order.
+  async function openMonthCells(wrp) {
+    await wrp.find('.lx-date-time-picker.lx-input-area').trigger('keyup', { key: 'ArrowDown' });
+    await nextTick();
+    const container = document.body.querySelector('.lx-calendar-container');
+    expect(container).toBeTruthy();
+    return [...container.querySelectorAll('.lx-calendar-month')];
+  }
+
+  // Jan-first grid: April = index 3, May = index 4.
+  async function assertOnlyMaySelectable(wrp) {
+    const cells = await openMonthCells(wrp);
+    expect(cells).toHaveLength(12);
+
+    const disabled = cells.map((c) => c.classList.contains('lx-disabled-month'));
+    expect(disabled[4]).toBe(false); // May: in range, selectable
+    expect(disabled[3]).toBe(true); // April: out of range, must NOT be selectable
+    // Exactly one selectable month in the whole grid.
+    expect(disabled.filter((d) => !d)).toHaveLength(1);
+  }
+
+  test('past window (min/max both before today) allows only May', async () => {
+    wrapper = mountMonthYear(mayWindow(2025));
+    await assertOnlyMaySelectable(wrapper);
+  });
+
+  test('present window (today inside min/max) allows only May', async () => {
+    wrapper = mountMonthYear(mayWindow(2026));
+    await assertOnlyMaySelectable(wrapper);
+  });
+
+  test('future window (min/max both after today) allows only May', async () => {
+    wrapper = mountMonthYear(mayWindow(2027));
+    await assertOnlyMaySelectable(wrapper);
   });
 });

@@ -369,6 +369,19 @@
   opacity: 1;
 }
 
+.lx:not(.lx-no-animations) .lx-calendar-container .lx-time-list-item.scroll-down-leave-active,
+.lx:not(.lx-no-animations) .lx-calendar-container .lx-time-list-item.scroll-up-leave-active {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.lx:not(.lx-no-animations) .lx-calendar-container .lx-time-list-item.scroll-down-leave-active {
+  top: 0;
+}
+.lx:not(.lx-no-animations) .lx-calendar-container .lx-time-list-item.scroll-up-leave-active {
+  bottom: 0;
+}
+
 /* lx-expanders */
 
 .lx:not(.lx-no-animations) .lx-expander .lx-head {

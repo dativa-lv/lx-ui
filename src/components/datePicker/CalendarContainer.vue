@@ -53,7 +53,7 @@ import LxEmptyState from '@/components/EmptyState.vue';
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: [String, Date, Object], default: null },
-  mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full' 'date-time', 'date-time-full' 'month', 'year', 'month-year', 'quarters'
+  mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full' 'date-time', 'date-time-full' 'month', 'year', 'month-year', 'quarters', 'birth-date'
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   disabled: { type: Boolean, default: false },
   locale: { type: String, default: 'lv-LV' },
@@ -119,6 +119,8 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const emits = defineEmits(['update:modelValue', 'focusActiveInput']);
 const containerRef = ref();
 
+const isDateMode = computed(() => ['date', 'birth-date'].includes(props.mode));
+
 const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
 
 const transitionName = ref('lx-next-slide');
@@ -166,9 +168,13 @@ const startQuarterYear = ref(findDecadeStartYear(todayDate.value.getFullYear()))
 const endQuarterYear = ref(findDecadeStartYear(todayDate.value.getFullYear()) + 9);
 
 const DEBOUNCE_MS = 50;
+const TIME_WHEEL_STEP_LOCK_MS = 50;
+const TIME_KEY_STEP_LOCK_MS = 100;
 
 const tempSelectedYear = ref(null);
 const focusDayRetryTimeout = ref(null);
+
+const timeStepLocked = ref({ hours: false, minutes: false, seconds: false });
 
 // Hours, minutes and seconds arrays
 const hours = ref(
@@ -526,6 +532,7 @@ function scheduleTimeRefocus(column, retries = 3) {
 
 function stepTimeColumn(column, delta, keepFocus = false) {
   const max = getColumnMax(column);
+  const step = delta > 0 ? 1 : -1;
   const currentIndex = positiveMod(timeStarts.value[column] + timeActiveOffsets.value[column], max);
   const nextSelectable = findSelectableTimeValue(column, currentIndex, delta);
 
@@ -533,8 +540,10 @@ function stepTimeColumn(column, delta, keepFocus = false) {
     return;
   }
 
+  // Advance continuously (not reset to the wrapped index) so row keys don't jump/flash at 59->00.
+  const signedDistance = positiveMod((nextSelectable - currentIndex) * step, max) * step;
   timeDirections.value[column] = delta > 0 ? 'down' : 'up';
-  centerTimeColumnOnIndex(column, nextSelectable);
+  timeStarts.value[column] += signedDistance;
   activeTimeColumn.value = column;
 
   if (keepFocus) {
@@ -542,10 +551,21 @@ function stepTimeColumn(column, delta, keepFocus = false) {
   }
 }
 
+function stepTimeColumnThrottled(column, delta, lockMs) {
+  if (timeStepLocked.value[column]) {
+    return false;
+  }
+  stepTimeColumn(column, delta, false);
+  timeStepLocked.value[column] = true;
+  setTimeout(() => {
+    timeStepLocked.value[column] = false;
+  }, lockMs);
+  return true;
+}
+
 function onTimeWheel(event, column) {
   event.preventDefault();
-  const delta = event.deltaY > 0 ? 1 : -1;
-  stepTimeColumn(column, delta, false);
+  stepTimeColumnThrottled(column, event.deltaY > 0 ? 1 : -1, TIME_WHEEL_STEP_LOCK_MS);
 }
 
 function moveTimeHorizontal(column, direction) {
@@ -660,14 +680,16 @@ function handleTimeArrowKey(column, key) {
   }
 
   if (key === 'ArrowUp') {
-    stepTimeColumn(column, -1, false);
-    scheduleTimeRefocus(column);
+    if (stepTimeColumnThrottled(column, -1, TIME_KEY_STEP_LOCK_MS)) {
+      scheduleTimeRefocus(column);
+    }
     return;
   }
 
   if (key === 'ArrowDown') {
-    stepTimeColumn(column, 1, false);
-    scheduleTimeRefocus(column);
+    if (stepTimeColumnThrottled(column, 1, TIME_KEY_STEP_LOCK_MS)) {
+      scheduleTimeRefocus(column);
+    }
   }
 }
 
@@ -1117,8 +1139,15 @@ function handleDoNotIndicateEnd() {
   }
 }
 
-function handleLayoutDisplay() {
+function handleLayoutDisplay(isInitialOpen = false) {
   if (showCalendar.value) {
+    if (isInitialOpen && props.mode === 'birth-date' && !props.modelValue) {
+      regularLayout.value = false;
+      monthsLayout.value = false;
+      quartersLayout.value = false;
+      yearsLayout.value = true;
+      return;
+    }
     const layout = getCalendarLayout(props.mode);
     // Month-only and month-year both use the months grid.
     if (layout === 'month') {
@@ -1927,6 +1956,8 @@ function handleDateTimePartSelection(updatedDate, selectedValue, key, mode) {
 
   if (isTimeSelectionComplete(isFullTimeMode)) {
     buildAndEmitFinalDateTime(updatedDate, selectedValue, isFullTimeMode, key);
+    // day selected last: close on Enter, mirroring the time keyboard path
+    if (key === 'enter') props.closeMenu();
   }
 
   handleEnterKeyFocus(key);
@@ -1973,7 +2004,7 @@ function handleDateSelection(selectedValue, key) {
 
   const { mode } = props;
 
-  if (mode === 'date') {
+  if (isDateMode.value) {
     return handleDateOnlySelection(updatedDate, key);
   }
 
@@ -2003,7 +2034,7 @@ function handleMonthSelection(selectedValue, newDate, key) {
   const monthIndex = Number(selectedValue.orderIndex);
   selectedMonth.value = monthIndex;
 
-  if (props.mode === 'date') {
+  if (isDateMode.value) {
     syncActiveDayToMonth(newDate.getFullYear(), monthIndex);
   }
 
@@ -2039,6 +2070,10 @@ function handleMonthSelection(selectedValue, newDate, key) {
     if (key === 'space') return;
     monthsLayout.value = false;
     regularLayout.value = true;
+    if (props.mode === 'birth-date' && key === 'enter') {
+      focusInitialPickerCell(getActiveCalendarDate());
+      return;
+    }
     nextTick(() => {
       focusLayoutTriggerButton('month');
     });
@@ -2100,6 +2135,13 @@ function handleYearSelection(selectedValue, newDate, key) {
 
   if (props.mode === 'month-year') {
     handleMonthYearSelection(numericYear);
+    return;
+  }
+
+  if (props.mode === 'birth-date') {
+    syncActiveMonthToYear(numericYear);
+    yearsLayout.value = false;
+    monthsLayout.value = true;
     return;
   }
 
@@ -2169,7 +2211,7 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
     case 'month':
       newDate.setDate(1);
       newDate.setMonth(selectedValue.orderIndex);
-      if (props.mode === 'date') currentDate.value = newDate;
+      if (isDateMode.value) currentDate.value = newDate;
 
       // Set selectedMonth from the selected value
       selectedMonth.value = Number(selectedValue.orderIndex);
@@ -2196,7 +2238,7 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
       break;
     case 'year':
       newDate.setFullYear(selectedValue);
-      if (props.mode === 'date' || props.mode === 'month-year') currentDate.value = newDate;
+      if (isDateMode.value || props.mode === 'month-year') currentDate.value = newDate;
 
       // Set selectedYear from the selected value
       selectedYear.value = Number(selectedValue);
@@ -3259,7 +3301,7 @@ const updateCurrentDateIfNotInMonthsList = (selectedDateValue) => {
 
 const isCalendarRootAvailable = computed(
   () =>
-    props.mode === 'date' ||
+    isDateMode.value ||
     props.mode === 'date-time' ||
     props.mode === 'date-time-full' ||
     props.mode === 'month' ||
@@ -3497,7 +3539,7 @@ function handleDayGridKeydown(e) {
 function handleCalendarKeydown(e) {
   if (
     regularLayout.value &&
-    (props.mode === 'date' || props.mode === 'date-time' || props.mode === 'date-time-full')
+    (isDateMode.value || props.mode === 'date-time' || props.mode === 'date-time-full')
   ) {
     if (handleDayGridKeydown(e)) return;
   }
@@ -3561,9 +3603,9 @@ function isActiveCalendarQuarter(quarterYear, quarterItem) {
 
 const monthsSelectButtonLabel = computed(() => {
   if (
-    (props.mode === 'date' && props.variant === 'full' && props.pickerType === 'single') ||
-    (props.mode === 'date' && props.variant === 'full-rows' && props.pickerType === 'single') ||
-    (props.mode === 'date' && props.variant === 'full-columns' && props.pickerType === 'single') ||
+    (isDateMode.value && props.variant === 'full' && props.pickerType === 'single') ||
+    (isDateMode.value && props.variant === 'full-rows' && props.pickerType === 'single') ||
+    (isDateMode.value && props.variant === 'full-columns' && props.pickerType === 'single') ||
     (props.pickerType === 'range' && !isMobileScreen.value)
   ) {
     // Flatten the monthsList array to handle the different structures
@@ -3599,9 +3641,9 @@ const monthsSelectButtonLabel = computed(() => {
 
 const yearsSelectButtonLabel = computed(() => {
   if (
-    (props.mode === 'date' && props.variant === 'full' && props.pickerType === 'single') ||
-    (props.mode === 'date' && props.variant === 'full-rows' && props.pickerType === 'single') ||
-    (props.mode === 'date' && props.variant === 'full-columns' && props.pickerType === 'single')
+    (isDateMode.value && props.variant === 'full' && props.pickerType === 'single') ||
+    (isDateMode.value && props.variant === 'full-rows' && props.pickerType === 'single') ||
+    (isDateMode.value && props.variant === 'full-columns' && props.pickerType === 'single')
   ) {
     // Flatten the monthsList array to handle the different structures
     const flattenedMonths = monthsList.value.flat();
@@ -3824,7 +3866,7 @@ function handleSinglePickerUnmount() {
     return;
   }
 
-  if (props.mode === 'date' && selectedDate.value && props.variant === 'default') {
+  if (isDateMode.value && selectedDate.value && props.variant === 'default') {
     currentDate.value = selectedDate.value;
     return;
   }
@@ -4019,6 +4061,13 @@ watch(
       quartersLayout.value = true;
       return;
     }
+    if (newKind === 'birth-date' && !props.modelValue) {
+      regularLayout.value = false;
+      monthsLayout.value = false;
+      yearsLayout.value = true;
+      quartersLayout.value = false;
+      return;
+    }
 
     regularLayout.value = true;
     monthsLayout.value = false;
@@ -4125,11 +4174,7 @@ watch(
         const openAnchorDate = getSingleOpenAnchorDate();
         currentDate.value = openAnchorDate;
 
-        if (
-          props.mode === 'date' ||
-          props.mode === 'date-time' ||
-          props.mode === 'date-time-full'
-        ) {
+        if (isDateMode.value || props.mode === 'date-time' || props.mode === 'date-time-full') {
           const decadeStart = findDecadeStartYear(openAnchorDate.getFullYear());
           startYear.value = decadeStart - 1;
           endYear.value = decadeStart + 10;
@@ -4154,7 +4199,7 @@ watch(
       }
 
       showCalendar.value = true;
-      handleLayoutDisplay();
+      handleLayoutDisplay(true);
       if (shouldAutoFocusPicker) {
         const initialFocusDate =
           props.pickerType === 'range' ? getRangeFocusDate() : getActiveCalendarDate();
@@ -4268,7 +4313,7 @@ watch(
     }
 
     if (props.pickerType === 'single' && isDefined(newValue)) {
-      if (props.mode === 'date' || props.mode === 'date-time' || props.mode === 'date-time-full') {
+      if (isDateMode.value || props.mode === 'date-time' || props.mode === 'date-time-full') {
         selectedDate.value = newValue;
         if (!selectedManually.value) currentDate.value = selectedDate.value;
 
@@ -4676,9 +4721,7 @@ if (typeof globalThis !== 'undefined') {
       v-if="mode !== 'month' && (!isMobileScreen || !mobileTimeLayout)"
     >
       <LxButton
-        v-if="
-          responsiveView && (mode === 'date' || mode === 'date-time' || mode === 'date-time-full')
-        "
+        v-if="responsiveView && (isDateMode || mode === 'date-time' || mode === 'date-time-full')"
         :id="`${id}-special-days-button`"
         customClass="lx-calendar-special-days-button"
         kind="ghost"
@@ -4759,17 +4802,16 @@ if (typeof globalThis !== 'undefined') {
               pickerType === 'single' &&
               (variant === 'default' || variant === 'picker') &&
               !responsiveView &&
-              (mode === 'date' ||
+              (isDateMode ||
                 ((mode === 'date-time' || mode === 'date-time-full') && !mobileTimeLayout)),
             'lx-quarters': mode === 'quarters',
             'quarters-only': mode === 'quarters' && !isMobileScreen,
             'mobile-quarters': mode === 'quarters' && isMobileScreen,
             'lx-full-layout':
-              (mode === 'date' && variant === 'full') ||
-              (mode === 'date' && variant === 'full-rows'),
-            'lx-full-rows': mode === 'date' && variant === 'full-rows',
+              (isDateMode && variant === 'full') || (isDateMode && variant === 'full-rows'),
+            'lx-full-rows': isDateMode && variant === 'full-rows',
             'lx-full-columns':
-              (pickerType === 'single' && mode === 'date' && variant === 'full-columns') ||
+              (pickerType === 'single' && isDateMode && variant === 'full-columns') ||
               (pickerType === 'range' &&
                 !isMobileScreen &&
                 mode !== 'month' &&
@@ -4810,8 +4852,8 @@ if (typeof globalThis !== 'undefined') {
           :class="[
             {
               'lx-full-layout':
-                (mode === 'date' && variant === 'full' && pickerType === 'single') ||
-                (mode === 'date' && variant === 'full-columns' && pickerType === 'single') ||
+                (isDateMode && variant === 'full' && pickerType === 'single') ||
+                (isDateMode && variant === 'full-columns' && pickerType === 'single') ||
                 (pickerType === 'range' &&
                   !isMobileScreen &&
                   mode !== 'month' &&
@@ -4842,9 +4884,9 @@ if (typeof globalThis !== 'undefined') {
                   >
                     <div
                       v-if="
-                        (mode === 'date' && variant === 'full') ||
-                        (mode === 'date' && variant === 'full-rows') ||
-                        (mode === 'date' && variant === 'full-columns') ||
+                        (isDateMode && variant === 'full') ||
+                        (isDateMode && variant === 'full-rows') ||
+                        (isDateMode && variant === 'full-columns') ||
                         (pickerType === 'range' && !isMobileScreen)
                       "
                       class="lx-calendar-regular-layout-month-label"
@@ -5180,7 +5222,7 @@ if (typeof globalThis !== 'undefined') {
                         :class="[
                           {
                             'full-layout':
-                              pickerType === 'single' && mode === 'date' && variant === 'full',
+                              pickerType === 'single' && isDateMode && variant === 'full',
                           },
                           {
                             'hovering-range':
@@ -5190,7 +5232,7 @@ if (typeof globalThis !== 'undefined') {
                             'start-month':
                               (month.orderIndex === selectedStartMonth &&
                                 currentDate.getFullYear() === Number(selectedStartYear) &&
-                                mode === 'date') ||
+                                isDateMode) ||
                               (month.orderIndex === selectedStartMonth && mode === 'month') ||
                               (month.orderIndex === selectedStartMonth &&
                                 month.year === Number(selectedStartYear) &&
@@ -5200,7 +5242,7 @@ if (typeof globalThis !== 'undefined') {
                             'end-month':
                               (month.orderIndex === selectedEndMonth &&
                                 currentDate.getFullYear() === Number(selectedEndYear) &&
-                                mode === 'date') ||
+                                isDateMode) ||
                               (month.orderIndex === selectedEndMonth && mode === 'month') ||
                               (month.orderIndex === selectedEndMonth &&
                                 month.year === Number(selectedEndYear) &&
@@ -5235,7 +5277,7 @@ if (typeof globalThis !== 'undefined') {
                               'lx-selected-start-month':
                                 (month.orderIndex === selectedStartMonth &&
                                   currentDate.getFullYear() === Number(selectedStartYear) &&
-                                  mode === 'date') ||
+                                  isDateMode) ||
                                 (month.orderIndex === selectedStartMonth && mode === 'month') ||
                                 (month.orderIndex === selectedStartMonth &&
                                   month.year === Number(selectedStartYear) &&
@@ -5245,7 +5287,7 @@ if (typeof globalThis !== 'undefined') {
                               'lx-selected-end-month':
                                 (month.orderIndex === selectedEndMonth &&
                                   currentDate.getFullYear() === Number(selectedEndYear) &&
-                                  mode === 'date') ||
+                                  isDateMode) ||
                                 (month.orderIndex === selectedEndMonth && mode === 'month') ||
                                 (month.orderIndex === selectedEndMonth &&
                                   month.year === Number(selectedEndYear) &&
@@ -5255,7 +5297,7 @@ if (typeof globalThis !== 'undefined') {
                               'lx-disabled-month':
                                 (mode !== 'month' &&
                                   !canSelectDate(
-                                    new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                    new Date(month.year, month.orderIndex, 1),
                                     minDateRef,
                                     maxDateRef,
                                     'month-year'
@@ -5263,7 +5305,7 @@ if (typeof globalThis !== 'undefined') {
                                 disabled,
                             },
                             {
-                              'lx-full-layout': mode === 'date' && variant === 'full',
+                              'lx-full-layout': isDateMode && variant === 'full',
                             },
                             {
                               'hovering-range':
@@ -5273,7 +5315,7 @@ if (typeof globalThis !== 'undefined') {
                           :aria-hidden="
                             (mode !== 'month' &&
                               !canSelectDate(
-                                new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                new Date(month.year, month.orderIndex, 1),
                                 minDateRef,
                                 maxDateRef,
                                 'month-year'
@@ -5294,7 +5336,7 @@ if (typeof globalThis !== 'undefined') {
                           @click.stop.prevent="
                             (mode === 'month' ||
                               canSelectDate(
-                                new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                new Date(month.year, month.orderIndex, 1),
                                 minDateRef,
                                 maxDateRef,
                                 'month-year'
@@ -5312,7 +5354,7 @@ if (typeof globalThis !== 'undefined') {
                                 'month',
                                 mode !== 'month' &&
                                   !canSelectDate(
-                                    new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                    new Date(month.year, month.orderIndex, 1),
                                     minDateRef,
                                     maxDateRef,
                                     'month-year'
@@ -5322,7 +5364,7 @@ if (typeof globalThis !== 'undefined') {
                           @focusin="
                             (mode === 'month' ||
                               canSelectDate(
-                                new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                new Date(month.year, month.orderIndex, 1),
                                 minDateRef,
                                 maxDateRef,
                                 'month-year'
@@ -5343,7 +5385,7 @@ if (typeof globalThis !== 'undefined') {
                               'month',
                               mode !== 'month' &&
                                 !canSelectDate(
-                                  new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                  new Date(month.year, month.orderIndex, 1),
                                   minDateRef,
                                   maxDateRef,
                                   'month-year'
@@ -5357,7 +5399,7 @@ if (typeof globalThis !== 'undefined') {
                               'month',
                               mode !== 'month' &&
                                 !canSelectDate(
-                                  new Date(month.year, month.orderIndex, currentDate.getDate()),
+                                  new Date(month.year, month.orderIndex, 1),
                                   minDateRef,
                                   maxDateRef,
                                   'month-year'
@@ -5370,9 +5412,7 @@ if (typeof globalThis !== 'undefined') {
                           <span class="lx-calendar-month-content">
                             {{
                               capitalizeFirstLetter(
-                                mode === 'date' && variant === 'full'
-                                  ? month.fullName
-                                  : month.shortName
+                                isDateMode && variant === 'full' ? month.fullName : month.shortName
                               )
                             }}
                           </span>

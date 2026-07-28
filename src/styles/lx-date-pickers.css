@@ -649,7 +649,6 @@
   background-color: var(--color-grid-hover-background);
 }
 
-
 .lx .lx-layout .lx-calendar-container .lx-time-lists-separator {
   padding: var(--space-0125) var(--space-0125) var(--space-0250);
 }
@@ -1107,6 +1106,7 @@
 }
 
 .lx .lx-layout .lx-calendar-container .lx-time-list {
+  position: relative;
   height: 100%;
   display: grid;
   grid-template-rows: repeat(5, 2rem);
@@ -1183,11 +1183,11 @@
 
 .lx-date-time-picker-wrapper .lx-calendar-container.mode-date-time .lx-time-picker-container .lx-time-columns,
 .lx-date-time-picker-wrapper .lx-calendar-container.mode-time .lx-time-picker-container .lx-time-columns {
-	width: 11rem;
+	width: 11.5rem;
 }
 .lx-date-time-picker-wrapper .lx-calendar-container.mode-date-time-full .lx-time-picker-container .lx-time-columns,
 .lx-date-time-picker-wrapper .lx-calendar-container.mode-time-full .lx-time-picker-container .lx-time-columns {
-  width: 16rem;
+  width: 17rem;
 }
 
 /* Responsive date-time "time open": match the time picker to the calendar layout footprint. */

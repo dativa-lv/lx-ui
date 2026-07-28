@@ -53,7 +53,7 @@
 
 .lx-tab-control header.lx-toolbar .lx-group {
   display: flex;
-  height: var(--row-size);
+  min-height: var(--row-size);
   flex-shrink: 0;
 }
 
@@ -76,8 +76,9 @@
 .lx-tab-control .lx-tab-container .lx-tab {
   min-height: var(--row-size);
   display: flex;
-  padding: var(--space-0500);
-  align-items: flex-end;
+  padding-left: var(--space-0500);
+  padding-right: var(--space-0500);
+  align-items: center;
   justify-content: flex-start;
   margin-right: var(--space-0500);
   margin-bottom: var(--space-0);
@@ -85,6 +86,10 @@
   border-bottom: var(--tab-border);
   max-width: 14rem;
   flex-shrink: 0;
+}
+
+.lx-tab-control .lx-tab-container .lx-tab:has(.additional-buttons) {
+  padding-right: 0;
 }
 
 .lx-tab-control .lx-toolbar:not(.lx-modal .lx-toolbar) .lx-group {
@@ -104,9 +109,9 @@
   visibility: hidden;
 }
 
-.lx-tab-control .lx-tab-container .lx-tab.lx-invalid svg {
+.lx-tab-control .lx-tab-container .lx-tab.lx-invalid svg.invalid {
   visibility: visible;
-  fill: var(--color-bad)
+  fill: var(--color-bad);
 }
 
 .lx-tab-control .lx-tab-container .lx-tab.lx-invalid .lx-primary {
@@ -131,6 +136,28 @@
 .lx-tab-control .lx-tab-container .lx-tab.lx-selected .lx-primary {
   color: var(--color-tab-selected-foreground);
   font-weight: var(--font-weight);
+}
+
+.lx-theme-contrast .lx-tab-control .lx-tab-container .lx-tab.lx-selected .additional-buttons .lx-button svg,
+.lx-theme-contrast .lx-tab-control .lx-tab-container .lx-tab.lx-selected .additional-buttons svg {
+  fill: var(--color-tab-selected-foreground);
+}
+
+.lx-theme-contrast .lx-tab-control .lx-tab-container .lx-tab:hover .additional-buttons .lx-button svg,
+.lx-theme-contrast .lx-tab-control .lx-tab-container .lx-tab:hover .additional-buttons svg {
+  fill: var(--color-region-hover-foreground);
+}
+
+.lx-tab-control .lx-tab-container .lx-tab .additional-buttons .lx-button.lx-button-ghost {
+  --color-button-ghost-icon: var(--color-label);
+  --color-button-ghost-icon-focus: var(--color-label);
+  --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
+  --color-button-ghost-icon-active: var(--color-interactive-active-foreground);
+}
+
+.lx-tab-control .lx-tab-container .lx-tab.lx-selected .additional-buttons .lx-button.lx-button-ghost {
+  --color-button-ghost-icon: var(--color-tab-selected-foreground);
+  --color-button-ghost-icon-focus: var(--color-tab-selected-foreground);
 }
 
 .lx-tab-control .lx-tab-container .lx-tab:hover {
@@ -205,6 +232,10 @@
   padding-right: var(--space-0);
 }
 
+.lx-tab-control .lx-tab-container .lx-tab > svg {
+  margin-right: var(--space-0500);
+}
+
 .lx-tab-control .lx-tab svg.item-icon{
   padding-right: var(--space-0250);
   fill: var(--color-label)
@@ -212,4 +243,52 @@
 
 .lx-tab-control .lx-tab.lx-selected svg.item-icon{
   fill: var(--color-data)
+}
+
+.lx-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-0250);
+  justify-content: center;
+}
+
+.lx-tab:has(.additional-buttons) {
+  justify-content: flex-start;
+}
+
+.lx-tab .additional-buttons {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.lx-tab-control .lx-tab-container .lx-tab .additional-buttons svg {
+  margin-left: 0;
+  margin-bottom:0;
+  height: var(--button-ghost-icon-size);
+  width: var(--button-ghost-icon-size);
+}
+
+@media (max-width: 700px) {
+  .lx-tab-control .tab-control-default .lx-dropdown-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .lx-tab-control .lx-dropdown-container .additional-buttons {
+    display: flex;
+  }
+  
+  .lx-tab-control .lx-dropdown-container .additional-buttons .lx-button.lx-button-ghost svg {
+    fill: var(--color-data);
+  }
+
+  .lx-tab-control .lx-dropdown-container .additional-buttons .lx-button.lx-button-ghost:hover svg {
+    fill: var(--color-interactive-hover-foreground);
+  }
+
+  .lx-tab-control .lx-dropdown-container .lx-field-wrapper {
+    flex: 1;
+  }
 }

@@ -122,11 +122,10 @@ Customized values for contrast mode:
 <br />
 <br />
 
-| Variable name                    | Contrast mode value                              |
-|----------------------------------|--------------------------------------------------|
-| `--input-border`                 | `--border-width-2` solid `--contrast-foreground` |
-| `--input-border-disabled`        | `--input-border`                                 |
-| `--input-border-bottom`          | `--input-border`                                 |
-| `--input-border-bottom-disabled` | `--input-border`                                 |
-| `--color-input-disabled`         | `--contrast-foreground`                          |
-| `--color-input-disabled-border`  | `--contrast-foreground`                          |
+| Variable name                       | Contrast mode value     |
+|-------------------------------------|-------------------------|
+| `--input-border-width`              | `--border-width-2`      |
+| `--color-input`                     | `--contrast-foreground` |
+| `--color-input-disabled`            | `--contrast-foreground` |
+| `--color-input-text-disabled`       | `--contrast-foreground` |
+| `--color-input-background-selected` | `--contrast-hover`      |

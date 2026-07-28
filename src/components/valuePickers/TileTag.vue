@@ -308,36 +308,28 @@ function getSelectedSingleId() {
 }
 
 function getTabIndex(id) {
-  const current =
-    highlightedItemId.value ??
-    getSelectedSingleId() ??
-    navigableItems.value[0]?.[props.idAttribute];
-  return current === id ? '0' : '-1';
+  const list = navigableItems.value;
+  const isFirstItem = list.length > 0 && list[0][props.idAttribute] === id;
+  const current = highlightedItemId.value ?? getSelectedSingleId();
+  const isValidCurrent = list.some((item) => item[props.idAttribute] === current);
+  if (current === id || (isFirstItem && !isValidCurrent)) return '0';
+  return '-1';
 }
 
 function focusRadio(offset) {
+  if (props.disabled || !navigableItems.value.length) return;
   const list = navigableItems.value;
-  if (!list.length) return;
-  const currentId = highlightedItemId.value ?? getSelectedSingleId() ?? list[0][props.idAttribute];
-  let index = list.findIndex((item) => item[props.idAttribute] === currentId);
-  if (index === -1) index = 0;
-  let next = index + offset;
-  if (next < 0) next = list.length - 1;
-  if (next >= list.length) next = 0;
-  const nextId = list[next][props.idAttribute];
+  const current = highlightedItemId.value ?? getSelectedSingleId();
+  const index = Math.max(
+    0,
+    list.findIndex((item) => item[props.idAttribute] === current)
+  );
+  const nextId = list[(index + offset + list.length) % list.length][props.idAttribute];
   highlightedItemId.value = nextId;
   selectSingle(nextId);
   nextTick(() => {
     document.getElementById(getItemId(nextId))?.focus();
   });
-}
-
-function focusNextRadio() {
-  focusRadio(1);
-}
-
-function focusPreviousRadio() {
-  focusRadio(-1);
 }
 
 const columnReadOnly = computed(() =>
@@ -494,13 +486,13 @@ const wrapperRef = ref();
               item[idAttribute] === checkNull(model)
             "
             data-container="value-picker-item"
-            @click="disabled ? null : selectSingle(item[idAttribute])"
-            @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
-            @keydown.enter.prevent="disabled ? null : selectSingle(item[idAttribute])"
-            @keydown.right.prevent="disabled ? null : focusNextRadio()"
-            @keydown.down.prevent="disabled ? null : focusNextRadio()"
-            @keydown.left.prevent="disabled ? null : focusPreviousRadio()"
-            @keydown.up.prevent="disabled ? null : focusPreviousRadio()"
+            @click="selectSingle(item[idAttribute])"
+            @keydown.space.prevent="selectSingle(item[idAttribute])"
+            @keydown.enter.prevent="selectSingle(item[idAttribute])"
+            @keydown.right.prevent="focusRadio(1)"
+            @keydown.down.prevent="focusRadio(1)"
+            @keydown.left.prevent="focusRadio(-1)"
+            @keydown.up.prevent="focusRadio(-1)"
           >
             <template v-if="variant === 'tiles'">
               <div class="lx-value-picker-tile-header">
@@ -628,13 +620,13 @@ const wrapperRef = ref();
               item[idAttribute] === checkNull(model)
             "
             data-container="value-picker-item"
-            @click="disabled ? null : selectSingle(item[idAttribute])"
-            @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
-            @keydown.enter.prevent="disabled ? null : selectSingle(item[idAttribute])"
-            @keydown.right.prevent="disabled ? null : focusNextRadio()"
-            @keydown.down.prevent="disabled ? null : focusNextRadio()"
-            @keydown.left.prevent="disabled ? null : focusPreviousRadio()"
-            @keydown.up.prevent="disabled ? null : focusPreviousRadio()"
+            @click="selectSingle(item[idAttribute])"
+            @keydown.space.prevent="selectSingle(item[idAttribute])"
+            @keydown.enter.prevent="selectSingle(item[idAttribute])"
+            @keydown.right.prevent="focusRadio(1)"
+            @keydown.down.prevent="focusRadio(1)"
+            @keydown.left.prevent="focusRadio(-1)"
+            @keydown.up.prevent="focusRadio(-1)"
           >
             <template v-if="variant === 'tags'">
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />

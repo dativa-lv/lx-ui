@@ -87,6 +87,38 @@
   justify-content: center;
 }
 
+.lx-expander .lx-expander-head {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.lx-expander .lx-expander-head > header.lx-head {
+  flex: 1;
+  min-width: 0;
+}
+
+.lx-expander .lx-expander-head-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  z-index: 1;
+}
+
+.lx-expander .lx-head .additional-buttons {
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.lx-expander .lx-expander-head-actions .lx-button.lx-button-ghost,
+.lx-expander .lx-head .additional-buttons .lx-button.lx-button-ghost {
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
+  --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
+  --color-button-ghost-icon-active: var(--color-interactive-active-foreground);
+}
+
 .lx-expander[data-disabled]>.lx-head>.lx-chevron-icon svg,
 .lx-expander[data-disabled] header .lx-modifier-icon {
   fill: var(--color-disabled-foreground);

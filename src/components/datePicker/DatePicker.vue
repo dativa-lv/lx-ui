@@ -44,7 +44,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: [String, Date, Object], default: null },
-  mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters', ('day-month' is handled by LxDayMonthPicker, not here)
+  mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters', 'birth-date'('day-month' is handled by LxDayMonthPicker, not here)
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   masks: { type: Object, default: () => {} },
   placeholder: { type: String, default: null },
@@ -928,7 +928,7 @@ function validateIfExact(e, type = 'startInput') {
     return;
   }
 
-  if (props.mode === 'date') {
+  if (props.mode === 'date' || props.mode === 'birth-date') {
     validateDateInput(e, type);
     return;
   }

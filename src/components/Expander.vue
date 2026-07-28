@@ -4,6 +4,7 @@ import { generateUUID } from '@/utils/stringUtils';
 import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxBadge from '@/components/Badge.vue';
 import useLx from '@/hooks/useLx';
@@ -49,6 +50,7 @@ const props = defineProps({
   selectStatus: { type: String, default: 'none' }, // none, some, all
   customClass: { type: String, default: '' },
   texts: { type: Object, default: () => ({}) },
+  actionDefinitions: { type: Array, default: () => [] },
 });
 
 const textsDefault = {
@@ -63,12 +65,14 @@ const textsDefault = {
   },
   clear: 'Notīrīt',
   clearTitle: '',
+  overflowMenu: 'Atvērt papildu iespējas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxExpander'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const actionDefinitionsResolved = computed(() => props.actionDefinitions || []);
 
-const emits = defineEmits(['update:modelValue', 'selectAll', 'resetFilters']);
+const emits = defineEmits(['update:modelValue', 'selectAll', 'resetFilters', 'actionClick']);
 
 const isExpandedRaw = shallowRef(props.modelValue);
 
@@ -122,6 +126,10 @@ function selectExpander(event, id) {
   event.stopPropagation();
   emits('selectAll', id);
 }
+
+function handleActionClick(id) {
+  emits('actionClick', id);
+}
 const expanderHeader = ref();
 
 function focus() {
@@ -146,114 +154,157 @@ defineExpose({ focus });
     ]"
     :data-disabled="disabled ? '' : null"
   >
-    <header
-      ref="expanderHeader"
-      :class="[{ 'lx-head': !$slots.customHeader }, { 'lx-custom-header': $slots.customHeader }]"
-      :for="id"
-      :title="tooltip"
-      tabindex="0"
-      role="button"
-      :aria-label="ariaLabelWithBadge"
-      :aria-describedby="
-        ((badge || badgeIcon) && badgeTitle) || description || invalid
-          ? [
-              (badge || badgeIcon) && badgeTitle ? `${id}-label` : null,
-              description ? `${id}-desc` : null,
-              invalid ? `${id}-invalidation-message` : null,
-            ]
-              .filter(Boolean)
-              .join(' ')
-          : null
-      "
-      :aria-expanded="isExpandedRaw"
-      :aria-invalid="invalid"
-      :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-      aria-controls="lx-body"
-      @click="toggleExpander"
-      @keydown.space.prevent="toggleExpander"
-      @keydown.enter.prevent="toggleExpander"
-    >
-      <template v-if="$slots.customHeader">
-        <slot name="customHeader" v-bind="props"> </slot>
-      </template>
+    <div class="lx-expander-head">
+      <header
+        ref="expanderHeader"
+        :class="[{ 'lx-head': !$slots.customHeader }, { 'lx-custom-header': $slots.customHeader }]"
+        :for="id"
+        :title="tooltip"
+        tabindex="0"
+        role="button"
+        :aria-label="ariaLabelWithBadge"
+        :aria-describedby="
+          ((badge || badgeIcon) && badgeTitle) || description || invalid
+            ? [
+                (badge || badgeIcon) && badgeTitle ? `${id}-label` : null,
+                description ? `${id}-desc` : null,
+                invalid ? `${id}-invalidation-message` : null,
+              ]
+                .filter(Boolean)
+                .join(' ')
+            : null
+        "
+        :aria-expanded="isExpandedRaw"
+        :aria-invalid="invalid"
+        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        aria-controls="lx-body"
+        @click="toggleExpander"
+        @keydown.space.prevent="toggleExpander"
+        @keydown.enter.prevent="toggleExpander"
+      >
+        <template v-if="$slots.customHeader">
+          <slot name="customHeader" v-bind="props"> </slot>
+        </template>
 
-      <template v-else>
-        <div class="lx-group">
-          <template v-if="icon">
-            <div class="lx-icon-wrapper">
-              <LxIcon customClass="lx-modifier-icon" :value="icon" :icon-set="iconSet" />
-              <div class="lx-indicator"></div>
+        <template v-else>
+          <div class="lx-group">
+            <template v-if="icon">
+              <div class="lx-icon-wrapper">
+                <LxIcon customClass="lx-modifier-icon" :value="icon" :icon-set="iconSet" />
+                <div class="lx-indicator"></div>
+              </div>
+            </template>
+            <div class="lx-header-data">
+              <div :id="`${id}-label`" v-if="label" class="heading-4">
+                {{ label }}
+              </div>
+              <legend :id="`${id}-desc`" v-if="description" class="lx-description">
+                {{ description }}
+              </legend>
             </div>
-          </template>
-          <div class="lx-header-data">
-            <div :id="`${id}-label`" v-if="label" class="heading-4">
-              {{ label }}
+            <div class="lx-expander-additional-info" v-if="$slots.additionalInfo">
+              <LxInfoWrapper :disabled="disabled">
+                <LxIcon value="info" :icon-set="iconSet" customClass="lx-info-icon" />
+                <template #panel>
+                  <slot name="additionalInfo"> </slot>
+                </template>
+              </LxInfoWrapper>
             </div>
-            <legend :id="`${id}-desc`" v-if="description" class="lx-description">
-              {{ description }}
-            </legend>
           </div>
-          <div class="lx-expander-additional-info" v-if="$slots.additionalInfo">
-            <LxInfoWrapper :disabled="disabled">
-              <LxIcon value="info" :icon-set="iconSet" customClass="lx-info-icon" />
-              <template #panel>
-                <slot name="additionalInfo"> </slot>
-              </template>
-            </LxInfoWrapper>
+
+          <LxBadge
+            :id="`${id}-badge`"
+            :icon="badgeIcon"
+            :icon-set="iconSet"
+            :value="badge"
+            :tooltip="badgeTitle"
+            :class="[
+              { 'lx-badge-info': badgeType === 'info' },
+              { 'lx-badge-success': badgeType === 'success' },
+              { 'lx-badge-warning': badgeType === 'warning' },
+              { 'lx-badge-error': badgeType === 'error' },
+            ]"
+          />
+
+          <div class="lx-chevron-icon">
+            <LxIcon :value="selectedIcon" />
           </div>
+          <LxButton
+            v-if="hasShortlistReset && !isExpandedRaw"
+            :id="`${id}-clear-button`"
+            customClass="lx-expander-action"
+            kind="ghost"
+            variant="icon-only"
+            :label="displayTexts.clear"
+            :title="displayTexts.clearTitle"
+            icon="filters-reset"
+            :disabled="disabled"
+            @click.stop="emits('resetFilters')"
+          />
+
+          <LxButton
+            v-if="hasSelectButton"
+            :id="`${id}-select-button`"
+            customClass="lx-expander-action"
+            kind="ghost"
+            :icon="
+              selectStatus === 'all'
+                ? 'checkbox-filled'
+                : selectStatus === 'some'
+                ? 'checkbox-indeterminate'
+                : 'checkbox'
+            "
+            variant="icon-only"
+            :label="
+              selectStatus === 'none' ? displayTexts.selectWholeGroup : displayTexts.clearSelected
+            "
+            :disabled="disabled"
+            @click="selectExpander($event, id)"
+          />
+        </template>
+      </header>
+      <div
+        class="lx-expander-head-actions"
+        v-if="actionDefinitionsResolved && actionDefinitionsResolved.length > 0"
+      >
+        <div class="additional-buttons">
+          <LxButton
+            v-if="actionDefinitionsResolved.length === 1"
+            :id="actionDefinitionsResolved[0]?.id"
+            :label="actionDefinitionsResolved[0]?.name || actionDefinitionsResolved[0]?.label"
+            :title="actionDefinitionsResolved[0]?.title || actionDefinitionsResolved[0]?.tooltip"
+            :icon="actionDefinitionsResolved[0]?.icon"
+            :iconSet="actionDefinitionsResolved[0]?.iconSet"
+            :loading="actionDefinitionsResolved[0]?.loading"
+            :busy="actionDefinitionsResolved[0]?.busy"
+            :disabled="actionDefinitionsResolved[0]?.disabled"
+            :destructive="actionDefinitionsResolved[0]?.destructive"
+            :active="actionDefinitionsResolved[0]?.active"
+            :badge="actionDefinitionsResolved[0]?.badge"
+            :badgeType="actionDefinitionsResolved[0]?.badgeType"
+            :badgeIcon="actionDefinitionsResolved[0]?.badgeIcon"
+            :badgeTitle="actionDefinitionsResolved[0]?.badgeTitle"
+            :href="actionDefinitionsResolved[0]?.href"
+            variant="icon-only"
+            kind="ghost"
+            @click.stop="handleActionClick(actionDefinitionsResolved[0]?.id)"
+          />
+          <LxDropDownMenu
+            v-else
+            :actionDefinitions="actionDefinitionsResolved"
+            @actionClick="handleActionClick"
+          >
+            <LxButton
+              icon="overflow-menu"
+              kind="ghost"
+              :label="displayTexts.overflowMenu"
+              variant="icon-only"
+              tabindex="-1"
+            />
+          </LxDropDownMenu>
         </div>
-
-        <LxBadge
-          :id="`${id}-badge`"
-          :icon="badgeIcon"
-          :icon-set="iconSet"
-          :value="badge"
-          :tooltip="badgeTitle"
-          :class="[
-            { 'lx-badge-info': badgeType === 'info' },
-            { 'lx-badge-success': badgeType === 'success' },
-            { 'lx-badge-warning': badgeType === 'warning' },
-            { 'lx-badge-error': badgeType === 'error' },
-          ]"
-        />
-
-        <div class="lx-chevron-icon">
-          <LxIcon :value="selectedIcon" />
-        </div>
-        <LxButton
-          v-if="hasShortlistReset && !isExpandedRaw"
-          :id="`${id}-clear-button`"
-          customClass="lx-expander-action"
-          kind="ghost"
-          variant="icon-only"
-          :label="displayTexts.clear"
-          :title="displayTexts.clearTitle"
-          icon="filters-reset"
-          :disabled="disabled"
-          @click.stop="emits('resetFilters')"
-        />
-
-        <LxButton
-          v-if="hasSelectButton"
-          :id="`${id}-select-button`"
-          customClass="lx-expander-action"
-          kind="ghost"
-          :icon="
-            selectStatus === 'all'
-              ? 'checkbox-filled'
-              : selectStatus === 'some'
-              ? 'checkbox-indeterminate'
-              : 'checkbox'
-          "
-          variant="icon-only"
-          :label="
-            selectStatus === 'none' ? displayTexts.selectWholeGroup : displayTexts.clearSelected
-          "
-          :disabled="disabled"
-          @click="selectExpander($event, id)"
-        />
-      </template>
-    </header>
+      </div>
+    </div>
     <transition name="expander-transition">
       <article
         v-if="renderMode === 'dynamic' ? isExpandedRaw : true"

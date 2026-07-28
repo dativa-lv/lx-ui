@@ -1,5 +1,6 @@
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, unref, useSlots, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, unref, useSlots, watch } from 'vue';
+import { useResizeObserver } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxBadge from '@/components/Badge.vue';
@@ -187,13 +188,12 @@ function getElement() {
 
 watch([() => props.label, () => props.variant], checkOverflow, { flush: 'post' });
 
-onMounted(() => {
-  checkOverflow();
-  globalThis.addEventListener('resize', checkOverflow);
+useResizeObserver(labelEl, () => {
+  overflowCheckTrigger.value += 1;
 });
 
-onBeforeUnmount(() => {
-  globalThis.removeEventListener('resize', checkOverflow);
+onMounted(() => {
+  checkOverflow();
 });
 
 defineOptions({ inheritAttrs: false });

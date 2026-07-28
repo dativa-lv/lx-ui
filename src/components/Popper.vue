@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject, onMounted, ref, watch } from 'vue';
-import { useFloating, flip, shift, arrow, offset, autoUpdate } from '@floating-ui/vue';
+import { useFloating, flip, shift, arrow, offset, size, autoUpdate } from '@floating-ui/vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { useLayoutInfo } from '@/hooks/useLayoutInfo';
 
@@ -32,6 +32,17 @@ const referenceRect = ref(null);
 const { shellKind, headerOverallHeight, isHeaderSticky, navWidth } = useLayoutInfo();
 
 const leftSafeZoneBorder = computed(() => Number(navWidth.value) || 0);
+
+// Automatically detect if inside higher context
+const insideHeader = inject('insideHeader', ref(false));
+const insideNavBar = inject('insideNavBar', ref(false));
+const insideModal = inject('insideModal', ref(false));
+const insideFullscreenOverlay = inject('insideFullscreenOverlay', ref(false));
+
+const needsHighZ = computed(
+  () =>
+    insideModal.value || insideFullscreenOverlay.value || insideHeader.value || insideNavBar.value
+);
 
 const basePlacement = computed(() => {
   switch (props.placement) {
@@ -92,6 +103,23 @@ const middleware = computed(() => {
       fallbackPlacements: fallbackPlacements.value,
     }),
     shift({ padding: 16 }),
+  ];
+
+  // Nav-bar only: expose available height so the panel caps to it and scrolls instead of overflowing off-screen.
+  if (insideNavBar.value && !props.fullScreenPanel && !props.clientPosition) {
+    middlewares.push(
+      size({
+        padding: 16,
+        apply({ availableHeight, elements }) {
+          // Floor to keep the value stable and avoid an autoUpdate/ResizeObserver relayout loop.
+          const h = Math.max(0, Math.floor(availableHeight));
+          elements.floating.style.setProperty('--lx-popper-available-height', `${h}px`);
+        },
+      })
+    );
+  }
+
+  middlewares.push(
     arrow({
       element: floatingArrow,
       padding: Number(props.arrowPadding),
@@ -99,8 +127,8 @@ const middleware = computed(() => {
     offset({
       mainAxis: Number(props.offsetDistance),
       crossAxis: Number(props.offsetSkid),
-    }),
-  ];
+    })
+  );
 
   return middlewares;
 });
@@ -217,17 +245,6 @@ watch(plc, (newPlacement) => {
   emits('update:placement', newPlacement);
 });
 
-// Automatically detect if inside higher context
-const insideHeader = inject('insideHeader', ref(false));
-const insideNavBar = inject('insideNavBar', ref(false));
-const insideModal = inject('insideModal', ref(false));
-const insideFullscreenOverlay = inject('insideFullscreenOverlay', ref(false));
-
-const needsHighZ = computed(
-  () =>
-    insideModal.value || insideFullscreenOverlay.value || insideHeader.value || insideNavBar.value
-);
-
 onMounted(() => {
   emits('update:placement', basePlacement.value);
   setReferenceVisibility();
@@ -250,6 +267,7 @@ function emitCurtainTouched() {
         :class="[
           panelClass,
           { 'higher-z-index': needsHighZ },
+          { 'inside-nav-bar': insideNavBar },
           {
             'fullscreen-popper': props.fullScreenPanel,
           },

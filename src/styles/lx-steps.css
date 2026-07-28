@@ -47,6 +47,7 @@
 
 .lx-steps-compact .lx-steps-data {
     overflow-x: auto;
+    overflow-y: hidden;
     gap: var(--space-1000);
 }
 
@@ -71,7 +72,7 @@
     width: var(--icon-size-xs);
     height: var(--icon-size-xs);
     --loader-width-s: var(--icon-size-xs);
-    --loader-height-s: var(--icon-height-xs);
+    --loader-height-s: var(--icon-size-xs);
 }
 
 .lx-steps-description {

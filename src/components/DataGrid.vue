@@ -220,6 +220,19 @@ function dropDownMenuRefFor(rowKey) {
 
 const VIRTUALIZED_ESTIMATED_ROW_HEIGHT = 72;
 const VIRTUALIZED_OVERSCAN = 6;
+
+// Default range plus `pinnedIndex`, so the roving tab-stop stays mounted when scrolled out of view.
+function extractVirtualRangeWithPinned(range, pinnedIndex) {
+  const start = Math.max(range.startIndex - range.overscan, 0);
+  const end = Math.min(range.endIndex + range.overscan, range.count - 1);
+  const indexes = [];
+  for (let i = start; i <= end; i += 1) indexes.push(i);
+  if (pinnedIndex != null && (pinnedIndex < start || pinnedIndex > end)) {
+    indexes.push(pinnedIndex);
+    indexes.sort((a, b) => a - b); // keep DOM order = index order for Tab order
+  }
+  return indexes;
+}
 const isDataGridLayoutVisible = ref(false);
 
 let pendingHeaderScrollRaf = null;
@@ -1172,6 +1185,13 @@ const wantsDataGridVirtualization = computed(
     isDataGridLayoutVisible.value
 );
 
+// Virtualizer-space index of the active roving tab-stop to pin (keeps the focused item mounted; null for header/out-of-range).
+const activeVirtualRowIndex = computed(() => {
+  const bodyIndex = gridActiveRow.value - (props.hasSorting ? 1 : 0);
+  if (bodyIndex < 0 || bodyIndex >= rows.value.length) return null;
+  return bodyIndex;
+});
+
 const {
   virtualizer: dataGridVirtualizer,
   isActive: shouldVirtualizeDataGrid,
@@ -1203,6 +1223,11 @@ const {
     estimateSize: () => VIRTUALIZED_ESTIMATED_ROW_HEIGHT,
     shouldAdjustScrollPositionOnItemSizeChange: () => false,
     overscan: VIRTUALIZED_OVERSCAN,
+    // Getter so reading the ref during the options spread keeps the pin reactive.
+    get rangeExtractor() {
+      const pinnedIndex = activeVirtualRowIndex.value;
+      return (range) => extractVirtualRangeWithPinned(range, pinnedIndex);
+    },
   }),
 });
 

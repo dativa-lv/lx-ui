@@ -72,13 +72,14 @@ const color = ref('--color-brand');
           v-show="(busy && item[stateAttribute] !== 'current') || !busy"
           customClass="lx-steps-icon"
           :style="{
-            fill: isDisabledLoadingBusy
-              ? 'var(--color-disabled-background)'
-              : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
-              ? 'var(--color-brand)'
-              : item[stateAttribute] === 'invalid'
-              ? 'var(--color-bad)'
-              : null,
+            fill:
+              item[stateAttribute] === 'invalid'
+                ? 'var(--color-bad)'
+                : isDisabledLoadingBusy
+                ? 'var(--color-disabled-background)'
+                : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
+                ? 'var(--color-brand)'
+                : null,
           }"
           :value="
             (() => {
@@ -128,13 +129,14 @@ const color = ref('--color-brand');
               v-show="(busy && item[stateAttribute] !== 'current') || !busy"
               customClass="lx-steps-icon"
               :style="{
-                fill: isDisabledLoadingBusy
-                  ? 'var(--color-disabled-background)'
-                  : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
-                  ? 'var(--color-brand)'
-                  : item[stateAttribute] === 'invalid'
-                  ? 'var(--color-bad)'
-                  : null,
+                fill:
+                  item[stateAttribute] === 'invalid'
+                    ? 'var(--color-bad)'
+                    : isDisabledLoadingBusy
+                    ? 'var(--color-disabled-background)'
+                    : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
+                    ? 'var(--color-brand)'
+                    : null,
               }"
               :value="
                 (() => {

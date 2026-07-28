@@ -1,6 +1,12 @@
+/* Background lives on the wrapper (not the panel) so no empty gap shows when the scrollable panel is dragged/overscrolled aside. */
+.lx-layout .popper .lx-dropdown-default-content,
+.lx-layout .popper .lx-dropdown-panel-wrapper {
+  background: var(--color-region);
+  border-radius: var(--popover-border-radius);
+}
+
 .lx-layout .popper .lx-dropdown-panel {
   position: static;
-  background: var(--color-region);
   width: var(--aside-size);
   box-shadow: var(--shadow-dropdown);
   border-width: var(--popover-border-width);
@@ -12,6 +18,11 @@
   max-height: 75vh;
   overflow-y: auto;
   z-index: 1000;
+}
+
+/* Nav-bar poppers: cap to the height Popper.vue reports (fallback 75vh) so they scroll instead of overflowing. */
+.lx-layout .popper.inside-nav-bar .lx-dropdown-panel {
+  max-height: min(75vh, var(--lx-popper-available-height, 75vh));
 }
 
 .lx-layout .lx-dropdown-default-content .lx-dropdown-panel {

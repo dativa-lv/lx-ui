@@ -478,6 +478,7 @@ const textsComp = computed(() => ({
 }));
 const requiredMode = computed(() => props.requiredMode);
 const formOrientation = computed(() => props.orientation);
+const sectionActions = ref({});
 
 // eslint-disable-next-line vue/no-setup-props-destructure
 provide('requiredTexts', textsComp);
@@ -487,6 +488,7 @@ provide('formIndex', modifiedIndexRef);
 provide('formOrientation', formOrientation);
 provide('sectionPrefix', props.id);
 provide('insideForm', insideForm);
+provide('sectionActions', sectionActions);
 
 const wizardModel = ref(null);
 const tabModel = ref(null);
@@ -1314,6 +1316,7 @@ if (props.builderOptions.useRegistry) {
       :items="itemsCopy"
       :kind="indexHasIcons ? 'combo' : 'default'"
       :texts="displayTexts"
+      @actionClick="clickHandler"
     >
       <template #body>
         <div

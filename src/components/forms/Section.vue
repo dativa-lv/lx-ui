@@ -242,6 +242,10 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, '
 
 const emits = defineEmits(['actionClick']);
 
+function handleActionClick(actionId) {
+  emits('actionClick', actionId);
+}
+
 const formMode = inject('formMode', ref('none'));
 const sectionIndexType = inject('formIndexType', 'default');
 const formIndex = inject('formIndex', null);
@@ -252,6 +256,24 @@ const sectionPrefix = inject('sectionPrefix');
 
 const sectionUUID = computed(() => `${sectionPrefix}-${props.id}`);
 
+const sectionActions = inject('sectionActions', null);
+
+watch(
+  () => props.actionDefinitions,
+  (value) => {
+    if (sectionActions && props.id) {
+      sectionActions.value = {
+        ...sectionActions.value,
+        [props.id]: {
+          actions: value,
+          onActionClick: handleActionClick,
+        },
+      };
+    }
+  },
+  { immediate: true }
+);
+
 const exactIndex = computed(() => {
   if (formIndex) return formIndex.value?.find((obj) => obj.id === sectionUUID.value);
   return [];
@@ -259,7 +281,8 @@ const exactIndex = computed(() => {
 
 const expandedValue = computed({
   get() {
-    if (formIndex) return formIndex.value?.find((obj) => obj.id === sectionUUID.value)?.expanded;
+    if (formIndex)
+      return formIndex.value?.find((obj) => obj.id === sectionUUID.value)?.expanded ?? false;
     return false;
   },
   set(value) {
@@ -403,6 +426,13 @@ onUnmounted(() => {
     :customClass="customClass"
     :render-mode="expanderRenderMode"
     :id="`${sectionUUID}-expander`"
+    :action-definitions="actionDefinitions"
+    @actionClick="(id) => handleActionClick(id)"
+    @update:modelValue="
+      (val) => {
+        expandedValue = val;
+      }
+    "
   >
     <section
       :id="sectionUUID"
@@ -479,12 +509,12 @@ onUnmounted(() => {
           :href="actionDefinitions?.[0]?.href"
           variant="icon-only"
           kind="ghost"
-          @click="emits('actionClick', actionDefinitions?.[0]?.id)"
+          @click="handleActionClick(actionDefinitions?.[0]?.id)"
         />
         <LxDropDownMenu
           v-else
           :actionDefinitions="actionDefinitions"
-          @actionClick="(id) => emits('actionClick', id)"
+          @actionClick="(id) => handleActionClick(id)"
         >
           <LxButton
             icon="overflow-menu"

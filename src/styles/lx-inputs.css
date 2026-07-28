@@ -3512,7 +3512,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-created-using-ai-badge,
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-created-using-ai-badge {
-  --color-badge-background:: var(--color-purple);
+  --color-badge-background: var(--color-purple);
 }
 
 .lx-file-name-wrapper {

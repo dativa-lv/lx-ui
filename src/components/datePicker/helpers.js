@@ -808,14 +808,20 @@ export function getMonths(currentDate, variant, mode, pickerType, isMobileScreen
   let monthsToShow = 0;
 
   // Determine the number of months to show and elements per row based on variant and mode
-  if (variant === 'full' && mode === 'date' && pickerType === 'single') {
+  if (variant === 'full' && (mode === 'date' || mode === 'birth-date') && pickerType === 'single') {
     monthsToShow = 3; // Show the current month and the next 3 months
   }
-  if (variant === 'full-rows' && mode === 'date' && pickerType === 'single') {
+  if (
+    variant === 'full-rows' &&
+    (mode === 'date' || mode === 'birth-date') &&
+    pickerType === 'single'
+  ) {
     monthsToShow = 1; // Show the current month and the next month
   }
   if (
-    (variant === 'full-columns' && mode === 'date' && pickerType === 'single') ||
+    (variant === 'full-columns' &&
+      (mode === 'date' || mode === 'birth-date') &&
+      pickerType === 'single') ||
     (pickerType === 'range' && !isMobileScreen)
   ) {
     monthsToShow = 1; // Show the current month and the next month
@@ -831,7 +837,9 @@ export function getMonths(currentDate, variant, mode, pickerType, isMobileScreen
 
   // Special logic for 'full-columns' variant: add two months to the first row
   if (
-    (variant === 'full-columns' && mode === 'date' && pickerType === 'single') ||
+    (variant === 'full-columns' &&
+      (mode === 'date' || mode === 'birth-date') &&
+      pickerType === 'single') ||
     (pickerType === 'range' && !isMobileScreen)
   ) {
     rows[0].push(months[0], months[1]); // First two months go to the first row
@@ -1197,7 +1205,7 @@ export const sanitizeDateInput = (e, mode) => {
   const input = e.target.value;
 
   // Set allowed characters based on the mode
-  if (mode === 'date') {
+  if (mode === 'date' || mode === 'birth-date') {
     allowedChars = /[^0-9.,/-]/g; // number, dot, comma, slash, dash
   } else if (mode === 'date-time' || mode === 'date-time-full') {
     allowedChars = /[^0-9.,/\- :]/g; // number, dot, comma, slash, dash, space, colon
@@ -1509,7 +1517,7 @@ export function isSingleChoiceKind(mode, currentDate, min, max) {
     return !canPickOtherYear;
   }
 
-  if (mode === 'date') {
+  if (mode === 'date' || mode === 'birth-date') {
     const canPickOtherMonth = hasOtherSelectableMonth(
       subMonths(currentDate, 1),
       addMonths(currentDate, 1),

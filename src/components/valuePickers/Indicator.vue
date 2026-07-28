@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch, generateUUID } from '@/utils/stringUtils';
 import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 
@@ -66,6 +66,7 @@ onMounted(() => {
   }
 });
 
+const highlightedItemId = ref(null);
 const itemsModel = ref({});
 const itemsDisplay = computed(() => {
   const res = [...props.items];
@@ -130,6 +131,8 @@ function getItemId(id) {
 
 function selectSingle(id) {
   if (props.disabled || props.readOnly) return;
+
+  highlightedItemId.value = id;
 
   // Deselect previously selected item
   if (model.value && !Array.isArray(model.value) && model.value !== notSelectedId) {
@@ -274,6 +277,38 @@ function checkNull(value) {
   return value;
 }
 
+const navigableItems = computed(() => itemsDisplay.value);
+
+function getSelectedSingleId() {
+  const value = Array.isArray(model.value) ? model.value[0] : model.value;
+  return value ?? null;
+}
+
+function getTabIndex(id) {
+  const list = navigableItems.value;
+  const isFirstItem = list.length > 0 && list[0][props.idAttribute] === id;
+  const current = highlightedItemId.value ?? getSelectedSingleId();
+  const isValidCurrent = list.some((item) => item[props.idAttribute] === current);
+  if (current === id || (isFirstItem && !isValidCurrent)) return '0';
+  return '-1';
+}
+
+function focusRadio(offset) {
+  if (props.disabled || props.readOnly || !navigableItems.value.length) return;
+  const list = navigableItems.value;
+  const current = highlightedItemId.value ?? getSelectedSingleId();
+  const index = Math.max(
+    0,
+    list.findIndex((item) => item[props.idAttribute] === current)
+  );
+  const nextId = list[(index + offset + list.length) % list.length][props.idAttribute];
+  highlightedItemId.value = nextId;
+  selectSingle(nextId);
+  nextTick(() => {
+    document.getElementById(getItemId(nextId))?.focus();
+  });
+}
+
 const areSomeSelected = computed(() => {
   let res = false;
   props.items.forEach((item) => {
@@ -400,7 +435,7 @@ const wrapperRef = ref();
         :disabled="disabled"
         :aria-disabled="disabled"
         :readOnly="readOnly"
-        :tabindex="disabled ? '-1' : readOnly ? '-1' : '0'"
+        :tabindex="disabled || readOnly ? '-1' : getTabIndex(item[idAttribute])"
         role="radio"
         :aria-checked="
           itemsModel[item[idAttribute]] ||
@@ -409,7 +444,13 @@ const wrapperRef = ref();
         "
         :aria-label="indicatorTooltips[item[idAttribute]]"
         data-container="value-picker-item"
-        @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
+        @click="selectSingle(item[idAttribute])"
+        @keydown.space.prevent="selectSingle(item[idAttribute])"
+        @keydown.enter.prevent="selectSingle(item[idAttribute])"
+        @keydown.right.prevent="focusRadio(1)"
+        @keydown.down.prevent="focusRadio(1)"
+        @keydown.left.prevent="focusRadio(-1)"
+        @keydown.up.prevent="focusRadio(-1)"
       >
         <template v-if="variant === 'indicator'">
           <LxIcon
@@ -442,7 +483,7 @@ const wrapperRef = ref();
         :disabled="disabled"
         :aria-disabled="disabled"
         :readOnly="readOnly"
-        :tabindex="disabled ? '-1' : readOnly ? '-1' : '0'"
+        :tabindex="disabled || readOnly ? '-1' : '0'"
         role="checkbox"
         :aria-checked="itemsModel[item[idAttribute]]"
         :aria-label="indicatorTooltips[item[idAttribute]]"

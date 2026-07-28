@@ -27,10 +27,11 @@ const props = defineProps({
       'month-year',
       'quarters',
       'day-month',
+      'birth-date',
     ],
     group: 'main',
     sequence: 1,
-  }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters', 'day-month'
+  }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters', 'day-month', 'birth-date',
   placeholder: { type: String, default: null, group: 'main', sequence: 7 },
   tooltip: { type: String, default: null, group: 'main', sequence: 8 },
   minDate: { type: Date, default: null, group: 'main', sequence: 3 },
@@ -165,7 +166,10 @@ function getName() {
 const modelValueIso = computed(() => {
   let res = props.modelValue;
   if (
-    ((props.kind === 'date' || props.kind === 'dateTime' || props.kind === 'date-time') &&
+    ((props.kind === 'date' ||
+      props.kind === 'birth-date' ||
+      props.kind === 'dateTime' ||
+      props.kind === 'date-time') &&
       props.modelValue?.length !== 5) ||
     (props.modelValue?.length !== 5 && props.kind === 'time')
   ) {
