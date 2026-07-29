@@ -208,6 +208,10 @@ dialog {
   background: var(--color-modal-footer-background);
 }
 
+.lx-modal > footer.lx-button-set:empty {
+  padding: var(--space-0);
+}
+
 .lx-modal > footer.lx-button-set .lx-button {
   justify-content: flex-start;
   flex-direction: row;

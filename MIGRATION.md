@@ -4,6 +4,18 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
+## 2.2.10 → 2.2.11
+
+### Breaking changes
+
+#### LxModal footer spacing moved from margin to padding (latvijalv only)
+
+The latvijalv modal footer now applies its spacing with **padding** instead of margin.
+
+If you set a custom `--modal-footer-margin: 1rem 0` or `margin: 1rem 0` for the latvijalv footer, remove it — the theme now applies the equivalent padding for you:
+
+~~`--modal-footer-margin: 1rem 0;`~~
+
 ## 2.2.7 → 2.2.8
 
 ### Breaking changes

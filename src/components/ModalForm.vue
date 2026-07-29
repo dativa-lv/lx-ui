@@ -47,7 +47,7 @@ const insideModal = ref(true);
 const modalContent = ref();
 const modalFooter = ref();
 
-const footerSize = useElementSize(modalFooter);
+const footerSize = useElementSize(modalFooter, undefined, { box: 'border-box' });
 
 const { y: scrollYPos } = useScroll(modalContent);
 

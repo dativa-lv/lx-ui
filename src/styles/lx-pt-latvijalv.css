@@ -60,7 +60,9 @@
   --modal-button-secondary-height: 3rem;
   --modal-button-secondary-min-width: 15rem;
   --modal-button-secondary-width: auto;
-  --modal-footer-margin: var(--space-1000) 8rem var(--space-1000) var(--space-0);
+  --modal-footer-padding: var(--space-1000) var(--space-0);
+  --modal-button-set-gap: var(--space-1000);
+  --modal-button-set-justification: center;
   --modal-button-secondary-text-alignment: center;
   --modal-button-primary-text-alignment: center;
 
@@ -145,4 +147,14 @@
 .lx-autocomplete-default-panel .lx-value .lx-item-display > p,
 .lx-autocomplete-default-panel .lx-value .lx-state > .lx-primary {
   overflow-x: unset;
+}
+
+.lx-layout-latvijalv .lx-modal > footer.lx-button-set {
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .lx-layout-latvijalv .lx-modal > footer.lx-button-set.lx-two-buttons {
+    flex-direction: column-reverse;
+  }
 }
