@@ -19,8 +19,9 @@ const has = (needed, value) => {
   if (!Array.isArray(values)) {
     values = [value];
   }
-  return against.some((a) => values.some((v) => a === v));
+  return against.some((a) => values.includes(a));
 };
+
 const hasPermission = (needed, scope) => {
   if (!needed) {
     return true;

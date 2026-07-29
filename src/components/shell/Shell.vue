@@ -750,9 +750,9 @@ watch(
   { immediate: true }
 );
 
-const modesWithAutoNavState = ['digives', 'digives-lite', 'digimaks', 'digimaks-lite'];
+const modesWithAutoNavState = new Set(['digives', 'digives-lite', 'digimaks', 'digimaks-lite']);
 function resolveNavBarSwitch(value) {
-  if (isNil(value) && !modesWithAutoNavState.includes(resolvedMode.value)) {
+  if (isNil(value) && !modesWithAutoNavState.has(resolvedMode.value)) {
     return true;
   }
   return value;

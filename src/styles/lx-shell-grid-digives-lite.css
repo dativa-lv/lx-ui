@@ -259,10 +259,6 @@
   border-image: linear-gradient(to right, var(--color-brand), var(--color-brand-secondary)) 1 100%;
 }
 
-.lx-layout.lx-layout-default.lx-layout-digives-lite>nav {
-  z-index: 8050;
-}
-
 .lx .lx-layout.lx-layout-digives-lite>footer {
   grid-column-start: 1;
   grid-column-end: 4;

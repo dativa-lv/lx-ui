@@ -146,7 +146,7 @@ function activateItems() {
 }
 activateItems();
 
-function clear(e = { stopPropagation: () => {} }) {
+function clear(e) {
   e?.stopPropagation();
 
   itemsDisplay.value.forEach((item) => {

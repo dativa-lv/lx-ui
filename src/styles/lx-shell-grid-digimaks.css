@@ -10,28 +10,11 @@
   position: fixed;
   top: var(--space-0);
   width: 100%;
-  z-index: 8100;
-}
-
-.lx-layout-digimaks>header:has(>.lx-header .lx-left-group:empty) {
-    padding-top: var(--native-inset-top, 0px);
-    height: auto;
-}
-
-.lx-layout-digimaks header>.lx-header:not(.lx-nav-panel-expanded)>.lx-group.lx-group-header {
-    padding-bottom: var(--space-0);
-}
-
-.lx-layout-digimaks > header > .lx-header .lx-left-group {
-    padding-bottom: var(--space-0250);
+  z-index: 100;
 }
 
 .lx-layout-digimaks>header>.lx-header .lx-left-group:empty {
     padding-bottom: var(--space-0);
-}
-
-.lx-layout-digimaks>header {
-    z-index: 100;
 }
 
 .lx-layout-digimaks > header:not(:has(.lx-nav-panel-expanded)) {
@@ -390,6 +373,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-0500);
+  padding-bottom: var(--space-0250);
 }
 
 .lx-layout-digimaks > header > .lx-header .lx-left-group > p {
@@ -615,6 +599,7 @@
 }
 
 .lx-layout-digimaks>header:has(>.lx-header .lx-left-group:empty) {
+  padding-top: var(--native-inset-top, 0px);
   height: 0;
 }
 

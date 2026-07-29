@@ -461,7 +461,7 @@ const headerButtonsVisibilityModel = computed({
     return props.headerButtonsVisibility;
   },
   set(value) {
-    emits('update:headerButtonsVisibility', { ...(value ?? {}) });
+    emits('update:headerButtonsVisibility', { ...value });
   },
 });
 

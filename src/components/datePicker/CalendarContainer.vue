@@ -4160,70 +4160,76 @@ function getSingleOpenAnchorDate() {
   return dateToUse;
 }
 
+function handleSinglePickerOpen() {
+  const openAnchorDate = getSingleOpenAnchorDate();
+  currentDate.value = openAnchorDate;
+
+  const isDateOrDateTime =
+    isDateMode.value || props.mode === 'date-time' || props.mode === 'date-time-full';
+
+  if (isDateOrDateTime) {
+    const decadeStart = findDecadeStartYear(openAnchorDate.getFullYear());
+    startYear.value = decadeStart - 1;
+    endYear.value = decadeStart + 10;
+  }
+
+  if (props.mode === 'quarters') {
+    const decadeStart = findDecadeStartYear(openAnchorDate.getFullYear());
+    startQuarterYear.value = decadeStart;
+    endQuarterYear.value = decadeStart + 9;
+  }
+}
+
+function handleMenuOpen() {
+  hasTimeGridActiveCell.value = false;
+
+  if (props.pickerType === 'single') {
+    handleSinglePickerOpen();
+  }
+
+  if (hasTimeColumns(props.mode)) {
+    initializeTimePicker();
+  }
+
+  if (props.pickerType === 'range') {
+    const rangeAnchorDate = getRangeOpenAnchorDate();
+    applyOpenAnchorDate(rangeAnchorDate);
+    activeCalendarDate.value = new Date(getRangeFocusDate());
+  } else {
+    activeCalendarDate.value = selectedDate.value || currentDate.value || todayDate.value;
+  }
+
+  showCalendar.value = true;
+  handleLayoutDisplay(true);
+
+  const shouldAutoFocusPicker = props.openSource === 'keyboard';
+  if (shouldAutoFocusPicker) {
+    const initialFocusDate =
+      props.pickerType === 'range' ? getRangeFocusDate() : getActiveCalendarDate();
+    focusInitialPickerCell(initialFocusDate);
+  }
+
+  const isTimeOnlyMode = props.mode === 'time' || props.mode === 'time-full';
+  if (shouldAutoFocusPicker && isTimeOnlyMode && !isMobileScreen.value) {
+    scheduleTimeRefocus('hours');
+  }
+}
+
+function handleMenuClose() {
+  if (props.pickerType === 'single') {
+    handleSinglePickerUnmount();
+  } else if (props.pickerType === 'range') {
+    handleRangePickerUnmount();
+  }
+}
+
 watch(
   () => props.menuState,
   (newValue) => {
-    const shouldAutoFocusPicker = props.openSource === 'keyboard';
-
     if (newValue) {
-      hasTimeGridActiveCell.value = false;
-    }
-
-    if (newValue) {
-      if (props.pickerType === 'single') {
-        const openAnchorDate = getSingleOpenAnchorDate();
-        currentDate.value = openAnchorDate;
-
-        if (isDateMode.value || props.mode === 'date-time' || props.mode === 'date-time-full') {
-          const decadeStart = findDecadeStartYear(openAnchorDate.getFullYear());
-          startYear.value = decadeStart - 1;
-          endYear.value = decadeStart + 10;
-        }
-
-        if (props.mode === 'quarters') {
-          startQuarterYear.value = findDecadeStartYear(openAnchorDate.getFullYear());
-          endQuarterYear.value = findDecadeStartYear(openAnchorDate.getFullYear()) + 9;
-        }
-      }
-
-      if (hasTimeColumns(props.mode)) {
-        initializeTimePicker();
-      }
-
-      if (props.pickerType === 'range') {
-        const rangeAnchorDate = getRangeOpenAnchorDate();
-        applyOpenAnchorDate(rangeAnchorDate);
-        activeCalendarDate.value = new Date(getRangeFocusDate());
-      } else {
-        activeCalendarDate.value = selectedDate.value || currentDate.value || todayDate.value;
-      }
-
-      showCalendar.value = true;
-      handleLayoutDisplay(true);
-      if (shouldAutoFocusPicker) {
-        const initialFocusDate =
-          props.pickerType === 'range' ? getRangeFocusDate() : getActiveCalendarDate();
-        focusInitialPickerCell(initialFocusDate);
-      }
-
-      if (
-        shouldAutoFocusPicker &&
-        (props.mode === 'time' || props.mode === 'time-full') &&
-        !isMobileScreen.value
-      ) {
-        scheduleTimeRefocus('hours');
-      }
-    }
-
-    if (!newValue) {
-      if (props.pickerType === 'single') {
-        handleSinglePickerUnmount();
-        return;
-      }
-
-      if (props.pickerType === 'range') {
-        handleRangePickerUnmount();
-      }
+      handleMenuOpen();
+    } else {
+      handleMenuClose();
     }
   },
   { immediate: true }

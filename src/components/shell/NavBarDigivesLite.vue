@@ -470,8 +470,8 @@ const megaMenuAllowedItems = computed(() =>
 );
 
 const isSelectedInNavItems = computed(() => {
-  const navItemsNames = navItemsPrimary.value.map((item) => item.to?.name);
-  return Object.keys(props.selectedNavItems).some((key) => navItemsNames.includes(key));
+  const navItemsNames = new Set(navItemsPrimary.value.map((item) => item.to?.name));
+  return Object.keys(props.selectedNavItems).some((key) => navItemsNames.has(key));
 });
 
 const themeDisplayItems = computed(() => {
