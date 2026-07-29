@@ -190,6 +190,10 @@ svg .lx-shade {
   position: static;
 }
 
+.lx-modal .lx-appendable-list-item > .lx-form-grid.lx-form-grid-stripped {
+  border: var(--region-border);
+}
+
 .lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section {
   grid-template-columns: 1fr;
 }
