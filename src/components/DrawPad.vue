@@ -4,6 +4,7 @@ import { ref, onMounted, onUnmounted, watch, computed, inject, getCurrentInstanc
 import { useThrottleFn } from '@vueuse/core';
 import { logError, logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
+import { useLayoutInfo } from '@/hooks/useLayoutInfo';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
@@ -102,14 +103,22 @@ const container = ref(null);
 
 let observer = null;
 
+const { theme } = useLayoutInfo();
+
+const resolveColorValue = (variable, fallback) => {
+  if (!variable || !canvas.value || !globalThis.getComputedStyle) return fallback;
+  const resolved = globalThis.getComputedStyle(canvas.value).getPropertyValue(variable).trim();
+  return resolved || fallback;
+};
+
 const redrawPaths = () => {
   if (!context.value) return;
 
   context.value.clearRect(0, 0, canvas.value.width, canvas.value.height);
 
-  paths.value.forEach(({ path, color }) => {
+  paths.value.forEach(({ path, color, variable }) => {
     const p = new Path2D(path);
-    context.value.strokeStyle = color;
+    context.value.strokeStyle = resolveColorValue(variable, color);
     context.value.lineWidth = strokeWidth.value;
     context.value.lineJoin = strokeLineJoint.value;
     context.value.stroke(p);
@@ -150,10 +159,10 @@ const generateSVG = () => {
 
   const svgHeader = `<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth.value}" height="${canvasHeight.value}">`;
   const svgPaths = paths.value
-    .map(
-      ({ path, color, variable }) =>
-        `<path data-semantic-color="${variable}" fill="none" stroke="${color}" d="${path}" stroke-width="${strokeWidth.value}" stroke-linejoin="${strokeLineJoint.value}"/>`
-    )
+    .map(({ path, color, variable }) => {
+      const stroke = resolveColorValue(variable, color);
+      return `<path data-semantic-color="${variable}" fill="none" stroke="${stroke}" d="${path}" stroke-width="${strokeWidth.value}" stroke-linejoin="${strokeLineJoint.value}"/>`;
+    })
     .join('');
   const svgFooter = '</svg>';
 
@@ -168,6 +177,12 @@ const emitSVG = () => {
 const throttledEmitSVG = useThrottleFn(() => {
   emitSVG();
 }, 500);
+
+watch(theme, () => {
+  if (!context.value) return;
+  redrawPaths();
+  if (paths.value.length > 0) emitSVG();
+});
 
 const startDrawing = (event) => {
   // Left mouse button only
@@ -200,7 +215,9 @@ const draw = (event) => {
     context.value.moveTo(lastX.value, lastY.value);
     context.value.lineTo(x, y);
     context.value.strokeStyle =
-      selectedInstrument.value === 'eraser' ? backgroundColor.value : selectedColor.value;
+      selectedInstrument.value === 'eraser'
+        ? backgroundColor.value
+        : resolveColorValue(selectedColorVariable.value, selectedColor.value);
     context.value.lineWidth = selectedInstrument.value === 'eraser' ? 20 : strokeWidth.value;
     context.value.lineJoin = 'round';
     context.value.stroke();
@@ -223,7 +240,7 @@ const stopDrawing = () => {
   if (currentPath.value.length > 0) {
     paths.value.push({
       path: currentPath.value.join(' '),
-      color: selectedColor.value,
+      color: resolveColorValue(selectedColorVariable.value, selectedColor.value),
       variable: selectedColorVariable.value,
     });
     currentPath.value = [];
@@ -247,7 +264,7 @@ const updatedInstrument = (instrument) => {
   if (instrument === 'eraser') {
     context.value.strokeStyle = backgroundColor.value;
   } else {
-    context.value.strokeStyle = selectedColor.value;
+    context.value.strokeStyle = resolveColorValue(selectedColorVariable.value, selectedColor.value);
   }
   emits('update:instrument', instrument);
 };

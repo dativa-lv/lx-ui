@@ -5,6 +5,7 @@ const shellKind = ref('default');
 const headerOverallHeight = ref(0);
 const isHeaderSticky = ref(false);
 const navWidth = ref(0);
+const theme = ref('light');
 
 const visibleHeightThreshold = 2;
 const heightTolerance = 2;
@@ -21,16 +22,54 @@ const shellKindClasses = [
   ['default', 'lx-layout-default'],
 ];
 
+const themeClasses = [
+  ['contrast', 'lx-theme-contrast'],
+  ['dark', 'lx-theme-dark'],
+  ['light', 'lx-theme-light'],
+];
+
 let mutationObserver;
 let resizeObserver;
+let themeObserver;
 let observedElement;
+let themeObservedElement;
 let resizeObservedElements = [];
 let activeConsumers = 0;
 let isWindowResizeObserved = false;
+let colorSchemeQuery;
+let isColorSchemeObserved = false;
 let rafId;
 
 function getLayoutElement() {
   return document.querySelector('.lx-layout');
+}
+
+function getThemeElement() {
+  return document.querySelector('.lx');
+}
+
+function prefersDarkColorScheme() {
+  return globalThis.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false;
+}
+
+function calculateTheme() {
+  const { classList } = getThemeElement() ?? {};
+
+  if (!classList) {
+    return 'light';
+  }
+
+  const matchedTheme = themeClasses.find(([, className]) => classList.contains(className));
+
+  if (matchedTheme) {
+    return matchedTheme[0];
+  }
+
+  if (classList.contains('lx-theme-auto')) {
+    return prefersDarkColorScheme() ? 'dark' : 'light';
+  }
+
+  return 'light';
 }
 
 function getLayoutSiblings() {
@@ -146,6 +185,7 @@ function updateLibData() {
   headerOverallHeight.value = calculateHeaderOverallHeight(nextShellKind);
   isHeaderSticky.value = calculateIsHeaderSticky();
   navWidth.value = calculateNavWidth(nextShellKind);
+  theme.value = calculateTheme();
 }
 
 function updateResizeObserver() {
@@ -199,6 +239,24 @@ function updateMutationObserver() {
   });
 }
 
+function updateThemeObserver() {
+  const elementToObserve = getThemeElement() ?? document.body;
+
+  if (!elementToObserve || themeObservedElement === elementToObserve) {
+    return;
+  }
+
+  themeObserver?.disconnect();
+  themeObservedElement = elementToObserve;
+  // eslint-disable-next-line no-use-before-define
+  themeObserver = new MutationObserver(scheduleUpdate);
+
+  themeObserver.observe(elementToObserve, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+}
+
 function scheduleUpdate() {
   if (rafId) {
     return;
@@ -210,6 +268,7 @@ function scheduleUpdate() {
     updateLibData();
     updateResizeObserver();
     updateMutationObserver();
+    updateThemeObserver();
   });
 }
 
@@ -231,17 +290,41 @@ function stopWindowResizeObserver() {
   isWindowResizeObserved = false;
 }
 
+function startColorSchemeObserver() {
+  if (isColorSchemeObserved || !globalThis.matchMedia) {
+    return;
+  }
+
+  colorSchemeQuery = globalThis.matchMedia('(prefers-color-scheme: dark)');
+  colorSchemeQuery.addEventListener('change', scheduleUpdate);
+  isColorSchemeObserved = true;
+}
+
+function stopColorSchemeObserver() {
+  if (!isColorSchemeObserved) {
+    return;
+  }
+
+  colorSchemeQuery?.removeEventListener('change', scheduleUpdate);
+  colorSchemeQuery = undefined;
+  isColorSchemeObserved = false;
+}
+
 function startLibDataObserver() {
   updateLibData();
   updateResizeObserver();
   updateMutationObserver();
+  updateThemeObserver();
   startWindowResizeObserver();
+  startColorSchemeObserver();
 }
 
 function stopLibDataObserver() {
   mutationObserver?.disconnect();
   resizeObserver?.disconnect();
+  themeObserver?.disconnect();
   stopWindowResizeObserver();
+  stopColorSchemeObserver();
 
   if (rafId) {
     cancelAnimationFrame(rafId);
@@ -250,7 +333,9 @@ function stopLibDataObserver() {
 
   mutationObserver = undefined;
   resizeObserver = undefined;
+  themeObserver = undefined;
   observedElement = undefined;
+  themeObservedElement = undefined;
   resizeObservedElements = [];
 }
 
@@ -274,5 +359,6 @@ export function useLayoutInfo() {
     headerOverallHeight,
     isHeaderSticky,
     navWidth,
+    theme,
   };
 }
