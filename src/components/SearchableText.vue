@@ -29,6 +29,8 @@ const res = computed(() => {
 });
 </script>
 <template>
-  {{ res.prefix }}<span class="lx-highlight" v-if="res.found">{{ res.found }}</span
-  >{{ res.postfix }}
+  <span
+    >{{ res.prefix }}<span class="lx-highlight" v-if="res.found">{{ res.found }}</span
+    >{{ res.postfix }}</span
+  >
 </template>
