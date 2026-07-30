@@ -1,16 +1,21 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, h, onMounted, ref } from 'vue';
 import { flushPromises, mount } from '@vue/test-utils';
 
 import LxShell from '@/components/shell/Shell.vue';
+
+const mockedScreenWidth = ref(1024);
 
 vi.mock('@vueuse/core', () => ({
   useColorMode: () => ref('light'),
   usePreferredReducedMotion: () => ref('no-preference'),
   usePreferredReducedTransparency: () => ref('no-preference'),
   useMutationObserver: () => ({ stop: vi.fn() }),
+  useResizeObserver: () => ({ stop: vi.fn() }),
+  useScroll: () => ({ y: ref(0) }),
+  useDebounceFn: (fn) => fn,
   useMediaQuery: () => ref(false),
-  useWindowSize: () => ({ width: ref(1024) }),
+  useWindowSize: () => ({ width: mockedScreenWidth }),
 }));
 
 vi.mock('@/hooks/useLx', () => ({
@@ -25,6 +30,21 @@ const createStub = (name, template = `<div data-stub="${name}"><slot /></div>`) 
     name,
     template,
   });
+
+const HeaderButtonsNavTestStub = defineComponent({
+  name: 'LxHeaderButtons',
+  emits: ['update:headerButtonsVisibility', 'update:headerActionsVisibility'],
+  setup(_, { emit }) {
+    onMounted(() => {
+      emit('update:headerButtonsVisibility', { nav: false });
+      emit('update:headerActionsVisibility', {
+        showGoBackButton: false,
+        showScrollUpButton: false,
+      });
+    });
+  },
+  template: '<div data-stub="LxHeaderButtons"><slot /></div>',
+});
 
 const NotificationStub = defineComponent({
   name: 'Notification',
@@ -81,6 +101,15 @@ const baseProps = {
 
 let wrapper;
 
+function setScreenWidth(width) {
+  mockedScreenWidth.value = width;
+  Object.defineProperty(globalThis, 'innerWidth', {
+    configurable: true,
+    writable: true,
+    value: width,
+  });
+}
+
 function createStorage() {
   const store = new Map();
 
@@ -108,6 +137,78 @@ function mountShell(props = {}) {
     },
     global: {
       stubs: globalStubs,
+    },
+  });
+}
+
+function mountShellForNavTests(props = {}, options = {}) {
+  const { controlled = false } = options;
+
+  if (controlled) {
+    const ControlledHost = defineComponent({
+      name: 'ControlledHost',
+      setup() {
+        const navBarSwitch = ref(props.navBarSwitch ?? true);
+        return { navBarSwitch };
+      },
+      render() {
+        return h(LxShell, {
+          ...baseProps,
+          ...props,
+          navBarSwitch: this.navBarSwitch,
+          'onUpdate:nav-bar-switch': (value) => {
+            this.navBarSwitch = value;
+          },
+        });
+      },
+    });
+
+    return mount(ControlledHost, {
+      global: {
+        stubs: {
+          ...globalStubs,
+          LxMainHeader: false,
+          LxMainHeaderDigives: false,
+          LxMainHeaderDigivesLite: false,
+          LxMainHeaderDigimaks: false,
+          LxMainHeaderDigimaksLite: false,
+          LxHeaderButtons: HeaderButtonsNavTestStub,
+          LxDropDownMenu: createStub('LxDropDownMenu'),
+          LxList: createStub('LxList'),
+          LxContextMenu: createStub('LxContextMenu'),
+          LxToolbar: createStub('LxToolbar'),
+          RouterLink: createStub('RouterLink'),
+          'router-link': createStub('router-link'),
+          LxNavBarDigives: createStub('LxNavBarDigives'),
+          LxNavBarDigivesLite: createStub('LxNavBarDigivesLite'),
+        },
+      },
+    });
+  }
+
+  return mount(LxShell, {
+    props: {
+      ...baseProps,
+      ...props,
+    },
+    global: {
+      stubs: {
+        ...globalStubs,
+        LxMainHeader: false,
+        LxMainHeaderDigives: false,
+        LxMainHeaderDigivesLite: false,
+        LxMainHeaderDigimaks: false,
+        LxMainHeaderDigimaksLite: false,
+        LxHeaderButtons: HeaderButtonsNavTestStub,
+        LxDropDownMenu: createStub('LxDropDownMenu'),
+        LxList: createStub('LxList'),
+        LxContextMenu: createStub('LxContextMenu'),
+        LxToolbar: createStub('LxToolbar'),
+        RouterLink: createStub('RouterLink'),
+        'router-link': createStub('router-link'),
+        LxNavBarDigives: createStub('LxNavBarDigives'),
+        LxNavBarDigivesLite: createStub('LxNavBarDigivesLite'),
+      },
     },
   });
 }
@@ -305,3 +406,135 @@ test('keeps notifications working in custom mode', async () => {
 
   expect(wrapper.find('[data-testid="notification"]').exists()).toBe(true);
 });
+
+// navBarSwitch tests
+
+const navBarModes = [
+  {
+    mode: 'default',
+    layoutSelector: '.lx-layout-default',
+    stateKind: 'layout-collapsed',
+    togglesWhenUndefined: true,
+    toggleSelector: '#nav-toggle',
+  },
+  {
+    mode: 'public',
+    layoutSelector: '.lx-layout-public',
+    stateKind: 'layout-collapsed',
+    togglesWhenUndefined: true,
+    toggleSelector: '#nav-toggle',
+  },
+  {
+    mode: 'latvijalv',
+    layoutSelector: '.lx-layout-latvijalv',
+    stateKind: 'layout-collapsed',
+    togglesWhenUndefined: true,
+    toggleSelector: '#nav-toggle',
+  },
+  {
+    mode: 'full-screen',
+    layoutSelector: '.lx-layout-full-screen',
+    stateKind: 'layout-collapsed',
+    togglesWhenUndefined: true,
+    toggleSelector: '#nav-toggle',
+  },
+  {
+    mode: 'digives',
+    layoutSelector: '.lx-layout-digives',
+    stateKind: 'layout-collapsed',
+    togglesWhenUndefined: false,
+    toggleSelector: '#lx-shell-nav-toggle-button',
+  },
+  {
+    mode: 'digives-lite',
+    layoutSelector: '.lx-layout-digives-lite',
+    stateKind: 'layout-collapsed',
+    togglesWhenUndefined: false,
+    toggleSelector: '#lx_nav-toggle',
+  },
+  {
+    mode: 'digimaks',
+    layoutSelector: '.lx-layout-digimaks',
+    stateKind: 'header-expanded',
+    togglesWhenUndefined: false,
+    toggleSelector: '.nav-toggle',
+  },
+  {
+    mode: 'digimaks-lite',
+    layoutSelector: '.lx-layout-digimaks',
+    stateKind: 'header-expanded',
+    togglesWhenUndefined: false,
+    toggleSelector: '.nav-toggle',
+  },
+];
+
+function readNavState(layout, stateKind) {
+  if (stateKind === 'layout-collapsed') {
+    return layout.classes().includes('lx-collapsed');
+  }
+  return wrapper.find('.lx-header').classes().includes('lx-nav-panel-expanded');
+}
+
+async function clickToggle(navToggleButton) {
+  await navToggleButton.trigger('click');
+  await settleShell();
+}
+
+test.each(navBarModes)(
+  'navBarSwitch undefined mode=$mode navbar collapse/expand',
+  async ({ mode, layoutSelector, stateKind, togglesWhenUndefined, toggleSelector }) => {
+    setScreenWidth(400);
+
+    wrapper = mountShellForNavTests({ mode });
+    await settleShell();
+
+    const layout = wrapper.find(layoutSelector);
+    expect(layout.exists()).toBe(true);
+
+    const navToggleButton = wrapper.find(toggleSelector);
+    expect(navToggleButton.exists()).toBe(true);
+
+    const initialState = readNavState(layout, stateKind);
+
+    await clickToggle(navToggleButton);
+    const stateAfterFirstClick = readNavState(layout, stateKind);
+
+    await clickToggle(navToggleButton);
+    const stateAfterSecondClick = readNavState(layout, stateKind);
+
+    if (togglesWhenUndefined) {
+      expect(stateAfterFirstClick).not.toBe(initialState);
+      expect(stateAfterSecondClick).toBe(initialState);
+    } else {
+      expect(stateAfterFirstClick).toBe(initialState);
+      expect(stateAfterSecondClick).toBe(initialState);
+    }
+  }
+);
+
+test.each(navBarModes)(
+  'navBarSwitch defined mode=$mode navbar collapse/expand',
+  async ({ mode, layoutSelector, stateKind, toggleSelector }) => {
+    setScreenWidth(400);
+
+    wrapper = mountShellForNavTests({ mode, navBarSwitch: true }, { controlled: true });
+    await settleShell();
+
+    const layout = wrapper.find(layoutSelector);
+    expect(layout.exists()).toBe(true);
+
+    const navToggleButton = wrapper.find(toggleSelector);
+    expect(navToggleButton.exists()).toBe(true);
+
+    const initialState = readNavState(layout, stateKind);
+
+    await clickToggle(navToggleButton);
+    const stateAfterFirstClick = readNavState(layout, stateKind);
+
+    await clickToggle(navToggleButton);
+    const stateAfterSecondClick = readNavState(layout, stateKind);
+
+    expect(stateAfterFirstClick).not.toBe(initialState);
+    expect(stateAfterSecondClick).toBe(initialState);
+  }
+);

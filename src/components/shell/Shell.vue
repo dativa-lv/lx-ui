@@ -12,7 +12,7 @@ import {
 import useLx from '@/hooks/useLx';
 import LxModal from '@/components/Modal.vue';
 import { lxDevUtils } from '@/utils';
-import { getDisplayTexts, isNil } from '@/utils/generalUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 import { shellContextKey } from '@/components/shell/shellContext';
 import { shellModeLoaders } from '@/components/shell/shellModeLoaders';
@@ -178,7 +178,7 @@ const props = defineProps({
   confirmClosesOnPrimary: { type: Boolean, default: true },
   confirmClosesOnSecondary: { type: Boolean, default: true },
 
-  navBarSwitch: { type: Boolean, default: true },
+  navBarSwitch: { type: Boolean, default: undefined },
 
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
@@ -750,9 +750,15 @@ watch(
   { immediate: true }
 );
 
+const internalNavBarSwitch = ref(true);
+
 const modesWithAutoNavState = new Set(['digives', 'digives-lite', 'digimaks', 'digimaks-lite']);
 function resolveNavBarSwitch(value) {
-  if (isNil(value) && !modesWithAutoNavState.has(resolvedMode.value)) {
+  if (value === undefined && !modesWithAutoNavState.has(resolvedMode.value)) {
+    return internalNavBarSwitch.value;
+  }
+  // when defined as null itnerpret it as collapsed by default
+  if (value === null && props.mode !== 'digives' && props.mode !== 'digives-lite') {
     return true;
   }
   return value;
@@ -763,6 +769,7 @@ const navBarSwitchModel = computed({
     return resolveNavBarSwitch(props.navBarSwitch);
   },
   set(value) {
+    internalNavBarSwitch.value = value;
     emits('update:nav-bar-switch', value);
   },
 });
