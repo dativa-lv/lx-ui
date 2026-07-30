@@ -55,9 +55,9 @@ const props = defineProps({
 
 const textsDefault = {
   emptyValue: 'Nav norādīts',
-  inputDaysPlaceholder: 'Ievadiet dienu skaitu',
-  inputMonthsPlaceholder: 'Ievadiet mēnešu skaitu',
-  inputYearsPlaceholder: 'Ievadiet gadu skaitu',
+  inputDaysPlaceholder: 'Dienu skaits',
+  inputMonthsPlaceholder: 'Mēnešu skaits',
+  inputYearsPlaceholder: 'Gadu skaits',
   inputTooltip: 'Dienu, mēnešu vai gadu ievade',
   dropdownPlaceholder: 'Izvēlieties vērtību',
   dropdownTooltip: 'Dienu, mēnešu vai gadu izvēle',
