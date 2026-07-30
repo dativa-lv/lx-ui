@@ -277,7 +277,7 @@ defineExpose({ focus });
             :iconSet="actionDefinitionsResolved[0]?.iconSet"
             :loading="actionDefinitionsResolved[0]?.loading"
             :busy="actionDefinitionsResolved[0]?.busy"
-            :disabled="actionDefinitionsResolved[0]?.disabled"
+            :disabled="actionDefinitionsResolved[0]?.disabled || disabled"
             :destructive="actionDefinitionsResolved[0]?.destructive"
             :active="actionDefinitionsResolved[0]?.active"
             :badge="actionDefinitionsResolved[0]?.badge"
@@ -292,6 +292,7 @@ defineExpose({ focus });
           <LxDropDownMenu
             v-else
             :actionDefinitions="actionDefinitionsResolved"
+            :disabled="disabled"
             @actionClick="handleActionClick"
           >
             <LxButton
@@ -300,6 +301,7 @@ defineExpose({ focus });
               :label="displayTexts.overflowMenu"
               variant="icon-only"
               tabindex="-1"
+              :disabled="disabled"
             />
           </LxDropDownMenu>
         </div>
