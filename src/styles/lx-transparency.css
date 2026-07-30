@@ -1,6 +1,7 @@
 .lx.lx-no-transparency:not(.lx-theme-contrast) .lx-data-grid-wrapper>.lx-grid-header-wrapper:after,
 .lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid) > footer.lx-sticky::before,
-.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid)>header.lx-sticky:not(.lx-form-with-tabs):not(.lx-form-with-steps):after {
+.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid)>header.lx-sticky:not(.lx-form-with-tabs):not(.lx-form-with-steps):after,
+.lx.lx-no-transparency:not(.lx-theme-contrast) .lx-chat-wrapper .lx-chat-footer::before {
     background: transparent;
 }
 

@@ -1119,7 +1119,7 @@ svg .lx-shade {
 }
 
 .lx-avatar-display.lx-avatar-display-initials-s > .lx-avatar-initials {
-  font-size: 0.875rem;
+  font-size: var(--small-font-size);
 }
 
 .lx-avatar-display.lx-avatar-display-initials-m > .lx-avatar-initials {

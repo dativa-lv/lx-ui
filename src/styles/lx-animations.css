@@ -900,3 +900,69 @@
 .lx:not(.lx-no-animations) .scroll-up-move {
   transition: transform 0.2s ease;
 }
+
+/* lx-chat typing dots ("." characters revealed one by one: 1 -> 2 -> 3, then reset together) */
+
+.lx:not(.lx-no-animations) .lx-chat-wrapper .lx-chat-typing span {
+  opacity: 0;
+  animation-duration: 1.4s;
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+}
+
+.lx:not(.lx-no-animations) .lx-chat-wrapper .lx-chat-typing span:nth-child(1) {
+  animation-name: lxChatTypingDot1;
+}
+
+.lx:not(.lx-no-animations) .lx-chat-wrapper .lx-chat-typing span:nth-child(2) {
+  animation-name: lxChatTypingDot2;
+}
+
+.lx:not(.lx-no-animations) .lx-chat-wrapper .lx-chat-typing span:nth-child(3) {
+  animation-name: lxChatTypingDot3;
+}
+
+@keyframes lxChatTypingDot1 {
+  0%,
+  10% {
+    opacity: 0;
+  }
+  10.01%,
+  90% {
+    opacity: 1;
+  }
+  90.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes lxChatTypingDot2 {
+  0%,
+  40% {
+    opacity: 0;
+  }
+  40.01%,
+  90% {
+    opacity: 1;
+  }
+  90.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes lxChatTypingDot3 {
+  0%,
+  70% {
+    opacity: 0;
+  }
+  70.01%,
+  90% {
+    opacity: 1;
+  }
+  90.01%,
+  100% {
+    opacity: 0;
+  }
+}

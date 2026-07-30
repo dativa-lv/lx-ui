@@ -110,8 +110,8 @@ async function computeSafeTo() {
   safeTo.value = cleaned ?? null;
 }
 
-function focus() {
-  itemRef.value?.focus();
+function focus(options) {
+  itemRef.value?.focus(options);
 }
 
 watch(() => props.href, computeSafeTo, { immediate: true });

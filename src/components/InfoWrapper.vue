@@ -387,9 +387,9 @@ watch(
   }
 );
 
-function focus() {
+function focus(options) {
   if (props.focusable) {
-    triggerRef.value?.focus();
+    triggerRef.value?.focus(options);
   }
 }
 

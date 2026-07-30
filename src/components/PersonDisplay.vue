@@ -261,8 +261,8 @@ const ariaLabel = computed(() => {
   return `${numDisplay} ${label}`;
 });
 
-function focus() {
-  infoWrapperRef.value?.focus();
+function focus(options) {
+  infoWrapperRef.value?.focus(options);
 }
 
 function scrollIntoView({ behavior, block, container, inline }) {

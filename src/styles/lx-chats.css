@@ -1,0 +1,338 @@
+.lx-chat-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  --lx-chat-fade-color: var(--color-background);
+}
+
+.lx-region .lx-chat-wrapper,
+.lx-region-component .lx-chat-wrapper,
+.lx-card .lx-chat-wrapper,
+.lx-modal .lx-chat-wrapper,
+.lx-form-region .lx-chat-wrapper {
+  --lx-chat-fade-color: var(--color-region);
+}
+
+.lx-chat-wrapper ul {
+  list-style: none;
+  margin: var(--space-0);
+  padding: var(--space-0);
+}
+
+/* --- Message list (scroll container) --- */
+
+.lx-chat-wrapper .lx-chat-message-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0; /* required, otherwise the list grows instead of scrolling */
+  overflow-y: auto;
+  padding: var(--space-0125) var(--space-0125) var(--space-4000);
+}
+
+.lx-chat-wrapper .lx-chat-message-list .lx-chat-message-list-items,
+.lx-chat-wrapper .lx-chat-message-list .lx-chat-user-messages-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.lx-chat-wrapper .lx-chat-message-list .lx-chat-message-list-items {
+  gap: var(--space-1500);
+}
+
+.lx-chat-wrapper .lx-chat-message-list .lx-chat-user-messages-group {
+  gap: var(--space-0250);
+}
+
+/* --- Bubble wrapper: alignment + width per breakpoint / kind --- */
+
+.lx-chat-wrapper .lx-chat-bubble-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0250);
+  width: fit-content;
+  margin-right: auto;
+}
+
+.lx-chat-l .lx-chat-bubble-wrapper {
+  max-width: min(80%, 43.5rem);
+}
+
+.lx-chat-m .lx-chat-bubble-wrapper {
+  max-width: 80%;
+}
+
+.lx-chat-s .lx-chat-bubble-wrapper {
+  max-width: 100%;
+}
+
+.lx-chat-chat.lx-chat-s .lx-chat-user-me .lx-chat-bubble-wrapper {
+  max-width: calc(100% - 2.5rem - 1ch);
+}
+
+.lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+
+.lx-chat-wrapper .lx-chat-bubble .lx-list-item-actions.lx-list-actions-hidden {
+  display: none;
+}
+
+.lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper:has(.lx-category-displayer):not(:has(.lx-invalid)):not(:has(.lx-list-item-actions:not(.lx-list-actions-hidden))) {
+  --list-item-header-padding: var(--space-0250)
+    calc(0.35rem + var(--list-category-width) + 2 * var(--list-category-margin)) 0.2rem
+    var(--space-0250);
+}
+
+.lx-chat-wrapper .lx-chat-bubble .lx-list-item:focus-visible {
+  outline: 2px solid var(--color-focus-background);
+  outline-offset: -2px;
+}
+
+/* Category colours disabled for now (gutter still reserved); !important beats the contrast-theme rule. Remove once re-enabled. */
+.lx-chat-wrapper .lx-chat-bubble .lx-category-displayer {
+  background: transparent !important;
+}
+
+.lx-chat-wrapper .lx-chat-bubble .lx-article {
+  margin-top: var(--space-0);
+  margin-bottom: var(--space-0);
+}
+
+.lx-chat-wrapper .lx-chat-bubble .lx-article > :first-child {
+  margin-top: var(--space-0);
+}
+
+.lx-chat-wrapper .lx-chat-bubble .lx-article > :last-child {
+  margin-bottom: var(--space-0);
+}
+
+.lx-chat-chat.lx-chat-m .lx-chat-user-me .lx-chat-bubble-wrapper,
+.lx-chat-chat.lx-chat-s .lx-chat-user-me .lx-chat-bubble-wrapper {
+  align-items: flex-end;
+  margin-right: var(--space-0);
+  margin-left: auto;
+}
+
+.lx-chat-l .lx-chat-bubble-content,
+.lx-chat-l .lx-chat-bubble-time,
+.lx-chat-comments .lx-chat-bubble-content,
+.lx-chat-comments .lx-chat-bubble-time,
+.lx-chat-chat.lx-chat-m .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-bubble-content,
+.lx-chat-chat.lx-chat-m .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-bubble-time,
+.lx-chat-chat.lx-chat-s .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-bubble-content,
+.lx-chat-chat.lx-chat-s .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-bubble-time {
+  margin-left: calc(var(--space-2500) + 1ch);
+}
+
+/* --- Person header (name + AI badge) --- */
+
+.lx-chat-wrapper .lx-chat-bubble-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-0500);
+}
+
+.lx-chat-wrapper .lx-chat-bubble-header .lx-badge {
+  margin-top: var(--space-0250);
+  --color-badge-background: var(--color-purple);
+  --color-badge-icon: var(--color-interactive-foreground);
+}
+
+.lx-chat-wrapper .lx-chat-bubble-header .lx-badge svg {
+  fill: var(--color-badge-icon);
+}
+
+.lx-chat-wrapper .lx-chat-bubble-time {
+  color: var(--color-label);
+  font-size: var(--small-font-size);
+}
+
+.lx-chat-chat.lx-chat-m .lx-chat-user-me .lx-chat-bubble-time,
+.lx-chat-chat.lx-chat-s .lx-chat-user-me .lx-chat-bubble-time {
+  text-align: right;
+}
+
+/* --- Bubble content row (bubble + reasoning button) --- */
+
+.lx-chat-wrapper .lx-chat-bubble-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-0250);
+}
+
+/* --- Bubble = LxListItem (.lx-list-item-wrapper) --- */
+
+.lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper {
+  border: var(--list-item-border);
+  min-height: var(--row-size);
+  background-color: var(--color-region);
+}
+
+.lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper:has(.lx-invalid) {
+  border: none;
+}
+
+.lx-chat-wrapper .lx-chat-typing-bubble.lx-list-item-wrapper {
+  border: var(--border-width-1) solid var(--color-chrome);
+  background-color: transparent;
+}
+
+.lx-region .lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper:not(.lx-chat-typing-bubble),
+.lx-region-component .lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper:not(.lx-chat-typing-bubble),
+.lx-card .lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper:not(.lx-chat-typing-bubble),
+.lx-modal .lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper:not(.lx-chat-typing-bubble),
+.lx-form-region .lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper:not(.lx-chat-typing-bubble) {
+  background-color: var(--color-region-2);
+}
+
+.lx-region .lx-chat-wrapper .lx-chat-bubble .lx-input-wrapper,
+.lx-region-component .lx-chat-wrapper .lx-chat-bubble .lx-input-wrapper,
+.lx-form-region .lx-chat-wrapper .lx-chat-bubble .lx-input-wrapper,
+.lx-region .lx-chat-wrapper .lx-chat-bubble .lx-complex-input,
+.lx-region-component .lx-chat-wrapper .lx-chat-bubble .lx-complex-input,
+.lx-form-region .lx-chat-wrapper .lx-chat-bubble .lx-complex-input,
+.lx-region .lx-chat-wrapper .lx-chat-bubble .lx-complex-displayer,
+.lx-region-component .lx-chat-wrapper .lx-chat-bubble .lx-complex-displayer,
+.lx-form-region .lx-chat-wrapper .lx-chat-bubble .lx-complex-displayer,
+.lx-override .lx-region .lx-chat-wrapper .lx-chat-bubble input:where(:not([type='file']):not([type='color']):not([type='image'])),
+.lx-override .lx-region-component .lx-chat-wrapper .lx-chat-bubble input:where(:not([type='file']):not([type='color']):not([type='image'])),
+.lx-override .lx-form-region .lx-chat-wrapper .lx-chat-bubble input:where(:not([type='file']):not([type='color']):not([type='image'])),
+.lx-override .lx-region .lx-chat-wrapper .lx-chat-bubble textarea,
+.lx-override .lx-region-component .lx-chat-wrapper .lx-chat-bubble textarea,
+.lx-override .lx-form-region .lx-chat-wrapper .lx-chat-bubble textarea {
+  background: var(--color-input-background);
+}
+
+.lx-chat-wrapper .lx-chat-bubble .lx-list-item > header {
+  color: var(--color-data);
+}
+
+.lx-chat-wrapper .lx-chat-form-prompt {
+  display: block;
+  margin-bottom: var(--space-1000);
+}
+
+/* Strip the compact LxForm's surface chrome so it blends into the bubble like a stripped form. */
+.lx-chat-wrapper .lx-chat-bubble .lx-form-grid {
+  background-color: transparent;
+  border: none;
+}
+
+/* Drop the form section's and footer's left/right padding, so the submit button sits flush
+   instead of indented (the bubble already has its own inset). */
+.lx-chat-wrapper .lx-chat-bubble .lx-form-grid .lx-form-section,
+.lx-chat-wrapper .lx-chat-bubble .lx-form-grid > footer {
+  padding-left: var(--space-0);
+  padding-right: var(--space-0);
+}
+
+.lx-chat-wrapper .lx-chat-typing {
+  display: inline-flex;
+}
+
+.lx-chat-wrapper .lx-chat-typing span {
+  opacity: 1;
+}
+
+.lx-chat-wrapper .lx-chat-status {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-label);
+}
+
+/* --- Invalid state --- */
+
+.lx-chat-wrapper .lx-chat-bubble .lx-list-item.lx-invalid {
+  border-width: var(--border-width-2);
+  border-style: var(--input-border-style);
+  border-color: var(--color-bad);
+}
+
+.lx-chat-wrapper .lx-chat-invalid-message {
+  color: var(--color-bad);
+  font-size: var(--small-font-size);
+}
+
+.lx-chat-l .lx-chat-invalid-message,
+.lx-chat-comments .lx-chat-invalid-message,
+.lx-chat-chat.lx-chat-m .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-invalid-message,
+.lx-chat-chat.lx-chat-s .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-invalid-message {
+  margin-left: calc(var(--space-2500) + 1ch);
+}
+
+/* --- Footer: composer + scroll-to-bottom button pinned above it --- */
+
+.lx-chat-wrapper .lx-chat-footer {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.lx:not(.lx-theme-contrast) .lx-chat-wrapper .lx-chat-footer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 3rem;
+  background: linear-gradient(180deg, transparent 0%, var(--lx-chat-fade-color) 100%);
+  opacity: var(--lx-chat-footer-shadow-opacity, 0);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Button-sized, right-aligned, --space-0250 above the composer. */
+.lx-chat-wrapper .lx-chat-scroll-down {
+  /* override .lx .lx-layout .lx-button { position: relative } */
+  position: absolute !important;
+  /* override .lx .lx-button:focus, .lx-override button:focus { z-index: 1 } */
+  z-index: 3 !important;
+  right: 0;
+  bottom: calc(var(--lx-chat-footer-height, 0px) + var(--space-0250));
+  background-color: var(--lx-chat-fade-color);
+}
+
+/* --- Composer: beside by default (field + toolbar in a row); JS adds .lx-chat-composer-multiline when text wraps, stacking the toolbar on top. --- */
+
+.lx-chat-wrapper .lx-chat-composer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  position: relative;
+  z-index: 3;
+}
+
+.lx-chat-wrapper .lx-chat-composer .lx-chat-composer-field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.lx-chat-wrapper .lx-chat-composer .lx-input-area {
+  --input-text-area-min-height: var(--button-height);
+}
+
+/* Grow with content up to 9rem, then scroll (only the visible textarea, not the measuring shadow) */
+.lx-chat-wrapper .lx-chat-composer .lx-text-area-dynamic {
+  max-height: 9rem;
+  /* override the base dynamic-textarea overflow:hidden so the 9rem cap scrolls */
+  overflow-y: auto !important;
+}
+
+/* Stacked: toolbar moves to its own row (via order), field fills the full width below. */
+.lx-chat-wrapper .lx-chat-composer.lx-chat-composer-multiline {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.lx-chat-wrapper .lx-chat-composer.lx-chat-composer-multiline .lx-chat-composer-toolbar {
+  order: -1;
+  align-self: stretch;
+  border-radius: var(--toolbar-embedded-border-radius);
+  border-width: var(--toolbar-embedded-border-width);
+  border-style: var(--toolbar-embedded-border-style);
+  border-color: var(--color-toolbar-embedded-border);
+}
