@@ -616,6 +616,27 @@
   --color-badge-text: var(--color-data);
   --color-badge-icon: var(--color-data);
 
+  --color-info-box-background: var(--color-region);
+  --color-info-box-border: var(--color-chrome);
+  --color-info-box-text-primary: var(--color-data);
+  --color-info-box-text-secondary: var(--color-data);
+  --color-info-box-icon: var(--color-data);
+  --color-info-box-border-hover: var(--color-interactive-hover-background);
+  --color-info-box-button-border-focus: var(--color-button-ghost-border-focus);
+  --color-info-box-button-border-hover: var(--color-button-ghost-border-hover);
+  --color-info-box-button-border-active: var(--color-button-ghost-border-active);
+  --color-info-box-button-border-disabled: var(--color-button-ghost-border-disabled);
+  --color-info-box-button-background: var(--color-button-ghost-background);
+  --color-info-box-button-background-focus: var(--color-button-ghost-background-focus);
+  --color-info-box-button-background-hover: var(--color-button-ghost-background-hover);
+  --color-info-box-button-background-active: var(--color-button-ghost-background-active);
+  --color-info-box-button-background-disabled: var(--color-button-ghost-background-disabled);
+  --color-info-box-button-icon: var(--color-data);
+  --color-info-box-button-icon-focus: var(--color-data);
+  --color-info-box-button-icon-hover: var(--color-button-ghost-icon-hover);
+  --color-info-box-button-icon-active: var(--color-button-ghost-icon-active);
+  --color-info-box-button-icon-disabled: var(--color-button-ghost-icon-disabled);
+
   --color-draft-background: var(--color-draft);
   --color-new-background: var(--color-new);
   --color-edited-background: var(--color-edited);

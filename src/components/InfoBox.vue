@@ -111,7 +111,6 @@ function handleClick(event) {
         </p>
       </div>
     </div>
-    <div class="lx-info-box-spacer" />
     <div
       class="additional-buttons lx-info-box-action-icon"
       :class="{

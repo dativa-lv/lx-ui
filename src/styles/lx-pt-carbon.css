@@ -816,6 +816,28 @@
   --badge-grid-template-columns: auto 1fr;
   --badge-grid-areas: 'icon text';
 
+  --info-box-grid-areas: 'icon content button';
+  --info-box-grid-template-columns: auto 1fr auto;
+  --info-box-grid-template-rows: 1fr;
+  --info-box-padding: var(--space-0500);
+  --info-box-border-width: var(--border-width-2);
+  --info-box-border-radius: var(--border-radius-0);
+  --info-box-icon-size: var(--icon-size-m);
+  --info-box-gap: var(--space-0500);
+  --info-box-row-gap: var(--space-0250);
+  --info-box-content-padding: var(--space-0125) var(--space-0) var(--space-0) var(--space-0);
+  --info-box-text-primary-font-weight: var(--font-weight-bold);
+  --info-box-text-primary-line-height: 1.25;
+  --info-box-text-secondary-font-size: var(--small-font-size);
+  --info-box-text-secondary-line-height: 1.1em;
+  --info-box-outline-offset: var(--space-0);
+  --info-box-button-height: var(--button-ghost-icon-only-height);
+  --info-box-button-width: var(--button-ghost-icon-only-width);
+  --info-box-button-border: var(--button-ghost-border);
+  --info-box-button-border-radius: var(--border-radius-0);
+  --info-box-button-outline-offset: var(--button-ghost-outline-offset);
+  --info-box-button-icon-size: var(--button-ghost-icon-size);
+
   --loader-height-l: 5.5rem;
   --loader-width-l: 5.5rem;
   --loader-height-s: 1.25rem;

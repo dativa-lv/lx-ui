@@ -42,6 +42,7 @@ export const commonStyles = [
   'lx-toggles',
   'lx-content-switchers',
   'lx-badges',
+  'lx-info-boxes',
   'lx-popovers',
   'lx-toolbars',
   'lx-day-input',

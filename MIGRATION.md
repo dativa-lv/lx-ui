@@ -16,6 +16,10 @@ If you set a custom `--modal-footer-margin: 1rem 0` or `margin: 1rem 0` for the 
 
 ~~`--modal-footer-margin: 1rem 0;`~~
 
+#### LxInfoBox
+
+`LxInfoBox` styles have been moved to a separate file - `lx-info-boxes.css`. Import this file in your project to ensure correct LxInfoBox appearance and behavior.
+
 ## 2.2.7 → 2.2.8
 
 ### Breaking changes
@@ -58,7 +62,7 @@ watch(
 
 #### LxToolbar
 
-`LxToolbar` styles have been moved to a separate file - `lx-toolbars.css`. Import this file in your project to ensure correct badge appearance and behavior.
+`LxToolbar` styles have been moved to a separate file - `lx-toolbars.css`. Import this file in your project to ensure correct toolbar appearance and behavior.
 
 #### Inputs
 
