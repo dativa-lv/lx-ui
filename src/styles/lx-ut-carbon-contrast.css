@@ -40,9 +40,7 @@
   --color-latvijalv-alert-hover-foreground: var(--contrast-background);
   --color-latvijalv-alert-hover-background: var(--contrast-hover);
   --color-tile-background: var(--contrast-background);
-  --color-tile-foreground: var(--contrast-foreground);
-  --color-tile-hover-background: var(--contrast-hover);
-  --color-tile-hover-foreground: var(--contrast-background);
+  --color-tile-background-hover: var(--contrast-hover);
   --color-grid-header: var(--contrast-background);
   --color-grid-hover-background: var(--contrast-hover);
   --color-grid-header-hover-background: var(--contrast-background);
@@ -112,13 +110,11 @@
   --region-border-transparent: var(--region-border);
 
   --card-border: var(--border-width-2) solid var(--color-foreground);
-  
-  --list-item-border: var(--border-width-2) solid var(--color-foreground);
 
-  --color-tile-hover-text-secondary: var(--contrast-background);
+  --color-tile-text-secondary-hover: var(--contrast-background);
 
-  --color-list-category-contrast: transparent;
-  --color-list-disabled-selected-text: var(--contrast-background);
+  --color-list-item-border: var(--color-foreground);
+  --color-list-text-selected-disabled: var(--contrast-background);
 
   --input-border-width: var(--border-width-2);
   --color-input-border: var(--contrast-foreground);

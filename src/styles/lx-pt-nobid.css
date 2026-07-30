@@ -34,7 +34,7 @@
   --h3-font-size: 0.875rem;
   --h3-font-weight: 600;
 
-  --list-item-border-radius: var(--border-radius-0750);
+  --list-item-inner-border-radius: var(--border-radius-0750);
   --list-header-min-height: 3.5rem;
   --input-border-width: var(--border-width-1);
   --color-input-border: var(--color-input-text) var(--color-input-text) var(--color-label) var(--color-input-text);

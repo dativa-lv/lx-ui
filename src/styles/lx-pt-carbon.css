@@ -122,7 +122,10 @@
   --card-padding: var(--space-1000);
   --card-width: auto;
 
-  --list-button-border-radius: var(--border-radius-0);
+  --list-button-outline-offset: -2px;
+  --list-button-icon-size: var(--button-icon-size);
+  --list-button-border: var(--button-ghost-border);
+  --list-button-border-radius: var(--button-border-radius);
   --list-button-max-height: var(--row-size);
   --list-button-width: var(--row-size);
   --list-category-border-radius: var(--border-radius-0);
@@ -135,9 +138,16 @@
   --list-item-gap: var(--space-0500);
   --list-item-header-padding: 0.25rem 0.35rem 0.2rem 0.25rem; /* TODO: use tokens instead */
   --list-item-header-min-height: 2.75rem;
-  --list-item-border: var(--border-width-2) solid transparent;
-  --list-item-border-radius: var(--border-radius-0);
-  --list-item-border-radius-inner: var(--list-item-border-radius);
+  --list-item-inner-border-radius: var(--border-radius-0);
+  --list-item-outer-border-radius: var(--border-radius-0);
+  --list-item-header-inner-border-radius: var(--list-item-inner-border-radius);
+  --list-item-header-outer-border-radius: var(--list-item-outer-border-radius);
+  --list-item-inner-border-radius-selected: var(--border-radius-0);
+  --list-item-outer-border-radius-selected: var(--border-radius-0);
+  --list-item-header-inner-border-radius-selected: var(--list-item-inner-border-radius-selected);
+  --list-item-header-outer-border-radius-selected: var(--list-item-inner-border-radius-selected);
+  --list-item-border-width: var(--border-width-2);
+  --list-item-border-style: solid;
   --list-item-loader-padding: var(--space-1000) var(--space-0) var(--space-0) var(--space-0);
   --list-item-selecting-block-padding: var(--space-1000) var(--space-0) var(--space-0) var(--space-0);
   --list-item-width: auto;
@@ -183,8 +193,10 @@
   --tile-mini-grid-template-rows: 1fr;
   --tile-header-min-height: var(--list-item-header-min-height);
   --tile-mini-header-min-height: 2.25rem;
-  --tile-border: var(--list-item-border);
-  --tile-border-radius: var(--list-item-border-radius);
+  
+  --tile-border-width: var(--list-item-border-width);
+  --tile-border-style: var(--list-item-border-style);
+  --tile-border-radius: var(--list-item-inner-border-radius);
   --tile-border-radius-inner: var(--tile-border-radius);
   --tile-icon-padding: var(--space-0);
   --tile-mini-icon-padding: var(--tile-icon-padding);
@@ -205,17 +217,22 @@
   --tile-text-secondary-padding: var(--space-0);
   --tile-text-secondary-margin: var(--space-1250) var(--space-0) var(--space-0) var(--space-0);
 
-  --data-block-border: var(--list-item-border);
-  --data-block-border-radius: var(--list-item-border-radius);
-  --data-block-border-radius-inner: var(--data-block-border-radius);
+  --data-block-border-width: var(--list-item-border-width);
+  --data-block-border-style: var(--list-item-border-style);
+  --data-block-border-radius: var(--list-item-inner-border-radius);
   --data-block-border-radius-expanded: var(--data-block-border-radius);
-  --data-block-border-radius-inner-expanded: var(--data-block-border-radius);
+  --data-block-header-border-radius: var(--data-block-border-radius);
+  --data-block-header-border-radius-expanded: var(--data-block-border-radius);
+  --data-block-button-border: var(--list-button-border);
+  --data-block-button-icon-size: var(--list-button-icon-size);
+  --data-block-button-outline-offset: var(--list-button-outline-offset);
+  --data-block-button-border-radius: var(--list-button-border-radius);
+  --data-block-button-border-radius-expanded: var(--list-button-border-radius);
   --data-block-button-max-height-m: var(--row-size);
   --data-block-button-max-height-l: 4rem;
   --data-block-button-width-m: var(--row-size);
   --data-block-button-width-l: 4rem;
-  --data-block-chevron-height: 1rem;
-  --data-block-chevron-width: 1rem;
+  --data-block-chevron-size: var(--icon-size-xs);
   --data-block-chevron-wrapper-max-height-m: var(--row-size);
   --data-block-chevron-wrapper-max-height-l: 4rem;
   --data-block-chevron-wrapper-width-m: var(--row-size);
@@ -232,10 +249,10 @@
   --data-block-icon-wrapper-width-m: var(--row-size);
   --data-block-icon-wrapper-width-l: 4rem;
   --data-block-invalid-icon-size: var(--icon-size-xs);
-  --data-block-left-indent-m: var(--space-1000);
-  --data-block-left-indent-l: var(--space-2000);
-  --data-block-right-indent-m: var(--space-1000);
-  --data-block-right-indent-l: var(--space-2000);
+  --data-block-indent-left-m: var(--space-1000);
+  --data-block-indent-left-l: var(--space-2000);
+  --data-block-indent-right-m: var(--space-1000);
+  --data-block-indent-right-l: var(--space-2000);
   --data-block-text-primary-font-size: var(--list-text-primary-font-size);
   --data-block-text-primary-font-weight: var(--list-text-primary-font-weight);
   --data-block-text-primary-line-height: var(--list-text-primary-line-height);
@@ -317,6 +334,15 @@
   --button-set-gap: var(--space-0500);
   --button-text-decoration: none;
 
+  --button-badge-icon-size: var(--icon-size-xs);
+  --button-badge-gap: var(--space-0250);
+  --button-badge-padding: var(--space-0125) var(--space-0375);
+  --button-badge-width: fit-content;
+  --button-badge-min-width: 1.5rem;
+  --button-badge-height: auto;
+  --button-badge-min-height: 1.5rem;
+  --button-badge-border-width: var(--border-width-2);
+  --button-badge-border-radius: var(--border-radius-1000);
   --button-badge-inset: -0.625rem -0.625rem auto auto; /* TODO: replace with token (?) */
   --button-badge-empty-inset: calc(var(--space-0500) * -1) calc(var(--space-0500) * -1) auto auto;
   --button-border-width: var(--border-width-2);

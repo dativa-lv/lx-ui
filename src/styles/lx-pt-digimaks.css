@@ -14,10 +14,12 @@
 
   --color-red: #e83077;
 
-  --list-item-border: var(--border-width-1) solid var(--color-chrome);
-  --region-border: var(--list-item-border);
+  --list-item-border-width: var(--border-width-1);
+  --list-item-border-style: solid;
+  --color-list-item-border: var(--color-chrome);
+  --region-border: var(--border-width-2) solid transparent;
   --border-radius-default: calc(var(--row-size) / 2);
-  --list-item-border-radius: var(--border-radius-default);
+  --list-item-inner-border-radius: var(--border-radius-default);
 
   --input-border-radius: var(--border-radius-default);
   --input-border-width: var(--border-width-1);

@@ -1556,7 +1556,7 @@
 }
 
 .lx-widget.lx-widget-router:hover {
-  background-color: var(--color-tile-hover-background);
+  background-color: var(--color-tile-background-hover);
   border: var(--border-width-2) solid var(--color-brand);
   color: var(--color-data);
   padding: var(--space-0);

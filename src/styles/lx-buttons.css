@@ -944,11 +944,14 @@ a.lx-button.lx-button-ghost svg {
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
   border-color: var(--color-background);
-  --badge-text-font-size: var(--small-font-size);
-  --badge-text-font-weight: var(--font-weight-bold);
-  --color-badge-background: var(--color-blue);
-  --color-badge-text: var(--color-region);
-  --color-badge-icon: var(--color-region);
+  border-width: var(--button-badge-border-width);
+  border-radius: var(--button-badge-border-radius);
+  column-gap: var(--button-badge-gap);
+  padding: var(--button-badge-padding);
+  width: var(--button-badge-width);
+  min-width: var(--button-badge-min-width);
+  height: var(--button-badge-height);
+  min-height: var(--button-badge-min-height);
 }
 
 .lx-region .lx-button .lx-badge,
@@ -957,8 +960,8 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-button .lx-button-content-wrapper .lx-badge .lx-badge-icon {
-  width: var(--icon-size-xs);
-  height: var(--icon-size-xs);
+  width: var(--button-badge-icon-size);
+  height: var(--button-badge-icon-size);
   fill: var(--color-badge-icon);
 }
 

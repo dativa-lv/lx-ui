@@ -558,7 +558,7 @@
   height: auto;
   min-height: var(--list-item-min-height);
   border: var(--border-width-2) solid var(--color-chrome);
-  border-radius: var(--list-item-border-radius);
+  border-radius: var(--list-item-border-radius-inner);
   padding-bottom: var(--space-0);
   margin-bottom: var(--space-1000);
 }
@@ -569,19 +569,19 @@
 
 .lx-layout-digimaks .lx-settings-menu .lx-settings-link .lx-button {
   --color-button-tertiary-text: var(--color-list-primary);
-  --color-button-tertiary-background: var(--color-list-background);
+  --color-button-tertiary-background: var(--color-list-item-background);
   --color-button-tertiary-icon: var(--color-list-primary);
   --color-button-tertiary-text-hover: var(--color-list-primary);
-  --color-button-tertiary-background-hover: var(--color-list-background);
+  --color-button-tertiary-background-hover: var(--color-list-item-background);
   --color-button-tertiary-icon-hover: var(--color-list-primary);
   --color-button-tertiary-text-focus: var(--color-list-primary);
-  --color-button-tertiary-background-focus: var(--color-list-background);
+  --color-button-tertiary-background-focus: var(--color-list-item-background);
   --color-button-tertiary-icon-focus: var(--color-list-primary);
   --color-button-tertiary-text-active: var(--color-list-primary);
-  --color-button-tertiary-background-active: var(--color-list-background);
+  --color-button-tertiary-background-active: var(--color-list-item-background);
   --color-button-tertiary-icon-active: var(--color-list-primary);
   --button-tertiary-border: var(--border-width-0);
-  --button-tertiary-border-radius: var(--list-item-border-radius);
+  --button-tertiary-border-radius: var(--list-item-border-radius-inner);
   --button-tertiary-padding: var(--space-0) var(--space-1000);
   --button-tertiary-height: auto;
   --button-icon-width: var(--list-icon-size);

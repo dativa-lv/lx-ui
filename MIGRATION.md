@@ -8,13 +8,52 @@ Our goal is to make upgrading predictable, transparent, and worth the effort.
 
 ### Breaking changes
 
-#### LxModal footer spacing moved from margin to padding (latvijalv only)
+#### LxList, LxTile, LxDataBlock
 
-The latvijalv modal footer now applies its spacing with **padding** instead of margin.
+**Token renames**
 
-If you set a custom `--modal-footer-margin: 1rem 0` or `margin: 1rem 0` for the latvijalv footer, remove it — the theme now applies the equivalent padding for you:
+- `--color-list-primary` → `--color-list-text-primary`
+- `--color-list-secondary` → `--color-list-text-secondary`
+- `--color-list-background` → `--color-list-item-background`
+- `--color-list-hover-background` → `--color-list-item-background-hover`
+- `--color-list-disabled-selected-text` → `--color-list-text-selected-disabled`
+- `--color-list-hover-text-primary` → `--color-list-text-primary-hover`
+- `--color-list-hover-text-secondary` → `--color-list-text-secondary-hover`
+- `--color-data-block-background-hover` → `--color-data-block-background-hover`
+- `--color-tile-primary` → `--color-tile-text-primary`
+- `--color-tile-secondary` → `--color-tile-text-secondary`
+- `--color-tile-hover-background` → `--color-tile-background-hover`
+- `--color-tile-hover-text-primary` → `--color-tile-text-secondary-primary`
+- `--color-tile-hover-text-secondary` → `--color-tile-text-secondary-hover`
+- `--data-block-border-radius-inner` → `--data-block-header-border-radius`
+- `--data-block-border-radius-inner-expanded` → `--data-block-header-border-radius-expanded`
+- `--data-block-border-primary` → `--color-data-block-text-primary`
+- `--data-block-border-secondary` → `--color-data-block-text-secondary`
+- `--data-block-chevron-height` + `--data-block-chevron-width` → `--data-block-chevron-size`
+- `--data-block-right-indent-m` -> `--data-block-indent-right-m`
+- `--data-block-right-indent-l` -> `--data-block-indent-right-l`
+- `--data-block-left-indent-m` -> `--data-block-indent-left-m`
+- `--data-block-left-indent-l` -> `--data-block-indent-left-l`
 
-~~`--modal-footer-margin: 1rem 0;`~~
+**Token removals**
+
+- `--color-list-category-contrast` (transparent)
+- `--color-list-disabled-foreground` (`--color-disabled`)
+- `--color-tile-disabled-foreground` (`--color-disabled`)
+- `--color-tile-foreground` (`--color-data`)
+- `--color-tile-hover-foreground` (`--color-data`)
+- `--color-data-block-disabled-foreground` (`--color-disabled-foreground`)
+- `--color-data-block-hover-foreground` (`--color-region-hover-foreground`) — split into `--color-data-block-text-primary-hover` and `--color-data-block-text-secondary-hover`
+- `--list-item-border` (`--border-width-2` solid transparent) — split into `--list-item-border-width`, `--list-item-border-style`, and `--color-list-item-border`
+- `--list-item-border-radius` (`--border-radius-0`) — split into `--list-item-inner-border-radius` and `--list-item-outer-border-radius`; `--list-item-border-radius-inner` split into `--list-item-header-inner-border-radius` and `--list-item-header-outer-border-radius`
+
+> Note: the same border split applies to `--tile-border` → `--tile-border-width`, `--tile-border-style`, `--color-tile-border` and `--data-block-border` → `--data-block-border-width`, `--data-block-border-style`, `--color-data-block-border`.
+
+#### LxModal footer spacing moved from margin to padding (latvijalv theme only)
+
+The latvijalv theme modal footer now applies its spacing with **padding** instead of margin.
+
+If you set a custom `--modal-footer-margin: 1rem 0` or `margin: 1rem 0` for the latvijalv footer, remove it — the theme now applies the equivalent padding for you.
 
 #### LxInfoBox
 

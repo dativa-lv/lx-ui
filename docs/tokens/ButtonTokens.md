@@ -13,6 +13,15 @@
 | `--button-cursor`                | pointer                                                       |
 | `--button-loader-margin`         | `--space-0`                                                   |
 | `--button-set-gap`               | `--space-0500`                                                |
+| `--button-badge-icon-size`       | `--icon-size-xs`                                              |
+| `--button-badge-gap`             | `--space-0250`                                                |
+| `--button-badge-padding`         | `--space-0125` `--space-0375`                                 |
+| `--button-badge-width`           | fit-content                                                   |
+| `--button-badge-min-width`       | 1.5rem                                                        |
+| `--button-badge-height`          | auto                                                          |
+| `--button-badge-min-height`      | 1.5rem                                                        |
+| `--button-badge-border-width`    | `--border-width-2`                                            |
+| `--button-badge-border-radius`   | `--border-radius-1000`                                        |
 | `--button-badge-inset`           | -0.625rem -0.625rem auto auto                                 |
 | `--button-badge-empty-inset`     | calc(`--space-0500` * -1) calc(`--space-0500` * -1) auto auto |
 | `--button-border-width`          | `--border-width-2`                                            |

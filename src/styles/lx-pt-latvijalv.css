@@ -25,7 +25,9 @@
 
   --region-border: var(--border-width-1) solid #edeef2;
   --region-border-transparent: var(--region-border);
-  --list-item-border: var(--border-width-1) solid #edeef2;
+  --list-item-border-width: var(--border-width-1);
+  --list-item-border-style: solid;
+  --color-list-item-border: #edeef2;
 
   --input-border-width: var(--border-width-1);
   --color-input-border: #e6e7ee #e6e7ee var(--color-label) #e6e7ee;
@@ -116,7 +118,7 @@
   --color-nav-chrome: transparent;
   --tab-border: var(--border-width-4) solid transparent;
   --region-border: var(--border-width-1) solid var(--color-chrome);
-  --list-item-border: var(--border-width-1) solid var(--color-chrome);
+  --color-list-item-border: var(--color-chrome);
   --color-input-border: var(--color-chrome) var(--color-chrome) var(--color-label) var(--color-chrome);
 
   --color-toggle-background-off: #d0d5dc;

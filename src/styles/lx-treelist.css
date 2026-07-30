@@ -62,16 +62,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: var(--color-list-background);
+    background: var(--color-list-item-background);
 }
 
 .tree-list .tree-item .tree-item-invalid>.lx-button{
     height: calc(var(--row-size) - 2px);
 }
 
+.lx-region-component .tree-list .tree-item .tree-item-invalid,
 .lx-region .tree-list .tree-item .tree-item-invalid,
+.lx-region-component .tree-list-small>.tree-item-invalid
 .lx-region .tree-list-small>.tree-item-invalid {
-    --color-list-background: var(--color-region-2);
+    --color-list-item-background: var(--color-region-2);
 }
 
 .tree-list-small>.tree-item-invalid {
@@ -135,7 +137,7 @@
 }
   
 .lx .tree-item-small-parent .lx-list-item.lx-list-item-interactive:not(.lx-list-item-disabled):hover {
-    background-color: var(--color-list-hover-background);
+    background-color: var(--color-list-item-background-hover);
 }
 
 .tree-list .tree-item .tree-item-invalid>.lx-button:not(.lx-disabled) svg,

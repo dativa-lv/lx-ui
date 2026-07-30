@@ -20,8 +20,9 @@
 | `--tile-grid-areas`                 | 'icon-loader' 'content' 'custom-content'              |
 | `--tile-grid-template-columns`      | 1fr                                                   |
 | `--tile-grid-template-rows`         | auto 1fr auto                                         |
-| `--tile-border`                     | `--list-item-border`                                  |
-| `--tile-border-radius`              | `--list-item-border-radius`                           |
+| `--tile-border-width`               | `--list-item-border-width`                            |
+| `--tile-border-style`               | `--list-item-border-style`                            |
+| `--tile-border-radius`              | `--list-item-inner-border-radius`                     |
 | `--tile-border-radius-inner`        | `--tile-border-radius`                                |
 | `--tile-icon-padding`               | `--space-0`                                           |
 | `--tile-mini-icon-padding`          | `--tile-icon-padding`                                 |
@@ -43,17 +44,17 @@
 
 ## Color
 
-| Variable name                       | Default value                       |
-|-------------------------------------|-------------------------------------|
-| `--color-tile-background`           | `--color-list-background`           |
-| `--color-tile-disabled-foreground`  | `--color-list-disabled-foreground`  |
-| `--color-tile-hover-background`     | `--color-list-hover-background`     |
-| `--color-tile-icon`                 | `--color-list-icon`                 |
-| `--color-tile-icon-hover`           | `--color-list-icon-hover`           |
-| `--color-tile-primary`              | `--color-tile-primary`              |
-| `--color-tile-secondary`            | `--color-list-secondary`            |
-| `--color-tile-hover-text-primary`   | `--color-list-hover-text-primary`   |
-| `--color-tile-hover-text-secondary` | `--color-list-hover-text-secondary` |
+| Variable name                       | Default value                        |
+|-------------------------------------|--------------------------------------|
+| `--color-tile-border`               | `--color-list-item-border`           |
+| `--color-tile-background`           | `--color-list-item-background`       |
+| `--color-tile-background-hover`     | `--color-list-item-background-hover` |
+| `--color-tile-icon`                 | `--color-list-icon`                  |
+| `--color-tile-icon-hover`           | `--color-list-icon-hover`            |
+| `--color-tile-text-primary`         | `--color-list-text-primary`          |
+| `--color-tile-text-secondary`       | `--color-list-text-secondary`        |
+| `--color-tile-text-primary-hover`   | `--color-list-text-primary-hover`    |
+| `--color-tile-text-secondary-hover` | `--color-list-text-secondary-hover`  |
 
 <br/>
 Customized values for contrast mode:
@@ -62,4 +63,4 @@ Customized values for contrast mode:
 
 | Variable name                       | Contrast mode value     |
 |-------------------------------------|-------------------------|
-| `--color-tile-hover-text-secondary` | `--contrast-background` |
+| `--color-tile-text-secondary-hover` | `--contrast-background` |

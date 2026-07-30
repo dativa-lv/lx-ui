@@ -460,7 +460,7 @@ code {
 .lx a.lx-tile:hover {
   margin: var(--space-0);
   padding: var(--tile-padding);
-  background-color: var(--color-tile-hover-background);
+  background-color: var(--color-tile-background-hover);
   border-color: var(--color-interactive-hover-background);
 }
 
@@ -521,18 +521,6 @@ code {
 .lx .lx-tile.lx-selected {
   background-color: var(--color-background);
   border: var(--border-width-2) solid var(--color-region);
-}
-
-.lx .lx-tile.lx-tile-green:hover header .lx-primary,
-.lx .lx-tile.lx-tile-blue:hover header .lx-primary,
-.lx .lx-tile.lx-tile-purple:hover header .lx-primary {
-  color: var(--color-tile-hover-foreground);
-}
-
-.lx .lx-tile.lx-tile-green:hover header svg,
-.lx .lx-tile.lx-tile-blue:hover header svg,
-.lx .lx-tile.lx-tile-purple:hover header svg {
-  fill: var(--color-tile-hover-foreground);
 }
 
 .lx-widget {

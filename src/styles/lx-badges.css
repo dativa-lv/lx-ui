@@ -27,6 +27,7 @@
   width: var(--badge-width-empty);
   --badge-gap-s: var(--space-0);
   --badge-padding-s: var(--space-0);
+  --badge-border-radius-s: var(--border-radius-full);
 }
 
 .lx .lx-badge.lx-badge-icon-only {
@@ -40,6 +41,7 @@
 .lx .lx-badge.lx-badge-text-only {
   --badge-grid-template-columns: 1fr;
   --badge-grid-areas: 'text';
+  --badge-gap-s: var(--space-0);
 }
 
 .lx-badge .lx-badge-icon {

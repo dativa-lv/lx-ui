@@ -17,9 +17,11 @@
   display: grid;
   grid-template-columns: var(--list-grid-template-columns);
   grid-template-areas: var(--list-grid-areas);
-  background: var(--color-list-background);
-  border: var(--list-item-border);
-  border-radius: var(--list-item-border-radius);
+  background: var(--color-list-item-background);
+  border-width: var(--list-item-border-width);
+  border-style: var(--list-item-border-style);
+  border-color: var(--color-list-item-border);
+  border-radius: var(--list-item-inner-border-radius);
   overflow: hidden;
 }
 
@@ -35,13 +37,435 @@
   display: grid;
   grid-template-columns: var(--list-grid-template-columns);
   grid-template-areas: var(--list-grid-areas);
-  border: var(--list-item-border);
-  border-radius: var(--list-item-border-radius);
+  border-width: var(--list-item-border-width);
+  border-style: var(--list-item-border-style);
+  border-color: var(--color-list-item-border);
+  border-radius: var(--list-item-inner-border-radius);
   min-height: var(--list-item-min-height);
   width: var(--list-item-width);
   overflow: hidden;
-  background: var(--color-list-background);
+  background: var(--color-list-item-background);
 }
+
+/*** Border-radius styles ***/
+
+/* 1 col */
+
+.lx-list-wrapper .lx-list-item-container:has(.lx-list-item.lx-selected) {
+  border-radius: var(--list-item-inner-border-radius-selected);
+}
+
+.lx-list-wrapper .lx-list-item-interactive {
+  border-radius: var(--list-item-header-inner-border-radius);
+}
+
+.lx-list-wrapper .lx-list-item-interactive.lx-selected {
+  border-radius: var(--list-item-header-inner-border-radius-selected);
+}
+
+/* First item */
+
+.draggable-list-item-wrapper:first-of-type .lx-list-item-container,
+.lx-list-wrapper .tree-item:first-of-type .lx-list-item-container,
+.lx-list-default .lx-list-item-container:first-of-type {
+  border-radius: var(--list-item-outer-border-radius) 
+                 var(--list-item-outer-border-radius) 
+                 var(--list-item-inner-border-radius) 
+                 var(--list-item-inner-border-radius);
+}
+
+.draggable-list-item-wrapper:first-of-type .lx-list-item-container .lx-list-item-interactive,
+.lx-list-wrapper .tree-item:first-of-type .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default .lx-list-item-container:first-of-type .lx-list-item-interactive {
+  border-radius: var(--list-item-header-outer-border-radius) 
+                 var(--list-item-header-outer-border-radius) 
+                 var(--list-item-header-inner-border-radius) 
+                 var(--list-item-header-inner-border-radius);
+}
+
+.lx-list-wrapper .tree-item:first-of-type .lx-list-item-container:has(.lx-list-item.lx-selected),
+.lx-list-default .lx-list-item-container:has(.lx-list-item.lx-selected):first-of-type {
+  border-radius: var(--list-item-outer-border-radius-selected) 
+                 var(--list-item-outer-border-radius-selected) 
+                 var(--list-item-inner-border-radius-selected) 
+                 var(--list-item-inner-border-radius-selected);
+}
+
+.lx-list-wrapper .tree-item:first-of-type .lx-list-item-container .lx-list-item-interactive.lx-selected,
+.lx-list-default .lx-list-item-container:first-of-type .lx-list-item-interactive.lx-selected {
+  border-radius: var(--list-item-header-outer-border-radius-selected) 
+                 var(--list-item-header-outer-border-radius-selected) 
+                 var(--list-item-header-inner-border-radius-selected) 
+                 var(--list-item-header-inner-border-radius-selected);
+}
+
+/* Last item */
+
+.draggable-list-item-wrapper:last-of-type .lx-list-item-container,
+.lx-list-wrapper .tree-item:last-of-type .lx-list-item-container,
+.lx-list-default .lx-list-item-container:last-of-type {
+  border-radius: var(--list-item-inner-border-radius) 
+                 var(--list-item-inner-border-radius) 
+                 var(--list-item-outer-border-radius) 
+                 var(--list-item-outer-border-radius);
+}
+
+.draggable-list-item-wrapper:last-of-type .lx-list-item-container .lx-list-item-interactive,
+.lx-list-wrapper .tree-item:last-of-type .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default .lx-list-item-container:last-of-type .lx-list-item-interactive {
+  border-radius: var(--list-item-header-inner-border-radius) 
+                 var(--list-item-header-inner-border-radius) 
+                 var(--list-item-header-outer-border-radius) 
+                 var(--list-item-header-outer-border-radius);
+}
+
+.lx-list-wrapper .tree-item:last-of-type .lx-list-item-container:has(.lx-list-item.lx-selected),
+.lx-list-default .lx-list-item-container:has(.lx-list-item.lx-selected):last-of-type {
+  border-radius: var(--list-item-inner-border-radius-selected) 
+                 var(--list-item-inner-border-radius-selected) 
+                 var(--list-item-outer-border-radius-selected) 
+                 var(--list-item-outer-border-radius-selected);
+}
+
+.lx-list-wrapper .tree-item:last-of-type .lx-list-item-container .lx-list-item-interactive.lx-selected,
+.lx-list-default .lx-list-item-container:last-of-type .lx-list-item-interactive.lx-selected {
+  border-radius: var(--list-item-header-inner-border-radius-selected) 
+                 var(--list-item-header-inner-border-radius-selected) 
+                 var(--list-item-header-outer-border-radius-selected) 
+                 var(--list-item-header-outer-border-radius-selected);
+}
+
+/* Only item */
+
+.draggable-list-item-wrapper:only-child .lx-list-item-container,
+.lx-list-wrapper .tree-item:only-child .lx-list-item-container,
+.lx-list-default .lx-list-item-container:only-child {
+  border-radius: var(--list-item-outer-border-radius);
+}
+
+.draggable-list-item-wrapper:only-child .lx-list-item-container .lx-list-item-interactive,
+.lx-list-wrapper .tree-item:only-child .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default .lx-list-item-container:only-child .lx-list-item-interactive {
+  border-radius: var(--list-item-header-inner-border-radius);
+}
+
+.lx-list-wrapper .tree-item:only-child .lx-list-item-container:has(.lx-list-item.lx-selected),
+.lx-list-default .lx-list-item-container:has(.lx-list-item.lx-selected):only-child {
+  border-radius: var(--list-item-outer-border-radius-selected);
+}
+
+.lx-list-wrapper .tree-item:only-child .lx-list-item-container .lx-list-item-interactive.lx-selected,
+.lx-list-default .lx-list-item-container:only-child .lx-list-item-interactive.lx-selected {
+  border-radius: var(--list-item-header-inner-border-radius-selected);
+}
+
+/* 2 cols */
+
+.lx-list-cols-2 .draggable-list-item-wrapper .lx-list-item-container,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container {
+  border-radius: var(--list-item-inner-border-radius);
+}
+
+.lx-list-cols-2 .draggable-list-item-wrapper .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container .lx-list-item-interactive {
+  border-radius: var(--list-item-header-inner-border-radius);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:has(.lx-list-item.lx-selected) {
+  border-radius: var(--list-item-inner-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container .lx-list-item-interactive.lx-selected {
+  border-radius: var(--list-item-header-inner-border-radius-selected);
+}
+
+.lx-list-cols-2 .draggable-list-item-wrapper:first-child .lx-list-item-container,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:first-child {
+  border-top-left-radius: var(--list-item-outer-border-radius);
+  border-top-right-radius: var(--list-item-inner-border-radius);
+}
+
+.lx-list-cols-2 .draggable-list-item-wrapper:first-child .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:first-child .lx-list-item-interactive {
+  border-top-left-radius: var(--list-item-header-outer-border-radius);
+  border-top-right-radius: var(--list-item-header-inner-border-radius);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:has(.lx-list-item.lx-selected):first-child {
+  border-top-left-radius: var(--list-item-outer-border-radius-selected);
+  border-top-right-radius: var(--list-item-inner-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:first-child .lx-list-item-interactive.lx-selected {
+  border-top-left-radius: var(--list-item-header-outer-border-radius-selected);
+  border-top-right-radius: var(--list-item-header-inner-border-radius-selected);
+}
+
+.lx-list-cols-2 .draggable-list-item-wrapper:nth-child(2) .lx-list-item-container,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:nth-child(2) {
+  border-top-right-radius: var(--list-item-outer-border-radius);
+}
+
+.lx-list-cols-2 .draggable-list-item-wrapper:nth-child(2) .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:nth-child(2) .lx-list-item-interactive {
+  border-top-right-radius: var(--list-item-header-outer-border-radius);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:has(.lx-list-item.lx-selected):nth-child(2) {
+  border-top-right-radius: var(--list-item-outer-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:nth-child(2) .lx-list-item-interactive.lx-selected {
+  border-top-right-radius: var(--list-item-header-outer-border-radius-selected);
+}
+
+/* Odd or even number of items - bottom-left item */
+/* Example:
+   1 2
+   3
+*/
+/* Example:
+   1 2
+   3 4
+*/
+
+.lx-list-cols-2 .draggable-list-item-wrapper:last-child:nth-child(odd) .lx-list-item-container,
+.lx-list-cols-2 .draggable-list-item-wrapper:nth-last-child(2):nth-child(odd) .lx-list-item-container,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:last-child:nth-child(odd),
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:nth-last-child(2):nth-child(odd) {
+  border-bottom-left-radius: var(--list-item-outer-border-radius);
+}
+
+.lx-list-cols-2 .draggable-list-item-wrapper:last-child:nth-child(odd) .lx-list-item-container .lx-list-item-interactive,
+.lx-list-cols-2 .draggable-list-item-wrapper:nth-last-child(2):nth-child(odd) .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:last-child:nth-child(odd) .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:nth-last-child(2):nth-child(odd) .lx-list-item-interactive {
+  border-bottom-left-radius: var(--list-item-header-outer-border-radius);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:has(.lx-list-item.lx-selected):last-child:nth-child(odd),
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:has(.lx-list-item.lx-selected):nth-last-child(2):nth-child(odd) {
+  border-bottom-left-radius: var(--list-item-outer-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:last-child:nth-child(odd) .lx-list-item-interactive.lx-selected,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:nth-last-child(2):nth-child(odd) .lx-list-item-interactive.lx-selected {
+  border-bottom-left-radius: var(--list-item-header-outer-border-radius-selected);
+}
+
+/* Even number of items - last item is bottom-right */
+/* Example:
+   1 2
+   3 4
+*/
+.lx-list-cols-2 .draggable-list-item-wrapper:last-child:nth-child(even) .lx-list-item-container,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:last-child:nth-child(even) {
+  border-bottom-right-radius: var(--list-item-outer-border-radius);
+}
+
+.lx-list-cols-2 .draggable-list-item-wrapper:last-child:nth-child(even) .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:last-child:nth-child(even) .lx-list-item-interactive {
+  border-bottom-right-radius: var(--list-item-header-outer-border-radius);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:has(.lx-list-item.lx-selected):last-child:nth-child(even) {
+  border-bottom-right-radius: var(--list-item-outer-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-2 .lx-list-item-container:last-child:nth-child(even) .lx-list-item-interactive.lx-selected {
+  border-bottom-right-radius: var(--list-item-header-outer-border-radius-selected);
+}
+
+/* 3 cols */
+
+.lx-list-cols-3 .draggable-list-item-wrapper .lx-list-item-container,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container {
+  border-radius: var(--list-item-inner-border-radius);
+}
+
+.lx-list-cols-3 .draggable-list-item-wrapper .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container .lx-list-item-interactive {
+  border-radius: var(--list-item-header-inner-border-radius);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:has(.lx-list-item.lx-selected) {
+  border-radius: var(--list-item-inner-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container .lx-list-item-interactive.lx-selected {
+  border-radius: var(--list-item-header-inner-border-radius-selected);
+}
+
+.lx-list-cols-3 .draggable-list-item-wrapper:first-child .lx-list-item-container,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:first-child {
+  border-top-left-radius: var(--list-item-outer-border-radius);
+}
+
+.lx-list-cols-3 .draggable-list-item-wrapper:first-child .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:first-child .lx-list-item-interactive {
+  border-top-left-radius: var(--list-item-header-outer-border-radius);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:has(.lx-list-item.lx-selected):first-child {
+  border-top-left-radius: var(--list-item-outer-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:first-child .lx-list-item-interactive.lx-selected {
+  border-top-left-radius: var(--list-item-header-outer-border-radius-selected);
+}
+
+.lx-list-cols-3 .draggable-list-item-wrapper:nth-child(3) .lx-list-item-container,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:nth-child(3) {
+  border-top-right-radius: var(--list-item-outer-border-radius);
+}
+
+.lx-list-cols-3 .draggable-list-item-wrapper:nth-child(3) .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:nth-child(3) .lx-list-item-interactive {
+  border-top-right-radius: var(--list-item-header-outer-border-radius);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:has(.lx-list-item.lx-selected):nth-child(3) {
+  border-top-right-radius: var(--list-item-outer-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:nth-child(3) .lx-list-item-interactive.lx-selected {
+  border-top-right-radius: var(--list-item-header-outer-border-radius-selected);
+}
+
+/* Last row has 1, 2 or 3 items - first item in row is bottom-left */
+/* Example:
+   1 2 3
+   4
+*/
+/* Example:
+   1 2 3
+   4 5
+*/
+/* Example:
+   1 2 3
+   4 5 6
+*/
+.lx-list-cols-3 .draggable-list-item-wrapper:nth-last-child(2):nth-child(3n + 1) .lx-list-item-container,
+.lx-list-cols-3 .draggable-list-item-wrapper:nth-last-child(3):nth-child(3n + 1) .lx-list-item-container,
+.lx-list-cols-3 .draggable-list-item-wrapper:last-child:nth-child(3n + 1) .lx-list-item-container,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:nth-last-child(2):nth-child(3n + 1),
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:nth-last-child(3):nth-child(3n + 1),
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n + 1) {
+  border-bottom-left-radius: var(--list-item-outer-border-radius);
+}
+
+.lx-list-cols-3 .draggable-list-item-wrapper:nth-last-child(2):nth-child(3n + 1) .lx-list-item-container  .lx-list-item-interactive,
+.lx-list-cols-3 .draggable-list-item-wrapper:nth-last-child(3):nth-child(3n + 1) .lx-list-item-container .lx-list-item-interactive,
+.lx-list-cols-3 .draggable-list-item-wrapper:last-child:nth-child(3n + 1) .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:nth-last-child(2):nth-child(3n + 1) .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:nth-last-child(3):nth-child(3n + 1) .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n + 1) .lx-list-item-interactive {
+  border-bottom-left-radius: var(--list-item-header-outer-border-radius);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:has(.lx-list-item.lx-selected):nth-last-child(2):nth-child(3n + 1),
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:has(.lx-list-item.lx-selected):nth-last-child(3):nth-child(3n + 1),
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:has(.lx-list-item.lx-selected):last-child:nth-child(3n + 1) {
+  border-bottom-left-radius: var(--list-item-outer-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:nth-last-child(2):nth-child(3n + 1) .lx-list-item-interactive.lx-selected,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:nth-last-child(3):nth-child(3n + 1) .lx-list-item-interactive.lx-selected,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n + 1) .lx-list-item-interactive.lx-selected {
+  border-bottom-left-radius: var(--list-item-header-outer-border-radius-selected);
+}
+
+/* Last row has 1 item - last item is bottom-left only */
+/* Example:
+   1 2 3
+   4
+*/
+.lx-list-cols-3 .draggable-list-item-wrapper:last-child:nth-child(3n + 1) .lx-list-item-container,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n + 1) {
+  border-bottom-right-radius: var(--list-item-inner-border-radius);
+}
+
+.lx-list-cols-3 .draggable-list-item-wrapper:last-child:nth-child(3n + 1) .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n + 1) .lx-list-item-interactive {
+  border-bottom-right-radius: var(--list-item-header-inner-border-radius);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:has(.lx-list-item.lx-selected):last-child:nth-child(3n + 1) {
+  border-bottom-right-radius: var(--list-item-inner-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n + 1) .lx-list-item-interactive.lx-selected {
+  border-bottom-right-radius: var(--list-item-header-inner-border-radius-selected);
+}
+
+/* Last row has 3 items - last item is bottom-right */
+/* Example:
+   1 2 3
+   4 5 6
+*/
+.lx-list-cols-3 .draggable-list-item-wrapper:last-child:nth-child(3n) .lx-list-item-container,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n) {
+  border-bottom-right-radius: var(--list-item-outer-border-radius);
+}
+
+.lx-list-cols-3 .draggable-list-item-wrapper:last-child:nth-child(3n) .lx-list-item-container  .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n) .lx-list-item-interactive {
+  border-bottom-right-radius: var(--list-item-header-outer-border-radius);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:has(.lx-list-item.lx-selected):last-child:nth-child(3n) {
+  border-bottom-right-radius: var(--list-item-outer-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n) .lx-list-item-interactive.lx-selected {
+  border-bottom-right-radius: var(--list-item-header-outer-border-radius-selected);
+}
+
+/* Last row has 2 items - last item has inner radius */
+/* Example:
+   1 2 3
+   4 5
+*/
+.lx-list-cols-3 .draggable-list-item-wrapper:last-child:nth-child(3n + 2) .lx-list-item-container,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n + 2) {
+  border-bottom-left-radius: var(--list-item-inner-border-radius);
+  border-bottom-right-radius: var(--list-item-inner-border-radius);
+}
+
+.lx-list-cols-3 .draggable-list-item-wrapper:last-child:nth-child(3n + 2) .lx-list-item-container .lx-list-item-interactive,
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n + 2) .lx-list-item-interactive {
+  border-bottom-left-radius: var(--list-item-header-inner-border-radius);
+  border-bottom-right-radius: var(--list-item-header-inner-border-radius);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:has(.lx-list-item.lx-selected):last-child:nth-child(3n + 2) {
+  border-bottom-left-radius: var(--list-item-inner-border-radius-selected);
+  border-bottom-right-radius: var(--list-item-inner-border-radius-selected);
+}
+
+.lx-list-default.lx-list-cols-3 .lx-list-item-container:last-child:nth-child(3n + 2) .lx-list-item-interactive.lx-selected {
+  border-bottom-left-radius: var(--list-item-header-inner-border-radius-selected);
+  border-bottom-right-radius: var(--list-item-header-inner-border-radius-selected);
+}
+
+.lx-expander.lx-expander-row .lx-body .lx-list-default.lx-list .lx-list-item-container,
+.lx-expander.lx-expander-row .lx-body .lx-list .lx-draggable-group-list-item .lx-list-item-container,
+.lx-expander.lx-expander-row .lx-body .tree-list .tree-item .lx-list-item-container,
+.lx-list-wrapper .tree-item .tree-item .lx-list-item-container {
+  border-radius: var(--list-item-inner-border-radius);
+}
+
+.lx-expander.lx-expander-row .lx-body .lx-list-default.lx-list .lx-list-item-container:has(.lx-list-item.lx-selected),
+.lx-expander.lx-expander-row .lx-body .tree-list .tree-item .lx-list-item-container:has(.lx-list-item.lx-selected) {
+  border-radius: var(--list-item-inner-border-radius-selected);
+}
+
+.lx-expander.lx-expander-row .lx-body .lx-list-default.lx-list .lx-list-item-container .lx-list-item-interactive.lx-selected,
+.lx-expander.lx-expander-row .lx-body .tree-list .tree-item .lx-list-item-container .lx-list-item-interactive.lx-selected {
+  border-radius: var(--list-item-header-inner-border-radius-selected);
+}
+
+/***/
 
 .lx-list-item-interactive:focus,
 .lx-list-item-interactive:focus-visible,
@@ -85,7 +509,6 @@
   grid-template-columns: subgrid;
   grid-template-rows: subgrid;
   grid-column: var(--list-grid-inner-column-span);
-  border-radius: var(--list-item-border-radius-inner);
   overflow: hidden;
 }
 
@@ -106,6 +529,8 @@
 .lx-list-item-container:has(.lx-list-item.lx-list-item-disabled) {
   cursor: not-allowed;
 }
+
+/*** Button styles ***/
   
 .lx-list-item-actions {
   grid-area: actions;
@@ -124,8 +549,59 @@
   min-width: var(--list-button-width);
   height: 100%;
   max-height: var(--list-button-max-height);
+  border: var(--list-button-border);
   border-radius: var(--list-button-border-radius);
+  background: var(--color-list-button-background);
+  outline-offset: var(--list-button-outline-offset);
 }
+
+.lx .lx-list-item-actions .lx-button svg {
+  fill: var(--color-list-button-icon);
+  height: var(--list-button-icon-size);
+  width: var(--list-button-icon-size);
+}
+
+.lx .lx-list-item-actions .lx-button:hover {
+  background: var(--color-list-button-background-hover);
+}
+
+.lx .lx-list-item-actions .lx-button:hover svg {
+  fill: var(--color-list-button-icon-hover);
+}
+
+.lx .lx-list-item-actions .lx-button:focus {
+  background: var(--color-list-button-background-focus);
+}
+
+.lx .lx-list-item-actions .lx-button:focus svg {
+  fill: var(--color-list-button-icon-focus);
+}
+
+.lx .lx-list-item-actions .lx-button:focus:hover {
+  background: var(--color-list-button-background-hover);
+}
+
+.lx .lx-list-item-actions .lx-button:focus:hover svg {
+  fill: var(--color-list-button-icon-hover);
+}
+
+.lx .lx-list-item-actions .lx-button.lx-button-ghost:active {
+  background: var(--color-list-button-background-active);
+}
+
+.lx .lx-list-item-actions .lx-button.lx-button-ghost:active svg {
+  fill: var(--color-list-button-icon-active);
+}
+
+.lx .lx-list-item-actions .lx-button.lx-button-ghost.lx-disabled {
+  background: var(--color-list-button-background-disabled);
+}
+
+.lx .lx-list-item-actions .lx-button.lx-button-ghost.lx-disabled svg {
+  fill: var(--color-list-button-icon-disabled);
+}
+
+/***/
 
 .lx-empty-state {
   height: calc(var(--row-size) * 2);
@@ -152,10 +628,6 @@
   width: 100%;
 }
 
-.lx-list-item-wrapper:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-list-item-actions .lx-dropdown-toggler .lx-button:hover{
-  background: var(--color-interactive-hover-background);
-}
-
 /*** Selected + hover container styles ***/
 
 .lx a.lx-list-item:hover {
@@ -180,7 +652,7 @@
 .lx .list-draggable-area:not(:has(.ghost)) .lx-draggable-group-list-item:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled)) .lx-handle:hover,
 .lx .lx-list-item-interactive:not(.lx-list-item-disabled):hover,
 .lx-list-item-interactive.lx-selected:not(.lx-list-item-disabled):hover {
-  background: var(--color-list-hover-background);
+  background: var(--color-list-item-background-hover);
 }
 
 /*** Form + region + modal + appendable list + datablock styles ***/
@@ -202,7 +674,7 @@
 .lx-region-component .lx-region-component .draggable-list-item-wrapper .lx-handle,
 .lx-region-component .lx-region-component .lx-list-item-wrapper,
 .lx-region-component .lx-region-component .lx-list-item-container {
-  background: var(--color-list-background);
+  background: var(--color-list-item-background);
 }
 
 .lx .lx-layout .lx-component-toolbar.lx-disabled .second-row {
@@ -435,7 +907,7 @@
 
 .lx-list-item-container:has(.lx-list-item-disabled) .lx-handle .lx-icon,
 .lx-list-item-disabled svg {
-  fill: var(--color-list-disabled-foreground);
+  fill: var(--color-disabled);
 }
 
 .lx.lx-theme-contrast .lx-list-item-wrapper:has(.lx-list-item-disabled) .lx-list-item-actions svg,
@@ -446,13 +918,6 @@
 .lx-list-item-wrapper .lx-list-item:not(.lx-list-item-disabled) .lx-list-icon,
 .lx-list-item:not(.lx-list-item-disabled) .lx-list-item-actions > .lx-button:not(:hover):not(:active):not(:disabled) .lx-button-icon {
   fill: var(--color-list-icon);
-}
-
-.lx .lx-list-item-wrapper .lx-list-item-actions .lx-button-ghost {
-  --color-button-ghost-icon: var(--color-list-icon);
-  --color-button-ghost-icon-focus: var(--color-list-icon);
-  --color-button-ghost-icon-disabled: var(--color-list-disabled-foreground);
-  --color-button-ghost-icon-active: var(--color-interactive-hover-foreground);
 }
 
 .lx .lx-layout .lx-list-item-interactive:hover:not(.lx-list-item-disabled)
@@ -610,14 +1075,14 @@
 }
 
 .lx.lx-theme-contrast .lx-list-item[class*=category] .lx-category-displayer {
-  background: var(--color-list-category-contrast);
+  background: transparent;
 }
   
 /*** List item text styles ***/
 
 .lx-list-item p.lx-primary {
   flex-grow: 0;
-  color: var(--color-list-primary);
+  color: var(--color-list-text-primary);
   font-size: var(--list-text-primary-font-size);
   line-height: var(--list-text-primary-line-height);
   font-weight: var(--list-text-primary-font-weight);
@@ -627,7 +1092,7 @@
 
 .lx-list-item > header > p.lx-secondary {
   flex-grow: 1;
-  color: var(--color-list-secondary);
+  color: var(--color-list-text-secondary);
   font-size: var(--list-text-secondary-font-size);
   line-height: var(--list-text-secondary-line-height);
   font-weight: var(--list-text-secondary-font-weight);
@@ -643,12 +1108,12 @@
 
 .lx-list-item-disabled p.lx-primary,
 .lx .lx-list-item-disabled p.lx-secondary {
-  color: var(--color-list-disabled-foreground);
+  color: var(--color-disabled);
 }
 
 .lx-list-item-disabled.lx-selected p.lx-primary,
 .lx .lx-list-item-disabled.lx-selected p.lx-secondary {
-  color: var(--color-list-disabled-selected-text);
+  color: var(--color-list-text-selected-disabled);
 }
 
 .lx-list-item-wrapper .lx-list-item.lx-selected:not(.lx-list-item-disabled) p.lx-primary,
@@ -668,11 +1133,11 @@
 
 .lx-list-item-wrapper .lx-list-item-interactive:not(.lx-list-item-disabled):hover p.lx-primary,
 .lx-list-item-interactive:not(.lx-list-item-disabled):hover header p {
-  color: var(--color-list-hover-text-primary);
+  color: var(--color-list-text-primary-hover);
 }
 
 .lx-list-item-wrapper .lx-list-item-interactive:not(.lx-list-item-disabled):hover p.lx-secondary {
-  color: var(--color-list-hover-text-secondary);
+  color: var(--color-list-text-secondary-hover);
 }
 
 /*** Toolbar styles ***/
@@ -783,18 +1248,18 @@
   justify-content: center;
   align-items: flex-start;
   width: var(--list-draggable-handle-width);
-  background: var(--color-list-background);
+  background: var(--color-list-item-background);
 }
 
 .lx-handle:not(.handle-disabled):hover .lx-icon {
-  fill: var(--color-list-hover-handle-icon);
+  fill: var(--color-list-draggable-handle-icon-hover);
 }
 
 .lx-handle .lx-icon {
   margin-top: var(--space-0500);
   width: var(--list-draggable-handle-icon-size);
   height: var(--list-draggable-handle-icon-size);
-  fill: var(--color-list-handle-icon);
+  fill: var(--color-list-draggable-handle-icon);
 }
 
 .draggable-list-item-wrapper .lx-list-item-wrapper {
@@ -843,7 +1308,6 @@
   display: grid;
   height: 100%;
   width: 100%;
-  border-radius: var(--list-item-border-radius);
 }
 
 .lx-draggable-group-list-item > .lx-list-item-container > .lx-context-container > .popper-wrapper,
@@ -876,7 +1340,7 @@
   border-radius: var(--tile-border-radius-inner);
   overflow: hidden;
   background: transparent;
-  color: var(--color-tile-primary);
+  color: var(--color-tile-text-primary);
   padding: var(--tile-padding);
   height: 100%;
   cursor: pointer;
@@ -894,7 +1358,9 @@
 
 .lx .lx-tile-wrapper {
   background: var(--color-tile-background);
-  border: var(--tile-border);
+  border-width: var(--tile-border-width);
+  border-style: var(--tile-border-style);
+  border-color: var(--color-tile-border);
   border-radius: var(--tile-border-radius);
   min-height: var(--tile-min-height);
   overflow: hidden;
@@ -909,7 +1375,7 @@
 
 .lx-tile p.lx-primary {
   flex-grow: 0;
-  color: var(--color-tile-primary);
+  color: var(--color-tile-text-primary);
   font-size: var(--tile-text-primary-font-size);
   line-height: var(--tile-text-primary-line-height);
   font-weight: var(--tile-text-primary-font-weight);
@@ -919,7 +1385,7 @@
 
 .lx-tile > header > p.lx-secondary {
   flex-grow: 1;
-  color: var(--color-tile-secondary);
+  color: var(--color-tile-text-secondary);
   font-size: var(--tile-text-secondary-font-size);
   line-height: var(--tile-text-secondary-line-height);
   font-weight: var(--tile-text-secondary-font-weight);
@@ -934,17 +1400,18 @@
 }
 
 .lx-tile.lx-disabled p.lx-primary,
-.lx .lx-tile.lx-disabled p.lx-secondary {
-  color: var(--color-tile-disabled-foreground);
+.lx .lx-tile.lx-disabled p.lx-secondary,
+.lx .lx-tile.lx-disabled .lx-tile-icon-wrapper .lx-tile-icon {
+  color: var(--color-disabled);
 }
 
 .lx-tile-wrapper .lx-tile:not(.lx-disabled):hover p.lx-primary,
 .lx-tile:not(.lx-disabled):hover article {
-  color: var(--color-tile-hover-text-primary);
+  color: var(--color-tile-text-primary-hover);
 }
 
 .lx-tile-wrapper .lx-tile:not(.lx-disabled):hover p.lx-secondary {
-  color: var(--color-tile-hover-text-secondary);
+  color: var(--color-tile-text-secondary-hover);
 }
 
 .lx-tile-wrapper .lx-tile:not(.lx-disabled) .lx-tile-icon {
@@ -952,7 +1419,7 @@
 }
 
 .lx-tile-wrapper .lx-tile.lx-disabled .lx-tile-icon {
-  fill: var(--color-tile-disabled-foreground);
+  fill: var(--color-disabled);
 }
 
 .lx-tile-wrapper .lx-tile:not(.lx-disabled):hover .lx-tile-icon {
@@ -1050,7 +1517,7 @@ a.lx-tile:hover {
 
 .lx-tile:not(.lx-disabled):hover,
 a.lx-tile:not(.lx-disabled):hover {
-  background: var(--color-tile-hover-background);
+  background: var(--color-tile-background-hover);
 }
 
 .lx-tile > header .lx-description {
@@ -1058,15 +1525,6 @@ a.lx-tile:not(.lx-disabled):hover {
   color: var(--color-label);
   font-size: var(--small-font-size);
   line-height: 1.1em;
-}
-
-.lx-tile:not(.lx-disabled):hover > header .lx-primary,
-.lx-tile:not(.lx-disabled):hover > header .lx-description {
-  color: var(--color-tile-hover-foreground);
-}
-
-.lx-tile:not(.lx-disabled):hover > header > .lx-icon {
-  fill: var(--color-tile-hover-foreground);
 }
 
 .lx-tile .lx-tile-item-loader, .lx-tile .lx-loader-wrapper {
@@ -1159,7 +1617,7 @@ li .lx-list-item.lx-inactive {
 }
 
 .lx-list-item-wrapper .lx-list-item-actions .lx-button .lx-badge {
-  border-color: var(--color-list-background);
+  border-color: var(--color-list-item-background);
 }
 
 .lx-region .lx-list-item-actions .lx-button .lx-badge,
@@ -1171,7 +1629,6 @@ li .lx-list-item.lx-inactive {
 .lx-list-item-wrapper .compact-actions:has(.lx-list-item-actions) .lx-list-icon-wrapper {
   height: var(--list-button-max-height);
 }
-
 
 .lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions {
   display: flex;

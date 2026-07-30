@@ -20,6 +20,7 @@ import { lxDevUtils } from '@/utils';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
 import useScrollVirtualizer from '@/hooks/useScrollVirtualizer';
+import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -133,6 +134,8 @@ const UNSPECIFIED_GROUP_CODE = 'lx_list_nullable_group';
 const BASE_WIDTH = 300; // minimum space for layout
 const WIDTH_PER_ACTION = 120; // average button width
 const VIRTUALIZED_ESTIMATED_ITEM_HEIGHT = 72;
+
+const { width: windowWidth } = useWindowSize();
 
 const responsiveGroupDefinitions = ref(props.groupDefinitions);
 const itemsArray = ref([]);
@@ -1382,6 +1385,25 @@ const toolbarActions = computed(() => {
   return props.toolbarActionDefinitions;
 });
 
+const listColsClass = computed(() => {
+  if (normalizedListType.value === '3') {
+    if (windowWidth.value > 1200) {
+      return 'lx-list-cols-3';
+    }
+    if (windowWidth.value > 900) {
+      return 'lx-list-cols-2';
+    }
+  }
+
+  if (normalizedListType.value === '2') {
+    if (windowWidth.value > 900) {
+      return 'lx-list-cols-2';
+    }
+  }
+
+  return null;
+});
+
 onMounted(async () => {
   // @ts-ignore
   itemsArray.value = fillItemsArray();
@@ -1599,8 +1621,12 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         <ul
           v-if="kind === 'default'"
           :id="id"
-          class="lx-list"
-          :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+          class="lx-list lx-list-default"
+          :class="[
+            { 'lx-list-3': listType === '3' },
+            { 'lx-list-2': listType === '2' },
+            listColsClass,
+          ]"
           :aria-labelledby="labelledBy"
         >
           <li
@@ -1666,7 +1692,11 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           v-if="kind === 'draggable' && draggable"
           :id="id"
           class="lx-list"
-          :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+          :class="[
+            { 'lx-list-3': listType === '3' },
+            { 'lx-list-2': listType === '2' },
+            listColsClass,
+          ]"
         >
           <draggable
             :id="`draggable-list-${id}`"
@@ -1801,8 +1831,12 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 filteredGroupedItems[prepareCode(group.id)].length > 0
               "
               :id="`${id}-${prepareCode(group.id)}`"
-              class="lx-list"
-              :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+              class="lx-list lx-list-default"
+              :class="[
+                { 'lx-list-3': listType === '3' },
+                { 'lx-list-2': listType === '2' },
+                listColsClass,
+              ]"
               :aria-labelledby="labelledBy"
             >
               <li
@@ -2146,7 +2180,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           v-if="shouldVirtualizeDefaultList"
           ref="defaultListRef"
           :id="id"
-          class="lx-list"
+          class="lx-list lx-list-default"
           :aria-labelledby="labelledBy"
           :style="{ height: `${defaultListTotalSize}px`, position: 'relative' }"
         >
@@ -2222,10 +2256,11 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         <ul
           v-else-if="kind === 'default' && !wantsDefaultListVirtualization"
           :id="id"
-          class="lx-list"
+          class="lx-list lx-list-default"
           :class="[
             { 'lx-list-2': normalizedListType === '2' },
             { 'lx-list-3': normalizedListType === '3' },
+            listColsClass,
           ]"
           :aria-labelledby="labelledBy"
         >
@@ -2291,7 +2326,11 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           v-if="kind === 'draggable' && draggable"
           :id="id"
           class="lx-list"
-          :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+          :class="[
+            { 'lx-list-3': listType === '3' },
+            { 'lx-list-2': listType === '2' },
+            listColsClass,
+          ]"
         >
           <draggable
             :id="`draggable-list-${id}`"
@@ -2412,7 +2451,11 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             v-if="kind === 'draggable' && draggable"
             :id="`${id}-${prepareCode(group.id)}`"
             class="lx-list"
-            :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+            :class="[
+              { 'lx-list-3': listType === '3' },
+              { 'lx-list-2': listType === '2' },
+              listColsClass,
+            ]"
           >
             <draggable
               class="list-draggable-area"
