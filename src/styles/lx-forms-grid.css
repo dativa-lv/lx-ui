@@ -2116,6 +2116,7 @@ p .lx-person-display-wrapper {
 
   .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-dropdown-input-wrapper > .lx-dropdown-default-panel {
     border-bottom: var(--border-width-0);
+    height: var(--row-size);
   }
   
   .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-dropdown-input-wrapper > .lx-dropdown-default-panel .lx-input-text{
@@ -2158,6 +2159,13 @@ p .lx-person-display-wrapper {
   .lx-form-grid > header > .lx-group.lx-primary .lx-toolbar-chip {
     margin-left: var(--space-0);
     padding-left: var(--gap-form-small-side);
+  }
+  .lx-form-grid > .lx-wizard .lx-steps-container-wrapper {
+    padding: var(--space-0750) var(--space-0500) var(--space-0500) var(--space-1000);
+  }
+
+  .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-dropdown-input-wrapper > .lx-dropdown-default-panel .lx-input-text {
+    margin-left: var(--space-0);
   }
 }
 

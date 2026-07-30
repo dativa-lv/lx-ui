@@ -587,8 +587,14 @@
     .lx-layout.lx-layout-latvijalv.lx-collapsed>nav,
     .lx-layout-latvijalv.no-nav-items .lx-data-grid-wrapper > .lx-grid-toolbar,
     .lx .lx-layout-latvijalv.no-nav-items .lx-data-grid-wrapper > .lx-grid-header-wrapper,
+    .lx-layout-latvijalv.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-toolbar,
+    .lx-layout-latvijalv.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-header-wrapper,
     .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid>header.lx-sticky {
       top: var(--space-0);
+    }
+
+    .lx-layout-latvijalv.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+      top: var(--row-size);
     }
   
     .lx-layout.lx-layout-latvijalv .lx-toolbar.lx-sticky,

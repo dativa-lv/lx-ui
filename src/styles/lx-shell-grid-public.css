@@ -526,9 +526,15 @@
   .lx-layout.lx-layout-public.lx-collapsed>nav,
   .lx-layout-public.no-nav-items .lx-data-grid-wrapper > .lx-grid-toolbar,
   .lx .lx-layout-public.no-nav-items .lx-data-grid-wrapper > .lx-grid-header-wrapper,
+  .lx-layout-public.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-toolbar,
+  .lx-layout-public.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-header-wrapper,
   .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-sticky,
   .lx-layout.lx-layout-public.no-nav-items .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
     top: var(--space-0);
+  }
+
+  .lx-layout-public.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+    top: var(--row-size);
   }
 
   .lx-layout.lx-layout-public .lx-toolbar.lx-sticky,

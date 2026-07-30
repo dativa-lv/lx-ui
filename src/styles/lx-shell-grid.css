@@ -2757,6 +2757,33 @@
   }
 }
 
+.lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--public-nav-header-size) + var(--row-size) * 2 + var(--border-width-1));
+}
+
+.lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2);
+  z-index: 9;
+  border-bottom: var(--border-width-1) solid var(--color-chrome);
+  position: sticky;
+}
+
+.lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid > header.lx-form-with-tabs.lx-sticky + .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid > header.lx-form-with-steps.lx-sticky + .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  top: calc(var(--nav-row-size) + var(--row-size));
+}
+
+.lx .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--border-width-1));
+}
+
+.lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky {
+  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--border-width-1));
+}
+
 @media (max-height: 640px) {
   .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
@@ -2776,17 +2803,39 @@
   .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid > .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-public .lx-form-grid > header.lx-form-with-steps+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid > header.lx-form-with-steps+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
-  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-  .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid > .lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-  .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-  .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid > .lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky {
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid > .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid > .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky {
     top: calc(var(--row-size) * 2);
   }
 
   .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
-  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky {
+  .lx .lx-layout.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky {
     top: calc(var(--row-size) * 3);
+  }
+
+  .lx .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid > .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-tabs:not(.lx-sticky)+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid > .lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid > .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-steps:not(.lx-sticky)+.lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid > .lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-tabs+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-tabs+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-steps+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-steps+.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+    top: var(--row-size);
+  }
+
+  .lx .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-tabs.lx-sticky+.lx-tab-control .lx-tab-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky,
+  .lx .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid>header.lx-form-with-steps.lx-sticky+.lx-wizard .lx-wizard-body .lx-component-toolbar.lx-toolbar-sticky {
+    top: calc(var(--row-size) * 2);
   }
 }
