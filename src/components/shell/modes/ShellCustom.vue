@@ -53,7 +53,7 @@ const {
       <slot name="aside-right" />
     </aside>
 
-    <footer ref="footer">
+    <footer v-if="$slots.footer" ref="footer" class="lx-layout-custom-footer">
       <slot name="footer" />
     </footer>
 

@@ -55,6 +55,6 @@
   grid-area: aside-right;
 }
 
-.lx-layout.lx-layout-custom > footer {
+.lx-layout.lx-layout-custom > .lx-layout-custom-footer {
   grid-area: footer;
 }

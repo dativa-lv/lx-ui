@@ -38,7 +38,7 @@ convenience for flexibility.
 | `aside-right` | `<aside class="lx-layout-custom-aside-right">`                 | Right sidebar. Optional.                                   |
 | `page-header` | `<div class="lx-layout-custom-page-header">` (inside `<main>`) | Your own page title/breadcrumbs. Optional. See note below. |
 | `default`     | `<main class="lx-main">`                                       | Main page content.                                         |
-| `footer`      | `<footer>`                                                     | Footer content.                                            |
+| `footer`      | `<footer class="lx-layout-custom-footer">`                     | Footer content. Optional.                                   |
 
 Each region is rendered **only when you provide the slot**, so an empty `aside-right` slot
 produces no empty column. Every region has its own class so you can target it from CSS.
@@ -79,6 +79,7 @@ Override it in your app by targeting the region classes, e.g.:
 }
 .lx-layout-custom-header { /* sticky bar, etc. */ }
 .lx-layout-custom-aside-left { /* sidebar styling */ }
+.lx-layout-custom-footer { /* footer styling */ }
 ```
 
 The `page-header` region ships with default spacing matching the built-in modes

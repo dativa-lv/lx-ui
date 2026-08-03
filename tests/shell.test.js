@@ -335,7 +335,7 @@ test('renders the custom mode layout when requested', async () => {
   expect(wrapper.find('#poppers').exists()).toBe(true);
 });
 
-test('renders custom mode header/aside slots only when provided, each with its class', async () => {
+test('renders custom mode header/aside/footer slots only when provided, each with its class', async () => {
   wrapper = mountShell({ mode: 'custom' });
   await settleShell();
 
@@ -343,6 +343,7 @@ test('renders custom mode header/aside slots only when provided, each with its c
   expect(wrapper.find('.lx-layout-custom-header').exists()).toBe(false);
   expect(wrapper.find('.lx-layout-custom-aside-left').exists()).toBe(false);
   expect(wrapper.find('.lx-layout-custom-aside-right').exists()).toBe(false);
+  expect(wrapper.find('.lx-layout-custom-footer').exists()).toBe(false);
 
   wrapper.unmount();
 
@@ -353,6 +354,7 @@ test('renders custom mode header/aside slots only when provided, each with its c
       'aside-left': '<div class="my-left">L</div>',
       'aside-right': '<div class="my-right">R</div>',
       default: '<div class="my-content">C</div>',
+      footer: '<div class="my-footer">F</div>',
     },
     global: { stubs: globalStubs },
   });
@@ -361,6 +363,7 @@ test('renders custom mode header/aside slots only when provided, each with its c
   const header = wrapper.find('.lx-layout-custom-header');
   const asideLeft = wrapper.find('.lx-layout-custom-aside-left');
   const asideRight = wrapper.find('.lx-layout-custom-aside-right');
+  const footer = wrapper.find('.lx-layout-custom-footer');
 
   expect(header.exists()).toBe(true);
   expect(header.find('.my-header').exists()).toBe(true);
@@ -368,6 +371,8 @@ test('renders custom mode header/aside slots only when provided, each with its c
   expect(asideLeft.find('.my-left').exists()).toBe(true);
   expect(asideRight.exists()).toBe(true);
   expect(asideRight.find('.my-right').exists()).toBe(true);
+  expect(footer.exists()).toBe(true);
+  expect(footer.find('.my-footer').exists()).toBe(true);
   expect(wrapper.find('.lx-main .my-content').exists()).toBe(true);
 });
 

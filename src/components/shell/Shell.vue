@@ -1431,7 +1431,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
       <template #aside-right v-if="$slots['aside-right']">
         <slot name="aside-right" />
       </template>
-      <template #footer>
+      <template #footer v-if="$slots.footer">
         <slot name="footer" />
       </template>
       <slot />
