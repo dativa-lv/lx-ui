@@ -2024,6 +2024,31 @@ function focusLayoutTriggerButton(type) {
   }
 }
 
+function commitSelectionAndClose(updatedDate, key) {
+  emits('update:modelValue', updatedDate);
+  handleLayoutDisplay();
+
+  if (key !== 'space') {
+    props.setActiveInput('startInput', props.id);
+  }
+
+  maybeCloseAfterSelection(key);
+}
+
+function openDayLayoutAfterMonth(key) {
+  monthsLayout.value = false;
+  regularLayout.value = true;
+
+  if (props.mode === 'birth-date' && key === 'enter') {
+    focusInitialPickerCell(getActiveCalendarDate());
+    return;
+  }
+
+  nextTick(() => {
+    focusLayoutTriggerButton('month');
+  });
+}
+
 function handleMonthSelection(selectedValue, newDate, key) {
   newDate.setDate(1);
   newDate.setMonth(selectedValue.orderIndex);
@@ -2039,12 +2064,7 @@ function handleMonthSelection(selectedValue, newDate, key) {
   }
 
   if (props.mode === 'month') {
-    emits('update:modelValue', newDate);
-    handleLayoutDisplay();
-    if (key !== 'space') {
-      props.setActiveInput('startInput', props.id);
-    }
-    maybeCloseAfterSelection(key);
+    commitSelectionAndClose(newDate, key);
     return;
   }
 
@@ -2052,13 +2072,7 @@ function handleMonthSelection(selectedValue, newDate, key) {
     selectedYear.value = Number(selectedValue.year);
 
     if (selectedYear.value) {
-      const updatedDate = new Date(selectedYear.value, monthIndex, 1);
-      emits('update:modelValue', updatedDate);
-      handleLayoutDisplay();
-      if (key !== 'space') {
-        props.setActiveInput('startInput', props.id);
-      }
-      maybeCloseAfterSelection(key);
+      commitSelectionAndClose(new Date(selectedYear.value, monthIndex, 1), key);
     } else {
       monthsLayout.value = false;
       yearsLayout.value = true;
@@ -2067,16 +2081,7 @@ function handleMonthSelection(selectedValue, newDate, key) {
   }
 
   if (isDateBasedMode(props.mode)) {
-    if (key === 'space') return;
-    monthsLayout.value = false;
-    regularLayout.value = true;
-    if (props.mode === 'birth-date' && key === 'enter') {
-      focusInitialPickerCell(getActiveCalendarDate());
-      return;
-    }
-    nextTick(() => {
-      focusLayoutTriggerButton('month');
-    });
+    if (key !== 'space') openDayLayoutAfterMonth(key);
     return;
   }
 
@@ -2897,269 +2902,107 @@ function moveCalendar(minDate, maxDate) {
   }
 }
 
+const DATE_TIME_FALLBACK_MODES = ['date-time', 'date-time-full', 'time'];
+
+// The selection is missing a part the mode requires
+function isIncompleteDateTimeSelection(mode) {
+  const missingDay = mode !== 'time' && !selectedDay.value;
+  const missingSecond = mode === 'date-time-full' && selectedSecond.value === null;
+
+  return (
+    missingDay || selectedHour.value === null || selectedMinute.value === null || missingSecond
+  );
+}
+
+// Missing time parts default to 0; with no day picked the fallback lands on "today"
+function buildFallbackDateTime(hasDay, withSeconds) {
+  const dateParts = hasDay
+    ? [selectedYear.value, selectedMonth.value, selectedDay.value]
+    : [todayDate.value.getFullYear(), todayDate.value.getMonth(), todayDate.value.getDate()];
+
+  const timeParts = [
+    selectedHour.value === null ? 0 : Number(selectedHour.value),
+    selectedMinute.value === null ? 0 : Number(selectedMinute.value),
+  ];
+
+  if (withSeconds) {
+    timeParts.push(selectedSecond.value === null ? 0 : Number(selectedSecond.value));
+  }
+
+  return new Date(...dateParts, ...timeParts);
+}
+
+function commitFallbackDateTime(updatedDate) {
+  selectedDate.value = updatedDate;
+  currentDate.value = updatedDate;
+  emits('update:modelValue', updatedDate);
+}
+
+function applyDateTimeFallback() {
+  const hasDay = Boolean(selectedDay.value);
+  const hasHour = selectedHour.value !== null;
+  const hasMinute = selectedMinute.value !== null;
+
+  // an empty and a fully filled selection are both committed elsewhere
+  if (!hasDay && !hasHour && !hasMinute) return;
+  if (hasDay && hasHour && hasMinute) return;
+
+  commitFallbackDateTime(buildFallbackDateTime(hasDay, false));
+}
+
+function applyDateTimeFullFallback() {
+  const hasDay = Boolean(selectedDay.value);
+  const hasHour = selectedHour.value !== null;
+  const hasMinute = selectedMinute.value !== null;
+  const hasSecond = selectedSecond.value !== null;
+
+  // a complete time falls back only without a day, landing on "today"
+  if (hasSecond || (hasHour && hasMinute)) {
+    if (!hasDay && hasHour && hasMinute && hasSecond) {
+      commitFallbackDateTime(buildFallbackDateTime(false, true));
+    }
+    return;
+  }
+
+  // at most one time part is set: nothing to fill in when the selection is empty
+  if (!hasDay && !hasHour && !hasMinute) return;
+
+  commitFallbackDateTime(buildFallbackDateTime(hasDay, true));
+}
+
+function applyTimeFallback() {
+  const hasHour = selectedHour.value !== null;
+  const hasMinute = selectedMinute.value !== null;
+
+  // only a half-filled time falls back, and it leaves the calendar viewport untouched
+  if (hasHour === hasMinute) return;
+
+  emits('update:modelValue', buildFallbackDateTime(false, false));
+}
+
 function handleDateTimeSelection() {
-  if (props.mode === 'date-time') {
-    if (props.clearIfNotExact) {
-      if (!selectedDay.value || selectedHour.value === null || selectedMinute.value === null) {
-        clearSelectedValues();
-      }
-    }
+  const { mode, clearIfNotExact } = props;
 
-    if (!props.clearIfNotExact) {
-      // Only date is selected, then time is set to 00:00
-      if (selectedDay.value && selectedHour.value === null && selectedMinute.value === null) {
-        const updatedDate = new Date(
-          selectedYear.value,
-          selectedMonth.value,
-          selectedDay.value,
-          0,
-          0
-        );
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-      // Date and hours selected, then minutes are set to :00
-      if (selectedDay.value && selectedHour.value !== null && selectedMinute.value === null) {
-        const updatedDate = new Date(
-          selectedYear.value,
-          selectedMonth.value,
-          selectedDay.value,
-          Number(selectedHour.value),
-          0
-        );
+  // only these modes fill in or clear a partially picked date-time
+  if (!DATE_TIME_FALLBACK_MODES.includes(mode)) return;
 
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-      // Date and minutes selected, then hours are set to 00:
-      if (selectedDay.value && selectedHour.value === null && selectedMinute.value !== null) {
-        const updatedDate = new Date(
-          selectedYear.value,
-          selectedMonth.value,
-          selectedDay.value,
-          0,
-          Number(selectedMinute.value)
-        );
-
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-
-      // Only time selected, then date is set to "today"
-      if (!selectedDay.value && selectedHour.value !== null && selectedMinute.value !== null) {
-        const updatedDate = new Date(
-          todayDate.value.getFullYear(),
-          todayDate.value.getMonth(),
-          todayDate.value.getDate(),
-          Number(selectedHour.value),
-          Number(selectedMinute.value)
-        );
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-
-      // Only hours selected, then date is set to "today" and minutes to :00
-      if (!selectedDay.value && selectedHour.value !== null && selectedMinute.value === null) {
-        const updatedDate = new Date(
-          todayDate.value.getFullYear(),
-          todayDate.value.getMonth(),
-          todayDate.value.getDate(),
-          Number(selectedHour.value),
-          0
-        );
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-
-      // Only minutes selected, then date is set to "today" and hours to 00:
-      if (!selectedDay.value && selectedHour.value === null && selectedMinute.value !== null) {
-        const updatedDate = new Date(
-          todayDate.value.getFullYear(),
-          todayDate.value.getMonth(),
-          todayDate.value.getDate(),
-          0,
-          Number(selectedMinute.value)
-        );
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-    }
+  if (clearIfNotExact) {
+    if (isIncompleteDateTimeSelection(mode)) clearSelectedValues();
+    return;
   }
 
-  if (props.mode === 'date-time-full') {
-    if (props.clearIfNotExact) {
-      if (
-        !selectedDay.value ||
-        selectedHour.value === null ||
-        selectedMinute.value === null ||
-        selectedSecond.value === null
-      ) {
-        clearSelectedValues();
-      }
-    }
-
-    if (!props.clearIfNotExact) {
-      // Only date is selected, then time is set to 00:00
-      if (
-        selectedDay.value &&
-        selectedHour.value === null &&
-        selectedMinute.value === null &&
-        selectedSecond.value === null
-      ) {
-        const updatedDate = new Date(
-          selectedYear.value,
-          selectedMonth.value,
-          selectedDay.value,
-          0,
-          0,
-          0
-        );
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-
-      // Date and hours selected, then minutes are set to :00
-      if (
-        selectedDay.value &&
-        selectedHour.value !== null &&
-        selectedMinute.value === null &&
-        selectedSecond.value === null
-      ) {
-        const updatedDate = new Date(
-          selectedYear.value,
-          selectedMonth.value,
-          selectedDay.value,
-          Number(selectedHour.value),
-          0,
-          0
-        );
-
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-
-      // Date and minutes selected, then hours and seconds are set to 00:
-      if (
-        selectedDay.value &&
-        selectedHour.value === null &&
-        selectedMinute.value !== null &&
-        selectedSecond.value === null
-      ) {
-        const updatedDate = new Date(
-          selectedYear.value,
-          selectedMonth.value,
-          selectedDay.value,
-          0,
-          Number(selectedMinute.value),
-          0
-        );
-
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-
-      // Only time selected, then date is set to "today"
-      if (
-        !selectedDay.value &&
-        selectedHour.value !== null &&
-        selectedMinute.value !== null &&
-        selectedSecond.value !== null
-      ) {
-        const updatedDate = new Date(
-          todayDate.value.getFullYear(),
-          todayDate.value.getMonth(),
-          todayDate.value.getDate(),
-          Number(selectedHour.value),
-          Number(selectedMinute.value),
-          Number(selectedSecond.value)
-        );
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-
-      // Only hours selected, then date is set to "today" and minutes to :00
-      if (
-        !selectedDay.value &&
-        selectedHour.value !== null &&
-        selectedMinute.value === null &&
-        selectedSecond.value === null
-      ) {
-        const updatedDate = new Date(
-          todayDate.value.getFullYear(),
-          todayDate.value.getMonth(),
-          todayDate.value.getDate(),
-          Number(selectedHour.value),
-          0,
-          0
-        );
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-
-      // Only minutes selected, then date is set to "today" and hours and seconds to 00:
-      if (
-        !selectedDay.value &&
-        selectedHour.value === null &&
-        selectedMinute.value !== null &&
-        selectedSecond.value === null
-      ) {
-        const updatedDate = new Date(
-          todayDate.value.getFullYear(),
-          todayDate.value.getMonth(),
-          todayDate.value.getDate(),
-          0,
-          Number(selectedMinute.value),
-          0
-        );
-        selectedDate.value = updatedDate;
-        currentDate.value = updatedDate;
-        emits('update:modelValue', updatedDate);
-      }
-    }
-  }
-
-  if (props.mode === 'time') {
-    if (props.clearIfNotExact) {
-      if (selectedHour.value === null || selectedMinute.value === null) {
-        clearSelectedValues();
-      }
-    }
-
-    if (!props.clearIfNotExact) {
-      // Only hours selected, then minutes are set to :00
-      if (selectedHour.value !== null && selectedMinute.value === null) {
-        const updatedDate = new Date(
-          todayDate.value.getFullYear(),
-          todayDate.value.getMonth(),
-          todayDate.value.getDate(),
-          Number(selectedHour.value),
-          0
-        );
-        emits('update:modelValue', updatedDate);
-      }
-      // Only minutes selected, then hours are set to 00:
-      if (selectedHour.value === null && selectedMinute.value !== null) {
-        const updatedDate = new Date(
-          todayDate.value.getFullYear(),
-          todayDate.value.getMonth(),
-          todayDate.value.getDate(),
-          0,
-          Number(selectedMinute.value)
-        );
-        emits('update:modelValue', updatedDate);
-      }
-    }
+  switch (mode) {
+    case 'date-time':
+      applyDateTimeFallback();
+      break;
+    case 'date-time-full':
+      applyDateTimeFullFallback();
+      break;
+    case 'time':
+      applyTimeFallback();
+      break;
+    default:
+      break;
   }
 }
 
