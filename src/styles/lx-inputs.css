@@ -4199,11 +4199,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-region);
 }
 
-.lx-region .lx-qr-wrapper:not(.lx-ignore-theme) > svg > rect{
+.lx-region .lx-qr-wrapper:not(.lx-ignore-theme) > svg > rect,
+.lx-region-component .lx-qr-wrapper:not(.lx-ignore-theme) > svg > rect{
   fill: var(--color-region-2); 
 }
 
-.lx-region .lx-qr-wrapper:not(.lx-ignore-theme){
+.lx-region .lx-qr-wrapper:not(.lx-ignore-theme),
+.lx-region-component .lx-qr-wrapper:not(.lx-ignore-theme){
   background-color: var(--color-region-2);
 }
 
