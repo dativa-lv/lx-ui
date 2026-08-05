@@ -213,6 +213,7 @@ const {
         {{ props.navigating ? displayTexts.loadingInProgress : displayTexts.loadingComplete }}
       </div>
     </main>
+    <slot name="custom-panel" />
     <footer ref="footer">
       <div></div>
       <div>

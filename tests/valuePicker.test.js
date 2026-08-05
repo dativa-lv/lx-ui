@@ -1302,6 +1302,55 @@ test('LxValuePicker dropdown-custom renders customItem slot in input when a valu
   expect(wrapper.find('.lx-placeholder').exists()).toBe(false);
 });
 
+test('LxValuePicker indicator modelValue click selects and deselects', async () => {
+  expect(LxValuePicker).toBeTruthy();
+
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'indicator',
+      selectionKind: 'multiple',
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+      ],
+      modelValue: ['one'],
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+  });
+
+  const items = wrapper.findAll('.lx-indicator');
+  expect(items[0].attributes('aria-checked')).toBe('true');
+  expect(items[1].attributes('aria-checked')).toBe('false');
+
+  await items[1].trigger('click');
+  expect(wrapper.props('modelValue')).toStrictEqual(['one', 'two']);
+
+  await items[0].trigger('click');
+  expect(wrapper.props('modelValue')).toStrictEqual(['two']);
+});
+
+test('LxValuePicker indicator click does nothing when disabled or readOnly', async () => {
+  expect(LxValuePicker).toBeTruthy();
+
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'indicator',
+      selectionKind: 'multiple',
+      disabled: true,
+      items: [{ id: 'one', name: 'One' }],
+      modelValue: [],
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+  });
+
+  await wrapper.find('.lx-indicator').trigger('click');
+  expect(wrapper.props('modelValue')).toStrictEqual([]);
+
+  await wrapper.setProps({ disabled: false, readOnly: true });
+  await wrapper.find('.lx-indicator').trigger('click');
+  expect(wrapper.props('modelValue')).toStrictEqual([]);
+});
+
 test('LxValuePicker dropdown hasSelectAll', async () => {
   expect(LxValuePicker).toBeTruthy();
 

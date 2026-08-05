@@ -357,8 +357,7 @@ svg .lx-shade {
 }
 
 .lx-form-grid>.lx-main>.lx-form-section:first-of-type,
-.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main>.lx-form-section:first-of-type,
-.lx-form-grid>.lx-wizard>.lx-wizard-body>.lx-main>.lx-form-section:first-of-type,
+.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main>.lx-form-section,
 .lx-data-block-content>.lx-main>.lx-form-section:first-of-type,
 .lx-form-grid>.lx-main>.lx-expander>.lx-body>.lx-form-section:first-of-type {
   border-top: var(--border-width-0);

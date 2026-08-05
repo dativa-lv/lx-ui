@@ -488,6 +488,7 @@ const wrapperRef = ref();
         :aria-checked="itemsModel[item[idAttribute]]"
         :aria-label="indicatorTooltips[item[idAttribute]]"
         data-container="value-picker-item"
+        @click="selectMultiple(item[idAttribute])"
         @keydown.space.prevent="selectMultiple(item[idAttribute])"
       >
         <template v-if="variant === 'indicator'">

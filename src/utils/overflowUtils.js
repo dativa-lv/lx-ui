@@ -60,6 +60,10 @@ export function getClosestExceededParent(target, { direction = 'horizontal' } = 
       return parent;
     }
 
+    if (parentStyle.position === 'fixed') {
+      return null;
+    }
+
     parent = parent.parentElement;
   }
 

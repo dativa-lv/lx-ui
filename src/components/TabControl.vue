@@ -104,10 +104,8 @@ function focusNextTab() {
   document.getElementById(`${props.id}-tab-${highlightedTabId.value}`).focus();
 }
 
-function calculateOffset(el) {
-  const navRems = getComputedStyle(el).getPropertyValue('--nav-row-size').trim();
-  const { fontSize } = getComputedStyle(el);
-  return Number.parseInt(navRems, 10) * Number.parseFloat(fontSize);
+function getStickyTopOffset(el) {
+  return Number.parseFloat(getComputedStyle(el).top) || 0;
 }
 
 const topOutOfBounds = computed(() => {
@@ -119,7 +117,7 @@ const topOutOfBounds = computed(() => {
   if (!tabControl.value || !tabHeader.value)
     return `${keyOpacity}: 0; ${keySize}: var(--row-size);`;
 
-  const v = bounding.top ? bounding.top.value - calculateOffset(tabControl.value) : 0;
+  const v = bounding.top ? bounding.top.value - getStickyTopOffset(tabHeader.value) : 0;
   if (v < 0 - limit) {
     return `${keyOpacity}: 1; ${keySize}: ${size}px;`;
   }

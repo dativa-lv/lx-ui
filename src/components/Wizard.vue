@@ -21,16 +21,14 @@ const model = computed({
   },
 });
 
-function calculateOffset(el) {
-  const navRems = getComputedStyle(el).getPropertyValue('--nav-row-size').trim();
-  const { fontSize } = getComputedStyle(el);
-  return Number.parseInt(navRems, 10) * Number.parseFloat(fontSize);
-}
-
 const wizardHeader = ref();
 const wizard = ref();
 const bounding = useElementBounding(wizard);
 const headerSize = useElementSize(wizardHeader);
+
+function getStickyTopOffset(el) {
+  return Number.parseFloat(getComputedStyle(el).top) || 0;
+}
 
 const topOutOfBounds = computed(() => {
   const keyOpacity = '--wizard-shadow-opacity';
@@ -40,7 +38,7 @@ const topOutOfBounds = computed(() => {
 
   if (!wizard.value || !wizardHeader.value) return `${keyOpacity}: 0; ${keySize}: var(--row-size);`;
 
-  const v = bounding.top ? bounding.top.value - calculateOffset(wizard.value) : 0;
+  const v = bounding.top ? bounding.top.value - getStickyTopOffset(wizardHeader.value) : 0;
   if (v < 0 - limit) {
     return `${keyOpacity}: 1; ${keySize}: ${size}px;`;
   }
