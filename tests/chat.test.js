@@ -52,7 +52,8 @@ describe('LxChat', () => {
       expect(wrapper.props().items).toEqual([]);
       expect(wrapper.props().userDefinitions).toEqual([]);
       expect(wrapper.props().kind).toBe('chat');
-      expect(wrapper.props().messageGrouping).toBe(10);
+      expect(wrapper.props().messageGrouping).toBe(true);
+      expect(wrapper.props().messageGroupingInterval).toBe(10);
       expect(wrapper.props().texts).toEqual({});
     });
   });
@@ -82,6 +83,24 @@ describe('LxChat', () => {
 
       // [me d1], [other x2 d1], [ai d2] -> 3 clusters.
       expect(wrapper.findAll('.lx-chat-user-group')).toHaveLength(3);
+    });
+
+    test('messageGrouping=false disables clustering and shows a person header for every message', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          messageGrouping: false,
+          userDefinitions: [
+            { id: 'user-me', isMe: true },
+            { id: 'user-ai', isAi: true },
+          ],
+          items: messages,
+        },
+        ...mountOptions,
+      });
+
+      expect(wrapper.findAll('.lx-chat-user-group')).toHaveLength(messages.length);
+      expect(wrapper.findAll('.lx-chat-bubble-header')).toHaveLength(messages.length);
+      expect(wrapper.findAll('.lx-chat-bubble-time')).toHaveLength(0);
     });
 
     test('flags the current user and the AI user', () => {
@@ -182,6 +201,7 @@ describe('LxChat', () => {
 
       const personDisplay = wrapper.findComponent(LxPersonDisplay);
       expect(personDisplay.props('value')).toEqual({
+        id: 'user-other',
         name: 'Other From Definitions',
         fullTime: expect.any(String),
       });
@@ -322,6 +342,57 @@ describe('LxChat', () => {
 
       expect(document.activeElement).toBe(activeBefore);
     });
+
+    test('sending a message scrolls to it even if the user had scrolled up', async () => {
+      wrapper = mountScrollableChat();
+      await nextTick(); // flush the mount's own pending scrollToLatest before simulating scroll-up
+
+      const listEl = wrapper.find('.lx-chat-message-list').element;
+      // Simulate having scrolled up (not just "at the top"), so a later scrollTop of 0 is
+      // distinguishable from "never moved" rather than coinciding with the initial position.
+      listEl.scrollTop = 400;
+      listEl.dispatchEvent(new Event('scroll'));
+      await nextTick();
+      expect(listEl.scrollTop).toBe(400);
+
+      // Uses the same (possibly smooth) scrollTo as the scroll-down button; force 'auto' so the
+      // jsdom-like environment applies it synchronously instead of deferring a smooth animation.
+      document.body.classList.add('lx-no-animations');
+      await wrapper.setProps({
+        items: [
+          { id: 'm1', userId: 'user-me', text: 'one', createdAt: day },
+          { id: 'm2', userId: 'user-other', text: 'two', createdAt: day },
+          { id: 'm3', userId: 'user-me', text: 'three, just sent', createdAt: day },
+        ],
+      });
+      await nextTick();
+      await nextTick();
+      document.body.classList.remove('lx-no-animations');
+
+      expect(listEl.scrollTop).toBe(listEl.scrollHeight);
+    });
+
+    test('an incoming message from someone else does not force-scroll a user who scrolled up', async () => {
+      wrapper = mountScrollableChat();
+      await nextTick(); // flush the mount's own pending scrollToLatest before simulating scroll-up
+
+      const listEl = wrapper.find('.lx-chat-message-list').element;
+      listEl.scrollTop = 400;
+      listEl.dispatchEvent(new Event('scroll'));
+      await nextTick();
+
+      await wrapper.setProps({
+        items: [
+          { id: 'm1', userId: 'user-me', text: 'one', createdAt: day },
+          { id: 'm2', userId: 'user-other', text: 'two', createdAt: day },
+          { id: 'm3', userId: 'user-other', text: 'three, from someone else', createdAt: day },
+        ],
+      });
+      await nextTick();
+      await nextTick();
+
+      expect(listEl.scrollTop).toBe(400);
+    });
   });
 
   describe('Time-based grouping', () => {
@@ -345,11 +416,11 @@ describe('LxChat', () => {
       expect(wrapper.findAll('.lx-chat-bubble-time')).toHaveLength(0);
     });
 
-    test('messageGrouping=0 shows a timestamp per message', () => {
+    test('messageGroupingInterval=0 shows a timestamp per message', () => {
       wrapper = mount(LxChat, {
         props: {
           userDefinitions: [{ id: 'user-me', isMe: true }],
-          messageGrouping: 0,
+          messageGroupingInterval: 0,
           items: receiverMessages(),
         },
         ...mountOptions,
@@ -360,6 +431,20 @@ describe('LxChat', () => {
       expect(wrapper.findAll('.lx-chat-bubble-time')).toHaveLength(1);
     });
 
+    test('messageGrouping=false ignores interval splitting and keeps full person headers', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [{ id: 'user-me', isMe: true }],
+          messageGrouping: false,
+          items: receiverMessages(),
+        },
+        ...mountOptions,
+      });
+
+      expect(wrapper.findAll('.lx-chat-bubble-header')).toHaveLength(2);
+      expect(wrapper.findAll('.lx-chat-bubble-time')).toHaveLength(0);
+    });
+
     test('a sub-group timestamp shows only the time, even for an old message (no repeated date)', () => {
       const old0 = new Date('2020-01-10T10:00:00.000Z');
       const old5 = new Date('2020-01-10T10:05:00.000Z');
@@ -367,7 +452,7 @@ describe('LxChat', () => {
       wrapper = mount(LxChat, {
         props: {
           userDefinitions: [{ id: 'user-me', isMe: true }],
-          messageGrouping: 0,
+          messageGroupingInterval: 0,
           items: [
             { id: 'm1', userId: 'user-other', userName: 'Other', text: 'one', createdAt: old0 },
             { id: 'm2', userId: 'user-other', userName: 'Other', text: 'two', createdAt: old5 },
@@ -402,10 +487,117 @@ describe('LxChat', () => {
       // Visible description stays the compact humanized text (unchanged from before).
       expect(personDisplay.props('description')).not.toBe(formatFull(day));
       // The full date+time (with seconds) is exposed as a translatable tooltip-only custom attribute.
-      expect(personDisplay.props('value')).toEqual({ name: 'Other', fullTime: formatFull(day) });
+      expect(personDisplay.props('value')).toEqual({
+        id: 'user-other',
+        name: 'Other',
+        fullTime: formatFull(day),
+      });
       expect(personDisplay.props('customAttributes')).toEqual([
         { name: 'Message time', attributeName: 'fullTime' },
       ]);
+    });
+
+    test('avatar seed (value.id) stays the userId even when the display name changes (e.g. locale switch)', async () => {
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [{ id: 'user-other', name: 'Cita' }],
+          items: [{ id: 'm1', userId: 'user-other', text: 'hi', createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      const before = wrapper.findComponent(LxPersonDisplay).props('value');
+      expect(before.id).toBe('user-other');
+      expect(before.name).toBe('Cita');
+
+      // Same userId, different display name — simulates a locale switch translating userDefinitions.
+      await wrapper.setProps({ userDefinitions: [{ id: 'user-other', name: 'Other' }] });
+
+      const after = wrapper.findComponent(LxPersonDisplay).props('value');
+      expect(after.id).toBe('user-other');
+      expect(after.name).toBe('Other');
+    });
+
+    test('passes avatarKind through to LxPersonDisplay', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          avatarKind: 'initials',
+          userDefinitions: [{ id: 'user-other', name: 'Other' }],
+          items: [{ id: 'm1', userId: 'user-other', text: 'hi', createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      expect(wrapper.findComponent(LxPersonDisplay).props('kind')).toBe('initials');
+    });
+
+    test('passes a userDefinitions icon/iconSet through to LxPersonDisplay', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [{ id: 'user-other', name: 'Other', icon: 'bug', iconSet: 'cds' }],
+          items: [{ id: 'm1', userId: 'user-other', text: 'hi', createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      const personDisplay = wrapper.findComponent(LxPersonDisplay);
+      expect(personDisplay.props('icon')).toBe('bug');
+      expect(personDisplay.props('iconSet')).toBe('cds');
+    });
+
+    test('exposes a userDefinitions description/role/institution as extra tooltip customAttributes', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          texts: {
+            messageTimeLabel: 'Message time',
+            descriptionLabel: 'Bio',
+            roleLabel: 'Role',
+            institutionLabel: 'Org',
+          },
+          userDefinitions: [
+            {
+              id: 'user-other',
+              name: 'Other',
+              description: 'Loves long walks on the beach',
+              role: 'SVP',
+              institution: 'Riot Games',
+            },
+          ],
+          items: [{ id: 'm1', userId: 'user-other', text: 'hi', createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      const personDisplay = wrapper.findComponent(LxPersonDisplay);
+      expect(personDisplay.props('value')).toEqual(
+        expect.objectContaining({
+          description: 'Loves long walks on the beach',
+          role: 'SVP',
+          institution: 'Riot Games',
+        })
+      );
+      expect(personDisplay.props('customAttributes')).toEqual([
+        { name: 'Message time', attributeName: 'fullTime' },
+        { name: 'Bio', attributeName: 'description' },
+        { name: 'Role', attributeName: 'role' },
+        { name: 'Org', attributeName: 'institution' },
+      ]);
+    });
+
+    test('omits description/role/institution customAttributes when not set on userDefinitions', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [{ id: 'user-other', name: 'Other' }],
+          items: [{ id: 'm1', userId: 'user-other', text: 'hi', createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      const attributeNames = wrapper
+        .findComponent(LxPersonDisplay)
+        .props('customAttributes')
+        .map((a) => a.attributeName);
+      expect(attributeNames).toEqual(['fullTime']);
     });
   });
 
@@ -470,7 +662,7 @@ describe('LxChat', () => {
       expect(wrapper.find('.lx-chat-status-text').text()).toBe('Hemingvejs un Bukovskis domā');
     });
 
-    test('ignores unknown typingUsers ids and falls back to the generic statusText', () => {
+    test('ignores unknown typingUsers ids and falls back to the generic statusTextSingular', () => {
       wrapper = mount(LxChat, {
         props: { userDefinitions, typing: true, typingUsers: ['user-unknown'], items: [] },
         ...mountOptions,
@@ -479,18 +671,48 @@ describe('LxChat', () => {
       expect(wrapper.find('.lx-chat-status-text').text()).toBe('Domā');
     });
 
-    test('accepts a custom statusText via the texts prop', () => {
+    test('accepts a custom statusTextSingular via the texts prop', () => {
       wrapper = mount(LxChat, {
         props: {
           userDefinitions,
           typing: true,
-          texts: { statusText: 'Raksta...' },
+          texts: { statusTextSingular: 'Raksta...' },
           items: [],
         },
         ...mountOptions,
       });
 
       expect(wrapper.find('.lx-chat-status-text').text()).toBe('Raksta...');
+    });
+
+    test('uses statusTextPlural (not statusTextSingular) when more than one person is typing', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions,
+          typing: true,
+          typingUsers: ['user-1', 'user-2'],
+          texts: { statusTextSingular: 'domā', statusTextPlural: 'domājam' },
+          items: [],
+        },
+        ...mountOptions,
+      });
+
+      expect(wrapper.find('.lx-chat-status-text').text()).toBe('Hemingvejs un Bukovskis domājam');
+    });
+
+    test('uses statusTextSingular when exactly one person is typing', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions,
+          typing: true,
+          typingUsers: ['user-1'],
+          texts: { statusTextSingular: 'domā', statusTextPlural: 'domājam' },
+          items: [],
+        },
+        ...mountOptions,
+      });
+
+      expect(wrapper.find('.lx-chat-status-text').text()).toBe('Hemingvejs domā');
     });
 
     test('renders typingActionDefinitions and emits typing-action-click on click', async () => {

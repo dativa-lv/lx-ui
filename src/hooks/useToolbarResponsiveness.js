@@ -193,7 +193,7 @@ export function useToolbarResponsiveness({
 
     return {
       ...action,
-      variant: promotedActionVariant.value,
+      variant: action.variantForce ?? promotedActionVariant.value,
     };
   });
 
@@ -691,7 +691,7 @@ export function useToolbarResponsiveness({
         }
       }
 
-      if (promotedActionBase.value) {
+      if (promotedActionBase.value && !promotedActionBase.value.variantForce) {
         promotedActionVariant.value = 'icon-only';
         await nextTick();
 

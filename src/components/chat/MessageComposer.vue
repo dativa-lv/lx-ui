@@ -1,5 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useElementSize, useMediaQuery } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
 import LxTextArea from '@/components/TextArea.vue';
 import LxToolbar from '@/components/Toolbar.vue';
@@ -14,7 +15,10 @@ const props = defineProps({
 
 const emit = defineEmits(['send']);
 
+const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
+
 const composerRef = ref(null);
+const { width: composerWidth } = useElementSize(composerRef);
 const rawText = ref(props.text ?? '');
 
 watch(
@@ -38,6 +42,7 @@ const sendActions = computed(() => [
     name: props.texts.send,
     icon: 'submit',
     kind: 'primary',
+    variantForce: composerWidth.value < 500 ? 'icon-only' : 'default',
     area: 'right',
     disabled: !canSend.value,
     loading: isLoading.value,
@@ -67,11 +72,9 @@ function onAction(actionId) {
 }
 
 function onKeydown(event) {
-  if (event.key === 'Enter' && !event.shiftKey) {
+  if (event.key === 'Enter' && !event.shiftKey && !isTouchMode.value) {
     event.preventDefault();
-    if (isLoading.value || !isBusy.value) {
-      send();
-    }
+    send();
   }
 }
 
@@ -114,7 +117,7 @@ function measure() {
     }
   }
 
-  const fullWidth = composerRef.value.clientWidth;
+  const fullWidth = composerWidth.value;
   if (!fullWidth || !reserved) {
     return;
   }

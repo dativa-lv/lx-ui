@@ -13,12 +13,14 @@ const props = defineProps({
     default: 'chat',
     options: ['chat', 'comments'],
   },
-  userDefinitions: { type: Array, default: () => [] }, // Per-user info by message.userId: { id, name, isMe, isAi }.
+  userDefinitions: { type: Array, default: () => [] }, // Per-user info by message.userId: { id, name, isMe, isAi, icon, iconSet, description, role, institution }.
+  avatarKind: { type: String, default: null }, // 'default', 'initials' — passed to LxPersonDisplay/LxAvatar; falls back to the global avatarKind when unset.
   messageText: { type: String, default: null },
   items: { type: Array, default: () => [] },
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
-  messageGrouping: { type: Number, default: 10 }, // minutes; 0 = no grouping
+  messageGrouping: { type: Boolean, default: true }, // Whether to group related messages together or display each message is its own cluster and show person header.
+  messageGroupingInterval: { type: Number, default: 10 }, // minutes; 0 = no grouping
   clarifyingQuestionsBuilder: { type: Object, default: null }, // Optional LxFormBuilder when absent, message schemas are ignored.
   messageActionDefinitions: { type: Array, default: () => [] }, // Per-message actions, gate visibility via `visibleByAttribute`/`isAi`/`isMe`.
   typing: { type: Boolean, default: false }, // Global state: someone (from typingUsers) is currently typing/thinking. Independent of any message.
@@ -28,17 +30,22 @@ const props = defineProps({
 });
 
 const textsDefault = {
-  placeholder: 'Ierakstiet kaut ko...',
+  placeholder: 'Rakstīt ziņu',
   empty: 'Sarakstē vēl nav ziņu',
   emptyDescription: 'Nosūtiet pirmo ziņu, lai sāktu sarunu',
   send: 'Sūtīt',
-  answerSubmit: 'Iesniegt',
+  answerSubmit: 'Apstiprināt',
   error: 'Kļūda!',
-  ai: 'AI',
+  ai: 'Mākslīgais intelekts',
+  reasoning: 'Domāšanas process',
   scrollToBottom: 'Atgriezties pie jaunākajām ziņām',
-  statusText: 'domā',
+  statusTextSingular: 'domā',
+  statusTextPlural: 'domā',
   and: 'un',
   messageTimeLabel: 'Ziņas laiks',
+  descriptionLabel: 'Apraksts',
+  roleLabel: 'Loma',
+  institutionLabel: 'Iestāde',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxChat'));
@@ -61,9 +68,7 @@ let observer = null;
 let frame = null;
 
 function resolveSize(width) {
-  if (width > 900) return 'l';
-  if (width >= 500) return 'm';
-  return 's';
+  return width > 900 ? 'l' : 'm';
 }
 
 function updateSize(width) {
@@ -109,6 +114,7 @@ const kindClass = computed(() => `lx-chat-${props.kind}`);
 const messageListRef = ref(null);
 const showScrollDown = ref(false);
 const scrollShadowOpacity = ref(0);
+const topShadowOpacity = ref(0);
 
 function scrollToBottom(event) {
   messageListRef.value?.scrollToBottom();
@@ -157,6 +163,7 @@ provide('lxChatTypingActionClick', (id) => emits('typing-action-click', { id }))
     ref="wrapperRef"
     class="lx-chat-wrapper"
     :class="[sizeClass, kindClass]"
+    :style="{ '--lx-chat-top-shadow-opacity': topShadowOpacity }"
     :id="id"
     data-component="lx-chat"
     :data-id="id"
@@ -177,16 +184,19 @@ provide('lxChatTypingActionClick', (id) => emits('typing-action-click', { id }))
       :id="id"
       :items="items"
       :userDefinitions="userDefinitions"
+      :avatarKind="avatarKind"
       :size="size"
       :kind="kind"
       :messageGrouping="messageGrouping"
+      :messageGroupingInterval="messageGroupingInterval"
       :busy="busy"
       :loading="loading"
       :typing="typing"
       :typingUsers="typingUsers"
       :texts="displayTexts"
-      @scroll-down-change="(value) => (showScrollDown = value)"
-      @scroll-shadow-change="(value) => (scrollShadowOpacity = value)"
+      @scrollDownChange="(value) => (showScrollDown = value)"
+      @scrollShadowChange="(value) => (scrollShadowOpacity = value)"
+      @topShadowChange="(value) => (topShadowOpacity = value)"
     />
 
     <div

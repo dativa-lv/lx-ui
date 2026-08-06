@@ -13,8 +13,10 @@ const typingActionDefinitionsGetter = inject('lxChatTypingActionDefinitions', nu
 const typingActionClick = inject('lxChatTypingActionClick', null);
 const typingActions = computed(() => typingActionDefinitionsGetter?.() || []);
 
+const typingNames = computed(() => props.typingUserNames.map((user) => user.name).filter(Boolean));
+
 const namesText = computed(() => {
-  const names = props.typingUserNames.map((user) => user.name).filter(Boolean);
+  const names = typingNames.value;
   if (names.length === 0) {
     return '';
   }
@@ -26,11 +28,14 @@ const namesText = computed(() => {
 });
 
 const statusLabel = computed(() => {
-  const status = props.texts.statusText || '';
-  return namesText.value ? `${namesText.value} ${status}`.trim() : capitalizeFirstLetter(status);
+  const status =
+    typingNames.value.length > 1 ? props.texts.statusTextPlural : props.texts.statusTextSingular;
+  return namesText.value
+    ? `${namesText.value} ${status || ''}`.trim()
+    : capitalizeFirstLetter(status || '');
 });
 
-function onAction(actionId) {
+function onActionClick(actionId) {
   typingActionClick?.(actionId);
 }
 </script>
@@ -44,7 +49,7 @@ function onAction(actionId) {
         label=""
         :value="{}"
         :actionDefinitions="typingActions"
-        @action-click="onAction"
+        @actionClick="onActionClick"
       >
         <template #customItem>
           <div class="lx-chat-status" role="status" aria-live="polite">

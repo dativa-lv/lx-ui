@@ -229,7 +229,7 @@ function processGroup(group) {
 
   const promotedAction = applyDefaults(firstAction, {
     kind: firstAction.kind,
-    variant: 'default',
+    variant: firstAction.variant ?? 'default',
     promoted: true,
   });
 

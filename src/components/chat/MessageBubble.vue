@@ -22,8 +22,10 @@ const props = defineProps({
   isMe: { type: Boolean, default: false },
   isAi: { type: Boolean, default: false },
   category: { type: String, default: null },
+  messageGrouping: { type: Boolean, default: true },
   showPersonHeader: { type: Boolean, default: false },
   showTimestamp: { type: Boolean, default: false },
+  avatarKind: { type: String, default: null },
   size: { type: String, default: 'l' },
   kind: { type: String, default: 'chat' },
   busy: { type: Boolean, default: false },
@@ -57,16 +59,32 @@ const fullTimeText = computed(() => {
 });
 
 const personValue = computed(() => ({
+  id: props.message.userId,
   name: props.message.userName,
   fullTime: fullTimeText.value,
+  description: props.message.description,
+  role: props.message.role,
+  institution: props.message.institution,
 }));
-const personCustomAttributes = computed(() => [
-  { name: props.texts.messageTimeLabel, attributeName: 'fullTime' },
-]);
+const personCustomAttributes = computed(() => {
+  const attributes = [{ name: props.texts.messageTimeLabel, attributeName: 'fullTime' }];
+  if (props.message.description) {
+    attributes.push({ name: props.texts.descriptionLabel, attributeName: 'description' });
+  }
+  if (props.message.role) {
+    attributes.push({ name: props.texts.roleLabel, attributeName: 'role' });
+  }
+  if (props.message.institution) {
+    attributes.push({ name: props.texts.institutionLabel, attributeName: 'institution' });
+  }
+  return attributes;
+});
 
-// Receivers always show the full header at a cluster start; the sender collapses to a time label in `chat` at m/s.
+// Receivers show full header at cluster starts; current user shows it only in comments mode or large size.
 const showFullPerson = computed(
-  () => props.showPersonHeader && (!props.isMe || props.kind === 'comments' || props.size === 'l')
+  () =>
+    (!props.isMe && !props.messageGrouping) ||
+    (props.showPersonHeader && (!props.isMe || props.kind === 'comments' || props.size === 'l'))
 );
 const isCollapsedHeader = computed(() => props.showPersonHeader && !showFullPerson.value);
 const showTimeLabel = computed(() => isCollapsedHeader.value || props.showTimestamp);
@@ -108,8 +126,8 @@ const formActions = computed(() => [
   {
     id: 'submit',
     name: props.texts.answerSubmit,
-    icon: 'submit',
-    kind: 'primary',
+    icon: 'accept',
+    kind: 'secondary',
     disabled: chatDisabled.value,
   },
 ]);
@@ -150,9 +168,12 @@ defineExpose({ focus });
       <LxPersonDisplay
         ref="personDisplayRef"
         size="l"
+        :kind="avatarKind"
         :value="personValue"
         :description="timeText"
-        :custom-attributes="personCustomAttributes"
+        :customAttributes="personCustomAttributes"
+        :icon="message.avatarIcon"
+        :iconSet="message.avatarIconSet"
       />
       <LxBadge v-if="isAi" icon="ai" :tooltip="texts.ai" />
     </div>
@@ -169,7 +190,7 @@ defineExpose({ focus });
         :category="isMe ? null : category"
         :invalid="isInvalid"
         :actionDefinitions="messageActions"
-        @action-click="onAction"
+        @actionClick="onAction"
       >
         <template #customItem>
           <template v-if="showForm">
@@ -181,9 +202,9 @@ defineExpose({ focus });
             <LxForm
               :column-count="1"
               kind="compact"
-              :show-header="false"
-              :sticky-footer="false"
-              :action-definitions="formActions"
+              :showHeader="false"
+              :stickyFooter="false"
+              :actionDefinitions="formActions"
               @actionClick="onFormAction"
             >
               <component

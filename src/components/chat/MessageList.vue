@@ -10,9 +10,11 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   items: { type: Array, default: () => [] },
   userDefinitions: { type: Array, default: () => [] },
+  avatarKind: { type: String, default: null },
   size: { type: String, default: 'l' },
   kind: { type: String, default: 'chat' },
-  messageGrouping: { type: Number, default: 10 },
+  messageGrouping: { type: Boolean, default: true },
+  messageGroupingInterval: { type: Number, default: 10 },
   busy: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   typing: { type: Boolean, default: false },
@@ -20,7 +22,7 @@ const props = defineProps({
   texts: { type: Object, default: () => ({}) },
 });
 
-const emit = defineEmits(['scroll-down-change', 'scroll-shadow-change']);
+const emit = defineEmits(['scroll-down-change', 'scroll-shadow-change', 'top-shadow-change']);
 
 const listRef = ref(null);
 const contentRef = ref(null);
@@ -31,6 +33,7 @@ const isNearBottom = ref(true);
 
 const SHADOW_FADE_DISTANCE = 100;
 const scrollShadowOpacity = ref(0);
+const topShadowOpacity = ref(0);
 
 function resolveDate(value) {
   const parsed = parseDate(value);
@@ -43,10 +46,13 @@ const userDefinitionsById = computed(() => {
   return map;
 });
 
-// Clusters group same user + same day; sub-groups split on gaps over `messageGrouping` minutes (always, if <= 0).
+// Clusters group same user + same day; sub-groups split on gaps over `messageGroupingInterval` minutes (always, if <= 0).
+// When `messageGrouping` is false, each message becomes its own cluster and always shows a person header.
 const clusters = computed(() => {
   const result = [];
-  const groupingMs = (Number.isFinite(props.messageGrouping) ? props.messageGrouping : 10) * 60000;
+  const groupingEnabled = props.messageGrouping;
+  const groupingMs =
+    (Number.isFinite(props.messageGroupingInterval) ? props.messageGroupingInterval : 10) * 60000;
 
   for (let index = 0; index < props.items.length; index += 1) {
     const message = props.items[index];
@@ -55,11 +61,22 @@ const clusters = computed(() => {
     const userDefinition = userDefinitionsById.value.get(message.userId) ?? {};
     const isMe = Boolean(userDefinition.isMe);
     const isAi = Boolean(userDefinition.isAi);
-    const resolvedMessage = { ...message, userName: userDefinition.name };
+    const resolvedMessage = {
+      ...message,
+      userName: userDefinition.name,
+      avatarIcon: userDefinition.icon,
+      avatarIconSet: userDefinition.iconSet,
+      description: userDefinition.description,
+      role: userDefinition.role,
+      institution: userDefinition.institution,
+    };
 
     const lastCluster = result[result.length - 1] ?? null;
     const isNewCluster =
-      !lastCluster || lastCluster.userId !== message.userId || lastCluster.dayKey !== dayKey;
+      !groupingEnabled ||
+      !lastCluster ||
+      lastCluster.userId !== message.userId ||
+      lastCluster.dayKey !== dayKey;
 
     if (isNewCluster) {
       const category = !isMe && message.category ? message.category : null;
@@ -79,7 +96,7 @@ const clusters = computed(() => {
     const isClusterStart = !previous;
 
     let isSubGroupStart;
-    if (isClusterStart) {
+    if (!groupingEnabled || isClusterStart) {
       isSubGroupStart = true;
     } else if (groupingMs <= 0) {
       isSubGroupStart = true;
@@ -92,7 +109,7 @@ const clusters = computed(() => {
     cluster.messages.push({
       id: `${props.id}-message-${message.id}`,
       message: resolvedMessage,
-      showPersonHeader: isClusterStart,
+      showPersonHeader: !groupingEnabled || isClusterStart,
       showTimestamp: isSubGroupStart && !isClusterStart,
     });
   }
@@ -116,6 +133,7 @@ const showScrollDown = computed(
 
 watch(showScrollDown, (value) => emit('scroll-down-change', value), { immediate: true });
 watch(scrollShadowOpacity, (value) => emit('scroll-shadow-change', value), { immediate: true });
+watch(topShadowOpacity, (value) => emit('top-shadow-change', value), { immediate: true });
 
 function computeNearBottom() {
   const el = listRef.value;
@@ -132,6 +150,14 @@ function computeShadowOpacity() {
   }
   const distanceFromBottom = Math.max(0, el.scrollHeight - el.scrollTop - el.clientHeight);
   return Math.min(1, distanceFromBottom / SHADOW_FADE_DISTANCE);
+}
+
+function computeTopShadowOpacity() {
+  const el = listRef.value;
+  if (!el) {
+    return 0;
+  }
+  return Math.min(1, Math.max(0, el.scrollTop) / SHADOW_FADE_DISTANCE);
 }
 
 function scrollToBottom() {
@@ -159,6 +185,7 @@ function scrollToLatest() {
 function onScroll() {
   isNearBottom.value = computeNearBottom();
   scrollShadowOpacity.value = computeShadowOpacity();
+  topShadowOpacity.value = computeTopShadowOpacity();
 }
 
 // Keep new/streaming content in view, but only if the user was already at the bottom.
@@ -174,6 +201,7 @@ onMounted(() => {
       }
       // Streaming/new content can shift the scroll-from-bottom distance without a scroll event.
       scrollShadowOpacity.value = computeShadowOpacity();
+      topShadowOpacity.value = computeTopShadowOpacity();
     });
     if (contentRef.value) {
       contentObserver.observe(contentRef.value);
@@ -194,6 +222,21 @@ watch(contentRef, (el) => {
   contentObserver.disconnect();
   if (el) contentObserver.observe(el);
 });
+
+watch(
+  () => props.items,
+  (newItems, oldItems) => {
+    const addedCount = newItems.length - (oldItems?.length ?? 0);
+    if (addedCount <= 0) return;
+
+    const sentByMe = newItems
+      .slice(-addedCount)
+      .some((item) => userDefinitionsById.value.get(item.userId)?.isMe);
+    if (sentByMe) {
+      nextTick(scrollToBottom);
+    }
+  }
+);
 
 defineExpose({ scrollToBottom, focusLastMessage });
 </script>
@@ -224,8 +267,10 @@ defineExpose({ scrollToBottom, focusLastMessage });
               :isMe="cluster.isMe"
               :isAi="cluster.isAi"
               :category="cluster.category"
+              :messageGrouping="messageGrouping"
               :showPersonHeader="message.showPersonHeader"
               :showTimestamp="message.showTimestamp"
+              :avatarKind="avatarKind"
               :size="size"
               :kind="kind"
               :busy="busy"

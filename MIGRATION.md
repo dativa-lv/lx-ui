@@ -4,6 +4,20 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
+## 2.2.11 → 2.2.12
+
+### Breaking changes
+
+#### LxChat
+
+`messageGrouping` has been repurposed.
+
+- Old behavior: `messageGrouping` controlled grouping interval (minutes).
+- New behavior: `messageGrouping` is now a boolean value that controls grouping mode (`true` = grouped, `false` = no grouping and person header shown on every message).
+- The old `messageGrouping` interval value has been moved to `messageGroupingInterval`.
+
+If you previously passed a numeric value to `messageGrouping`, move that value to `messageGroupingInterval` and set `messageGrouping` to `true`.
+
 ## 2.2.10 → 2.2.11
 
 ### Breaking changes
