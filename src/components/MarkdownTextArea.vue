@@ -121,7 +121,7 @@ const textsDefault = {
   blue: 'Zils',
   purple: 'Violets',
   grey: 'Pelēks',
-  helperTextLabel: 'Papildu informācija',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() =>
@@ -325,7 +325,7 @@ function shouldKeepToolbarFocus(target) {
   return target instanceof Element
     ? Boolean(
         target.closest(
-          '.lx-component-toolbar, .lx-dropdown-panel-wrapper, .lx-dropdown-panel, .lx-input-helper-wrapper'
+          '.lx-component-toolbar, .lx-dropdown-panel-wrapper, .lx-dropdown-panel, .lx-input-helper-wrapper, .lx-input-footer'
         )
       )
     : false;

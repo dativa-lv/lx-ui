@@ -3,13 +3,15 @@ import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch, generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
-import { clampText, getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 
 import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
+import LxIcon from '@/components/Icon.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -32,6 +34,8 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
+  helperText: { type: String, default: null },
+  helperTextKind: { type: String, default: 'label', options: ['label', 'icon'] },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
@@ -48,11 +52,27 @@ const textsDefault = {
   notSelected: 'Nav izvēlēts',
   searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
   selectAll: 'Izvēlēties visu',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
+);
+const showInfoHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'icon' && !props.invalid
+);
+const describedBy = computed(() => {
+  const ids = [];
+  if (showInlineHelper.value || showInfoHelper.value) ids.push(`${props.id}-helper`);
+  if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
+  return ids.length ? ids.join(' ') : null;
+});
 
 const model = computed({
   get() {
@@ -406,7 +426,7 @@ const wrapperRef = ref();
     ]"
     :aria-invalid="invalid"
     :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
-    :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
+    :aria-describedby="describedBy"
     role="radiogroup"
     :aria-labelledby="labelId"
     :title="tooltip"
@@ -539,6 +559,28 @@ const wrapperRef = ref();
       >
         {{ invalidationMessageClamped }}
       </div>
+      <div class="lx-helper-text" v-if="showInlineHelper" :id="`${id}-helper`">
+        {{ helperTextClamped }}
+      </div>
+      <template v-else-if="showInfoHelper">
+        <div class="lx-helper-info-row">
+          <LxInfoWrapper
+            placement="bottom"
+            offset-distance="6"
+            :disabled="disabled"
+            :label="displayTexts.helperTextLabel"
+          >
+            <LxIcon customClass="lx-helper-icon" value="info" />
+            <span>{{ displayTexts.helperTextLabel }}</span>
+            <template #panel>
+              <p class="lx-data">{{ helperTextClamped }}</p>
+            </template>
+          </LxInfoWrapper>
+        </div>
+        <div class="lx-invisible" :id="`${id}-helper`">
+          {{ helperTextClamped }}
+        </div>
+      </template>
     </template>
   </div>
 </template>

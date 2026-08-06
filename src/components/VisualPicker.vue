@@ -18,11 +18,13 @@ import LxButton from '@/components/Button.vue';
 import LxList from '@/components/list/List.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
+import LxIcon from '@/components/Icon.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 import { useElementSize } from '@vueuse/core';
 import { getTexts } from '@/utils/visualPickerUtils';
-import { getDisplayTexts, findFocusableElements } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, findFocusableElements, isDefined } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -60,6 +62,14 @@ const props = defineProps({
     sequence: 3,
   }, // single, multiple
   labelId: { type: String, default: null },
+  helperText: { type: String, default: null, group: 'main', sequence: 4 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 5,
+  },
   texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
@@ -77,10 +87,16 @@ const textsDefault = ref({
   listView: 'Saraksta skats',
   removeCountry: 'Noņemt valsti',
   errorLabel: 'Neizdevās ielādēt attēlu',
+  helperTextLabel: 'Papildinformācija',
 });
 const displayTexts = computed(() =>
   getDisplayTexts(props.texts, textsDefault.value, 'LxVisualPicker')
 );
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(() => hasHelperText.value && props.helperTextKind === 'label');
+const showInfoHelper = computed(() => hasHelperText.value && props.helperTextKind === 'icon');
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -433,6 +449,7 @@ if (props.builderOptions?.useRegistry) {
     :id="id"
     :data-id="id"
     :aria-labelledby="labelledBy"
+    :aria-describedby="showInlineHelper || showInfoHelper ? `${id}-helper` : null"
   >
     <LxContentSwitcher
       v-if="isImageVisible && mode === 'default'"
@@ -499,5 +516,22 @@ if (props.builderOptions?.useRegistry) {
         </LxList>
       </div>
     </div>
+    <div class="lx-helper-text" v-if="showInlineHelper" :id="`${id}-helper`">
+      {{ helperTextClamped }}
+    </div>
+    <template v-else-if="showInfoHelper">
+      <div class="lx-helper-info-row">
+        <LxInfoWrapper placement="bottom" offset-distance="6" :label="displayTexts.helperTextLabel">
+          <LxIcon customClass="lx-helper-icon" value="info" />
+          <span>{{ displayTexts.helperTextLabel }}</span>
+          <template #panel>
+            <p class="lx-data">{{ helperTextClamped }}</p>
+          </template>
+        </LxInfoWrapper>
+      </div>
+      <div class="lx-invisible" :id="`${id}-helper`">
+        {{ helperTextClamped }}
+      </div>
+    </template>
   </div>
 </template>

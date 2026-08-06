@@ -312,7 +312,10 @@
   --input-tag-margin: var(--space-0) var(--space-0500);
   --input-text-area-padding-y: var(--space-0500);
   --input-text-area-min-height: 6rem;
-  
+
+  --number-slider-track-max-width: 12.5rem;
+  --number-slider-track-min-width: 3rem;
+
   --input-complex-row-gap: var(--space-0);
   --input-complex-border-radius: var(--border-radius-0);
   --input-complex-border-width: var(--border-width-0) var(--border-width-0) var(--border-width-1) var(--border-width-0);

@@ -14,8 +14,9 @@ import LxIcon from '@/components/Icon.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxToolbar from '@/components/Toolbar.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
@@ -39,6 +40,14 @@ const props = defineProps({
   }, // list, toggle
   hasFlashlightToggle: { type: Boolean, default: false, group: 'main', sequence: 3 },
   showAlerts: { type: Boolean, default: true, group: 'main', sequence: 4 },
+  helperText: { type: String, default: null, group: 'main', sequence: 6 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 7,
+  },
   labelId: { type: String, default: null },
   stickyToolbar: { type: Boolean, default: false, group: 'additional', sequence: 2 },
   actionDefinitions: { type: Array, default: () => [] },
@@ -67,9 +76,15 @@ const textsDefault = {
   scanFile: 'Skenēt datni',
   reloadPage: 'Pārlādēt lapu',
   toggleFlashlight: 'Zibspuldze',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxQrScanner'));
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(() => hasHelperText.value && props.helperTextKind === 'label');
+const showInfoHelper = computed(() => hasHelperText.value && props.helperTextKind === 'icon');
 
 const emits = defineEmits(['update', 'error', 'actionClick']);
 
@@ -331,143 +346,164 @@ const wrapperRef = ref();
 </script>
 
 <template>
-  <div
-    ref="wrapperRef"
-    class="lx-qr-scanner-wrapper lx-complex-input"
-    :class="{ 'drag-over': dragOver }"
-    :aria-labelledby="labelledBy"
-    :data-id="id"
-  >
-    <LxToolbar
-      v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"
-      :id="`${id}-toolbar`"
-      class="lx-embedded-toolbar"
-      :disabled="loading || error || refreshError || accepted"
-      :actionDefinitions="toolbarActions"
-      :sticky="stickyToolbar"
-      :wrapperRef="wrapperRef"
-      @actionClick="toolbarActionClick"
-    />
-    <div class="lx-qr-scanner lx-input-wrapper">
-      <Transition name="fade">
-        <QrcodeStream
-          v-if="showPreview"
-          :torch="torch && !torchNotSupported"
-          :formats="formats"
-          v-show="showScanner"
-          :constraints="selectedCamera"
-          :paused="selectionKind === 'single' ? error || accepted : false"
-          @camera-on="cameraOn"
-          @detect="onDetect"
-          @error="onError"
-        >
-          <div class="lx-qr-center" v-show="showScanner">
-            <svg
-              version="1.1"
-              id="Layer_1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              x="0px"
-              y="0px"
-              viewBox="0 0 24 24"
-              style="enable-background: new 0 0 24 24"
-              xml:space="preserve"
-            >
-              <g>
-                <polygon points="1,1 6,1 6,0.7 0.6,0.7 0.6,6 1,6 	"></polygon>
-                <polygon points="17.9,0.7 17.9,1 23,1 23,6 23.3,6 23.3,0.7 	"></polygon>
-                <polygon points="22.9,23 17.9,23 17.9,23.4 23.3,23.4 23.3,18 22.9,18 	"></polygon>
-                <polygon points="1,18 0.6,18 0.6,23.4 6,23.4 6,23 1,23 	"></polygon>
-              </g>
-            </svg>
-          </div>
-        </QrcodeStream>
-      </Transition>
-
-      <Transition name="fade">
-        <div v-if="loading" class="lx-qr-loader">
-          <LxLoader :loading="true" />
-        </div>
-      </Transition>
-
-      <div
-        v-show="accepted || error"
-        class="lx-qr-placeholder"
-        v-if="selectionKind === 'single' || (selectionKind === 'multiple' && refreshError)"
-      >
+  <div class="lx-field-wrapper">
+    <div
+      ref="wrapperRef"
+      class="lx-qr-scanner-wrapper lx-complex-input"
+      :class="{ 'drag-over': dragOver }"
+      :aria-labelledby="labelledBy"
+      :aria-describedby="showInlineHelper || showInfoHelper ? `${id}-helper` : null"
+      :data-id="id"
+    >
+      <LxToolbar
+        v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"
+        :id="`${id}-toolbar`"
+        class="lx-embedded-toolbar"
+        :disabled="loading || error || refreshError || accepted"
+        :actionDefinitions="toolbarActions"
+        :sticky="stickyToolbar"
+        :wrapperRef="wrapperRef"
+        @actionClick="toolbarActionClick"
+      />
+      <div class="lx-qr-scanner lx-input-wrapper">
         <Transition name="fade">
-          <div class="lx-qr-success" v-if="accepted">
-            <div class="lx-qr-success-core">
-              <LxIcon value="accept" />
-              <p>{{ displayTexts.success }}</p>
-              <LxButton :label="displayTexts.continueScanning" @click="resetAccepted()" />
+          <QrcodeStream
+            v-if="showPreview"
+            :torch="torch && !torchNotSupported"
+            :formats="formats"
+            v-show="showScanner"
+            :constraints="selectedCamera"
+            :paused="selectionKind === 'single' ? error || accepted : false"
+            @camera-on="cameraOn"
+            @detect="onDetect"
+            @error="onError"
+          >
+            <div class="lx-qr-center" v-show="showScanner">
+              <svg
+                version="1.1"
+                id="Layer_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px"
+                y="0px"
+                viewBox="0 0 24 24"
+                style="enable-background: new 0 0 24 24"
+                xml:space="preserve"
+              >
+                <g>
+                  <polygon points="1,1 6,1 6,0.7 0.6,0.7 0.6,6 1,6 	"></polygon>
+                  <polygon points="17.9,0.7 17.9,1 23,1 23,6 23.3,6 23.3,0.7 	"></polygon>
+                  <polygon points="22.9,23 17.9,23 17.9,23.4 23.3,23.4 23.3,18 22.9,18 	"></polygon>
+                  <polygon points="1,18 0.6,18 0.6,23.4 6,23.4 6,23 1,23 	"></polygon>
+                </g>
+              </svg>
             </div>
-          </div>
+          </QrcodeStream>
         </Transition>
 
         <Transition name="fade">
-          <div class="lx-qr-error" v-show="error">
-            <div class="lx-qr-error-core">
-              <LxEmptyState
-                :label="displayTexts.errorLabel"
-                :description="errorMessage"
-                icon="invalid"
-                :action-definitions="
-                  !refreshError
-                    ? [{ id: 'reset', name: displayTexts.continueScanning }]
-                    : [{ id: 'refresh', name: displayTexts.reloadPage, icon: 'refresh' }]
-                "
-                @actionClick="emptyStateAction"
-              />
+          <div v-if="loading" class="lx-qr-loader">
+            <LxLoader :loading="true" />
+          </div>
+        </Transition>
+
+        <div
+          v-show="accepted || error"
+          class="lx-qr-placeholder"
+          v-if="selectionKind === 'single' || (selectionKind === 'multiple' && refreshError)"
+        >
+          <Transition name="fade">
+            <div class="lx-qr-success" v-if="accepted">
+              <div class="lx-qr-success-core">
+                <LxIcon value="accept" />
+                <p>{{ displayTexts.success }}</p>
+                <LxButton :label="displayTexts.continueScanning" @click="resetAccepted()" />
+              </div>
+            </div>
+          </Transition>
+
+          <Transition name="fade">
+            <div class="lx-qr-error" v-show="error">
+              <div class="lx-qr-error-core">
+                <LxEmptyState
+                  :label="displayTexts.errorLabel"
+                  :description="errorMessage"
+                  icon="invalid"
+                  :action-definitions="
+                    !refreshError
+                      ? [{ id: 'reset', name: displayTexts.continueScanning }]
+                      : [{ id: 'refresh', name: displayTexts.reloadPage, icon: 'refresh' }]
+                  "
+                  @actionClick="emptyStateAction"
+                />
+              </div>
+            </div>
+          </Transition>
+        </div>
+
+        <Transition name="fade">
+          <div v-show="accepted || error" v-if="selectionKind === 'multiple'">
+            <div class="lx-qr-notification">
+              <Transition name="fade">
+                <div class="lx-qr-success" v-if="accepted">
+                  <LxIcon value="notification-success" />
+                  <p>{{ displayTexts.success }}</p>
+                </div>
+              </Transition>
+              <Transition name="fade">
+                <div class="lx-qr-error" v-if="error && !refreshError">
+                  <LxIcon value="invalid" />
+                  <p>{{ displayTexts.errorLabel }}</p>
+                </div>
+              </Transition>
             </div>
           </div>
         </Transition>
       </div>
 
       <Transition name="fade">
-        <div v-show="accepted || error" v-if="selectionKind === 'multiple'">
-          <div class="lx-qr-notification">
-            <Transition name="fade">
-              <div class="lx-qr-success" v-if="accepted">
-                <LxIcon value="notification-success" />
-                <p>{{ displayTexts.success }}</p>
-              </div>
-            </Transition>
-            <Transition name="fade">
-              <div class="lx-qr-error" v-if="error && !refreshError">
-                <LxIcon value="invalid" />
-                <p>{{ displayTexts.errorLabel }}</p>
-              </div>
-            </Transition>
+        <QrcodeDropZone
+          @detect="onDetect"
+          @error="onError"
+          :formats="formats"
+          class="lx-qr-drag-wrapper"
+          v-if="hasFileUploader"
+          v-show="(!accepted && !error) || selectionKind === 'multiple'"
+        >
+          <div class="lx-qr-drag-zone" @dragenter="dragEnter" @dragleave="dragLeave">
+            <p>{{ displayTexts.dragHere }}</p>
           </div>
-        </div>
+        </QrcodeDropZone>
       </Transition>
-    </div>
 
-    <Transition name="fade">
-      <QrcodeDropZone
+      <QrcodeCapture
+        v-if="hasFileUploader"
+        :id="id"
         @detect="onDetect"
         @error="onError"
         :formats="formats"
-        class="lx-qr-drag-wrapper"
-        v-if="hasFileUploader"
-        v-show="(!accepted && !error) || selectionKind === 'multiple'"
-      >
-        <div class="lx-qr-drag-zone" @dragenter="dragEnter" @dragleave="dragLeave">
-          <p>{{ displayTexts.dragHere }}</p>
-        </div>
-      </QrcodeDropZone>
-    </Transition>
+        :multiple="false"
+        capture="user"
+        hidden
+      />
+    </div>
 
-    <QrcodeCapture
-      v-if="hasFileUploader"
-      :id="id"
-      @detect="onDetect"
-      @error="onError"
-      :formats="formats"
-      :multiple="false"
-      capture="user"
-      hidden
-    />
+    <div class="lx-helper-text" v-if="showInlineHelper" :id="`${id}-helper`">
+      {{ helperTextClamped }}
+    </div>
+    <template v-else-if="showInfoHelper">
+      <div class="lx-helper-info-row">
+        <LxInfoWrapper placement="bottom" offset-distance="6" :label="displayTexts.helperTextLabel">
+          <LxIcon customClass="lx-helper-icon" value="info" />
+          <span>{{ displayTexts.helperTextLabel }}</span>
+          <template #panel>
+            <p class="lx-data">{{ helperTextClamped }}</p>
+          </template>
+        </LxInfoWrapper>
+      </div>
+      <div class="lx-invisible" :id="`${id}-helper`">
+        {{ helperTextClamped }}
+      </div>
+    </template>
   </div>
 </template>

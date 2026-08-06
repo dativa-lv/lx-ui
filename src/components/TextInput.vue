@@ -126,7 +126,7 @@ const textsDefault = {
   emptyValue: 'Nav norādīts',
   showPassword: 'Rādīt paroli',
   hidePassword: 'Paslēpt paroli',
-  helperTextLabel: 'Papildu informācija',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxTextInput'));

@@ -10,7 +10,9 @@ import {
 } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxButton from '@/components/Button.vue';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import LxIcon from '@/components/Icon.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { makeIntegerValidator } from '@/utils/numberSliderUtils';
 import { generateUUID } from '@/utils/stringUtils';
@@ -59,6 +61,14 @@ const props = defineProps({
   hasInput: { type: Boolean, default: false, group: 'main', sequence: 4 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  helperText: { type: String, default: null, group: 'main', sequence: 5 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 6,
+  },
   labelId: { type: String, default: null },
   disableArrowKeys: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
@@ -76,9 +86,19 @@ const props = defineProps({
 const textsDefault = {
   decreaseValue: 'Samazināt vērtību',
   increaseValue: 'Palielināt vērtību',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(() => hasHelperText.value && props.helperTextKind === 'label');
+const showInfoHelper = computed(() => hasHelperText.value && props.helperTextKind === 'icon');
+const describedBy = computed(() => {
+  if (showInlineHelper.value || showInfoHelper.value) return `${props.id}-helper`;
+  return null;
+});
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -195,61 +215,72 @@ if (props.builderOptions?.useRegistry) {
   <div class="lx-field-wrapper" :data-id="id">
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">{{ model }}</p>
     <template v-else-if="kind === 'stepper'">
-      <div
-        class="lx-number-stepper-wrapper lx-input-wrapper"
-        :class="[{ 'lx-disabled': disabled }, { 'lx-number-stepper-no-input': !hasInput }]"
-      >
-        <LxTextInput
-          v-if="hasInput"
-          :id="id"
-          v-model="model"
-          mask="integer"
-          class="lx-number-stepper-field"
-          :labelId="labelledBy"
-          :disabled
-          :builderOptions="{ innerComponent: true }"
-          @keydown.up.exact.prevent="!props.disableArrowKeys && onIncreaseStep()"
-          @keydown.down.exact.prevent="!props.disableArrowKeys && onDecreaseStep()"
-          @keydown.shift.up.exact.prevent="!props.disableArrowKeys && onIncreaseMultiplier()"
-          @keydown.shift.down.exact.prevent="!props.disableArrowKeys && onDecreaseMultiplier()"
-          @keydown.page-up.prevent="onIncreasePage"
-          @keydown.page-down.prevent="onDecreasePage"
-        />
-        <p
-          v-else
-          class="lx-number-stepper-value lx-input-area"
-          role="spinbutton"
-          :aria-labelledby="labelledBy"
-          :aria-valuenow="model"
-          :aria-valuemin="minValue"
-          :aria-valuemax="maxValue"
+      <div class="lx-number-stepper-container-wrapper">
+        <div
+          class="lx-number-stepper-wrapper lx-input-wrapper"
+          :class="[{ 'lx-disabled': disabled }, { 'lx-number-stepper-no-input': !hasInput }]"
         >
-          {{ model }}
-        </p>
-        <LxButton
-          :id="`${id}-decrease`"
-          customClass="lx-number-stepper-decrease"
-          kind="ghost"
-          variant="icon-only"
-          icon="subtract"
-          :label="displayTexts.decreaseValue"
-          :disabled="isDecreaseDisabled"
-          :tabindex="hasInput ? -1 : 0"
-          @mousedown="onStepperButtonMouseDown"
-          @click="onDecreaseStep"
-        />
-        <LxButton
-          :id="`${id}-increase`"
-          customClass="lx-number-stepper-increase"
-          kind="ghost"
-          variant="icon-only"
-          icon="add"
-          :label="displayTexts.increaseValue"
-          :disabled="isIncreaseDisabled"
-          :tabindex="hasInput ? -1 : 0"
-          @mousedown="onStepperButtonMouseDown"
-          @click="onIncreaseStep"
-        />
+          <LxTextInput
+            v-if="hasInput"
+            :id="id"
+            v-model="model"
+            mask="integer"
+            class="lx-number-stepper-field"
+            :labelId="labelledBy"
+            :disabled
+            :builderOptions="{ innerComponent: true }"
+            @keydown.up.exact.prevent="!props.disableArrowKeys && onIncreaseStep()"
+            @keydown.down.exact.prevent="!props.disableArrowKeys && onDecreaseStep()"
+            @keydown.shift.up.exact.prevent="!props.disableArrowKeys && onIncreaseMultiplier()"
+            @keydown.shift.down.exact.prevent="!props.disableArrowKeys && onDecreaseMultiplier()"
+            @keydown.page-up.prevent="onIncreasePage"
+            @keydown.page-down.prevent="onDecreasePage"
+          />
+          <p
+            v-else
+            class="lx-number-stepper-value lx-input-area"
+            role="spinbutton"
+            :aria-labelledby="labelledBy"
+            :aria-describedby="describedBy"
+            :aria-valuenow="model"
+            :aria-valuemin="minValue"
+            :aria-valuemax="maxValue"
+          >
+            {{ model }}
+          </p>
+          <LxButton
+            :id="`${id}-decrease`"
+            customClass="lx-number-stepper-decrease"
+            kind="ghost"
+            variant="icon-only"
+            icon="subtract"
+            :label="displayTexts.decreaseValue"
+            :disabled="isDecreaseDisabled"
+            :tabindex="hasInput ? -1 : 0"
+            @mousedown="onStepperButtonMouseDown"
+            @click="onDecreaseStep"
+          />
+          <LxButton
+            :id="`${id}-increase`"
+            customClass="lx-number-stepper-increase"
+            kind="ghost"
+            variant="icon-only"
+            icon="add"
+            :label="displayTexts.increaseValue"
+            :disabled="isIncreaseDisabled"
+            :tabindex="hasInput ? -1 : 0"
+            @mousedown="onStepperButtonMouseDown"
+            @click="onIncreaseStep"
+          />
+        </div>
+        <div v-if="showInfoHelper" class="lx-number-slider-helper-wrapper">
+          <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
+            <LxIcon customClass="lx-helper-icon" value="info" />
+            <template #panel>
+              <p class="lx-data">{{ helperTextClamped }}</p>
+            </template>
+          </LxInfoWrapper>
+        </div>
       </div>
       <div
         v-if="!hasInput"
@@ -276,6 +307,7 @@ if (props.builderOptions?.useRegistry) {
           :max="maxValue"
           :step="stepValue"
           :aria-labelledby="labelledBy"
+          :aria-describedby="describedBy"
           :disabled
           @mousedown="onMouseDown"
           @keydown.up.prevent="!props.disableArrowKeys && onIncreaseStep()"
@@ -317,6 +349,20 @@ if (props.builderOptions?.useRegistry) {
           :builderOptions="{ innerComponent: true }"
         />
       </div>
+      <div v-if="showInfoHelper" class="lx-number-slider-helper-wrapper">
+        <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
+          <LxIcon customClass="lx-helper-icon" value="info" />
+          <template #panel>
+            <p class="lx-data">{{ helperTextClamped }}</p>
+          </template>
+        </LxInfoWrapper>
+      </div>
+    </div>
+    <div class="lx-helper-text" v-if="showInlineHelper && !readOnly" :id="`${id}-helper`">
+      {{ helperTextClamped }}
+    </div>
+    <div class="lx-invisible" v-else-if="showInfoHelper && !readOnly" :id="`${id}-helper`">
+      {{ helperTextClamped }}
     </div>
   </div>
 </template>

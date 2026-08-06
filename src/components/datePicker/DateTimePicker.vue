@@ -96,7 +96,7 @@ const textsDefault = {
   dayClearedAnnouncement: 'Diena attīrīta, jo neeksistē izvēlētajā mēnesī',
   monthChangedAnnouncement: 'Mēnesis mainīts uz {0}',
   monthClearedAnnouncement: 'Mēnesis attīrīts, jo izvēlētā diena tajā neeksistē',
-  helperTextLabel: 'Papildu informācija',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDateTimePicker'));

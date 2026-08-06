@@ -72,7 +72,7 @@ const textsDefault = {
   daysSingular: 'diena',
   monthsSingular: 'mēnesis',
   yearsSingular: 'gads',
-  helperTextLabel: 'Papildu informācija',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDayInput'));
@@ -384,6 +384,13 @@ const infoText = computed(() => {
   return props.readOnly ? '' : displayTexts.value.noResults;
 });
 
+function getDescribedBy(baseId) {
+  const ids = [baseId];
+  if (infoText.value) ids.push(`${props.id}-helper`);
+  if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
+  return ids.join(' ');
+}
+
 function normalizeSegmentedValue(value, field) {
   if (value === '' || value === null || value === undefined) {
     return null;
@@ -663,11 +670,7 @@ watch(
                 :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
                 :aria-label="input.unit"
                 :aria-labelledby="labelledBy"
-                :aria-describedby="
-                  showInvalidationMessage
-                    ? `${id}-lx-input-description ${id}-invalidation-message`
-                    : `${id}-lx-input-description`
-                "
+                :aria-describedby="getDescribedBy(`${id}-lx-input-description`)"
               />
               <div class="lx-duration-unit">{{ input.unit }}</div>
               <div v-if="invalid" class="lx-input-icon-wrapper">
@@ -678,13 +681,16 @@ watch(
         </div>
 
         <div v-if="infoText" class="lx-duration-result-icon">
-          <LxInfoWrapper placement="top" :label="displayTexts.helperTextLabel">
-            <LxIcon value="info" />
+          <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
+            <LxIcon customClass="lx-helper-icon" value="info" />
 
             <template #panel>
               <p class="lx-data">{{ infoText }}</p>
             </template>
           </LxInfoWrapper>
+        </div>
+        <div v-if="infoText" class="lx-invisible" :id="`${id}-helper`">
+          {{ infoText }}
         </div>
 
         <div v-if="result && !readOnly && kind === 'label'" class="lx-duration-result-label">

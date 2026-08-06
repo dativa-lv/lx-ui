@@ -102,7 +102,7 @@ const textsDefault = {
   inputManual: 'Ievadīt manuāli',
   bottomSheetClose: 'Paslēpt paneli',
   scrollUpDown: 'Ritināt uz augšu vai leju',
-  helperTextLabel: 'Papildu informācija',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -1437,7 +1437,7 @@ onMounted(async () => {
               :label="displayTexts.helperTextLabel"
             >
               <LxIcon
-                customClass="lx-date-time-icon lx-modifier-icon"
+                customClass="lx-date-time-icon lx-modifier-icon lx-helper-icon"
                 :value="mode === 'time' ? 'time' : 'calendar'"
               />
               <template #panel>
@@ -1503,7 +1503,10 @@ onMounted(async () => {
                 :disabled="disabled"
                 :label="displayTexts.helperTextLabel"
               >
-                <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="calendar" />
+                <LxIcon
+                  customClass="lx-date-time-icon lx-modifier-icon lx-helper-icon"
+                  value="calendar"
+                />
                 <template #panel>
                   <p class="lx-data">{{ helperTextClamped }}</p>
                 </template>

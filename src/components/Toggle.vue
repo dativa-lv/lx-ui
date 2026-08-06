@@ -13,8 +13,9 @@ import {
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { formatValueBool } from '@/utils/formatUtils';
-import { clampText, getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -24,6 +25,14 @@ const props = defineProps({
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
+  helperText: { type: String, default: null, group: 'main', sequence: 3 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 4,
+  },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   tooltip: { type: String, default: null, group: 'main', sequence: 2 },
   label: { type: String, default: null },
@@ -58,12 +67,33 @@ const model = computed({
   },
 });
 
-const textsDefault = { valueYes: 'Jā', valueNo: 'Nē', emptyValue: 'Nav norādīts' };
+const textsDefault = {
+  valueYes: 'Jā',
+  valueNo: 'Nē',
+  emptyValue: 'Nav norādīts',
+  helperTextLabel: 'Papildinformācija',
+};
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxToggle'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 const showInvalidationMessage = computed(
   () => props.invalid && props.invalidationMessage && !props.readOnly
 );
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
+);
+const showInfoHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'icon' && !props.invalid
+);
+const describedBy = computed(() => {
+  const ids = [];
+  if (showInlineHelper.value || showInfoHelper.value) ids.push(`${props.id}-helper`);
+  if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
+  if (ids.length) return ids.join(' ');
+  return null;
+});
 
 const input = ref({});
 
@@ -214,7 +244,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
         :aria-checked="model"
         :aria-invalid="invalid"
         :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
-        :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
+        :aria-describedby="describedBy"
         :aria-label="accessibleLabel || (!(size !== 's' && hasSlots) ? tooltipValue : null)"
         :aria-labelledby="accessibleLabel ? null : labelledBy"
         tabindex="0"
@@ -248,6 +278,14 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
       <div v-show="invalid && !hasSlots" class="lx-invalidation-icon-wrapper">
         <LxIcon customClass="lx-invalidation-icon" value="invalid" />
       </div>
+      <div v-if="showInfoHelper" class="lx-toggle-helper-wrapper">
+        <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
+          <LxIcon customClass="lx-helper-icon" value="info" />
+          <template #panel>
+            <p class="lx-data">{{ helperTextClamped }}</p>
+          </template>
+        </LxInfoWrapper>
+      </div>
     </div>
     <div
       v-if="showInvalidationMessage"
@@ -255,6 +293,12 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
       :id="`${id}-invalidation-message`"
     >
       {{ invalidationMessageClamped }}
+    </div>
+    <div class="lx-helper-text" v-if="showInlineHelper && !readOnly" :id="`${id}-helper`">
+      {{ helperTextClamped }}
+    </div>
+    <div class="lx-invisible" v-else-if="showInfoHelper && !readOnly" :id="`${id}-helper`">
+      {{ helperTextClamped }}
     </div>
   </div>
 </template>

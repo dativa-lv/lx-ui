@@ -6,6 +6,10 @@
   column-gap: var(--toggle-gap);
 }
 
+.lx-toggle-wrapper.lx-small {
+  align-items: center;
+}
+
 /* Check out why -1px */
 .lx-layout .lx-toggle-wrapper input[type="checkbox"].lx-toggle {
   position: absolute;
@@ -221,32 +225,43 @@
   border: var(--border-width-2) solid var(--color-bad);
 }
 
+/*** Helper text styles ***/
+
+.lx-toggle-wrapper .lx-toggle-helper-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.lx-toggle-wrapper:not(.lx-small) .lx-toggle-helper-wrapper {
+  align-self: flex-start;
+}
+
 @media (pointer: fine) {
   .lx-dropdown-menu-toggle-wrapper:hover .lx-toggle-appearance,
-  .lx-toggle-wrapper:hover .lx-toggle-appearance {
+  .lx-toggle-wrapper:not(.lx-disabled):hover:not(:has(.lx-toggle-helper-wrapper:hover)) .lx-toggle-appearance {
     background: var(--color-toggle-background-hover-off);
     border-color: var(--color-toggle-border-hover-off);
   }
 
   .lx-dropdown-menu-toggle-wrapper:hover .lx-toggle-thumb,
-  .lx-toggle-wrapper:hover .lx-toggle-thumb {
+  .lx-toggle-wrapper:not(.lx-disabled):hover:not(:has(.lx-toggle-helper-wrapper:hover)) .lx-toggle-thumb {
     background: var(--color-toggle-thumb-hover-off);
     border-color: var(--color-toggle-thumb-hover-off);
   }
 
   .lx-dropdown-menu-toggle-wrapper:hover .lx-checked .lx-toggle-appearance,
-  .lx-toggle-wrapper.lx-checked:hover .lx-toggle-appearance {
+  .lx-toggle-wrapper.lx-checked:not(.lx-disabled):hover:not(:has(.lx-toggle-helper-wrapper:hover)) .lx-toggle-appearance {
     background: var(--color-toggle-background-hover-on);
     border-color: var(--color-toggle-border-hover-on);
   }
 
   .lx-dropdown-menu-toggle-wrapper:hover .lx-checked .lx-toggle-thumb,
-  .lx-toggle-wrapper.lx-checked:hover .lx-toggle-thumb {
+  .lx-toggle-wrapper.lx-checked:not(.lx-disabled):hover:not(:has(.lx-toggle-helper-wrapper:hover)) .lx-toggle-thumb {
     background: var(--color-toggle-thumb-hover-on);
   }
 
   .lx-dropdown-menu-toggle-wrapper:hover .lx-toggle-checkmark,
-  .lx-toggle-wrapper:hover .lx-toggle-checkmark {
+  .lx-toggle-wrapper:not(.lx-disabled):hover:not(:has(.lx-toggle-helper-wrapper:hover)) .lx-toggle-checkmark {
     fill: var(--color-toggle-checkmark-hover);
   }
 }

@@ -13,9 +13,11 @@ import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxLoader from '@/components/Loader.vue';
+import LxIcon from '@/components/Icon.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { lxDevUtils } from '@/utils';
 import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
@@ -41,6 +43,14 @@ const props = defineProps({
   labelId: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   stickyToolbar: { type: Boolean, default: false, group: 'main', sequence: 4 },
+  helperText: { type: String, default: null, group: 'main', sequence: 5 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 6,
+  },
   texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
@@ -63,9 +73,15 @@ const textsDefault = {
   toggleFlashlight: 'Zibspuldze',
   photoTaken: 'Attēls uzņemts',
   photoDeleted: 'Attēls dzēsts',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxCamera'));
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(() => hasHelperText.value && props.helperTextKind === 'label');
+const showInfoHelper = computed(() => hasHelperText.value && props.helperTextKind === 'icon');
 
 const system = useLx().getGlobals()?.systemId;
 
@@ -435,7 +451,13 @@ const wrapperRef = ref();
 </script>
 
 <template>
-  <div ref="wrapperRef" class="lx-camera-wrapper" :aria-labelledby="labelledBy" :data-id="id">
+  <div
+    ref="wrapperRef"
+    class="lx-camera-wrapper"
+    :aria-labelledby="labelledBy"
+    :aria-describedby="showInlineHelper || showInfoHelper ? `${id}-helper` : null"
+    :data-id="id"
+  >
     <div class="lx-camera" :class="{ 'lx-complex-input': !error }">
       <div
         :id="`${id}-announce`"
@@ -490,5 +512,22 @@ const wrapperRef = ref();
         @click="deleteImage"
       />
     </div>
+    <div class="lx-helper-text" v-if="showInlineHelper" :id="`${id}-helper`">
+      {{ helperTextClamped }}
+    </div>
+    <template v-else-if="showInfoHelper">
+      <div class="lx-helper-info-row">
+        <LxInfoWrapper placement="bottom" offset-distance="6" :label="displayTexts.helperTextLabel">
+          <LxIcon customClass="lx-helper-icon" value="info" />
+          <span>{{ displayTexts.helperTextLabel }}</span>
+          <template #panel>
+            <p class="lx-data">{{ helperTextClamped }}</p>
+          </template>
+        </LxInfoWrapper>
+      </div>
+      <div class="lx-invisible" :id="`${id}-helper`">
+        {{ helperTextClamped }}
+      </div>
+    </template>
   </div>
 </template>

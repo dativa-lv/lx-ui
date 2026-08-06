@@ -45,6 +45,14 @@ const props = defineProps({
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
+  helperText: { type: String, default: null, group: 'main', sequence: 10 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 11,
+  },
   loading: { type: Boolean, default: false, group: 'mode', sequence: 3 },
   hasDetails: { type: Boolean, default: false, group: 'main', sequence: 3 },
   selectionKind: {
@@ -95,11 +103,27 @@ const textsDefault = {
   selectAll: 'Izvēlēties visu',
   loadingState: 'Notiek ielāde',
   additionalText: 'Mēģiniet meklēt, izmantojot citu vārdu vai frāzi',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxAutoComplete'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
+);
+const showInfoHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'icon' && !props.invalid
+);
+const describedBy = computed(() => {
+  const ids = [];
+  if (showInlineHelper.value || showInfoHelper.value) ids.push(`${props.id}-helper`);
+  if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
+  return ids.length ? ids.join(' ') : null;
+});
 
 const emit = defineEmits(['update:modelValue', 'openDetails', 'update:searchString']);
 
@@ -1312,9 +1336,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       :aria-errormessage="
                         showInvalidationMessage ? `${id}-invalidation-message` : null
                       "
-                      :aria-describedby="
-                        showInvalidationMessage ? `${id}-invalidation-message` : null
-                      "
+                      :aria-describedby="describedBy"
                       :aria-busy="loadingState || loading"
                       :maxlength="queryMaxLength || null"
                       :tabindex="disabled ? '-1' : '0'"
@@ -1354,6 +1376,28 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       class="lx-invalidation-icon-wrapper"
                     >
                       <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+                    </div>
+
+                    <div
+                      v-if="showInfoHelper && !(loadingState || loading)"
+                      class="lx-input-helper-wrapper"
+                      @click.stop
+                      @mousedown.stop
+                      @keydown.space.stop
+                      @keydown.enter.stop
+                      @keydown.up.stop
+                      @keydown.down.stop
+                    >
+                      <LxInfoWrapper
+                        placement="top"
+                        :disabled="disabled"
+                        :label="displayTexts.helperTextLabel"
+                      >
+                        <LxIcon customClass="lx-helper-icon" value="info" />
+                        <template #panel>
+                          <p class="lx-data">{{ helperTextClamped }}</p>
+                        </template>
+                      </LxInfoWrapper>
                     </div>
 
                     <div v-if="shouldShowIcon" class="lx-input-icon-wrapper">
@@ -1421,6 +1465,22 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     @click.stop
                   >
                     {{ invalidationMessageClamped }}
+                  </div>
+                  <div
+                    class="lx-helper-text"
+                    v-if="showInlineHelper"
+                    :id="`${id}-helper`"
+                    @click.stop
+                  >
+                    {{ helperTextClamped }}
+                  </div>
+                  <div
+                    class="lx-invisible"
+                    v-else-if="showInfoHelper"
+                    :id="`${id}-helper`"
+                    @click.stop
+                  >
+                    {{ helperTextClamped }}
                   </div>
                 </div>
               </div>

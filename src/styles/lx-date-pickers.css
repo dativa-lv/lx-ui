@@ -1358,20 +1358,6 @@
   width: var(--input-width-l);
 }
 
-.lx .lx-layout .lx-day-month-picker .lx-day-month-info svg {
-  height: var(--icon-size-m);
-  width: var(--icon-size-m);
-  margin: var(--space-0500);
-}
-
-.lx .lx-layout .lx-day-month-picker .lx-day-month-info .lx-info-wrapper-content {
-  height: var(--input-height);
-}
-
-.lx .lx-layout .lx-day-month-picker .lx-day-month-info .popper-wrapper {
-  width: fit-content;
-}
-
 .lx .lx-layout .lx-day-month-picker.lx-day-month-responsive .lx-day-month-fields {
   flex-direction: column;
   align-items: flex-start;

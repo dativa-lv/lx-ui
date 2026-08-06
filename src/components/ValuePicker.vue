@@ -67,6 +67,14 @@ const props = defineProps({
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
+  helperText: { type: String, default: null, group: 'main', sequence: 9 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 10,
+  },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
@@ -241,6 +249,8 @@ if (props.builderOptions?.useRegistry) {
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
+        :helperText="helperText"
+        :helperTextKind="helperTextKind"
         :texts="displayTexts"
         :placeholder="placeholder"
         :tooltip="tooltip"
@@ -274,6 +284,8 @@ if (props.builderOptions?.useRegistry) {
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
+        :helperText="helperText"
+        :helperTextKind="helperTextKind"
         :texts="displayTexts"
         :placeholder="placeholder"
         :tooltip="tooltip"
@@ -312,6 +324,8 @@ if (props.builderOptions?.useRegistry) {
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
+        :helperText="helperText"
+        :helperTextKind="helperTextKind"
         :texts="displayTexts"
         :placeholder="placeholder"
         :tooltip="tooltip"
@@ -345,6 +359,8 @@ if (props.builderOptions?.useRegistry) {
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
+        :helperText="helperText"
+        :helperTextKind="helperTextKind"
         :texts="displayTexts"
         :placeholder="placeholder"
         :tooltip="tooltip"
@@ -378,6 +394,8 @@ if (props.builderOptions?.useRegistry) {
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
+        :helperText="helperText"
+        :helperTextKind="helperTextKind"
         :texts="displayTexts"
         :placeholder="placeholder"
         :tooltip="tooltip"
@@ -410,6 +428,8 @@ if (props.builderOptions?.useRegistry) {
         :disabled="disabled"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
+        :helperText="helperText"
+        :helperTextKind="helperTextKind"
         :texts="displayTexts"
         :placeholder="placeholder"
         :tooltip="tooltip"

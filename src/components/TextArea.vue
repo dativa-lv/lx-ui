@@ -43,7 +43,7 @@ const props = defineProps({
 
 const textsDefault = {
   emptyValue: 'Nav norādīts',
-  helperTextLabel: 'Papildu informācija',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

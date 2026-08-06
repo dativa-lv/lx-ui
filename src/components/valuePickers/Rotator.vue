@@ -1,13 +1,14 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { clampText, getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -29,6 +30,8 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
+  helperText: { type: String, default: null },
+  helperTextKind: { type: String, default: 'label', options: ['label', 'icon'] },
   searchAttributes: { type: Array, default: null },
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => {} },
@@ -40,11 +43,27 @@ const textsDefault = {
   clearChosen: 'Notīrīt visas atlasītās vērtības',
   notSelected: 'Nav izvēlēts',
   searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
+);
+const showInfoHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'icon' && !props.invalid
+);
+const describedBy = computed(() => {
+  const ids = [];
+  if (showInlineHelper.value || showInfoHelper.value) ids.push(`${props.id}-helper`);
+  if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
+  return ids.length ? ids.join(' ') : null;
+});
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -76,7 +95,14 @@ const currentIndex = ref(0);
 const itemsModel = ref({});
 const highlightedItemId = ref(null);
 const dropdownMenuRef = ref(null);
+const rotatorFieldRef = ref(null);
 const suppressTransition = ref(false);
+
+function focusRotatorField() {
+  nextTick(() => {
+    rotatorFieldRef.value?.focus();
+  });
+}
 
 function activate() {
   rotatorItemsArray.value?.forEach((item) => {
@@ -210,7 +236,7 @@ function selectSingle(id) {
     model.value = [currentItemId];
     highlightedItemId.value = currentItemId;
     if (dropdownMenuRef.value && dropdownMenuRef.value.menuOpen) {
-      dropdownMenuRef.value.closeMenu();
+      dropdownMenuRef.value.closeMenu({ source: 'keyboard' });
     }
   }
 }
@@ -392,11 +418,12 @@ function onUp() {
         :tabindex="-1"
       >
         <div
+          ref="rotatorFieldRef"
           class="lx-rotator-dropdown-wrapper lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
           :aria-invalid="invalid"
           :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
-          :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
+          :aria-describedby="describedBy"
           :tabindex="disabled ? -1 : 0"
           :aria-labelledby="labelId"
           :aria-disabled="disabled"
@@ -408,6 +435,7 @@ function onUp() {
           @keyup.up.prevent="onUp"
           @keydown.down.prevent
           @keydown.up.prevent
+          @keydown.esc.prevent="focusRotatorField"
         >
           <div class="pseudo-input" />
 
@@ -433,6 +461,32 @@ function onUp() {
               </template>
             </li>
           </TransitionGroup>
+
+          <div
+            v-if="showInfoHelper"
+            class="lx-input-helper-wrapper"
+            @click.stop
+            @contextmenu.stop
+            @keyup.space.stop
+            @keyup.enter.stop
+            @keyup.up.stop
+            @keyup.down.stop
+            @keydown.space.stop
+            @keydown.enter.stop
+            @keydown.up.stop
+            @keydown.down.stop
+          >
+            <LxInfoWrapper
+              placement="top"
+              :disabled="disabled"
+              :label="displayTexts.helperTextLabel"
+            >
+              <LxIcon customClass="lx-helper-icon" value="info" />
+              <template #panel>
+                <p class="lx-data">{{ helperTextClamped }}</p>
+              </template>
+            </LxInfoWrapper>
+          </div>
 
           <div class="lx-input-icon-wrapper">
             <LxIcon customClass="lx-modifier-icon thumb" value="rotator" />
@@ -466,6 +520,12 @@ function onUp() {
         @contextmenu.stop
       >
         {{ invalidationMessageClamped }}
+      </div>
+      <div class="lx-helper-text" v-if="showInlineHelper" :id="`${id}-helper`" @contextmenu.stop>
+        {{ helperTextClamped }}
+      </div>
+      <div class="lx-invisible" v-else-if="showInfoHelper" :id="`${id}-helper`">
+        {{ helperTextClamped }}
       </div>
     </div>
   </template>

@@ -137,6 +137,14 @@ function handleClose(hasAnimation = true) {
   });
 }
 
+function focusToggler() {
+  if (!togglerRef.value) return;
+  const innerFocusable = findFocusableElements(togglerRef.value).find(
+    (el) => el !== togglerRef.value
+  );
+  (innerFocusable || togglerRef.value).focus();
+}
+
 function closeMenu({ source = 'default' } = {}) {
   if (props.datePickerType && responsiveView.value) {
     handleClose();
@@ -154,7 +162,7 @@ function closeMenu({ source = 'default' } = {}) {
   parentFocusTrap?.unpause();
 
   if (source === 'keyboard' && !props.datePickerType) {
-    togglerRef.value?.focus();
+    focusToggler();
   }
 }
 
@@ -325,7 +333,7 @@ function handlePanelKeydown(e) {
       e.preventDefault();
       closeMenu();
       if (e.shiftKey) {
-        togglerRef.value.focus();
+        focusToggler();
       } else {
         focusNextFocusableElement(togglerRef.value);
       }

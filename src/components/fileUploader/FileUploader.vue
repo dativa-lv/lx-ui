@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch, inject, getCurrentInstance, onUnmounte
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts, isNil } from '@/utils/generalUtils';
+import { getDisplayTexts, isNil, clampText, isDefined } from '@/utils/generalUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxList from '@/components/list/List.vue';
@@ -12,6 +12,7 @@ import FileUploaderDetails from '@/components/fileUploader/FileUploaderDetails.v
 import FileUploaderItem from '@/components/fileUploader/FileUploaderItem.vue';
 import LxCamera from '@/components/Camera.vue';
 import LxIcon from '@/components/Icon.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxLoader from '@/components/Loader.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
@@ -50,6 +51,14 @@ const props = defineProps({
   maxFileSize: { type: Number, default: 30000000, group: 'additional', sequence: 6 },
   hasDownloadButton: { type: Boolean, default: false, group: 'main', sequence: 6 },
   showMeta: { type: Boolean, default: true, group: 'main', sequence: 7 },
+  helperText: { type: String, default: null, group: 'main', sequence: 8 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 9,
+  },
   maxSizeForMeta: { type: Number, default: 30000000, group: 'additional', sequence: 7 },
   hasCamera: { type: Boolean, default: false, group: 'main', sequence: 4 },
   cameraSwitcherMode: {
@@ -159,9 +168,23 @@ const textsDefault = {
   metaMainDescription: 'Apraksts',
   metaEDocContentLabel: 'Paraksti',
   metaEdocArchiveContentLabel: 'Saturs',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxFileUploader'));
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+
+const usesDescriptionAsHelper = computed(
+  () => !hasHelperText.value && Boolean(displayTexts.value.uploaderDescription)
+);
+const helperTextClamped = computed(() =>
+  clampText(hasHelperText.value ? props.helperText : displayTexts.value.uploaderDescription)
+);
+const showInlineHelper = computed(
+  () => usesDescriptionAsHelper.value || (hasHelperText.value && props.helperTextKind === 'label')
+);
+const showInfoHelper = computed(() => hasHelperText.value && props.helperTextKind === 'icon');
 
 // states:
 // id - id of the file
@@ -728,6 +751,7 @@ if (props.builderOptions?.useRegistry) {
       { 'lx-disabled': disabled },
     ]"
     :aria-labelledBy="labelledBy"
+    :aria-describedby="showInlineHelper || showInfoHelper ? `${id}-helper` : null"
     role="group"
     :data-id="id"
   >
@@ -948,9 +972,33 @@ if (props.builderOptions?.useRegistry) {
     </div>
   </div>
 
-  <div v-if="mode === 'default' && displayTexts.uploaderDescription" class="lx-description">
-    {{ displayTexts.uploaderDescription }}
+  <div
+    v-if="showInlineHelper"
+    class="lx-helper-text"
+    :class="{ 'lx-description': usesDescriptionAsHelper }"
+    :id="`${id}-helper`"
+  >
+    {{ helperTextClamped }}
   </div>
+  <template v-else-if="showInfoHelper">
+    <div class="lx-helper-info-row">
+      <LxInfoWrapper
+        placement="bottom"
+        offset-distance="6"
+        :disabled="disabled"
+        :label="displayTexts.helperTextLabel"
+      >
+        <LxIcon customClass="lx-helper-icon" value="info" />
+        <span>{{ displayTexts.helperTextLabel }}</span>
+        <template #panel>
+          <p class="lx-data">{{ helperTextClamped }}</p>
+        </template>
+      </LxInfoWrapper>
+    </div>
+    <div class="lx-invisible" :id="`${id}-helper`">
+      {{ helperTextClamped }}
+    </div>
+  </template>
 
   <LxModal
     ref="infoModal"

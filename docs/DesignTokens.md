@@ -29,3 +29,4 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 - [LxNavBar](tokens/NavBarTokens.md)
 - [LxModal](tokens/ModalTokens.md)
 - [Popovers](tokens/PopoverTokens.md)
+- [LxNumberSlider](tokens/NumberSliderTokens.md)

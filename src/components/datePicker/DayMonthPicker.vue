@@ -37,6 +37,7 @@ const textsDefault = {
   dayClearedAnnouncement: 'Diena attīrīta, jo neeksistē izvēlētajā mēnesī',
   monthChangedAnnouncement: 'Mēnesis mainīts uz {0}',
   monthClearedAnnouncement: 'Mēnesis attīrīts, jo izvēlētā diena tajā neeksistē',
+  helperTextLabel: 'Papildinformācija',
 };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const helperTextClamped = computed(() => clampText(props.helperText));
@@ -220,8 +221,10 @@ watch([selectedMonth, selectedDay], () => emitValue(currentValue()));
         v-if="helperTextKind === 'icon' && helperText"
         class="lx-day-month-info"
         placement="top"
+        :disabled="disabled"
+        :label="displayTexts.helperTextLabel"
       >
-        <LxIcon value="info" />
+        <LxIcon customClass="lx-helper-icon" value="info" />
         <template #panel>
           <p class="lx-data">{{ helperTextClamped }}</p>
         </template>
@@ -235,9 +238,20 @@ watch([selectedMonth, selectedDay], () => emitValue(currentValue()));
     >
       {{ invalidationMessageClamped }}
     </div>
-    <p v-else-if="helperTextKind === 'label' && helperText" class="lx-helper-text">
+    <p
+      v-else-if="helperTextKind === 'label' && helperText"
+      class="lx-helper-text"
+      :id="`${id}-helper`"
+    >
       {{ helperTextClamped }}
     </p>
+    <div
+      v-else-if="helperTextKind === 'icon' && helperText"
+      class="lx-invisible"
+      :id="`${id}-helper`"
+    >
+      {{ helperTextClamped }}
+    </div>
     <div class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
       {{ liveAnnouncement }}
     </div>

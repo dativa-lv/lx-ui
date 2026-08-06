@@ -5,10 +5,12 @@ import { useThrottleFn } from '@vueuse/core';
 import { logError, logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import { useLayoutInfo } from '@/hooks/useLayoutInfo';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxIcon from '@/components/Icon.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
@@ -37,6 +39,14 @@ const props = defineProps({
   showClearAll: { type: Boolean, default: false, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
   stickyToolbar: { type: Boolean, default: false, group: 'additional', sequence: 3 },
+  helperText: { type: String, default: null, group: 'main', sequence: 5 },
+  helperTextKind: {
+    type: String,
+    default: 'label',
+    options: ['label', 'icon'],
+    group: 'main',
+    sequence: 6,
+  },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
@@ -63,9 +73,15 @@ const textsDefault = {
   blue: 'Zils',
   purple: 'Violets',
   grey: 'Pelēks',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDrawPad'));
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(() => hasHelperText.value && props.helperTextKind === 'label');
+const showInfoHelper = computed(() => hasHelperText.value && props.helperTextKind === 'icon');
 
 const emits = defineEmits([
   'update:modelValue',
@@ -508,6 +524,7 @@ const wrapperRef = ref();
           class="lx-canvas-element lx-input-area"
           :height="canvasHeight"
           :aria-labelledby="labelledBy"
+          :aria-describedby="showInlineHelper || showInfoHelper ? `${id}-helper` : null"
           @pointerdown.prevent="startDrawing"
           @pointermove.prevent="draw"
           @pointerup.prevent="stopDrawing"
@@ -517,5 +534,27 @@ const wrapperRef = ref();
         />
       </div>
     </div>
+    <div class="lx-helper-text" v-if="showInlineHelper" :id="`${id}-helper`">
+      {{ helperTextClamped }}
+    </div>
+    <template v-else-if="showInfoHelper">
+      <div class="lx-helper-info-row">
+        <LxInfoWrapper
+          placement="bottom"
+          offset-distance="6"
+          :disabled="disabled"
+          :label="displayTexts.helperTextLabel"
+        >
+          <LxIcon customClass="lx-helper-icon" value="info" />
+          <span>{{ displayTexts.helperTextLabel }}</span>
+          <template #panel>
+            <p class="lx-data">{{ helperTextClamped }}</p>
+          </template>
+        </LxInfoWrapper>
+      </div>
+      <div class="lx-invisible" :id="`${id}-helper`">
+        {{ helperTextClamped }}
+      </div>
+    </template>
   </div>
 </template>

@@ -5,8 +5,15 @@ import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxIcon from '@/components/Icon.vue';
 import LxPopper from '@/components/Popper.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { clampText, focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import {
+  clampText,
+  findFocusableElements,
+  focusNextFocusableElement,
+  getDisplayTexts,
+  isDefined,
+} from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -22,6 +29,8 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
+  helperText: { type: String, default: null },
+  helperTextKind: { type: String, default: 'label', options: ['label', 'icon'] },
   labelId: { type: String, default: null },
   meaningful: { type: Boolean, default: null },
   tabindex: {
@@ -44,11 +53,27 @@ const panelRef = ref();
 const textsDefault = {
   emptyValue: 'Nav norādīts',
   noItemsMessage: 'Nav pieejamu vērtību',
+  helperTextLabel: 'Papildinformācija',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
 const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
+
+const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
+);
+const showInfoHelper = computed(
+  () => hasHelperText.value && props.helperTextKind === 'icon' && !props.invalid
+);
+const describedBy = computed(() => {
+  const ids = [];
+  if (showInlineHelper.value || showInfoHelper.value) ids.push(`${props.id}-helper`);
+  if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
+  return ids.length ? ids.join(' ') : null;
+});
 
 const noItemsMessage = computed(
   () => displayTexts.value.noItemsMessage ?? textsDefault.noItemsMessage
@@ -313,6 +338,19 @@ function focusPreviousInputElement() {
   });
 }
 
+function focusHelperIconOrNext(forward) {
+  if (forward) {
+    const innerFocusable = findFocusableElements(container.value).filter(
+      (el) => el !== container.value
+    );
+    if (innerFocusable.length > 0) {
+      innerFocusable[0].focus();
+      return;
+    }
+  }
+  focusNextFocusableElement(container.value, forward);
+}
+
 const handleKeydown = (e) => {
   if (e.key === 'Tab' && menuOpen.value) {
     const tabPressed = e.shiftKey ? 'backward' : 'forward';
@@ -323,7 +361,7 @@ const handleKeydown = (e) => {
 
     menuOpen.value = false;
 
-    focusNextFocusableElement(container.value, tabPressed === 'forward');
+    focusHelperIconOrNext(tabPressed === 'forward');
   }
 };
 
@@ -418,7 +456,7 @@ const getSelectedItem = computed(
           :id="id"
           :aria-invalid="invalid"
           :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
-          :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
+          :aria-describedby="describedBy"
           class="lx-dropdown lx-input-area"
           :class="[
             { 'lx-invalid': invalid },
@@ -448,6 +486,14 @@ const getSelectedItem = computed(
         <div v-if="invalid" class="lx-invalidation-icon-wrapper">
           <LxIcon customClass="lx-invalidation-icon" value="invalid" />
         </div>
+        <div v-if="showInfoHelper" class="lx-input-helper-wrapper">
+          <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
+            <LxIcon customClass="lx-helper-icon" value="info" />
+            <template #panel>
+              <p class="lx-data">{{ helperTextClamped }}</p>
+            </template>
+          </LxInfoWrapper>
+        </div>
         <div class="lx-input-icon-wrapper">
           <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
         </div>
@@ -458,6 +504,12 @@ const getSelectedItem = computed(
         :id="`${id}-invalidation-message`"
       >
         {{ invalidationMessageClamped }}
+      </div>
+      <div class="lx-helper-text" v-if="showInlineHelper" :id="`${id}-helper`">
+        {{ helperTextClamped }}
+      </div>
+      <div class="lx-invisible" v-else-if="showInfoHelper" :id="`${id}-helper`">
+        {{ helperTextClamped }}
       </div>
     </template>
 
@@ -475,7 +527,7 @@ const getSelectedItem = computed(
         :aria-labelledby="labelledBy"
         :aria-invalid="invalid"
         :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
-        :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
+        :aria-describedby="describedBy"
         @keydown.esc.prevent="closeDropDownDefaultOnEsc"
         @keydown.enter.prevent="onEnter"
         @keydown.space.prevent="onEnter"
@@ -520,6 +572,28 @@ const getSelectedItem = computed(
                 <LxIcon customClass="lx-invalidation-icon" value="invalid" />
               </div>
 
+              <div
+                v-if="showInfoHelper"
+                class="lx-input-helper-wrapper"
+                @click.stop
+                @mousedown.stop
+                @keydown.space.stop
+                @keydown.enter.stop
+                @keydown.up.stop
+                @keydown.down.stop
+              >
+                <LxInfoWrapper
+                  placement="top"
+                  :disabled="disabled"
+                  :label="displayTexts.helperTextLabel"
+                >
+                  <LxIcon customClass="lx-helper-icon" value="info" />
+                  <template #panel>
+                    <p class="lx-data">{{ helperTextClamped }}</p>
+                  </template>
+                </LxInfoWrapper>
+              </div>
+
               <div class="lx-input-icon-wrapper">
                 <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
               </div>
@@ -533,6 +607,24 @@ const getSelectedItem = computed(
               @mousedown.prevent
             >
               {{ invalidationMessageClamped }}
+            </div>
+            <div
+              class="lx-helper-text"
+              v-if="showInlineHelper"
+              :id="`${id}-helper`"
+              @click.stop
+              @mousedown.prevent
+            >
+              {{ helperTextClamped }}
+            </div>
+            <div
+              class="lx-invisible"
+              v-else-if="showInfoHelper"
+              :id="`${id}-helper`"
+              @click.stop
+              @mousedown.prevent
+            >
+              {{ helperTextClamped }}
             </div>
           </div>
 
