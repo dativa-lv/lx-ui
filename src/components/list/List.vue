@@ -1118,8 +1118,8 @@ const selectedLabel = computed(() => {
   return ret;
 });
 
-function selectionActionClick(actinoId, selectedItemsIds) {
-  emits('selectionActionClick', actinoId, selectedItemsIds);
+function selectionActionClick(actionId, selectedItemsIds, actionValue = undefined) {
+  emits('selectionActionClick', actionId, selectedItemsIds, actionValue);
 }
 
 const states = computed({
@@ -1374,8 +1374,8 @@ function focusFirstFocusableElementAfter() {
 
 const insideForm = inject('insideForm', ref(false));
 
-function handleToolbarActionClick(id) {
-  emits('toolbarActionClick', id);
+function handleToolbarActionClick(id, value) {
+  emits('toolbarActionClick', id, value);
 }
 
 const toolbarActions = computed(() => {
@@ -1533,7 +1533,9 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               <LxDropDownMenu
                 :disabled="loading || busy"
                 :actionDefinitions="selectionActionDefinitions"
-                @actionClick="(id) => selectionActionClick(id, selectedItems)"
+                @actionClick="
+                  (id, actionValue) => selectionActionClick(id, selectedItems, actionValue)
+                "
               >
                 <LxButton
                   icon="menu"
@@ -1594,7 +1596,9 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 <LxDropDownMenu
                   :disabled="loading || busy"
                   :actionDefinitions="selectionActionDefinitions"
-                  @actionClick="(id) => selectionActionClick(id, selectedItems)"
+                  @actionClick="
+                    (id, actionValue) => selectionActionClick(id, selectedItems, actionValue)
+                  "
                 >
                   <LxButton
                     icon="menu"

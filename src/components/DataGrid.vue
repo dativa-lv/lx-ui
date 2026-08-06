@@ -555,9 +555,9 @@ function handleActionClick(actionName, rowCode, additionalParam) {
   }
 }
 
-function handleSelectionActionClick(actionName, selectedRowCodes) {
+function handleSelectionActionClick(actionName, selectedRowCodes, actionValue = undefined) {
   if (!props.loading && !props.busy) {
-    emits('selectionActionClick', actionName, selectedRowCodes);
+    emits('selectionActionClick', actionName, selectedRowCodes, actionValue);
   }
 }
 
@@ -1395,11 +1395,11 @@ const autoSearchMode = computed(() => {
   return 'compact';
 });
 
-function toolbarClick(action) {
+function toolbarClick(action, value) {
   if (selectedRows.value.length === 0) {
-    emits('toolbarActionClick', action);
+    emits('toolbarActionClick', action, value);
   } else {
-    handleSelectionActionClick(action, selectedRows.value);
+    handleSelectionActionClick(action, selectedRows.value, value);
   }
 }
 
@@ -1952,7 +1952,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               <LxDropDownMenu
                 :actionDefinitions="selectionActionDefinitions"
                 :disabled="isDisabled"
-                @actionClick="(id) => handleSelectionActionClick(id, selectedRows)"
+                @actionClick="
+                  (id, actionValue) => handleSelectionActionClick(id, selectedRows, actionValue)
+                "
               >
                 <LxButton
                   :id="`${id}-selection-actions-button`"
