@@ -70,6 +70,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxExpander'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 const actionDefinitionsResolved = computed(() => props.actionDefinitions || []);
 
 const emits = defineEmits(['update:modelValue', 'selectAll', 'resetFilters', 'actionClick']);
@@ -168,7 +169,7 @@ defineExpose({ focus });
             ? [
                 (badge || badgeIcon) && badgeTitle ? `${id}-label` : null,
                 description ? `${id}-desc` : null,
-                invalid ? `${id}-invalidation-message` : null,
+                showInvalidationMessage ? `${id}-invalidation-message` : null,
               ]
                 .filter(Boolean)
                 .join(' ')
@@ -176,7 +177,7 @@ defineExpose({ focus });
         "
         :aria-expanded="isExpandedRaw"
         :aria-invalid="invalid"
-        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
         aria-controls="lx-body"
         @click="toggleExpander"
         @keydown.space.prevent="toggleExpander"
@@ -313,7 +314,11 @@ defineExpose({ focus });
         v-show="renderMode === 'default' ? isExpandedRaw : true"
         class="lx-body"
       >
-        <div v-if="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+        <div
+          v-if="showInvalidationMessage"
+          class="lx-invalidation-message"
+          :id="`${id}-invalidation-message`"
+        >
           {{ invalidationMessageClamped }}
         </div>
         <slot></slot>

@@ -49,6 +49,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const model = computed({
   get() {
@@ -459,8 +460,8 @@ const wrapperRef = ref();
         tabindex="-1"
         :role="selectionKind === 'single' ? 'radiogroup' : 'group'"
         :aria-invalid="invalid"
-        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+        :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :title="tooltip"
         :aria-labelledby="labelId"
         data-container="value-picker-items-wrapper"
@@ -592,8 +593,8 @@ const wrapperRef = ref();
           role="radiogroup"
           :aria-labelledby="labelId"
           :aria-invalid="invalid"
-          :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-          :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+          :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+          :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
           :title="tooltip"
           data-container="value-picker-items-wrapper"
         >
@@ -646,8 +647,8 @@ const wrapperRef = ref();
           role="group"
           :aria-labelledby="labelId"
           :aria-invalid="invalid"
-          :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-          :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+          :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+          :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
           :title="tooltip"
           data-container="value-picker-items-wrapper"
         >
@@ -682,7 +683,11 @@ const wrapperRef = ref();
           </li>
         </ul>
       </div>
-      <div v-show="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+      <div
+        v-if="showInvalidationMessage"
+        class="lx-invalidation-message"
+        :id="`${id}-invalidation-message`"
+      >
         {{ invalidationMessageClamped }}
       </div>
     </template>

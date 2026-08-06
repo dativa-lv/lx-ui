@@ -33,6 +33,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxRating'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const infoWrapperRef = ref(null);
 
@@ -220,8 +221,8 @@ defineExpose({ focus, scrollIntoView });
           role="radiogroup"
           :aria-disabled="disabled"
           :aria-invalid="showInvalid"
-          :aria-errormessage="showInvalid ? `${id}-invalidation-message` : null"
-          :aria-describedby="showInvalid ? `${id}-invalidation-message` : null"
+          :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+          :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
           :class="[
             { 'lx-disabled': disabled },
             { 'lx-read-only': readOnly },
@@ -354,7 +355,11 @@ defineExpose({ focus, scrollIntoView });
         <LxIcon customClass="lx-invalidation-icon" value="invalid" />
       </div>
     </div>
-    <div class="lx-invalidation-message" v-if="showInvalid" :id="`${id}-invalidation-message`">
+    <div
+      class="lx-invalidation-message"
+      v-if="showInvalidationMessage"
+      :id="`${id}-invalidation-message`"
+    >
       {{ invalidationMessageClamped }}
     </div>
   </div>

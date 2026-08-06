@@ -41,6 +41,7 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const helperTextClamped = computed(() => clampText(props.helperText));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const pad = (value) => String(value).padStart(2, '0');
 
@@ -227,7 +228,11 @@ watch([selectedMonth, selectedDay], () => emitValue(currentValue()));
       </LxInfoWrapper>
     </div>
     <!-- Shared message area: the invalidation message replaces inline helper text. -->
-    <div v-if="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+    <div
+      v-if="showInvalidationMessage"
+      class="lx-invalidation-message"
+      :id="`${id}-invalidation-message`"
+    >
       {{ invalidationMessageClamped }}
     </div>
     <p v-else-if="helperTextKind === 'label' && helperText" class="lx-helper-text">

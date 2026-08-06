@@ -49,6 +49,9 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(
+  () => props.invalid && props.invalidationMessage && !props.readOnly
+);
 
 const emits = defineEmits(['update:modelValue', 'update:searchString']);
 
@@ -469,8 +472,8 @@ const wrapperRef = ref();
       :aria-labelledby="labelId"
       :title="tooltip"
       :aria-invalid="invalid"
-      :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-      :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+      :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+      :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
       tabindex="-1"
       data-container="value-picker-items-wrapper"
     >
@@ -618,7 +621,7 @@ const wrapperRef = ref();
     </div>
   </div>
   <div
-    v-show="invalid && !readOnly"
+    v-if="showInvalidationMessage"
     class="lx-invalidation-message"
     :id="`${id}-invalidation-message`"
   >

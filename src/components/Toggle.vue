@@ -61,6 +61,9 @@ const model = computed({
 const textsDefault = { valueYes: 'Jā', valueNo: 'Nē', emptyValue: 'Nav norādīts' };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxToggle'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(
+  () => props.invalid && props.invalidationMessage && !props.readOnly
+);
 
 const input = ref({});
 
@@ -210,8 +213,8 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
         :role="role"
         :aria-checked="model"
         :aria-invalid="invalid"
-        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+        :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-label="accessibleLabel || (!(size !== 's' && hasSlots) ? tooltipValue : null)"
         :aria-labelledby="accessibleLabel ? null : labelledBy"
         tabindex="0"
@@ -247,7 +250,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
       </div>
     </div>
     <div
-      v-if="invalid && !readOnly"
+      v-if="showInvalidationMessage"
       class="lx-invalidation-message"
       :id="`${id}-invalidation-message`"
     >

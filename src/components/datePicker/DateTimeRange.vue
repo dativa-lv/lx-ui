@@ -114,6 +114,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDateTimeRange'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 const rangeWrapper = ref();
 const emits = defineEmits([
   'update:startDate',
@@ -600,7 +601,7 @@ if (props.builderOptions?.useRegistry) {
           />
         </div>
 
-        <div v-if="invalid && kind === 'legacy'" class="lx-invalidation-message">
+        <div v-if="showInvalidationMessage && kind === 'legacy'" class="lx-invalidation-message">
           {{ invalidationMessageClamped }}
         </div>
       </div>

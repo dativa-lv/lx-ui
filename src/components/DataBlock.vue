@@ -48,6 +48,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDataBlock'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const emits = defineEmits([
   'actionClick',
@@ -164,12 +165,12 @@ const expandIconTitle = computed(() => {
         :tabindex="expandable && !isDisabled ? 0 : null"
         :aria-expanded="expandable ? expanded : null"
         :aria-invalid="invalid"
-        :aria-errormessage="invalid && invalidationMessage ? `${id}-invalidation-message` : null"
+        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-label="ariaLabel"
         :aria-describedby="
           [
             width <= 500 || expanded ? null : `data-block-${id}-desc`,
-            invalid && invalidationMessage ? `${id}-invalidation-message` : null,
+            showInvalidationMessage ? `${id}-invalidation-message` : null,
           ]
             .filter(Boolean)
             .join(' ') || null
@@ -233,11 +234,7 @@ const expandIconTitle = computed(() => {
             />
           </div>
         </template>
-        <div
-          v-if="invalid && invalidationMessage"
-          class="lx-invisible"
-          :id="`${id}-invalidation-message`"
-        >
+        <div v-if="showInvalidationMessage" class="lx-invisible" :id="`${id}-invalidation-message`">
           {{ invalidationMessageClamped }}
         </div>
       </header>

@@ -51,6 +51,9 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const hasHelperText = computed(() => Boolean(props.helperText));
 const helperTextClamped = computed(() => clampText(props.helperText));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(
+  () => props.invalid && props.invalidationMessage && !props.readOnly
+);
 const showInlineHelper = computed(
   () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
 );
@@ -62,7 +65,7 @@ const describedBy = computed(() => {
   if ((showInlineHelper.value || showInfoHelper.value) && !props.readOnly) {
     ids.push(`${props.id}-helper`);
   }
-  if (props.invalid && !props.readOnly) ids.push(`${props.id}-invalidation-message`);
+  if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
   return ids.length ? ids.join(' ') : null;
 });
 
@@ -178,7 +181,7 @@ if (props.builderOptions?.useRegistry) {
             :maxlength="props.maxlength"
             :title="props.tooltip"
             :aria-labelledby="labelledBy"
-            :aria-errormessage="invalid ? `${props.id}-invalidation-message` : null"
+            :aria-errormessage="showInvalidationMessage ? `${props.id}-invalidation-message` : null"
             :aria-describedby="describedBy"
             @input="triggerResize"
           />
@@ -213,7 +216,7 @@ if (props.builderOptions?.useRegistry) {
         </div>
         <div v-if="props.maxlength || invalid || showInlineHelper" class="lx-input-footer">
           <div
-            v-if="invalid && !readOnly"
+            v-if="showInvalidationMessage"
             class="lx-invalidation-message"
             :id="`${props.id}-invalidation-message`"
           >

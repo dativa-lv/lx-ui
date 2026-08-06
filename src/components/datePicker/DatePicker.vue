@@ -112,6 +112,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const hasHelperText = computed(() => Boolean(props.helperText));
 const helperTextClamped = computed(() => clampText(props.helperText));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 const showInlineHelper = computed(
   () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
 );
@@ -126,7 +127,7 @@ const showInfoHelper = computed(
 const describedBy = computed(() => {
   const ids = [`${props.id}-lx-input-description`];
   if (hasHelperText.value && !props.invalid) ids.push(`${props.id}-helper`);
-  if (props.invalid) ids.push(`${props.id}-invalidation-message`);
+  if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
   return ids.join(' ');
 });
 
@@ -1401,7 +1402,7 @@ onMounted(async () => {
             :tabindex="startInputIndex"
             :maxlength="getMaxLength"
             :aria-invalid="invalid"
-            :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+            :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
             :aria-label="
               pickerType === 'range'
                 ? displayTexts.startDateLabel
@@ -1475,7 +1476,7 @@ onMounted(async () => {
               :tabindex="endInputIndex"
               :maxlength="getMaxLength"
               :aria-invalid="invalid"
-              :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+              :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
               :aria-label="displayTexts.endDateLabel"
               :aria-describedby="describedBy"
               @mousedown="preventDefaultFocus"
@@ -1571,7 +1572,7 @@ onMounted(async () => {
       @focusActiveInput="focusInput"
     />
     <div
-      v-if="invalid"
+      v-if="showInvalidationMessage"
       class="lx-invalidation-message"
       :class="{ 'lx-invisible': legacyMode }"
       :id="`${id}-invalidation-message`"

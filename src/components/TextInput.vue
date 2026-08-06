@@ -422,6 +422,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
 const helperTextClamped = computed(() => clampText(props.helperText));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(
+  () => props.invalid && props.invalidationMessage && !props.readOnly
+);
 const showInlineHelper = computed(
   () => hasHelperText.value && props.helperTextKind === 'label' && !props.invalid
 );
@@ -433,7 +436,7 @@ const describedBy = computed(() => {
   if ((showInlineHelper.value || showInfoHelper.value) && !props.readOnly) {
     ids.push(`${props.id}-helper`);
   }
-  if (props.invalid && !props.readOnly) ids.push(`${props.id}-invalidation-message`);
+  if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
   return ids.length ? ids.join(' ') : null;
 });
 
@@ -719,7 +722,7 @@ defineExpose({ focus });
         :maxlength="maxLengthValue"
         :title="tooltip"
         :aria-labelledby="labelledBy"
-        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-describedby="describedBy"
         :inputmode="inputMode"
         @accept="onAccept"
@@ -754,7 +757,7 @@ defineExpose({ focus });
         :title="tooltip"
         :placeholder="placeholder"
         :aria-invalid="invalid"
-        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-describedby="describedBy"
         class="lx-text-input lx-input-area"
         :class="[{ 'lx-invalid': invalid }, { 'lx-search-input': props.kind === 'search' }]"
@@ -763,7 +766,7 @@ defineExpose({ focus });
 
     <div
       class="lx-invalidation-message"
-      v-if="invalid && !readOnly"
+      v-if="showInvalidationMessage"
       :id="`${id}-invalidation-message`"
     >
       {{ invalidationMessageClamped }}

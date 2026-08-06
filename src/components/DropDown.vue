@@ -48,6 +48,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const noItemsMessage = computed(
   () => displayTexts.value.noItemsMessage ?? textsDefault.noItemsMessage
@@ -416,8 +417,8 @@ const getSelectedItem = computed(
           v-model="model"
           :id="id"
           :aria-invalid="invalid"
-          :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-          :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+          :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+          :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
           class="lx-dropdown lx-input-area"
           :class="[
             { 'lx-invalid': invalid },
@@ -451,7 +452,11 @@ const getSelectedItem = computed(
           <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
         </div>
       </div>
-      <div v-if="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+      <div
+        v-if="showInvalidationMessage"
+        class="lx-invalidation-message"
+        :id="`${id}-invalidation-message`"
+      >
         {{ invalidationMessageClamped }}
       </div>
     </template>
@@ -469,8 +474,8 @@ const getSelectedItem = computed(
         :aria-controls="`${id}-listbox`"
         :aria-labelledby="labelledBy"
         :aria-invalid="invalid"
-        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+        :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
         @keydown.esc.prevent="closeDropDownDefaultOnEsc"
         @keydown.enter.prevent="onEnter"
         @keydown.space.prevent="onEnter"
@@ -521,7 +526,7 @@ const getSelectedItem = computed(
             </div>
 
             <div
-              v-if="invalid"
+              v-if="showInvalidationMessage"
               class="lx-invalidation-message"
               :id="`${id}-invalidation-message`"
               @click.stop

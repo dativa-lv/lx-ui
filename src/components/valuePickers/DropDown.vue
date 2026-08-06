@@ -74,6 +74,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const noItemsMessage = computed(() => displayTexts.value.noItemsMessage);
 
@@ -684,8 +685,8 @@ function countDigits(number) {
         :aria-expanded="menuOpen"
         :aria-controls="`${id}-listbox`"
         :aria-invalid="invalid"
-        :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-        :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+        :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-labelledby="labelId"
         @keydown.esc.prevent="closeDropDownDefaultOnEsc"
         @keydown.enter.prevent="onEnter"
@@ -894,7 +895,11 @@ function countDigits(number) {
           </template>
         </LxPopper>
       </div>
-      <div v-show="invalid" class="lx-invalidation-message" :id="`${id}-invalidation-message`">
+      <div
+        v-if="showInvalidationMessage"
+        class="lx-invalidation-message"
+        :id="`${id}-invalidation-message`"
+      >
         {{ invalidationMessageClamped }}
       </div>
     </div>

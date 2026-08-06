@@ -76,6 +76,7 @@ const textsDefault = {
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDayInput'));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -659,11 +660,11 @@ watch(
                 :disabled="disabled"
                 :readonly="false"
                 :aria-invalid="invalid"
-                :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
+                :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
                 :aria-label="input.unit"
                 :aria-labelledby="labelledBy"
                 :aria-describedby="
-                  invalid
+                  showInvalidationMessage
                     ? `${id}-lx-input-description ${id}-invalidation-message`
                     : `${id}-lx-input-description`
                 "
@@ -692,7 +693,7 @@ watch(
       </div>
 
       <div
-        v-if="invalid && !readOnly"
+        v-if="showInvalidationMessage"
         class="lx-invalidation-message"
         :id="`${id}-invalidation-message`"
       >

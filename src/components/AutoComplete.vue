@@ -99,6 +99,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxAutoComplete'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const emit = defineEmits(['update:modelValue', 'openDetails', 'update:searchString']);
 
@@ -1308,8 +1309,12 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       :aria-labelledby="labelledBy"
                       :aria-label="getName(false)"
                       :aria-invalid="invalid"
-                      :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-                      :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+                      :aria-errormessage="
+                        showInvalidationMessage ? `${id}-invalidation-message` : null
+                      "
+                      :aria-describedby="
+                        showInvalidationMessage ? `${id}-invalidation-message` : null
+                      "
                       :aria-busy="loadingState || loading"
                       :maxlength="queryMaxLength || null"
                       :tabindex="disabled ? '-1' : '0'"
@@ -1410,7 +1415,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                   </div>
 
                   <div
-                    v-if="invalid"
+                    v-if="showInvalidationMessage"
                     class="lx-invalidation-message"
                     :id="`${id}-invalidation-message`"
                     @click.stop

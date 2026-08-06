@@ -44,6 +44,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxValuePicker'));
 const invalidationMessageClamped = computed(() => clampText(props.invalidationMessage));
+const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -394,8 +395,8 @@ function onUp() {
           class="lx-rotator-dropdown-wrapper lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
           :aria-invalid="invalid"
-          :aria-errormessage="invalid ? `${id}-invalidation-message` : null"
-          :aria-describedby="invalid ? `${id}-invalidation-message` : null"
+          :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+          :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"
           :tabindex="disabled ? -1 : 0"
           :aria-labelledby="labelId"
           :aria-disabled="disabled"
@@ -459,7 +460,7 @@ function onUp() {
       </LxDropDownMenu>
 
       <div
-        v-if="invalid"
+        v-if="showInvalidationMessage"
         class="lx-invalidation-message"
         :id="`${id}-invalidation-message`"
         @contextmenu.stop
