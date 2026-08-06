@@ -455,6 +455,7 @@ provide('insideHeader', insideHeader);
       <div class="lx-left-group">
         <LxButton
           v-if="!hideNavBar"
+          id="nav-toggle-header"
           customClass="nav-toggle"
           icon="menu"
           :label="navBarSwitch ? displayTexts.openNavbar : displayTexts.close"
@@ -481,6 +482,7 @@ provide('insideHeader', insideHeader);
       <div class="lx-nav-panel">
         <div class="lx-nav-header">
           <LxButton
+            id="nav-toggle-panel"
             customClass="nav-toggle"
             icon="menu"
             :label="navBarSwitch ? displayTexts.openNavbar : displayTexts.close"

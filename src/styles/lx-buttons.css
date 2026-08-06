@@ -952,6 +952,11 @@ a.lx-button.lx-button-ghost svg {
   min-width: var(--button-badge-min-width);
   height: var(--button-badge-height);
   min-height: var(--button-badge-min-height);
+  --color-badge-background: var(--color-blue);
+  --color-badge-text: var(--color-region);
+  --color-badge-icon: var(--color-region);
+  --badge-text-font-weight: var(--font-weight-bold);
+  --badge-text-font-size: var(--small-font-size);
 }
 
 .lx-region .lx-button .lx-badge,

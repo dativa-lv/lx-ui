@@ -433,7 +433,7 @@
   --button-tertiary-height: var(--button-height);
   --button-tertiary-icon-size: var(--button-icon-size);
   --button-tertiary-min-width: var(--button-min-width);
-  --button-tertiary-outline-offset: -2px;
+  --button-tertiary-outline-offset: var(--button-outline-offset);
   --button-tertiary-padding: var(--button-padding);
   --button-tertiary-width: var(--button-width);
   --button-tertiary-icon-only-height: var(--button-icon-only-height);

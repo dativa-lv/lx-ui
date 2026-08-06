@@ -250,7 +250,7 @@
   --color-button-tertiary-background: transparent;
   --color-button-tertiary-text-focus: var(--color-interactive-background);
   --color-button-tertiary-background-focus: transparent;
-  --color-button-tertiary-border-focus: var(--color-focus-background);
+  --color-button-tertiary-border-focus: var(--color-interactive-background);
   --color-button-tertiary-text-active: var(--color-interactive-active-foreground);
   --color-button-tertiary-background-active: var(--color-interactive-active-background);
   --color-button-tertiary-border-active: var(--color-interactive-active-background);

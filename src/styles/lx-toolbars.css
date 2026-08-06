@@ -1229,6 +1229,14 @@
   height: var(--toolbar-input-height);
 }
 
+.lx-component-toolbar .pseudo-input,
+.lx-component-toolbar .lx-dropdown-input-wrapper,
+.lx-component-toolbar .lx-autocomplete-default-data,
+.lx-component-toolbar .lx-rotator .lx-dropdown-toggler,
+.lx-component-toolbar .lx-value-picker-dropdown-wrapper > .lx-dropdown-default {
+  height: var(--toolbar-input-height);
+}
+
 .lx-component-toolbar .first-row .lx-input-wrapper {
   background: var(--color-toolbar-input-background);
 }

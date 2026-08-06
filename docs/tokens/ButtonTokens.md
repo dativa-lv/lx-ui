@@ -111,7 +111,7 @@
 | `--button-tertiary-height`                 | `--button-height`                                                                  |
 | `--button-tertiary-icon-size`              | `--button-icon-size`                                                               |
 | `--button-tertiary-min-width`              | `--button-min-width`                                                               |
-| `--button-tertiary-outline-offset`         | -2px                                                                               |
+| `--button-tertiary-outline-offset`         | `--button-outline-offset`                                                          |
 | `--button-tertiary-padding`                | `--button-padding`                                                                 |
 | `--button-tertiary-width`                  | `--button-width`                                                                   |
 | `--button-tertiary-icon-only-height`       | `--button-icon-only-height`                                                        |
@@ -196,7 +196,7 @@
 | `--color-button-tertiary-background`           | transparent                                |
 | `--color-button-tertiary-text-focus`           | `--color-button-tertiary-text`             |
 | `--color-button-tertiary-background-focus`     | `--color-button-tertiary-background`       |
-| `--color-button-tertiary-border-focus`         | `--color-focus-background`                 |
+| `--color-button-tertiary-border-focus`         | `--color-interactive-background`           |
 | `--color-button-tertiary-text-active`          | `--color-interactive-active-foreground`    |
 | `--color-button-tertiary-background-active`    | `--color-interactive-active-background`    |
 | `--color-button-tertiary-border-active`        | `--color-interactive-active-background`    |

@@ -489,6 +489,10 @@
   --color-header-hover-background: var(--color-button-primary-background-hover);
 }
 
+.lx-layout.lx-layout-public .lx-header .lx-login-button .lx-button {
+  outline-offset: -2px;
+}
+
 .lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month .lx-info-wrapper-responsive-toolbar>.lx-button,
 .lx .lx-dropdown-panel-wrapper.date-picker-type.mode-month-year .lx-info-wrapper-responsive-toolbar>.lx-button,
 .lx .lx-dropdown-panel-wrapper.date-picker-type.mode-quarters .lx-info-wrapper-responsive-toolbar>.lx-button {
