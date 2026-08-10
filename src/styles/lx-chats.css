@@ -88,11 +88,6 @@
   max-width: min(100%, 43.5rem);
 }
 
-.lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper {
-  flex: 0 1 auto;
-  max-width: 100%;
-}
-
 .lx-chat-wrapper .lx-chat-bubble .lx-list-item-actions.lx-list-actions-hidden {
   display: none;
 }
@@ -176,9 +171,11 @@
   gap: var(--space-0250);
 }
 
-/* --- Bubble = LxListItem (.lx-list-item-wrapper) --- */
+/* --- Bubble (derived from LxListItem, therefore uses .lx-list-item-wrapper) --- */
 
 .lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper {
+  flex: 0 1 auto;
+  max-width: 100%;
   min-height: var(--row-size);
   background-color: var(--color-region);
 }
