@@ -82,6 +82,8 @@ const props = defineProps({
   headerButtonsVisibility: { type: Object, default: () => ({}) },
   headerActionsVisibility: { type: Object, default: () => ({}) },
 
+  overflowTabindex: { type: [String, Number], default: 0 },
+
   // When false, skip width-based collapsing and keep all eligible buttons visible (e.g. custom
   // mode, where there's no nav bar to offload overflow to and the header width can't be measured).
   enableResponsivity: { type: Boolean, default: true },
@@ -1386,6 +1388,7 @@ const loginButtonKind = computed(() => {
             :actionDefinitions="languagesDisplayItems"
             :groupDefinitions="accessibilityDisplayGroups"
             :disabled="headerNavDisable"
+            :tabindex="overflowTabindex"
             @actionClick="languageChange"
           >
             <div class="lx-toolbar">
@@ -1409,6 +1412,7 @@ const loginButtonKind = computed(() => {
             :actionDefinitions="themeDisplayItems"
             :groupDefinitions="accessibilityDisplayGroups"
             :disabled="headerNavDisable"
+            :tabindex="overflowTabindex"
             @actionClick="themeDropdownClicked"
           >
             <div class="lx-toolbar">
@@ -1439,6 +1443,7 @@ const loginButtonKind = computed(() => {
             :label="displayTexts.spotlight.label"
             :disabled="headerNavDisable"
             :badge="spotlightHasBadge ? ' ' : null"
+            :tabindex="overflowTabindex"
             @click="toggleSpotlight"
           />
         </div>

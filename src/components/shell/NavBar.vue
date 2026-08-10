@@ -472,6 +472,7 @@ provide('insideNavBar', insideNavBar);
       <LxHeaderButtons
         :mode="layoutMode"
         :hasNavBar="true"
+        :overflow-tabindex="getTabIndex"
         :header-nav-disable="headerNavDisable"
         :has-language-picker="hasLanguagePicker"
         :languages="languages"
@@ -525,6 +526,7 @@ provide('insideNavBar', insideNavBar);
           :texts="displayTexts"
           :disabled="headerNavDisable"
           buttonVariant="default"
+          :tabindex="getTabIndex"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           @mega-menu-show-all-click="triggerShowAllClick"
         />
@@ -542,6 +544,7 @@ provide('insideNavBar', insideNavBar);
             :disabled="headerNavDisable"
             :label="displayTexts.loginButtonLabel"
             :title="displayTexts.loginButtonTitle"
+            :tabindex="getTabIndex"
             @click="loginClicked"
           />
         </div>

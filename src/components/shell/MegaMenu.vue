@@ -18,6 +18,7 @@ const props = defineProps({
   selectedMegaMenuItem: { type: String, default: null },
   buttonVariant: { type: String, default: 'icon-only' },
   disabled: { type: Boolean, default: false },
+  tabindex: { type: [String, Number], default: null },
   texts: {
     type: Object,
     required: false,
@@ -153,6 +154,7 @@ const safeShowAllHref = computedAsync(() => computeSafeTo(props.showAllHref), nu
     :disabled="disabled"
     :actionDefinitions="megaMenuActionsDefinitons"
     :groupDefinitions="groupDefinitions"
+    :tabindex="tabindex"
     @actionClick="updateSelectedMegaMenuItem"
   >
     <div class="lx-toolbar">

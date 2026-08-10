@@ -12,7 +12,7 @@ import {
 import useLx from '@/hooks/useLx';
 import LxModal from '@/components/Modal.vue';
 import { lxDevUtils } from '@/utils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, focusFirstElementInContainer } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 import { shellContextKey } from '@/components/shell/shellContext';
 import { shellModeLoaders } from '@/components/shell/shellModeLoaders';
@@ -962,22 +962,78 @@ function initializeTouchMode() {
   touchModeChange(touchModeToggle.value);
 }
 
-function observeModals() {
-  useMutationObserver(
-    modals,
-    () => {
-      if (modals.value) {
-        const hasModalChildren = modals.value.hasChildNodes();
-        [header.value, main.value, nav.value, footer.value].forEach((element) => {
-          if (element) {
-            element.setAttribute('aria-hidden', hasModalChildren ? 'true' : 'false');
-          }
-        });
-      }
-    },
-    { childList: true }
-  );
+const MOBILE_NAV_OVERLAY_WIDTH_BREAKPOINT = 500;
+const MOBILE_NAV_OVERLAY_WIDTH_BREAKPOINT_WIDE = 900;
+const MOBILE_NAV_HIDDEN_WIDTH_BREAKPOINT = 800;
+const MOBILE_NAV_HIDDEN_WIDTH_BREAKPOINT_WIDE = 900;
+const WIDE_COLLAPSE_MODES = new Set(['public', 'latvijalv']);
+const NAV_TOGGLE_MENU_WIDTH_BREAKPOINT = 1840;
+
+const navOverlayWidthBreakpoint = computed(() =>
+  WIDE_COLLAPSE_MODES.has(resolvedMode.value)
+    ? MOBILE_NAV_OVERLAY_WIDTH_BREAKPOINT_WIDE
+    : MOBILE_NAV_OVERLAY_WIDTH_BREAKPOINT
+);
+
+const navHiddenWidthBreakpoint = computed(() =>
+  WIDE_COLLAPSE_MODES.has(resolvedMode.value)
+    ? MOBILE_NAV_HIDDEN_WIDTH_BREAKPOINT_WIDE
+    : MOBILE_NAV_HIDDEN_WIDTH_BREAKPOINT
+);
+
+function isNavOverlayOpen() {
+  return !props.hideNavBar && navBarSwitchModel.value === false;
 }
+
+function setInert(element, value) {
+  if (element) {
+    // eslint-disable-next-line no-param-reassign
+    element.inert = value;
+  }
+}
+
+function updateAriaHiddenState() {
+  const hasModalChildren = !!modals.value?.hasChildNodes();
+  const hideBackgroundForNav = isNavOverlayOpen() && width.value <= navOverlayWidthBreakpoint.value;
+  const navHiddenWhenClosed = !isNavOverlayOpen() && width.value <= navHiddenWidthBreakpoint.value;
+
+  setInert(main.value, hasModalChildren || hideBackgroundForNav);
+  setInert(footer.value, hasModalChildren || hideBackgroundForNav);
+  setInert(header.value, hasModalChildren);
+
+  setInert(nav.value, hasModalChildren || navHiddenWhenClosed);
+}
+
+function observeModals() {
+  useMutationObserver(modals, updateAriaHiddenState, { childList: true });
+}
+
+watch(
+  [
+    navBarSwitchModel,
+    width,
+    navOverlayWidthBreakpoint,
+    navHiddenWidthBreakpoint,
+    () => props.hideNavBar,
+    header,
+    main,
+    nav,
+    footer,
+  ],
+  updateAriaHiddenState,
+  { immediate: true }
+);
+
+watch(navBarSwitchModel, (isCollapsed, wasCollapsed) => {
+  const shouldFocus =
+    isCollapsed === false &&
+    wasCollapsed !== false &&
+    width.value <= NAV_TOGGLE_MENU_WIDTH_BREAKPOINT;
+
+  if (shouldFocus) {
+    nextTick(() => focusFirstElementInContainer(nav.value));
+  }
+});
 
 onMounted(() => {
   initializeTheme();
@@ -1055,25 +1111,7 @@ function lvAlertItemClicked(event, alert) {
 }
 
 function focusFirstMainFocusableElement() {
-  const mainElement = main.value;
-
-  const focusableSelectors = [
-    'a:not([disabled])',
-    'button:not([disabled])',
-    'input:not([disabled])',
-    '[tabindex="0"]',
-  ];
-
-  if (mainElement) {
-    const focusableElements = Array.from(
-      mainElement.querySelectorAll(focusableSelectors.join(', '))
-    );
-    const firstVisibleElement = focusableElements.find((element) => element.offsetParent !== null);
-
-    if (firstVisibleElement) {
-      firstVisibleElement.focus();
-    }
-  }
+  focusFirstElementInContainer(main.value);
 }
 
 const customButtonOpenedModal = computed({

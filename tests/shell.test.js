@@ -543,3 +543,30 @@ test.each(navBarModes)(
     expect(stateAfterSecondClick).toBe(initialState);
   }
 );
+
+test('collapsed navbar is inert on narrow screens without waiting for a toggle', async () => {
+  setScreenWidth(700);
+
+  wrapper = mountShellForNavTests();
+  await settleShell();
+
+  const nav = wrapper.find('nav');
+  expect(nav.exists()).toBe(true);
+  expect(nav.element.inert).toBe(true);
+  expect(wrapper.find('main').element.inert).toBe(false);
+
+  wrapper.vm.navToggle(false);
+  await settleShell();
+
+  expect(nav.element.inert).toBe(false);
+});
+
+test('navbar is not inert on wide screens', async () => {
+  setScreenWidth(1024);
+
+  wrapper = mountShellForNavTests();
+  await settleShell();
+
+  expect(wrapper.find('nav').element.inert).toBe(false);
+  expect(wrapper.find('main').element.inert).toBe(false);
+});
