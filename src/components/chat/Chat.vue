@@ -46,6 +46,7 @@ const textsDefault = {
   descriptionLabel: 'Apraksts',
   roleLabel: 'Loma',
   institutionLabel: 'Iestāde',
+  overflowMenu: 'Atvērt papildu iespējas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxChat'));

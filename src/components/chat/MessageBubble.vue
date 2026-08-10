@@ -12,7 +12,9 @@ import {
 import useLx from '@/hooks/useLx';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';
-import LxListItem from '@/components/list/ListItem.vue';
+import LxIcon from '@/components/Icon.vue';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxButton from '@/components/Button.vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 
@@ -112,6 +114,39 @@ const listItemValue = computed(() => ({
   notBusy: !chatDisabled.value,
 }));
 
+const visibleMessageActions = computed(() => {
+  const actions = (messageActions.value || [])
+    .filter((action) =>
+      action.visibleByAttribute ? listItemValue.value[action.visibleByAttribute] : true
+    )
+    .map((action) => ({
+      ...action,
+      disabled:
+        action.disabled ||
+        (action.enableByAttribute ? !listItemValue.value[action.enableByAttribute] : false),
+    }));
+
+  if (actions.length > 1) {
+    actions.unshift({
+      id: `${props.id}-action-open-menu`,
+      label: props.texts.overflowMenu,
+      icon: 'overflow-menu',
+      kind: 'main',
+      variant: 'icon-only',
+    });
+  }
+
+  return actions;
+});
+
+const messageActionSingle = computed(() =>
+  visibleMessageActions.value.length === 1 ? visibleMessageActions.value[0] : null
+);
+
+const bubbleCategoryClass = computed(() =>
+  props.category ? `lx-category-${props.category}` : null
+);
+
 const isInvalid = computed(() => Boolean(props.message.invalid));
 const invalidationMessage = computed(() => props.message.invalidationMessage || props.texts.error);
 
@@ -146,7 +181,7 @@ function onFormAction(actionName) {
   }
 }
 
-function onAction(actionId) {
+function onActionClick(actionId) {
   messageActionClick?.(actionId, props.message);
 }
 
@@ -181,43 +216,76 @@ defineExpose({ focus });
     <div v-else-if="showTimeLabel" class="lx-chat-bubble-time">{{ timeLabelText }}</div>
 
     <div class="lx-chat-bubble-content">
-      <LxListItem
-        ref="listItemRef"
-        class="lx-chat-bubble"
-        :id="`${id}-item`"
-        :label="message.text || ''"
-        :value="listItemValue"
-        :category="isMe ? null : category"
-        :invalid="isInvalid"
-        :actionDefinitions="messageActions"
-        @actionClick="onAction"
-      >
-        <template #customItem>
-          <template v-if="showForm">
-            <LxRichTextDisplay
-              v-if="message.text"
-              class="lx-chat-form-prompt"
-              :value="message.text"
-            />
-            <LxForm
-              :column-count="1"
-              kind="compact"
-              :showHeader="false"
-              :stickyFooter="false"
-              :actionDefinitions="formActions"
-              @actionClick="onFormAction"
-            >
-              <component
-                :is="builder"
-                ref="formBuilderRef"
-                v-model="formModel"
-                :schema="message.schema"
+      <div class="lx-chat-bubble lx-list-item-wrapper" :id="`${id}-item`">
+        <div
+          ref="listItemRef"
+          class="lx-list-item"
+          :class="[bubbleCategoryClass, { 'lx-invalid': isInvalid }]"
+          tabindex="-1"
+          :aria-invalid="isInvalid"
+        >
+          <div class="lx-category-displayer" />
+          <header>
+            <template v-if="showForm">
+              <LxRichTextDisplay
+                v-if="message.text"
+                class="lx-chat-form-prompt"
+                :value="message.text"
               />
-            </LxForm>
-          </template>
-          <LxRichTextDisplay v-else :value="message.text || ''" />
-        </template>
-      </LxListItem>
+              <LxForm
+                :column-count="1"
+                kind="compact"
+                :showHeader="false"
+                :stickyFooter="false"
+                :actionDefinitions="formActions"
+                @actionClick="onFormAction"
+              >
+                <component
+                  :is="builder"
+                  ref="formBuilderRef"
+                  v-model="formModel"
+                  :schema="message.schema"
+                />
+              </LxForm>
+            </template>
+            <LxRichTextDisplay v-else :value="message.text || ''" />
+          </header>
+
+          <div v-if="isInvalid" class="lx-invalidation-icon-wrapper">
+            <LxIcon value="invalid" customClass="lx-invalidation-icon" />
+          </div>
+        </div>
+
+        <div v-if="messageActionSingle" class="lx-list-item-actions" @click.stop>
+          <LxButton
+            :id="`${id}-item-action-${messageActionSingle.id}`"
+            :label="messageActionSingle.name || messageActionSingle.label"
+            :title="messageActionSingle.title || messageActionSingle.tooltip"
+            :icon="messageActionSingle.icon"
+            :iconSet="messageActionSingle.iconSet"
+            :loading="messageActionSingle.loading"
+            :busy="messageActionSingle.busy"
+            :destructive="messageActionSingle.destructive"
+            :disabled="messageActionSingle.disabled"
+            :active="messageActionSingle.active"
+            :badge="messageActionSingle.badge"
+            :badgeType="messageActionSingle.badgeType"
+            :badgeIcon="messageActionSingle.badgeIcon"
+            :badgeTitle="messageActionSingle.badgeTitle"
+            :href="messageActionSingle.href"
+            kind="ghost"
+            variant="icon-only"
+            @click.prevent.stop="onActionClick(messageActionSingle.id)"
+          />
+        </div>
+
+        <div v-else-if="visibleMessageActions.length > 1" class="lx-list-item-actions" @click.stop>
+          <LxDropDownMenu
+            :actionDefinitions="visibleMessageActions"
+            @actionClick="(actionId) => onActionClick(actionId)"
+          />
+        </div>
+      </div>
     </div>
 
     <div v-if="isInvalid" :id="`${id}-error`" class="lx-chat-invalid-message" role="alert">
