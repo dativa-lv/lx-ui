@@ -162,7 +162,7 @@ defineExpose({ focus });
         :class="[{ 'lx-head': !$slots.customHeader }, { 'lx-custom-header': $slots.customHeader }]"
         :for="id"
         :title="tooltip"
-        tabindex="0"
+        :tabindex="disabled ? null : 0"
         role="button"
         :aria-label="ariaLabelWithBadge"
         :aria-describedby="
@@ -242,6 +242,7 @@ defineExpose({ focus });
             icon="filters-reset"
             :disabled="disabled"
             @click.stop="emits('resetFilters')"
+            @keydown.space.stop
           />
 
           <LxButton
@@ -262,6 +263,7 @@ defineExpose({ focus });
             "
             :disabled="disabled"
             @click="selectExpander($event, id)"
+            @keydown.space.stop
           />
         </template>
       </header>

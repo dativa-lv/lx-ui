@@ -21,7 +21,6 @@
   flex-shrink: 0;
   flex-grow: 0;
   margin-right: var(--space-0500);
-  margin-left: calc(var(--space-0125) * -1);
   fill: var(--color-data);
   -webkit-transform: none;
   transform: none;
@@ -328,18 +327,18 @@
 .lx-expander-additional-info {
   display: flex;
   flex-shrink: 0;
-  width: 1rem;
-  height: 1rem;
   margin-left: var(--space-0500);
-  margin-bottom: var(--space-0125);
 }
 
-.lx-expander-additional-info>.popper-wrapper {
-  width: 100%;
+.lx-expander-additional-info .lx-info-wrapper-content {
+  display: flex;
 }
 
 .lx-expander-additional-info svg.lx-info-icon {
   fill: var(--color-label);
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+  flex-shrink: 0;
 }
 
 .lx-expander > .lx-expander-head > .lx-head > .lx-button.lx-expander-action {
