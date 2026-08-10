@@ -99,7 +99,7 @@ const gradientComputed = computed(() => {
     :aria-hidden="value === 'none' ? true : !meaningful"
     focusable="false"
     data-component="lx-icon"
-    :data-id="id"
+    :id="id"
   >
     <title>{{ props.title }}</title>
     <desc>{{ props.desc ? props.desc : `${displayTexts.iconLabel} "${icon}"` }}</desc>

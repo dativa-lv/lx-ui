@@ -58,7 +58,13 @@ const loaderAriaHidden = computed(() => {
 </script>
 
 <template>
-  <div class="lx-loader-wrapper" :id="id" :aria-hidden="loaderAriaHidden" :aria-label="props.label">
+  <div
+    class="lx-loader-wrapper"
+    :id="id"
+    :aria-hidden="loaderAriaHidden"
+    :aria-label="props.label"
+    data-component="lx-loader"
+  >
     <div
       v-if="loading || kind === 'progress'"
       :class="[
@@ -88,6 +94,7 @@ const loaderAriaHidden = computed(() => {
               :stroke-width="kind === 'progress' ? strokeWidth : undefined"
               :stroke-dasharray="kind === 'progress' ? strokeDashArray : undefined"
               :stroke-dashoffset="kind === 'progress' ? 0 : undefined"
+              data-container="loader-track"
             />
             <circle
               class="lx-loader-active"
@@ -132,7 +139,7 @@ const loaderAriaHidden = computed(() => {
             />
           </div>
         </div>
-        <div class="lx-loader-bar-track">
+        <div class="lx-loader-bar-track" data-container="loader-track">
           <div
             class="lx-loader-active"
             :style="

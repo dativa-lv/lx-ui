@@ -172,6 +172,7 @@ onMounted(() => {
           }
         : {}
     "
+    data-component="lx-card"
   >
     <div
       class="lx-card lx-region-component"

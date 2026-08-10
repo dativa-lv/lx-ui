@@ -53,6 +53,7 @@ const isEmpty = computed(
     :title="tooltip"
     :id="id"
     :aria-label="tooltip"
+    data-component="lx-badge"
   >
     <LxIcon
       v-if="icon"

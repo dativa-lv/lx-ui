@@ -154,6 +154,7 @@ defineExpose({ focus });
       customClass,
     ]"
     :data-disabled="disabled ? '' : null"
+    data-component="lx-expander"
   >
     <div class="lx-expander-head">
       <header

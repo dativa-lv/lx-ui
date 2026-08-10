@@ -229,6 +229,7 @@ defineExpose({ focus, scrollIntoView, getElement });
     :tabindex="tabindex"
     :role="kind === 'menuitem' ? 'menuitem' : null"
     v-bind="$attrs"
+    data-component="lx-button"
     @click="click"
     @keydown.enter.stop.prevent="() => null"
     @keyup.enter.stop.prevent="click"
@@ -296,6 +297,7 @@ defineExpose({ focus, scrollIntoView, getElement });
     :aria-describedby="accessibleTitle ? `${id}-description` : null"
     :target="openInNewTab ? '_blank' : null"
     v-bind="$attrs"
+    data-component="lx-button"
   >
     <div class="lx-button-content-wrapper">
       <template v-if="showIcon || busy">
