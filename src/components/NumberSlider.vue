@@ -91,6 +91,14 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
+const dataState = computed(() =>
+  JSON.stringify({
+    kind: props.kind,
+    hasInput: props.hasInput,
+    readOnly: props.readOnly,
+  })
+);
+
 const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
 const helperTextClamped = computed(() => clampText(props.helperText));
 const showInlineHelper = computed(() => hasHelperText.value && props.helperTextKind === 'label');
@@ -118,15 +126,11 @@ const maxValue = computed(() => Math.round(Number(props.max)));
 
 watch(
   () => model.value,
-  (newValue, oldValue) => {
-    if (newValue !== oldValue) {
-      model.value = Number(newValue);
-    }
-
-    if (model.value <= minValue.value) {
+  (newValue) => {
+    if (newValue < minValue.value) {
       model.value = minValue.value;
     }
-    if (model.value >= maxValue.value) {
+    if (newValue > maxValue.value) {
       model.value = maxValue.value;
     }
   }
@@ -212,7 +216,12 @@ if (props.builderOptions?.useRegistry) {
 }
 </script>
 <template>
-  <div class="lx-field-wrapper" :data-id="id">
+  <div
+    class="lx-field-wrapper"
+    data-component="lx-number-slider"
+    :data-id="id"
+    :data-state="dataState"
+  >
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">{{ model }}</p>
     <template v-else-if="kind === 'stepper'">
       <div class="lx-number-stepper-container-wrapper">
@@ -310,10 +319,10 @@ if (props.builderOptions?.useRegistry) {
           :aria-describedby="describedBy"
           :disabled
           @mousedown="onMouseDown"
-          @keydown.up.prevent="!props.disableArrowKeys && onIncreaseStep()"
-          @keydown.right.prevent="onIncreaseStep"
-          @keydown.down.prevent="!props.disableArrowKeys && onDecreaseStep()"
-          @keydown.left.prevent="onDecreaseStep"
+          @keydown.up.exact.prevent="!props.disableArrowKeys && onIncreaseStep()"
+          @keydown.right.exact.prevent="onIncreaseStep"
+          @keydown.down.exact.prevent="!props.disableArrowKeys && onDecreaseStep()"
+          @keydown.left.exact.prevent="onDecreaseStep"
           @keydown.shift.up.exact.prevent="!props.disableArrowKeys && onIncreaseMultiplier()"
           @keydown.shift.right.exact.prevent="onIncreaseMultiplier"
           @keydown.shift.down.exact.prevent="!props.disableArrowKeys && onDecreaseMultiplier()"
