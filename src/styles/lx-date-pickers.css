@@ -755,8 +755,6 @@
   -ms-flex-positive: 1;
   flex-grow: 1;
   height: 3px;
-  transition: var(--day-content-transition);
-  background-color: var(--bar-bg);
 }
 
 .lx .lx-layout .lx-day-layer-popper-layout .lx-day-layer-popper-bar,
@@ -765,11 +763,16 @@
   height: 0.8rem;
   display: flex;
   justify-content: center;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  margin-top: var(--space-0125);
   margin-right: var(--space-0250);
-  transition: var(--day-content-transition);
-  background-color: var(--bar-bg);
   border: var(--border-width-1) solid var(--color-region);
   border-radius: var(--border-radius-1000);
+}
+
+.lx .lx-layout .lx-calendar-special-dates-wrapper .lx-day-layer-popper-bar {
+  margin-top: var(--space-0375);
 }
 
 .lx .lx-layout  .lx-calendar-special-dates-wrapper .lx-list {
@@ -778,13 +781,13 @@
 
 .lx .lx-layout  .lx-calendar-special-dates-wrapper .lx-list li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .lx .lx-layout .lx-day-layer-popper-layout {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .lx .lx-layout .lx-day-layer-popper-layout .lx-day-layer-popper-header {
@@ -802,7 +805,7 @@
 
 .lx .lx-layout .lx-day-layer-popper-layout .lx-day-layer-popper-main .lx-list li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .lx .lx-layout .lx-day-layer-popper-layout .lx-day-layer-popper-main .lx-list li .lx-row .lx-data {
