@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch, inject } from 'vue';
+import { useWindowSize } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';
 import LxDataBlock from '@/components/DataBlock.vue';
 import LxButton from '@/components/Button.vue';
@@ -14,7 +15,7 @@ import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   headingTag: { type: String, default: 'div' }, // h1, h2, h3, h4, h5, h6, div
-  headingLevel: { type: Number, default: 2 }, // 1-6
+  headingLevel: { type: Number, default: null }, // 1-6, default 2 (3 inside a modal)
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -61,6 +62,12 @@ const textsDefault = {
 const displayTexts = computed(() =>
   getDisplayTexts(props.texts, textsDefault, 'LxAccessibilitySettings')
 );
+
+const insideModal = inject('insideModal', ref(false));
+
+const { width: windowWidth } = useWindowSize();
+
+const blockSize = computed(() => (windowWidth.value <= 800 ? 'm' : 'l'));
 
 const blocks = [
   {
@@ -190,10 +197,19 @@ const headingTag = computed(() => {
   return 'div';
 });
 
+const headingLevel = computed(() => {
+  if (headingTag.value !== 'div') {
+    return Number(headingTag.value.slice(1));
+  }
+  if (props.headingLevel !== null && props.headingLevel !== undefined) {
+    return Math.min(6, Math.max(1, Math.round(props.headingLevel)));
+  }
+  return insideModal.value ? 3 : 2;
+});
+
 const headingAttrs = computed(() => {
-  if (props.headingTag === 'div') {
-    const level = Math.min(6, Math.max(1, Math.round(props.headingLevel)));
-    return { role: 'heading', 'aria-level': level };
+  if (headingTag.value === 'div') {
+    return { role: 'heading', 'aria-level': headingLevel.value };
   }
   return {};
 });
@@ -203,14 +219,14 @@ const headingAttrs = computed(() => {
   <div :id="id" class="lx-accessibility-settings-wrapper">
     <template v-for="(blocksInSection, section) in sections" :key="section">
       <div :id="`${id}-section-${section}`" class="lx-accessibility-settings-block">
-        <component :is="headingTag" v-bind="headingAttrs" class="heading-2">
+        <component :is="headingTag" v-bind="headingAttrs" :class="`heading-${headingLevel}`">
           {{ displayTexts[section] }}
         </component>
         <template v-for="block in blocksInSection" :key="block.id">
           <LxDataBlock
             v-if="block.id !== 'theme' || themeDisplayItems.length > 0"
             :id="`${id}-${block.id}`"
-            size="l"
+            :size="blockSize"
             :expandable="true"
             v-model="blockExpanderModels[block.id]"
           >
