@@ -116,7 +116,8 @@
 }
 
 .lx-expander[data-disabled] > .lx-expander-head > .lx-head > .lx-chevron-icon svg,
-.lx-expander[data-disabled] header .lx-modifier-icon {
+.lx-expander[data-disabled] header .lx-modifier-icon,
+.lx-expander[data-disabled] header .lx-expander-additional-info svg.lx-info-icon {
   fill: var(--color-disabled-foreground);
 }
 
