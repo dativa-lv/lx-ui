@@ -34,6 +34,8 @@ export const commonStyles = [
   'lx-map',
   'lx-data-visualizer',
   'lx-shell-grid',
+  // must stay directly after lx-shell-grid - these styles were extracted from it
+  'lx-info-wrappers',
   'lx-forms-grid',
   'lx-date-pickers',
   'lx-stack',

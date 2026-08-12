@@ -32,9 +32,8 @@
   --color-nav-hover-background: var(--contrast-hover);
   --color-nav-hover-foreground: var(--contrast-background);
   --color-tooltip-background: var(--contrast-interactive);
-  --color-tooltip-foreground: var(--contrast-background);
-  --color-tooltip-foreground-label: var(--contrast-background);
-  --color-tooltip-foreground-data: var(--contrast-background);
+  --color-tooltip-text-primary: var(--contrast-background);
+  --color-tooltip-text-secondary: var(--contrast-background);
   --color-latvijalv-alert-background: var(--contrast-background);
   --color-latvijalv-alert-foreground: var(--contrast-foreground);
   --color-latvijalv-alert-hover-foreground: var(--contrast-background);
@@ -141,4 +140,7 @@
   --color-loader-track: var(--contrast-background);
 
   --badge-border-s: var(--badge-border-width-s) solid var(--contrast-foreground);
+
+  --color-sheet-handle-icon: var(--contrast-background);
+  --color-sheet-button-icon: var(--contrast-background);
 }

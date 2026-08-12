@@ -1158,7 +1158,7 @@ svg .lx-shade {
 }
 
 .lx-form-grid .lx-row .lx-info-wrapper-panel > .lx-row > .lx-vertical > .lx-data {
-  color: var(--color-tooltip-foreground);
+  color: var(--color-tooltip-text-primary);
   min-height: auto;
 }
 
@@ -1950,7 +1950,7 @@ p .lx-person-display-wrapper {
 
 .lx:not(.lx-theme-contrast) .lx-dropdown-multiple .popper-wrapper .lx-dropdown-default-panel.lx-input-wrapper .lx-info-wrapper-content:not(.lx-disabled):hover,
 .lx:not(.lx-theme-contrast) .lx-autocomplete .lx-autocomplete-default-data .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):hover {
-  background-color: transparent;
+  background: transparent;
 }
 
 @media (min-width: 800px) {

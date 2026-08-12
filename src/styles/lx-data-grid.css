@@ -951,32 +951,8 @@
   top: var(--space-1500);
 }
 
-.lx-info-wrapper-content:not(.lx-disabled) {
-  cursor: help;
-}
-.lx-info-wrapper-content.lx-tooltip-kind:not(.lx-disabled) {
-  cursor: default;
-}
-
-.lx-info-wrapper.lx-tooltip-kind .lx-info-wrapper-panel-area {
-  justify-content: center;
-}
-
-.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
-.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
-  background-color: var(--color-grid-hover-background);
-}
-
 .lx.lx-theme-contrast .lx-expander header.lx-head:hover .lx-header-data .lx-description {
   color: var(--color-region-hover-foreground);
-}
-
-.lx .lx-info-wrapper-panel .lx-row > .lx-label {
-  width: 100%;
-}
-
-.lx .popper-wrapper > .lx-info-wrapper-content.lx-rich-kind:focus {
-  outline: 2px solid var(--color-focus-background);     
 }
 
 .lx .popper-wrapper>div:focus,
@@ -992,7 +968,7 @@
 .lx .lx-form-grid>.lx-main .lx-row>div.lx-vertical .lx-field-wrapper .popper p.lx-data,
 .lx .popper .lx-info-wrapper-panel p.lx-data {
   font-weight: var(--data-weight);
-  color: var(--color-tooltip-foreground);
+  color: var(--color-tooltip-text-primary);
   min-height: auto;
   display: flex;
   align-items: center;
@@ -1004,18 +980,8 @@
   line-height: 1.1em;
 }
 
-.lx-info-wrapper-panel .lx-row-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.lx .popper .lx-info-wrapper-panel label:not(.lx-state>.lx-primary) {
-  font-size: var(--label-font-size);
-}
-
 .lx .lx-form-grid .lx-row .lx-info-wrapper-panel>.lx-row>.lx-vertical>p.lx-data {
-  color: var(--color-tooltip-foreground);
+  color: var(--color-tooltip-text-primary);
   min-height: auto;
 }
 
@@ -1025,20 +991,6 @@
 
 .lx-form-grid>.lx-main .lx-info-wrapper .lx-row>div.lx-vertical {
   min-height: auto;
-}
-
-.lx .lx-layout .popper .lx-info-wrapper.lx-tooltip-kind {
-  padding: var(--space-0250) var(--space-0500);
-  min-width: 2.5rem;
-  max-width: 16rem;
-}
-
-.lx .lx-layout .popper .lx-info-wrapper.lx-tooltip-kind .lx-info-wrapper-panel::before {
-  display: none;
-}
-
-.lx .lx-layout .popper .lx-info-wrapper.lx-tooltip-kind > div {
-  align-items: center;
 }
 
 .lx-data-grid-wrapper .lx-statusbar .lx-chip.lx-button {

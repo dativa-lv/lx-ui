@@ -967,7 +967,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 .lx:not(.lx-theme-contrast) .lx-input-helper-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
 .lx:not(.lx-theme-contrast) .lx-input-helper-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
-  background-color: transparent;
+  background: transparent;
 }
 
 .lx-input-helper-wrapper .popper-wrapper,
@@ -1472,7 +1472,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx:not(.lx-theme-contrast) .lx-info-wrapper:has(.lx-autocomplete-default):hover {
-  background-color: transparent;
+  background: transparent;
 }
 
 .lx-value-picker-dropdown-wrapper
@@ -2601,7 +2601,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx .lx-layout .lx-tag-button .popper-wrapper .lx-info-wrapper-content {
-  background-color: transparent; 
+  background: transparent;
 }
 
 .lx .lx-info-wrapper .lx-autocomplete-default .popper {

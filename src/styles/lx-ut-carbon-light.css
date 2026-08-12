@@ -29,15 +29,14 @@
   --color-nav-hover-background: #000;
   --color-nav-hover-foreground: #fff;
   --color-tooltip-background: #333;
-  --color-tooltip-foreground: #fff;
-  --color-tooltip-foreground-label: #cccccc;
-  --color-tooltip-foreground-data: #fff;
+  --color-tooltip-text-primary: #fff;
+  --color-tooltip-text-secondary: #cccccc;
   --color-latvijalv-alert-background: #2d313b;
   --color-latvijalv-alert-foreground: #fff;
   --color-latvijalv-alert-hover-foreground: var(--color-latvijalv-alert-foreground);
   --color-latvijalv-alert-hover-background: #000;
   --color-grid-header: var(--color-chrome);
-  --color-grid-hover-background: var(--color-tile-background-hover);
+  --color-grid-hover-background: var(--color-region-hover-background);
   --color-grid-hover-foreground: var(--color-data);
   --color-grid-header-hover-background: #d0d0d0;
   --color-highlight: #e3ebe1;
@@ -128,8 +127,6 @@
   --color-selected-dropdown: var(--color-selected);
   --color-selected-dropdown-background: var(--color-selected-background);
   --color-selected-dropdown-border: transparent transparent transparent var(--color-selected-border);
-
-  --color-info-wrapper-close-hover-background: var(--color-nav-hover-background);
 
   --color-card-foreground: var(--color-data);
   --color-card-background: var(--color-region);
@@ -667,6 +664,30 @@
   --color-info-box-button-icon-hover: var(--color-button-ghost-icon-hover);
   --color-info-box-button-icon-active: var(--color-button-ghost-icon-active);
   --color-info-box-button-icon-disabled: var(--color-button-ghost-icon-disabled);
+
+  --color-info-wrapper-background: var(--color-tooltip-background);
+  --color-info-wrapper-border: transparent;
+  --color-info-wrapper-content-background-hover: var(--color-grid-hover-background);
+  --color-info-wrapper-text-primary: var(--color-tooltip-text-primary);
+  --color-info-wrapper-text-secondary: var(--color-tooltip-text-secondary);
+  --color-sheet-scroll-shadow: var(--color-tooltip-background);
+  --color-sheet-background: var(--color-info-wrapper-background);
+  --color-sheet-header-background: var(--color-tooltip-background);
+  --color-sheet-header-border: var(--color-chrome);
+  --color-sheet-handle-icon: var(--color-label);
+  --color-sheet-button-icon: var(--color-nav-foreground);
+  --color-sheet-button-icon-focus: var(--color-sheet-button-icon);
+  --color-sheet-button-icon-hover: var(--color-sheet-button-icon);
+  --color-sheet-button-icon-active: var(--color-button-ghost-icon-active);
+  --color-sheet-button-background: var(--color-button-ghost-background);
+  --color-sheet-button-background-focus: var(--color-button-ghost-background-focus);
+  --color-sheet-button-background-hover: var(--color-button-ghost-background-hover);
+  --color-sheet-button-background-active: var(--color-button-ghost-background-active);
+  --color-sheet-button-border-focus: var(--color-button-ghost-border-focus);
+  --color-sheet-button-border-hover: var(--color-button-ghost-border-hover);
+  --color-sheet-button-border-active: var(--color-button-ghost-border-active);
+
+  --color-tooltip-border: transparent;
 
   --color-draft-background: var(--color-draft);
   --color-new-background: var(--color-new);

@@ -591,6 +591,8 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
               { 'slide-down-animation': responsiveView && popperToClose },
             ]"
           >
+            <div class="handle-wrapper-spacer" aria-hidden="true"></div>
+
             <div
               class="handle-wrapper"
               @click.stop

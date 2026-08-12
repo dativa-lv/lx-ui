@@ -837,83 +837,6 @@
   font-weight: var(--font-weight-bold);
 }
 
-.lx .lx-layout .popper .lx-info-wrapper {
-  background-color: var(--color-tooltip-background);
-  padding: var(--space-0500);
-  color: var(--color-tooltip-foreground-data)
-}
-
-.lx .lx-layout .lx-info-wrapper-panel {
-  max-width: var(--aside-size);
-  display: grid;
-}
-
-.lx-info-wrapper.lx-tooltip-kind>.lx-info-wrapper-panel {
-  font-size: var(--label-font-size);
-  color: var(--color-tooltip-foreground-label)
-}
-
-.lx-info-wrapper-panel::before {
-  position: absolute;
-  content: "";
-  display: block;
-}
-
-.lx-info-wrapper-panel.info-popper-top::before {
-  block-size: var(--info-popper-spacer-size, 0rem);
-  inset-inline: 0;
-  inset-block-end: 0;
-  transform: translateY(100%);
-}
-
-.lx-info-wrapper-panel.info-popper-bottom::before {
-  block-size: var(--info-popper-spacer-size, 0rem);
-  inset-inline: 0;
-  inset-block-start: 0;
-  transform: translateY(-100%);
-}
-
-.lx-info-wrapper-panel.info-popper-right::before {
-  inline-size: var(--info-popper-spacer-size, 0rem);
-  inset-block: 0;
-  inset-inline-start: 0;
-  transform: translateX(-100%);
-}
-
-.lx-info-wrapper-panel.info-popper-left::before {
-  inline-size: var(--info-popper-spacer-size, 0rem);
-  inset-block: 0;
-  inset-inline-end: 0;
-  transform: translateX(100%);
-}
-
-.lx .lx-form .lx-row .popper .lx-info-wrapper-panel .lx-data,
-.lx .popper .lx-info-wrapper-panel .lx-data,
-.lx .popper .lx-info-wrapper-panel p.lx-data,
-.lx .popper p.lx-simple-popper-content,
-.lx .lx-form-grid>.lx-main .lx-row>div.lx-vertical .lx-field-wrapper .popper p.lx-data {
-  color: var(--color-tooltip-foreground-data);
-}
-
-.lx-info-wrapper .lx-info-wrapper-panel .lx-secondary,
-.lx .popper .lx-info-wrapper-panel .lx-secondary,
-.lx .popper .lx-info-wrapper-panel label:not(.lx-state > .lx-primary) {
-  color: var(--color-tooltip-foreground-label);
-}
-
-.lx .lx-info-wrapper .popper:hover {
-  background: var(--color-tooltip-background);
-}
-
-.lx-info-wrapper .popper > #arrow::before,
-.lx-info-wrapper .popper:hover > #arrow::before {
-  background: var(--color-tooltip-background) !important;
-}
-
-.lx .lx-form .lx-info-wrapper .popper .lx-info-wrapper-panel .lx-row {
-  width: inherit;
-}
-
 .lx .lx-layout .popper .popper-floating-arrow {
   position: absolute;
   width: 0.625rem;
@@ -922,10 +845,6 @@
   transform: rotate(45deg);
   z-index: 8100;
   pointer-events: none;
-}
-
-.lx .lx-info-wrapper .popper {
-  box-shadow: var(--shadow-dropdown);
 }
 
 .lx .lx-layout .popper {
@@ -938,73 +857,6 @@
   z-index: 9000;
 }
 
-.lx .lx-layout .popper .lx-info-wrapper.lx-rich-kind.lx-responsive-view .lx-info-wrapper-panel::before {
-  display: none;
-}
-
-.lx .lx-layout .lx-info-wrapper .lx-info-wrapper-panel {
-  min-width: 2.5rem;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-.lx .lx-layout .lx-info-wrapper.lx-responsive-view .lx-info-wrapper-panel {
-   max-width: unset;
-}
-
-.lx-info-wrapper-responsive-toolbar {
-  background-color: var(--color-tooltip-background);
-  height: var(--row-size);
-  display: grid;
-  grid-template-columns: 1fr 3rem;
-}
-
-.lx-info-wrapper-responsive-toolbar .handle-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.lx-info-wrapper-responsive-toolbar .handle-wrapper svg{
-  margin-left: var(--space-3000);
-}
-
-.lx-info-wrapper-responsive-toolbar svg {
-  fill: var(--color-nav-foreground);
-  width: var(--icon-size-m);
-  height: var(--icon-size-m);
-}
-
-.lx-info-wrapper-responsive-toolbar .lx-button.lx-button-ghost svg {
-  fill: var(--color-nav-foreground);
-}
-
-.lx.lx-theme-contrast .lx-info-wrapper-responsive-toolbar .lx-button.lx-button-ghost svg,
-.lx.lx-theme-contrast .lx-info-wrapper-responsive-toolbar .handle-wrapper svg{
-   fill: var(--color-nav-background);
-}
-
-.lx-info-wrapper .lx-tooltip-text {
-  color: var(--color-tooltip-foreground-label);
-  font-size: var(--label-font-size);
-}
-
-.lx .lx-layout .lx-info-wrapper.lx-responsive-view .lx-info-wrapper-panel-area {
-  overflow: auto;
-  max-height: calc(75dvh - var(--row-size));
-}
-
-.lx-info-wrapper-responsive-toolbar .lx-button.lx-button-ghost:hover {
-  background-color: var(--color-info-wrapper-close-hover-background);
-  border-color: var(--color-info-wrapper-close-hover-background);
-}
-
-.lx .lx-layout .lx-info-wrapper.lx-responsive-view {
-  width: 100vw;
-  padding: var(--space-0);
-}
-
 .lx .lx-layout .popper.fullscreen-popper {
   z-index: 8101;
 }
@@ -1013,43 +865,6 @@
   z-index: 8100;
 }
 
-
-.lx-info-wrapper .lx-info-wrapper-panel .scrollable-container  {
-  display: grid;
-  gap: var(--space-0500);
-}
-.lx-info-wrapper.lx-responsive-view .scrollable-container {
-  padding: var(--space-1000);
-  padding-top: var(--space-0500);
-}
-
-.lx-info-wrapper .lx-info-wrapper-panel .lx-info-wrapper-panel-area {
-	display: grid;
-}
-
-.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .popper.fullscreen-popper .lx-info-wrapper-panel-area::after {
-  background: linear-gradient(0deg, transparent 0%, var(--color-tooltip-background) 100%);
-  content: "";
-  height: 3rem;
-  position: absolute;
-  top: var(--row-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: var(--info-wrapper-top-shadow-opacity);
-  pointer-events: none;
-}
-
-.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .popper.fullscreen-popper .lx-info-wrapper-panel-area::before {
-  background: linear-gradient(180deg, transparent 0%, var(--color-tooltip-background) 100%);
-  content: "";
-  height: 3rem;
-  position: absolute;
-  bottom: var(--space-0);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: var(--info-wrapper-bottom-shadow-opacity);
-  pointer-events: none;
-}
 
 .lx .lx-layout .popper.fullscreen-popper .scrollable-container {
   overflow: auto;
@@ -1258,12 +1073,6 @@
 }
 
 /* /articles */
-
-.lx-layout .lx-info-wrapper > .popper-wrapper {
-  width: 100%;
-  margin: var(--space-0) !important;
-  border: none !important;
-}
 
 .lx .lx-layout .lx-alert-menu-list {
   margin: var(--space-0);
@@ -2289,14 +2098,6 @@
 
 .lx .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-bottom::before{
   clip-path: polygon(0 0, 100% 0, 100% 10%, 10% 100%, 0 100%);
-}
-
-.lx .lx-info-wrapper-responsive-toolbar {
-  border-top: var(--border-width-1) solid var(--color-chrome);
-}
-
-.lx-info-wrapper-responsive-toolbar svg.handle-icon {
-  opacity: 50%;
 }
 
 .lx-layout-latvijalv .lx-spotlight .lx-spotlight-footer > .lx-button {

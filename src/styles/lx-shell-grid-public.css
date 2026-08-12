@@ -423,19 +423,6 @@
 }
 
 
-.handle-wrapper .handle-icon {
-  width: var(--icon-size-l);
-  height: var(--icon-size-l);
-  position: absolute;
-  margin-top: var(--space-0500);
-}
-
-.lx-info-wrapper-responsive-toolbar .handle-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: start;
-}
-
 .lx-dropdown-panel-wrapper .lx-info-wrapper-responsive-toolbar {
   height: 4rem;
 }
@@ -445,7 +432,6 @@
 }
 
 .lx .handle-wrapper>.lx-button {
-  margin-left: var(--space-3000);
   margin-top: var(--space-1000);
 }
 

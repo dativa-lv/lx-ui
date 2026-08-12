@@ -565,12 +565,12 @@
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-weeks .lx-calendar-week .lx-info-wrapper-content:hover {
-  background-color: transparent;
+  background: transparent;
 }
 
 .lx:not(.lx-theme-contrast) .lx-input-icon-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
 .lx:not(.lx-theme-contrast) .lx-input-icon-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
-  background-color: transparent;
+  background: transparent;
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-weeks.first-month .lx-calendar-week.first-week .lx-calendar-day.lx-other-month:not(.lx-disabled-date),
@@ -930,7 +930,7 @@
 }
 
 .popper.fullscreen-popper .lx-dropdown-panel-wrapper .lx-info-wrapper-responsive-toolbar {
-  background-color: var(--color-region);
+  background: var(--color-region);
 }
 
 .lx .lx-layout .popper.higher-z-index.fullscreen-popper {
@@ -983,14 +983,6 @@
   background-color: var(--color-button-ghost-background-hover);
   color: var(--color-button-ghost-text-hover);
   border-color: var(--color-button-ghost-border-hover);
-}
-
-.lx .lx-info-wrapper-responsive-toolbar.dropdown-handle-toolbar svg.handle-icon {
-  fill: var(--color-data)
-}
-
-.lx.lx-theme-contrast .lx-info-wrapper-responsive-toolbar.dropdown-handle-toolbar svg.handle-icon {
-  opacity: 1;
 }
 
 .lx-calendar-special-dates-wrapper {

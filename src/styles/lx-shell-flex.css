@@ -855,7 +855,7 @@ code {
   display: none;
   background-color: var(--color-tooltip-background);
 
-  color: var(--color-tooltip-foreground);
+  color: var(--color-tooltip-text-primary);
   left: var(--space-0);
   width: auto;
   padding: var(--space-0500) var(--space-1000);
@@ -876,7 +876,7 @@ code {
 
 .lx-info-wrapper .lx-tooltip label,
 .lx-info-wrapper .lx-tooltip .lx-data {
-  color: var(--color-tooltip-foreground) !important;
+  color: var(--color-tooltip-text-primary) !important;
 }
 
 
@@ -1152,7 +1152,7 @@ code {
 .lx .lx-layout .popper  .lx-info-wrapper-panel {
   background-color: var(--color-tooltip-background);
   padding: var(--space-0500) var(--space-1000);
-  color: var(--color-tooltip-foreground);
+  color: var(--color-tooltip-text-primary);
 }
 
 .lx .lx-layout .lx-info-wrapper-panel .lx-row {
@@ -1162,7 +1162,7 @@ code {
 .lx .lx-form .lx-row .popper .lx-info-wrapper-panel .lx-data,
 .lx .popper .lx-info-wrapper-panel .lx-data,
 .lx .popper .lx-info-wrapper-panel label:not(.lx-state > .lx-primary) {
-  color: var(--color-tooltip-foreground);
+  color: var(--color-tooltip-text-primary);
 }
 
 .lx .lx-info-wrapper .popper:hover {

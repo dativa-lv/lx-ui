@@ -867,6 +867,42 @@
   --info-box-button-outline-offset: var(--button-ghost-outline-offset);
   --info-box-button-icon-size: var(--button-ghost-icon-size);
 
+  --info-wrapper-padding: var(--space-0500);
+  --info-wrapper-gap: var(--space-0500);
+  --info-wrapper-row-gap: var(--space-0);
+  --info-wrapper-border-width: var(--border-width-0);
+  --info-wrapper-border-style: solid;
+  --info-wrapper-border-radius: var(--border-radius-0);
+  --info-wrapper-shadow: none;
+  --info-wrapper-max-width: var(--aside-size);
+  --info-wrapper-min-width: 2.5rem;
+  --info-wrapper-text-primary-font-size: inherit;
+  --info-wrapper-text-primary-font-weight: var(--data-weight);
+  --info-wrapper-text-secondary-font-size: var(--label-font-size);
+  --info-wrapper-text-secondary-font-weight: inherit;
+  --sheet-border-radius: var(--info-wrapper-border-radius);
+  --sheet-padding: var(--space-0500) var(--space-1000) var(--space-1000)
+    var(--space-1000);
+  --sheet-header-padding: var(--space-0);
+  --sheet-header-border-width: var(--border-width-1);
+  --sheet-handle-icon-size: var(--icon-size-l);
+  --sheet-button-height: var(--button-ghost-icon-only-height);
+  --sheet-button-width: var(--button-ghost-icon-only-width);
+  --sheet-button-min-width: var(--space-3000);
+  --sheet-button-border: var(--button-ghost-border);
+  --sheet-button-border-radius: var(--button-ghost-border-radius);
+  --sheet-button-outline-offset: var(--button-ghost-outline-offset);
+  --sheet-button-icon-size: var(--button-ghost-icon-size);
+
+  --tooltip-padding: var(--space-0250) var(--space-0500);
+  --tooltip-border-width: var(--border-width-0);
+  --tooltip-border-style: solid;
+  --tooltip-border-radius: var(--border-radius-0);
+  --tooltip-shadow: none;
+  --tooltip-max-width: var(--aside-size);
+  --tooltip-min-width: 2.5rem;
+  --tooltip-text-font-size: var(--label-font-size);
+
   --loader-height-l: 5.5rem;
   --loader-width-l: 5.5rem;
   --loader-height-s: 1.25rem;

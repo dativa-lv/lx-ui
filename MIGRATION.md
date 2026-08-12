@@ -4,6 +4,23 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
+## 2.2.12 → 2.2.13
+
+### Breaking changes
+
+#### LxInfoWrapper, LxTooltip
+
+`LxInfoWrapper` and `LxTooltip` styles have been moved to a separate file - `lx-info-wrappers.css`. Import this file in your project to ensure correct LxInfoWrapper and LxTooltip appearance and behavior.
+
+**Token renames**
+
+- `--color-info-wrapper-close-hover-background` → `--color-sheet-button-background-hover`
+- `--color-tooltip-foreground` → `--color-tooltip-text-primary`
+- `--color-tooltip-foreground-data` → `--color-tooltip-text-primary`
+- `--color-tooltip-foreground-label` → `--color-tooltip-text-secondary`
+
+> Note: `--color-tooltip-foreground` and `--color-tooltip-foreground-data` are merged into one token — they held an identical value in every theme.
+
 ## 2.2.11 → 2.2.12
 
 ### Breaking changes

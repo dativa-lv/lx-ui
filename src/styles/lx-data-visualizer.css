@@ -467,7 +467,7 @@
 }
 
 .lx .lx-data-visualizer .popper-wrapper .lx-info-wrapper-content:hover {
-  background-color: transparent;
+  background: transparent;
 }
 
 .lx-data-visualizer .lx-target-wrapper-multiple  .target-value-multiple .lx-info-wrapper-content{

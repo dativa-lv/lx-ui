@@ -81,7 +81,7 @@
 }
 
 .lx-info-wrapper .lx-steps-description .lx-description {
-    color: var(--color-tooltip-foreground-label);
+    color: var(--color-tooltip-text-secondary);
 }
 
 .lx-steps-container-wrapper-disabled {
@@ -94,11 +94,11 @@
 }
 
 .lx-steps-data-block-small>.lx-info-wrapper .lx-info-wrapper-panel .lx-steps-description>.lx-description {
-    color: var(--color-tooltip-foreground)
+    color: var(--color-tooltip-text-primary)
 }
 
 .lx .lx-layout .lx-info-wrapper svg.lx-steps-icon {
-    fill: var(--color-tooltip-foreground);
+    fill: var(--color-info-wrapper-text-primary);
 }
 
 @media (max-width: 800px) {

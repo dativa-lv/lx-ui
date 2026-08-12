@@ -760,7 +760,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .lx a.leaflet-popup-close-button {
   padding: var(--space-0);
   margin: var(--space-0);
-  color: var(--color-tooltip-foreground);
+  color: var(--color-tooltip-text-primary);
 }
 
 .lx a.leaflet-popup-close-button:hover {
@@ -833,7 +833,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 .leaflet-popup-content-wrapper {
   background-color: var(--color-tooltip-background);
-  color: var(--color-tooltip-foreground);
+  color: var(--color-tooltip-text-primary);
   border-radius: var(--border-radius-0);
   box-shadow: var(--shadow-dropdown);
 }
