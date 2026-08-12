@@ -9,6 +9,7 @@ import {
   humanizeDate,
   formatFull,
 } from '@/utils/dateUtils';
+import { sanitizeToPlainText } from '@/utils/formatUtils';
 import useLx from '@/hooks/useLx';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';
@@ -167,12 +168,31 @@ const formActions = computed(() => [
   },
 ]);
 
+function sanitizeForm(value) {
+  if (typeof value === 'string') {
+    return sanitizeToPlainText(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeForm(item));
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, nestedValue]) => [key, sanitizeForm(nestedValue)])
+    );
+  }
+
+  return value;
+}
+
 function submitForm() {
   const errors = formBuilderRef.value?.validateModel?.();
   if (Array.isArray(errors) && errors.length > 0) {
     return;
   }
-  submitClarifyingQuestions?.(props.message, formModel.value);
+  const sanitizedModel = sanitizeForm(formModel.value);
+  submitClarifyingQuestions?.(props.message, sanitizedModel);
 }
 
 function onFormAction(actionName) {

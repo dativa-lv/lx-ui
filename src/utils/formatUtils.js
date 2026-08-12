@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { formatDate, formatDateTime } from '@/utils/dateUtils';
 import { cutString, shortenUserName } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
@@ -356,4 +357,17 @@ export function pluralize(value, forms, locale) {
   } catch {
     return fallback;
   }
+}
+
+/**
+ * Sanitizes text and strips all HTML tags and attributes.
+ *
+ * @param {string} value - Raw text that may contain HTML.
+ * @returns {string} Sanitized plain-text-safe string.
+ */
+export function sanitizeToPlainText(value) {
+  return DOMPurify.sanitize(value, {
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: [],
+  });
 }

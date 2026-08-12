@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useElementSize, useMediaQuery } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
+import { sanitizeToPlainText } from '@/utils/formatUtils';
 import LxTextArea from '@/components/TextArea.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 
@@ -28,7 +29,7 @@ watch(
   }
 );
 
-const normalizedText = computed(() => rawText.value.trim());
+const normalizedText = computed(() => sanitizeToPlainText(rawText.value ?? '').trim());
 const canSend = computed(() => normalizedText.value.length > 0);
 const isLoading = computed(() => props.loading);
 const isBusy = computed(() => props.busy);
