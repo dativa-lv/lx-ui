@@ -20,6 +20,7 @@ import { lxDevUtils } from '@/utils';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
 import useScrollVirtualizer from '@/hooks/useScrollVirtualizer';
+import { useLoadingAnnouncer } from '@/hooks/useLoadingAnnouncer';
 import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
@@ -110,11 +111,16 @@ const textsDefault = {
   skipLinkLabel: 'Izlaist sarakstu',
   skipLinkTitle: 'Izlaist sarakstu',
   overflowMenu: 'Atvērt papildu iespējas',
-  labelDone: 'Ielāde ir pabeigta',
+  labelDone: 'Ielāde ir pabeigta', // TODO: rename to `loadingEnd` on the next major
+  loadingStart: 'Notiek ielāde',
   draggableItem: 'Pārvietojams rokturis',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxList'));
+
+// LxLoaderView announces the lazy library load. `loadingStart` goes through
+// `texts` because `label` is the visible caption and has to stay empty here.
+const loaderViewTexts = computed(() => ({ loadingStart: displayTexts.value.loadingStart }));
 
 const emits = defineEmits([
   'update:searchString',
@@ -150,6 +156,8 @@ const loadingLib = ref(false);
 const listWrapper = ref(null);
 const toolbarRef = ref(null);
 const isNarrow = ref(false);
+
+const { shouldAnnounceLoading, shouldAnnounceDone } = useLoadingAnnouncer(() => props.loading);
 
 const defaultListRef = ref(null);
 const defaultListGap = ref(8);
@@ -1458,7 +1466,17 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
       'list-inside-form': insideForm,
     }"
   >
-    <LxLoaderView :loading="loadingLib" label="" :labelDone="displayTexts.labelDone">
+    <p class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
+      <template v-if="shouldAnnounceLoading">{{ displayTexts.loadingStart }}</template>
+      <template v-else-if="shouldAnnounceDone">{{ displayTexts.labelDone }}</template>
+    </p>
+
+    <LxLoaderView
+      :loading="loadingLib"
+      label=""
+      :labelDone="displayTexts.labelDone"
+      :texts="loaderViewTexts"
+    >
       <LxSkipLink
         v-if="props.hasSkipLink"
         :label="displayTexts.skipLinkLabel"

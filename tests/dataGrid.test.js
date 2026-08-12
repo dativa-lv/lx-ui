@@ -9,6 +9,7 @@ import {
   checkActionDefinitionsButtonsSingle,
   checkActionDefinitionsButtonsMultiple,
 } from './helpers/actionDefinitionsHelpers';
+import { checkLoadingAnnouncement } from './helpers/loadingAnnouncementHelpers';
 
 const tanstackVirtual = vi.hoisted(() => ({
   useVirtualizer: undefined,
@@ -1335,4 +1336,14 @@ describe('Virtualization', () => {
       logErrorSpy.mockRestore();
     }
   });
+});
+
+describe('Loading announcement', () => {
+  checkLoadingAnnouncement(
+    mountComponent,
+    (w) => {
+      wrapper = w;
+    },
+    { props: { hasVirtualization: false } }
+  );
 });

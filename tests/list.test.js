@@ -10,6 +10,7 @@ import {
   checkActionDefinitionsButtonsSingle,
   checkActionDefinitionsButtonsMultiple,
 } from './helpers/actionDefinitionsHelpers';
+import { checkLoadingAnnouncement } from './helpers/loadingAnnouncementHelpers';
 
 let wrapper;
 
@@ -936,4 +937,19 @@ describe('Virtualization', () => {
       logSpy.mockRestore();
     }
   });
+});
+
+describe('Loading announcement', () => {
+  // LxList still names the end text `labelDone` (to be renamed `loadingEnd`).
+  checkLoadingAnnouncement(
+    mountComponent,
+    (w) => {
+      wrapper = w;
+    },
+    {
+      props: { hasVirtualization: false },
+      texts: { loadingStart: 'Loading has started', labelDone: 'Loading has finished' },
+      expected: { start: 'Loading has started', end: 'Loading has finished' },
+    }
+  );
 });

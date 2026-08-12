@@ -86,10 +86,15 @@ const textsDefault = {
   errorTitle: 'Kļūda kartes attēlošanā',
   errorDescription: 'Nav definēts neviens kartes pamata slānis',
   overflowMenu: 'Atvērt papildu iespējas',
-  labelDone: 'Ielāde ir pabeigta',
+  labelDone: 'Ielāde ir pabeigta', // TODO: rename to `loadingEnd` on the next major
+  loadingStart: 'Notiek ielāde',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxMap'));
+
+// LxLoaderView announces the lazy library load. `loadingStart` goes through
+// `texts` because `label` is the visible caption and has to stay empty here.
+const loaderViewTexts = computed(() => ({ loadingStart: displayTexts.value.loadingStart }));
 
 const zoom = computed({
   get() {
@@ -471,7 +476,13 @@ const wrapperRef = ref();
     :style="grayscaleStyle"
     :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
   >
-    <LxLoaderView :loading="loadingLib" label="" :labelDone="displayTexts.labelDone">
+    <!-- label="" keeps the spinner captionless; the announcement comes from texts -->
+    <LxLoaderView
+      :loading="loadingLib"
+      label=""
+      :labelDone="displayTexts.labelDone"
+      :texts="loaderViewTexts"
+    >
       <LxToolbar
         v-if="showToolbar"
         :id="`${id}-toolbar`"

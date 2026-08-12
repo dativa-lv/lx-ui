@@ -85,15 +85,20 @@ export const TYPED_INPUT_DEFAULT_MASKS = Object.freeze({
 });
 
 /**
- * LxLoaderView delay announcement delay constants
+ * Loading state announcement delay constants, shared by every component that
+ * announces loading to screen readers through `useLoadingAnnouncer`
+ * (LxLoaderView, LxDataGrid, LxList, LxMap).
  * DEFAULT_LOADING_DELAY - default delay before announcing loading state
  * INITIAL_MOUNTED_LOADING_DELAY - delay before announcing loading state on initial mount
  * MIN_BETWEEN_LOADING_DELAY - delay between announcing loading state changes, to minimize announcement collision
+ * DONE_ANNOUNCEMENT_CLEAR_DELAY - delay after which the finished announcement is
+ * removed from the live region, so it isn't left behind for browse/scan mode
  */
 export const LOADER_VIEW_CONSTANTS = Object.freeze({
   DEFAULT_LOADING_DELAY: 700,
   INITIAL_MOUNTED_LOADING_DELAY: 2000,
   MIN_BETWEEN_LOADING_DELAY: 1000,
+  DONE_ANNOUNCEMENT_CLEAR_DELAY: 3000,
 });
 
 /**

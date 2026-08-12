@@ -11,6 +11,7 @@ import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import useScrollVirtualizer from '@/hooks/useScrollVirtualizer';
 import { useGridKeyboardNavigation } from '@/hooks/useGridKeyboardNavigation';
+import { useLoadingAnnouncer } from '@/hooks/useLoadingAnnouncer';
 import { formatValueArray } from '@/utils/formatUtils';
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
@@ -178,8 +179,8 @@ const textsDefault = {
   close: 'Aizvērt',
   skipHeader: 'Pāriet uz tabulas datiem',
   overflowMenu: 'Atvērt papildu iespējas',
-  loadingStart: 'Ielādē sākas',
-  loadingEnd: 'Ielādē beidzas',
+  loadingStart: 'Notiek ielāde',
+  loadingEnd: 'Ielāde ir pabeigta',
   defaultSortingTooltips: {
     asc: 'Tiek kārtots augošā secībā pēc',
     desc: 'Tiek kārtots dilstošā secībā pēc',
@@ -196,8 +197,9 @@ const gridTemplateColumns = ref('');
 const skeletonGridTemplateColumns = ref('6rem 12rem auto');
 const header = ref(null);
 const container = ref(null);
-const showLoadingAlert = ref(false);
 const autoScrollable = ref(false);
+
+const { shouldAnnounceLoading, shouldAnnounceDone } = useLoadingAnnouncer(() => props.loading);
 
 // Row dropdown menus keyed by rowKey, not by render index: Vue's v-for ref
 // arrays aren't guaranteed to match source order, so during fast virtualized
@@ -1706,10 +1708,7 @@ onMounted(() => {
 
   watch(
     () => props.loading,
-    (newValue, oldValue) => {
-      if (oldValue !== undefined) {
-        showLoadingAlert.value = true;
-      }
+    (newValue) => {
       if (!newValue) {
         nextTick(() => {
           syncContainerScroll();
@@ -1854,6 +1853,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
     :style="`${topOutOfBounds} ${fullBleedMargin} ${stickyToolbarAdditionalHeight}`"
     :class="[{ 'lx-grid-sticky': stickyHeader }, { 'lx-grid-sticky-toolbar': props.stickyToolbar }]"
   >
+    <p class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
+      <template v-if="shouldAnnounceLoading">{{ displayTexts.loadingStart }}</template>
+      <template v-else-if="shouldAnnounceDone">{{ displayTexts.loadingEnd }}</template>
+    </p>
+
     <header v-if="showHeader">
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
       <p :id="`${id}-description`" class="lx-description">{{ description }}</p>
@@ -2803,17 +2807,6 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           <div class="lx-cell lx-cell-m"><div class="lx-skeleton-placeholder"></div></div>
           <div class="lx-cell lx-cell"><div class="lx-skeleton-placeholder"></div></div>
         </div>
-        <p v-if="loading && showLoadingAlert" class="lx-invisible" aria-live="polite" role="status">
-          {{ displayTexts.loadingStart }}
-        </p>
-        <p
-          v-if="!loading && showLoadingAlert"
-          class="lx-invisible"
-          aria-live="polite"
-          role="status"
-        >
-          {{ displayTexts.loadingEnd }}
-        </p>
       </div>
     </article>
 

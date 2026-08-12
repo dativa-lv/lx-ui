@@ -1,9 +1,10 @@
 <script setup>
-import { computed, onUnmounted, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import LxLoader from '@/components/Loader.vue';
 
 import { generateUUID } from '@/utils/stringUtils';
-import { LOADER_VIEW_CONSTANTS } from '@/constants';
+import { getDisplayTexts } from '@/utils/generalUtils';
+import { useLoadingAnnouncer } from '@/hooks/useLoadingAnnouncer';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -12,13 +13,27 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // 'default' or 'bar'
   modelValue: { type: [Number, String], default: 0 },
   kind: { type: String, default: 'indeterminate' }, // 'indeterminate' or 'progress'
-  label: { type: String, default: 'Notiek ielāde' },
-  labelDone: { type: String, default: 'Ielāde ir pabeigta' },
+  label: { type: String, default: 'Notiek ielāde' }, // visible label under the loader
+  labelDone: { type: String, default: 'Ielāde ir pabeigta' }, // TODO: replace with texts.loadingEnd
   description: { type: String, default: '' },
   fakedDuration: { type: Number, default: 2000 },
   faked: { type: Boolean, default: false },
   state: { type: String, default: 'default' },
+  texts: { type: Object, default: () => ({}) },
 });
+
+// The announced texts fall back to the existing `label` / `labelDone` props, so
+// nothing changes for consumers that only set those. An explicitly passed
+// `texts` entry wins, which is what a caller with an empty visible `label`
+// needs in order to still announce a start message.
+const textsDefault = computed(() => ({
+  loadingStart: props.label || 'Notiek ielāde',
+  loadingEnd: props.labelDone || 'Ielāde ir pabeigta',
+}));
+
+const displayTexts = computed(() =>
+  getDisplayTexts(props.texts, textsDefault.value, 'LxLoaderView')
+);
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -30,17 +45,6 @@ const model = computed({
     emits('update:modelValue', value);
   },
 });
-
-const shouldAnnounceLoading = ref(false);
-const shouldAnnounceDone = ref(false);
-const hasShownLoading = ref(false);
-const canAnnounceDone = ref(false);
-const pendingDoneAnnouncement = ref(false);
-let loadingDelayTimer = null;
-let minDoneDelayTimer = null;
-let hasUsedInitialMountedLoadingThreshold = false;
-
-const mountedWithLoading = props.loading;
 
 watch(
   () => model.value,
@@ -54,88 +58,20 @@ watch(
   }
 );
 
-watch(
-  () => props.loading,
-  (isLoading) => {
-    if (loadingDelayTimer) {
-      clearTimeout(loadingDelayTimer);
-      loadingDelayTimer = null;
-    }
-
-    if (isLoading) {
-      if (minDoneDelayTimer) {
-        clearTimeout(minDoneDelayTimer);
-        minDoneDelayTimer = null;
-      }
-
-      shouldAnnounceDone.value = false;
-      shouldAnnounceLoading.value = false;
-      hasShownLoading.value = false;
-      canAnnounceDone.value = false;
-      pendingDoneAnnouncement.value = false;
-
-      const loadingAnnounceDelay =
-        mountedWithLoading && !hasUsedInitialMountedLoadingThreshold
-          ? LOADER_VIEW_CONSTANTS.INITIAL_MOUNTED_LOADING_DELAY
-          : LOADER_VIEW_CONSTANTS.DEFAULT_LOADING_DELAY;
-
-      if (mountedWithLoading && !hasUsedInitialMountedLoadingThreshold) {
-        hasUsedInitialMountedLoadingThreshold = true;
-      }
-
-      loadingDelayTimer = setTimeout(() => {
-        if (props.loading) {
-          shouldAnnounceLoading.value = true;
-          hasShownLoading.value = true;
-          canAnnounceDone.value = false;
-
-          minDoneDelayTimer = setTimeout(() => {
-            canAnnounceDone.value = true;
-            if (pendingDoneAnnouncement.value && !props.loading) {
-              shouldAnnounceDone.value = true;
-              hasShownLoading.value = false;
-              pendingDoneAnnouncement.value = false;
-            }
-          }, LOADER_VIEW_CONSTANTS.MIN_BETWEEN_LOADING_DELAY);
-        }
-      }, loadingAnnounceDelay);
-      return;
-    }
-
-    shouldAnnounceLoading.value = false;
-    if (hasShownLoading.value) {
-      if (canAnnounceDone.value) {
-        shouldAnnounceDone.value = true;
-        hasShownLoading.value = false;
-        pendingDoneAnnouncement.value = false;
-      } else {
-        shouldAnnounceDone.value = false;
-        pendingDoneAnnouncement.value = true;
-      }
-    } else {
-      shouldAnnounceDone.value = false;
-      pendingDoneAnnouncement.value = false;
-    }
-  },
-  { immediate: true }
-);
-
-onUnmounted(() => {
-  if (loadingDelayTimer) {
-    clearTimeout(loadingDelayTimer);
-  }
-  if (minDoneDelayTimer) {
-    clearTimeout(minDoneDelayTimer);
-  }
-});
+const { shouldAnnounceLoading, shouldAnnounceDone } = useLoadingAnnouncer(() => props.loading);
 </script>
 
 <template>
   <div class="lx-loader-view-wrapper" :id="props.id">
+    <p class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
+      <template v-if="shouldAnnounceLoading">
+        {{ displayTexts.loadingStart }}
+        <template v-if="kind === 'progress'">- {{ Number(model) * 100 }}%</template>
+      </template>
+      <template v-else-if="shouldAnnounceDone">{{ displayTexts.loadingEnd }}</template>
+    </p>
+
     <div v-if="props.loading" class="lx-loader-view-loader-wrapper" :aria-label="props.label">
-      <div v-if="shouldAnnounceLoading" aria-live="polite" role="status" class="lx-invisible">
-        {{ props.label }} <span v-if="kind === 'progress'">- {{ Number(model) * 100 }}%</span>
-      </div>
       <LxLoader
         :modelValue="model"
         :loading="props.loading"
@@ -151,9 +87,6 @@ onUnmounted(() => {
       />
     </div>
     <div v-show="!props.loading" class="lx-loader-view-content-wrapper">
-      <div v-if="shouldAnnounceDone" aria-live="polite" role="status" class="lx-invisible">
-        {{ props.labelDone }}
-      </div>
       <slot />
     </div>
   </div>
