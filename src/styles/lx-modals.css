@@ -175,13 +175,13 @@ dialog {
 
 /* Header button focus-hover */
 
-.lx dialog.lx-modal > header > .lx-button:focus:hover,
-.lx-curtain .lx-modal > header .lx-button:focus:hover {
+dialog.lx-modal > header > .lx-button:focus:hover,
+.lx-modal > header .lx-button:focus:hover {
   background: var(--color-modal-button-header-background-hover);
 }
 
-.lx dialog.lx-modal > header > .lx-button:focus:hover svg,
-.lx-curtain .lx-modal > header .lx-button:focus:hover svg {
+dialog.lx-modal > header > .lx-button:focus:hover svg,
+.lx-modal > header .lx-button:focus:hover svg {
   fill: var(--color-modal-button-header-icon-hover);
 }
 

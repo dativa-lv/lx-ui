@@ -1488,6 +1488,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
     :description="idleModalDescription"
     :buttonSecondaryIsCancel="false"
     :disableClosing="true"
+    :escEnabled="false"
     :actionDefinitions="idleModalActions"
     :texts="displayTexts"
     @actionClick="idleModalClicked"
