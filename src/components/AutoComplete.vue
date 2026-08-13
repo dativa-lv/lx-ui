@@ -1209,11 +1209,23 @@ if (props.builderOptions?.useRegistry) {
   });
 }
 
+const dataState = computed(() =>
+  JSON.stringify({
+    readOnly: props.readOnly,
+  })
+);
+
 defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
 </script>
 
 <template>
-  <div class="lx-field-wrapper" ref="refRoot" :data-id="id">
+  <div
+    class="lx-field-wrapper"
+    ref="refRoot"
+    :data-id="id"
+    data-component="lx-auto-complete"
+    :data-state="dataState"
+  >
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
       <template v-if="$slots.customItem">
         <slot name="customItem" v-bind="selectedItem"></slot>

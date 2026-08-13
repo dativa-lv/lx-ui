@@ -139,10 +139,22 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
 }
 </script>
 <template>
-  <div :id="id" class="lx-field-wrapper" v-if="readOnly" :data-id="id">
+  <div
+    v-if="readOnly"
+    :id="id"
+    class="lx-field-wrapper"
+    :data-id="id"
+    data-component="lx-content-switcher"
+  >
     <p class="lx-data">{{ getName() }}</p>
   </div>
-  <div :id="id" class="lx-content-switcher-wrapper" :data-id="id" v-else>
+  <div
+    v-else
+    :id="id"
+    class="lx-content-switcher-wrapper"
+    :data-id="id"
+    data-component="lx-content-switcher"
+  >
     <div
       class="lx-content-switcher"
       :class="[{ 'lx-disabled': disabled }]"

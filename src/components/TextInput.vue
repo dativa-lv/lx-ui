@@ -640,10 +640,23 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
   });
 }
 
+const dataState = computed(() =>
+  JSON.stringify({
+    readOnly: props.readOnly,
+    kind: props.kind,
+    hidePassword: hidePassword.value,
+  })
+);
+
 defineExpose({ focus });
 </script>
 <template>
-  <div class="lx-field-wrapper" :data-id="id">
+  <div
+    class="lx-field-wrapper"
+    data-component="lx-text-input"
+    :data-id="id"
+    :data-state="dataState"
+  >
     <p
       v-if="readOnly && props.kind !== 'password'"
       class="lx-data"

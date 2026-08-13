@@ -150,6 +150,12 @@ onMounted(() => {
     cardRef.value?.classList.remove('lx-card-no-transition');
   });
 });
+
+const dataState = computed(() =>
+  JSON.stringify({
+    isFlipped: isFlipped.value,
+  })
+);
 </script>
 <template>
   <div
@@ -173,6 +179,7 @@ onMounted(() => {
         : {}
     "
     data-component="lx-card"
+    :data-state="dataState"
   >
     <div
       class="lx-card lx-region-component"
