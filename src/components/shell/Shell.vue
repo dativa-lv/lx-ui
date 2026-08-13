@@ -161,7 +161,7 @@ const props = defineProps({
   coverImageDark: { type: String, default: '/imgs/cover-full-dark.jpg' },
   coverLogo: { type: String, default: '/imgs/logo-mid.png' },
   hasCoverLogo: { type: Boolean, default: true },
-  environment: { type: Object, default: () => {} },
+  environment: { type: Object, default: () => ({}) },
   headerNavDisable: { type: Boolean, default: false },
   headerNavReadOnly: { type: Boolean, default: false },
   navigating: { type: Boolean, default: false },
@@ -171,7 +171,7 @@ const props = defineProps({
   showIdleBadge: { type: Boolean, default: false },
   secondsToLive: { type: Number, default: null },
 
-  confirmDialogData: { type: Object, default: () => {} },
+  confirmDialogData: { type: Object, default: null },
   confirmPrimaryButtonBusy: { type: Boolean, default: false },
   confirmSecondaryButtonBusy: { type: Boolean, default: false },
   confirmPrimaryButtonDestructive: { type: Boolean, default: false },
@@ -208,7 +208,7 @@ const props = defineProps({
   spotlightHasShowMore: { type: Boolean, default: false },
   spotlightHasBadge: { type: Boolean, default: true },
 
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const shellModeComponents = {

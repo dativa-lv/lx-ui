@@ -34,7 +34,7 @@ const props = defineProps({
   defaultExpanded: { type: Boolean, default: true },
   expandedAttribute: { type: String, default: 'extended' },
   invalidAttribute: { type: String, default: 'invalid' },
-  selectedValues: { type: Object, default: () => {} },
+  selectedValues: { type: Object, default: null },
   labelId: { type: String, default: null },
   stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
@@ -204,12 +204,15 @@ function actionClick(val, item, itemKey) {
   emits('actionClick', val, item, itemKey);
 }
 
+const selectedValuesNotDefined = ref({});
+
 const selectedValues = computed({
   get() {
-    if (!props.selectedValues) return {};
+    if (!props.selectedValues) return selectedValuesNotDefined.value;
     return props.selectedValues;
   },
   set(value) {
+    if (!props.selectedValues) selectedValuesNotDefined.value = value;
     emits('update:selectedValues', value);
   },
 });

@@ -77,7 +77,7 @@ const props = defineProps({
     sequence: 3,
   }, // default || max
   preferencesId: { type: String, default: 'lx-camera-settings' },
-  itemsStates: { type: Object, default: () => {} },
+  itemsStates: { type: Object, default: null },
   labelId: { type: String, default: null },
   texts: {
     type: Object,

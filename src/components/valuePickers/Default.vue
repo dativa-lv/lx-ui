@@ -40,7 +40,7 @@ const props = defineProps({
   hasSelectAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
   stickyToolbar: { type: Boolean, default: false },
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const emits = defineEmits(['update:modelValue', 'update:searchString']);

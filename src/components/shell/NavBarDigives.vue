@@ -28,7 +28,7 @@ const props = defineProps({
   selectedAlternativeProfile: { type: Object, default: null },
   headerNavDisable: { type: Boolean, default: false },
   headerNavReadOnly: { type: Boolean, default: false },
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const defaultTexts = {

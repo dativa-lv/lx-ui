@@ -287,7 +287,7 @@ const props = defineProps({
    * @type {Object}
    * @since 0.3.5
    */
-  texts: { type: Object, default: () => {}, group: 'additional', sequence: 100 },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   role: { type: String, default: 'form' }, // form || group
   builderOptions: {
     type: Object,

@@ -61,7 +61,7 @@ const props = defineProps({
   selectionKind: { type: String, default: 'single' }, // single, multiple
   selectionActionDefinitions: { type: Array, default: () => [] },
   includeUnspecifiedGroups: { type: Boolean, default: false },
-  itemsStates: { type: Object, default: () => {} },
+  itemsStates: { type: Object, default: null },
   mode: { type: String, default: 'client' }, // client, server
   searchMode: { type: String, default: 'default' }, // default, compact
   labelId: { type: String, default: null },
@@ -1132,12 +1132,11 @@ function selectionActionClick(actionId, selectedItemsIds, actionValue = undefine
 
 const states = computed({
   get() {
-    // Šis vajadzīgs, jo, ja nav definēts, tad nez kāpēc props.itemsStates ir null, nevis {}
-    // kā norādīts defaultā, līdz ar to komponenti nav iespējams izmantot bez props.itemsState definēšanas
     if (!props.itemsStates) return statesNotDefined.value;
     return props.itemsStates;
   },
   set(value) {
+    if (!props.itemsStates) statesNotDefined.value = value;
     emits('update:itemsStates', value);
   },
 });

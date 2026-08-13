@@ -34,7 +34,7 @@ const props = defineProps({
   helperTextKind: { type: String, default: 'label', options: ['label', 'icon'] },
   searchAttributes: { type: Array, default: null },
   labelId: { type: String, default: null },
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const textsDefault = {

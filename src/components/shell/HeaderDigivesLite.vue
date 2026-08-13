@@ -58,7 +58,7 @@ const props = defineProps({
   alertCount: { type: Number, default: null },
   alertLevel: { type: String, default: null },
   hasHelp: { type: Boolean, default: false },
-  environment: { type: Object, default: () => {} },
+  environment: { type: Object, default: () => ({}) },
   hasCustomButton: { type: Boolean, default: false },
   customButtonIcon: { type: String, default: null },
   customButtonBadge: { type: String, default: null },
@@ -85,7 +85,7 @@ const props = defineProps({
       'home';
     },
   },
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const textsDefault = {

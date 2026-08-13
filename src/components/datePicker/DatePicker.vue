@@ -46,7 +46,7 @@ const props = defineProps({
   modelValue: { type: [String, Date, Object], default: null },
   mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters', 'birth-date'('day-month' is handled by LxDayMonthPicker, not here)
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
-  masks: { type: Object, default: () => {} },
+  masks: { type: Object, default: () => ({}) },
   placeholder: { type: String, default: null },
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },

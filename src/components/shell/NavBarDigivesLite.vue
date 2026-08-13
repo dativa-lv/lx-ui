@@ -62,7 +62,7 @@ const props = defineProps({
   alertCount: { type: Number, default: null },
   alertLevel: { type: String, default: null },
   hasHelp: { type: Boolean, default: false },
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
 
   hasCustomButton: { type: Boolean, default: false },
   customButtonIcon: { type: String, default: null },

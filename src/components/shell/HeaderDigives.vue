@@ -38,7 +38,7 @@ const props = defineProps({
   alertCount: { type: Number, default: null },
   alertLevel: { type: String, default: null },
   hasHelp: { type: Boolean, default: false },
-  environment: { type: Object, default: () => {} },
+  environment: { type: Object, default: () => ({}) },
   breadcrumbs: {
     type: Array,
     required: false,

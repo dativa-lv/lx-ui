@@ -37,12 +37,12 @@ const props = defineProps({
   },
   hasSelecting: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'single' }, // single, multiple
-  selectedItems: { type: Object, default: () => {} },
-  itemsStates: { type: Object, default: () => {} },
+  selectedItems: { type: Object, default: () => ({}) },
+  itemsStates: { type: Object, default: () => ({}) },
   mode: { type: String, default: 'client' }, // client, server
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
   parents: { type: Array, default: () => [] },
-  children: { type: Object, default: () => {} },
+  children: { type: Object, default: null },
   disabled: { type: Boolean, default: false },
 });
 
@@ -135,7 +135,7 @@ function updateParents(item) {
 function hasSelectedChildren(id) {
   let res = false;
   Object.keys(selected.value).forEach((key) => {
-    if (selected.value[key] && props.children?.[id].includes(key)) res = true;
+    if (selected.value[key] && props.children?.[id]?.includes(key)) res = true;
     return true;
   });
   return res;

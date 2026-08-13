@@ -49,7 +49,7 @@ const props = defineProps({
   alertCount: { type: Number, default: null },
   alertLevel: { type: String, default: null },
   hasHelp: { type: Boolean, default: false },
-  environment: { type: Object, default: () => {} },
+  environment: { type: Object, default: () => ({}) },
   headerNavDisable: { type: Boolean, default: false },
   breadcrumbs: {
     type: Array,
@@ -88,7 +88,7 @@ const props = defineProps({
 
   headerButtonsVisibility: { type: Object, default: () => ({}) },
 
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const textsDefault = {

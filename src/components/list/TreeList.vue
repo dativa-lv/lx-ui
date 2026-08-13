@@ -38,10 +38,10 @@ const props = defineProps({
   hasSelecting: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'single' }, // single, multiple
-  selectedItems: { type: Object, default: () => {} },
-  itemsStates: { type: Object, default: () => {} },
+  selectedItems: { type: Object, default: () => ({}) },
+  itemsStates: { type: Object, default: () => ({}) },
   mode: { type: String, default: 'client' }, // client, server
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const emits = defineEmits([

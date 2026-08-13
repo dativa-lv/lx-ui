@@ -22,7 +22,7 @@ const props = defineProps({
   kind: { type: String, default: 'default' }, // primary, secondary, tertiary, ghost, menuitem
   variant: { type: String, default: 'default' }, // default, icon-only
   destructive: { type: Boolean, default: false },
-  href: { type: Object, default: () => {} },
+  href: { type: Object, default: null },
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },

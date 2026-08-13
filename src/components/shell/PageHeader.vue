@@ -38,7 +38,7 @@ const props = defineProps({
     default: () => [], // { to: '{ name: 'home'}', label: 'Home' }],
   },
   hideHeaderText: { type: Boolean, default: false },
-  texts: { type: Object, default: () => {} },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const defaultTexts = {
