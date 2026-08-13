@@ -150,6 +150,7 @@ const bubbleCategoryClass = computed(() =>
 
 const isInvalid = computed(() => Boolean(props.message.invalid));
 const invalidationMessage = computed(() => props.message.invalidationMessage || props.texts.error);
+const plainMessageText = computed(() => sanitizeToPlainText(props.message.text ?? ''));
 
 // A schema renders as a form via the injected builder (ignored when absent); otherwise text renders as markdown.
 const builder = computed(() => clarifyingQuestionsBuilderGetter?.() || null);
@@ -250,7 +251,7 @@ defineExpose({ focus });
               <LxRichTextDisplay
                 v-if="message.text"
                 class="lx-chat-form-prompt"
-                :value="message.text"
+                :value="plainMessageText"
               />
               <LxForm
                 :column-count="1"
@@ -268,7 +269,7 @@ defineExpose({ focus });
                 />
               </LxForm>
             </template>
-            <LxRichTextDisplay v-else :value="message.text || ''" />
+            <LxRichTextDisplay v-else :value="plainMessageText" />
           </header>
 
           <div v-if="isInvalid" class="lx-invalidation-icon-wrapper">

@@ -4,7 +4,6 @@ import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { ref, watch } from 'vue';
 import { loadLibrary } from '@/utils/libLoader';
 import { generateUUID } from '@/utils/stringUtils';
-import { sanitizeToPlainText } from '@/utils/formatUtils';
 
 const props = defineProps({
   value: { type: String, default: '' },
@@ -24,6 +23,10 @@ async function loadMarked() {
 }
 
 const vCleanHtml = buildVueDompurifyHTMLDirective({
+  default: {
+    // dompurify already strips unsafe tags like script; keep only app-specific UI bans.
+    FORBID_TAGS: ['button', 'form', 'input', 'textarea', 'select', 'option'],
+  },
   hooks: {
     afterSanitizeAttributes: (node) => {
       if (node.tagName === 'A') {
@@ -36,8 +39,6 @@ const vCleanHtml = buildVueDompurifyHTMLDirective({
 watch(
   () => props.value,
   async (newMarkdown) => {
-    const sanitizedMarkdown = sanitizeToPlainText(newMarkdown);
-
     markdownLoading.value = true;
     await loadMarked();
 
@@ -49,7 +50,7 @@ watch(
       return `<h${depth} id="markdown-section-${props.id}-${headingCounter}">${text}</h${depth}>`;
     };
 
-    markdown.value = await marked(sanitizedMarkdown, { renderer });
+    markdown.value = await marked(newMarkdown, { renderer });
 
     markdownLoading.value = false;
   },
