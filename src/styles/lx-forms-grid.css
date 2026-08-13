@@ -286,6 +286,7 @@ svg .lx-shade {
 .lx-form-grid
   > .lx-main
   > .lx-expander.lx-edoc-signs-list-section.edocBadgeIcon
+  > .lx-expander-head
   > .lx-head
   > .lx-group
   > .lx-icon-wrapper {
@@ -298,7 +299,7 @@ svg .lx-shade {
   margin-right: var(--space-0500);
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.c2paBadgeIcon > .lx-head > .lx-group > .lx-icon-wrapper {
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.c2paBadgeIcon > .lx-expander-head > .lx-head > .lx-group > .lx-icon-wrapper {
   background: var(--color-region);
   border-radius: var(--border-radius-1000);
   margin-right: var(--space-0500);
@@ -308,6 +309,7 @@ svg .lx-shade {
 .lx-form-grid
   > .lx-main
   > .lx-expander.lx-edoc-signs-list-section.edocBadgeIcon
+  > .lx-expander-head
   > .lx-head
   > .lx-group
   > .lx-icon-wrapper
@@ -319,7 +321,7 @@ svg .lx-shade {
   width: var(--icon-size-xs);
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.c2paBadgeIcon > .lx-head > .lx-group > .lx-icon-wrapper svg {
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.c2paBadgeIcon > .lx-expander-head > .lx-head > .lx-group > .lx-icon-wrapper svg {
   margin: var(--space-0);
   padding: var(--space-0);
   fill: var(--color-blue);

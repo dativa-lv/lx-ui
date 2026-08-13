@@ -436,12 +436,13 @@
   transition: font-size ease-out 0.1s;
 }
 
-.lx:not(.lx-no-animations) .lx-expander > header .lx-modifier-icon + .lx-indicator {
+.lx:not(.lx-no-animations) .lx-expander > .lx-expander-head > header .lx-modifier-icon + .lx-indicator {
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 .lx:not(.lx-no-animations)
   .lx-expander.lx-expander-highlighted
+  > .lx-expander-head
   > header
   .lx-icon-wrapper
   .lx-modifier-icon

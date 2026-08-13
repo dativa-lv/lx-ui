@@ -96,7 +96,8 @@
   width: auto;
 }
 
-.lx-expander .lx-expander-head > header.lx-head {
+.lx-expander .lx-expander-head > header.lx-head,
+.lx-expander .lx-expander-head > header.lx-custom-header {
   flex: 1;
   min-width: 0;
 }
