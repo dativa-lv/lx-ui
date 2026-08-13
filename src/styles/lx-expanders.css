@@ -729,6 +729,18 @@
   height: 100%;
 }
 
+.lx-data-block-wrapper-m .additional-buttons .lx-context-container,
+.lx-data-block-wrapper-m .additional-buttons .popper-wrapper,
+.lx-data-block-wrapper-m .additional-buttons .lx-dropdown-toggler {
+  max-height: var(--data-block-button-max-height-m);
+}
+
+.lx-data-block-wrapper-l .additional-buttons .lx-context-container,
+.lx-data-block-wrapper-l .additional-buttons .popper-wrapper,
+.lx-data-block-wrapper-l .additional-buttons .lx-dropdown-toggler {
+  max-height: var(--data-block-button-max-height-l);
+}
+
 .lx-data-block-wrapper-m .additional-buttons > .lx-button,
 .lx-data-block-wrapper-m .additional-buttons .lx-dropdown-toggler > .lx-button {
   height: 100%;
