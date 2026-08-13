@@ -542,8 +542,9 @@
 /*** LxDataBlock content styles ***/
 
 .lx-data-block-wrapper > .lx-data-block-content {
-  overflow: hidden;
+  overflow: clip;
 }
+
 .lx-data-block-wrapper-m > .lx-data-block-content > .lx-main {
   padding: var(--data-block-content-padding-m);
 }
