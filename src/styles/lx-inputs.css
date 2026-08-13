@@ -837,6 +837,10 @@
   border-color: var(--color-input-complex-content-border-disabled);
 }
 
+.lx .lx-layout .lx-markdown-text-area-wrapper:has(.lx-input-wrapper.lx-disabled) .lx-markdown-text-area {
+  background: var(--color-input-background-disabled);
+}
+
 .lx-region .lx-input-wrapper,
 .lx-region-component .lx-input-wrapper,
 .lx-override .lx-region input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
@@ -2953,6 +2957,11 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: 100%;
 }
 
+.lx-qr-scanner-wrapper > .lx-component-toolbar:not(.lx-toolbar-sticky) {
+  position: relative;
+  z-index: 1;
+}
+
 .lx-qr-scanner-wrapper .lx-qr-loader {
   display: flex;
   justify-content: center;
@@ -4025,6 +4034,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: 100%;
   align-items: center;
   aspect-ratio: 4/3;
+  border: var(--border-width-0);
 }
 
 .lx-camera-wrapper .lx-camera-error>.lx-empty-state-wrapper>.lx-empty-state-data>svg{

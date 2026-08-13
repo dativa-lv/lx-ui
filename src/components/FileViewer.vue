@@ -496,6 +496,21 @@ const renderingInProgress = computed(
     loadingPdfjs.value
 );
 
+const loadingStateDelay = 250;
+const showLoadingState = ref(false);
+let loadingStateTimer = null;
+
+watch(renderingInProgress, (value) => {
+  clearTimeout(loadingStateTimer);
+  if (value) {
+    loadingStateTimer = setTimeout(() => {
+      showLoadingState.value = true;
+    }, loadingStateDelay);
+  } else {
+    showLoadingState.value = false;
+  }
+});
+
 function resetPdfViewer() {
   pdf.value = null;
   isFileUploaded.value = false;
@@ -1622,6 +1637,7 @@ onMounted(() => {
 onUnmounted(() => {
   disconnectObserver();
   disconnectResizeObserver();
+  clearTimeout(loadingStateTimer);
 });
 </script>
 
@@ -1634,6 +1650,7 @@ onUnmounted(() => {
       { image: supportedFileType === 'Image' || supportedFileType === 'SVG' },
       { 'lx-file-viewer-sticky': stickyToolbar && !isExpanded },
       { 'is-ready': isFileUploaded && !renderingInProgress },
+      { 'lx-loading': showLoadingState },
     ]"
     :style="inlineSize"
     ref="fileViewerWrapperRef"

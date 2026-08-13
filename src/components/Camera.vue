@@ -296,6 +296,8 @@ async function initializeCameraSettings(settingsObj) {
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
+const cameraUnavailable = computed(() => error.value);
+
 const toolbarActions = computed(() => {
   const actionsDefault = [];
 
@@ -319,6 +321,7 @@ const toolbarActions = computed(() => {
         icon: 'camera-switch',
         groupId: 'switchCamera',
         area: 'right',
+        disabled: cameraUnavailable.value,
       });
     } else if (props.cameraSwitcherMode === 'list') {
       const camerasGroupId = 'camerasList';
@@ -330,6 +333,7 @@ const toolbarActions = computed(() => {
         groupId: 'changeCamera',
         nestedGroupId: camerasGroupId,
         area: 'right',
+        disabled: cameraUnavailable.value,
       };
 
       const cameras = camerasList.value.map((camera) => ({
@@ -337,6 +341,7 @@ const toolbarActions = computed(() => {
         name: camera.label || camera.deviceId,
         groupId: camerasGroupId,
         active: selectedCamera.value?.deviceId === camera.deviceId,
+        disabled: cameraUnavailable.value,
       }));
 
       actionsDefault.push(mainButton, ...cameras);
@@ -347,6 +352,7 @@ const toolbarActions = computed(() => {
   const actionsExtra = props.actionDefinitions.map((a) => ({
     ...(a && typeof a === 'object' ? a : {}),
     extra: true,
+    disabled: a?.disabled || cameraUnavailable.value,
   }));
 
   return [...actionsBuiltIn, ...actionsExtra];
@@ -458,7 +464,7 @@ const wrapperRef = ref();
     :aria-describedby="showInlineHelper || showInfoHelper ? `${id}-helper` : null"
     :data-id="id"
   >
-    <div class="lx-camera" :class="{ 'lx-complex-input': !error }">
+    <div class="lx-camera lx-complex-input">
       <div
         :id="`${id}-announce`"
         class="lx-invisible"
@@ -474,7 +480,7 @@ const wrapperRef = ref();
         ref="toolbarRef"
         class="lx-embedded-toolbar"
         :id="`${id}-toolbar`"
-        :disabled="error || loading"
+        :disabled="loading"
         :actionDefinitions="toolbarActions"
         :sticky="stickyToolbar"
         :wrapperRef="wrapperRef"
@@ -489,7 +495,11 @@ const wrapperRef = ref();
           @actionClick="handleActionClick"
         />
       </div>
-      <div v-show="!error" class="lx-camera-frame lx-input-wrapper">
+      <div
+        v-show="!error"
+        class="lx-camera-frame lx-input-wrapper"
+        :class="{ 'lx-disabled': loading, 'lx-invalid': error }"
+      >
         <LxLoader v-if="loading" :loading="true" />
         <!-- eslint-disable-next-line vuejs-accessibility/media-has-caption -->
         <video :id="id" v-show="!modelValue && !loading" ref="video" autoplay playsinline muted />

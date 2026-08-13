@@ -239,6 +239,10 @@ async function loadQrReader() {
   QrcodeCapture = lib.QrcodeCapture;
 }
 
+const actionsDisabled = computed(
+  () => loading.value || error.value || refreshError.value || accepted.value
+);
+
 const toolbarActions = computed(() => {
   const actionsDefault = [];
 
@@ -251,6 +255,7 @@ const toolbarActions = computed(() => {
       area: 'right',
       kind: 'toggle',
       value: torch.value,
+      disabled: actionsDisabled.value,
     });
   }
 
@@ -261,6 +266,7 @@ const toolbarActions = computed(() => {
       icon: 'documents',
       groupId: 'scanFile',
       area: 'right',
+      disabled: actionsDisabled.value,
     });
   }
 
@@ -272,6 +278,7 @@ const toolbarActions = computed(() => {
         icon: 'camera-switch',
         groupId: 'switchCamera',
         area: 'right',
+        disabled: actionsDisabled.value,
       });
     } else if (props.cameraSwitcherMode === 'list') {
       const camerasGroupId = 'camerasList';
@@ -283,6 +290,7 @@ const toolbarActions = computed(() => {
         groupId: 'changeCamera',
         nestedGroupId: camerasGroupId,
         area: 'right',
+        disabled: actionsDisabled.value,
       };
 
       const cameras = camerasList.value.map((camera) => ({
@@ -290,6 +298,7 @@ const toolbarActions = computed(() => {
         name: camera.label || camera.deviceId,
         groupId: camerasGroupId,
         active: selectedCamera.value?.deviceId === camera.deviceId,
+        disabled: actionsDisabled.value,
       }));
 
       actionsDefault.push(mainButton, ...cameras);
@@ -300,6 +309,7 @@ const toolbarActions = computed(() => {
   const actionsExtra = props.actionDefinitions.map((a) => ({
     ...(a && typeof a === 'object' ? a : {}),
     extra: true,
+    disabled: a?.disabled || actionsDisabled.value,
   }));
 
   return [...actionsBuiltIn, ...actionsExtra];
@@ -359,13 +369,16 @@ const wrapperRef = ref();
         v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"
         :id="`${id}-toolbar`"
         class="lx-embedded-toolbar"
-        :disabled="loading || error || refreshError || accepted"
+        :disabled="loading"
         :actionDefinitions="toolbarActions"
         :sticky="stickyToolbar"
         :wrapperRef="wrapperRef"
         @actionClick="toolbarActionClick"
       />
-      <div class="lx-qr-scanner lx-input-wrapper">
+      <div
+        class="lx-qr-scanner lx-input-wrapper"
+        :class="{ 'lx-disabled': loading, 'lx-invalid': error }"
+      >
         <Transition name="fade">
           <QrcodeStream
             v-if="showPreview"

@@ -22,8 +22,19 @@
   margin-bottom: var(--displayer-complex-row-gap);
 }
 
-.lx .lx-component-toolbar.lx-embedded-toolbar.lx-disabled {
+.lx .lx-component-toolbar.lx-embedded-toolbar.lx-disabled:not(.lx-toolbar-sticky) {
   --color-toolbar-embedded-background: var(--color-input-background-disabled);
+}
+
+.lx-region .lx-embedded-toolbar.lx-disabled.lx-toolbar-sticky,
+.lx-region-component .lx-embedded-toolbar.lx-disabled.lx-toolbar-sticky {
+  --color-toolbar-embedded-background: var(--color-region);
+}
+
+.lx-embedded-toolbar.lx-disabled.lx-toolbar-sticky,
+.lx-region .lx-region-component .lx-embedded-toolbar.lx-disabled.lx-toolbar-sticky,
+.lx-region-component .lx-region-component .lx-embedded-toolbar.lx-disabled.lx-toolbar-sticky {
+  --color-toolbar-embedded-background: var(--color-region-2);
 }
 
 .lx-component-toolbar.lx-toolbar-empty,
