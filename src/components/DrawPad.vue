@@ -116,6 +116,7 @@ const strokeLineJoint = ref('round');
 const paths = ref([]);
 const currentPath = ref([]);
 const container = ref(null);
+const wrapperRef = ref();
 
 let observer = null;
 
@@ -141,14 +142,25 @@ const redrawPaths = () => {
   });
 };
 
+const getAvailableWidth = () => {
+  const parent = wrapperRef.value?.parentElement;
+  if (!parent) return container.value?.getBoundingClientRect().width ?? null;
+
+  const styles = globalThis.getComputedStyle?.(parent);
+  const paddingLeft = Number.parseFloat(styles?.paddingLeft) || 0;
+  const paddingRight = Number.parseFloat(styles?.paddingRight) || 0;
+
+  return parent.getBoundingClientRect().width - paddingLeft - paddingRight;
+};
+
 const resizeCanvas = () => {
   if (!canvas.value) return;
 
-  const rect = container.value?.getBoundingClientRect();
-  if (!rect) return;
+  const availableWidth = getAvailableWidth();
+  if (!availableWidth) return;
 
   const maxWidth = Math.max(Number.parseInt(props.width || '0', 10), 200);
-  const newWidth = Math.min(rect.width, maxWidth);
+  const newWidth = Math.min(availableWidth, maxWidth);
   canvasWidth.value = newWidth;
   canvas.value.width = newWidth;
 
@@ -435,14 +447,15 @@ onMounted(async () => {
     });
   });
 
-  if (container.value) {
-    observer.observe(container.value);
+  const observedElement = wrapperRef.value?.parentElement || container.value;
+  if (observedElement) {
+    observer.observe(observedElement);
   }
 });
 
 onUnmounted(() => {
-  if (observer && container.value) {
-    observer.unobserve(container.value);
+  if (observer) {
+    observer.disconnect();
   }
 });
 
@@ -466,7 +479,6 @@ if (props.builderOptions?.useRegistry) {
     unregisterBuilderInstance(props?.id);
   });
 }
-const wrapperRef = ref();
 </script>
 
 <template>
