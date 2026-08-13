@@ -2,7 +2,9 @@
 
 [← Back to Design Tokens](../DesignTokens.md)
 
-## Icon size tokens
+## Layout tokens
+
+### Icon size tokens
 
 | Variable name    | Default value |
 |------------------|---------------|
@@ -11,7 +13,7 @@
 | `--icon-size-m`  | 1.5rem        |
 | `--icon-size-l`  | 2rem          |
 
-## Border width tokens
+### Border width tokens
 
 | Variable name      | Default value |
 |--------------------|---------------|
@@ -21,7 +23,7 @@
 | `--border-width-3` | 3px           |
 | `--border-width-4` | 4px           |
 
-## Border radius tokens
+### Border radius tokens
 
 | Variable name          | Default value |
 |------------------------|---------------|
@@ -34,7 +36,7 @@
 | `--border-radius-2000` | 2rem          |
 | `--border-radius-full` | 100vh         |
 
-## Spacing tokens
+### Spacing tokens
 
 | Variable name  | Default value |
 |----------------|---------------|
@@ -52,3 +54,54 @@
 | `--space-3000` | 3rem          |
 | `--space-4000` | 4rem          |
 | `--space-5000` | 5rem          |
+
+## Color tokens
+
+### Background colors
+
+| Variable name        | Light mode | Dark mode |
+|----------------------|------------|-----------|
+| `--color-background` | #eee       | #18181a   |
+| `--color-region`     | #fff       | #27282d   |
+| `--color-region-2`   | #eee       | #151516   |
+| `--color-chrome`     | #e0e0e0    | #35373c   |
+| `--color-highlight`  | #e3ebe1    | #124c58   |
+
+### Data colors
+
+| Variable name                    | Light mode           | Dark mode            |
+|----------------------------------|----------------------|----------------------|
+| `--color-label`                  | #6c6c6c              | #979797              |
+| `--color-data`                   | `--color-foreground` | `--color-foreground` |
+| `--color-interactive-background` | `--color-brand`      | `--color-brand`      |
+
+### Semantic colors
+
+| Variable name        | Light mode       | Dark mode        |
+|----------------------|------------------|------------------|
+| `--color-good`       | #198038          | #198038          |
+| `--color-bad`        | `--color-red`    | `--color-red`    |
+| `--color-new`        | `--color-blue`   | `--color-blue`   |
+| `--color-draft`      | `--color-blue`   | `--color-blue`   |
+| `--color-edited`     | `--color-orange` | `--color-orange` |
+| `--color-ongoing`    | `--color-orange` | `--color-orange` |
+| `--color-incomplete` | `--color-blue`   | `--color-blue`   |
+| `--color-waiting`    | `--color-grey`   | `--color-grey`   |
+| `--color-disabled`   | #888             | #888             |
+| `--color-inactive`   | `--color-grey`   | `--color-grey`   |
+| `--color-finished`   | `--color-green`  | `--color-green`  |
+| `--color-signed`     | `--color-purple` | `--color-purple` |
+| `--color-deleted`    | `--color-grey`   | `--color-grey`   |
+| `--color-error`      | `--color-red`    | `--color-red`    |
+| `--color-neutral`    | `--color-grey`   | `--color-grey`   |
+
+### Other colors
+
+| Variable name    | Light mode | Dark mode |
+|------------------|------------|-----------|
+| `--color-red`    | #d0141e    | #ff603a   |
+| `--color-orange` | #c55300    | #ffab00   |
+| `--color-green`  | #198038    | #36b37e   |
+| `--color-teal`   | #178295    | #00b8d9   |
+| `--color-blue`   | #036cf5    | #4c9aff   |
+| `--color-purple` | #6554c0    | #998dd9   |

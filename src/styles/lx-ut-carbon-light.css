@@ -66,8 +66,8 @@
   --color-disabled: #888;
   --color-yellow-foreground: var(--color-data);
 
-  --color-green: rgb(25, 128, 56);
-  --color-red: rgb(208, 20, 30);
+  --color-green: #198038;
+  --color-red: #d0141e;
   --color-orange: #c55300;
   --color-purple: #6554c0;
   --color-blue: #036cf5;
@@ -82,7 +82,7 @@
   --color-label-20: rgb(131, 131, 131, 0.2);
   --color-yellow-20: rgb(241, 194, 27, 0.2);
 
-  --color-good: rgb(25, 128, 56);
+  --color-good: #198038;
   --color-bad: var(--color-red);
   --color-new: var(--color-blue);
   --color-draft: var(--color-blue);

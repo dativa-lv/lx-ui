@@ -75,8 +75,9 @@
   --color-yellow: #f1c21b;
   --color-grey: var(--color-label);
 
-  --color-good: rgb(25, 128, 56);
+  --color-good: #198038;
   --color-bad: var(--color-red);
+  --color-new: var(--color-blue);
   --color-warning: var(--color-orange);
   --color-neutral: var(--color-grey);
   --color-destructive: var(--color-red);
