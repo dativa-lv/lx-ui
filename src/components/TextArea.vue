@@ -150,10 +150,22 @@ if (props.builderOptions?.useRegistry) {
     unregisterBuilderInstance(props?.id);
   });
 }
+
+const dataState = computed(() =>
+  JSON.stringify({
+    readOnly: props.readOnly,
+  })
+);
 </script>
 
 <template>
-  <div class="lx-field-wrapper" ref="wrapperRef" :data-id="id">
+  <div
+    class="lx-field-wrapper"
+    ref="wrapperRef"
+    :data-id="id"
+    data-component="lx-text-area"
+    :data-state="dataState"
+  >
     <p v-if="props.readOnly" class="lx-data" :aria-labelledby="labelledBy">
       {{ model }}
       <LxEmptyValue v-if="!model" :texts="{ emptyValue: displayTexts.emptyValue }" />

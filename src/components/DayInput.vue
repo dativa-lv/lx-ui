@@ -591,10 +591,18 @@ watch(
   },
   { immediate: true }
 );
+
+const dataState = computed(() =>
+  JSON.stringify({
+    readOnly: props.readOnly,
+    kind: props.kind,
+    variant: props.variant,
+  })
+);
 </script>
 
 <template>
-  <div class="lx-field-wrapper" :data-id="id">
+  <div class="lx-field-wrapper" :data-id="id" data-component="lx-day-input" :data-state="dataState">
     <div
       ref="durationInputWrapper"
       class="lx-duration-input-wrapper"

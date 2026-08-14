@@ -252,7 +252,7 @@ if (props.builderOptions?.useRegistry) {
 </script>
 
 <template>
-  <div class="lx-field-wrapper" :data-id="id">
+  <div class="lx-field-wrapper" :data-id="id" data-component="lx-date-time-picker">
     <template v-if="readOnly">
       <p class="lx-data" :aria-labelledby="labelledBy">
         <time class="date-time-readonly" :datetime="modelValueIso">

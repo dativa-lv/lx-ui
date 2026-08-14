@@ -176,10 +176,16 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
     unregisterBuilderInstance(props?.id);
   });
 }
+
+const dataState = computed(() =>
+  JSON.stringify({
+    readOnly: props.readOnly,
+  })
+);
 </script>
 
 <template>
-  <div class="lx-field-wrapper" :data-id="id">
+  <div class="lx-field-wrapper" :data-id="id" data-component="lx-toggle" :data-state="dataState">
     <div v-if="readOnly" class="lx-toggle-label-wrapper lx-toggle-read-only">
       <span
         class="lx-toggle-text"

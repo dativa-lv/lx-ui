@@ -500,6 +500,7 @@ if (props.builderOptions?.useRegistry) {
     class="lx-field-wrapper lx-date-time-range-field-wrapper"
     :class="[{ 'lx-date-time-range-small-view': forceColumnView }]"
     :data-id="id"
+    data-component="lx-date-time-range-picker"
   >
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
       <LxEmptyValue

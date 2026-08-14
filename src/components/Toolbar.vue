@@ -568,6 +568,12 @@ onUpdated(() => {
 });
 
 defineExpose({ toggleSearch, focusAction });
+
+const dataState = computed(() =>
+  JSON.stringify({
+    searchMode: autoSearchMode.value,
+  })
+);
 </script>
 
 <template>
@@ -586,6 +592,8 @@ defineExpose({ toggleSearch, focusAction });
     ]"
     :style="`${topOutOfBounds}`"
     role="toolbar"
+    data-component="lx-toolbar"
+    :data-state="dataState"
   >
     <div class="first-row">
       <LxToolbarGroup
