@@ -1070,6 +1070,14 @@ const selectionState = computed(() => {
   return 'checkbox-indeterminate';
 });
 
+const hasGroupSelectButton = computed(
+  () =>
+    hasSelectAll.value &&
+    props.selectionKind === 'multiple' &&
+    !searchStringClient.value &&
+    !searchStringServer.value
+);
+
 function selectRows(arr = null) {
   if (arr === null) {
     if (props.kind === 'treelist') {
@@ -1828,9 +1836,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :label="group.name"
             :id="group.id"
             :has-select-button="
-              hasSelecting &&
-              hasSelectableItemsInGroup[prepareCode(group.id)] &&
-              selectionKind === 'multiple'
+              hasGroupSelectButton && hasSelectableItemsInGroup[prepareCode(group.id)]
             "
             :select-status="groupSelectionStatuses?.[group.id]"
             :texts="{
@@ -2049,9 +2055,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :label="group.name"
             :id="group.id"
             :has-select-button="
-              hasSelecting &&
-              hasSelectableItemsInGroup[prepareCode(group.id)] &&
-              selectionKind === 'multiple'
+              hasGroupSelectButton && hasSelectableItemsInGroup[prepareCode(group.id)]
             "
             :select-status="groupSelectionStatuses?.[group.id]"
             :texts="{
@@ -2115,9 +2119,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :label="group.name"
             :id="group.id"
             :has-select-button="
-              hasSelecting &&
-              hasSelectableItemsInGroup[prepareCode(group.id)] &&
-              selectionKind === 'multiple'
+              hasGroupSelectButton && hasSelectableItemsInGroup[prepareCode(group.id)]
             "
             :select-status="groupSelectionStatuses?.[group.id]"
             :texts="{
