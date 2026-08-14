@@ -157,7 +157,6 @@ const textsDefault = {
   noItemsDescription: '',
   iconsResponsiveRowLabel: 'Ikonas',
   moreActions: 'Papildu darbības',
-  actions: 'Darbības',
   openSearch: 'Atvērt meklētāju',
   closeSearch: 'Aizvērt meklētāju',
   personDisplay: {
@@ -298,6 +297,27 @@ function syncDataGridLayoutVisibility() {
   return nextVisibility;
 }
 
+const headerWrapperRef = ref(null);
+
+function isCoveredByStickyHeader(target, wrapper) {
+  return (
+    props.stickyHeader &&
+    !!wrapper &&
+    target instanceof HTMLElement &&
+    !wrapper.contains(target) &&
+    target.getBoundingClientRect().top < wrapper.getBoundingClientRect().bottom
+  );
+}
+
+function getStickyHeaderOverlap(target) {
+  const wrapper = headerWrapperRef.value;
+  if (!isCoveredByStickyHeader(target, wrapper)) return 0;
+
+  const stickyOffset = Number.parseFloat(globalThis.getComputedStyle?.(wrapper)?.top);
+
+  return Number.isNaN(stickyOffset) ? 0 : stickyOffset + wrapper.offsetHeight;
+}
+
 const {
   activeRow: gridActiveRow,
   activeCol: gridActiveCol,
@@ -308,7 +328,7 @@ const {
   onKeydown,
   isCellDelegated,
   setActiveFromClick,
-} = useGridKeyboardNavigation();
+} = useGridKeyboardNavigation({ getScrollMarginTop: getStickyHeaderOverlap });
 
 const isDisabled = computed(() => props.loading || props.busy);
 
@@ -1413,6 +1433,16 @@ function getRowVisibleActions(row) {
   );
 }
 
+function getClickedActionIndex(event) {
+  const clickedButton = event?.target?.closest?.('.lx-button');
+  if (!clickedButton || !event.currentTarget) return 0;
+
+  const index = Array.from(event.currentTarget.querySelectorAll('.lx-button')).indexOf(
+    clickedButton
+  );
+  return Math.max(index, 0);
+}
+
 function getRowActionDefinitionsGroup(row) {
   return actionDefinitionsGroup.value
     .filter((a) => (a.visibleByAttribute ? row[a.visibleByAttribute] : true))
@@ -1977,6 +2007,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
     </div>
 
     <div
+      ref="headerWrapperRef"
       class="lx-grid-header-wrapper"
       aria-hidden="false"
       @keydown="(e) => onKeydown(e, rowCount, computedGridHeaderColumnCount)"
@@ -1994,6 +2025,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           class="lx-cell-header lx-cell-selector"
           :tabindex="hasSorting ? getTabIndex(0, 0) : null"
           :ref="(el) => (hasSorting ? registerCell(el, 0, 0) : null)"
+          @keydown.space.prevent
         />
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
         <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus-->
@@ -2046,6 +2078,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             },
           ]"
           @click="handleHeaderClick(col.id, colIndex)"
+          @keydown.space.prevent
           @keyup.space.prevent="sortColumn(col.id)"
           @keyup.enter="sortColumn(col.id)"
         >
@@ -2075,16 +2108,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           </div>
         </div>
 
-        <div
-          v-if="hasActionButtons"
-          class="lx-cell-header lx-cell-action"
-          :title="displayTexts.actions"
-          :tabindex="hasSorting ? getTabIndex(0, showSelecting ? colCount + 1 : colCount) : null"
-          :ref="
-            (el) =>
-              hasSorting ? registerCell(el, 0, showSelecting ? colCount + 1 : colCount) : null
-          "
-        />
+        <div v-if="hasActionButtons" class="lx-cell-header lx-cell-action" />
       </div>
     </div>
 
@@ -2636,14 +2660,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 v-if="getRowVisibleActions(row).length <= 2"
                 role="toolbar"
                 @click="
-                  setActiveFromClick(
-                    getGridRowIndex(rowIndex),
-                    showSelecting ? colCount + 1 : colCount
-                  )
+                  (event) =>
+                    setActiveFromClick(
+                      getGridRowIndex(rowIndex),
+                      showSelecting ? colCount + 1 : colCount,
+                      true,
+                      getClickedActionIndex(event)
+                    )
                 "
               >
                 <LxButton
-                  v-for="action in getRowVisibleActions(row)"
+                  v-for="(action, actionIndex) in getRowVisibleActions(row)"
                   :key="action.id"
                   :id="`${id}-${row[idAttribute]}-action-${action.id}`"
                   :label="action.name || action.label"
@@ -2666,14 +2693,19 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :badgeIcon="action.badgeIcon"
                   :badgeTitle="action.badgeTitle"
                   :tabindex="
-                    getTabIndex(getGridRowIndex(rowIndex), showSelecting ? colCount + 1 : colCount)
+                    getTabIndex(
+                      getGridRowIndex(rowIndex),
+                      showSelecting ? colCount + 1 : colCount,
+                      actionIndex
+                    )
                   "
                   :ref="
                     (el) =>
                       registerCell(
                         el ?? null,
                         getGridRowIndex(rowIndex),
-                        showSelecting ? colCount + 1 : colCount
+                        showSelecting ? colCount + 1 : colCount,
+                        actionIndex
                       )
                   "
                   :href="action.href"
@@ -2769,6 +2801,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         )
                     "
                     @click.stop.prevent="handleMenuClick(rowIndex, rowKey)"
+                    @keyup.up.stop
+                    @keyup.down.stop
                   >
                     <LxButton
                       :id="`${id}-${row[idAttribute]}-action`"

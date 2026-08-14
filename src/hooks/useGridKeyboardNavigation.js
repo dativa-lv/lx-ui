@@ -1,5 +1,7 @@
 import { ref, nextTick } from 'vue';
 
+const SCROLL_INTO_VIEW_OPTIONS = { behavior: 'instant', block: 'nearest', inline: 'nearest' };
+
 function isDisabledCell(target) {
   if (!target) return true;
 
@@ -57,7 +59,7 @@ function isCellDelegated(col, customVal = false) {
   );
 }
 
-export function useGridKeyboardNavigation() {
+export function useGridKeyboardNavigation({ getScrollMarginTop } = {}) {
   const activeRow = ref(0);
   const activeCol = ref(0);
   const activeItem = ref(0);
@@ -69,10 +71,16 @@ export function useGridKeyboardNavigation() {
 
     let target = null;
 
-    if (el instanceof HTMLElement || typeof el.focus === 'function') {
+    const exposedElement = typeof el.getElement === 'function' ? el.getElement() : null;
+
+    if (el instanceof HTMLElement) {
       target = el;
+    } else if (exposedElement instanceof HTMLElement) {
+      target = exposedElement;
     } else if (el.focusEl?.value instanceof HTMLElement) {
       target = el.focusEl.value;
+    } else if (typeof el.focus === 'function') {
+      target = el;
     }
 
     if (target) {
@@ -97,6 +105,17 @@ export function useGridKeyboardNavigation() {
     }
 
     return [{ target: targets, item: 0 }];
+  }
+
+  function isMountedTarget(target) {
+    return !(target instanceof HTMLElement) || target.isConnected;
+  }
+
+  function getFocusableCellTargets(row, col) {
+    const targets = getCellTargets(row, col).filter(({ target }) => !isDisabledCell(target));
+    const mounted = targets.filter(({ target }) => isMountedTarget(target));
+
+    return mounted.length > 0 ? mounted : targets;
   }
 
   function collectCellFocusableCandidates(currentRow, currentCol, row, col) {
@@ -126,21 +145,65 @@ export function useGridKeyboardNavigation() {
     );
   }
 
-  function focusCell(row, col, scroll = true, preferredItem = 0) {
-    const targets = getCellTargets(row, col);
-    const preferredTarget = targets.find(
-      ({ item, target }) => item === preferredItem && !isDisabledCell(target)
-    );
-    const fallbackTarget = targets.find(({ target }) => !isDisabledCell(target));
+  function resolveCellTarget(row, col, preferredItem) {
+    const targets = getFocusableCellTargets(row, col);
+    if (targets.length === 0) return null;
 
-    let resolvedCell;
+    const preferredTarget = targets.find(({ item }) => item === preferredItem);
     if (preferredTarget) {
-      resolvedCell = { row, col, item: preferredTarget.item, target: preferredTarget.target };
-    } else if (fallbackTarget) {
-      resolvedCell = { row, col, item: fallbackTarget.item, target: fallbackTarget.target };
-    } else {
-      resolvedCell = findClosestFocusableCell(row, col);
+      return { row, col, item: preferredTarget.item, target: preferredTarget.target };
     }
+
+    const closestTarget = targets.reduce((best, candidate) =>
+      Math.abs(candidate.item - preferredItem) < Math.abs(best.item - preferredItem)
+        ? candidate
+        : best
+    );
+
+    return { row, col, item: closestTarget.item, target: closestTarget.target };
+  }
+
+  function getStickyOverlap(target) {
+    if (typeof getScrollMarginTop !== 'function' || !(target instanceof HTMLElement)) return 0;
+
+    return getScrollMarginTop(target) || 0;
+  }
+
+  function scrollIntoViewReservingOverlap(element) {
+    const reservedOverlap = getStickyOverlap(element);
+    if (reservedOverlap > 0) {
+      element.style.setProperty('scroll-margin-top', `${reservedOverlap}px`);
+    }
+
+    element.scrollIntoView(SCROLL_INTO_VIEW_OPTIONS);
+
+    if (reservedOverlap > 0) element.style.removeProperty('scroll-margin-top');
+  }
+
+  function focusedElementSince(previouslyFocused) {
+    const { activeElement } = document;
+    const hasTakenFocus =
+      activeElement instanceof HTMLElement &&
+      activeElement !== previouslyFocused &&
+      activeElement !== document.body;
+
+    return hasTakenFocus ? activeElement : null;
+  }
+
+  function scrollResolvedTargetIntoView(target, targetElement, previouslyFocused) {
+    if (targetElement) {
+      targetElement.scrollIntoView(SCROLL_INTO_VIEW_OPTIONS);
+      return;
+    }
+
+    const focusedElement = focusedElementSince(previouslyFocused);
+    if (focusedElement) scrollIntoViewReservingOverlap(focusedElement);
+    else target.scrollIntoView(SCROLL_INTO_VIEW_OPTIONS);
+  }
+
+  function focusCell(row, col, scroll = true, preferredItem = 0) {
+    const resolvedCell =
+      resolveCellTarget(row, col, preferredItem) ?? findClosestFocusableCell(row, col);
 
     if (!resolvedCell?.target) return null;
 
@@ -149,14 +212,19 @@ export function useGridKeyboardNavigation() {
     activeItem.value = resolvedCell.item ?? 0;
 
     nextTick(() => {
-      resolvedCell.target.focus({ preventScroll: !scroll });
-      if (scroll) {
-        resolvedCell.target.scrollIntoView({
-          behavior: 'instant',
-          block: 'nearest',
-          inline: 'nearest',
-        });
+      const { target } = resolvedCell;
+      const targetElement = target instanceof HTMLElement ? target : null;
+      const reservedOverlap = scroll && targetElement ? getStickyOverlap(targetElement) : 0;
+      if (reservedOverlap > 0) {
+        targetElement.style.setProperty('scroll-margin-top', `${reservedOverlap}px`);
       }
+
+      const previouslyFocused = document.activeElement;
+      target.focus({ preventScroll: !scroll });
+
+      if (scroll) scrollResolvedTargetIntoView(target, targetElement, previouslyFocused);
+
+      if (reservedOverlap > 0) targetElement.style.removeProperty('scroll-margin-top');
     });
 
     return resolvedCell;
@@ -183,7 +251,7 @@ export function useGridKeyboardNavigation() {
 
     switch (e.key) {
       case 'ArrowRight':
-        if (getCellTargets(r, c).some(({ item }) => item === activeItem.value + 1)) {
+        if (getFocusableCellTargets(r, c).some(({ item }) => item === activeItem.value + 1)) {
           e.preventDefault();
           focusCell(r, c, true, activeItem.value + 1);
           return;
@@ -193,7 +261,7 @@ export function useGridKeyboardNavigation() {
       case 'ArrowLeft':
         if (
           activeItem.value > 0 &&
-          getCellTargets(r, c).some(({ item }) => item === activeItem.value - 1)
+          getFocusableCellTargets(r, c).some(({ item }) => item === activeItem.value - 1)
         ) {
           e.preventDefault();
           focusCell(r, c, true, activeItem.value - 1);

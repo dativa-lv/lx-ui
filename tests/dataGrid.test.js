@@ -350,6 +350,406 @@ describe('Action definitions', () => {
   });
 });
 
+describe('Rows the virtualizer has unmounted', () => {
+  const props = {
+    id: 'grid',
+    idAttribute: 'id',
+    items: [
+      { id: 'one', name: 'Item one', rating: 3 },
+      { id: 'two', name: 'Item two', rating: 4 },
+      { id: 'three', name: 'Item three', rating: 5 },
+    ],
+    columnDefinitions: [
+      { id: 'name', attributeName: 'name', name: 'Name' },
+      { id: 'rating', attributeName: 'rating', name: 'Rating', type: 'rating' },
+    ],
+    hasVirtualization: false,
+  };
+
+  test('keeps arrowing down the same column when the next row is not rendered', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    const rows = wrapper.findAll('.lx-grid-content .lx-grid-row');
+    const secondRowNameCell = rows[1].findAll('.lx-cell')[0];
+
+    await rows[0].findAll('.lx-cell')[0].trigger('click');
+    await nextTick();
+
+    // Scrolled out of view, the virtualizer drops the row while its cells stay
+    // registered. A text cell leaves a detached div behind; a rating cell leaves a
+    // component instance, which no element check can tell apart from a live one.
+    rows[1].element.remove();
+
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowDown' });
+    await nextTick();
+
+    expect(secondRowNameCell.attributes('tabindex')).toBe('0');
+  });
+});
+
+describe('Action button keyboard focus', () => {
+  const props = {
+    id: 'grid',
+    idAttribute: 'id',
+    items: [
+      { id: 'one', name: 'Item one', canEdit: true },
+      { id: 'two', name: 'Item two', canEdit: false },
+      { id: 'three', name: 'Item three', canEdit: false },
+    ],
+    columnDefinitions: [{ id: 'name', attributeName: 'name', name: 'Name' }],
+    actionDefinitions: [
+      { id: 'open', name: 'Open', icon: 'open' },
+      { id: 'edit', name: 'Edit', icon: 'edit', enableByAttribute: 'canEdit' },
+    ],
+    hasVirtualization: false,
+  };
+
+  async function arrowDown() {
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowDown' });
+    await nextTick();
+  }
+
+  test('arrowing down a row with a disabled action focuses its enabled action', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    await wrapper.find('#grid-one-action-open').trigger('click');
+    await nextTick();
+
+    expect(document.activeElement.id).toBe('grid-one-action-open');
+
+    // Rows two and three have a disabled "edit" — the roving tabindex must not
+    // land on a button that can never take focus, or focus silently stays behind
+    // and the next Tab leaves the grid entirely.
+    await arrowDown();
+
+    expect(document.activeElement.id).toBe('grid-two-action-open');
+
+    await arrowDown();
+
+    expect(document.activeElement.id).toBe('grid-three-action-open');
+    expect(wrapper.find('#grid-three-action-open').attributes('tabindex')).toBe('0');
+    expect(wrapper.find('#grid-three-action-edit').attributes('tabindex')).toBe('-1');
+  });
+
+  test('arrowing sideways reaches both action buttons of a row', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    await wrapper.find('#grid-one-action-open').trigger('click');
+    await nextTick();
+
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowRight' });
+    await nextTick();
+
+    expect(document.activeElement.id).toBe('grid-one-action-edit');
+
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowLeft' });
+    await nextTick();
+
+    expect(document.activeElement.id).toBe('grid-one-action-open');
+  });
+
+  test('clicking the second action button keeps focus on the clicked button', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    await wrapper.find('#grid-one-action-edit').trigger('click');
+    await nextTick();
+
+    expect(document.activeElement.id).toBe('grid-one-action-edit');
+  });
+});
+
+describe('Action column header', () => {
+  const props = {
+    id: 'grid',
+    idAttribute: 'id',
+    items: [{ id: 'one', name: 'Item one' }],
+    columnDefinitions: [{ id: 'name', attributeName: 'name', name: 'Name' }],
+    actionDefinitions: [{ id: 'open', name: 'Open', icon: 'open' }],
+    hasSorting: true,
+    hasVirtualization: false,
+  };
+
+  test('space on a header cell does not scroll the page', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    const headerCell = wrapper.find('.lx-grid-header-wrapper .lx-cell-header');
+    const keydown = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+
+    headerCell.element.dispatchEvent(keydown);
+
+    // The cell is a plain focusable div, so an unprevented space press scrolls.
+    expect(keydown.defaultPrevented).toBe(true);
+  });
+
+  test('is not a keyboard stop — it has no content to read', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    const actionHeader = wrapper.find('.lx-grid-header-wrapper .lx-cell-header.lx-cell-action');
+
+    expect(actionHeader.exists()).toBe(true);
+    expect(actionHeader.attributes('tabindex')).toBeUndefined();
+    // No tooltip either — there is nothing under the pointer to describe.
+    expect(actionHeader.attributes('title')).toBeUndefined();
+
+    // Arrowing past the last sortable column must not land on the empty placeholder.
+    await wrapper.find('.lx-grid-header-wrapper .lx-cell-header').trigger('click');
+    await nextTick();
+    await wrapper.find('.lx-grid-header-wrapper').trigger('keydown', { key: 'ArrowRight' });
+    await nextTick();
+
+    expect(document.activeElement).not.toBe(actionHeader.element);
+    expect(document.activeElement.textContent).toContain('Name');
+  });
+});
+
+describe('Row action menu', () => {
+  const props = {
+    id: 'grid',
+    idAttribute: 'id',
+    items: [
+      { id: 'one', name: 'Item one' },
+      { id: 'two', name: 'Item two' },
+    ],
+    columnDefinitions: [{ id: 'name', attributeName: 'name', name: 'Name' }],
+    actionDefinitions: [
+      { id: 'open', name: 'Open', icon: 'open' },
+      { id: 'edit', name: 'Edit', icon: 'edit' },
+      { id: 'delete', name: 'Delete', icon: 'delete' },
+    ],
+    hasVirtualization: false,
+  };
+
+  function findPanel() {
+    return document.body.querySelector('.lx-dropdown-panel-wrapper');
+  }
+
+  test('does not open while arrowing through rows', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    const menuCells = wrapper.findAll('.grid-actions-menu');
+    const grid = wrapper.find('.lx-data-grid');
+
+    await wrapper.find('#grid-one-action-open').trigger('click');
+    await nextTick();
+
+    // The menu opens on key release, and by then arrow navigation has already moved
+    // focus onto the next row's menu cell — that release must not open it.
+    await grid.trigger('keydown', { key: 'ArrowRight' });
+    await nextTick();
+    await menuCells[0].trigger('keyup', { key: 'ArrowRight' });
+
+    await grid.trigger('keydown', { key: 'ArrowDown' });
+    await nextTick();
+    await menuCells[1].trigger('keyup', { key: 'ArrowDown' });
+
+    expect(document.activeElement).toBe(menuCells[1].element);
+    expect(findPanel()).toBeNull();
+  });
+
+  test('still opens on enter', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    const menuCell = wrapper.findAll('.grid-actions-menu')[0];
+
+    await menuCell.trigger('keydown', { key: 'Enter' });
+    await menuCell.trigger('keyup', { key: 'Enter' });
+
+    expect(findPanel()).toBeTruthy();
+  });
+});
+
+describe('Sticky header scroll offset', () => {
+  const props = {
+    id: 'grid',
+    idAttribute: 'id',
+    items: [
+      { id: 'one', name: 'Item one' },
+      { id: 'two', name: 'Item two' },
+    ],
+    columnDefinitions: [{ id: 'name', attributeName: 'name', name: 'Name', kind: 'clickable' }],
+    hasVirtualization: false,
+  };
+
+  // jsdom lays nothing out, so every rect is zero and every cell would look like it
+  // sits exactly at the header's bottom edge. These stubs place the boxes the
+  // occlusion check reads.
+  function stubRect(element, top, height = 40) {
+    Object.defineProperty(element, 'getBoundingClientRect', {
+      value: () => ({ top, bottom: top + height, left: 0, right: 0, width: 0, height }),
+      configurable: true,
+    });
+  }
+
+  function stubStickyHeader({ stickyOffset, height }) {
+    const headerWrapper = wrapper.find('.lx-grid-header-wrapper').element;
+
+    Object.defineProperty(headerWrapper, 'offsetHeight', {
+      value: height,
+      configurable: true,
+    });
+    stubRect(headerWrapper, Number.parseFloat(stickyOffset), height);
+
+    const realGetComputedStyle = globalThis.getComputedStyle.bind(globalThis);
+    vi.spyOn(globalThis, 'getComputedStyle').mockImplementation((element, pseudoElement) => {
+      const style = realGetComputedStyle(element, pseudoElement);
+      if (element !== headerWrapper) return style;
+
+      return new Proxy(style, {
+        get(target, key) {
+          if (key === 'top') return stickyOffset;
+          const value = Reflect.get(target, key);
+          return typeof value === 'function' ? value.bind(target) : value;
+        },
+      });
+    });
+  }
+
+  // The reserve exists only for the scroll it belongs to and is taken off again
+  // afterwards, so it has to be read while the grid scrolls.
+  function watchReserveWhileScrolling() {
+    const reserve = { value: null };
+
+    Element.prototype.scrollIntoView ??= () => {};
+    vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(function capture() {
+      reserve.value = this.style.scrollMarginTop;
+    });
+
+    return reserve;
+  }
+
+  function placeBodyCells(top) {
+    wrapper.findAll('.lx-grid-content .lx-cell').forEach((cell) => stubRect(cell.element, top));
+  }
+
+  async function focusFirstCellThenArrowDown() {
+    await wrapper.findAll('.lx-grid-content .lx-cell')[0].trigger('click');
+    await nextTick();
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowDown' });
+    await nextTick();
+
+    // Guard the assertions below against a silently unfocused grid.
+    expect(document.activeElement.textContent).toContain('Item two');
+  }
+
+  test('reserves the space the sticky header covers, so a cell is not scrolled under it', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+    stubStickyHeader({ stickyOffset: '48px', height: 40 });
+    placeBodyCells(20); // under the header, which reaches down to 88
+    const reserve = watchReserveWhileScrolling();
+
+    await focusFirstCellThenArrowDown();
+
+    // Without the reserve the cell aligns with the top of the scrollport, which is
+    // behind the sticky header — only its bottom edge stays readable.
+    expect(reserve.value).toBe('88px');
+    // Left behind, it would displace the scroll on a later tab into the grid.
+    expect(document.activeElement.style.scrollMarginTop).toBe('');
+  });
+
+  test('reserves the same space for a cell that delegates to a component', async () => {
+    wrapper = mountComponent({
+      props: {
+        ...props,
+        columnDefinitions: [
+          { id: 'rating', attributeName: 'rating', name: 'Rating', type: 'rating' },
+        ],
+        items: [
+          { id: 'one', rating: 3 },
+          { id: 'two', rating: 4 },
+        ],
+      },
+      attachTo: document.body,
+    });
+
+    await flushVirtualizationSetup();
+    stubStickyHeader({ stickyOffset: '48px', height: 40 });
+    const reserve = watchReserveWhileScrolling();
+
+    await wrapper.findAll('.lx-grid-content .lx-cell')[0].trigger('click');
+    await nextTick();
+
+    // A rating cell registers the component, not a node, so the element that ends up
+    // under the header is only known once it has focus. Its unstubbed rect sits at 0,
+    // which is behind the header.
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowDown' });
+    await nextTick();
+
+    expect(reserve.value).toBe('88px');
+    expect(document.activeElement.style.scrollMarginTop).toBe('');
+  });
+
+  test('reserves nothing for a cell the header does not cover', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+    stubStickyHeader({ stickyOffset: '48px', height: 40 });
+    placeBodyCells(200); // well clear of the header
+    const reserve = watchReserveWhileScrolling();
+
+    await focusFirstCellThenArrowDown();
+
+    expect(reserve.value).toBe('');
+  });
+
+  test('reserves nothing while moving through the header itself', async () => {
+    wrapper = mountComponent({
+      props: {
+        ...props,
+        hasSorting: true,
+        columnDefinitions: [
+          { id: 'name', attributeName: 'name', name: 'Name' },
+          { id: 'id', attributeName: 'id', name: 'Id' },
+        ],
+      },
+      attachTo: document.body,
+    });
+
+    await flushVirtualizationSetup();
+    stubStickyHeader({ stickyOffset: '48px', height: 40 });
+    const reserve = watchReserveWhileScrolling();
+
+    await wrapper.findAll('.lx-grid-header-wrapper .lx-cell-header')[0].trigger('click');
+    await nextTick();
+    await wrapper.find('.lx-grid-header-wrapper').trigger('keydown', { key: 'ArrowRight' });
+    await nextTick();
+
+    // A header cell cannot hide behind the header it belongs to, so reserving the band
+    // would only scroll the grid away under every arrow key.
+    expect(reserve.value).toBe('');
+  });
+
+  test('reserves nothing when the header does not stick', async () => {
+    wrapper = mountComponent({ props: { ...props, stickyHeader: false }, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+    stubStickyHeader({ stickyOffset: '48px', height: 40 });
+    placeBodyCells(20);
+    const reserve = watchReserveWhileScrolling();
+
+    await focusFirstCellThenArrowDown();
+
+    expect(reserve.value).toBe('');
+  });
+});
+
 describe('Badge definitions', () => {
   const props = {
     items: [
