@@ -3,8 +3,10 @@ import { computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   value: { type: [Object, String, Number], default: null },
   dictionary: { type: Array, default: () => [{}] },
   texts: { type: Object, default: () => ({}) },
@@ -129,6 +131,8 @@ const alignedRowSize = computed(() => {
       { 'lx-tooltip-state': definition?.title },
     ]"
     :title="definition?.title"
+    data-component="lx-state-display"
+    :id="id"
   >
     <div
       v-if="definition?.displayShape !== 'icon' && definition?.displayShape !== 'custom'"

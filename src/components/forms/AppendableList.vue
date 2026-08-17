@@ -277,9 +277,22 @@ onMounted(() => {
 const wrapperRef = ref();
 
 defineExpose({ clearModel });
+
+const dataState = computed(() =>
+  JSON.stringify({
+    expandable: props.expandable,
+  })
+);
 </script>
+
 <template>
-  <div class="lx-appendable-list-wrapper" ref="wrapperRef">
+  <div
+    class="lx-appendable-list-wrapper"
+    ref="wrapperRef"
+    data-component="lx-appendable-list"
+    :data-id="id"
+    :data-state="dataState"
+  >
     <LxToolbar
       class="lx-floating-toolbar"
       :id="`${props.id}-toolbar`"

@@ -92,6 +92,7 @@ function handleClick(event) {
     :class="containerClasses"
     :role="kind === 'clickable' ? 'button' : undefined"
     :tabindex="kind === 'clickable' ? '0' : '-1'"
+    data-component="lx-info-box"
     @click="handleClick"
     @keydown.enter="handleClick"
     @keydown.space="handleClick"

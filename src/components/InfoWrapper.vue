@@ -474,6 +474,8 @@ defineExpose({ handleOpen, handleClose, showPopper, focus, scrollIntoView });
     :locked="locked"
     emitPlacement
     :fullScreenPanel="responsiveView"
+    data-component="lx-info-wrapper"
+    :data-id="id"
     @update:placement="handlePlacementChange"
     @curtainTouched="curtainTouched"
     @referenceHidden="handleClose(false)"
