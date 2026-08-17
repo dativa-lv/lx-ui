@@ -2341,3 +2341,25 @@ describe('LxDateTimePicker month-year min/max selectability', () => {
     await assertOnlyMaySelectable(wrapper);
   });
 });
+
+describe('LxDateTimePicker required', () => {
+  test('required hands aria-required to the date input', () => {
+    wrapper = mount(LxDateTimePicker, { props: { required: true } });
+    expect(wrapper.find('.lx-date-time-picker').attributes('aria-required')).toBe('true');
+  });
+
+  test('aria-required is omitted by default', () => {
+    wrapper = mount(LxDateTimePicker);
+    expect(wrapper.find('.lx-date-time-picker').attributes('aria-required')).toBeUndefined();
+  });
+
+  test('composite kind hands required to both value pickers', () => {
+    wrapper = mount(LxDayMonthPicker, {
+      props: { required: true },
+      global: { stubs: { LxValuePicker: true } },
+    });
+    const pickers = wrapper.findAllComponents({ name: 'LxValuePicker' });
+    expect(pickers.length).toBe(2);
+    expect(pickers.every((picker) => picker.props('required') === true)).toBe(true);
+  });
+});

@@ -4,7 +4,7 @@ import { useResizeObserver } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-import { getDisplayTexts, clampText } from '@/utils/generalUtils';
+import { getDisplayTexts, clampText, isNil } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
@@ -15,6 +15,7 @@ const props = defineProps({
   rows: { type: Number, default: 3, group: 'main', sequence: 2 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
   helperText: { type: String, default: null, group: 'main', sequence: 6 },
@@ -99,6 +100,11 @@ function focus() {
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
 
 watch(
   model,
@@ -193,6 +199,7 @@ const dataState = computed(() =>
             :maxlength="props.maxlength"
             :title="props.tooltip"
             :aria-labelledby="labelledBy"
+            :aria-required="ariaRequired"
             :aria-errormessage="showInvalidationMessage ? `${props.id}-invalidation-message` : null"
             :aria-describedby="describedBy"
             @input="triggerResize"

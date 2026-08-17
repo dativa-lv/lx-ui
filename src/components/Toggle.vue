@@ -15,7 +15,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { formatValueBool } from '@/utils/formatUtils';
-import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -23,6 +23,7 @@ const props = defineProps({
   modelValue: { type: Boolean, default: null },
   size: { type: String, default: 'm', options: ['s', 'm'], group: 'main', sequence: 1 }, // 's' (small) or 'm' (medium)
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
   helperText: { type: String, default: null, group: 'main', sequence: 3 },
@@ -153,6 +154,11 @@ watch(
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
 
 onMounted(() => {
   checkModelState();
@@ -253,6 +259,7 @@ const dataState = computed(() =>
         :aria-describedby="describedBy"
         :aria-label="accessibleLabel || (!(size !== 's' && hasSlots) ? tooltipValue : null)"
         :aria-labelledby="accessibleLabel ? null : labelledBy"
+        :aria-required="ariaRequired"
         tabindex="0"
       />
       <!-- it's fine, because key events are being caught by the input above, clicks aren't -->

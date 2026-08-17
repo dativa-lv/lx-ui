@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, provide } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -54,6 +54,8 @@ const emits = defineEmits([
 function handleActionClick(actionName, rowCode) {
   emits('actionClick', actionName, rowCode);
 }
+
+provide('rowRequired', ref(null));
 
 const selected = computed({
   get() {

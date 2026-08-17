@@ -34,6 +34,7 @@ const props = defineProps({
   convertToString: { type: Boolean, default: true, group: 'additional', sequence: 2 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
   uppercase: { type: Boolean, default: false, group: 'additional', sequence: 3 },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
   helperText: { type: String, default: null, group: 'main', sequence: 6 },
@@ -418,6 +419,11 @@ const matchedFlags = computed(() => {
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
 
 const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
 const helperTextClamped = computed(() => clampText(props.helperText));
@@ -735,6 +741,7 @@ defineExpose({ focus });
         :maxlength="maxLengthValue"
         :title="tooltip"
         :aria-labelledby="labelledBy"
+        :aria-required="ariaRequired"
         :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-describedby="describedBy"
         :inputmode="inputMode"
@@ -770,6 +777,7 @@ defineExpose({ focus });
         :title="tooltip"
         :placeholder="placeholder"
         :aria-invalid="invalid"
+        :aria-required="ariaRequired"
         :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-describedby="describedBy"
         class="lx-text-input lx-input-area"

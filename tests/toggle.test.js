@@ -72,3 +72,12 @@ describe('LxToggle', () => {
     });
   });
 });
+
+test('LxToggle required', () => {
+  wrapper = mount(LxToggle, { props: { required: true } });
+  expect(wrapper.find('.lx-toggle').attributes('aria-required')).toBe('true');
+
+  wrapper.unmount();
+  wrapper = mount(LxToggle);
+  expect(wrapper.find('.lx-toggle').attributes('aria-required')).toBeUndefined();
+});

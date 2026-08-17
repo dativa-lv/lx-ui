@@ -16,7 +16,7 @@ import LxValuePicker from '@/components/ValuePicker.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
-import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
+import { getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { logWarn } from '@/utils/devUtils';
@@ -38,6 +38,7 @@ const props = defineProps({
     group: 'main',
     sequence: 2,
   },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   labelId: { type: String, default: null },
@@ -442,6 +443,11 @@ watch(
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
@@ -632,6 +638,7 @@ const dataState = computed(() =>
             :placeholder="singlePlaceholder"
             :tooltip="displayTexts.inputTooltip"
             :invalid="invalid"
+            :required="required"
             :labelId="labelledBy"
             :builderOptions="{ innerComponent: true }"
           />
@@ -644,6 +651,7 @@ const dataState = computed(() =>
             :tooltip="displayTexts.dropdownTooltip"
             :disabled="disabled"
             :invalid="invalid"
+            :required="required"
             :labelId="labelledBy"
             variant="dropdown"
           />
@@ -678,6 +686,7 @@ const dataState = computed(() =>
                 :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
                 :aria-label="input.unit"
                 :aria-labelledby="labelledBy"
+                :aria-required="ariaRequired"
                 :aria-describedby="getDescribedBy(`${id}-lx-input-description`)"
               />
               <div class="lx-duration-unit">{{ input.unit }}</div>

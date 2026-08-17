@@ -75,3 +75,12 @@ describe('LxCheckbox', () => {
     });
   });
 });
+
+test('LxCheckbox required', () => {
+  wrapper = mount(LxCheckbox, { props: { required: true } });
+  expect(wrapper.find('input').attributes('aria-required')).toBe('true');
+
+  wrapper.unmount();
+  wrapper = mount(LxCheckbox);
+  expect(wrapper.find('input').attributes('aria-required')).toBeUndefined();
+});

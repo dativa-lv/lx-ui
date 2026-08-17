@@ -1,5 +1,15 @@
 <script setup>
-import { computed, onMounted, onBeforeUnmount, ref, toRaw, watch, nextTick, useSlots } from 'vue';
+import {
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  provide,
+  ref,
+  toRaw,
+  watch,
+  nextTick,
+  useSlots,
+} from 'vue';
 import {
   useWindowSize,
   useElementBounding,
@@ -63,6 +73,9 @@ const emits = defineEmits([
   'toolbarActionClick',
   'emptyStateActionClick',
 ]);
+
+provide('rowRequired', ref(null));
+
 const slots = useSlots();
 const props = defineProps({
   id: {

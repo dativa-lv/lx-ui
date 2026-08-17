@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, inject, nextTick } from 'vue';
 import { useMediaQuery, useWindowSize } from '@vueuse/core';
-import { getDisplayTexts, clampText } from '@/utils/generalUtils';
+import { getDisplayTexts, clampText, isNil } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
 import {
@@ -49,6 +49,7 @@ const props = defineProps({
   masks: { type: Object, default: () => ({}) },
   placeholder: { type: String, default: null },
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   helperText: { type: String, default: null },
@@ -129,6 +130,12 @@ const describedBy = computed(() => {
   if (hasHelperText.value && !props.invalid) ids.push(`${props.id}-helper`);
   if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
   return ids.join(' ');
+});
+
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
 });
 
 const emits = defineEmits(['update:modelValue', 'outOfRange']);
@@ -1411,6 +1418,7 @@ onMounted(async () => {
                 : null
             "
             :aria-labelledby="pickerType === 'single' && !legacyMode ? labelledBy : null"
+            :aria-required="ariaRequired"
             :aria-describedby="describedBy"
             @mousedown="preventDefaultFocus"
             @touchstart="onTouchStart($event, 'startInput')"
@@ -1478,6 +1486,7 @@ onMounted(async () => {
               :aria-invalid="invalid"
               :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
               :aria-label="displayTexts.endDateLabel"
+              :aria-required="ariaRequired"
               :aria-describedby="describedBy"
               @mousedown="preventDefaultFocus"
               @touchstart="onTouchStart($event, 'endInput')"

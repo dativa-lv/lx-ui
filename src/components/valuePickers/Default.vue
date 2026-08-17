@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, watch, nextTick, provide } from 'vue';
 import { textSearch, generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
@@ -32,6 +32,7 @@ const props = defineProps({
   readOnlyRenderType: { type: String, default: 'row' }, // 'row' || 'column'
   alwaysAsArray: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   helperText: { type: String, default: null },
@@ -73,6 +74,11 @@ const describedBy = computed(() => {
   if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
   return ids.length ? ids.join(' ') : null;
 });
+
+const ariaRequired = computed(() =>
+  props.required && props.selectionKind === 'single' ? true : null
+);
+provide('rowRequired', ref(null));
 
 const model = computed({
   get() {
@@ -429,6 +435,7 @@ const wrapperRef = ref();
     :aria-describedby="describedBy"
     role="radiogroup"
     :aria-labelledby="labelId"
+    :aria-required="ariaRequired"
     :title="tooltip"
     :id="id"
     data-container="value-picker-items-wrapper"

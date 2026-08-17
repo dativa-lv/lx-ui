@@ -38,6 +38,7 @@ const props = defineProps({
   maxDate: { type: Date, default: null, group: 'main', sequence: 4 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
   helperText: { type: String, default: null, group: 'main', sequence: 9 },
@@ -287,6 +288,7 @@ if (props.builderOptions?.useRegistry) {
           :helperText="helperText"
           :helperTextKind="helperTextKind"
           :texts="displayTexts"
+          :required="required"
           :labelled-by="labelledBy"
         />
         <LxDatePicker
@@ -311,6 +313,7 @@ if (props.builderOptions?.useRegistry) {
           :cadenceOfMinutes="cadenceOfMinutes"
           :cadenceOfSeconds="cadenceOfSeconds"
           :texts="displayTexts"
+          :required="required"
           :labelled-by="labelledBy"
         />
       </div>

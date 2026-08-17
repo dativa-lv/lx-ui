@@ -200,3 +200,31 @@ describe('LxDayInput', () => {
     });
   });
 });
+
+describe('LxDayInput required', () => {
+  test('default variant hands required to the value input and the unit picker', () => {
+    wrapper = mount(LxDayInput, { props: { variant: 'default', required: true } });
+
+    expect(
+      wrapper.find('.lx-duration-single-value .lx-text-input').attributes('aria-required')
+    ).toBe('true');
+    expect(
+      wrapper.find('.lx-duration-single-unit .lx-dropdown-default').attributes('aria-required')
+    ).toBe('true');
+  });
+
+  test('segmented variant sets aria-required on every segment', () => {
+    wrapper = mount(LxDayInput, { props: { variant: 'days', required: true } });
+
+    const inputs = wrapper.findAll('.lx-duration-fields input');
+    expect(inputs.length).toBeGreaterThan(0);
+    expect(inputs.every((input) => input.attributes('aria-required') === 'true')).toBe(true);
+  });
+
+  test('aria-required is omitted by default', () => {
+    wrapper = mount(LxDayInput, { props: { variant: 'days' } });
+
+    const inputs = wrapper.findAll('.lx-duration-fields input');
+    expect(inputs.every((input) => input.attributes('aria-required') === undefined)).toBe(true);
+  });
+});

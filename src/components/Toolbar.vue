@@ -7,6 +7,7 @@ import {
   onMounted,
   onUpdated,
   inject,
+  provide,
   useSlots,
   Comment,
   Fragment,
@@ -58,6 +59,8 @@ const emits = defineEmits([
   'update:searchString',
   'searchExpandedChange',
 ]);
+
+provide('rowRequired', ref(null));
 
 const GROUP_ID_DEFAULT_RIGHT = 'lx_group_default_right';
 const GROUP_ID_DEFAULT_LEFT = 'lx_group_default_left';

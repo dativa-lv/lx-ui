@@ -29,7 +29,7 @@ import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxLoader from '@/components/Loader.vue';
 import { isUrl, isUri, generateUUID, isEmail, isPhone } from '@/utils/stringUtils';
 import { checkArrayObjectProperty } from '@/utils/arrayUtils';
-import { getDisplayTexts, clampText } from '@/utils/generalUtils';
+import { getDisplayTexts, clampText, isNil } from '@/utils/generalUtils';
 import { formatValue, formatUrl } from '@/utils/formatUtils';
 import { loadLibrary } from '@/utils/libLoader';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
@@ -41,6 +41,7 @@ const props = defineProps({
   rows: { type: Number, default: 3, group: 'additional', sequence: 1 },
   maxlength: { type: Number, default: null, group: 'main', sequence: 7 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  required: { type: Boolean, default: null },
   showColorPicker: { type: Boolean, default: false, group: 'main', sequence: 1 },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
@@ -196,6 +197,11 @@ const modalActionDefinitions = ref([
 const toolbarRef = ref(null);
 
 const rowId = inject('rowId', ref(null));
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
 
 let headingCounter = 0;
 let Editor = null;
@@ -1245,6 +1251,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
             role="textbox"
             :aria-invalid="invalid"
             :aria-labelledby="labelledBy"
+            :aria-required="ariaRequired"
             :aria-errormessage="showInvalidationMessage ? `${props.id}-invalidation-message` : null"
             :aria-describedby="describedBy"
           />

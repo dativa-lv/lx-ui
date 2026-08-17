@@ -2,6 +2,9 @@ import { test, expect, afterEach, beforeEach } from 'vitest';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import { mount } from '@vue/test-utils';
+import { h } from 'vue';
+import LxForm from '@/components/forms/Form.vue';
+import LxRow from '@/components/forms/Row.vue';
 import 'regenerator-runtime/runtime';
 
 let wrapper;
@@ -1391,4 +1394,129 @@ test('LxValuePicker dropdown hasSelectAll', async () => {
   selectAll.dispatchEvent(new Event('click', { bubbles: true }));
   await wrapper.vm.$nextTick();
   expect(wrapper.props('modelValue')).toStrictEqual([]);
+});
+
+test('LxValuePicker aria-required on the radio group inside a required LxRow', () => {
+  wrapper = mount(LxForm, {
+    slots: {
+      default: h(
+        LxRow,
+        { label: 'Choice', required: true },
+        {
+          default: () =>
+            h(LxValuePicker, {
+              variant: 'default',
+              selectionKind: 'single',
+              items: [
+                { id: 'one', name: 'One' },
+                { id: 'two', name: 'Two' },
+              ],
+            }),
+        }
+      ),
+    },
+  });
+
+  const group = wrapper.find('.lx-value-picker-default-wrapper');
+  expect(group.attributes('role')).toBe('radiogroup');
+  expect(group.attributes('aria-required')).toBe('true');
+
+  const radios = wrapper.findAll('input[type="radio"]');
+  expect(radios.length).toBe(2);
+  expect(radios.every((radio) => radio.attributes('aria-required') === undefined)).toBe(true);
+});
+
+test('LxValuePicker multi-select group gets no aria-required', () => {
+  wrapper = mount(LxForm, {
+    slots: {
+      default: h(
+        LxRow,
+        { label: 'Choice', required: true },
+        {
+          default: () =>
+            h(LxValuePicker, {
+              variant: 'default',
+              selectionKind: 'multiple',
+              items: [
+                { id: 'one', name: 'One' },
+                { id: 'two', name: 'Two' },
+              ],
+            }),
+        }
+      ),
+    },
+  });
+
+  const group = wrapper.find('.lx-value-picker-default-wrapper');
+  expect(group.attributes('role')).toBe('group');
+  expect(group.attributes('aria-required')).toBeUndefined();
+
+  const checkboxes = wrapper.findAll('input[type="checkbox"]');
+  expect(checkboxes.length).toBe(2);
+  expect(checkboxes.every((box) => box.attributes('aria-required') === undefined)).toBe(true);
+});
+
+test('LxValuePicker required prop on the single-select radio group', () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'default',
+      selectionKind: 'single',
+      required: true,
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+      ],
+    },
+  });
+
+  const group = wrapper.find('.lx-value-picker-default-wrapper');
+  expect(group.attributes('aria-required')).toBe('true');
+
+  const radios = wrapper.findAll('input[type="radio"]');
+  expect(radios.every((radio) => radio.attributes('aria-required') === undefined)).toBe(true);
+});
+
+test('LxValuePicker required prop reaches every group variant', () => {
+  const variants = [
+    { variant: 'default', selector: '.lx-value-picker-default-wrapper' },
+    { variant: 'tiles', selector: '.lx-value-picker-tile-wrapper' },
+    { variant: 'tags', selector: '.lx-tag-set' },
+    { variant: 'horizontal', selector: '.lx-value-picker-horizontal-wrapper' },
+    { variant: 'indicator', selector: '.lx-value-picker-indicators' },
+  ];
+
+  variants.forEach(({ variant, selector }) => {
+    const localWrapper = mount(LxValuePicker, {
+      props: {
+        variant,
+        selectionKind: 'single',
+        required: true,
+        items: [
+          { id: 'one', name: 'One' },
+          { id: 'two', name: 'Two' },
+        ],
+      },
+    });
+
+    expect(localWrapper.find(selector).attributes('aria-required'), variant).toBe('true');
+    localWrapper.unmount();
+  });
+});
+
+test('LxValuePicker required prop without a row still omits it for multi-select', () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'default',
+      selectionKind: 'multiple',
+      required: true,
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+      ],
+    },
+  });
+
+  expect(
+    wrapper.find('.lx-value-picker-default-wrapper').attributes('aria-required')
+  ).toBeUndefined();
 });

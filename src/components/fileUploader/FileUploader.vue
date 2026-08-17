@@ -44,6 +44,7 @@ const props = defineProps({
   }, // content, meta
   hasSearch: { type: Boolean, default: false, group: 'main', sequence: 5 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  required: { type: Boolean, default: null },
   loading: { type: Boolean, default: false, group: 'mode', sequence: 4 },
   busy: { type: Boolean, default: false, group: 'mode', sequence: 3 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
@@ -719,6 +720,12 @@ const showCameraButton = computed(() => {
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
+
 defineExpose({ getFiles, isUploading });
 
 if (props.builderOptions?.useRegistry) {
@@ -763,6 +770,7 @@ if (props.builderOptions?.useRegistry) {
         ref="fileInput"
         :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
         @change="uploadFiles"
+        :aria-required="ariaRequired"
         tabindex="-1"
         aria-hidden="true"
         role="presentation"
@@ -841,6 +849,7 @@ if (props.builderOptions?.useRegistry) {
         :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
         @change="uploadFiles"
         multiple
+        :aria-required="ariaRequired"
         tabindex="-1"
         aria-hidden="true"
         role="presentation"

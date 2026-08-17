@@ -28,6 +28,7 @@ const props = defineProps({
   readOnly: { type: Boolean, default: false },
   readOnlyRenderType: { type: String, default: 'row' }, // 'row' || 'column'
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   helperText: { type: String, default: null },
@@ -69,6 +70,10 @@ const describedBy = computed(() => {
   if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
   return ids.length ? ids.join(' ') : null;
 });
+
+const ariaRequired = computed(() =>
+  props.required && props.selectionKind === 'single' ? true : null
+);
 
 const model = computed({
   get() {
@@ -483,6 +488,7 @@ const wrapperRef = ref();
         :aria-describedby="describedBy"
         :title="tooltip"
         :aria-labelledby="labelId"
+        :aria-required="ariaRequired"
         data-container="value-picker-items-wrapper"
       >
         <div v-for="item in itemsDisplay" :key="item[idAttribute]">
@@ -611,6 +617,7 @@ const wrapperRef = ref();
           :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
           role="radiogroup"
           :aria-labelledby="labelId"
+          :aria-required="ariaRequired"
           :aria-invalid="invalid"
           :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
           :aria-describedby="describedBy"

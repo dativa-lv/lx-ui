@@ -1,5 +1,5 @@
 <script setup>
-import { computed, shallowRef, watch } from 'vue';
+import { computed, shallowRef, watch, provide, ref } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -60,6 +60,8 @@ const emits = defineEmits([
 function handleActionClick(actionName, selectedItemId = 'default') {
   emits('actionClick', actionName, selectedItemId);
 }
+
+provide('rowRequired', ref(null));
 
 const isDisabled = computed(() => {
   let res = false;

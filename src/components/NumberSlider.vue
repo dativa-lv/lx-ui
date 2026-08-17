@@ -12,7 +12,7 @@ import LxTextInput from '@/components/TextInput.vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { makeIntegerValidator } from '@/utils/numberSliderUtils';
 import { generateUUID } from '@/utils/stringUtils';
@@ -60,6 +60,7 @@ const props = defineProps({
   },
   hasInput: { type: Boolean, default: false, group: 'main', sequence: 4 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  required: { type: Boolean, default: null },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   helperText: { type: String, default: null, group: 'main', sequence: 5 },
   helperTextKind: {
@@ -176,6 +177,11 @@ const fillingUp = computed(
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
 
 const onMouseDown = () => {
   globalThis.getSelection()?.removeAllRanges();
@@ -237,6 +243,7 @@ if (props.builderOptions?.useRegistry) {
             class="lx-number-stepper-field"
             :labelId="labelledBy"
             :disabled
+            :required="required"
             :builderOptions="{ innerComponent: true }"
             @keydown.up.exact.prevent="!props.disableArrowKeys && onIncreaseStep()"
             @keydown.down.exact.prevent="!props.disableArrowKeys && onDecreaseStep()"
@@ -250,6 +257,7 @@ if (props.builderOptions?.useRegistry) {
             class="lx-number-stepper-value lx-input-area"
             role="spinbutton"
             :aria-labelledby="labelledBy"
+            :aria-required="ariaRequired"
             :aria-describedby="describedBy"
             :aria-valuenow="model"
             :aria-valuemin="minValue"
@@ -316,6 +324,7 @@ if (props.builderOptions?.useRegistry) {
           :max="maxValue"
           :step="stepValue"
           :aria-labelledby="labelledBy"
+          :aria-required="ariaRequired"
           :aria-describedby="describedBy"
           :disabled
           @mousedown="onMouseDown"
@@ -355,6 +364,7 @@ if (props.builderOptions?.useRegistry) {
           mask="integer"
           :labelId="labelledBy"
           :disabled
+          :required="required"
           :builderOptions="{ innerComponent: true }"
         />
       </div>

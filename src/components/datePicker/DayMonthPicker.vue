@@ -15,6 +15,7 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null }, // 'MM-dd' | null
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   clearIfNotExact: { type: Boolean, default: false },
@@ -199,6 +200,7 @@ watch([selectedMonth, selectedDay], () => emitValue(currentValue()));
         :invalid="invalid"
         :placeholder="displayTexts.dayPlaceholder"
         :tooltip="tooltip"
+        :required="required"
         :labelId="labelledBy"
         :texts="texts"
       />
@@ -214,6 +216,7 @@ watch([selectedMonth, selectedDay], () => emitValue(currentValue()));
         :invalid="invalid"
         :placeholder="displayTexts.monthPlaceholder"
         :tooltip="tooltip"
+        :required="required"
         :labelId="labelledBy"
         :texts="texts"
       />

@@ -8,6 +8,7 @@ const props = defineProps({
   modelValue: { type: Boolean, default: false },
   label: { type: String, default: null },
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: null },
   value: { type: String, default: 'none' },
   tabindex: { type: Number, default: null },
   labelId: { type: String, default: null },
@@ -28,6 +29,7 @@ const inputRef = ref(null);
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+const ariaRequired = computed(() => (props.required ? true : null));
 
 const click = (e) => {
   emits('click', e);
@@ -70,6 +72,7 @@ defineExpose({ focus, scrollIntoView });
       :value="value"
       :tabindex="tabindex"
       :aria-labelledby="labelledBy"
+      :aria-required="ariaRequired"
       @click="click"
     />
     <label

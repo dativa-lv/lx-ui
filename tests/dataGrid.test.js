@@ -1,8 +1,10 @@
 /* eslint-disable no-restricted-imports */
 import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
 import { mount, RouterLinkStub } from '@vue/test-utils';
-import { nextTick, ref } from 'vue';
+import { h, nextTick, ref } from 'vue';
 import LxDataGrid from '@/components/DataGrid.vue';
+import LxForm from '@/components/forms/Form.vue';
+import LxRow from '@/components/forms/Row.vue';
 import * as devUtils from '@/utils/devUtils';
 import {
   actionDefinitionsCommon,
@@ -1746,4 +1748,36 @@ describe('Loading announcement', () => {
     },
     { props: { hasVirtualization: false } }
   );
+});
+
+describe('Required LxRow', () => {
+  test('row selection controls do not inherit aria-required', () => {
+    wrapper = mount(LxForm, {
+      slots: {
+        default: h(
+          LxRow,
+          { label: 'Pick rows', required: true },
+          {
+            default: () =>
+              h(LxDataGrid, {
+                idAttribute: 'id',
+                hasSelecting: true,
+                selectionKind: 'multiple',
+                hasVirtualization: false,
+                items: [
+                  { id: 'a', name: 'A' },
+                  { id: 'b', name: 'B' },
+                ],
+                columnDefinitions: [{ id: 'name', attributeName: 'name', name: 'Name' }],
+              }),
+          }
+        ),
+      },
+      global: { stubs: { RouterLink: RouterLinkStub } },
+    });
+
+    const boxes = wrapper.findAll('.lx-cell-selector input[type="checkbox"]');
+    expect(boxes.length).toBe(2);
+    expect(boxes.every((box) => box.attributes('aria-required') === undefined)).toBe(true);
+  });
 });

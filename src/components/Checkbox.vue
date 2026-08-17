@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, inject, getCurrentInstance, onUnmounted } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { isNil } from '@/utils/generalUtils';
 import LxIcon from '@/components/Icon.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
@@ -10,6 +11,7 @@ const props = defineProps({
   modelValue: { type: Boolean, default: false },
   label: { type: String, default: null, group: 'main', sequence: 1 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  required: { type: Boolean, default: null },
   value: { type: String, default: 'none', group: 'main', sequence: 2 },
   tabindex: { type: String, default: '0' },
   labelId: { type: String, default: null },
@@ -39,6 +41,11 @@ const inputRef = ref(null);
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
 
 const click = (e) => {
   emits('click', e);
@@ -97,6 +104,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
       :value="value"
       :tabindex="tabindex"
       :aria-labelledby="labelledBy"
+      :aria-required="ariaRequired"
       :aria-label="label"
       @click="click"
     />

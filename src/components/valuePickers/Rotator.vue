@@ -28,6 +28,7 @@ const props = defineProps({
   readOnly: { type: Boolean, default: false },
   readOnlyRenderType: { type: String, default: 'row' }, // 'row' || 'column'
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   helperText: { type: String, default: null },

@@ -1,9 +1,9 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
-import { clampText, getDisplayTexts } from '@/utils/generalUtils';
+import { clampText, getDisplayTexts, isNil } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
 const emits = defineEmits(['update:modelValue']);
@@ -15,6 +15,7 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // 'default' or 'colorful'
   readOnly: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: null },
   focusable: { type: Boolean, default: true },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
@@ -188,6 +189,12 @@ function reset() {
 
 const showInvalid = computed(() => props.invalid && !props.readOnly);
 
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value && !props.readOnly ? true : null;
+});
+
 function focus() {
   if (props.focusable) {
     infoWrapperRef.value?.focus();
@@ -220,6 +227,7 @@ defineExpose({ focus, scrollIntoView });
           class="lx-ratings"
           role="radiogroup"
           :aria-disabled="disabled"
+          :aria-required="ariaRequired"
           :aria-invalid="showInvalid"
           :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
           :aria-describedby="showInvalidationMessage ? `${id}-invalidation-message` : null"

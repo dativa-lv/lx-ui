@@ -43,6 +43,7 @@ const props = defineProps({
   tooltipAttribute: { type: String, default: null, group: 'additional', sequence: 4 },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
   helperText: { type: String, default: null, group: 'main', sequence: 10 },
@@ -1067,6 +1068,11 @@ watch(
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
 
 const areSomeSelected = computed(() => {
   let res = false;
@@ -1344,6 +1350,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       "
                       :aria-labelledby="labelledBy"
                       :aria-label="getName(false)"
+                      :aria-required="ariaRequired"
                       :aria-invalid="invalid"
                       :aria-errormessage="
                         showInvalidationMessage ? `${id}-invalidation-message` : null

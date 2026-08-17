@@ -6,6 +6,7 @@ import { mount } from '@vue/test-utils';
 import { h } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxTextArea from '@/components/TextArea.vue';
+import LxValuePicker from '@/components/ValuePicker.vue';
 
 let wrapper;
 
@@ -476,3 +477,129 @@ test('LxRow inputId', () => {
 //     },
 //   });
 // });
+
+test('LxRow aria-required on the input', () => {
+  expect(LxRow).toBeTruthy();
+
+  wrapper = mount(LxForm, {
+    slots: {
+      default: [
+        h(LxRow, { label: 'Name', required: true }, { default: () => h(LxTextInput) }),
+        h(LxRow, { label: 'Surname', required: false }, { default: () => h(LxTextInput) }),
+        h(LxRow, { label: 'Age', required: null }, { default: () => h(LxTextArea) }),
+        h(LxRow, { label: 'Notes', required: true }, { default: () => h(LxTextArea) }),
+      ],
+    },
+    global: {
+      components: {
+        LxRow,
+        LxTextInput,
+        LxTextArea,
+      },
+    },
+  });
+
+  const rows = wrapper.findAll('.lx-row');
+  expect(rows[0].find('.lx-text-input').attributes('aria-required')).toBe('true');
+  expect(rows[1].find('.lx-text-input').attributes('aria-required')).toBeUndefined();
+  expect(rows[2].find('.lx-text-area').attributes('aria-required')).toBeUndefined();
+  expect(rows[3].find('.lx-text-area').attributes('aria-required')).toBe('true');
+});
+
+test('LxRow aria-required is independent of requiredMode', () => {
+  expect(LxRow).toBeTruthy();
+
+  wrapper = mount(LxForm, {
+    props: {
+      requiredMode: 'none',
+    },
+    slots: {
+      default: h(LxRow, { label: 'Name', required: true }, { default: () => h(LxTextInput) }),
+    },
+    global: {
+      components: {
+        LxRow,
+        LxTextInput,
+      },
+    },
+  });
+
+  const row = wrapper.find('.lx-row');
+  expect(row.find('label').text()).not.toContain('(obligāts)');
+  expect(row.find('.lx-text-input').attributes('aria-required')).toBe('true');
+});
+
+test('LxRow required is a fallback for the input own required prop', () => {
+  expect(LxRow).toBeTruthy();
+
+  wrapper = mount(LxForm, {
+    slots: {
+      default: [
+        h(LxRow, { label: 'Name' }, { default: () => h(LxTextInput, { required: true }) }),
+        h(LxRow, { label: 'Surname', required: true }, { default: () => h(LxTextInput) }),
+        h(LxRow, { label: 'Age' }, { default: () => h(LxTextInput) }),
+        h(
+          LxRow,
+          { label: 'Notes', required: true },
+          { default: () => h(LxTextInput, { required: false }) }
+        ),
+        h(
+          LxRow,
+          { label: 'Extra', required: false },
+          { default: () => h(LxTextInput, { required: true }) }
+        ),
+      ],
+    },
+    global: {
+      components: {
+        LxRow,
+        LxTextInput,
+      },
+    },
+  });
+
+  const rows = wrapper.findAll('.lx-row');
+  expect(rows[0].find('.lx-text-input').attributes('aria-required')).toBe('true');
+  expect(rows[1].find('.lx-text-input').attributes('aria-required')).toBe('true');
+  expect(rows[2].find('.lx-text-input').attributes('aria-required')).toBeUndefined();
+  expect(rows[3].find('.lx-text-input').attributes('aria-required')).toBeUndefined();
+  expect(rows[4].find('.lx-text-input').attributes('aria-required')).toBe('true');
+});
+
+test('LxRow required is overridden by required false on a value picker', () => {
+  expect(LxRow).toBeTruthy();
+
+  wrapper = mount(LxForm, {
+    slots: {
+      default: [
+        h(
+          LxRow,
+          { label: 'Choice', required: true },
+          { default: () => h(LxValuePicker, { variant: 'default', selectionKind: 'single' }) }
+        ),
+        h(
+          LxRow,
+          { label: 'Other', required: true },
+          {
+            default: () =>
+              h(LxValuePicker, {
+                variant: 'default',
+                selectionKind: 'single',
+                required: false,
+              }),
+          }
+        ),
+      ],
+    },
+    global: {
+      components: {
+        LxRow,
+        LxValuePicker,
+      },
+    },
+  });
+
+  const groups = wrapper.findAll('.lx-value-picker-default-wrapper');
+  expect(groups[0].attributes('aria-required')).toBe('true');
+  expect(groups[1].attributes('aria-required')).toBeUndefined();
+});

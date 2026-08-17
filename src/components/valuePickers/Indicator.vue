@@ -30,6 +30,7 @@ const props = defineProps({
   readOnly: { type: Boolean, default: false },
   readOnlyRenderType: { type: String, default: 'row' }, // 'row' || 'column'
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   helperText: { type: String, default: null },
@@ -68,6 +69,10 @@ const describedBy = computed(() => {
   if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
   return ids.length ? ids.join(' ') : null;
 });
+
+const ariaRequired = computed(() =>
+  props.required && props.selectionKind === 'single' ? true : null
+);
 
 const emits = defineEmits(['update:modelValue', 'update:searchString']);
 
@@ -411,6 +416,7 @@ const wrapperRef = ref();
     :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
     :aria-describedby="describedBy"
     :aria-labelledby="labelId"
+    :aria-required="ariaRequired"
   >
     <LxToolbar
       v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')"

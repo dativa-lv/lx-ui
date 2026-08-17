@@ -1124,3 +1124,27 @@ describe('LxNumberSlider', () => {
     });
   });
 });
+
+describe('LxNumberSlider required', () => {
+  test('slider kind sets aria-required on the range input', () => {
+    wrapper = mount(LxNumberSlider, { props: { required: true } });
+    expect(wrapper.find('.lx-number-slider').attributes('aria-required')).toBe('true');
+  });
+
+  test('stepper kind hands required to the inner LxTextInput', () => {
+    wrapper = mount(LxNumberSlider, {
+      props: { kind: 'stepper', hasInput: true, required: true },
+    });
+    expect(wrapper.find('.lx-text-input').attributes('aria-required')).toBe('true');
+  });
+
+  test('stepper kind without an input sets aria-required on the spinbutton', () => {
+    wrapper = mount(LxNumberSlider, { props: { kind: 'stepper', required: true } });
+    expect(wrapper.find('[role="spinbutton"]').attributes('aria-required')).toBe('true');
+  });
+
+  test('aria-required is omitted by default', () => {
+    wrapper = mount(LxNumberSlider);
+    expect(wrapper.find('.lx-number-slider').attributes('aria-required')).toBeUndefined();
+  });
+});

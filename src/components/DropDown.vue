@@ -13,6 +13,7 @@ import {
   focusNextFocusableElement,
   getDisplayTexts,
   isDefined,
+  isNil,
 } from '@/utils/generalUtils';
 
 const props = defineProps({
@@ -27,6 +28,7 @@ const props = defineProps({
   tooltip: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   helperText: { type: String, default: null },
@@ -420,6 +422,11 @@ function isItemSelected(item) {
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+const rowRequired = inject('rowRequired', ref(null));
+const ariaRequired = computed(() => {
+  const value = isNil(props.required) ? rowRequired.value : props.required;
+  return value ? true : null;
+});
 
 onMounted(() => {
   filteredItems.value = props.items;
@@ -468,6 +475,7 @@ const getSelectedItem = computed(
           :title="tooltip"
           :disabled="isDisabled"
           :aria-labelledby="labelledBy"
+          :aria-required="ariaRequired"
           @change="change($event)"
         >
           <option disabled value="" v-show="false" class="placeholder-select">
@@ -525,6 +533,7 @@ const getSelectedItem = computed(
         :aria-expanded="ariaExpandedState"
         :aria-controls="`${id}-listbox`"
         :aria-labelledby="labelledBy"
+        :aria-required="ariaRequired"
         :aria-invalid="invalid"
         :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-describedby="describedBy"

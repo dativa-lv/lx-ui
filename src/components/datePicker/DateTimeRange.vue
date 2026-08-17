@@ -52,6 +52,7 @@ const props = defineProps({
   maxRangeLength: { type: Number, default: null },
   readOnly: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false, sequence: 1 },
   invalidationMessage: { type: String, default: null, sequence: 2 },
   helperText: { type: String, default: null, group: 'main', sequence: 6 },
@@ -550,6 +551,7 @@ if (props.builderOptions?.useRegistry) {
           picker-type="range"
           :clearIfNotExact="clearIfNotExact"
           :texts="displayTexts"
+          :required="required"
           :labelled-by="labelledBy"
           @outOfRange="onOutOfRange"
         />
@@ -572,6 +574,7 @@ if (props.builderOptions?.useRegistry) {
             :first-day-of-the-week="localeFirstDay"
             :clearIfNotExact="clearIfNotExact"
             :texts="displayTexts"
+            :required="required"
             :labelled-by="displayTexts.startDateLabel"
             @outOfRange="onOutOfRangeStartDate"
             legacy-mode
@@ -596,6 +599,7 @@ if (props.builderOptions?.useRegistry) {
             :first-day-of-the-week="localeFirstDay"
             :clearIfNotExact="clearIfNotExact"
             :texts="displayTexts"
+            :required="required"
             :labelled-by="displayTexts.endDateLabel"
             @outOfRange="onOutOfRangeEndDate"
             legacy-mode

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted, nextTick, inject, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, onMounted, nextTick, inject, provide, onBeforeUnmount } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxExpander from '@/components/Expander.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -1333,6 +1333,8 @@ async function loadDraggable() {
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+
+provide('rowRequired', ref(null));
 
 watch(
   () => props.items,

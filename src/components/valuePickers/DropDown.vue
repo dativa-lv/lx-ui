@@ -39,6 +39,7 @@ const props = defineProps({
   readOnly: { type: Boolean, default: false },
   readOnlyRenderType: { type: String, default: 'row' }, // 'row' || 'column'
   disabled: { type: Boolean, default: false },
+  required: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   helperText: { type: String, default: null },
@@ -99,6 +100,8 @@ const describedBy = computed(() => {
   if (showInvalidationMessage.value) ids.push(`${props.id}-invalidation-message`);
   return ids.length ? ids.join(' ') : null;
 });
+
+const ariaRequired = computed(() => (props.required ? true : null));
 
 const noItemsMessage = computed(() => displayTexts.value.noItemsMessage);
 
@@ -672,6 +675,7 @@ function countDigits(number) {
       :tooltip="tooltip"
       :readOnly="readOnly"
       :disabled="disabled"
+      :required="required"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
       :helperText="helperText"
@@ -696,6 +700,7 @@ function countDigits(number) {
       :tooltip="tooltip"
       :read-only="readOnly"
       :disabled="disabled"
+      :required="required"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
       :helperText="helperText"
@@ -729,6 +734,7 @@ function countDigits(number) {
         :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-describedby="describedBy"
         :aria-labelledby="labelId"
+        :aria-required="ariaRequired"
         @keydown.esc.prevent="closeDropDownDefaultOnEsc"
         @keydown.enter.prevent="onEnter"
         @keydown.space.prevent="onEnter"

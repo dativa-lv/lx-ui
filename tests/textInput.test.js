@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { test, expect, describe, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { ref } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 
 let wrapper;
@@ -800,4 +801,38 @@ test('LxTextInput phone kind - longest possible match', async () => {
   flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
   expect(flag.length).toBe(1);
   expect(flag[0].attributes('aria-label')).toContain('Antigva un Barbuda');
+});
+
+describe('LxTextInput required', () => {
+  test('required prop sets aria-required on the input', () => {
+    wrapper = mount(LxTextInput, { props: { required: true } });
+    expect(wrapper.find('.lx-text-input').attributes('aria-required')).toBe('true');
+  });
+
+  test('aria-required is omitted by default', () => {
+    wrapper = mount(LxTextInput);
+    expect(wrapper.find('.lx-text-input').attributes('aria-required')).toBeUndefined();
+  });
+
+  test('required prop sets aria-required on the currency input', () => {
+    wrapper = mount(LxTextInput, { props: { mask: 'currency', required: true } });
+    expect(wrapper.find('.lx-text-input').attributes('aria-required')).toBe('true');
+  });
+});
+
+describe('LxTextInput required precedence', () => {
+  test('required false wins over a required LxRow', () => {
+    wrapper = mount(LxTextInput, {
+      props: { required: false },
+      global: { provide: { rowRequired: ref(true) } },
+    });
+    expect(wrapper.find('.lx-text-input').attributes('aria-required')).toBeUndefined();
+  });
+
+  test('an unset required falls back to the row value', () => {
+    wrapper = mount(LxTextInput, {
+      global: { provide: { rowRequired: ref(true) } },
+    });
+    expect(wrapper.find('.lx-text-input').attributes('aria-required')).toBe('true');
+  });
 });

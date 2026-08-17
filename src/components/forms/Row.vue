@@ -227,6 +227,9 @@ const showHeaderWithoutInfo = computed(
 const idComputed = computed(() => props.id);
 provide('rowId', idComputed);
 
+const rowRequired = computed(() => (props.required ? true : null));
+provide('rowRequired', rowRequired);
+
 if (props.builderOptions.useRegistry) {
   const instance = getCurrentInstance();
   registerBuilderInstance({

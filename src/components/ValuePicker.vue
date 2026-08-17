@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, inject, getCurrentInstance, onUnmounted, watch } from 'vue';
 import { generateUUID, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, isNil } from '@/utils/generalUtils';
 
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import LxValuePickerDropDown from '@/components/valuePickers/DropDown.vue';
@@ -65,6 +65,7 @@ const props = defineProps({
   }, // 'row' || 'column'
   alwaysAsArray: { type: Boolean, default: false, group: 'additional', sequence: 1 },
   disabled: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  required: { type: Boolean, default: null },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   helperText: { type: String, default: null, group: 'main', sequence: 9 },
@@ -187,6 +188,11 @@ const model = computed({
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
+const rowRequired = inject('rowRequired', ref(null));
+const isRequired = computed(() =>
+  Boolean(isNil(props.required) ? rowRequired.value : props.required)
+);
+
 onMounted(() => {
   const updateModelValue = (value) => emits('update:modelValue', value);
 
@@ -247,6 +253,7 @@ if (props.builderOptions?.useRegistry) {
         :groupId="groupId"
         :selectionKind="selectionKind"
         :disabled="disabled"
+        :required="isRequired"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
         :helperText="helperText"
@@ -282,6 +289,7 @@ if (props.builderOptions?.useRegistry) {
         :groupId="groupId"
         :selectionKind="selectionKind"
         :disabled="disabled"
+        :required="isRequired"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
         :helperText="helperText"
@@ -322,6 +330,7 @@ if (props.builderOptions?.useRegistry) {
         :variant="variant"
         :selectionKind="selectionKind"
         :disabled="disabled"
+        :required="isRequired"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
         :helperText="helperText"
@@ -357,6 +366,7 @@ if (props.builderOptions?.useRegistry) {
         :variant="variant"
         :selectionKind="selectionKind"
         :disabled="disabled"
+        :required="isRequired"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
         :helperText="helperText"
@@ -392,6 +402,7 @@ if (props.builderOptions?.useRegistry) {
         :variant="variant"
         :selectionKind="selectionKind"
         :disabled="disabled"
+        :required="isRequired"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
         :helperText="helperText"
@@ -426,6 +437,7 @@ if (props.builderOptions?.useRegistry) {
         :groupId="groupId"
         :selectionKind="selectionKind"
         :disabled="disabled"
+        :required="isRequired"
         :invalid="invalid"
         :invalidation-message="invalidationMessage"
         :helperText="helperText"
