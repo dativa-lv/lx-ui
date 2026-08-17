@@ -558,6 +558,15 @@
   color: var(--color-grid-hover-foreground);
 }
 
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-secondary .lx-person-display-name,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-secondary .lx-grid-icon-text,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-secondary .flag-column p,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-extra .lx-person-display-name,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-extra .lx-grid-icon-text,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-extra .flag-column p {
+  color: var(--contrast-background);
+}
+
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-extra .lx-grid-column-icon,
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-secondary .lx-grid-column-icon {
   fill: var(--color-grid-hover-foreground);
@@ -930,6 +939,10 @@
   margin-top: calc(var(--space-0250) * -1);
   margin-bottom: calc(var(--space-0250) * -1);
   flex-grow: 0;
+}
+
+.lx.lx-theme-contrast .lx-data-grid .lx-indicator {
+  background-color: var(--contrast-background);
 }
 
 .lx .lx-layout .lx-info-wrapper ul.array-type-list {
