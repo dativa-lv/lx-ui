@@ -89,7 +89,7 @@ function readGap() {
   if (!composerRef.value) {
     return 0;
   }
-  const gap = parseFloat(getComputedStyle(composerRef.value).columnGap);
+  const gap = Number.parseFloat(getComputedStyle(composerRef.value).columnGap);
   return Number.isFinite(gap) ? gap : 0;
 }
 

@@ -1198,6 +1198,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   display: flex;
   justify-content: center;
   align-items: center;
+  --color-cover-background: rgba(0, 0, 0, 0.5);
 }
 
 dialog.lx-modal > header,
@@ -1222,10 +1223,6 @@ dialog.lx-modal > header > .lx-primary,
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.lx-curtain {
-  --color-cover-background: rgba(0, 0, 0, 0.5);
 }
 
 .lx-modal {
@@ -1825,11 +1822,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx .lx-dropdown-panel .lx-button-set .lx-button-content-wrapper,
 .lx .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper {
   gap: var(--popover-item-gap);
-}
-
-.lx .lx-dropdown-panel .user-menu-panel .lx-button-content-wrapper,
-.lx .lx-dropdown-panel .lx-button-set .lx-button-content-wrapper,
-.lx .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper {
   grid-template-areas: var(--popover-item-button-grid-areas);
   grid-template-columns: var(--popover-item-button-grid-template-columns);
   grid-template-rows: var(--popover-item-button-grid-template-rows);

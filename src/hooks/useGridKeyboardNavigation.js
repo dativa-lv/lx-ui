@@ -154,10 +154,12 @@ export function useGridKeyboardNavigation({ getScrollMarginTop } = {}) {
       return { row, col, item: preferredTarget.item, target: preferredTarget.target };
     }
 
-    const closestTarget = targets.reduce((best, candidate) =>
-      Math.abs(candidate.item - preferredItem) < Math.abs(best.item - preferredItem)
-        ? candidate
-        : best
+    const closestTarget = targets.reduce(
+      (best, candidate) =>
+        Math.abs(candidate.item - preferredItem) < Math.abs(best.item - preferredItem)
+          ? candidate
+          : best,
+      targets[0]
     );
 
     return { row, col, item: closestTarget.item, target: closestTarget.target };
