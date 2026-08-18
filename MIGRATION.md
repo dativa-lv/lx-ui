@@ -4,6 +4,14 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
+## 2.2.13 → 2.2.14
+
+### Breaking changes
+
+#### LxList
+
+The `--color-list-text-selected-disabled` token, which previously defaulted to `--color-disabled` or `--contrast-background` in contrast mode, has been removed.
+
 ## 2.2.12 → 2.2.13
 
 ### Breaking changes

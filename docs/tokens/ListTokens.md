@@ -79,7 +79,6 @@
 | `--color-list-text-primary-hover`          | `--color-region-hover-foreground`          |
 | `--color-list-text-secondary`              | `--color-label`                            |
 | `--color-list-text-secondary-hover`        | `--color-region-hover-foreground`          |
-| `--color-list-text-selected-disabled`      | `--color-disabled`                         |
 | `--color-list-button-background`           | `--color-button-ghost-background`          |
 | `--color-list-button-background-focus`     | `--color-button-ghost-background-focus`    |
 | `--color-list-button-background-hover`     | `--color-button-ghost-background-hover`    |
@@ -99,4 +98,3 @@ Customized values for contrast mode:
 | Variable name                         | Contrast mode value     |
 |---------------------------------------|-------------------------|
 | `--color-list-item-border`            | `--contrast-foreground` |
-| `--color-list-text-selected-disabled` | `--contrast-background` |

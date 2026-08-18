@@ -85,8 +85,14 @@ svg .lx-shade {
 .lx-form-grid > header > .lx-group .lx-info-wrapper-content:focus .lx-toolbar-chip,
 .lx-form-grid > header > .lx-group .lx-info-wrapper-content:hover .lx-toolbar-chip > .lx-state,
 .lx-form-grid > header > .lx-group .lx-info-wrapper-content:focus .lx-toolbar-chip > .lx-state {
-  background-color: var(--color-grid-hover-background);
   cursor: help;
+}
+
+.lx:not(.lx-theme-contrast) .lx-form-grid > header > .lx-group .lx-info-wrapper-content:hover .lx-toolbar-chip,
+.lx:not(.lx-theme-contrast) .lx-form-grid > header > .lx-group .lx-info-wrapper-content:focus .lx-toolbar-chip,
+.lx:not(.lx-theme-contrast) .lx-form-grid > header > .lx-group .lx-info-wrapper-content:hover .lx-toolbar-chip > .lx-state,
+.lx:not(.lx-theme-contrast) .lx-form-grid > header > .lx-group .lx-info-wrapper-content:focus .lx-toolbar-chip > .lx-state {
+  background-color: var(--color-grid-hover-background);
 }
 
 .lx-form-grid > header > .lx-group .lx-toolbar-chip .lx-info-wrapper .lx-info-wrapper-content {

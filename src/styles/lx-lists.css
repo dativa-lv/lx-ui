@@ -1106,19 +1106,14 @@
   text-overflow: ellipsis;
 }
 
-.lx-list-item-disabled p.lx-primary,
-.lx .lx-list-item-disabled p.lx-secondary {
-  color: var(--color-disabled);
-}
-
-.lx-list-item-disabled.lx-selected p.lx-primary,
-.lx .lx-list-item-disabled.lx-selected p.lx-secondary {
-  color: var(--color-list-text-selected-disabled);
-}
-
-.lx-list-item-wrapper .lx-list-item.lx-selected:not(.lx-list-item-disabled) p.lx-primary,
-.lx-list-item-wrapper .lx-list-item.lx-selected:not(.lx-list-item-disabled) p.lx-secondary {
+.lx-list-item.lx-selected .lx-primary,
+.lx-list-item.lx-selected .lx-secondary {
   color: var(--color-selected);
+}
+
+.lx-theme-contrast .lx-list-item-disabled.lx-selected header > .lx-primary,
+.lx-theme-contrast .lx-list-item-disabled.lx-selected header > .lx-secondary {
+  --color-disabled: var(--contrast-background);
 }
 
 .lx-list-item-wrapper .lx-list-item.lx-selected p.lx-primary .lx-highlight,
@@ -1131,13 +1126,18 @@
   color: var(--color-highlight);
 }
 
-.lx-list-item-wrapper .lx-list-item-interactive:not(.lx-list-item-disabled):hover p.lx-primary,
-.lx-list-item-interactive:not(.lx-list-item-disabled):hover header p {
+.lx-list-item-interactive:hover .lx-primary,
+.lx-list-item-interactive:hover header p {
   color: var(--color-list-text-primary-hover);
 }
 
-.lx-list-item-wrapper .lx-list-item-interactive:not(.lx-list-item-disabled):hover p.lx-secondary {
+.lx-list-item-interactive:hover .lx-secondary {
   color: var(--color-list-text-secondary-hover);
+}
+
+.lx-list-item-disabled.lx-list-item .lx-primary,
+.lx-list-item-disabled.lx-list-item .lx-secondary {
+  color: var(--color-disabled);
 }
 
 /*** Toolbar styles ***/

@@ -113,7 +113,6 @@
   --color-tile-text-secondary-hover: var(--contrast-background);
 
   --color-list-item-border: var(--color-foreground);
-  --color-list-text-selected-disabled: var(--contrast-background);
 
   --input-border-width: var(--border-width-2);
   --color-input-border: var(--contrast-foreground);

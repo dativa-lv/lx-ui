@@ -150,7 +150,6 @@
   --color-list-icon: var(--color-data);
   --color-list-text-primary: var(--color-data);
   --color-list-text-secondary: var(--color-label);
-  --color-list-text-selected-disabled: var(--color-disabled);
   --color-list-item-background-hover: var(--color-region-hover-background);
   --color-list-text-primary-hover: var(--color-region-hover-foreground);
   --color-list-text-secondary-hover: var(--color-region-hover-foreground);
