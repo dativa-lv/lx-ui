@@ -179,7 +179,7 @@
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-button.lx-button-secondary:hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-button.lx-button-secondary svg {
@@ -205,7 +205,7 @@
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button:hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
   cursor: pointer;
 }
 
@@ -515,15 +515,15 @@
 
   .lx-layout.lx-layout-public.lx-collapsed>nav,
   .lx-layout-public.no-nav-items .lx-data-grid-wrapper > .lx-grid-toolbar,
-  .lx .lx-layout-public.no-nav-items .lx-data-grid-wrapper > .lx-grid-header-wrapper,
+  .lx .lx-layout-public.no-nav-items .lx-data-grid-wrapper .lx-grid-header-wrapper,
   .lx-layout-public.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-toolbar,
-  .lx-layout-public.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-header-wrapper,
+  .lx-layout-public.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper .lx-grid-header-wrapper,
   .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-sticky,
   .lx-layout.lx-layout-public.no-nav-items .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
     top: var(--space-0);
   }
 
-  .lx-layout-public.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper.lx-grid-sticky-toolbar > .lx-grid-header-wrapper {
+  .lx-layout-public.lx-hide-nav-bar:not(.no-nav-items) .lx-data-grid-wrapper.lx-grid-sticky-toolbar .lx-grid-header-wrapper {
     top: var(--row-size);
   }
 
@@ -531,7 +531,7 @@
   .lx-layout.lx-layout-public .lx-form-grid>header.lx-sticky,
   .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>aside.lx-index>ul,
   .lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-toolbar,
-  .lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-header-wrapper,
+  .lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper .lx-grid-header-wrapper,
   .lx-layout.lx-layout-public .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar,
   .lx-layout-public.no-nav-items .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper,
   .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
@@ -557,7 +557,7 @@
     .lx .lx-layout.lx-layout-public .lx-toolbar.lx-sticky,
     .lx .lx-layout-public .lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar,
     .lx .lx-layout.lx-layout-public .lx-form-grid>header.lx-sticky,
-    .lx .lx-layout-public .lx-data-grid-wrapper > .lx-grid-header-wrapper,
+    .lx .lx-layout-public .lx-data-grid-wrapper .lx-grid-header-wrapper,
     .lx .lx-layout-public .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
       top: var(--space-0);
     }
@@ -690,7 +690,7 @@
   .lx-layout.lx-layout-public .lx-toolbar.lx-sticky,
   .lx-layout.lx-layout-public .lx-form-grid>header.lx-sticky,
   .lx .lx-layout-public .lx-data-grid-wrapper .lx-grid-toolbar,
-  .lx-layout-public .lx-data-grid-wrapper > .lx-grid-header-wrapper,
+  .lx-layout-public .lx-data-grid-wrapper .lx-grid-header-wrapper,
   .lx-layout-public .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
     top: var(--nav-row-size);
   }

@@ -624,7 +624,7 @@ header.lx.lx-layout-public>.lx-header .lx-user-button {
 }
 
 header.lx.lx-layout-public>.lx-header .lx-user-button:hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
   cursor: var(--button-cursor);
 }
 

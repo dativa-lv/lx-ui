@@ -31,13 +31,13 @@
 
 ## Color
 
-| Variable name                                   | Default value                    |
-| ----------------------------------------------- | -------------------------------- |
-| `--color-info-wrapper-background`               | `--color-tooltip-background`     |
-| `--color-info-wrapper-border`                   | transparent                      |
-| `--color-info-wrapper-content-background-hover` | `--color-grid-hover-background`  |
-| `--color-info-wrapper-text-primary`             | `--color-tooltip-text-primary`   |
-| `--color-info-wrapper-text-secondary`           | `--color-tooltip-text-secondary` |
+| Variable name                                   | Default value                        |
+|-------------------------------------------------|--------------------------------------|
+| `--color-info-wrapper-background`               | `--color-tooltip-background`         |
+| `--color-info-wrapper-border`                   | transparent                          |
+| `--color-info-wrapper-content-background-hover` | `--color-data-grid-background-hover` |
+| `--color-info-wrapper-text-primary`             | `--color-tooltip-text-primary`       |
+| `--color-info-wrapper-text-secondary`           | `--color-tooltip-text-secondary`     |
 
 ## Bottom sheet
 

@@ -1074,9 +1074,9 @@ h2.lx-section-header + p.lx-invalidation-message,
   column-gap: var(--space-0250);
 }
 
-.lx-data-grid-wrapper .lx-radio-button-wrapper .lx-radio-button-label-wrapper,
-.lx-data-grid-wrapper .lx-checkbox-label-wrapper {
-  justify-self: center;
+.lx-radio-button-wrapper .lx-radio-button-label-wrapper:not(:has(.lx-radio-button-label)),
+.lx-checkbox-wrapper .lx-checkbox-label-wrapper:not(:has(.lx-checkbox-label)) {
+  column-gap: var(--space-0);
 }
 
 .lx-radio-button-appearance,
@@ -1657,7 +1657,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-value-picker-indicators
   .lx-indicator-set
   .lx-indicator[disabled='false'][readOnly='false']:not(.lx-indicators-selected):hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
   border: var(--border-width-2) solid var(--color-brand);
   box-shadow: var(--shadow-1);
 }
@@ -1868,7 +1868,7 @@ h2.lx-section-header + p.lx-invalidation-message,
     .lx-indicator-yellow
   ):hover
   .lx-indicator-icon {
-  fill: var(--color-grid-header-hover-background);
+  fill: var(--color-data-grid-column-header-background-hover);
 }
 
 .lx-value-picker-horizontal-item-description,
@@ -2409,7 +2409,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx .lx-layout .lx-color-list .lx-color-item:hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
 }
 
 .lx .lx-layout .lx-color-list .lx-color-item div {

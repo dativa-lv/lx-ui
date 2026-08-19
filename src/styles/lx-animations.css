@@ -223,7 +223,10 @@
 .lx:not(.lx-no-animations) .lx-card-face,
 .lx:not(.lx-no-animations) .lx-list-item-wrapper,
 .lx:not(.lx-no-animations) .lx-list-item-container,
-.lx:not(.lx-no-animations) .lx-tile .lx-description {
+.lx:not(.lx-no-animations) .lx-tile .lx-description,
+.lx:not(.lx-no-animations) .lx-data-grid-wrapper .lx-cell,
+.lx:not(.lx-no-animations) .lx-data-grid-wrapper .lx-grid-row,
+.lx:not(.lx-no-animations) .lx-data-grid-wrapper .lx-cell-action {
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
 

@@ -329,3 +329,96 @@ export function cssLengthToPx(value, element) {
 
   return numericValue;
 }
+
+/**
+ * Resolves a `rem` CSS value or a `var()` token string to a numeric `rem` float value.
+ *
+ * @param {Element | HTMLElement | null} [element] - The element to resolve computed styles against.
+ * @param {string} [propertyValue] - The raw CSS property value, `rem` string, or `var()` token.
+ * @returns {number} The resolved numeric value in `rem` units, or `0` if invalid or empty.
+ */
+export function resolveRemToken(element, propertyValue) {
+  if (!propertyValue) return 0;
+
+  let valueStr = propertyValue.trim();
+
+  if (valueStr.startsWith('var(')) {
+    const [, varName] = valueStr.match(/var\(\s*([^,\s)]+)/) || [];
+    if (varName && element) {
+      valueStr = getComputedStyle(element).getPropertyValue(varName).trim();
+    }
+  }
+
+  const num = Number.parseFloat(valueStr);
+  return Number.isNaN(num) ? 0 : num;
+}
+
+/**
+ * Parses shorthand padding CSS strings (e.g., `"1rem 2rem 0.5rem"` or `"var(--padding)"`)
+ * and extracts the numeric `rem` value for a specified target direction.
+ *
+ * @param {string} [paddingStr] - The CSS padding value to parse.
+ * @param {Element | HTMLElement | null} [element] - The element to resolve computed styles against.
+ * @param {'horizontal' | 'vertical' | 'top' | 'right' | 'bottom' | 'left'} [target='horizontal'] - The padding direction to return.
+ * @returns {number} The resolved padding value in `rem` units.
+ */
+export function parsePaddingRem(paddingStr, element, target = 'horizontal') {
+  if (!paddingStr) return 0;
+
+  let str = paddingStr.trim();
+
+  if (str.startsWith('var(') && element) {
+    const [, varName] = str.match(/var\(\s*([^,\s)]+)/) || [];
+
+    if (varName) {
+      str = getComputedStyle(element).getPropertyValue(varName).trim() || str;
+    }
+  }
+
+  const parts = str.match(/(?:var\([^)]+\)|[^\s]+)/g) || [];
+
+  if (parts.length === 0) return 0;
+
+  let topStr = '0';
+  let rightStr = '0';
+  let bottomStr = '0';
+  let leftStr = '0';
+
+  if (parts.length === 1) {
+    const [all] = parts;
+    topStr = all;
+    rightStr = all;
+    bottomStr = all;
+    leftStr = all;
+  } else if (parts.length === 2) {
+    const [vertical, horizontal] = parts;
+    topStr = vertical;
+    bottomStr = vertical;
+    rightStr = horizontal;
+    leftStr = horizontal;
+  } else if (parts.length === 3) {
+    const [top, horizontal, bottom] = parts;
+    topStr = top;
+    rightStr = horizontal;
+    leftStr = horizontal;
+    bottomStr = bottom;
+  } else {
+    [topStr, rightStr, bottomStr, leftStr] = parts;
+  }
+
+  switch (target) {
+    case 'vertical':
+      return resolveRemToken(element, topStr) + resolveRemToken(element, bottomStr);
+    case 'top':
+      return resolveRemToken(element, topStr);
+    case 'right':
+      return resolveRemToken(element, rightStr);
+    case 'bottom':
+      return resolveRemToken(element, bottomStr);
+    case 'left':
+      return resolveRemToken(element, leftStr);
+    case 'horizontal':
+    default:
+      return resolveRemToken(element, leftStr) + resolveRemToken(element, rightStr);
+  }
+}

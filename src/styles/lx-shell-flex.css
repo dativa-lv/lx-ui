@@ -848,7 +848,7 @@ code {
 
 .lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
 .lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
 }
 
 .lx-info-wrapper .lx-tooltip {
@@ -1042,7 +1042,7 @@ code {
 }
 
 .lx .lx-index li:hover:not(li.lx-selected) {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
   color: var(--color-interactive-hover-background);
 }
 

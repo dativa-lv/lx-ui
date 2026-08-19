@@ -418,7 +418,7 @@
 }
 
 .custom-context-menu:not(.lx-disabled) .selected-person-display:hover {
-  background: var(--color-grid-hover-background);
+  background: var(--color-data-grid-background-hover);
   cursor: pointer;
 }
 

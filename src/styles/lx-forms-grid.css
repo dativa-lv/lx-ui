@@ -92,7 +92,7 @@ svg .lx-shade {
 .lx:not(.lx-theme-contrast) .lx-form-grid > header > .lx-group .lx-info-wrapper-content:focus .lx-toolbar-chip,
 .lx:not(.lx-theme-contrast) .lx-form-grid > header > .lx-group .lx-info-wrapper-content:hover .lx-toolbar-chip > .lx-state,
 .lx:not(.lx-theme-contrast) .lx-form-grid > header > .lx-group .lx-info-wrapper-content:focus .lx-toolbar-chip > .lx-state {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
 }
 
 .lx-form-grid > header > .lx-group .lx-toolbar-chip .lx-info-wrapper .lx-info-wrapper-content {
@@ -707,7 +707,7 @@ svg .lx-shade {
 
 .lx .lx-form-grid > aside.lx-index.lx-index-small > ul li:hover,
 .lx .lx-form-grid > aside.lx-index > ul li:hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
 }
 
 .lx .lx-form-grid > aside.lx-index > ul li:focus-within {
@@ -1349,7 +1349,7 @@ p .lx-person-display-wrapper {
 }
 
 .lx-form-grid > .lx-index > ul > li:hover > .index-text > .inner-text{
-  color: var(--color-grid-hover-foreground);
+  color: var(--color-data-grid-foreground-hover);
 }
 
 .lx-form-grid > .lx-index > ul > li > .index-text.lx-invalid,
@@ -1366,13 +1366,13 @@ p .lx-person-display-wrapper {
 }
 
 .lx-form-grid > .lx-index > ul > li:hover > .index-text > p{
-  color: var(--color-grid-hover-foreground);
+  color: var(--color-data-grid-foreground-hover);
 }
 
 .lx-theme-contrast .lx-form-grid > .lx-index > ul > li:hover > .index-text > svg,
 .lx-theme-contrast .lx-form-grid > .lx-index > ul > li:hover > .index-text svg,
 .lx-theme-contrast .lx-form-grid > .lx-index > ul > li.lx-selected > .index-text svg {
-  fill: var(--color-grid-hover-foreground);
+  fill: var(--color-data-grid-foreground-hover);
 }
 
 .lx .lx-layout .additional-index-button.lx-button.lx-invalid {
@@ -1427,10 +1427,6 @@ p .lx-person-display-wrapper {
   opacity: 0;
   opacity: var(--form-bottom-shadow-opacity);
   pointer-events: none;
-}
-
-.lx .lx-form-grid .lx-data-grid.lx-scrollable table {
-  width: 100%;
 }
 
 .lx-form-grid .lx-row > .lx-row-header {

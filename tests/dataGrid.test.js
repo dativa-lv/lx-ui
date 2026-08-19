@@ -107,7 +107,7 @@ describe('Scrollable performance', () => {
     wrapper = mountComponent({ props });
 
     const grid = wrapper.find('.lx-data-grid');
-    const header = wrapper.find('.lx-grid-header-wrapper > .lx-grid-row[role="toolbar"]');
+    const header = wrapper.find('.lx-grid-header-wrapper > .lx-grid-row');
 
     // Let the mount/virtualization setup (which schedules its own animation
     // frame to settle initial row heights) finish before measuring scroll sync.
@@ -138,7 +138,7 @@ describe('Scrollable performance', () => {
     wrapper = mountComponent({ props });
 
     const grid = wrapper.find('.lx-data-grid');
-    const header = wrapper.find('.lx-grid-header-wrapper > .lx-grid-row[role="toolbar"]');
+    const header = wrapper.find('.lx-grid-header-wrapper > .lx-grid-row');
 
     await flushVirtualizationSetup();
     callbacks.length = 0;
@@ -169,7 +169,7 @@ describe('Scrollable performance', () => {
     wrapper = mountComponent({ props });
 
     const grid = wrapper.find('.lx-data-grid');
-    const header = wrapper.find('.lx-grid-header-wrapper > .lx-grid-row[role="toolbar"]');
+    const header = wrapper.find('.lx-grid-header-wrapper > .lx-grid-row');
 
     await flushVirtualizationSetup();
     callbacks.length = 0;
@@ -728,9 +728,9 @@ describe('Sticky header scroll offset', () => {
     stubStickyHeader({ stickyOffset: '48px', height: 40 });
     const reserve = watchReserveWhileScrolling();
 
-    await wrapper.findAll('.lx-grid-header-wrapper .lx-cell-header')[0].trigger('click');
+    await wrapper.findAll('.lx-grid-header-row .lx-cell-header-sort-button')[0].trigger('click');
     await nextTick();
-    await wrapper.find('.lx-grid-header-wrapper').trigger('keydown', { key: 'ArrowRight' });
+    await wrapper.find('.lx-grid-header-row').trigger('keydown', { key: 'ArrowRight' });
     await nextTick();
 
     // A header cell cannot hide behind the header it belongs to, so reserving the band
@@ -742,7 +742,6 @@ describe('Sticky header scroll offset', () => {
     wrapper = mountComponent({ props: { ...props, stickyHeader: false }, attachTo: document.body });
 
     await flushVirtualizationSetup();
-    stubStickyHeader({ stickyOffset: '48px', height: 40 });
     placeBodyCells(20);
     const reserve = watchReserveWhileScrolling();
 

@@ -8,9 +8,21 @@ Our goal is to make upgrading predictable, transparent, and worth the effort.
 
 ### Breaking changes
 
-#### LxList
+#### LxDataGrid, LxList
 
-The `--color-list-text-selected-disabled` token, which previously defaulted to `--color-disabled` or `--contrast-background` in contrast mode, has been removed.
+**Token renames**
+
+- `--padding-cell` → `--data-grid-cell-padding`
+- `--color-grid-header` → `--color-data-grid-column-header-background`
+- `--color-grid-hover-foreground` → `--color-data-grid-foreground-hover`
+- `--color-grid-hover-background` → `--color-data-grid-background-hover`
+- `--color-grid-header-hover-background` → `--color-data-grid-column-header-background-hover`
+
+**Token removals**
+
+- `--grid-primary-button-size` (12rem)
+- `--padding-grid-header` (1rem)
+- `--color-list-text-selected-disabled` (`--color-disabled` or `--contrast-background` in contrast mode)
 
 ## 2.2.12 → 2.2.13
 

@@ -304,7 +304,7 @@
 }
 
 .lx-expander .lx-expander-head > header:hover .lx-modifier-icon+.lx-indicator {
-  border: var(--border-width-2) solid var(--color-grid-hover-background);
+  border: var(--border-width-2) solid var(--color-data-grid-background-hover);
 }
 
 .lx-expander.lx-expander-highlighted .lx-expander-head > header .lx-icon-wrapper .lx-modifier-icon+.lx-indicator {

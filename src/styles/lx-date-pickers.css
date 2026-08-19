@@ -487,7 +487,7 @@
 .lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):not(.lx-disabled-month):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):not(.lx-disabled-year):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):not(.lx-disabled-quarter):hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
   color: var(--contrast-background);
 }
 
@@ -503,7 +503,7 @@
 .lx .lx-layout .lx-calendar-container .lx-calendar-month.lx-today:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-year.lx-today:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):hover,
 .lx .lx-layout .lx-calendar-container .lx-calendar-quarter.lx-today:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
 }
 
 .lx-calendar-day-wrapper.hovering-range.start-day,
@@ -646,7 +646,7 @@
 }
 
 .lx .lx-layout .lx-calendar-container .lx-time-list-item:hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-time-lists-separator {
@@ -656,7 +656,7 @@
 .lx .lx-layout .lx-calendar-container .lx-active-hour,
 .lx .lx-layout .lx-calendar-container .lx-active-minutes {
   position: absolute;
-  background-color: var(--color-grid-header-hover-background);
+  background-color: var(--color-data-grid-column-header-background-hover);
   width: 4.7rem;
   height: 2rem;
 }

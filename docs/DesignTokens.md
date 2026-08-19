@@ -32,3 +32,4 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 - [LxModal](tokens/ModalTokens.md)
 - [Popovers](tokens/PopoverTokens.md)
 - [LxNumberSlider](tokens/NumberSliderTokens.md)
+- [LxDataGrid](tokens/DataGridTokens.md)

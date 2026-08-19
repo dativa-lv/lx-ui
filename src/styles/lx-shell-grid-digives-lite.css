@@ -463,7 +463,7 @@
 .end-section .lx-user-menu.opened,
 .digives-lite-nav-panel .lx-user-menu:hover,
 .digives-lite-nav-panel .lx-user-menu.opened {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-data-grid-background-hover);
 
 }
 

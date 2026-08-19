@@ -27,7 +27,7 @@ import { useLoadingAnnouncer } from '@/hooks/useLoadingAnnouncer';
 import { formatValueArray } from '@/utils/formatUtils';
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, remToPx, resolveRemToken, parsePaddingRem } from '@/utils/generalUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
@@ -258,6 +258,7 @@ const selectedRowsRaw = ref({});
 const gridTemplateColumns = ref('');
 const skeletonGridTemplateColumns = ref('6rem 12rem auto');
 const header = ref(null);
+const nonStickyHeaderRow = ref(null);
 const container = ref(null);
 const autoScrollable = ref(false);
 
@@ -299,12 +300,15 @@ function extractVirtualRangeWithPinned(range, pinnedIndex) {
 }
 const isDataGridLayoutVisible = ref(false);
 
+const focusedHeaderColumnId = ref(null);
+const headerSortButtonRefs = new Map();
 let pendingHeaderScrollRaf = null;
 let pendingContainerScrollRaf = null;
 let pendingBoundingRaf = null;
 // scrollLeft we last mirrored onto each element; a matching scroll event is our echo
 let mirroredHeaderLeft = null;
 let mirroredContainerLeft = null;
+let scrollCompensationRaf = null;
 
 const { width, height } = useWindowSize();
 
@@ -318,6 +322,29 @@ const containerSize = useElementSize(container);
 const headerSize = useElementSize(header);
 const lxElement = document.querySelector('.lx');
 const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+let actionVars = null;
+
+function getActionColumnVars() {
+  if (actionVars) return actionVars;
+
+  const computedStyle = getComputedStyle(lxElement);
+  const actionWidthRem = resolveRemToken(
+    lxElement,
+    computedStyle.getPropertyValue('--data-grid-action-width')
+  );
+  const horizontalPaddingRem = parsePaddingRem(
+    computedStyle.getPropertyValue('--data-grid-action-set-padding'),
+    lxElement
+  );
+  const gapRem = resolveRemToken(
+    lxElement,
+    computedStyle.getPropertyValue('--data-grid-action-gap')
+  );
+
+  actionVars = { actionWidthRem, horizontalPaddingRem, gapRem };
+  return actionVars;
+}
 
 function isElementRenderable(element) {
   if (!element) return false;
@@ -368,6 +395,7 @@ function isCoveredByStickyHeader(target, wrapper) {
     !!wrapper &&
     target instanceof HTMLElement &&
     !wrapper.contains(target) &&
+    !nonStickyHeaderRow.value?.contains(target) &&
     target.getBoundingClientRect().top < wrapper.getBoundingClientRect().bottom
   );
 }
@@ -774,6 +802,17 @@ function scheduleContainerScroll() {
     syncContainerScroll();
   });
 }
+
+watch(
+  () => props.stickyHeader,
+  async (isSticky) => {
+    if (!isSticky) return;
+    await nextTick();
+    mirroredHeaderLeft = null;
+    mirroredContainerLeft = null;
+    syncHeaderScroll();
+  }
+);
 
 function setSorting(columnCode, direction) {
   sortedColumns.value[columnCode] = direction;
@@ -1576,10 +1615,34 @@ function updateGridTemplateColumns() {
     .filter((col) => props.showAllColumns || col.kind !== 'extra')
     .map((col) => gridColumnWidths[col.size] || 'auto');
 
-  const actionColumnWidth = props.actionDefinitions?.length > 1 ? '5rem' : '2.5rem';
+  let actionColumnWidth = '0px';
+  let selectingColumnWidth = '0px';
 
-  modifyColumn(templateColumns, hasActionButtons.value, actionColumnWidth, false);
-  modifyColumn(templateColumns, showSelecting.value, '3rem', true);
+  const needsActionColumn = hasActionButtons.value;
+  const needsSelectingColumn = showSelecting.value;
+
+  if (lxElement && (needsActionColumn || needsSelectingColumn)) {
+    const { actionWidthRem, horizontalPaddingRem, gapRem } = getActionColumnVars();
+
+    if (needsActionColumn) {
+      const rawCount = props.actionDefinitions?.length || 1;
+      const actionCount = Math.min(Math.max(0, rawCount), 2);
+
+      if (actionCount > 0) {
+        const gapsTotalRem = actionCount === 2 ? gapRem : 0;
+        const totalActionRem = actionWidthRem * actionCount + gapsTotalRem + horizontalPaddingRem;
+        actionColumnWidth = `${remToPx(totalActionRem)}px`;
+      }
+    }
+
+    if (needsSelectingColumn) {
+      const totalSelectingRem = actionWidthRem + horizontalPaddingRem;
+      selectingColumnWidth = `${remToPx(totalSelectingRem)}px`;
+    }
+  }
+
+  modifyColumn(templateColumns, needsActionColumn, actionColumnWidth, false);
+  modifyColumn(templateColumns, needsSelectingColumn, selectingColumnWidth, true);
 
   gridTemplateColumns.value = templateColumns.join(' ');
 }
@@ -1588,17 +1651,17 @@ function updateGridTemplateColumns() {
 let lastColumnWidths = null;
 
 function syncColumnWidths() {
-  if (!header.value || !container.value) return;
+  const headerEl = header.value || nonStickyHeaderRow.value;
+  if (!headerEl || !container.value) return;
 
-  if (props.loading) container.value.style.gridTemplateColumns = 'auto';
   autoScrollable.value = false;
 
   // without this if, totalWidth will be calculate assuming its possible to scroll and * size columns will be too wide
   if (props.scrollable === 'auto') {
-    container.value.classList.remove('lx-scrollable');
+    dataGridWrapperRef.value.classList.remove('lx-scrollable');
   }
 
-  const { children } = header.value;
+  const { children } = headerEl;
   let totalWidth = 0;
 
   Array.from(children).forEach((child) => {
@@ -1607,13 +1670,12 @@ function syncColumnWidths() {
 
   if (totalWidth > container.value.getBoundingClientRect().width && props.scrollable === 'auto') {
     autoScrollable.value = true;
-    container.value.style.gridTemplateColumns = 'auto';
-    container.value.classList.add('lx-scrollable');
+    dataGridWrapperRef.value.classList.add('lx-scrollable');
   } else {
     autoScrollable.value = false;
   }
 
-  const headerColumns = Array.from(header.value.children).filter(
+  const headerColumns = Array.from(headerEl.children).filter(
     (col) => col.getBoundingClientRect().width > 0
   );
 
@@ -1622,7 +1684,6 @@ function syncColumnWidths() {
     .join(' ');
 
   container.value.style.setProperty('--lx-data-grid-template-columns', columnWidths);
-  container.value.style.gridTemplateColumns = columnWidths;
 
   if (shouldVirtualizeDataGrid.value) {
     if (columnWidths !== lastColumnWidths) dataGridVirtualizer.value?.value.measure();
@@ -1644,7 +1705,7 @@ function getInlineDisplayValue(styleText = '') {
 
 const topOutOfBounds = computed(() => {
   const keyOpacity = '--grid-top-shadow-opacity';
-  const keySize = '--grid-header-size';
+  const keySize = '--data-grid-header-size';
   const limit = 100;
   const headerHeight = headerSize.height?.value || 0;
 
@@ -1663,7 +1724,7 @@ const topOutOfBounds = computed(() => {
   return `${keyOpacity}: 0; ${keySize}: ${headerHeight}px;`;
 });
 
-const fullBleedMargin = computed(() => {
+const isFullBleedActive = computed(() => {
   if (
     !props.fullBleed ||
     !props.scrollable ||
@@ -1673,6 +1734,13 @@ const fullBleedMargin = computed(() => {
     dataGridWrapperRef.value?.closest('.lx-form-grid') ||
     width.value <= 1920
   ) {
+    return false;
+  }
+  return true;
+});
+
+const fullBleedMargin = computed(() => {
+  if (!isFullBleedActive.value) {
     return `--grid-left-margin: var(--space-0); --grid-right-margin: var(--space-0);`;
   }
 
@@ -1916,6 +1984,40 @@ function handleMenuClick(rowIndex, rowKey) {
   dropDownMenus.get(rowKey)?.openMenu();
 }
 
+function handleStickyHeaderFocusIn(event) {
+  event.target.blur();
+  nonStickyHeaderRow.value?.focus({ preventScroll: true });
+}
+
+function handleHeaderSortButtonFocus(colId) {
+  focusedHeaderColumnId.value = colId;
+
+  const scroller = resolveDataGridScrollParent(container.value) || window;
+  const before =
+    scroller === window
+      ? { top: window.scrollY, left: window.scrollX }
+      : { top: scroller.scrollTop, left: scroller.scrollLeft };
+
+  if (scrollCompensationRaf) cancelAnimationFrame(scrollCompensationRaf);
+  scrollCompensationRaf = requestAnimationFrame(() => {
+    scrollCompensationRaf = null;
+    if (scroller === window) {
+      window.scrollTo({ top: before.top, left: before.left, behavior: 'instant' });
+    } else {
+      scroller.scrollTop = before.top;
+      scroller.scrollLeft = before.left;
+    }
+  });
+}
+
+function handleHeaderSortButtonBlur() {
+  focusedHeaderColumnId.value = null;
+}
+
+function forwardHeaderClick(colId) {
+  headerSortButtonRefs.get(colId)?.click();
+}
+
 watch(
   () => props.selectionKind,
   (newKind) => {
@@ -1987,7 +2089,12 @@ defineExpose({ cancelSelection, selectRows, sortBy });
     :data-id="id"
     class="lx-data-grid-wrapper"
     :style="`${topOutOfBounds} ${fullBleedMargin} ${stickyToolbarAdditionalHeight}`"
-    :class="[{ 'lx-grid-sticky': stickyHeader }, { 'lx-grid-sticky-toolbar': props.stickyToolbar }]"
+    :class="[
+      { 'lx-grid-sticky': stickyHeader },
+      { 'lx-grid-sticky-toolbar': props.stickyToolbar },
+      { 'lx-scrollable': scrollable === true || autoScrollable === true },
+      { 'lx-full-bleed': isFullBleedActive },
+    ]"
   >
     <p class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
       <template v-if="shouldAnnounceLoading">{{ displayTexts.loadingStart }}</template>
@@ -2111,594 +2218,298 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         </template>
       </LxToolbar>
     </div>
-
-    <div
-      ref="headerWrapperRef"
-      class="lx-grid-header-wrapper"
-      aria-hidden="false"
-      @keydown="(e) => onKeydown(e, rowCount, computedGridHeaderColumnCount)"
-    >
+    <div class="lx-data-grid-table-wrapper">
       <div
-        ref="header"
-        class="lx-grid-row"
-        role="toolbar"
-        :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
-        :tabindex="-1"
-        @scroll="scheduleContainerScroll"
+        v-if="stickyHeader"
+        ref="headerWrapperRef"
+        class="lx-grid-header-wrapper"
+        aria-hidden="true"
+        tabindex="-1"
+        @focusin="handleStickyHeaderFocusIn"
       >
         <div
-          v-if="showSelecting"
-          class="lx-cell-header lx-cell-selector"
-          :tabindex="hasSorting ? getTabIndex(0, 0) : null"
-          :ref="(el) => (hasSorting ? registerCell(el, 0, 0) : null)"
-          @keydown.space.prevent
-        />
-        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
-        <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus-->
-        <div
-          v-for="(col, colIndex) in gridColumnsDisplay"
-          :key="col.id"
-          :title="formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)"
-          class="lx-cell-header"
-          :aria-sort="getAriaSorting(sortedColumns[col.id])"
-          :aria-label="
-            formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
-          "
-          role="button"
-          :tabindex="hasSorting ? getTabIndex(0, showSelecting ? colIndex + 1 : colIndex) : null"
-          :ref="
-            (el) =>
-              hasSorting ? registerCell(el, 0, showSelecting ? colIndex + 1 : colIndex) : null
-          "
-          :class="[
-            {
-              'lx-cell-number':
-                col.type === 'number' || col.type === 'decimal' || col.type === 'float',
-            },
-            {
-              'lx-cell-sortable': hasSorting,
-            },
-            {
-              'lx-cell-sorted': sortedColumns[col.id],
-            },
-            {
-              'lx-cell-extra': col.kind === 'extra',
-            },
-            {
-              'lx-cell-xs': col.size === 'xs',
-            },
-            {
-              'lx-cell-s': col.size === 's',
-            },
-            {
-              'lx-cell-m': col.size === 'm',
-            },
-            {
-              'lx-cell-l': col.size === 'l',
-            },
-            {
-              'lx-cell-xl': col.size === 'xl',
-            },
-            {
-              'lx-cell-stretch': col.size === '*',
-            },
-          ]"
-          @click="handleHeaderClick(col.id, colIndex)"
-          @keydown.space.prevent
-          @keyup.space.prevent="sortColumn(col.id)"
-          @keyup.enter="sortColumn(col.id)"
+          ref="header"
+          class="lx-grid-row"
+          tabindex="-1"
+          :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
+          @scroll.passive="scheduleContainerScroll"
         >
-          <div>
-            <p class="lx-primary" v-if="col.size !== 'xs'">{{ col.name }}</p>
-            <LxIcon
-              value="sort-down"
-              v-if="sortedColumns[col.id] === 'desc'"
-              :title="
-                formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
-              "
-            />
-            <LxIcon
-              value="sort-up"
-              v-if="sortedColumns[col.id] === 'asc'"
-              :title="
-                formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
-              "
-            />
-            <LxIcon
-              value="sort-default"
-              v-if="!sortedColumns[col.id]"
-              :title="
-                formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
-              "
-            />
-          </div>
-        </div>
+          <div
+            v-if="showSelecting"
+            class="lx-cell-header lx-cell-selector"
+            @keydown.space.prevent
+          />
 
-        <div v-if="hasActionButtons" class="lx-cell-header lx-cell-action" />
-      </div>
-    </div>
-
-    <article
-      ref="container"
-      :id="id"
-      class="lx-data-grid"
-      :class="[
-        { 'lx-scrollable': scrollable === true || autoScrollable === true },
-        { 'lx-data-grid-full': showAllColumns },
-        { 'lx-loading': loading },
-      ]"
-      :tabindex="-1"
-      @scroll="scheduleHeaderScroll()"
-      @keydown="(e) => onKeydown(e, rowCount, computedGridColumnCount, isMenuOpen)"
-    >
-      <div
-        class="lx-grid-table"
-        v-show="!loading"
-        role="table"
-        :aria-labelledby="`${id}-label`"
-        :aria-describedby="`${id}-description`"
-      >
-        <div class="lx-invisible" role="row">
-          <div v-if="showSelecting" class="lx-cell-header" role="columnheader" />
+          <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
           <div
             v-for="col in gridColumnsDisplay"
             :key="col.id"
-            :aria-label="
-              formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
-            "
-            role="columnheader"
+            :data-col-id="col.id"
+            :title="formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)"
+            class="lx-cell-header"
+            :class="[
+              {
+                'lx-cell-number':
+                  col.type === 'number' || col.type === 'decimal' || col.type === 'float',
+              },
+              { 'lx-cell-sortable': hasSorting },
+              { 'lx-cell-sorted': sortedColumns[col.id] },
+              { 'lx-cell-extra': col.kind === 'extra' },
+              { 'lx-cell-xs': col.size === 'xs' },
+              { 'lx-cell-s': col.size === 's' },
+              { 'lx-cell-m': col.size === 'm' },
+              { 'lx-cell-l': col.size === 'l' },
+              { 'lx-cell-xl': col.size === 'xl' },
+              { 'lx-cell-stretch': col.size === '*' },
+              { 'lx-cell-header-highlighted': focusedHeaderColumnId === col.id },
+            ]"
+            @click="forwardHeaderClick(col.id)"
+            @keydown.space.prevent
+            @keyup.space.prevent="forwardHeaderClick(col.id)"
+            @keyup.enter="forwardHeaderClick(col.id)"
           >
-            {{ col.name }}
+            <div class="lx-sticky-header-content-wrapper">
+              <p class="lx-primary" v-if="col.size !== 'xs'">{{ col.name }}</p>
+              <LxIcon
+                value="sort-down"
+                v-if="sortedColumns[col.id] === 'desc'"
+                :title="
+                  formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
+                "
+              />
+              <LxIcon
+                value="sort-up"
+                v-if="sortedColumns[col.id] === 'asc'"
+                :title="
+                  formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
+                "
+              />
+              <LxIcon
+                value="sort-default"
+                v-if="!sortedColumns[col.id]"
+                :title="
+                  formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
+                "
+              />
+            </div>
           </div>
-          <div v-if="hasActionButtons" role="columnheader" />
-        </div>
 
+          <div v-if="hasActionButtons" class="lx-cell-header lx-cell-action" />
+        </div>
+      </div>
+
+      <article
+        ref="container"
+        :id="id"
+        class="lx-data-grid"
+        :class="[{ 'lx-data-grid-full': showAllColumns }, { 'lx-loading': loading }]"
+        :tabindex="-1"
+        @scroll.passive="scheduleHeaderScroll()"
+        @keydown="(e) => onKeydown(e, rowCount, computedGridColumnCount, isMenuOpen)"
+      >
         <div
-          class="lx-grid-content"
-          :class="[{ 'lx-grid-content-virtualized': shouldVirtualizeDataGrid }]"
-          :style="dataGridContentStyle"
+          class="lx-grid-table"
+          v-show="!loading"
+          role="table"
+          :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
+          :aria-labelledby="`${id}-label`"
+          :aria-describedby="`${id}-description`"
         >
-          <!-- Row focus is handled programmatically by the grid roving-focus manager. -->
           <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
           <div
-            v-for="{ row, rowIndex, rowKey, style } in displayedRows"
-            class="lx-grid-row"
-            :class="[{ 'lx-selected': selectedRowsRaw[row[idAttribute]] && hasSelecting }]"
-            :id="`row-${row[idAttribute]}`"
-            :style="style"
-            :ref="shouldVirtualizeDataGrid ? measureDataGridVirtualElement : null"
-            :tabindex="-1"
+            class="lx-grid-header-row"
+            ref="nonStickyHeaderRow"
             role="row"
-            :key="rowKey"
-            :data-index="shouldVirtualizeDataGrid ? rowIndex : null"
-            @dblclick="defaultActionClicked(row[idAttribute], row)"
+            :tabindex="-1"
+            @keydown="
+              (e) => {
+                onKeydown(e, rowCount, computedGridHeaderColumnCount);
+                e.stopPropagation();
+              }
+            "
           >
-            <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
-            <div
-              v-if="showSelecting"
-              class="lx-cell lx-cell-selector"
-              role="cell"
-              @click="setActiveFromClick(getGridRowIndex(rowIndex), 0)"
-            >
-              <template v-if="isSelectable(row)">
-                <LxCheckbox
-                  v-if="selectionKind === 'multiple'"
-                  :id="`select-${id}-${row[idAttribute]}`"
-                  v-model="selectedRowsRaw[row[idAttribute]]"
-                  :value="row[idAttribute]?.toString()"
-                  :disabled="isDisabled"
-                  :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0).toString()"
-                  :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
-                />
-                <LxRadioButton
-                  v-if="selectionKind === 'single'"
-                  :id="`select-${id}-${row[idAttribute]}`"
-                  v-model="selectedRowsRaw[row[idAttribute]]"
-                  :value="row[idAttribute]?.toString()"
-                  :disabled="isDisabled"
-                  :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0)"
-                  :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
-                  @click="selectRow(row[idAttribute])"
-                />
-              </template>
-              <p v-else class="lx-checkbox-placeholder"></p>
-            </div>
-            <!-- Since key events are assigned to the whole <div> (lx-grid-row) already -->
-            <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+            <div v-if="showSelecting" class="lx-cell-header lx-cell-selector" role="columnheader" />
             <div
               v-for="(col, colIndex) in gridColumnsDisplay"
               :key="col.id"
-              v-memo="[row, col, gridActiveRow, gridActiveCol, gridActiveItem, isDisabled]"
-              class="lx-cell"
-              role="cell"
-              :tabindex="
-                cellIsInteractive(row, col)
-                  ? getTabIndex(getGridRowIndex(rowIndex), showSelecting ? colIndex + 1 : colIndex)
-                  : -1
-              "
-              :ref="
-                cellIsInteractive(row, col)
-                  ? (el) =>
-                      registerCell(
-                        el,
-                        getGridRowIndex(rowIndex),
-                        showSelecting ? colIndex + 1 : colIndex
-                      )
-                  : null
-              "
+              class="lx-cell-header"
+              role="columnheader"
+              :aria-sort="getAriaSorting(sortedColumns[col.id])"
               :class="[
-                col.cellStaticClass,
                 {
-                  'lx-cell-link-disabled':
-                    (col.kind === 'clickable' && !checkEnableByAttributeName(row)) || isDisabled,
-                  'lx-cell-not-delegated': cellIsInteractive(row, col),
+                  'lx-cell-number':
+                    col.type === 'number' || col.type === 'decimal' || col.type === 'float',
                 },
+                { 'lx-cell-sortable': hasSorting },
+                { 'lx-cell-sorted': sortedColumns[col.id] },
+                { 'lx-cell-extra': col.kind === 'extra' },
+                { 'lx-cell-xs': col.size === 'xs' },
+                { 'lx-cell-s': col.size === 's' },
+                { 'lx-cell-m': col.size === 'm' },
+                { 'lx-cell-l': col.size === 'l' },
+                { 'lx-cell-xl': col.size === 'xl' },
+                { 'lx-cell-stretch': col.size === '*' },
               ]"
-              @click="
-                setActiveFromClick(
-                  getGridRowIndex(rowIndex),
-                  showSelecting ? colIndex + 1 : colIndex
-                )
-              "
-              @keydown.space.prevent
-              @keyup.enter="(event) => handleCellKey(event, col, row)"
-              @keyup.space="(event) => handleCellKey(event, col, row)"
             >
-              <component
-                v-if="isRenderableTextType(col.type)"
-                :is="isDateType(col.type) ? 'time' : 'span'"
-                :aria-label="getAriaLabel(col, row)"
-                :title="getTextTooltip(col, row)"
-                :class="{
-                  'lx-cell-tooltip':
-                    col.type === 'tooltip-text' || ['xs', 's', 'm'].includes(col.size),
-                  'lx-cell-clickable-button':
-                    props.clickableRole === 'button' && col.kind === 'clickable',
-                  'lx-cell-clickable': col.kind === 'clickable',
-                }"
+              <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
+              <div
+                v-if="hasSorting"
+                role="button"
+                class="lx-cell-header-sort-button"
+                :data-col-id="col.id"
+                :ref="
+                  (el) => {
+                    registerCell(el, 0, showSelecting ? colIndex + 1 : colIndex);
+                    headerSortButtonRefs.set(col.id, el);
+                  }
+                "
+                :tabindex="getTabIndex(0, showSelecting ? colIndex + 1 : colIndex)"
+                @click="handleHeaderClick(col.id, colIndex)"
+                @keyup.enter="handleHeaderClick(col.id, colIndex)"
+                @keyup.space.prevent="handleHeaderClick(col.id, colIndex)"
+                @focus="handleHeaderSortButtonFocus(col.id)"
+                @blur="handleHeaderSortButtonBlur"
+                @keydown.space.prevent
+              >
+                <p class="lx-primary" v-if="col.size !== 'xs'">{{ col.name }}</p>
+                <LxIcon value="sort-down" v-if="sortedColumns[col.id] === 'desc'" />
+                <LxIcon value="sort-up" v-if="sortedColumns[col.id] === 'asc'" />
+                <LxIcon value="sort-default" v-if="!sortedColumns[col.id]" />
+              </div>
+
+              <p v-else class="lx-primary" :title="col.title">{{ col.name }}</p>
+            </div>
+
+            <div
+              v-if="hasActionButtons"
+              class="lx-cell-header lx-cell-action"
+              role="columnheader"
+              :title="displayTexts.actions"
+            />
+          </div>
+
+          <div
+            class="lx-grid-content"
+            :class="[{ 'lx-grid-content-virtualized': shouldVirtualizeDataGrid }]"
+            :style="dataGridContentStyle"
+          >
+            <!-- Row focus is handled programmatically by the grid roving-focus manager. -->
+            <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
+            <div
+              v-for="{ row, rowIndex, rowKey, style } in displayedRows"
+              class="lx-grid-row"
+              :class="[{ 'lx-selected': selectedRowsRaw[row[idAttribute]] && hasSelecting }]"
+              :id="`row-${row[idAttribute]}`"
+              :style="style"
+              :ref="shouldVirtualizeDataGrid ? measureDataGridVirtualElement : null"
+              :tabindex="-1"
+              role="row"
+              :key="rowKey"
+              :data-index="shouldVirtualizeDataGrid ? rowIndex : null"
+              @dblclick="defaultActionClicked(row[idAttribute], row)"
+            >
+              <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+              <div
+                v-if="showSelecting"
+                class="lx-cell lx-cell-selector"
+                role="cell"
+                @click="setActiveFromClick(getGridRowIndex(rowIndex), 0)"
+              >
+                <template v-if="isSelectable(row)">
+                  <div class="lx-data-grid-selection-wrapper">
+                    <LxCheckbox
+                      v-if="selectionKind === 'multiple'"
+                      :id="`select-${id}-${row[idAttribute]}`"
+                      v-model="selectedRowsRaw[row[idAttribute]]"
+                      :value="row[idAttribute]?.toString()"
+                      :disabled="isDisabled"
+                      :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0).toString()"
+                      :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
+                    />
+                    <LxRadioButton
+                      v-if="selectionKind === 'single'"
+                      :id="`select-${id}-${row[idAttribute]}`"
+                      v-model="selectedRowsRaw[row[idAttribute]]"
+                      :value="row[idAttribute]?.toString()"
+                      :disabled="isDisabled"
+                      :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0)"
+                      :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
+                      @click="selectRow(row[idAttribute])"
+                    />
+                  </div>
+                </template>
+                <p v-else class="lx-checkbox-placeholder"></p>
+              </div>
+              <!-- Since key events are assigned to the whole <div> (lx-grid-row) already -->
+              <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+              <div
+                v-for="(col, colIndex) in gridColumnsDisplay"
+                :key="col.id"
+                v-memo="[row, col, gridActiveRow, gridActiveCol, gridActiveItem, isDisabled]"
+                class="lx-cell"
+                role="cell"
                 :tabindex="
-                  isCellDelegated(col) &&
-                  !(col.kind === 'clickable' && isRenderableTextType(col.type))
+                  cellIsInteractive(row, col)
                     ? getTabIndex(
                         getGridRowIndex(rowIndex),
                         showSelecting ? colIndex + 1 : colIndex
                       )
                     : -1
                 "
-                :role="col.kind === 'clickable' ? props.clickableRole : null"
-                :datetime="isDateType(col.type) ? row[col.attributeName] : null"
                 :ref="
-                  isCellDelegated(col) &&
-                  !(col.kind === 'clickable' && isRenderableTextType(col.type))
+                  cellIsInteractive(row, col)
                     ? (el) =>
                         registerCell(
-                          el ?? null,
+                          el,
                           getGridRowIndex(rowIndex),
                           showSelecting ? colIndex + 1 : colIndex
                         )
                     : null
                 "
-                @keyup.space="handleKey(col, row)"
-                @keyup.enter="handleKey(col, row)"
-                @click="handleClick(col, row)"
+                :class="[
+                  col.cellStaticClass,
+                  {
+                    'lx-cell-link-disabled':
+                      (col.kind === 'clickable' && !checkEnableByAttributeName(row)) || isDisabled,
+                    'lx-cell-not-delegated': cellIsInteractive(row, col),
+                  },
+                ]"
+                @click="
+                  setActiveFromClick(
+                    getGridRowIndex(rowIndex),
+                    showSelecting ? colIndex + 1 : colIndex
+                  )
+                "
+                @keydown.space.prevent
+                @keyup.enter="(event) => handleCellKey(event, col, row)"
+                @keyup.space="(event) => handleCellKey(event, col, row)"
               >
-                <LxEmptyValue
-                  v-if="
-                    formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) ===
-                    '—'
-                  "
-                  :texts="{ emptyValue: displayTexts.emptyValue }"
-                />
-                <template v-else>{{
-                  formatValue(row[col.attributeName], col.type, col.options?.fractionDigits)
-                }}</template>
-              </component>
-
-              <LxStateDisplay
-                v-if="col.type === 'state'"
-                :value="row[col?.attributeName]"
-                :dictionary="col?.dictionary ? col?.dictionary : col?.options"
-                :texts="{ emptyValue: displayTexts.emptyValue }"
-              />
-              <LxRating
-                v-if="col.type === 'rating'"
-                v-model="row[col.attributeName]"
-                readOnly
-                :disabled="props.busy"
-                :focusable="
-                  isCellDelegated(col)
-                    ? getFocusable(
-                        getGridRowIndex(rowIndex),
-                        showSelecting ? colIndex + 1 : colIndex
-                      )
-                    : false
-                "
-                :ref="
-                  isCellDelegated(col)
-                    ? (el) =>
-                        registerCell(
-                          el ?? null,
+                <component
+                  v-if="isRenderableTextType(col.type)"
+                  :is="isDateType(col.type) ? 'time' : 'span'"
+                  :aria-label="getAriaLabel(col, row)"
+                  :title="getTextTooltip(col, row)"
+                  :class="{
+                    'lx-cell-tooltip':
+                      col.type === 'tooltip-text' || ['xs', 's', 'm'].includes(col.size),
+                    'lx-cell-clickable-button':
+                      props.clickableRole === 'button' && col.kind === 'clickable',
+                    'lx-cell-clickable': col.kind === 'clickable',
+                  }"
+                  :tabindex="
+                    isCellDelegated(col) &&
+                    !(col.kind === 'clickable' && isRenderableTextType(col.type))
+                      ? getTabIndex(
                           getGridRowIndex(rowIndex),
                           showSelecting ? colIndex + 1 : colIndex
                         )
-                    : null
-                "
-                :texts="{ ...displayTexts.rating, emptyValue: displayTexts.emptyValue }"
-              />
-
-              <template v-if="col.type === 'icon'">
-                <template
-                  v-if="
-                    isObject(row?.[col?.attributeName]) && !isValueEmpty(row?.[col?.attributeName])
+                      : -1
                   "
-                >
-                  <div
-                    class="lx-grid-icon-wrapper"
-                    :class="{
-                      'lx-icon-has-tooltip':
-                        row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label,
-                      'only-icon': !isValidString(row?.[col?.attributeName]?.label),
-                    }"
-                  >
-                    <template
-                      v-if="
-                        isValidString(row?.[col?.attributeName]?.icon) ||
-                        isValidString(row?.[col?.attributeName]?.label)
-                      "
-                    >
-                      <LxInfoWrapper
-                        :focusable="
-                          isCellDelegated(
-                            col,
-                            isObject(row?.[col?.attributeName]) &&
-                              !isValueEmpty(row?.[col?.attributeName])
-                          )
-                            ? getFocusable(
-                                getGridRowIndex(rowIndex),
-                                showSelecting ? colIndex + 1 : colIndex
-                              )
-                            : false
-                        "
-                        :ref="
-                          isCellDelegated(
-                            col,
-                            isObject(row?.[col?.attributeName]) &&
-                              !isValueEmpty(row?.[col?.attributeName])
-                          )
-                            ? (el) =>
-                                registerCell(
-                                  el ?? null,
-                                  getGridRowIndex(rowIndex),
-                                  showSelecting ? colIndex + 1 : colIndex
-                                )
-                            : null
-                        "
-                        :disabled="
-                          !isValidString(row?.[col?.attributeName]?.title) &&
-                          !isValidString(row?.[col?.attributeName]?.label)
-                        "
-                      >
-                        <div
-                          class="lx-grid-icon-content-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-4"
-                        >
-                          <LxIcon
-                            :value="
-                              isValidString(row?.[col?.attributeName]?.icon)
-                                ? row?.[col?.attributeName]?.icon
-                                : 'default'
-                            "
-                            :icon-set="row?.[col?.attributeName]?.iconSet"
-                            :customClass="`lx-grid-column-icon ${
-                              row?.[col?.attributeName]?.category
-                            }`"
-                          />
-                          <p
-                            v-if="
-                              col.size !== 'xs' && isValidString(row?.[col?.attributeName]?.label)
-                            "
-                            class="lx-grid-icon-text"
-                          >
-                            {{ row?.[col?.attributeName].label }}
-                          </p>
-                        </div>
-                        <template #panel>
-                          <p class="lx-data">
-                            {{
-                              row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label
-                            }}
-                          </p>
-                        </template>
-                      </LxInfoWrapper>
-                    </template>
-                    <LxEmptyValue
-                      class="empty-icon-value"
-                      v-else
-                      :texts="{ emptyValue: displayTexts.emptyValue }"
-                    />
-                  </div>
-                </template>
-
-                <template
-                  v-else-if="
-                    !isObject(row?.[col?.attributeName]) && !isValueEmpty(row?.[col?.attributeName])
-                  "
-                >
-                  <div class="lx-grid-icon-wrapper">
-                    <LxIcon :value="row?.[col?.attributeName]" customClass="lx-grid-column-icon" />
-                  </div>
-                </template>
-                <LxEmptyValue
-                  class="empty-icon-value"
-                  v-else
-                  :texts="{ emptyValue: displayTexts.emptyValue }"
-                />
-              </template>
-
-              <template v-if="col.type === 'flag' || col.type === 'country'">
-                <div
-                  class="flag-column"
-                  v-if="
-                    typeof row[col.attributeName] === 'string' &&
-                    isValidString(row[col.attributeName])
-                  "
-                >
-                  <LxFlag
-                    size="s"
-                    :value="row[col.attributeName]"
-                    :locale="locale"
-                    :meaningful="row[col.attributeName]?.meaningful || true"
-                  />
-                </div>
-
-                <div class="flag-column" v-else-if="typeof row[col.attributeName] === 'object'">
-                  <LxFlagItemDisplay
-                    :value="row[col.attributeName]"
-                    nameAttribute="name"
-                    idAttribute="id"
-                    :locale="locale"
-                    :meaningful="row[col.attributeName]?.meaningful || false"
-                    :texts="{ emptyValue: displayTexts.emptyValue }"
-                  />
-                </div>
-                <LxEmptyValue
-                  class="empty-flag-value"
-                  v-else
-                  :texts="{ emptyValue: displayTexts.emptyValue }"
-                />
-              </template>
-
-              <template v-if="col.type === 'person'">
-                <div class="lx-cell-person-wrapper">
-                  <LxPersonDisplay
-                    :value="row[col.attributeName]"
-                    :kind="col.options?.avatarKind"
-                    :customAttributes="col.options?.customAttributes"
-                    :texts="
-                      row[col.attributeName]?.texts || {
-                        ...displayTexts.personDisplay,
-                        emptyValue: displayTexts.emptyValue,
-                      }
-                    "
-                    size="s"
-                    :customRole="col.kind === 'clickable' ? clickableRole : null"
-                    :focusable="
-                      isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
-                        ? getFocusable(
-                            getGridRowIndex(rowIndex),
-                            showSelecting ? colIndex + 1 : colIndex,
-                            0
-                          )
-                        : false
-                    "
-                    :ref="
-                      isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
-                        ? (el) =>
-                            registerCell(
-                              el ?? null,
-                              getGridRowIndex(rowIndex),
-                              showSelecting ? colIndex + 1 : colIndex,
-                              0
-                            )
-                        : null
-                    "
-                    @click="
-                      defaultActionName && col.kind === 'clickable'
-                        ? defaultActionClicked(row[idAttribute], row)
-                        : null
-                    "
-                    @keyup.enter.space="
-                      defaultActionName && col.kind === 'clickable'
-                        ? defaultActionClicked(row[idAttribute], row)
-                        : null
-                    "
-                  />
-                  <LxButton
-                    v-if="
-                      col?.options?.actionDefinitions?.[0] &&
-                      (!col.options.actionDefinitions[0]?.visibleByAttribute ||
-                        row[col.options.actionDefinitions[0]?.visibleByAttribute])
-                    "
-                    :id="`${id}-${row[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
-                    variant="icon-only"
-                    kind="ghost"
-                    :label="
-                      col.options.actionDefinitions[0]?.name ||
-                      col.options.actionDefinitions[0]?.label
-                    "
-                    :title="
-                      col.options.actionDefinitions[0]?.title ||
-                      col.options.actionDefinitions[0]?.tooltip
-                    "
-                    :icon="col.options.actionDefinitions[0]?.icon"
-                    :iconSet="col.options.actionDefinitions[0]?.iconSet"
-                    :loading="col.options.actionDefinitions[0]?.loading"
-                    :busy="col.options.actionDefinitions[0]?.busy"
-                    :destructive="col.options.actionDefinitions[0]?.destructive"
-                    :disabled="
-                      isDisabled ||
-                      col.options.actionDefinitions[0]?.disabled ||
-                      (col.options.actionDefinitions[0]?.enableByAttribute
-                        ? !row[col.options.actionDefinitions[0]?.enableByAttribute]
-                        : false)
-                    "
-                    :active="col.options.actionDefinitions[0]?.active"
-                    :badge="col.options.actionDefinitions[0]?.badge"
-                    :badgeType="col.options.actionDefinitions[0]?.badgeType"
-                    :badgeIcon="col.options.actionDefinitions[0]?.badgeIcon"
-                    :badgeTitle="col.options.actionDefinitions[0]?.badgeTitle"
-                    :tabindex="
-                      getTabIndex(
-                        getGridRowIndex(rowIndex),
-                        showSelecting ? colIndex + 1 : colIndex,
-                        1
-                      )
-                    "
-                    :ref="
-                      (el) =>
-                        registerCell(
-                          el ?? null,
-                          getGridRowIndex(rowIndex),
-                          showSelecting ? colIndex + 1 : colIndex,
-                          1
-                        )
-                    "
-                    @click.stop="
-                      handleActionClick(
-                        col?.options?.actionDefinitions[0]?.id,
-                        row[idAttribute],
-                        actionAdditionalParameter
-                      )
-                    "
-                  />
-                </div>
-              </template>
-              <template v-if="col.type === 'array'">
-                <LxInfoWrapper
-                  v-if="
-                    row[col.attributeName] &&
-                    row[col.attributeName].length >
-                      (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
-                  "
-                  :focusable="
-                    isCellDelegated(
-                      col,
-                      row[col.attributeName] &&
-                        row[col.attributeName].length >
-                          (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
-                    )
-                      ? getFocusable(
-                          getGridRowIndex(rowIndex),
-                          showSelecting ? colIndex + 1 : colIndex
-                        )
-                      : false
-                  "
+                  :role="col.kind === 'clickable' ? props.clickableRole : null"
+                  :datetime="isDateType(col.type) ? row[col.attributeName] : null"
                   :ref="
-                    isCellDelegated(
-                      col,
-                      row[col.attributeName] &&
-                        row[col.attributeName].length >
-                          (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
-                    )
+                    isCellDelegated(col) &&
+                    !(col.kind === 'clickable' && isRenderableTextType(col.type))
                       ? (el) =>
                           registerCell(
                             el ?? null,
@@ -2707,195 +2518,440 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                           )
                       : null
                   "
+                  @keyup.space="handleKey(col, row)"
+                  @keyup.enter="handleKey(col, row)"
+                  @click="handleClick(col, row)"
                 >
-                  <div class="lx-indicator">
-                    <LxEmptyValue
+                  <LxEmptyValue
+                    v-if="
+                      formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) ===
+                      '—'
+                    "
+                    :texts="{ emptyValue: displayTexts.emptyValue }"
+                  />
+                  <template v-else>{{
+                    formatValue(row[col.attributeName], col.type, col.options?.fractionDigits)
+                  }}</template>
+                </component>
+
+                <LxStateDisplay
+                  v-if="col.type === 'state'"
+                  :value="row[col?.attributeName]"
+                  :dictionary="col?.dictionary ? col?.dictionary : col?.options"
+                  :texts="{ emptyValue: displayTexts.emptyValue }"
+                />
+                <LxRating
+                  v-if="col.type === 'rating'"
+                  v-model="row[col.attributeName]"
+                  readOnly
+                  :disabled="props.busy"
+                  :focusable="
+                    isCellDelegated(col)
+                      ? getFocusable(
+                          getGridRowIndex(rowIndex),
+                          showSelecting ? colIndex + 1 : colIndex
+                        )
+                      : false
+                  "
+                  :ref="
+                    isCellDelegated(col)
+                      ? (el) =>
+                          registerCell(
+                            el ?? null,
+                            getGridRowIndex(rowIndex),
+                            showSelecting ? colIndex + 1 : colIndex
+                          )
+                      : null
+                  "
+                  :texts="{ ...displayTexts.rating, emptyValue: displayTexts.emptyValue }"
+                />
+
+                <template v-if="col.type === 'icon'">
+                  <template
+                    v-if="
+                      isObject(row?.[col?.attributeName]) &&
+                      !isValueEmpty(row?.[col?.attributeName])
+                    "
+                  >
+                    <div
+                      class="lx-grid-icon-wrapper"
+                      :class="{
+                        'lx-icon-has-tooltip':
+                          row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label,
+                        'only-icon': !isValidString(row?.[col?.attributeName]?.label),
+                      }"
+                    >
+                      <template
+                        v-if="
+                          isValidString(row?.[col?.attributeName]?.icon) ||
+                          isValidString(row?.[col?.attributeName]?.label)
+                        "
+                      >
+                        <LxInfoWrapper
+                          :focusable="
+                            isCellDelegated(
+                              col,
+                              isObject(row?.[col?.attributeName]) &&
+                                !isValueEmpty(row?.[col?.attributeName])
+                            )
+                              ? getFocusable(
+                                  getGridRowIndex(rowIndex),
+                                  showSelecting ? colIndex + 1 : colIndex
+                                )
+                              : false
+                          "
+                          :ref="
+                            isCellDelegated(
+                              col,
+                              isObject(row?.[col?.attributeName]) &&
+                                !isValueEmpty(row?.[col?.attributeName])
+                            )
+                              ? (el) =>
+                                  registerCell(
+                                    el ?? null,
+                                    getGridRowIndex(rowIndex),
+                                    showSelecting ? colIndex + 1 : colIndex
+                                  )
+                              : null
+                          "
+                          :disabled="
+                            !isValidString(row?.[col?.attributeName]?.title) &&
+                            !isValidString(row?.[col?.attributeName]?.label)
+                          "
+                        >
+                          <div
+                            class="lx-grid-icon-content-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-4"
+                          >
+                            <LxIcon
+                              :value="
+                                isValidString(row?.[col?.attributeName]?.icon)
+                                  ? row?.[col?.attributeName]?.icon
+                                  : 'default'
+                              "
+                              :icon-set="row?.[col?.attributeName]?.iconSet"
+                              :customClass="`lx-grid-column-icon ${
+                                row?.[col?.attributeName]?.category
+                              }`"
+                            />
+                            <p
+                              v-if="
+                                col.size !== 'xs' && isValidString(row?.[col?.attributeName]?.label)
+                              "
+                              class="lx-grid-icon-text"
+                            >
+                              {{ row?.[col?.attributeName].label }}
+                            </p>
+                          </div>
+                          <template #panel>
+                            <p class="lx-data">
+                              {{
+                                row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label
+                              }}
+                            </p>
+                          </template>
+                        </LxInfoWrapper>
+                      </template>
+                      <LxEmptyValue
+                        class="empty-icon-value"
+                        v-else
+                        :texts="{ emptyValue: displayTexts.emptyValue }"
+                      />
+                    </div>
+                  </template>
+
+                  <template
+                    v-else-if="
+                      !isObject(row?.[col?.attributeName]) &&
+                      !isValueEmpty(row?.[col?.attributeName])
+                    "
+                  >
+                    <div class="lx-grid-icon-wrapper">
+                      <LxIcon
+                        :value="row?.[col?.attributeName]"
+                        customClass="lx-grid-column-icon"
+                      />
+                    </div>
+                  </template>
+                  <LxEmptyValue
+                    class="empty-icon-value"
+                    v-else
+                    :texts="{ emptyValue: displayTexts.emptyValue }"
+                  />
+                </template>
+
+                <template v-if="col.type === 'flag' || col.type === 'country'">
+                  <div
+                    class="flag-column"
+                    v-if="
+                      typeof row[col.attributeName] === 'string' &&
+                      isValidString(row[col.attributeName])
+                    "
+                  >
+                    <LxFlag
+                      size="s"
+                      :value="row[col.attributeName]"
+                      :locale="locale"
+                      :meaningful="row[col.attributeName]?.meaningful || true"
+                    />
+                  </div>
+
+                  <div class="flag-column" v-else-if="typeof row[col.attributeName] === 'object'">
+                    <LxFlagItemDisplay
+                      :value="row[col.attributeName]"
+                      nameAttribute="name"
+                      idAttribute="id"
+                      :locale="locale"
+                      :meaningful="row[col.attributeName]?.meaningful || false"
+                      :texts="{ emptyValue: displayTexts.emptyValue }"
+                    />
+                  </div>
+                  <LxEmptyValue
+                    class="empty-flag-value"
+                    v-else
+                    :texts="{ emptyValue: displayTexts.emptyValue }"
+                  />
+                </template>
+
+                <template v-if="col.type === 'person'">
+                  <div class="lx-cell-person-wrapper">
+                    <LxPersonDisplay
+                      :value="row[col.attributeName]"
+                      :kind="col.options?.avatarKind"
+                      :customAttributes="col.options?.customAttributes"
+                      :texts="
+                        row[col.attributeName]?.texts || {
+                          ...displayTexts.personDisplay,
+                          emptyValue: displayTexts.emptyValue,
+                        }
+                      "
+                      size="s"
+                      :customRole="col.kind === 'clickable' ? clickableRole : null"
+                      :focusable="
+                        isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
+                          ? getFocusable(
+                              getGridRowIndex(rowIndex),
+                              showSelecting ? colIndex + 1 : colIndex,
+                              0
+                            )
+                          : false
+                      "
+                      :ref="
+                        isCellDelegated(col, !isValueEmpty(row?.[col?.attributeName]))
+                          ? (el) =>
+                              registerCell(
+                                el ?? null,
+                                getGridRowIndex(rowIndex),
+                                showSelecting ? colIndex + 1 : colIndex,
+                                0
+                              )
+                          : null
+                      "
+                      @click="
+                        defaultActionName && col.kind === 'clickable'
+                          ? defaultActionClicked(row[idAttribute], row)
+                          : null
+                      "
+                      @keyup.enter.space="
+                        defaultActionName && col.kind === 'clickable'
+                          ? defaultActionClicked(row[idAttribute], row)
+                          : null
+                      "
+                    />
+                    <LxButton
                       v-if="
+                        col?.options?.actionDefinitions?.[0] &&
+                        (!col.options.actionDefinitions[0]?.visibleByAttribute ||
+                          row[col.options.actionDefinitions[0]?.visibleByAttribute])
+                      "
+                      :id="`${id}-${row[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
+                      variant="icon-only"
+                      kind="ghost"
+                      :label="
+                        col.options.actionDefinitions[0]?.name ||
+                        col.options.actionDefinitions[0]?.label
+                      "
+                      :title="
+                        col.options.actionDefinitions[0]?.title ||
+                        col.options.actionDefinitions[0]?.tooltip
+                      "
+                      :icon="col.options.actionDefinitions[0]?.icon"
+                      :iconSet="col.options.actionDefinitions[0]?.iconSet"
+                      :loading="col.options.actionDefinitions[0]?.loading"
+                      :busy="col.options.actionDefinitions[0]?.busy"
+                      :destructive="col.options.actionDefinitions[0]?.destructive"
+                      :disabled="
+                        isDisabled ||
+                        col.options.actionDefinitions[0]?.disabled ||
+                        (col.options.actionDefinitions[0]?.enableByAttribute
+                          ? !row[col.options.actionDefinitions[0]?.enableByAttribute]
+                          : false)
+                      "
+                      :active="col.options.actionDefinitions[0]?.active"
+                      :badge="col.options.actionDefinitions[0]?.badge"
+                      :badgeType="col.options.actionDefinitions[0]?.badgeType"
+                      :badgeIcon="col.options.actionDefinitions[0]?.badgeIcon"
+                      :badgeTitle="col.options.actionDefinitions[0]?.badgeTitle"
+                      :tabindex="
+                        getTabIndex(
+                          getGridRowIndex(rowIndex),
+                          showSelecting ? colIndex + 1 : colIndex,
+                          1
+                        )
+                      "
+                      :ref="
+                        (el) =>
+                          registerCell(
+                            el ?? null,
+                            getGridRowIndex(rowIndex),
+                            showSelecting ? colIndex + 1 : colIndex,
+                            1
+                          )
+                      "
+                      @click.stop="
+                        handleActionClick(
+                          col?.options?.actionDefinitions[0]?.id,
+                          row[idAttribute],
+                          actionAdditionalParameter
+                        )
+                      "
+                    />
+                  </div>
+                </template>
+                <template v-if="col.type === 'array'">
+                  <LxInfoWrapper
+                    v-if="
+                      row[col.attributeName] &&
+                      row[col.attributeName].length >
+                        (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
+                    "
+                    :focusable="
+                      isCellDelegated(
+                        col,
+                        row[col.attributeName] &&
+                          row[col.attributeName].length >
+                            (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
+                      )
+                        ? getFocusable(
+                            getGridRowIndex(rowIndex),
+                            showSelecting ? colIndex + 1 : colIndex
+                          )
+                        : false
+                    "
+                    :ref="
+                      isCellDelegated(
+                        col,
+                        row[col.attributeName] &&
+                          row[col.attributeName].length >
+                            (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
+                      )
+                        ? (el) =>
+                            registerCell(
+                              el ?? null,
+                              getGridRowIndex(rowIndex),
+                              showSelecting ? colIndex + 1 : colIndex
+                            )
+                        : null
+                    "
+                  >
+                    <div class="lx-indicator">
+                      <LxEmptyValue
+                        v-if="
+                          formatValue(
+                            row[col.attributeName],
+                            col.type,
+                            col.options?.displayItemsCount
+                          ) === '—'
+                        "
+                        :texts="{ emptyValue: displayTexts.emptyValue }"
+                      />
+                      <template v-else>{{
                         formatValue(
                           row[col.attributeName],
                           col.type,
                           col.options?.displayItemsCount
-                        ) === '—'
-                      "
-                      :texts="{ emptyValue: displayTexts.emptyValue }"
-                    />
-                    <template v-else>{{
-                      formatValue(row[col.attributeName], col.type, col.options?.displayItemsCount)
-                    }}</template>
-                  </div>
+                        )
+                      }}</template>
+                    </div>
 
-                  <template #panel>
-                    <ul class="array-type-list">
-                      <li v-for="i in row[col.attributeName]" v-bind:key="i">
-                        <div class="lx-row">
-                          <p class="lx-data">{{ i }}</p>
-                        </div>
-                      </li>
-                    </ul>
-                  </template>
-                </LxInfoWrapper>
+                    <template #panel>
+                      <ul class="array-type-list">
+                        <li v-for="i in row[col.attributeName]" v-bind:key="i">
+                          <div class="lx-row">
+                            <p class="lx-data">{{ i }}</p>
+                          </div>
+                        </li>
+                      </ul>
+                    </template>
+                  </LxInfoWrapper>
 
-                <template v-else>
-                  <template
-                    v-for="(i, index) in formatValue(
-                      row[col.attributeName],
-                      col.type,
-                      col.options?.displayItemsCount
-                    )"
-                    :key="index"
-                  >
-                    <LxEmptyValue
-                      v-if="i === '—'"
-                      :texts="{ emptyValue: displayTexts.emptyValue }"
-                    />
-                    <template v-else>{{ `${i} ` }}</template>
+                  <template v-else>
+                    <template
+                      v-for="(i, index) in formatValue(
+                        row[col.attributeName],
+                        col.type,
+                        col.options?.displayItemsCount
+                      )"
+                      :key="index"
+                    >
+                      <LxEmptyValue
+                        v-if="i === '—'"
+                        :texts="{ emptyValue: displayTexts.emptyValue }"
+                      />
+                      <template v-else>{{ `${i} ` }}</template>
+                    </template>
                   </template>
                 </template>
-              </template>
-            </div>
-
-            <div
-              v-if="hasActionButtons"
-              class="lx-cell-action"
-              :class="[{ 'show-cell-borders': scrollable === true || autoScrollable === true }]"
-              role="cell"
-            >
-              <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
-              <div
-                class="lx-toolbar"
-                v-if="getRowVisibleActions(row).length <= 2"
-                role="toolbar"
-                @click="
-                  (event) =>
-                    setActiveFromClick(
-                      getGridRowIndex(rowIndex),
-                      showSelecting ? colCount + 1 : colCount,
-                      true,
-                      getClickedActionIndex(event)
-                    )
-                "
-              >
-                <LxButton
-                  v-for="(action, actionIndex) in getRowVisibleActions(row)"
-                  :key="action.id"
-                  :id="`${id}-${row[idAttribute]}-action-${action.id}`"
-                  :label="action.name || action.label"
-                  :title="action.title || action.tooltip"
-                  :icon="action.icon"
-                  :iconSet="action.iconSet"
-                  :loading="action.loading"
-                  :busy="action.busy"
-                  kind="ghost"
-                  variant="icon-only"
-                  :destructive="action.destructive"
-                  :disabled="
-                    isDisabled ||
-                    action.disabled ||
-                    (action.enableByAttribute ? !row[action.enableByAttribute] : false)
-                  "
-                  :active="action.active"
-                  :badge="action.badge"
-                  :badgeType="action.badgeType"
-                  :badgeIcon="action.badgeIcon"
-                  :badgeTitle="action.badgeTitle"
-                  :tabindex="
-                    getTabIndex(
-                      getGridRowIndex(rowIndex),
-                      showSelecting ? colCount + 1 : colCount,
-                      actionIndex
-                    )
-                  "
-                  :ref="
-                    (el) =>
-                      registerCell(
-                        el ?? null,
-                        getGridRowIndex(rowIndex),
-                        showSelecting ? colCount + 1 : colCount,
-                        actionIndex
-                      )
-                  "
-                  :href="action.href"
-                  @click="handleActionClick(action.id, row[idAttribute], actionAdditionalParameter)"
-                />
               </div>
 
-              <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
               <div
-                v-if="getRowVisibleActions(row).length > 2"
-                class="lx-toolbar"
-                role="toolbar"
-                @click="
-                  setActiveFromClick(
-                    getGridRowIndex(rowIndex),
-                    showSelecting ? colCount + 1 : colCount
-                  )
-                "
+                v-if="hasActionButtons"
+                class="lx-cell-action"
+                :class="[{ 'show-cell-borders': scrollable === true || autoScrollable === true }]"
+                role="cell"
               >
-                <LxButton
-                  v-if="
-                    !actionDefinitions?.[0]?.visibleByAttribute ||
-                    row[actionDefinitions?.[0]?.visibleByAttribute]
-                  "
-                  :id="`${id}-${row[idAttribute]}-action-${actionDefinitions?.[0]?.id}`"
-                  :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
-                  :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
-                  :icon="actionDefinitions?.[0]?.icon"
-                  :iconSet="actionDefinitions?.[0]?.iconSet"
-                  :loading="actionDefinitions?.[0]?.loading"
-                  :busy="actionDefinitions?.[0]?.busy"
-                  :destructive="actionDefinitions?.[0]?.destructive"
-                  :disabled="
-                    isDisabled ||
-                    actionDefinitions?.[0]?.disabled ||
-                    (actionDefinitions?.[0]?.enableByAttribute
-                      ? !row[actionDefinitions?.[0]?.enableByAttribute]
-                      : false)
-                  "
-                  kind="ghost"
-                  variant="icon-only"
-                  :active="actionDefinitions?.[0]?.active"
-                  :badge="actionDefinitions?.[0]?.badge"
-                  :badgeType="actionDefinitions?.[0]?.badgeType"
-                  :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
-                  :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
-                  :tabindex="
-                    getTabIndex(getGridRowIndex(rowIndex), showSelecting ? colCount + 1 : colCount)
-                  "
-                  :ref="
-                    (el) =>
-                      registerCell(
-                        el ?? null,
+                <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+                <div
+                  class="lx-toolbar"
+                  v-if="getRowVisibleActions(row).length <= 2"
+                  role="toolbar"
+                  @click="
+                    (event) =>
+                      setActiveFromClick(
                         getGridRowIndex(rowIndex),
-                        showSelecting ? colCount + 1 : colCount
+                        showSelecting ? colCount + 1 : colCount,
+                        true,
+                        getClickedActionIndex(event)
                       )
                   "
-                  :href="actionDefinitions?.[0]?.href"
-                  @click="
-                    handleActionClick(
-                      actionDefinitions?.[0]?.id,
-                      row[idAttribute],
-                      actionAdditionalParameter
-                    )
-                  "
-                />
-
-                <LxDropDownMenu
-                  :ref="dropDownMenuRefFor(rowKey)"
-                  placement="bottom-end"
-                  :disabled="isDisabled"
-                  :tabindex="-1"
-                  :actionDefinitions="getRowActionDefinitionsGroup(row)"
-                  @actionClick="
-                    (id) => handleActionClick(id, row[idAttribute], actionAdditionalParameter)
-                  "
                 >
-                  <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
-                  <div
-                    class="lx-toolbar grid-actions-menu"
+                  <LxButton
+                    v-for="(action, actionIndex) in getRowVisibleActions(row)"
+                    :key="action.id"
+                    :id="`${id}-${row[idAttribute]}-action-${action.id}`"
+                    :label="action.name || action.label"
+                    :title="action.title || action.tooltip"
+                    :icon="action.icon"
+                    :iconSet="action.iconSet"
+                    :loading="action.loading"
+                    :busy="action.busy"
+                    kind="ghost"
+                    variant="icon-only"
+                    :destructive="action.destructive"
+                    :disabled="
+                      isDisabled ||
+                      action.disabled ||
+                      (action.enableByAttribute ? !row[action.enableByAttribute] : false)
+                    "
+                    :active="action.active"
+                    :badge="action.badge"
+                    :badgeType="action.badgeType"
+                    :badgeIcon="action.badgeIcon"
+                    :badgeTitle="action.badgeTitle"
                     :tabindex="
                       getTabIndex(
                         getGridRowIndex(rowIndex),
-                        showSelecting ? colCount + 2 : colCount + 1
+                        showSelecting ? colCount + 1 : colCount,
+                        actionIndex
                       )
                     "
                     :ref="
@@ -2903,299 +2959,190 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         registerCell(
                           el ?? null,
                           getGridRowIndex(rowIndex),
-                          showSelecting ? colCount + 2 : colCount + 1
+                          showSelecting ? colCount + 1 : colCount,
+                          actionIndex
                         )
                     "
-                    @click.stop.prevent="handleMenuClick(rowIndex, rowKey)"
-                    @keyup.up.stop
-                    @keyup.down.stop
+                    :href="action.href"
+                    @click="
+                      handleActionClick(action.id, row[idAttribute], actionAdditionalParameter)
+                    "
+                  />
+                </div>
+
+                <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+                <div
+                  v-if="getRowVisibleActions(row).length > 2"
+                  class="lx-toolbar"
+                  role="toolbar"
+                  @click="
+                    setActiveFromClick(
+                      getGridRowIndex(rowIndex),
+                      showSelecting ? colCount + 1 : colCount
+                    )
+                  "
+                >
+                  <LxButton
+                    v-if="
+                      !actionDefinitions?.[0]?.visibleByAttribute ||
+                      row[actionDefinitions?.[0]?.visibleByAttribute]
+                    "
+                    :id="`${id}-${row[idAttribute]}-action-${actionDefinitions?.[0]?.id}`"
+                    :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
+                    :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
+                    :icon="actionDefinitions?.[0]?.icon"
+                    :iconSet="actionDefinitions?.[0]?.iconSet"
+                    :loading="actionDefinitions?.[0]?.loading"
+                    :busy="actionDefinitions?.[0]?.busy"
+                    :destructive="actionDefinitions?.[0]?.destructive"
+                    :disabled="
+                      isDisabled ||
+                      actionDefinitions?.[0]?.disabled ||
+                      (actionDefinitions?.[0]?.enableByAttribute
+                        ? !row[actionDefinitions?.[0]?.enableByAttribute]
+                        : false)
+                    "
+                    kind="ghost"
+                    variant="icon-only"
+                    :active="actionDefinitions?.[0]?.active"
+                    :badge="actionDefinitions?.[0]?.badge"
+                    :badgeType="actionDefinitions?.[0]?.badgeType"
+                    :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
+                    :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
+                    :tabindex="
+                      getTabIndex(
+                        getGridRowIndex(rowIndex),
+                        showSelecting ? colCount + 1 : colCount
+                      )
+                    "
+                    :ref="
+                      (el) =>
+                        registerCell(
+                          el ?? null,
+                          getGridRowIndex(rowIndex),
+                          showSelecting ? colCount + 1 : colCount
+                        )
+                    "
+                    :href="actionDefinitions?.[0]?.href"
+                    @click="
+                      handleActionClick(
+                        actionDefinitions?.[0]?.id,
+                        row[idAttribute],
+                        actionAdditionalParameter
+                      )
+                    "
+                  />
+
+                  <LxDropDownMenu
+                    :ref="dropDownMenuRefFor(rowKey)"
+                    placement="bottom-end"
+                    :disabled="isDisabled"
+                    :tabindex="-1"
+                    :actionDefinitions="getRowActionDefinitionsGroup(row)"
+                    @actionClick="
+                      (id) => handleActionClick(id, row[idAttribute], actionAdditionalParameter)
+                    "
                   >
-                    <LxButton
-                      :id="`${id}-${row[idAttribute]}-action`"
-                      icon="overflow-menu"
-                      kind="ghost"
-                      :disabled="isDisabled"
-                      :label="displayTexts.moreActions"
-                      variant="icon-only"
-                      :tabindex="-1"
-                    />
-                  </div>
-                </LxDropDownMenu>
+                    <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+                    <div
+                      class="grid-actions-menu"
+                      :tabindex="
+                        getTabIndex(
+                          getGridRowIndex(rowIndex),
+                          showSelecting ? colCount + 2 : colCount + 1
+                        )
+                      "
+                      :ref="
+                        (el) =>
+                          registerCell(
+                            el ?? null,
+                            getGridRowIndex(rowIndex),
+                            showSelecting ? colCount + 2 : colCount + 1
+                          )
+                      "
+                      @click.stop.prevent="handleMenuClick(rowIndex, rowKey)"
+                      @keyup.up.stop
+                      @keyup.down.stop
+                    >
+                      <LxButton
+                        :id="`${id}-${row[idAttribute]}-action`"
+                        icon="overflow-menu"
+                        kind="ghost"
+                        :disabled="isDisabled"
+                        :label="displayTexts.moreActions"
+                        variant="icon-only"
+                        :tabindex="-1"
+                      />
+                    </div>
+                  </LxDropDownMenu>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div
-        class="lx-skeleton lx-grid-table"
-        v-show="loading"
-        :aria-labelledby="`${id}-label`"
-        :aria-describedby="`${id}-description`"
-        :style="{
-          gridTemplateColumns: skeletonGridTemplateColumns,
-        }"
+        <div
+          class="lx-skeleton-grid-table"
+          v-show="loading"
+          :aria-labelledby="`${id}-label`"
+          :aria-describedby="`${id}-description`"
+          :style="{
+            gridTemplateColumns: skeletonGridTemplateColumns,
+          }"
+        >
+          <div class="lx-grid-row">
+            <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
+            <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
+            <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
+          </div>
+
+          <div class="lx-grid-row" v-for="index in props.skeletonRowCount" :key="index">
+            <div class="lx-cell lx-cell-s"><div class="lx-skeleton-placeholder"></div></div>
+            <div class="lx-cell lx-cell-m"><div class="lx-skeleton-placeholder"></div></div>
+            <div class="lx-cell lx-cell"><div class="lx-skeleton-placeholder"></div></div>
+          </div>
+        </div>
+      </article>
+
+      <LxEmptyState
+        v-if="items?.length < 1 && !(loading || busy)"
+        :label="displayTexts.noItems"
+        :description="displayTexts.noItemsDescription"
+        :icon="emptyStateIcon"
+        :actionDefinitions="emptyStateActionDefinitions"
+        @actionClick="emptyStateActionClicked"
+      />
+
+      <LxAppendableList
+        v-if="isResponsiveLayout"
+        :modelValue="rows"
+        :expandable="true"
+        :nameAttribute="primaryColumnDisplayAttribute()"
+        kind="compact"
+        :readOnly="true"
+        :hasSelecting="showSelecting"
+        :selectionKind="selectionKind"
+        :selectableAttribute="selectableAttribute"
+        :actionDefinitions="actionDefinitions"
+        :uppercase="false"
+        :columnCount="2"
+        :defaultExpanded="false"
+        :idAttribute="idAttribute"
+        v-model:selectedValues="selectedRowsRaw"
+        @actionClick="(val, item) => handleActionClick(val, item, actionAdditionalParameter)"
+        :class="[{ 'lx-data-grid-full': showAllColumns }]"
       >
-        <div class="lx-grid-row">
-          <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
-          <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
-          <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
-        </div>
+        <template #customItem="{ item }">
+          <template v-if="$slots.customResponsiveItem">
+            <slot name="customResponsiveItem" v-bind="{ item }" />
+          </template>
 
-        <div class="lx-grid-row" v-for="index in props.skeletonRowCount" :key="index">
-          <div class="lx-cell lx-cell-s"><div class="lx-skeleton-placeholder"></div></div>
-          <div class="lx-cell lx-cell-m"><div class="lx-skeleton-placeholder"></div></div>
-          <div class="lx-cell lx-cell"><div class="lx-skeleton-placeholder"></div></div>
-        </div>
-      </div>
-    </article>
-
-    <LxEmptyState
-      v-if="items?.length < 1 && !(loading || busy)"
-      :label="displayTexts.noItems"
-      :description="displayTexts.noItemsDescription"
-      :icon="emptyStateIcon"
-      :actionDefinitions="emptyStateActionDefinitions"
-      @actionClick="emptyStateActionClicked"
-    />
-
-    <LxAppendableList
-      v-if="isResponsiveLayout"
-      :modelValue="rows"
-      :expandable="true"
-      :nameAttribute="primaryColumnDisplayAttribute()"
-      kind="compact"
-      :readOnly="true"
-      :hasSelecting="showSelecting"
-      :selectionKind="selectionKind"
-      :selectableAttribute="selectableAttribute"
-      :actionDefinitions="actionDefinitions"
-      :uppercase="false"
-      :columnCount="2"
-      :defaultExpanded="false"
-      :idAttribute="idAttribute"
-      v-model:selectedValues="selectedRowsRaw"
-      @actionClick="(val, item) => handleActionClick(val, item, actionAdditionalParameter)"
-      :class="[{ 'lx-data-grid-full': showAllColumns }]"
-    >
-      <template #customItem="{ item }">
-        <template v-if="$slots.customResponsiveItem">
-          <slot name="customResponsiveItem" v-bind="{ item }" />
-        </template>
-
-        <template v-else>
-          <LxRow
-            :label="col.name"
-            v-for="col in columnsComputed?.filter((col) => col.type !== 'icon')"
-            :key="col.id"
-            columnSpan="2"
-            :class="[
-              {
-                'lx-cell-clickable': col.kind === 'clickable',
-              },
-              {
-                'lx-cell-primary': col.kind === 'primary',
-              },
-              {
-                'lx-cell-secondary': col.kind === 'secondary',
-              },
-              {
-                'lx-cell-extra': col.kind === 'extra',
-              },
-              {
-                'lx-cell-link-disabled':
-                  col.kind === 'clickable' && !checkEnableByAttributeName(item),
-              },
-            ]"
-          >
-            <component
-              v-if="isRenderableTextType(col.type)"
-              :is="isDateType(col.type) ? 'time' : 'span'"
-              :tabindex="col.kind === 'clickable' ? 0 : -1"
-              :datetime="isDateType(col.type) ? item[col.attributeName] : null"
-              @click="handleClick(col, item)"
-              @keydown.enter="handleKey(col, item)"
-            >
-              <LxEmptyValue
-                v-if="
-                  formatValue(item[col.attributeName], col.type, col.options?.fractionDigits) ===
-                  '—'
-                "
-                :texts="{ emptyValue: displayTexts.emptyValue }"
-              />
-              <template v-else>{{
-                formatValue(item[col.attributeName], col.type, col.options?.fractionDigits)
-              }}</template>
-            </component>
-
-            <template v-if="col.type === 'array'">
-              <LxInfoWrapper
-                v-if="
-                  item[col.attributeName] &&
-                  item[col.attributeName].length >
-                    (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
-                "
-              >
-                <div class="lx-indicator">
-                  <LxEmptyValue
-                    v-if="
-                      formatValue(
-                        item[col.attributeName],
-                        col.type,
-                        col.options?.displayItemsCount
-                      ) === '—'
-                    "
-                    :texts="{ emptyValue: displayTexts.emptyValue }"
-                  />
-                  <template v-else>{{
-                    formatValue(item[col.attributeName], col.type, col.options?.displayItemsCount)
-                  }}</template>
-                </div>
-                <template #panel>
-                  <ul>
-                    <li v-for="i in item[col.attributeName]" v-bind:key="i">
-                      <div class="lx-row">
-                        <p class="lx-data">{{ i }}</p>
-                      </div>
-                    </li>
-                  </ul>
-                </template>
-              </LxInfoWrapper>
-              <template v-else>
-                <template
-                  v-for="(i, index) in formatValue(
-                    item[col.attributeName],
-                    col.type,
-                    col.options?.displayItemsCount
-                  )"
-                  :key="index"
-                >
-                  <LxEmptyValue v-if="i === '—'" :texts="{ emptyValue: displayTexts.emptyValue }" />
-                  <template v-else>{{ `${i} ` }}</template>
-                </template>
-              </template>
-            </template>
-
-            <LxStateDisplay
-              v-else-if="col.type === 'state'"
-              :value="item[col?.attributeName]"
-              :dictionary="col?.dictionary ? col?.dictionary : col?.options"
-              :texts="{ emptyValue: displayTexts.emptyValue }"
-            />
-
-            <LxRating
-              v-else-if="col.type === 'rating'"
-              :disabled="props.busy"
-              readOnly
-              v-model="item[col.attributeName]"
-              :texts="{ ...displayTexts.rating, emptyValue: displayTexts.emptyValue }"
-            />
-
-            <template v-if="col.type === 'flag' || col.type === 'country'">
-              <div
-                class="flag-column"
-                v-if="
-                  typeof item[col.attributeName] === 'string' &&
-                  item[col.attributeName].trim() !== ''
-                "
-              >
-                <LxFlag size="s" :value="item[col.attributeName]" :locale="locale" />
-              </div>
-
-              <div class="flag-column" v-else-if="typeof item[col.attributeName] === 'object'">
-                <LxFlagItemDisplay
-                  :value="item[col.attributeName]"
-                  nameAttribute="name"
-                  idAttribute="id"
-                  :texts="{ emptyValue: displayTexts.emptyValue }"
-                />
-              </div>
-              <LxEmptyValue
-                class="empty-flag-value"
-                v-else
-                :texts="{ emptyValue: displayTexts.emptyValue }"
-              />
-            </template>
-            <template v-else-if="col.type === 'person'">
-              <div class="lx-cell-person-wrapper">
-                <LxPersonDisplay
-                  :value="item[col.attributeName]"
-                  :kind="col.options?.avatarKind"
-                  :customAttributes="col.options?.customAttributes"
-                  :texts="
-                    item[col.attributeName]?.texts || {
-                      ...displayTexts.personDisplay,
-                      emptyValue: displayTexts.emptyValue,
-                    }
-                  "
-                  size="s"
-                  :customRole="col.kind === 'clickable' ? clickableRole : null"
-                  @click="
-                    defaultActionName && col.kind === 'clickable'
-                      ? defaultActionClicked(item[idAttribute], item)
-                      : null
-                  "
-                  @keydown.enter="
-                    defaultActionName && col.kind === 'clickable'
-                      ? defaultActionClicked(item[idAttribute], item)
-                      : null
-                  "
-                />
-                <LxButton
-                  v-if="
-                    col?.options?.actionDefinitions?.[0] &&
-                    (!col.options.actionDefinitions[0]?.visibleByAttribute ||
-                      item[col.options.actionDefinitions[0]?.visibleByAttribute])
-                  "
-                  :id="`${id}-${item[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
-                  variant="icon-only"
-                  kind="ghost"
-                  :label="
-                    col.options.actionDefinitions[0]?.name ||
-                    col.options.actionDefinitions[0]?.label
-                  "
-                  :title="
-                    col.options.actionDefinitions[0]?.title ||
-                    col.options.actionDefinitions[0]?.tooltip
-                  "
-                  :icon="col.options.actionDefinitions[0]?.icon"
-                  :iconSet="col.options.actionDefinitions[0]?.iconSet"
-                  :loading="col.options.actionDefinitions[0]?.loading"
-                  :busy="col.options.actionDefinitions[0]?.busy"
-                  :destructive="col.options.actionDefinitions[0]?.destructive"
-                  :disabled="
-                    isDisabled ||
-                    col.options.actionDefinitions[0]?.disabled ||
-                    (col.options.actionDefinitions[0]?.enableByAttribute
-                      ? !item[col.options.actionDefinitions[0]?.enableByAttribute]
-                      : false)
-                  "
-                  :active="col.options.actionDefinitions[0]?.active"
-                  :badge="col.options.actionDefinitions[0]?.badge"
-                  :badgeType="col.options.actionDefinitions[0]?.badgeType"
-                  :badgeIcon="col.options.actionDefinitions[0]?.badgeIcon"
-                  :badgeTitle="col.options.actionDefinitions[0]?.badgeTitle"
-                  @click.stop="
-                    handleActionClick(
-                      col?.options?.actionDefinitions[0]?.id,
-                      item[idAttribute],
-                      actionAdditionalParameter
-                    )
-                  "
-                />
-              </div>
-            </template>
-          </LxRow>
-
-          <LxRow
-            v-if="shouldShowIconRow"
-            class="lx-responsive-grid-icons-row"
-            columnSpan="2"
-            :label="displayTexts.iconsResponsiveRowLabel"
-          >
-            <div
-              v-for="col in columnsComputed?.filter((col) => col.type === 'icon')"
+          <template v-else>
+            <LxRow
+              :label="col.name"
+              v-for="col in columnsComputed?.filter((col) => col.type !== 'icon')"
               :key="col.id"
+              columnSpan="2"
               :class="[
                 {
                   'lx-cell-clickable': col.kind === 'clickable',
@@ -3215,131 +3162,349 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 },
               ]"
             >
-              <template
-                v-if="
-                  isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
-                "
+              <component
+                v-if="isRenderableTextType(col.type)"
+                :is="isDateType(col.type) ? 'time' : 'span'"
+                :tabindex="col.kind === 'clickable' ? 0 : -1"
+                :datetime="isDateType(col.type) ? item[col.attributeName] : null"
+                @click="handleClick(col, item)"
+                @keydown.enter="handleKey(col, item)"
               >
-                <div
-                  class="lx-grid-icon-wrapper"
-                  :class="{
-                    'lx-icon-has-tooltip':
-                      item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label,
-                    'only-icon': !isValidString(item?.[col?.attributeName]?.label),
-                  }"
+                <LxEmptyValue
+                  v-if="
+                    formatValue(item[col.attributeName], col.type, col.options?.fractionDigits) ===
+                    '—'
+                  "
+                  :texts="{ emptyValue: displayTexts.emptyValue }"
+                />
+                <template v-else>{{
+                  formatValue(item[col.attributeName], col.type, col.options?.fractionDigits)
+                }}</template>
+              </component>
+
+              <template v-if="col.type === 'array'">
+                <LxInfoWrapper
+                  v-if="
+                    item[col.attributeName] &&
+                    item[col.attributeName].length >
+                      (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
+                  "
                 >
-                  <LxInfoWrapper
-                    :disabled="
-                      !isValidString(item?.[col?.attributeName]?.title) &&
-                      !isValidString(item?.[col?.attributeName]?.label)
-                    "
+                  <div class="lx-indicator">
+                    <LxEmptyValue
+                      v-if="
+                        formatValue(
+                          item[col.attributeName],
+                          col.type,
+                          col.options?.displayItemsCount
+                        ) === '—'
+                      "
+                      :texts="{ emptyValue: displayTexts.emptyValue }"
+                    />
+                    <template v-else>{{
+                      formatValue(item[col.attributeName], col.type, col.options?.displayItemsCount)
+                    }}</template>
+                  </div>
+                  <template #panel>
+                    <ul>
+                      <li v-for="i in item[col.attributeName]" v-bind:key="i">
+                        <div class="lx-row">
+                          <p class="lx-data">{{ i }}</p>
+                        </div>
+                      </li>
+                    </ul>
+                  </template>
+                </LxInfoWrapper>
+                <template v-else>
+                  <template
+                    v-for="(i, index) in formatValue(
+                      item[col.attributeName],
+                      col.type,
+                      col.options?.displayItemsCount
+                    )"
+                    :key="index"
                   >
-                    <div class="lx-grid-icon-content-wrapper lx-aligned-row">
-                      <LxIcon
-                        :value="item?.[col?.attributeName]?.icon"
-                        :icon-set="item?.[col?.attributeName]?.iconSet"
-                        :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
-                      />
-                      <p v-if="col.size !== 'xs'" class="lx-grid-icon-text">
-                        {{ item?.[col?.attributeName].label }}
-                      </p>
-                    </div>
-                    <template #panel>
-                      <p class="lx-data">
-                        {{ item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label }}
-                      </p>
-                    </template>
-                  </LxInfoWrapper>
-                </div>
+                    <LxEmptyValue
+                      v-if="i === '—'"
+                      :texts="{ emptyValue: displayTexts.emptyValue }"
+                    />
+                    <template v-else>{{ `${i} ` }}</template>
+                  </template>
+                </template>
               </template>
-              <template
-                v-else-if="
-                  !isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
-                "
-              >
-                <div class="lx-grid-icon-wrapper">
-                  <LxIcon :value="item?.[col?.attributeName]" customClass="lx-grid-column-icon" />
-                </div>
-              </template>
-              <LxEmptyValue
-                class="empty-icon-value"
-                v-else
+
+              <LxStateDisplay
+                v-else-if="col.type === 'state'"
+                :value="item[col?.attributeName]"
+                :dictionary="col?.dictionary ? col?.dictionary : col?.options"
                 :texts="{ emptyValue: displayTexts.emptyValue }"
               />
-            </div>
-          </LxRow>
-        </template>
-      </template>
-      <template #customHeader="{ item, expanded }" v-if="$slots.customResponsiveHeader">
-        <slot name="customResponsiveHeader" v-bind="{ item, expanded }" />
-      </template>
-    </LxAppendableList>
 
-    <footer class="lx-statusbar" v-if="showStatusbar">
-      <div
-        class="lx-group lx-group-paging count-selector"
-        v-if="hasPaging && showItemsCountSelector && !loading"
-      >
-        {{ displayTexts.itemsPerPage }}
-        <LxDropDownMenu :disabled="isDisabled">
-          <LxButton
-            :id="`${id}-items-per-page-button`"
-            :label="itemsPerPage.toString()"
-            icon="chevron-down"
-            kind="ghost"
-            customClass="lx-chip"
-            tabindex="-1"
-          />
-          <template #panel>
-            <div class="lx-button-set">
-              <LxButton
-                v-for="i in itemsCountSelector"
-                :key="i"
-                :id="`${id}-items-per-page-${i}`"
-                :label="`${i.toString()} ${displayTexts.itemsPerPageLabel}`"
-                :disabled="itemsPerPage === i || isDisabled"
-                @click="changeItemsPerPage(i)"
+              <LxRating
+                v-else-if="col.type === 'rating'"
+                :disabled="props.busy"
+                readOnly
+                v-model="item[col.attributeName]"
+                :texts="{ ...displayTexts.rating, emptyValue: displayTexts.emptyValue }"
               />
-            </div>
+
+              <template v-if="col.type === 'flag' || col.type === 'country'">
+                <div
+                  class="flag-column"
+                  v-if="
+                    typeof item[col.attributeName] === 'string' &&
+                    item[col.attributeName].trim() !== ''
+                  "
+                >
+                  <LxFlag size="s" :value="item[col.attributeName]" :locale="locale" />
+                </div>
+
+                <div class="flag-column" v-else-if="typeof item[col.attributeName] === 'object'">
+                  <LxFlagItemDisplay
+                    :value="item[col.attributeName]"
+                    nameAttribute="name"
+                    idAttribute="id"
+                    :texts="{ emptyValue: displayTexts.emptyValue }"
+                  />
+                </div>
+                <LxEmptyValue
+                  class="empty-flag-value"
+                  v-else
+                  :texts="{ emptyValue: displayTexts.emptyValue }"
+                />
+              </template>
+              <template v-else-if="col.type === 'person'">
+                <div class="lx-cell-person-wrapper">
+                  <LxPersonDisplay
+                    :value="item[col.attributeName]"
+                    :kind="col.options?.avatarKind"
+                    :customAttributes="col.options?.customAttributes"
+                    :texts="
+                      item[col.attributeName]?.texts || {
+                        ...displayTexts.personDisplay,
+                        emptyValue: displayTexts.emptyValue,
+                      }
+                    "
+                    size="s"
+                    :customRole="col.kind === 'clickable' ? clickableRole : null"
+                    @click="
+                      defaultActionName && col.kind === 'clickable'
+                        ? defaultActionClicked(item[idAttribute], item)
+                        : null
+                    "
+                    @keydown.enter="
+                      defaultActionName && col.kind === 'clickable'
+                        ? defaultActionClicked(item[idAttribute], item)
+                        : null
+                    "
+                  />
+                  <LxButton
+                    v-if="
+                      col?.options?.actionDefinitions?.[0] &&
+                      (!col.options.actionDefinitions[0]?.visibleByAttribute ||
+                        item[col.options.actionDefinitions[0]?.visibleByAttribute])
+                    "
+                    :id="`${id}-${item[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
+                    variant="icon-only"
+                    kind="ghost"
+                    :label="
+                      col.options.actionDefinitions[0]?.name ||
+                      col.options.actionDefinitions[0]?.label
+                    "
+                    :title="
+                      col.options.actionDefinitions[0]?.title ||
+                      col.options.actionDefinitions[0]?.tooltip
+                    "
+                    :icon="col.options.actionDefinitions[0]?.icon"
+                    :iconSet="col.options.actionDefinitions[0]?.iconSet"
+                    :loading="col.options.actionDefinitions[0]?.loading"
+                    :busy="col.options.actionDefinitions[0]?.busy"
+                    :destructive="col.options.actionDefinitions[0]?.destructive"
+                    :disabled="
+                      isDisabled ||
+                      col.options.actionDefinitions[0]?.disabled ||
+                      (col.options.actionDefinitions[0]?.enableByAttribute
+                        ? !item[col.options.actionDefinitions[0]?.enableByAttribute]
+                        : false)
+                    "
+                    :active="col.options.actionDefinitions[0]?.active"
+                    :badge="col.options.actionDefinitions[0]?.badge"
+                    :badgeType="col.options.actionDefinitions[0]?.badgeType"
+                    :badgeIcon="col.options.actionDefinitions[0]?.badgeIcon"
+                    :badgeTitle="col.options.actionDefinitions[0]?.badgeTitle"
+                    @click.stop="
+                      handleActionClick(
+                        col?.options?.actionDefinitions[0]?.id,
+                        item[idAttribute],
+                        actionAdditionalParameter
+                      )
+                    "
+                  />
+                </div>
+              </template>
+            </LxRow>
+
+            <LxRow
+              v-if="shouldShowIconRow"
+              class="lx-responsive-grid-icons-row"
+              columnSpan="2"
+              :label="displayTexts.iconsResponsiveRowLabel"
+            >
+              <div
+                v-for="col in columnsComputed?.filter((col) => col.type === 'icon')"
+                :key="col.id"
+                :class="[
+                  {
+                    'lx-cell-clickable': col.kind === 'clickable',
+                  },
+                  {
+                    'lx-cell-primary': col.kind === 'primary',
+                  },
+                  {
+                    'lx-cell-secondary': col.kind === 'secondary',
+                  },
+                  {
+                    'lx-cell-extra': col.kind === 'extra',
+                  },
+                  {
+                    'lx-cell-link-disabled':
+                      col.kind === 'clickable' && !checkEnableByAttributeName(item),
+                  },
+                ]"
+              >
+                <template
+                  v-if="
+                    isObject(item?.[col?.attributeName]) &&
+                    !isValueEmpty(item?.[col?.attributeName])
+                  "
+                >
+                  <div
+                    class="lx-grid-icon-wrapper"
+                    :class="{
+                      'lx-icon-has-tooltip':
+                        item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label,
+                      'only-icon': !isValidString(item?.[col?.attributeName]?.label),
+                    }"
+                  >
+                    <LxInfoWrapper
+                      :disabled="
+                        !isValidString(item?.[col?.attributeName]?.title) &&
+                        !isValidString(item?.[col?.attributeName]?.label)
+                      "
+                    >
+                      <div class="lx-grid-icon-content-wrapper lx-aligned-row">
+                        <LxIcon
+                          :value="item?.[col?.attributeName]?.icon"
+                          :icon-set="item?.[col?.attributeName]?.iconSet"
+                          :customClass="`lx-grid-column-icon ${
+                            item?.[col?.attributeName]?.category
+                          }`"
+                        />
+                        <p v-if="col.size !== 'xs'" class="lx-grid-icon-text">
+                          {{ item?.[col?.attributeName].label }}
+                        </p>
+                      </div>
+                      <template #panel>
+                        <p class="lx-data">
+                          {{
+                            item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label
+                          }}
+                        </p>
+                      </template>
+                    </LxInfoWrapper>
+                  </div>
+                </template>
+                <template
+                  v-else-if="
+                    !isObject(item?.[col?.attributeName]) &&
+                    !isValueEmpty(item?.[col?.attributeName])
+                  "
+                >
+                  <div class="lx-grid-icon-wrapper">
+                    <LxIcon :value="item?.[col?.attributeName]" customClass="lx-grid-column-icon" />
+                  </div>
+                </template>
+                <LxEmptyValue
+                  class="empty-icon-value"
+                  v-else
+                  :texts="{ emptyValue: displayTexts.emptyValue }"
+                />
+              </div>
+            </LxRow>
           </template>
-        </LxDropDownMenu>
-      </div>
+        </template>
+        <template #customHeader="{ item, expanded }" v-if="$slots.customResponsiveHeader">
+          <slot name="customResponsiveHeader" v-bind="{ item, expanded }" />
+        </template>
+      </LxAppendableList>
 
-      <div class="lx-group count-display" v-if="!loading">
-        {{ itemsLabel }}
-      </div>
+      <footer class="lx-statusbar" v-if="showStatusbar">
+        <div
+          class="lx-group lx-group-paging count-selector"
+          v-if="hasPaging && showItemsCountSelector && !loading"
+        >
+          <span> {{ displayTexts.itemsPerPage }}</span>
+          <LxDropDownMenu :disabled="isDisabled">
+            <LxButton
+              :id="`${id}-items-per-page-button`"
+              :label="itemsPerPage.toString()"
+              icon="chevron-down"
+              kind="ghost"
+              customClass="lx-chip"
+              tabindex="-1"
+            />
+            <template #panel>
+              <div class="lx-button-set">
+                <LxButton
+                  v-for="i in itemsCountSelector"
+                  :key="i"
+                  :id="`${id}-items-per-page-${i}`"
+                  :label="`${i.toString()} ${displayTexts.itemsPerPageLabel}`"
+                  :disabled="itemsPerPage === i || isDisabled"
+                  @click="changeItemsPerPage(i)"
+                />
+              </div>
+            </template>
+          </LxDropDownMenu>
+        </div>
+        <div class="lx-group count-display" v-if="!loading">
+          <div v-if="hasPaging && showItemsCountSelector && !loading" class="lx-divider"></div>
+          <span>{{ itemsLabel }}</span>
+        </div>
 
-      <div class="lx-group lx-group-paging" v-if="hasPaging && !loading">
-        <LxButton
-          :id="`${id}-action-first-page`"
-          kind="ghost"
-          icon="first-page"
-          :label="displayTexts.firstPage"
-          variant="icon-only"
-          :disabled="pageCurrent < 1 || isDisabled"
-          @click="selectFirstPage()"
-        />
-        <div class="lx-divider"></div>
-        <LxButton
-          :id="`${id}-action-previous-page`"
-          kind="ghost"
-          icon="previous-page"
-          :label="displayTexts.previousPage"
-          variant="icon-only"
-          :disabled="pageCurrent < 1 || isDisabled"
-          @click="selectPreviousPage"
-        />
-        <div class="lx-divider"></div>
-        <LxButton
-          :id="`${id}-action-next-page`"
-          kind="ghost"
-          icon="next-page"
-          :label="displayTexts.nextPage"
-          variant="icon-only"
-          :disabled="Number(pageCurrent) + 1 >= Number(pagesTotal) || isDisabled"
-          @click="selectNextPage"
-        />
-      </div>
-    </footer>
+        <div class="lx-group lx-group-paging paging-buttons" v-if="hasPaging && !loading">
+          <div class="lx-divider"></div>
+          <LxButton
+            :id="`${id}-action-first-page`"
+            kind="ghost"
+            icon="first-page"
+            :label="displayTexts.firstPage"
+            variant="icon-only"
+            :disabled="pageCurrent < 1 || isDisabled"
+            @click="selectFirstPage()"
+          />
+          <div class="lx-divider"></div>
+          <LxButton
+            :id="`${id}-action-previous-page`"
+            kind="ghost"
+            icon="previous-page"
+            :label="displayTexts.previousPage"
+            variant="icon-only"
+            :disabled="pageCurrent < 1 || isDisabled"
+            @click="selectPreviousPage"
+          />
+          <div class="lx-divider"></div>
+          <LxButton
+            :id="`${id}-action-next-page`"
+            kind="ghost"
+            icon="next-page"
+            :label="displayTexts.nextPage"
+            variant="icon-only"
+            :disabled="Number(pageCurrent) + 1 >= Number(pagesTotal) || isDisabled"
+            @click="selectNextPage"
+          />
+        </div>
+      </footer>
+    </div>
   </div>
 </template>

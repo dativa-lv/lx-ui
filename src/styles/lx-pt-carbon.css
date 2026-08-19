@@ -81,8 +81,44 @@
   --body-column-size: 1300px;
   --form-column-size: 30rem;
   --aside-size: 16rem;
-  --grid-primary-button-size: 12rem;
   --indicator-size: 2.5rem;
+
+  --data-grid-text-default-font-weight: var(--font-weight);
+  --data-grid-text-primary-font-weight: var(--font-weight-bold);
+  --data-grid-text-secondary-font-weight: var(--font-weight);
+  --data-grid-cell-padding: var(--space-0750) var(--space-1000);
+  --data-grid-cell-min-height: 3rem;
+  --data-grid-divider-border: var(--border-width-1) solid var(--color-chrome);
+  --data-grid-action-set-padding: var(--space-0);
+  --data-grid-action-set-gap: var(--space-0);
+  --data-grid-action-icon-size: var(--button-icon-size);
+  --data-grid-action-border: var(--button-ghost-border);
+  --data-grid-action-border-radius: var(--button-border-radius);
+  --data-grid-action-height: 3rem;
+  --data-grid-action-width: 3rem;
+  --data-grid-action-outline-offset: var(--button-ghost-outline-offset);
+
+  --data-grid-footer-divider-border: var(--border-width-1) solid var(--color-chrome);
+  --data-grid-footer-divider-height: stretch;
+  --data-grid-footer-button-icon-size: var(--button-icon-size);
+  --data-grid-footer-button-border: var(--button-ghost-border);
+  --data-grid-footer-button-border-radius: var(--button-border-radius);
+  --data-grid-footer-button-height: var(--button-height);
+  --data-grid-footer-button-width: var(--button-width);
+  --data-grid-footer-button-min-width: 5rem;
+  --data-grid-footer-button-icon-only-width: var(--button-icon-only-width);
+  --data-grid-footer-button-icon-only-min-width: var(--button-icon-only-min-width);
+  --data-grid-footer-button-outline-offset: var(--button-ghost-outline-offset);
+
+  --data-grid-footer-grid-template-columns: auto 1fr auto;
+  --data-grid-footer-grid-areas: 'count-selector count-display paging-buttons';
+  --data-grid-column-header-icon-size: var(--icon-size-s);
+  --data-grid-column-header-padding: var(--space-0);
+  --data-grid-column-header-cell-gap: var(--space-0250);
+  --data-grid-column-header-text-font-weight: var(--font-weight);
+  --data-grid-border-width: var(--border-width-0);
+  --data-grid-border-style: solid;
+  --data-grid-border-radius: var(--border-radius-0);
 
   --aside-border: var(--border-width-0) solid var(--color-chrome);
   --region-border: var(--border-width-0);
@@ -92,8 +128,6 @@
 
   --notification-border: var(--border-width-0) var(--border-width-0) var(--border-width-0) var(--border-width-4);
 
-  --padding-cell: var(--space-0750) var(--space-1000);
-  --padding-grid-header: var(--space-1000);
   --padding-form: var(--space-3000) var(--space-2000);
   --padding-default: var(--space-1000);
   --padding-form-negative: -2rem;

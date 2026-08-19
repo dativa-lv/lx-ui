@@ -14,7 +14,7 @@
   --color-label: #6e7681;
   --color-data: #1c1c1c;
   --color-chrome: #e6e7ee;
-  --color-grid-hover-background: #f6f6f6;
+  --color-data-grid-background-hover: #f6f6f6;
   --color-focus-background: #bf4e2c;
   --color-destructive: #ff0000;
   --color-nav-background: #d9710d;
@@ -107,7 +107,7 @@
   --color-label: #cccccc;
   --color-data: #dddddd;
   --color-chrome: #0c0c0c;
-  --color-grid-hover-background: var(--color-region-hover);
+  --color-data-grid-background-hover: var(--color-region-hover);
   --color-region-hover-background: var(--color-region-hover);
 
   --color-focus-background: #bf4e2c;
