@@ -706,7 +706,7 @@ header.lx.lx-layout-public .lx-header .lx-main-button .lx-badge-text {
   transition: font-size .2s ease-in-out;
 }
 
-.lx-layout > header .lx-header .lx-main-button .lx-badge.lx-badge-preprod {
+header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-preprod {
   background-color: var(--color-teal);
   border-color: var(--color-teal);
   color: var(--color-region);
@@ -1559,6 +1559,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx-dialog > .lx-main > div {
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: left;
 }
 
 @media (max-width: 800px) {
