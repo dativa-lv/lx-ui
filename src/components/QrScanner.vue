@@ -50,7 +50,7 @@ const props = defineProps({
   },
   labelId: { type: String, default: null },
   stickyToolbar: { type: Boolean, default: false, group: 'additional', sequence: 2 },
-  actionDefinitions: { type: Array, default: () => [] },
+  actionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 3 },
   texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,

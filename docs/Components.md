@@ -47,6 +47,12 @@ LX/UI provides over 50 components for different needs. Check these live demos fr
 - [🌐 LxToolbar](https://lx-ui.dev/sandbox/toolbar)
 - [🌐 LxLoaderView](https://lx-ui.dev/sandbox/loader-view)
 - [🌐 LxStack](https://lx-ui.dev/sandbox/stack)
+- [🌐 LxCard](https://lx-ui.dev/sandbox/card)
+- [🌐 LxInfoBox](https://lx-ui.dev/sandbox/info-box)
+- [🌐 LxDialog](https://lx-ui.dev/sandbox/dialog)
+- [🌐 LxModalForm](https://lx-ui.dev/sandbox/modal-form)
+- [🌐 LxTooltip](https://lx-ui.dev/sandbox/modal-form)
+- [🌐 LxChat](https://lx-ui.dev/sandbox/chat)
 
 
 ## Displayers

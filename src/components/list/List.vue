@@ -1,5 +1,16 @@
 <script setup>
-import { ref, computed, watch, onMounted, nextTick, inject, provide, onBeforeUnmount } from 'vue';
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  nextTick,
+  inject,
+  provide,
+  onBeforeUnmount,
+  getCurrentInstance,
+  onUnmounted,
+} from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxExpander from '@/components/Expander.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -22,53 +33,108 @@ import { loadLibrary } from '@/utils/libLoader';
 import useScrollVirtualizer from '@/hooks/useScrollVirtualizer';
 import { useLoadingAnnouncer } from '@/hooks/useLoadingAnnouncer';
 import { useWindowSize } from '@vueuse/core';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  items: { type: Array, default: null },
-  hasSearch: { type: Boolean, default: false },
-  groupDefinitions: { type: Array, default: null },
-  icon: { type: String, default: 'open' },
-  iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet },
-  kind: { type: String, default: 'default' }, // default, draggable, treelist
-  idAttribute: { type: String, default: 'id' },
-  nameAttribute: { type: String, default: 'name' },
-  descriptionAttribute: { type: String, default: 'description' },
-  hrefAttribute: { type: String, default: 'href' },
-  groupAttribute: { type: String, default: 'group' },
-  clickableAttribute: { type: String, default: 'clickable' },
-  iconAttribute: { type: String, default: 'icon' },
-  iconSetAttribute: { type: String, default: 'iconSet' },
-  tooltipAttribute: { type: String, default: 'tooltip' },
-  categoryAttribute: { type: String, default: 'category' },
-  childrenAttribute: { type: String, default: 'children' },
-  hasChildrenAttribute: { type: String, default: 'hasChildren' },
-  selectableAttribute: { type: String, default: 'selectable' },
-  orderAttribute: { type: String, default: 'order' },
-  actionDefinitions: { type: Array, default: null },
-  toolbarActionDefinitions: { type: Array, default: () => [] },
-  actionsLayout: { type: String, default: 'default' }, // default, vertical
-  emptyStateActionDefinitions: { type: Array, default: null },
-  emptyStateIcon: { type: String, default: '' },
-  listType: { type: String, default: '3' },
-  searchString: { type: String, default: '' },
-  searchSide: { type: String, default: 'client' }, // client, server
-  showLoadMore: { type: Boolean, default: false },
-  loading: { type: Boolean, default: false },
-  busy: { type: Boolean, default: false },
-  hideFilteredItems: { type: Boolean, default: false },
-  hasSelecting: { type: Boolean, default: false },
-  selectionKind: { type: String, default: 'single' }, // single, multiple
-  selectionActionDefinitions: { type: Array, default: () => [] },
-  includeUnspecifiedGroups: { type: Boolean, default: false },
+  items: { type: Array, default: null, group: 'main', sequence: 1 },
+  hasSearch: { type: Boolean, default: false, group: 'main', sequence: 9 },
+  groupDefinitions: { type: Array, default: null, group: 'main', sequence: 2 },
+  icon: { type: String, default: 'open', group: 'main', sequence: 15 },
+  iconSet: {
+    type: String,
+    default: () => useLx().getGlobals()?.iconSet,
+    group: 'main',
+    sequence: 16,
+    options: ['cds', 'material', 'brand', 'phosphor'],
+  },
+  kind: {
+    type: String,
+    default: 'default',
+    group: 'main',
+    sequence: 5,
+    options: ['default', 'draggable', 'treelist'],
+  },
+  idAttribute: { type: String, default: 'id', group: 'additional', sequence: 86 },
+  nameAttribute: { type: String, default: 'name', group: 'additional', sequence: 87 },
+  descriptionAttribute: { type: String, default: 'description', group: 'additional', sequence: 88 },
+  hrefAttribute: { type: String, default: 'href', group: 'additional', sequence: 89 },
+  groupAttribute: { type: String, default: 'group', group: 'additional', sequence: 90 },
+  clickableAttribute: { type: String, default: 'clickable', group: 'additional', sequence: 91 },
+  iconAttribute: { type: String, default: 'icon', group: 'additional', sequence: 92 },
+  iconSetAttribute: { type: String, default: 'iconSet', group: 'additional', sequence: 93 },
+  tooltipAttribute: { type: String, default: 'tooltip', group: 'additional', sequence: 94 },
+  categoryAttribute: { type: String, default: 'category', group: 'additional', sequence: 95 },
+  childrenAttribute: { type: String, default: 'children', group: 'additional', sequence: 96 },
+  hasChildrenAttribute: { type: String, default: 'hasChildren', group: 'additional', sequence: 97 },
+  selectableAttribute: { type: String, default: 'selectable', group: 'additional', sequence: 98 },
+  orderAttribute: { type: String, default: 'order', group: 'additional', sequence: 99 },
+  actionDefinitions: { type: Array, default: null, group: 'main', sequence: 3 },
+  toolbarActionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 1 },
+  actionsLayout: {
+    type: String,
+    default: 'default',
+    group: 'additional',
+    sequence: 8,
+    options: ['default', 'vertical'],
+  },
+  emptyStateActionDefinitions: { type: Array, default: null, group: 'additional', sequence: 6 },
+  emptyStateIcon: { type: String, default: '', group: 'additional', sequence: 7 },
+  listType: { type: String, default: '3', group: 'main', sequence: 6, options: ['1', '2', '3'] },
+  searchString: {
+    type: String,
+    default: '',
+  },
+  searchSide: {
+    type: String,
+    default: 'client',
+    group: 'main',
+    sequence: 10,
+    options: ['client', 'server'],
+  },
+  showLoadMore: { type: Boolean, default: false, group: 'main', sequence: 13 },
+  loading: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  busy: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  hideFilteredItems: { type: Boolean, default: false, group: 'main', sequence: 12 },
+  hasSelecting: { type: Boolean, default: false, group: 'main', sequence: 7 },
+  selectionKind: {
+    type: String,
+    default: 'single',
+    group: 'main',
+    sequence: 8,
+    options: ['single', 'multiple'],
+  },
+  selectionActionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 2 },
+  includeUnspecifiedGroups: { type: Boolean, default: false, group: 'additional', sequence: 4 },
   itemsStates: { type: Object, default: null },
-  mode: { type: String, default: 'client' }, // client, server
-  searchMode: { type: String, default: 'default' }, // default, compact
+  mode: {
+    type: String,
+    default: 'client',
+    group: 'mode',
+    sequence: 3,
+    options: ['client', 'server'],
+  },
+  searchMode: {
+    type: String,
+    default: 'default',
+    group: 'main',
+    sequence: 11,
+    options: ['default', 'compact'],
+  },
   labelId: { type: String, default: null },
-  hasSkipLink: { type: Boolean, default: false },
-  hasVirtualization: { type: Boolean, default: true },
-  stickyToolbar: { type: Boolean, default: false },
-  texts: { type: Object, default: () => ({}) },
+  hasSkipLink: { type: Boolean, default: false, group: 'additional', sequence: 5 },
+  hasVirtualization: { type: Boolean, default: true, group: 'additional', sequence: 3 },
+  stickyToolbar: { type: Boolean, default: false, group: 'main', sequence: 13 },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -1421,6 +1487,25 @@ const listColsClass = computed(() => {
   return null;
 });
 
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
+  registerBuilderInstance({
+    name: 'LxList',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxList' },
+    ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
+  });
+}
+
 onMounted(async () => {
   // @ts-ignore
   itemsArray.value = fillItemsArray();
@@ -1469,6 +1554,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
 <template>
   <div
     ref="listWrapper"
+    :data-id="id"
     class="lx-list-wrapper"
     :class="{
       'is-narrow': isNarrow,

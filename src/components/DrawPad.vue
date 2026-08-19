@@ -38,7 +38,7 @@ const props = defineProps({
   showColorPicker: { type: Boolean, default: false, group: 'main', sequence: 3 },
   showClearAll: { type: Boolean, default: false, group: 'main', sequence: 4 },
   labelId: { type: String, default: null },
-  stickyToolbar: { type: Boolean, default: false, group: 'additional', sequence: 3 },
+  stickyToolbar: { type: Boolean, default: false, group: 'additional', sequence: 4 },
   helperText: { type: String, default: null, group: 'main', sequence: 5 },
   helperTextKind: {
     type: String,
@@ -47,7 +47,7 @@ const props = defineProps({
     group: 'main',
     sequence: 6,
   },
-  actionDefinitions: { type: Array, default: () => [] },
+  actionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 6 },
   texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,

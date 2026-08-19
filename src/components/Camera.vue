@@ -41,7 +41,7 @@ const props = defineProps({
   }, // default || max
   preferencesId: { type: String, default: 'lx-camera-settings' },
   labelId: { type: String, default: null },
-  actionDefinitions: { type: Array, default: () => [] },
+  actionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 1 },
   stickyToolbar: { type: Boolean, default: false, group: 'main', sequence: 4 },
   helperText: { type: String, default: null, group: 'main', sequence: 5 },
   helperTextKind: {

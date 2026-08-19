@@ -9,6 +9,8 @@ import {
   watch,
   nextTick,
   useSlots,
+  getCurrentInstance,
+  onUnmounted,
 } from 'vue';
 import {
   useWindowSize,
@@ -44,6 +46,7 @@ import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const lvCollator = new Intl.Collator('lv');
 const numberFormatters = new Map();
@@ -82,56 +85,103 @@ const props = defineProps({
     type: String,
     default: () => generateUUID(),
   },
-  label: { type: String, default: null },
-  description: { type: String, default: null },
+  label: { type: String, default: null, group: 'main', sequence: 14 },
+  description: { type: String, default: null, group: 'main', sequence: 15 },
   columnDefinitions: {
     type: Array,
     default: () => [
       { attributeName: 'id', size: 's' },
       { attributeName: 'name', size: '*' },
     ],
+    group: 'main',
+    sequence: 2,
   },
-  idAttribute: { type: String, default: 'id' },
-  actionDefinitions: { type: Array, default: () => [] },
-  actionAdditionalParameter: { type: String, default: null },
-  defaultActionName: { type: String, default: 'open' },
-  items: { type: Array, default: () => [] },
-  loading: { type: Boolean, default: false },
-  busy: { type: Boolean, default: false },
-  skeletonRowCount: { type: Number, default: 10 },
-  hasVirtualization: { type: Boolean, default: true },
-  scrollable: { type: [Boolean, String], default: 'auto' }, // 'auto', true, false
-  stickyHeader: { type: Boolean, default: true },
-  showHeader: { type: Boolean, default: false },
-  showToolbar: { type: Boolean, default: false },
-  showStatusbar: { type: Boolean, default: true },
-  showAllColumns: { type: Boolean, default: false },
-  showItemsCountSelector: { type: Boolean, default: false },
-  hasPaging: { type: Boolean, default: false },
-  hasSorting: { type: Boolean, default: false },
-  hasSelecting: { type: Boolean, default: false },
-  selectionKind: { type: String, default: 'multiple' }, // 'multiple' (with checkboxes; can select many rows) or 'single' (with radio buttons; can select one row)
-  selectableAttribute: { type: String, default: 'selectable' },
-  sortingSide: { type: String, default: 'client' }, // 'client' (sorting is done on client side) or 'server' (sorting is done on server side)
-  sortingIgnoreEmpty: { type: Boolean, default: true },
-  pageCurrent: { type: Number, default: 0 },
-  itemsPerPage: { type: Number, default: 20 },
-  itemsTotal: { type: Number, default: 0 },
-  sortingMode: { type: String, default: 'strip' }, // 'default' or 'strip'
-  selectionActionDefinitions: { type: Array, default: () => [] },
-  toolbarActionDefinitions: { type: Array, default: () => [] },
-  emptyStateActionDefinitions: { type: Array, default: null },
-  emptyStateIcon: { type: String, default: '' },
-  clickableRole: { type: String, default: 'link' }, // 'link' or 'button'
-  hasSearch: { type: Boolean, default: false },
-  searchMode: { type: String, default: 'default' }, // default, compact
+  idAttribute: { type: String, default: 'id', group: 'additional', sequence: 98 },
+  actionDefinitions: { type: Array, default: () => [], group: 'main', sequence: 3 },
+  actionAdditionalParameter: { type: String, default: null, group: 'additional', sequence: 11 },
+  defaultActionName: { type: String, default: 'open', group: 'additional', sequence: 7 },
+  items: { type: Array, default: () => [], group: 'main', sequence: 1 },
+  loading: { type: Boolean, default: false, group: 'mode', sequence: 1 },
+  busy: { type: Boolean, default: false, group: 'mode', sequence: 2 },
+  skeletonRowCount: { type: Number, default: 10, group: 'additional', sequence: 6 },
+  hasVirtualization: { type: Boolean, default: true, group: 'additional', sequence: 3 },
+  scrollable: {
+    type: [Boolean, String],
+    default: 'auto',
+    group: 'main',
+    sequence: 4,
+    options: ['auto', true, false],
+  },
+  stickyHeader: { type: Boolean, default: true, group: 'main', sequence: 6 },
+  showHeader: { type: Boolean, default: false, group: 'main', sequence: 13 },
+  showToolbar: { type: Boolean, default: false, group: 'main', sequence: 7 },
+  showStatusbar: { type: Boolean, default: true, group: 'main', sequence: 16 },
+  showAllColumns: { type: Boolean, default: false, group: 'main', sequence: 5 },
+  showItemsCountSelector: { type: Boolean, default: false, group: 'main', sequence: 21 },
+  hasPaging: { type: Boolean, default: false, group: 'main', sequence: 20 },
+  hasSorting: { type: Boolean, default: false, group: 'main', sequence: 17 },
+  hasSelecting: { type: Boolean, default: false, group: 'main', sequence: 9 },
+  selectionKind: {
+    type: String,
+    default: 'multiple',
+    group: 'main',
+    sequence: 10,
+    options: ['multiple', 'single'],
+  },
+  selectableAttribute: { type: String, default: 'selectable', group: 'additional', sequence: 99 },
+  sortingSide: {
+    type: String,
+    default: 'client',
+    group: 'main',
+    sequence: 18,
+    options: ['client', 'server'],
+  },
+  sortingIgnoreEmpty: { type: Boolean, default: true, group: 'additional', sequence: 3 },
+  pageCurrent: { type: Number, default: 0, group: 'additional', sequence: 4 },
+  itemsPerPage: { type: Number, default: 20, group: 'additional', sequence: 5 },
+  itemsTotal: { type: Number, default: 0, group: 'main', sequence: 22 },
+  sortingMode: {
+    type: String,
+    default: 'strip',
+    group: 'main',
+    sequence: 19,
+    options: ['default', 'strip'],
+  },
+  selectionActionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 2 },
+  toolbarActionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 1 },
+  emptyStateActionDefinitions: { type: Array, default: null, group: 'additional', sequence: 8 },
+  emptyStateIcon: { type: String, default: '', group: 'additional', sequence: 10 },
+  clickableRole: {
+    type: String,
+    default: 'link',
+    group: 'additional',
+    sequence: 10,
+    options: ['link', 'button'],
+  },
+  hasSearch: { type: Boolean, default: false, group: 'main', sequence: 11 },
+  searchMode: {
+    type: String,
+    default: 'default',
+    group: 'main',
+    sequence: 12,
+    options: ['default', 'compact'],
+  },
   searchString: { type: String, default: '' },
   searchSide: { type: String, default: 'server' }, // server, TODO add client search
   locale: { type: String, default: null }, // lv, en
-  fullBleed: { type: Boolean, default: true },
-  badgeDefinitions: { type: Array, default: () => [] },
-  stickyToolbar: { type: Boolean, default: false },
-  texts: { type: Object, default: () => ({}) },
+  fullBleed: { type: Boolean, default: true, group: 'main', sequence: 23 },
+  badgeDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 12 },
+  stickyToolbar: { type: Boolean, default: false, group: 'main', sequence: 8 },
+  texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -1909,11 +1959,32 @@ const stickyToolbarAdditionalHeight = computed(() => {
     toolbarHeight.value
   )}px - var(--row-size));`;
 });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  // Adds default texts to ensure they are available in the builder instance
+  instance.type.props.texts.options = textsDefault;
+  registerBuilderInstance({
+    name: 'LxDataGrid',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxDataGrid' },
+    ]),
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
+  });
+}
+
 defineExpose({ cancelSelection, selectRows, sortBy });
 </script>
 <template>
   <div
     ref="dataGridWrapperRef"
+    :data-id="id"
     class="lx-data-grid-wrapper"
     :style="`${topOutOfBounds} ${fullBleedMargin} ${stickyToolbarAdditionalHeight}`"
     :class="[{ 'lx-grid-sticky': stickyHeader }, { 'lx-grid-sticky-toolbar': props.stickyToolbar }]"

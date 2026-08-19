@@ -28,10 +28,20 @@ The prop `actionDefinitions` is available for following components:
 - LxTreeList
 - LxWidget
 
+The prop `toolbarActionDefinitions` is available for following components:
+- LxAppendableList
+- LxDataGrid
+- LxList
+
+
+The prop `selectionActionDefinitions` is available for following components:
+- LxDataGrid
+- LxList
+
 
 ### Properties
 
-`actionDefinitions` is an array of action definition objects. Each object can contain following properties:
+`actionDefinitions`, `toolbarActionDefinitions`, `selectionActionDefinitions` are an arrays of action definition objects. Each object can contain following properties:
 
 | Property | Scope | Type | Description |
 |----------|------|------|-------------|
@@ -44,7 +54,7 @@ The prop `actionDefinitions` is available for following components:
 | `variant` | All | String | Display variant for the action button. Controls whether the button shows both icon and label or just the icon. Allowed values: `default`, `icon-only`. |
 | `visibleByAttribute` | **B** | String | Attribute name from the data object. Action is only visible when this attribute evaluates to true. |
 | `enableByAttribute` | **B** | String | Attribute name from the data object. Action is only enabled when this attribute evaluates to true. |
-| `groupId` | **A** | String | Identifier for grouping related actions together. |
+| `groupId` | All | String | Identifier for grouping related actions together. |
 | `nestedGroupId` | **A** | String | Identifier for turning this action into a dropdown menu trigger. Actions whose `groupId` matches this value will be rendered as items inside the dropdown menu. |
 | `area` | **A** | String | Position where the action should be placed. Allowed values: `left`, `right`. |
 | `customClass` | All | String | Custom CSS class name(s) to apply to the action button for additional styling. Multiple classes can be separated by spaces (e.g., `class-1 class-2`). |
