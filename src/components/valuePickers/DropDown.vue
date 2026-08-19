@@ -843,6 +843,7 @@ function countDigits(number) {
               @keydown.up.prevent="focusPreviousInputElement"
               @keydown="handleKeydown"
             >
+              <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -- keyboard close is handled by the parent panel's @keydown.esc listener -->
               <slot name="panel" @click="closeDropDownDefault()">
                 <div
                   :id="`${id}-listbox`"
@@ -865,6 +866,7 @@ function countDigits(number) {
                       "
                       class="select-all-wrapper"
                     >
+                      <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- the lint rule can't evaluate the conditional :tabindex expression below, which always resolves to '0' or '-1' -->
                       <div
                         :id="`${id}-select-all`"
                         class="lx-value-picker-item select-all lx-popover-item-selecting"
@@ -877,6 +879,7 @@ function countDigits(number) {
                         @keydown.enter.prevent="selectAll"
                         @keydown.space.prevent="selectAll"
                         @click="selectAll"
+                        @focus="highlightedItemId = 'select-all'"
                       >
                         <LxIcon
                           :value="
@@ -893,6 +896,7 @@ function countDigits(number) {
                       </div>
                     </div>
                     <!-- Normal item rendering -->
+                    <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events, vuejs-accessibility/interactive-supports-focus -- keyboard selection is handled by the panel's keydown listeners (Enter/Space via onEnter) using roving tabindex; the lint rules can't evaluate the conditional :tabindex expression below, which always resolves to '0' or '-1' -->
                     <div
                       v-if="getIdAttributeString(item) !== 'select-all'"
                       :title="item[nameAttribute]"
@@ -923,6 +927,7 @@ function countDigits(number) {
                       ]"
                       :id="getItemId(item[idAttribute])"
                       @click="selectMultiple(item[idAttribute])"
+                      @focus="highlightedItemId = getIdAttributeString(item)"
                     >
                       <LxCheckbox
                         v-if="selectionKind === 'multiple'"

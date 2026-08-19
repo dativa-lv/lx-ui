@@ -745,14 +745,27 @@ function openDetails() {
   }
 }
 
+function focusHighlightedItem() {
+  nextTick(() => {
+    if (refListbox.value) {
+      const highlightedItems = refListbox.value.querySelectorAll(
+        '.lx-value-picker-item.lx-highlighted-item'
+      );
+      highlightedItems[0]?.focus();
+    }
+  });
+}
+
 function focusNextInputElement(e) {
   if (e.shiftKey && e.key === 'ArrowDown') return;
   onDown();
+  focusHighlightedItem();
 }
 
 function focusPreviousInputElement(e) {
   if (e.shiftKey && e.key === 'ArrowUp') return;
   onUp();
+  focusHighlightedItem();
 }
 
 watch(highlightedItemId, (newId) => {
@@ -1565,6 +1578,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                             :aria-selected="areAllSelected"
                             @keydown.enter.prevent="selectAll"
                             @click="selectAll"
+                            @focus="highlightedItemId = 'select-all'"
                             :title="
                               areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
                             "
@@ -1614,6 +1628,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                               ? selectSingle(item)
                               : selectMultiple(item)
                           "
+                          @focus="highlightedItemId = getIdAttributeString(item)"
                         >
                           <LxCheckbox
                             v-if="selectionKind === 'multiple'"
