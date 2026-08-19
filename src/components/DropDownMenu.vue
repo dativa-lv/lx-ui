@@ -651,6 +651,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     :items="group"
                     variant="tags-custom"
                     selectionKind="single"
+                    :standalone="false"
                     :id="groupName"
                     @update:modelValue="
                       (newValue) => {
@@ -772,6 +773,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     :items="group"
                     variant="tags-custom"
                     selectionKind="single"
+                    :standalone="false"
                     :id="groupName"
                     @update:modelValue="
                       (newValue) => {

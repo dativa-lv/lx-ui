@@ -264,6 +264,11 @@ describe('Group definitions', () => {
     expect(action3.querySelector('.lx-dropdown-menu-tag-label').textContent).toBe(
       actionDefinitions[2].name
     );
+
+    // standalone=false is wired through: every tag is its own tab stop, not just the selected one
+    expect(action1.getAttribute('tabindex')).toBe('0');
+    expect(action2.getAttribute('tabindex')).toBe('0');
+    expect(action3.getAttribute('tabindex')).toBe('0');
   });
 
   test('renders groups with labels', async () => {

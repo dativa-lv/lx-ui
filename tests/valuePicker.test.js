@@ -173,6 +173,58 @@ test('LxValuePicker tags single-select radio group ARIA', () => {
   expect(items[2].attributes('tabindex')).toBe('-1');
 });
 
+test('LxValuePicker tags single-select standalone=false makes every radio focusable', () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'tags',
+      selectionKind: 'single',
+      modelValue: 'two',
+      standalone: false,
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+        { id: 'three', name: 'Three' },
+      ],
+    },
+  });
+
+  const items = wrapper.find('.lx-value-picker-tags').findAll('.lx-tag');
+
+  // standalone=false: every radio item is its own tab stop, like checkboxes
+  expect(items[0].attributes('tabindex')).toBe('0');
+  expect(items[1].attributes('tabindex')).toBe('0');
+  expect(items[2].attributes('tabindex')).toBe('0');
+});
+
+test('LxValuePicker tags single-select standalone=false disables arrow key navigation', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'tags',
+      selectionKind: 'single',
+      modelValue: 'two',
+      standalone: false,
+      items: [
+        { id: 'one', name: 'One' },
+        { id: 'two', name: 'Two' },
+        { id: 'three', name: 'Three' },
+      ],
+    },
+  });
+
+  const items = wrapper.find('.lx-value-picker-tags').findAll('.lx-tag');
+
+  // With standalone=false, arrow keys no longer move selection - only Tab/click/space/enter do
+  await items[1].trigger('keydown.right');
+  await items[1].trigger('keydown.down');
+  await items[1].trigger('keydown.left');
+  await items[1].trigger('keydown.up');
+  expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+
+  // Space still selects, like a checkbox
+  await items[2].trigger('keydown.space');
+  expect(wrapper.emitted('update:modelValue').at(-1)).toEqual(['three']);
+});
+
 test('LxValuePicker tags single-select arrow navigation selects', async () => {
   wrapper = mount(LxValuePicker, {
     props: {

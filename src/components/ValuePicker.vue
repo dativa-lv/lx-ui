@@ -51,6 +51,7 @@ const props = defineProps({
     sequence: 3,
   }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false, group: 'main', sequence: 5 }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  standalone: { type: Boolean, default: true }, // If false, radio items (selectionKind 'single') behave like checkboxes for navigation: every item gets its own tab stop instead of the roving tabindex, and arrow keys no longer move focus/selection - only Tab does. Used by LxDropDownMenu's 'tags' groups.
   placeholder: { type: String, default: null, group: 'main', sequence: 7 },
   hasSearch: { type: Boolean, default: false, group: 'main', sequence: 6 },
   searchString: { type: String, default: '' },
@@ -342,6 +343,7 @@ if (props.builderOptions?.useRegistry) {
         :has-search="hasSearch"
         v-model:searchString="reactiveSearchString"
         :nullable="nullable"
+        :standalone="standalone"
         :readOnly="readOnly"
         :readOnlyRenderType="readOnlyRenderType"
         :search-attributes="searchAttributes"

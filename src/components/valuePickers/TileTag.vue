@@ -20,6 +20,7 @@ const props = defineProps({
   variant: { type: String, default: 'tile' },
   selectionKind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false }, // Only if selectionKind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  standalone: { type: Boolean, default: true },
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
   searchString: { type: String, default: '' },
@@ -333,6 +334,7 @@ function getSelectedSingleId() {
 }
 
 function getTabIndex(id) {
+  if (!props.standalone) return '0';
   const list = navigableItems.value;
   const isFirstItem = list.length > 0 && list[0][props.idAttribute] === id;
   const current = highlightedItemId.value ?? getSelectedSingleId();
@@ -342,7 +344,7 @@ function getTabIndex(id) {
 }
 
 function focusRadio(offset) {
-  if (props.disabled || !navigableItems.value.length) return;
+  if (!props.standalone || props.disabled || !navigableItems.value.length) return;
   const list = navigableItems.value;
   const current = highlightedItemId.value ?? getSelectedSingleId();
   const index = Math.max(
