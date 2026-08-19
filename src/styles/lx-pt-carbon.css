@@ -105,7 +105,7 @@
   --data-grid-footer-button-border-radius: var(--button-border-radius);
   --data-grid-footer-button-height: var(--button-height);
   --data-grid-footer-button-width: var(--button-width);
-  --data-grid-footer-button-min-width: 5rem;
+  --data-grid-footer-button-min-width: 5.5rem;
   --data-grid-footer-button-icon-only-width: var(--button-icon-only-width);
   --data-grid-footer-button-icon-only-min-width: var(--button-icon-only-min-width);
   --data-grid-footer-button-outline-offset: var(--button-ghost-outline-offset);
