@@ -1246,7 +1246,7 @@ const {
   scrollAnchorRef: container,
   positionObserverRef: dataGridWrapperRef,
   resolveScrollParent: resolveDataGridScrollParent,
-  createVirtualizerOptions: ({ scrollMargin }) => ({
+  createVirtualizerOptions: ({ scrollMargin, shouldAdjustScrollPositionOnItemSizeChange }) => ({
     get count() {
       if (!wantsDataGridVirtualization.value) return 0;
       return rows.value?.length || 0;
@@ -1256,7 +1256,7 @@ const {
       return scrollMargin.value;
     },
     estimateSize: () => VIRTUALIZED_ESTIMATED_ROW_HEIGHT,
-    shouldAdjustScrollPositionOnItemSizeChange: () => false,
+    shouldAdjustScrollPositionOnItemSizeChange,
     overscan: VIRTUALIZED_OVERSCAN,
     // Getter so reading the ref during the options spread keeps the pin reactive.
     get rangeExtractor() {
@@ -1319,6 +1319,21 @@ function remeasureRenderedDataGridRows() {
   if (!shouldVirtualizeDataGrid.value || !container.value) return;
   const rowElements = container.value.querySelectorAll('.lx-grid-content-virtualized .lx-grid-row');
   measureDataGridVirtualElements(rowElements);
+}
+
+// Wiping the key-cached row heights re-positions every row, so only re-measure on a real row change.
+function currentRowKeys() {
+  return rowsWithVirtualKey.value.map((entry) => entry.virtualKey);
+}
+let lastRowKeys = currentRowKeys();
+function takeRowKeysChanged() {
+  const keys = currentRowKeys();
+  const changed =
+    !lastRowKeys ||
+    lastRowKeys.length !== keys.length ||
+    keys.some((key, index) => key !== lastRowKeys[index]);
+  lastRowKeys = keys;
+  return changed;
 }
 
 // Schedules a frame callback, skipping it where requestAnimationFrame is absent (SSR / torn-down test DOM).
@@ -1519,6 +1534,9 @@ function updateGridTemplateColumns() {
   gridTemplateColumns.value = templateColumns.join(' ');
 }
 
+// Row heights only change when column widths do.
+let lastColumnWidths = null;
+
 function syncColumnWidths() {
   if (!header.value || !container.value) return;
 
@@ -1557,7 +1575,8 @@ function syncColumnWidths() {
   container.value.style.gridTemplateColumns = columnWidths;
 
   if (shouldVirtualizeDataGrid.value) {
-    dataGridVirtualizer.value?.value.measure();
+    if (columnWidths !== lastColumnWidths) dataGridVirtualizer.value?.value.measure();
+    lastColumnWidths = columnWidths;
   }
 }
 
@@ -1673,6 +1692,9 @@ watch(
 watch(wantsDataGridVirtualization, async (value) => {
   if (!value) {
     clearDataGridVirtualization();
+    // A rebuilt virtualizer starts with an empty height cache, so let it measure once.
+    lastRowKeys = null;
+    lastColumnWidths = null;
     return;
   }
 
@@ -1687,7 +1709,7 @@ watch([rows, () => props.loading], async () => {
   syncDataGridLayoutVisibility();
   if (!wantsDataGridVirtualization.value) return;
   updateDataGridScrollContext();
-  dataGridVirtualizer.value?.value.measure();
+  if (takeRowKeysChanged()) dataGridVirtualizer.value?.value.measure();
   scheduleFrame(() => remeasureRenderedDataGridRows());
 });
 

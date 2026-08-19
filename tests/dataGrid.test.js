@@ -1738,6 +1738,55 @@ describe('Virtualization', () => {
       logErrorSpy.mockRestore();
     }
   });
+
+  // `measure()` drops every cached row height, which re-positions rows and jumps a scrolled grid.
+  test('does not re-measure when an items refresh returns the same rows', async () => {
+    const requestAnimationFrameSpy = vi
+      .spyOn(globalThis, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0);
+        return 1;
+      });
+    const cancelAnimationFrameSpy = vi
+      .spyOn(globalThis, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
+
+    const measure = vi.fn();
+    const buildItems = (count) =>
+      Array.from({ length: count }, (_, i) => ({ id: `row-${i + 1}`, name: `Row ${i + 1}` }));
+
+    tanstackVirtual.useWindowVirtualizer = vi.fn((options) =>
+      createVirtualizerRef({
+        rows: Array.from({ length: 7 }, (_, i) => ({ index: i, start: i * 72 })),
+        totalSize: 3600,
+        options,
+        measure,
+      })
+    );
+
+    try {
+      wrapper = mountComponent({
+        props: { hasVirtualization: true, idAttribute: 'id', items: buildItems(50) },
+      });
+
+      await flushVirtualizationSetup();
+      measure.mockClear();
+
+      // A fresh array with identical content — what a 30s auto-refresh produces.
+      await wrapper.setProps({ items: buildItems(50) });
+      await flushVirtualizationSetup();
+
+      expect(measure).not.toHaveBeenCalled();
+
+      await wrapper.setProps({ items: buildItems(49) });
+      await flushVirtualizationSetup();
+
+      expect(measure).toHaveBeenCalled();
+    } finally {
+      requestAnimationFrameSpy.mockRestore();
+      cancelAnimationFrameSpy.mockRestore();
+    }
+  });
 });
 
 describe('Loading announcement', () => {
