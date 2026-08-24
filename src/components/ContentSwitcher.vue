@@ -137,7 +137,14 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
     unregisterBuilderInstance(props?.id);
   });
 }
+
+const dataState = computed(() =>
+  JSON.stringify({
+    readOnly: props.readOnly,
+  })
+);
 </script>
+
 <template>
   <div
     v-if="readOnly"
@@ -145,6 +152,7 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
     class="lx-field-wrapper"
     :data-id="id"
     data-component="lx-content-switcher"
+    :data-state="dataState"
   >
     <p class="lx-data">{{ getName() }}</p>
   </div>
