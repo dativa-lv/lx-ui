@@ -427,7 +427,6 @@
   display: flex;
   width: var(--data-grid-action-width);
   height: var(--data-grid-action-height);
-  height: var(--data-grid-action-height);
   margin: var(--space-0);
   justify-content: center;
   align-items: center;
@@ -472,15 +471,6 @@
 .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell {
   color: var(--color-data-grid-foreground-hover);
 }
-/* 
-.lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell-secondary .lx-person-display-name,
-.lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell-secondary .lx-grid-icon-text,
-.lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell-secondary .flag-column p,
-.lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell-extra .lx-person-display-name,
-.lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell-extra .lx-grid-icon-text,
-.lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell-extra .flag-column p {
-  color: var(--contrast-background);
-} */
 
 .lx-data-grid .lx-grid-table .lx-grid-row:hover .lx-cell .lx-grid-column-icon,
 .lx-grid-row:hover .lx-cell .lx-person-icon-display > svg,

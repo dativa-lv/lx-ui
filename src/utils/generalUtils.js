@@ -379,10 +379,10 @@ export function parsePaddingRem(paddingStr, element, target = 'horizontal') {
 
   if (parts.length === 0) return 0;
 
-  let topStr = '0';
-  let rightStr = '0';
-  let bottomStr = '0';
-  let leftStr = '0';
+  let topStr;
+  let rightStr;
+  let bottomStr;
+  let leftStr;
 
   if (parts.length === 1) {
     const [all] = parts;

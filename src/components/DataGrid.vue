@@ -1724,20 +1724,16 @@ const topOutOfBounds = computed(() => {
   return `${keyOpacity}: 0; ${keySize}: ${headerHeight}px;`;
 });
 
-const isFullBleedActive = computed(() => {
-  if (
-    !props.fullBleed ||
-    !props.scrollable ||
-    !props.showAllColumns ||
-    !lxElement ||
-    dataGridWrapperRef.value?.closest('#modals') ||
-    dataGridWrapperRef.value?.closest('.lx-form-grid') ||
-    width.value <= 1920
-  ) {
-    return false;
-  }
-  return true;
-});
+const isFullBleedActive = computed(
+  () =>
+    props.fullBleed &&
+    props.scrollable &&
+    props.showAllColumns &&
+    lxElement &&
+    !dataGridWrapperRef.value?.closest('#modals') &&
+    !dataGridWrapperRef.value?.closest('.lx-form-grid') &&
+    width.value > 1920
+);
 
 const fullBleedMargin = computed(() => {
   if (!isFullBleedActive.value) {
