@@ -19,6 +19,8 @@ const resolvedTheme = computed(() => {
   return props.theme;
 });
 
+const colorScheme = computed(() => (props.theme === 'auto' ? null : props.theme));
+
 const altText = computed(() => getAltText(props.value));
 
 // Logos are loaded lazily, so getLogo is async — resolve URLs into refs.
@@ -45,11 +47,11 @@ watch(
 </script>
 
 <template>
-  <picture v-if="size === 'auto'">
+  <picture v-if="size === 'auto'" :style="{ colorScheme }">
     <source :srcset="srcL" media="(min-resolution: 3dppx)" />
     <source :srcset="srcM" media="(min-resolution: 2dppx)" />
     <img :src="srcS" :alt="altText" />
   </picture>
 
-  <img v-else :src="srcFixed" :alt="altText" />
+  <img v-else :src="srcFixed" :alt="altText" :style="{ colorScheme }" />
 </template>

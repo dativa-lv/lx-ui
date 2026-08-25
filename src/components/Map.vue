@@ -260,7 +260,10 @@ const iconAnchor = [14, 30];
 const shadowAnchor = [10, 32];
 const popupAnchor = [2, -24];
 
-const grayscaleStyle = computed(() => `--map-grayscale: ${grayscaleRef.value / 100};`);
+const mapStyle = computed(() => ({
+  '--map-grayscale': grayscaleRef.value / 100,
+  colorScheme: props.ignoreThemeChange ? 'light' : null,
+}));
 
 const location = ref();
 const locationAccuracy = ref();
@@ -473,7 +476,7 @@ const wrapperRef = ref();
     :id="id"
     class="lx-map lx-complex-displayer"
     ref="wrapperRef"
-    :style="grayscaleStyle"
+    :style="mapStyle"
     :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
   >
     <!-- label="" keeps the spinner captionless; the announcement comes from texts -->
