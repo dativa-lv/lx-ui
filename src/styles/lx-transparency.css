@@ -70,10 +70,10 @@
   --color-cover-background: transparent;
 }
 
-.lx.lx-theme-contrast.lx-no-transparency .lx-dropdown-default-content,		
-.lx.lx-theme-contrast.lx-no-transparency .lx-notifications-list .lx-notification,		
-.lx.lx-theme-contrast.lx-no-transparency .popper .lx-dropdown-panel {		
-    --region-border-transparent: 2px solid var(--color-chrome);		
+.lx.lx-theme-contrast.lx-no-transparency .lx-dropdown-default-content,
+.lx.lx-theme-contrast.lx-no-transparency .lx-notifications-list .lx-notification,
+.lx.lx-theme-contrast.lx-no-transparency .popper .lx-dropdown-panel {
+    --region-border-transparent: 2px solid var(--color-chrome);
 }
 
 .lx.lx-no-transparency .lx-layout-default.lx-collapsed .lx-nav-panel:hover,

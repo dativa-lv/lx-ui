@@ -556,35 +556,6 @@
 
 /*** LxDataBlock selecting button styles ***/
 
-.lx-data-block .lx-radio-button-appearance,
-.lx-data-block .lx-checkbox-appearance {
-  margin: var(--space-0250);
-}
-
-/* Radio button contrast styles */
-
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled):not(.lx-data-block-selected) > .lx-data-block > .lx-data-block-header:hover .lx-radio-button-appearance,
-.lx-theme-contrast .lx-data-block-selected > .lx-data-block .lx-radio-button-appearance {
-  border-color: var(--contrast-background);
-}
-
-.lx-theme-contrast .lx-data-block-selected > .lx-data-block .lx-radio-button-appearance .lx-radio-thumb {
-  background-color: var(--contrast-background);
-}
-
-/* Checkbox contrast styles */
-
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) > .lx-data-block > .lx-data-block-header:hover .lx-checkbox-appearance,
-.lx-theme-contrast .lx-data-block-selected > .lx-data-block .lx-checkbox-wrapper .lx-checkbox-appearance {
-  border-color: var(--contrast-background);
-  background-color: var(--contrast-background);
-}
-
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) > .lx-data-block > .lx-data-block-header:hover .lx-checkbox-appearance svg,
-.lx-theme-contrast .lx-data-block-selected > .lx-data-block .lx-checkbox-wrapper .lx-checkbox-appearance svg {
-  fill: var(--contrast-foreground);
-}
-
 /* Expanded content contrast styles */
 
 .lx-theme-contrast .lx-data-block-wrapper.lx-data-block-expanded>.lx-data-block-content {
@@ -621,6 +592,11 @@
 .lx-data-block-wrapper-m > .lx-data-block .lx-indications {
   width: max(var(--data-block-chevron-wrapper-width-m), var(--data-block-indent-right-m));
   max-height: var(--data-block-chevron-wrapper-max-height-m);
+}
+
+.lx-data-block-wrapper-m > .lx-data-block .lx-icons:has(.lx-selecting-block) {
+  --data-block-icon-wrapper-width-m: var(--data-block-selecting-block-width);
+  --data-block-icon-wrapper-max-height-m: var(--data-block-selecting-block-height);
 }
 
 .lx-data-block-wrapper-m:has(.additional-buttons) > .lx-data-block .lx-indications,
@@ -933,25 +909,13 @@
   --tile-min-height: 100%;
 }
 
+.lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile .lx-value-picker-tile-name {
+  margin: var(--nav-tile-text-primary-margin);
+}
+
 .lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile-wrapper,
 .lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile .lx-value-picker-tile-header {
   overflow: hidden;
-}
-
-.lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile .lx-value-picker-tile-name {
-  font-size: var(--tile-text-primary-font-size);
-  font-weight: var(--tile-text-primary-font-weight);
-  margin: var(--tile-text-primary-margin);
-  padding: var(--tile-text-primary-padding);
-  line-height: var(--tile-text-primary-line-height);
-}
-
-.lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile .lx-value-picker-description {
-  font-size: var(--tile-text-secondary-font-size);
-  font-weight: var(--tile-text-secondary-font-weight);
-  margin: var(--tile-text-secondary-margin);
-  padding: var(--tile-text-secondary-padding);
-  line-height: var(--tile-text-secondary-line-height);
 }
 
 .lx-accessibility-settings-block .lx-data-block-wrapper .lx-value-picker-tile .lx-theme-item-content {
@@ -959,8 +923,8 @@
 }
 
 .lx-accessibility-settings-block .lx-data-block-wrapper .lx-theme-item-content > svg {
-  height: var(--tile-icon-size);
-  width: var(--tile-icon-size);
+  height: var(--nav-tile-icon-size);
+  width: var(--nav-tile-icon-size);
   fill: var(--color-data);
 }
 
@@ -1051,7 +1015,7 @@
     white-space: normal;
   }
 
-  .lx-data-block .lx-secondary {		
-    display: none;		
+  .lx-data-block .lx-secondary {
+    display: none;
   }
 }

@@ -63,6 +63,8 @@
 | `--list-treelist-indent-right`                    | `--space-0`                                                   |
 | `--list-treelist-indent-child-left`               | `--row-size`                                                  |
 | `--list-treelist-indent-child-right`              | `--space-0`                                                   |
+| `--list-selecting-block-width`                    | `--row-size`                                                  |
+| `--list-selecting-block-height`                   | `--row-size`                                                  |
 
 ## Color
 

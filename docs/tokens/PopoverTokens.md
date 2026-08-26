@@ -51,6 +51,7 @@
 | `--popover-item-tag-grid-template-rows`       | auto auto                               |
 | `--popover-item-tag-set-margin`               | `--space-0500` `--space-0250`           |
 | `--popover-item-tag-height`                   | 4rem                                    |
+| `--popover-item-tag-icon-size`                | `--icon-size-s`                         |
 | `--popover-item-tag-icon-alignment`           | start                                   |
 | `--popover-item-tag-text-alignment`           | start                                   |
 | `--popover-item-tag-padding`                  | `--space-0500`                          |

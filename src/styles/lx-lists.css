@@ -614,11 +614,6 @@
   margin-top: var(--space-1000);
 }
 
-.lx-list > li > .selecting-block > .lx-checkbox-placeholder {
-  width: 1rem;
-  height: 1rem;
-}
-
 .lx .lx-layout .first-row .lx-text-input.lx-search-input {
   background: transparent;
   height: 100%;
@@ -629,6 +624,11 @@
 }
 
 /*** Selected + hover container styles ***/
+
+.lx-list-item-container .lx-radio-button-wrapper,
+.lx-list-item-container .lx-checkbox-wrapper {
+  grid-area: selecting;
+}
 
 .lx a.lx-list-item:hover {
   background: transparent;
@@ -683,200 +683,6 @@
 
 .lx .lx-component-toolbar.lx-disabled.lx-selection-toolbar .second-row {
   background: var(--color-toolbar-selection-button-background-disabled);
-}
-
-/*** Checkbox + radio button styles ***/
-
-.selecting-block > .lx-checkbox-wrapper {
-  margin: var(--space-0);
-}
-
-.selecting-block > .lx-radio-button-wrapper {
-  margin: calc(var(--space-0125) * -1) 0 0 0;
-}
-
-.lx-list-wrapper .selecting-block {
-  display: flex;
-  justify-content: center;
-  padding: var(--list-item-selecting-block-padding);
-  min-width: 3rem; /* TODO: replace with token */
-  background: transparent;
-  grid-area: selecting;
-}
-
-.lx-list-wrapper .selecting-block > .lx-checkbox-wrapper .lx-checkbox-label-wrapper,
-.lx-list-wrapper .selecting-block > .lx-radio-button-wrapper .lx-radio-button-label-wrapper {
-  column-gap: var(--space-0);
-}
-
-.selecting-block > .lx-checkbox-wrapper .lx-checkbox-appearance,
-.selecting-block > .lx-radio-button-wrapper .lx-radio-button-appearance {
-  margin: var(--space-0);
-}
-
-.selecting-block > .lx-checkbox-wrapper .lx-checkbox-label,
-.selecting-block > .lx-radio-button-wrapper .lx-radio-button-label {
-  display: none;
-}
-
-/* Disabled item */
-
-.lx-list-wrapper .lx-checkbox-wrapper
-  .lx-checkbox:disabled
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance {
-    border-color: var(--color-disabled);
-}
-
-.lx-list-wrapper .lx-checkbox-wrapper
-  .lx-checkbox:disabled
-  + .lx-checkbox-label-wrapper
-  svg {
-    fill: var(--color-disabled);
-}
-
-.lx-list-wrapper .lx-radio-button-wrapper
-  .lx-radio-button:not(:checked):disabled
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance {
-    border-color: var(--color-disabled);
-}
-
-/* Disabled selected item */
-
-.lx-list-wrapper .lx-checkbox-wrapper
-  .lx-checkbox:checked:disabled
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance {
-    background-color: var(--color-disabled);
-    border-color: var(--color-disabled);
-}
-
-.lx-theme-contrast .lx-list-wrapper
-  .lx-checkbox:checked:disabled
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance {
-    background-color: var(--contrast-background);
-    border-color: var(--contrast-background);
-}
-
-.lx-list-wrapper .lx-checkbox-wrapper
-  .lx-checkbox:checked:disabled
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance svg {
-    fill: var(--color-region);
-}
-
-.lx-theme-contrast 
-  .lx-list-wrapper .lx-checkbox-wrapper
-  .lx-checkbox:checked:disabled
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance svg {
-    fill: var(--contrast-interactive);
-}
-
-/* No hover, unchecked */
-.lx-list-wrapper .lx-checkbox-wrapper
-  .lx-checkbox:not(:disabled):not(:checked)
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance {
-  background-color: transparent;
-  border-color: var(--color-data);
-}
-
-.lx-list-wrapper .lx-radio-button-wrapper
-  .lx-radio-button:not(:disabled):not(:checked)
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance {
-    border-color: var(--color-data);
-}
-
-/* No hover, checked */
-.lx-list-wrapper .lx-checkbox-wrapper
-  .lx-checkbox:not(:disabled):checked
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance {
-  background-color: var(--color-data);
-  border-color: var(--color-data);
-}
-
-.lx-theme-contrast
-  .lx-list-wrapper
-  .lx-checkbox:not(:disabled):checked
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance {
-  background-color: var(--contrast-background);
-  border-color: var(--contrast-background);
-}
-
-.lx-list-wrapper .lx-radio-button-wrapper
-  .lx-radio-button:not(:disabled):checked
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance {
-  border-color: var(--color-data);
-}
-
-.lx-theme-contrast 
-  .lx-list-wrapper .lx-radio-button-wrapper
-  .lx-radio-button:not(:disabled):checked
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance {
-  border-color: var(--contrast-background);
-}
-
-.lx-list-wrapper .lx-radio-button-wrapper:not(:hover)
-  .lx-radio-button:not(:disabled):checked
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance
-  .lx-radio-thumb{
-  background-color: var(--color-data);
-}
-
-.lx-theme-contrast
-  .lx-list-wrapper .lx-radio-button-wrapper:not(:hover)
-  .lx-radio-button:not(:disabled):checked
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance
-  .lx-radio-thumb{
-  background-color: var(--contrast-background);
-}
-
-.lx-list-wrapper .lx-checkbox-wrapper
-  .lx-checkbox:not(:disabled):checked
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance svg{
-  fill: var(--color-region);
-}
-
-.lx-theme-contrast
-  .lx-list-wrapper
-  .lx-checkbox:not(:disabled):checked
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance svg{
-  fill: var(--contrast-foreground);
-}
-
-/* Direct hover on checkbox */
-.lx-list-wrapper .lx-checkbox-wrapper:hover
-  .lx-checkbox:not(:disabled)
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance {
-  background-color: var(--color-interactive-hover-background);
-  border-color: var(--color-interactive-hover-background);
-}
-
-.lx-list-wrapper .lx-radio-button-wrapper:hover
-  .lx-radio-button:not(:disabled)
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance {
-  border-color: var(--color-interactive-hover-background);
-}
-
-.lx-list-wrapper .lx-checkbox-wrapper:hover
-  .lx-checkbox:not(:disabled)
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance svg {
-  fill: var(--color-focus-foreground);
 }
 
 /*** Icon styles ***/
@@ -1330,67 +1136,65 @@
   padding-left: var(--space-0);
 }
 
-/*** LxTile styles ***/
-
-.lx .lx-tile-wrapper .lx-tile {
+.lx-tile-wrapper .lx-tile {
   display: grid;
-  grid-template-columns: var(--tile-grid-template-columns);
-  grid-template-rows: var(--tile-grid-template-rows);
-  grid-template-areas: var(--tile-grid-areas);
-  border-radius: var(--tile-border-radius-inner);
+  grid-template-columns: var(--nav-tile-grid-template-columns);
+  grid-template-rows: var(--nav-tile-grid-template-rows);
+  grid-template-areas: var(--nav-tile-grid-areas);
+  border-radius: var(--nav-tile-border-radius-inner);
   overflow: hidden;
   background: transparent;
-  color: var(--color-tile-text-primary);
-  padding: var(--tile-padding);
+  color: var(--color-nav-tile-text-primary);
+  padding: var(--nav-tile-padding);
   height: 100%;
   cursor: pointer;
   text-decoration: var(--button-text-decoration);
 }
 
-.lx .lx-tile:focus {
+.lx-tile:focus {
   outline: 2px solid var(--color-focus-background);
   outline-offset: -2px;
 }
 
-.lx .lx-tile:hover {
+.lx-tile:hover {
   color: inherit;
 }
 
-.lx .lx-tile-wrapper {
-  background: var(--color-tile-background);
-  border-width: var(--tile-border-width);
-  border-style: var(--tile-border-style);
-  border-color: var(--color-tile-border);
-  border-radius: var(--tile-border-radius);
-  min-height: var(--tile-min-height);
+.lx-tile-wrapper {
+  background: var(--color-nav-tile-background);
+  border-width: var(--nav-tile-border-width);
+  border-style: var(--nav-tile-border-style);
+  border-color: var(--color-nav-tile-border);
+  border-radius: var(--nav-tile-border-radius);
+  min-height: var(--nav-tile-min-height);
   overflow: hidden;
   justify-self: stretch;
   width: auto;
   grid-row: span 4;
 }
 
-.lx .lx-tile > article.lx-main {
+.lx-tile > article.lx-main {
   grid-area: custom-content;
 }
 
 .lx-tile p.lx-primary {
   flex-grow: 0;
-  color: var(--color-tile-text-primary);
-  font-size: var(--tile-text-primary-font-size);
-  line-height: var(--tile-text-primary-line-height);
-  font-weight: var(--tile-text-primary-font-weight);
-  padding: var(--tile-text-primary-padding);
-  margin: var(--tile-text-primary-margin);
+  color: var(--color-nav-tile-text-primary);
+  font-size: var(--nav-tile-text-primary-font-size);
+  line-height: var(--nav-tile-text-primary-line-height);
+  font-weight: var(--nav-tile-text-primary-font-weight);
+  padding: var(--nav-tile-text-primary-padding);
+  margin: var(--nav-tile-text-primary-margin);
 }
 
 .lx-tile > header > p.lx-secondary {
   flex-grow: 1;
-  color: var(--color-tile-text-secondary);
-  font-size: var(--tile-text-secondary-font-size);
-  line-height: var(--tile-text-secondary-line-height);
-  font-weight: var(--tile-text-secondary-font-weight);
-  padding: var(--tile-text-secondary-padding);
-  margin: var(--tile-text-secondary-margin);
+  color: var(--color-nav-tile-text-secondary);
+  font-size: var(--nav-tile-text-secondary-font-size);
+  line-height: var(--nav-tile-text-secondary-line-height);
+  font-weight: var(--nav-tile-text-secondary-font-weight);
+  padding: var(--nav-tile-text-secondary-padding);
+  margin: var(--nav-tile-text-secondary-margin);
 }
 
 .lx-tile p.lx-primary,
@@ -1400,22 +1204,22 @@
 }
 
 .lx-tile.lx-disabled p.lx-primary,
-.lx .lx-tile.lx-disabled p.lx-secondary,
-.lx .lx-tile.lx-disabled .lx-tile-icon-wrapper .lx-tile-icon {
+.lx-tile.lx-disabled p.lx-secondary,
+.lx-tile.lx-disabled .lx-tile-icon-wrapper .lx-tile-icon {
   color: var(--color-disabled);
 }
 
 .lx-tile-wrapper .lx-tile:not(.lx-disabled):hover p.lx-primary,
 .lx-tile:not(.lx-disabled):hover article {
-  color: var(--color-tile-text-primary-hover);
+  color: var(--color-nav-tile-text-primary-hover);
 }
 
 .lx-tile-wrapper .lx-tile:not(.lx-disabled):hover p.lx-secondary {
-  color: var(--color-tile-text-secondary-hover);
+  color: var(--color-nav-tile-text-secondary-hover);
 }
 
 .lx-tile-wrapper .lx-tile:not(.lx-disabled) .lx-tile-icon {
-  fill: var(--color-tile-icon);
+  fill: var(--color-nav-tile-icon);
 }
 
 .lx-tile-wrapper .lx-tile.lx-disabled .lx-tile-icon {
@@ -1423,7 +1227,7 @@
 }
 
 .lx-tile-wrapper .lx-tile:not(.lx-disabled):hover .lx-tile-icon {
-  fill: var(--color-tile-icon-hover);
+  fill: var(--color-nav-tile-icon-hover);
 }
 
 .lx-tile-wrapper > .lx-tile > .lx-tile-icon-wrapper,
@@ -1480,44 +1284,43 @@
   overflow: visible;
 }
 
-.lx-list-item,
 .lx-tile {
   outline-color: var(--color-focus-background);
 }
 
-.lx .lx-tile > header {
+.lx-tile > header {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-self: flex-start;
   width: auto;
-  min-height: var(--tile-header-min-height);
+  min-height: var(--nav-tile-header-min-height);
   min-width: 0; /* So that text overflow works */
-  padding: var(--tile-header-padding);
+  padding: var(--nav-tile-header-padding);
   grid-area: content;
 }
 
 .lx-tile > .lx-tile-icon-wrapper {
   display: flex;
   grid-area: icon-loader;
-  padding: var(--tile-icon-padding);
+  padding: var(--nav-tile-icon-padding);
 }
 
 .lx-tile > .lx-tile-icon-wrapper .lx-icon {
-  height: var(--tile-icon-size);
-  width: var(--tile-icon-size);
+  height: var(--nav-tile-icon-size);
+  width: var(--nav-tile-icon-size);
   flex-shrink: 0;
 }
 
 .lx-tile:hover,
 a.lx-tile:hover {
   margin: var(--space-0);
-  padding: var(--tile-padding);
+  padding: var(--nav-tile-padding);
 }
 
 .lx-tile:not(.lx-disabled):hover,
 a.lx-tile:not(.lx-disabled):hover {
-  background: var(--color-tile-background-hover);
+  background: var(--color-nav-tile-background-hover);
 }
 
 .lx-tile > header .lx-description {
@@ -1527,7 +1330,8 @@ a.lx-tile:not(.lx-disabled):hover {
   line-height: 1.1em;
 }
 
-.lx-tile .lx-tile-item-loader, .lx-tile .lx-loader-wrapper {
+.lx-tile .lx-tile-item-loader,
+.lx-tile .lx-loader-wrapper {
   display: flex;
 }
 
@@ -1535,48 +1339,44 @@ a.lx-tile:not(.lx-disabled):hover {
   grid-area: icon-loader;
 }
 
-.lx .lx-tile-wrapper .lx-tile.lx-disabled {
+.lx-tile-wrapper .lx-tile.lx-disabled {
   outline: none;
   pointer-events: none;
 }
 
-.lx .lx-tile-wrapper:has(.lx-tile.lx-disabled) {
+.lx-tile-wrapper:has(.lx-tile.lx-disabled) {
   cursor: not-allowed;
 }
 
 .lx-dashboard .lx-tile-wrapper:has(.lx-tile.lx-mini) {
-  min-height: var(--tile-mini-min-height);
+  min-height: var(--nav-tile-mini-min-height);
   grid-row: span 2;
 }
 
-.lx-dashboard .lx-list-wrapper {
-  grid-column: span 4;
-}
-
-.lx .lx-tile.lx-mini {
-  grid-template-columns: var(--tile-mini-grid-template-columns);
-  grid-template-areas: var(--tile-mini-grid-areas);
-  grid-template-rows: var(--tile-mini-grid-template-rows);
+.lx-tile.lx-mini {
+  grid-template-columns: var(--nav-tile-mini-grid-template-columns);
+  grid-template-areas: var(--nav-tile-mini-grid-areas);
+  grid-template-rows: var(--nav-tile-mini-grid-template-rows);
 }
 
 .lx-tile.lx-mini > .lx-tile-icon-wrapper {
-  padding: var(--tile-mini-icon-padding);
+  padding: var(--nav-tile-mini-icon-padding);
 }
 
 .lx-tile.lx-mini > .lx-tile-item-loader {
-  padding: var(--tile-mini-loader-padding);
+  padding: var(--nav-tile-mini-loader-padding);
 }
 
-.lx .lx-tile.lx-mini header {
-  min-height: var(--tile-mini-header-min-height);
+.lx-tile.lx-mini header {
+  min-height: var(--nav-tile-mini-header-min-height);
 }
 
-.lx .lx-tile.lx-mini  svg {
+.lx-tile.lx-mini  svg {
   align-self: center;
 }
 
 .lx-tile.lx-mini > header .lx-primary {
-  margin: var(--tile-mini-text-primary-margin);
+  margin: var(--nav-tile-mini-text-primary-margin);
 }
 
 .lx-tile.lx-mini .lx-description,
@@ -1584,6 +1384,15 @@ a.lx-tile:not(.lx-disabled):hover {
   display: none;
 }
 
+/***/
+
+.lx-list-item {
+  outline-color: var(--color-focus-background);
+}
+
+.lx-dashboard .lx-list-wrapper {
+  grid-column: span 4;
+}
 
 /*** Misc styles ***/
 
@@ -1592,7 +1401,7 @@ a.lx-tile:not(.lx-disabled):hover {
 }
 
 .lx-list-item.lx-list-item-tile {
-  height: var(--tile-min-height);
+  height: var(--nav-tile-min-height);
 }
 
 li .lx-list-item.lx-inactive {

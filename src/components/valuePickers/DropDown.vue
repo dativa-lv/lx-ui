@@ -900,7 +900,7 @@ function countDigits(number) {
                     <div
                       v-if="getIdAttributeString(item) !== 'select-all'"
                       :title="item[nameAttribute]"
-                      class="lx-value-picker-item lx-popover-item-text-only"
+                      class="lx-value-picker-item lx-popover-item-text-only lx-embedded-selecting-block"
                       :tabindex="
                         highlightedItemId && highlightedItemId === getIdAttributeString(item)
                           ? '0'
@@ -943,9 +943,7 @@ function countDigits(number) {
                           innerComponent: true,
                         }"
                         @click="selectMultiple(item[idAttribute])"
-                      />
-
-                      <label :for="item.id">
+                      >
                         <LxSearchableText
                           :value="item[nameAttribute]"
                           :search-string="query"
@@ -954,12 +952,17 @@ function countDigits(number) {
                         <div v-if="variant === 'dropdown-custom'">
                           <slot name="customItemDropdown" v-bind="item"></slot>
                         </div>
-                      </label>
-                      <LxIcon
-                        v-if="itemsModel[item[idAttribute]] && selectionKind === 'single'"
-                        customClass="lx-popover-item-checkmark"
-                        value="tick"
-                      />
+                      </LxCheckbox>
+
+                      <div
+                        :class="{ 'lx-invisible': selectionKind === 'multiple' }"
+                        :id="getLabelId(item[idAttribute])"
+                      >
+                        <template v-if="variant === 'dropdown'">{{ item[nameAttribute] }}</template>
+                        <template v-if="variant === 'dropdown-custom'">
+                          <slot name="customItemDropdown" v-bind="item"></slot>
+                        </template>
+                      </div>
                     </div>
                   </template>
                 </div>

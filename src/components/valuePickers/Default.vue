@@ -478,7 +478,6 @@ const wrapperRef = ref();
         @deselectAll="selectAll"
       />
       <div
-        v-if="!readOnly"
         v-for="(item, index) in itemsDisplay"
         :id="`${id}-${index}`"
         :key="item[idAttribute]"

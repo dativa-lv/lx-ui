@@ -10,6 +10,8 @@ import LxIcon from '@/components/Icon.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import LxCheckbox from '@/components/Checkbox.vue';
+import LxRadioButton from '@/components/RadioButton.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -432,10 +434,11 @@ function onNext() {
 
 function handleFocus() {
   nextTick(() => {
-    const container = document.getElementById(props.id);
-    const selectedItem = container?.querySelector(
-      '.lx-value-picker-horizontal-icon-wrapper.lx-selected'
-    );
+    const item = itemsDisplay.value[currentIndex];
+    if (!item) return;
+    const selectedItem = document.getElementById(getItemId(item[props.idAttribute]));
+
+    selectedItem.focus({ preventScroll: true });
 
     setTimeout(() => {
       selectedItem?.scrollIntoView({
@@ -464,7 +467,7 @@ const wrapperRef = ref();
 <template>
   <div ref="wrapperRef" class="lx-value-picker-horizontal-container" :id="id">
     <LxToolbar
-      v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')"
+      v-if="(hasSearch || (hasSelectAll && selectionKind === 'multiple')) && !readOnly"
       class="lx-floating-toolbar"
       :disabled="disabled"
       :hasSearch="hasSearch"
@@ -517,9 +520,8 @@ const wrapperRef = ref();
 
       <template v-else>
         <div
-          v-for="item in itemsDisplay"
-          v-if="!readOnly"
-          :id="`${id}-item-${item[idAttribute]}`"
+          v-for="(item, index) in itemsDisplay"
+          :id="`${id}-item-wrapper-${index}`"
           :key="item[idAttribute]"
           class="lx-value-picker-horizontal-item"
           :class="[
@@ -529,117 +531,76 @@ const wrapperRef = ref();
           data-container="value-picker-item"
         >
           <div v-if="selectionKind === 'single'" class="lx-label-wrapper" :group-id="groupId">
-            <div
-              v-if="variant === 'horizontal'"
-              class="lx-value-picker-horizontal-item-container"
-              :title="item[descriptionAttribute] || tooltip"
-              aria-hidden="true"
-            >
-              <div
-                class="lx-value-picker-horizontal-item-label"
-                :id="`${id}-label-${item[idAttribute]}`"
-              >
-                <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-                <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
-                  {{ item[descriptionAttribute] }}
-                </span>
-              </div>
-            </div>
-            <div
-              v-else-if="variant === 'horizontal-custom'"
-              class="lx-value-picker-horizontal-item-container"
-              :title="item[descriptionAttribute] || tooltip"
-              aria-hidden="true"
-            >
-              <div class="lx-slot-wrapper" :id="`${id}-label-${item[idAttribute]}`">
-                <slot name="customItem" v-bind="item" />
-                <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
-                  {{ item[descriptionAttribute] }}
-                </span>
-              </div>
-            </div>
-            <div
-              class="lx-value-picker-horizontal-icon-wrapper"
-              :class="{
-                'lx-selected':
-                  itemsModel[item[idAttribute]] ||
-                  (item[idAttribute] === notSelectedId && model === null),
-              }"
+            <LxRadioButton
+              v-model="itemsModel[item[idAttribute]]"
+              :id="getItemId(item[idAttribute])"
+              :group-id="groupId"
+              :disabled="disabled"
+              :value="item[idAttribute].toString()"
+              :tabindex="disabled ? -1 : getTabIndex(item[idAttribute])"
+              @click="selectSingle(item[idAttribute])"
               @keydown.right.prevent="!disabled && focusNext()"
               @keydown.down.prevent="!disabled && focusNext()"
               @keydown.left.prevent="!disabled && focusPrevious()"
               @keydown.up.prevent="!disabled && focusPrevious()"
-              @click="selectSingle(item[idAttribute])"
-              :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])"
-              role="radio"
-              :aria-labelledby="`${id}-label-${item[idAttribute]}`"
-              :aria-checked="
-                itemsModel[item[idAttribute]] ||
-                (item[idAttribute] === notSelectedId && model === null)
-              "
-              :aria-disabled="disabled"
-            >
-              <LxIcon
-                :id="getItemId(item[idAttribute])"
-                :value="
-                  itemsModel[item[idAttribute]] ||
-                  (item[idAttribute] === notSelectedId && model === null)
-                    ? 'selected'
-                    : 'unselected'
-                "
-                :disabled="disabled"
-                v-model="itemsModel[item[idAttribute]]"
-              />
-            </div>
-          </div>
-          <div v-if="selectionKind === 'multiple'" class="lx-label-wrapper" :group-id="groupId">
-            <div
-              class="lx-value-picker-horizontal-item-container"
-              v-if="variant === 'horizontal'"
-              :title="item[descriptionAttribute] || tooltip"
-              aria-hidden="true"
             >
               <div
-                class="lx-value-picker-horizontal-item-label"
+                v-if="variant === 'horizontal'"
+                class="lx-value-picker-horizontal-item-container"
                 :id="`${id}-label-${item[idAttribute]}`"
               >
-                <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+                <div class="lx-value-picker-horizontal-item-label">
+                  <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+                </div>
                 <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
                   {{ item[descriptionAttribute] }}
                 </span>
               </div>
-            </div>
-            <div
-              class="lx-value-picker-horizontal-item-container"
-              v-else-if="variant === 'horizontal-custom'"
-              :title="item[descriptionAttribute] || tooltip"
-              aria-hidden="true"
-            >
-              <div class="lx-slot-wrapper" :id="`${id}-label-${item[idAttribute]}`">
+              <div
+                v-else-if="variant === 'horizontal-custom'"
+                class="lx-value-picker-horizontal-item-container"
+                :id="`${id}-label-${item[idAttribute]}`"
+              >
                 <slot name="customItem" v-bind="item" />
                 <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
                   {{ item[descriptionAttribute] }}
                 </span>
               </div>
-            </div>
-            <div
-              class="lx-value-picker-horizontal-icon-wrapper"
-              :class="{ 'lx-selected': itemsModel[item[idAttribute]] }"
+            </LxRadioButton>
+          </div>
+          <div v-if="selectionKind === 'multiple'" class="lx-label-wrapper" :group-id="groupId">
+            <LxCheckbox
+              :id="getItemId(item[idAttribute])"
+              :group-id="groupId"
+              v-model="itemsModel[item[idAttribute]]"
+              :disabled="disabled"
+              :value="item[idAttribute]?.toString()"
+              :builderOptions="{ innerComponent: true }"
               @click="selectMultiple(item[idAttribute])"
               @keydown.space.prevent="selectMultiple(item[idAttribute])"
-              :tabindex="disabled ? '-1' : '0'"
-              role="checkbox"
-              :aria-labelledby="`${id}-label-${item[idAttribute]}`"
-              :aria-checked="itemsModel[item[idAttribute]]"
-              :aria-disabled="disabled"
             >
-              <LxIcon
-                :id="getItemId(item[idAttribute])"
-                :value="itemsModel[item[idAttribute]] ? 'selected' : 'unselected'"
-                :disabled="disabled"
-                v-model="itemsModel[item[idAttribute]]"
-              />
-            </div>
+              <div
+                v-if="variant === 'horizontal'"
+                class="lx-value-picker-horizontal-item-container"
+                :id="`${id}-label-${item[idAttribute]}`"
+              >
+                <div class="lx-value-picker-horizontal-item-label">
+                  <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+                </div>
+                <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
+                  {{ item[descriptionAttribute] }}
+                </span>
+              </div>
+              <div
+                v-else-if="variant === 'horizontal-custom'"
+                class="lx-value-picker-horizontal-item-container"
+              >
+                <slot name="customItem" v-bind="item" />
+                <span v-if="item[descriptionAttribute]" class="lx-invisible" aria-hidden="false">
+                  {{ item[descriptionAttribute] }}
+                </span>
+              </div>
+            </LxCheckbox>
           </div>
         </div>
       </template>

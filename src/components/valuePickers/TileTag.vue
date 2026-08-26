@@ -8,6 +8,8 @@ import LxSearchableText from '@/components/SearchableText.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import LxRadioButton from '@/components/RadioButton.vue';
+import LxCheckbox from '@/components/Checkbox.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -496,13 +498,18 @@ const wrapperRef = ref();
         <div v-for="item in itemsDisplay" :key="item[idAttribute]">
           <div
             v-if="selectionKind === 'single' && !isElementHidden(item)"
-            class="lx-value-picker-tile"
-            :class="{
-              'lx-value-picker-tile-selected':
-                itemsModel[item[idAttribute]] ||
-                (!alwaysAsArray && item[idAttribute] === model) ||
-                item[idAttribute] === checkNull(model),
-            }"
+            class="lx-value-picker-tile lx-embedded-selecting-block"
+            :class="[
+              {
+                'lx-value-picker-tile-selected':
+                  itemsModel[item[idAttribute]] ||
+                  (!alwaysAsArray && item[idAttribute] === model) ||
+                  item[idAttribute] === checkNull(model),
+              },
+              {
+                'lx-disabled': disabled,
+              },
+            ]"
             :id="getItemId(item[idAttribute])"
             :group-id="groupId"
             :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])"
@@ -527,17 +534,17 @@ const wrapperRef = ref();
                 <div class="lx-value-picker-tile-name">
                   <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
                 </div>
-                <div class="lx-value-picker-icon">
-                  <LxIcon
-                    v-if="
-                      itemsModel[item[idAttribute]] ||
-                      (!alwaysAsArray && item[idAttribute] === model) ||
-                      item[idAttribute] === checkNull(model)
-                    "
-                    value="selected"
-                  />
-                  <LxIcon v-else value="unselected" />
-                </div>
+                <LxRadioButton
+                  :model-value="
+                    itemsModel[item[idAttribute]] ||
+                    (!alwaysAsArray && item[idAttribute] === model) ||
+                    item[idAttribute] === checkNull(model)
+                  "
+                  :disabled="disabled"
+                  :tabindex="-1"
+                  aria-hidden="true"
+                  inert
+                />
               </div>
               <div
                 class="lx-value-picker-description"
@@ -548,29 +555,32 @@ const wrapperRef = ref();
             </template>
             <div class="lx-value-picker-tile-header" v-else-if="variant === 'tiles-custom'">
               <slot name="customItem" v-bind="item" />
-              <div class="lx-value-picker-icon">
-                <LxIcon
-                  v-if="
-                    itemsModel[item[idAttribute]] ||
-                    (!alwaysAsArray && item[idAttribute] === model) ||
-                    item[idAttribute] === checkNull(model)
-                  "
-                  value="selected"
-                />
-                <LxIcon v-else value="unselected" />
-              </div>
+              <LxRadioButton
+                :model-value="
+                  itemsModel[item[idAttribute]] ||
+                  (!alwaysAsArray && item[idAttribute] === model) ||
+                  item[idAttribute] === checkNull(model)
+                "
+                :disabled="disabled"
+                :tabindex="-1"
+                aria-hidden="true"
+                inert
+              />
             </div>
           </div>
 
           <div
             v-if="selectionKind === 'multiple' && !isElementHidden(item)"
-            class="lx-value-picker-tile"
+            class="lx-value-picker-tile lx-embedded-selecting-block"
+            :class="[
+              {
+                'lx-value-picker-tile-selected': itemsModel[item[idAttribute]],
+              },
+              { 'lx-disabled': disabled },
+            ]"
             :id="getItemId(item[idAttribute])"
             :group-id="groupId"
             :tabindex="disabled ? '-1' : '0'"
-            :class="{
-              'lx-value-picker-tile-selected': itemsModel[item[idAttribute]],
-            }"
             :disabled="disabled"
             role="checkbox"
             :aria-checked="itemsModel[item[idAttribute]]"
@@ -583,10 +593,13 @@ const wrapperRef = ref();
                 <div class="lx-value-picker-tile-name">
                   <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
                 </div>
-                <div class="lx-value-picker-icon">
-                  <LxIcon v-if="itemsModel[item[idAttribute]]" value="selected" />
-                  <LxIcon v-else value="unselected" />
-                </div>
+                <LxCheckbox
+                  :model-value="itemsModel[item[idAttribute]]"
+                  :disabled="disabled"
+                  tabindex="-1"
+                  aria-hidden="true"
+                  inert
+                />
               </div>
               <div
                 class="lx-value-picker-description"
@@ -598,10 +611,13 @@ const wrapperRef = ref();
             <template v-else-if="variant === 'tiles-custom'">
               <div class="lx-value-picker-tile-header">
                 <slot name="customItem" v-bind="item" />
-                <div class="lx-value-picker-icon">
-                  <LxIcon v-if="itemsModel[item[idAttribute]]" value="selected" />
-                  <LxIcon v-else value="unselected" />
-                </div>
+                <LxCheckbox
+                  :model-value="itemsModel[item[idAttribute]]"
+                  :disabled="disabled"
+                  tabindex="-1"
+                  aria-hidden="true"
+                  inert
+                />
               </div>
             </template>
           </div>
@@ -610,7 +626,7 @@ const wrapperRef = ref();
 
       <div
         class="lx-value-picker-tags"
-        :class="[{ 'lx-invalid': invalid }]"
+        :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
         v-if="variant === 'tags' || variant === 'tags-custom'"
       >
         <ul

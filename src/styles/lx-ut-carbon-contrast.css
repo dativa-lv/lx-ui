@@ -38,8 +38,8 @@
   --color-latvijalv-alert-foreground: var(--contrast-foreground);
   --color-latvijalv-alert-hover-foreground: var(--contrast-background);
   --color-latvijalv-alert-hover-background: var(--contrast-hover);
-  --color-tile-background: var(--contrast-background);
-  --color-tile-background-hover: var(--contrast-hover);
+  --color-nav-tile-background: var(--contrast-background);
+  --color-nav-tile-background-hover: var(--contrast-hover);
   --color-highlight: var(--contrast-interactive);
   --color-highlight-background: var(--color-highlight);
   --color-highlight-foreground: var(--contrast-background);
@@ -112,7 +112,7 @@
 
   --card-border: var(--border-width-2) solid var(--color-foreground);
 
-  --color-tile-text-secondary-hover: var(--contrast-background);
+  --color-nav-tile-text-secondary-hover: var(--contrast-background);
 
   --color-list-item-border: var(--color-foreground);
 
@@ -137,6 +137,8 @@
   --color-nav-item-background-selected: var(--contrast-foreground);
   --color-nav-public-item-text-hover: var(--contrast-background);
   --color-nav-public-item-icon-hover: var(--contrast-background);
+
+  --color-indicator-icon-hover: var(--contrast-background);
 
   --color-loader-track: var(--contrast-background);
 

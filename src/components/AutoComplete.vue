@@ -1606,7 +1606,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                           tabindex="-1"
                           role="option"
                           :aria-selected="isItemSelected(item)"
-                          class="lx-value-picker-item lx-popover-item-text-only"
+                          class="lx-value-picker-item lx-popover-item-text-only lx-embedded-selecting-block"
                           :class="[
                             {
                               'lx-selected': isItemSelected(item),
@@ -1639,25 +1639,34 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                             :disabled="disabled"
                             :value="item[idAttribute]"
                             tabindex="-1"
-                            :labelId="getLabelId(item[idAttribute])"
                             :builderOptions="{
                               innerComponent: true,
                             }"
                             @click="selectMultiple(item)"
-                          />
-
-                          <label :for="item[idAttribute]" :id="getLabelId(item[idAttribute])">
+                          >
                             <template v-if="$slots.customItem">
                               <slot name="customItem" v-bind="item"></slot>
                             </template>
-
                             <template v-else>
                               <LxSearchableText
                                 :value="item[nameAttribute]"
                                 :search-string="query"
                               />
                             </template>
-                          </label>
+                          </LxCheckbox>
+
+                          <div
+                            :class="{ 'lx-invisible': selectionKind === 'multiple' }"
+                            :id="getLabelId(item[idAttribute])"
+                          >
+                            <template v-if="$slots.customItem">
+                              <slot name="customItem" v-bind="item"></slot>
+                            </template>
+                            <template v-else>
+                              {{ item[nameAttribute] }}
+                            </template>
+                          </div>
+
                           <LxIcon
                             v-if="isItemSelected(item) && selectionKind === 'single'"
                             customClass="lx-popover-item-checkmark"

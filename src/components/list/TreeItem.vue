@@ -212,7 +212,7 @@ watch(
             <slot name="customItem" v-bind="item" />
           </template>
         </LxListItem>
-        <div class="selecting-block" v-if="hasSelecting">
+        <template v-if="hasSelecting">
           <template v-if="isSelectable(item)">
             <LxRadioButton
               v-if="selectionKind === 'single'"
@@ -239,7 +239,7 @@ watch(
             />
           </template>
           <p v-else class="lx-checkbox-placeholder"></p>
-        </div>
+        </template>
       </div>
     </div>
     <div class="tree-item-invalid" v-if="states?.[item[idAttribute]]?.invalid">

@@ -99,23 +99,25 @@
   overflow: hidden;
 }
 
+.lx-dropdown-default-content .lx-value-picker-item .lx-checkbox-wrapper,
+.lx-dropdown-default-content .lx-value-picker-item .lx-radio-button-wrapper {
+  width: 100%;
+  overflow: hidden;
+}
+
+.lx-dropdown-default-content .lx-value-picker-item > div,
+.lx-dropdown-default-content .lx-value-picker-item .lx-checkbox-text-wrapper,
+.lx-dropdown-default-content .lx-value-picker-item .lx-radio-button-text-wrapper {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .lx-value-picker-item .lx-state .lx-state-icon {
   margin-left: var(--space-0500);
 }
 
 .lx-value-picker-item label {
-  display: flex;
-  align-items: center;
   cursor: pointer;
-  width: fit-content;
-  grid-area: content;
-}
-
-.lx-dropdown-default-content .lx-value-picker-item:not(:has(.lx-item-display)):not(:has(.lx-state)) label,
-.autocomplete-multiple.lx-value-picker-item label:not(:has(.lx-item-display)):not(:has(.lx-state)), 
-.dropdown-multiple.lx-value-picker-item label:not(:has(.lx-item-display)):not(:has(.lx-state)) {
-  display: block;
-  width: 100%;
 }
 
 .lx-layout .lx-value-picker-item:focus,
@@ -529,14 +531,9 @@
 
 .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag svg {
   grid-area: icon;
-  height: var(--popover-item-icon-size-s);
-  width: var(--popover-item-icon-size-s);
+  height: var(--popover-item-tag-icon-size);
+  width: var(--popover-item-tag-icon-size);
   justify-self: var(--popover-item-tag-icon-alignment);
-}
-
-.lx-touch-mode .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag svg {
-  height: var(--popover-item-icon-size-l);
-  width: var(--popover-item-icon-size-l);
 }
 
 .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag:hover svg {

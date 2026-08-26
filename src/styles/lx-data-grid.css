@@ -415,32 +415,16 @@
   opacity: 1;
 }
 
-.lx-data-grid .lx-data-grid-selection-wrapper {
-  display: flex;
-  align-items: start;
+.lx-data-grid .lx-selection-block {
+  width: var(--data-grid-selecting-block-width);
+  height: var(--data-grid-selecting-block-height);
   padding: var(--data-grid-action-set-padding);
-  height: 100%;
-}
-
-.lx-data-grid .lx-checkbox-wrapper,
-.lx-data-grid .lx-radio-button-wrapper {
-  display: flex;
-  width: var(--data-grid-action-width);
-  height: var(--data-grid-action-height);
-  margin: var(--space-0);
-  justify-content: center;
-  align-items: center;
 }
 
 .lx-data-grid .lx-grid-row.lx-selected .lx-cell-selector,
 .lx-data-grid .lx-grid-table .lx-grid-row.lx-selected .lx-cell,
 .lx-data-grid .lx-grid-table .lx-grid-row.lx-selected .lx-cell-action {
   background: var(--color-selected-background);
-}
-
-.lx-data-grid-wrapper .lx-radio-button-wrapper .lx-radio-button-label-wrapper,
-.lx-data-grid-wrapper .lx-checkbox-label-wrapper {
-  justify-self: center;
 }
 
 .lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row.lx-selected {
@@ -488,92 +472,6 @@
 .lx-theme-contrast .lx-grid-row .lx-cell-extra .lx-ratings svg,
 .lx-grid-row:hover .lx-cell-extra .lx-ratings svg {
     opacity: 1;
-}
-
-/*** Contrast checkbox & radio button styles ***/
-
-/* Selected/hover on row + no hover on checkbox */
-
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row.lx-selected 
-  .lx-checkbox+
-  .lx-checkbox-label-wrapper 
-  .lx-checkbox-appearance,
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row:hover 
-  .lx-checkbox+
-  .lx-checkbox-label-wrapper 
-  .lx-checkbox-appearance {
-  background-color: var(--contrast-background);
-  border-color: var(--contrast-background);
-}
-
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row
-  .lx-checkbox+
-  .lx-checkbox-label-wrapper 
-  .lx-checkbox-appearance 
-  .lx-checkbox-thumb svg {
-  fill: var(--contrast-foreground);
-}
-
-/* Hover on checkbox */
-
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row 
-  .lx-checkbox-wrapper:hover 
-  .lx-checkbox+
-  .lx-checkbox-label-wrapper 
-  .lx-checkbox-appearance {
-  background-color: var(--contrast-hover);
-  border-color: var(--contrast-background);
-}
-
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row 
-  .lx-checkbox-wrapper:hover 
-  .lx-checkbox:checked+
-  .lx-checkbox-label-wrapper 
-  .lx-checkbox-appearance 
-  .lx-checkbox-thumb svg {
-  fill: var(--contrast-background);
-}
-
-/* Selected/hover on row + no hover on radio button */
-
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row.lx-selected
-  .lx-radio-button-wrapper 
-  .lx-radio-button+
-  .lx-radio-button-label-wrapper 
-  .lx-radio-button-appearance,
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row:hover
-  .lx-radio-button-wrapper 
-  .lx-radio-button+
-  .lx-radio-button-label-wrapper 
-  .lx-radio-button-appearance {
-  border-color: var(--contrast-background);
-  background-color: var(--contrast-background);
-}
-
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row
-  .lx-radio-button:checked+
-  .lx-radio-button-label-wrapper 
-  .lx-radio-button-appearance 
-  .lx-radio-thumb {
-  background-color: var(--contrast-background);
-}
-
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row
-  .lx-radio-button-wrapper
-  .lx-radio-button:checked+
-  .lx-radio-button-label-wrapper 
-  .lx-radio-button-appearance {
-  background-color: transparent;
-}
-
-/* Hover on radio button */
-
-.lx.lx-theme-contrast .lx-data-grid .lx-grid-table .lx-grid-row 
-  .lx-radio-button-wrapper:hover 
-  .lx-radio-button+
-  .lx-radio-button-label-wrapper 
-  .lx-radio-button-appearance {
-  background-color: var(--contrast-hover);
 }
 
 .lx-theme-contrast .lx-data-grid .lx-cell-person-wrapper .lx-button:hover {

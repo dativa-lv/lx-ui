@@ -284,15 +284,15 @@
   animation: pulse 3.4s infinite alternate ease-in-out;
 }
 
-.lx:not(.lx-no-animations) .lx-radio-button-appearance .lx-radio-thumb {
+.lx:not(.lx-no-animations) .lx-radio-button-container .lx-radio-button-thumb {
   transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
-.lx:not(.lx-no-animations) .lx-checkbox-appearance {
+.lx:not(.lx-no-animations) .lx-checkbox-container {
   transition: background-color 0.2s ease-out, border-color 0.2s ease-out;
 }
 
-.lx:not(.lx-no-animations) .lx-checkbox-appearance .lx-checkbox-thumb,
+.lx:not(.lx-no-animations) .lx-checkbox-container .lx-checkbox-thumb,
 .lx:not(.lx-no-animations) .lx-override input[type="checkbox"]::before,
 .lx:not(.lx-no-animations) .lx-override input[type="radio"]::before {
   transition: opacity 0.2s ease-out, transform 0.2s ease-out;
@@ -519,8 +519,8 @@
   transition: 70ms cubic-bezier(0.2, 0, 0.38, 0.9) all;
 }
 
-.lx:not(.lx-no-animations) .lx-radio-button-appearance,
-.lx:not(.lx-no-animations) .lx-checkbox-appearance,
+.lx:not(.lx-no-animations) .lx-radio-button-container,
+.lx:not(.lx-no-animations) .lx-checkbox-container,
 .lx:not(.lx-no-animations) .lx-override input[type="checkbox"],
 .lx:not(.lx-no-animations) .lx-override input[type="radio"] {
   -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
@@ -529,18 +529,8 @@
     border-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
 }
 
-.lx:not(.lx-no-animations)
-  .lx-radio-button:checked
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance::before,
-.lx:not(.lx-no-animations)
-  .lx-checkbox:checked
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance::before,
-.lx:not(.lx-no-animations)
-  .lx-checkbox:indeterminate
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance::before {
+.lx:not(.lx-no-animations) .lx-radio-button-wrapper.lx-checked .lx-radio-button-container::before,
+.lx:not(.lx-no-animations) .lx-checkbox-wrapper.lx-checked .lx-checkbox-container::before {
   -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
     border-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
   transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),

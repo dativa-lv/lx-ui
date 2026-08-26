@@ -1,0 +1,929 @@
+/*** LxCheckbox + LxRadioButton styles ***/
+
+.lx-radio-button-wrapper,
+.lx-checkbox-wrapper {
+  width: fit-content;
+  height: fit-content;
+  margin: var(--selecting-block-margin);
+}
+
+.lx-selecting-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--selecting-block-width);
+  height: var(--selecting-block-height);
+  cursor: pointer;
+}
+
+.lx-data-grid-wrapper .lx-selecting-block {
+  width: var(--data-grid-selecting-block-width);
+  height: var(--data-grid-selecting-block-height);
+}
+
+.lx-data-grid-wrapper .lx-radio-button-wrapper,
+.lx-data-grid-wrapper .lx-checkbox-wrapper {
+  --selecting-block-margin: var(--space-0);
+}
+
+.lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-selecting-block,
+.lx-theme-contrast .lx-value-picker-tile-wrapper .lx-value-picker-tile:hover .lx-selecting-block,
+.lx-theme-contrast .lx-data-block-wrapper .lx-data-block-header:hover .lx-selecting-block {
+ --color-checkbox-border-off: var(--contrast-background);
+ --color-checkbox-background-off: var(--contrast-hover);
+ --color-checkbox-border-hover-off: var(--contrast-foreground);
+ --color-checkbox-background-hover-off: var(--contrast-foreground);
+ --color-checkbox-border-on: var(--contrast-background);
+ --color-checkbox-background-on: var(--contrast-background);
+ --color-checkbox-tick: var(--contrast-foreground);
+ --color-checkbox-border-hover-on: var(--contrast-foreground);
+ --color-checkbox-background-hover-on: var(--contrast-foreground);
+ --color-checkbox-tick-hover: var(--contrast-background);
+ --color-radio-button-border-off: var(--contrast-background);
+ --color-radio-button-background-off: var(--contrast-hover);
+ --color-radio-button-border-hover-off: var(--contrast-foreground);
+ --color-radio-button-background-hover-off: var(--contrast-foreground);
+ --color-radio-button-border-on: var(--contrast-background);
+ --color-radio-button-background-on: var(--contrast-background);
+ --color-radio-button-thumb: var(--contrast-foreground);
+ --color-radio-button-border-hover-on: var(--contrast-foreground);
+ --color-radio-button-background-hover-on: var(--contrast-foreground);
+ --color-radio-button-thumb-hover: var(--contrast-background);
+}
+
+.lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row.lx-selected .lx-selecting-block,
+.lx-theme-contrast .lx-list-item-container:has(.lx-list-item.lx-selected) .lx-selecting-block,
+.lx-theme-contrast .lx-data-block-wrapper.lx-data-block-selected .lx-data-block-header .lx-selecting-block,
+.lx-theme-contrast .lx-value-picker-tile-wrapper .lx-value-picker-tile.lx-value-picker-tile-selected .lx-selecting-block {
+ --color-checkbox-border-on: var(--contrast-background);
+ --color-checkbox-background-on: var(--contrast-background);
+ --color-checkbox-tick: var(--contrast-foreground);
+ --color-radio-button-border-on: var(--contrast-background);
+ --color-radio-button-background-on: var(--contrast-background);
+ --color-radio-button-thumb: var(--contrast-foreground);
+}
+
+.lx-list-item-container .lx-selecting-block,
+.lx-list-item-container .lx-radio-button-wrapper,
+.lx-list-item-container .lx-checkbox-wrapper {
+  width: var(--list-selecting-block-width);
+  max-height: var(--list-selecting-block-height);
+  height: 100%;
+}
+
+.lx-list-item-container .lx-radio-button-wrapper,
+.lx-list-item-container .lx-checkbox-wrapper {
+  --selecting-block-margin: var(--space-0);
+}
+
+.lx-data-block-wrapper .lx-icons .lx-selecting-block,
+.lx-data-block-wrapper .lx-icons .lx-radio-button-wrapper,
+.lx-data-block-wrapper .lx-icons .lx-checkbox-wrapper {
+  width: var(--data-block-selecting-block-width);
+  max-height: var(--data-block-selecting-block-height);
+  height: 100%;
+}
+
+.lx-data-block-wrapper .lx-icons .lx-radio-button-wrapper,
+.lx-data-block-wrapper .lx-icons .lx-checkbox-wrapper {
+  --selecting-block-margin: var(--space-0);
+}
+
+.lx-list-item-container .lx-radio-button-label,
+.lx-list-item-container .lx-checkbox-label {
+  display: none;
+}
+
+.lx-data-block-wrapper .lx-selecting-block {
+  --selecting-block-margin: var(--space-0);
+}
+
+.lx-value-picker-horizontal-wrapper .lx-selecting-block {
+  width: var(--selecting-block-horizontal-width);
+  height: var(--selecting-block-horizontal-height);
+  --selecting-block-margin: var(--space-0);
+}
+
+.lx-radio-button-input,
+.lx-checkbox {
+  position: absolute;
+  overflow: hidden;
+  width: 2px;
+  height: 2px;
+  padding: var(--space-0);
+  border: var(--border-width-0);
+  margin: calc(var(--space-0125) * -1);
+  clip: rect(0, 0, 0, 0);
+  visibility: inherit;
+  white-space: nowrap;
+}
+
+.lx-radio-button-wrapper,
+.lx-checkbox-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  letter-spacing: var(--letter-spacing-1);
+  font-size: var(--selecting-block-text-primary-font-size);
+  font-weight: var(--selecting-block-text-primary-font-weight);
+  line-height: var(--selecting-block-text-primary-line-height);
+  color: var(--color-selecting-block-text-primary);
+  column-gap: var(--selecting-block-gap);
+}
+
+.lx-radio-button-wrapper.lx-disabled,
+.lx-checkbox-wrapper.lx-disabled {
+  color: var(--color-disabled-foreground);
+}
+
+.lx-embedded-selecting-block {
+  --selecting-block-margin: var(--space-0);
+}
+
+.lx-radio-button-wrapper .lx-radio-button-text-wrapper,
+.lx-checkbox-wrapper .lx-checkbox-text-wrapper {
+  padding: var(--selecting-block-text-padding);
+  cursor: pointer;
+}
+
+.lx-radio-button-wrapper:not(:has(.lx-radio-button-text-wrapper)),
+.lx-checkbox-wrapper:not(:has(.lx-checkbox-text-wrapper)) {
+  column-gap: var(--space-0);
+}
+
+.lx-radio-button-container,
+.lx-checkbox-container {
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.lx-layout.lx-override input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--checkbox-width);
+  height: var(--checkbox-height);
+  border-width: var(--checkbox-border-width);
+  border-style: var(--checkbox-border-style);
+  border-color: var(--color-checkbox-border-off);
+  border-radius: var(--checkbox-border-radius);
+  background: var(--color-checkbox-background-off);
+  outline: 2px solid transparent;
+  cursor: pointer;
+}
+
+.lx-override input[type="checkbox"]:focus {
+  outline-color: var(--color-focus-background);
+}
+
+.lx-override input[type="checkbox"][tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* Necessary for cases, where a native checkbox needs to look like an LX checkbox */
+.lx-override input[type="checkbox"]::before {
+  content: "✔";
+  color: transparent;
+  font-size: 0.75rem;
+  opacity: 0;
+}
+
+.lx-override input[type="checkbox"]:checked {
+  background: var(--color-checkbox-background-on);
+  border-color: var(--color-checkbox-border-on);
+}
+
+.lx-override input[type="checkbox"]:hover {
+  background: var(--color-checkbox-background-hover-off);
+  border-color: var(--color-checkbox-border-hover-off);
+}
+
+.lx-override input[type="checkbox"]:checked:hover {
+  background: var(--color-checkbox-background-hover-on);
+  border-color: var(--color-checkbox-border-hover-on);
+}
+
+.lx-override input[type="checkbox"]:checked::before {
+  color: var(--color-checkbox-tick);
+  opacity: 1;
+}
+
+.lx-override input[type="checkbox"]:checked:hover::before {
+  color: var(--color-checkbox-tick-hover);
+}
+
+.lx-layout.lx-override input[type="radio"] {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--radio-button-width);
+  height: var(--radio-button-height);
+  border-width: var(--radio-button-border-width);
+  border-style: var(--radio-button-border-style);
+  border-color: var(--color-radio-button-border-off);
+  border-radius: var(--radio-button-border-radius);
+  background: var(--color-radio-button-background-off);
+  outline: 2px solid transparent;
+  cursor: pointer;
+}
+
+.lx-override input[type="radio"]:focus {
+  outline-color: var(--color-focus-background);
+}
+
+.lx-override input[type="radio"][tabindex="-1"]:focus{
+  outline: none;
+}
+
+/* Necessary for cases, where a native radio button needs to look like an LX radio button */
+.lx-override input[type="radio"]::before {
+  content: "●";
+  color: transparent;
+  font-size: 1.6rem;
+  margin-top: calc(var(--space-0250) * -1);
+  opacity: 0;
+}
+
+.lx-override input[type="radio"]:checked {
+  background: var(--color-radio-button-background-on);
+  border-color: var(--color-radio-button-border-on);
+}
+
+.lx-override input[type="radio"]:hover {
+  background: var(--color-interactive-hover-background);
+  border-color: transparent;
+}
+
+.lx-override input[type="radio"]:checked:hover::before {
+  color: var(--color-interactive-hover-foreground);
+  border-color: transparent;
+}
+
+.lx-override input[type="radio"]:checked::before {
+  color: var(--color-radio-button-thumb);
+  opacity: 1;
+}
+
+.lx-override input[type="checkbox"]:checked::before,
+.lx-override input[type="radio"]:checked::before {
+  content: '';
+}
+
+.lx-radio-button-wrapper .lx-radio-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--radio-button-width);
+  height: var(--radio-button-height);
+  border-radius: var(--radio-button-border-radius);
+  border-width: var(--radio-button-border-width);
+  border-style: var(--radio-button-border-style);
+  border-color: var(--color-radio-button-border-off);
+  background: var(--color-radio-button-background-off);
+}
+
+.lx-radio-button-wrapper.lx-checked .lx-radio-button-container {
+  background: var(--color-radio-button-background-on);
+  border-color: var(--color-radio-button-border-on);
+}
+
+.lx-radio-button-wrapper .lx-selecting-block:hover .lx-radio-button-container,
+.lx-radio-button-wrapper:has(.lx-radio-button-text-wrapper:hover) .lx-radio-button-container {
+  background: var(--color-radio-button-background-hover-off);
+  border-color: var(--color-radio-button-border-hover-off);
+}
+
+.lx-radio-button-wrapper.lx-checked .lx-selecting-block:hover .lx-radio-button-container,
+.lx-radio-button-wrapper.lx-checked:has(.lx-radio-button-text-wrapper:hover) .lx-radio-button-container {
+  background: var(--color-radio-button-background-hover-on);
+  border-color: var(--color-radio-button-border-hover-on);
+}
+
+.lx-radio-button-container .lx-radio-button-thumb {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  height: var(--radio-button-thumb-height);
+  width: var(--radio-button-thumb-width);
+  border-radius: var(--radio-button-thumb-border-radius);
+  background: var(--color-radio-button-thumb);
+  transform: scale(0.5);
+}
+
+.lx-radio-button-wrapper.lx-checked .lx-radio-button-thumb {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.lx-radio-button-wrapper.lx-checked .lx-selecting-block:hover .lx-radio-button-thumb,
+.lx-radio-button-wrapper.lx-checked:has(.lx-radio-button-text-wrapper:hover) .lx-radio-button-thumb {
+  background: var(--color-radio-button-thumb-hover);
+}
+
+.lx-checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: var(--checkbox-width);
+  height: var(--checkbox-height);
+  border-radius: var(--checkbox-border-radius);
+  border-width: var(--checkbox-border-width);
+  border-style: var(--checkbox-border-style);
+  border-color: var(--color-checkbox-border-off);
+  background: var(--color-checkbox-background-off);
+}
+
+.lx-checkbox-wrapper.lx-checked .lx-checkbox-container {
+  background: var(--color-checkbox-background-on);
+  border-color: var(--color-checkbox-border-on);
+}
+
+.lx-checkbox-wrapper .lx-selecting-block:hover .lx-checkbox-container,
+.lx-checkbox-wrapper:has(.lx-checkbox-text-wrapper:hover) .lx-checkbox-container {
+  background: var(--color-checkbox-background-hover-off);
+  border-color: var(--color-checkbox-border-hover-off);
+}
+
+.lx-checkbox-wrapper.lx-checked .lx-selecting-block:hover .lx-checkbox-container,
+.lx-checkbox-wrapper.lx-checked:has(.lx-checkbox-text-wrapper:hover) .lx-checkbox-container {
+  background: var(--color-checkbox-background-hover-on);
+  border-color: var(--color-checkbox-border-hover-on);
+}
+
+.lx-checkbox-wrapper .lx-checkbox-thumb {
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.5);
+}
+
+.lx-checkbox-wrapper.lx-checked .lx-checkbox-thumb {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lx-checkbox-wrapper .lx-checkbox-container .lx-checkbox-thumb svg {
+  height: var(--checkbox-tick-size);
+  width: var(--checkbox-tick-size);
+  fill: var(--color-checkbox-tick);
+}
+
+.lx-checkbox-wrapper.lx-checked .lx-selecting-block:hover .lx-checkbox-thumb svg,
+.lx-checkbox-wrapper.lx-checked:has(.lx-checkbox-text-wrapper:hover) .lx-checkbox-thumb svg {
+  fill: var(--color-checkbox-tick-hover);
+}
+
+.lx-embedded-selecting-block .lx-radio-button-wrapper .lx-radio-button-container,
+.lx-embedded-selecting-block .lx-checkbox-wrapper .lx-checkbox-container {
+  --color-radio-button-background-hover-off: var(--color-radio-button-background-off);
+  --color-radio-button-border-hover-off: var(--color-radio-button-border-off);
+  --color-radio-button-background-hover-on: var(--color-radio-button-background-on);
+  --color-radio-button-border-hover-on: var(--color-radio-button-border-on);
+  --color-radio-button-thumb-hover: var(--color-radio-button-thumb);
+  --color-checkbox-background-hover-off: var(--color-checkbox-background-off);
+  --color-checkbox-border-hover-off: var(--color-checkbox-border-off);
+  --color-checkbox-background-hover-on: var(--color-checkbox-background-on);
+  --color-checkbox-border-hover-on: var(--color-checkbox-border-on);
+  --color-checkbox-tick-hover: var(--color-checkbox-tick);
+}
+
+.lx-radio-button-input:active + .lx-selecting-block .lx-radio-button-container,
+.lx-radio-button-input:focus + .lx-selecting-block .lx-radio-button-container,
+.lx-checkbox:active + .lx-selecting-block .lx-checkbox-container,
+.lx-checkbox:focus + .lx-selecting-block .lx-checkbox-container {
+  outline: 2px solid var(--color-focus-background);
+}
+
+/* Disabled styles */
+
+.lx-radio-button-wrapper.lx-disabled,
+.lx-checkbox-wrapper.lx-disabled {
+  color: var(--color-disabled-foreground);
+}
+
+.lx-radio-button-wrapper.lx-disabled .lx-selecting-block,
+.lx-checkbox-wrapper.lx-disabled .lx-selecting-block,
+.lx-radio-button-wrapper.lx-disabled .lx-radio-button-text-wrapper,
+.lx-checkbox-wrapper.lx-disabled .lx-checkbox-text-wrapper {
+  cursor: not-allowed;
+}
+
+.lx-radio-button-wrapper.lx-disabled .lx-radio-button-input + .lx-selecting-block .lx-radio-button-container,
+.lx-checkbox-wrapper.lx-disabled .lx-checkbox + .lx-selecting-block .lx-checkbox-container {
+  outline: none;
+}
+
+.lx-radio-button-wrapper.lx-disabled .lx-selecting-block .lx-radio-button-container,
+.lx-radio-button-wrapper.lx-disabled.lx-checked .lx-selecting-block .lx-radio-button-container {
+  border-color: var(--color-disabled-foreground);
+  background: transparent;
+}
+
+.lx-checkbox-wrapper.lx-disabled .lx-selecting-block .lx-checkbox-container,
+.lx-checkbox-wrapper.lx-disabled.lx-checked .lx-selecting-block .lx-checkbox-container,
+.lx-checkbox:disabled:indeterminate + .lx-selecting-block .lx-checkbox-container {
+  border-color: var(--color-disabled-foreground);
+  background: transparent;
+}
+
+.lx-radio-button-wrapper.lx-disabled .lx-selecting-block .lx-radio-button-container .lx-radio-button-thumb {
+  background: var(--color-disabled-foreground);
+}
+
+.lx-checkbox-wrapper.lx-disabled.lx-checked .lx-selecting-block .lx-checkbox-container,
+.lx-checkbox:disabled:indeterminate + .lx-selecting-block .lx-checkbox-container {
+  background: var(--color-disabled-foreground);
+}
+
+.lx-checkbox-wrapper.lx-disabled .lx-selecting-block .lx-checkbox-container .lx-checkbox-thumb svg {
+  fill: var(--color-disabled-background);
+}
+
+/* Invalid styles */
+
+.lx-value-picker-default-wrapper.lx-invalid > .lx-value-picker-default-item .lx-radio-button-wrapper .lx-radio-button-container,
+.lx-value-picker-default-wrapper.lx-invalid > .lx-value-picker-default-item .lx-checkbox-wrapper .lx-selecting-block .lx-checkbox-container {
+  border-color: var(--color-bad);
+}
+
+/*** LxValuePicker default styles ***/
+
+.lx-value-picker-default-item {
+  display: flex;
+  align-items: center;
+}
+
+.lx-value-picker-default-item.lx-value-hidden,
+.lx-tag.lx-value-hidden {
+  opacity: 0.25;
+}
+
+.lx-value-picker-default-item > .lx-value-picker-default-item-container {
+  display: flex;
+}
+
+.lx-value-picker-default-item > .lx-value-picker-default-item-container > .lx-value-picker-default-item-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lx-value-picker-default-wrapper.select-all > .lx-value-picker-default-item {
+  padding-left: var(--space-1000);
+}
+
+.lx-value-picker-default-wrapper.select-all:has(.lx-text-input-wrapper) > .lx-value-picker-default-item {
+  padding-left: var(--space-0750);
+}
+
+/*** LxValuePicker horizontal styles ***/
+
+.lx-value-picker-horizontal-container {
+  display: grid;
+}
+
+.lx-value-picker-horizontal-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: var(--selecting-block-horizontal-set-gap);
+  padding-bottom: var(--space-0500); /* TODO: add token? */
+  overflow-x: auto;
+}
+
+.lx-value-picker-horizontal-wrapper .lx-radio-button-wrapper, 
+.lx-value-picker-horizontal-wrapper .lx-checkbox-wrapper {
+  align-items: center;
+  flex-direction: column-reverse;
+  gap: var(--selecting-block-horizontal-gap);
+}
+
+.lx-value-picker-horizontal-wrapper .lx-radio-button-wrapper, 
+.lx-value-picker-horizontal-wrapper .lx-checkbox-wrapper {
+  --selecting-block-margin: var(--space-0);
+}
+
+.lx-value-picker-horizontal-item {
+  display: flex;
+  width: 8rem; /* TODO: add token? */
+  align-items: end;
+  justify-content: center;
+  text-align: center;
+}
+
+.lx-value-picker-horizontal-item .lx-label-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 8rem; /* TODO: add token? */
+}
+
+.lx-value-picker-horizontal-item-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx-value-picker-horizontal-item .lx-slot-wrapper {
+  text-align: center;
+}
+
+.lx-value-picker-horizontal-item.lx-value-hidden {
+  opacity: 0.25;
+}
+
+.lx-value-picker-horizontal-item > .lx-value-picker-horizontal-item-container {
+  display: flex;
+}
+
+.lx-value-picker-horizontal-item > .lx-value-picker-horizontal-item-container > .lx-value-picker-horizontal-item-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lx-value-picker-default-item .lx-value-picker-default-item-description {
+  color: var(--color-selecting-block-text-secondary);
+  line-height: var(--selecting-block-text-secondary-line-height);
+  font-size: var(--selecting-block-text-secondary-font-size);
+  font-weight: var(--selecting-block-text-secondary-font-weight);
+}
+
+.lx-value-picker-item-disabled .lx-value-picker-default-item-description {
+  color: var(--color-disabled-foreground);
+}
+
+/* Invalid styles */
+
+.lx-value-picker-horizontal-wrapper.lx-invalid > .lx-value-picker-horizontal-item .lx-radio-button-wrapper .lx-radio-button-container,
+.lx-value-picker-horizontal-wrapper.lx-invalid > .lx-value-picker-horizontal-item .lx-checkbox-wrapper .lx-selecting-block .lx-checkbox-container {
+  border-color: var(--color-bad);
+}
+
+/*** LxValuePicker indicator styles ***/
+
+.lx-indicator.lx-value-hidden {
+  opacity: 0.25;
+}
+
+.lx-value-picker-indicators .lx-indicator-set {
+  display: flex;
+  gap: var(--indicator-set-gap);
+  list-style: none;
+  margin: var(--space-0);
+  padding: var(--space-0);
+  flex-wrap: wrap;
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-indicator-background);
+  border-radius: var(--indicator-border-radius);
+  width: var(--indicator-width);
+  height: var(--indicator-height);
+  border-width: var(--indicator-border-width);
+  border-style: var(--indicator-border-style);
+  border-color: var(--color-indicator-border);
+  cursor: pointer;
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator svg {
+  width: var(--indicator-icon-size);
+  height: var(--indicator-icon-size);
+  fill: var(--color-indicator-icon);
+}
+
+.lx-value-picker-indicators .lx-indicator:focus,
+.lx-value-picker-indicators .lx-indicator:focus-visible {
+  outline: 2px solid var(--color-focus-background);
+}
+
+/* Hover styles */
+
+.lx-value-picker-indicators .lx-indicator:hover {
+  background: var(--color-indicator-background-hover);
+  border-color: var(--color-indicator-border-hover);
+  box-shadow: var(--shadow-1);
+}
+
+.lx-value-picker-indicators .lx-indicator:hover svg {
+  fill: var(--color-indicator-icon-hover);
+}
+
+/* Selected styles */
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicator-selected,
+.lx-value-picker-indicators.lx-inactive .lx-indicator-set .lx-indicator.lx-indicator-selected {
+  background: var(--color-indicator-background-selected);
+  border-color: var(--color-indicator-border-selected);
+}
+
+.lx-value-picker-indicators .lx-indicator.lx-indicator-selected svg,
+.lx-value-picker-indicators.lx-inactive .lx-indicator.lx-indicator-selected svg {
+  fill: var(--color-indicator-icon-selected);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator-selected:hover,
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator-selected:hover {
+  background: var(--color-indicator-background-selected-hover);
+  border-color: var(--color-indicator-border-selected-hover);
+}
+
+.lx-value-picker-indicators .lx-indicator-selected:hover svg,
+.lx-indicator-selected.lx-colorful-indicator:not(.lx-indicator-yellow):hover svg {
+  fill: var(--color-indicator-icon-selected-hover);
+}
+
+/* Disabled styles */
+
+.lx-value-picker-indicators.lx-disabled .lx-indicator {
+  border-color: var(--color-disabled-foreground);
+  background: var(--color-region);
+  cursor: not-allowed;
+  outline: none;
+  box-shadow: none;
+}
+
+.lx-value-picker-indicators.lx-disabled .lx-indicator svg {
+  fill: var(--color-disabled-foreground);
+}
+
+/* Invalid styles */
+
+.lx-value-picker-indicators.lx-invalid .lx-indicator-set .lx-indicator {
+  border-color: var(--color-bad);
+}
+
+/* Read-only styles */
+
+.lx-value-picker-indicators.lx-read-only .lx-indicator {
+  background: var(--color-region);
+  border-color: var(--color-chrome);
+  box-shadow: none;
+  cursor: help;
+  outline: none;
+}
+
+.lx-value-picker-indicators.lx-read-only .lx-indicator svg {
+  fill: var(--color-chrome);
+}
+
+/* Colored indicator styles */
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicator-red,
+.lx-value-picker-indicators.lx-inactive .lx-indicator-set .lx-indicator.lx-indicator-red {
+  background-color: var(--color-red);
+  border-color: var(--color-red);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicator-orange,
+.lx-value-picker-indicators.lx-inactive .lx-indicator-set .lx-indicator.lx-indicator-orange {
+  background-color: var(--color-orange);
+  border-color: var(--color-orange);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicator-green,
+.lx-value-picker-indicators.lx-inactive .lx-indicator-set .lx-indicator.lx-indicator-green {
+  background-color: var(--color-green);
+  border-color: var(--color-green);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicator-teal,
+.lx-value-picker-indicators.lx-inactive .lx-indicator-set .lx-indicator.lx-indicator-teal {
+  background-color: var(--color-teal);
+  border-color: var(--color-teal);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicator-yellow,
+.lx-value-picker-indicators.lx-inactive .lx-indicator-set .lx-indicator.lx-indicator-yellow {
+  background-color: var(--color-yellow);
+  border-color: var(--color-yellow);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicator-yellow .lx-indicator-icon {
+  fill: var(--color-yellow-foreground);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicator-blue,
+.lx-value-picker-indicators.lx-inactive .lx-indicator-set .lx-indicator.lx-indicator-blue {
+  background-color: var(--color-blue);
+  border-color: var(--color-blue);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicator-purple,
+.lx-value-picker-indicators.lx-inactive .lx-indicator-set .lx-indicator.lx-indicator-purple {
+  background-color: var(--color-purple);
+  border-color: var(--color-purple);
+}
+
+.lx-value-picker-indicators .lx-indicator.lx-indicator-red .lx-indicator-icon,
+.lx-value-picker-indicators.lx-inactive .lx-indicator.lx-indicator-red .lx-indicator-icon,
+.lx-value-picker-indicators .lx-indicator.lx-indicator-orange .lx-indicator-icon,
+.lx-value-picker-indicators.lx-inactive .lx-indicator.lx-indicator-orange .lx-indicator-icon,
+.lx-value-picker-indicators .lx-indicator.lx-indicator-green .lx-indicator-icon,
+.lx-value-picker-indicators.lx-inactive .lx-indicator.lx-indicator-green .lx-indicator-icon,
+.lx-value-picker-indicators .lx-indicator.lx-indicator-teal .lx-indicator-icon,
+.lx-value-picker-indicators.lx-inactive .lx-indicator.lx-indicator-teal .lx-indicator-icon,
+.lx-value-picker-indicators .lx-indicator.lx-indicator-blue .lx-indicator-icon,
+.lx-value-picker-indicators.lx-inactive .lx-indicator.lx-indicator-blue .lx-indicator-icon,
+.lx-value-picker-indicators .lx-indicator.lx-indicator-purple .lx-indicator-icon,
+.lx-value-picker-indicators.lx-inactive .lx-indicator.lx-indicator-purple .lx-indicator-icon {
+  fill: var(--color-region);
+}
+
+/*** LxValuePicker tag styles ***/
+
+.lx-value-picker-tile-tag-container {
+  display: grid;
+}
+
+.lx-tag-set {
+  display: flex;
+  gap: var(--tag-set-gap);
+  list-style: none;
+  margin: var(--space-0);
+  padding: var(--space-0);
+  flex-wrap: wrap;
+}
+
+.lx-value-picker-tags .lx-tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-tag-background);
+  color: var(--color-tag-text);
+  border-width: var(--tag-border-width);
+  border-style: var(--tag-border-style);
+  border-color: var(--color-tag-border);
+  border-radius: var(--tag-border-radius);
+  height: var(--tag-height);
+  width: var(--tag-width);
+  padding: var(--tag-padding);
+  font-weight: var(--tag-text-font-weight);
+  font-size: var(--tag-text-font-size);
+  line-height: var(--tag-text-line-height);
+  cursor: pointer;
+}
+
+.lx-tag-set .lx-tag:focus,
+.lx-tag-set .lx-tag:focus-visible {
+  outline: 2px solid var(--color-focus-background);
+}
+
+.lx-value-picker-tags .lx-tag:hover {
+  background: var(--color-tag-background-hover);
+  border-color: var(--color-tag-border-hover);
+  color: var(--color-tag-text-hover);
+}
+
+.lx-value-picker-tags.lx-disabled .lx-tag {
+  background: var(--color-region);
+  border-color: var(--color-disabled-foreground);
+  color: var(--color-disabled-foreground);
+  opacity: 1;
+  cursor: not-allowed;
+  outline: none;
+  box-shadow: none;
+}
+
+.lx-value-picker-tags .lx-tag.lx-tags-tile-selected {
+  background: var(--color-tag-background-selected);
+  border-color: var(--color-tag-border-selected);
+  color: var(--color-tag-text-selected);
+}
+
+.lx-value-picker-tags.lx-invalid .lx-tag {
+  border-color: var(--color-bad);
+}
+
+/*** LxValuePicker tile styles ***/
+
+.lx-value-picker-tile-wrapper {
+  display: flex;
+  gap: var(--tile-set-gap);
+  flex-wrap: nowrap;
+  padding-bottom: var(--space-0500);
+  overflow-x: auto;
+}
+
+.lx-value-picker-tile-wrapper > div:empty {
+  display: none;
+}
+
+.lx-value-picker-tile {
+  flex: 1 0 auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  width: var(--tile-width);
+  background-color: var(--color-tile-background);
+  height: var(--tile-height);
+  padding: var(--tile-padding);
+  text-decoration: var(--button-text-decoration);
+  border-radius: var(--tile-border-radius);
+  border-width: var(--tile-border-width);
+  border-style: var(--tile-border-style);
+  border-color: var(--color-tile-border);
+  cursor: pointer;
+}
+
+.lx-value-picker-tile-header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  word-wrap: break-word;
+  justify-content: space-between;
+  color: var(--color-tile-text-primary);
+  font-weight: var(--tile-text-primary-font-weight);
+  font-size: var(--tile-text-primary-font-size);
+  line-height: var(--tile-text-primary-line-height);
+}
+
+.lx-value-picker-tile-name {
+  margin-right: var(--tile-column-gap);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx-value-picker-tile-wrapper .lx-value-picker-description {
+  margin-top: var(--tile-row-gap);
+  font-weight: var(--tile-text-secondary-font-weight);
+  font-size: var(--tile-text-secondary-font-size);
+  line-height: var(--tile-text-secondary-line-height);
+  color: var(--color-tile-text-secondary);
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.lx-value-picker-tile:focus,
+.lx-value-picker-tile:focus-visible,
+.lx-value-picker-description[tabindex="0"]:focus,
+.lx-value-picker-description[tabindex="0"]:focus-visible {
+  box-shadow: var(--shadow-1);
+  outline: 2px solid var(--color-focus-background);
+}
+
+.lx-value-picker-tile:focus,
+.lx-value-picker-tile:focus-visible {
+  outline-offset: -2px;
+}
+
+.lx-value-picker-description[tabindex="-1"] {
+  pointer-events: none;
+}
+
+.lx-value-picker-tile:hover {
+  background: var(--color-tile-background-hover);
+}
+
+.lx-value-picker-tile:hover .lx-value-picker-tile-header {
+  color: var(--color-tile-text-primary-hover);
+}
+
+.lx-value-picker-tile:hover .lx-value-picker-description {
+  color: var(--color-tile-text-secondary-hover);
+}
+
+.lx-value-picker-tile.lx-disabled {
+  background: var(--color-region);
+  border-color: var(--color-disabled-foreground);
+  color: var(--color-disabled-foreground);
+  box-shadow: none;
+  cursor: not-allowed;
+  outline: none;
+}
+
+.lx-value-picker-tile.lx-disabled .lx-value-picker-tile-header,
+.lx-value-picker-tile.lx-disabled .lx-value-picker-description {
+  color: var(--color-disabled-foreground);
+}
+
+.lx-value-picker-tile.lx-value-picker-tile-selected {
+  background: var(--color-tile-background-selected);
+  border-color: var(--color-tile-border-selected);
+  color: var(--color-tile-text-primary-selected);
+}
+
+.lx-value-picker-tile.lx-value-picker-tile-selected .lx-value-picker-tile-header {
+  color: var(--color-tile-text-primary-selected);
+}
+
+.lx-value-picker-tile.lx-value-picker-tile-selected .lx-value-picker-description {
+  color:  var(--color-tile-text-secondary-selected);
+}
+
+.lx-value-picker-tile-wrapper.lx-invalid .lx-value-picker-tile {
+  border-color: var(--color-bad);
+}

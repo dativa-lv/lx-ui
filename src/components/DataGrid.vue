@@ -2412,27 +2412,25 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 @click="setActiveFromClick(getGridRowIndex(rowIndex), 0)"
               >
                 <template v-if="isSelectable(row)">
-                  <div class="lx-data-grid-selection-wrapper">
-                    <LxCheckbox
-                      v-if="selectionKind === 'multiple'"
-                      :id="`select-${id}-${row[idAttribute]}`"
-                      v-model="selectedRowsRaw[row[idAttribute]]"
-                      :value="row[idAttribute]?.toString()"
-                      :disabled="isDisabled"
-                      :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0).toString()"
-                      :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
-                    />
-                    <LxRadioButton
-                      v-if="selectionKind === 'single'"
-                      :id="`select-${id}-${row[idAttribute]}`"
-                      v-model="selectedRowsRaw[row[idAttribute]]"
-                      :value="row[idAttribute]?.toString()"
-                      :disabled="isDisabled"
-                      :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0)"
-                      :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
-                      @click="selectRow(row[idAttribute])"
-                    />
-                  </div>
+                  <LxCheckbox
+                    v-if="selectionKind === 'multiple'"
+                    :id="`select-${id}-${row[idAttribute]}`"
+                    v-model="selectedRowsRaw[row[idAttribute]]"
+                    :value="row[idAttribute]?.toString()"
+                    :disabled="isDisabled"
+                    :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0).toString()"
+                    :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
+                  />
+                  <LxRadioButton
+                    v-if="selectionKind === 'single'"
+                    :id="`select-${id}-${row[idAttribute]}`"
+                    v-model="selectedRowsRaw[row[idAttribute]]"
+                    :value="row[idAttribute]?.toString()"
+                    :disabled="isDisabled"
+                    :tabindex="getTabIndex(getGridRowIndex(rowIndex), 0)"
+                    :ref="(el) => registerCell(el, getGridRowIndex(rowIndex), 0)"
+                    @click="selectRow(row[idAttribute])"
+                  />
                 </template>
                 <p v-else class="lx-checkbox-placeholder"></p>
               </div>

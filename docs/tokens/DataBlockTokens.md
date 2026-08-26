@@ -54,7 +54,8 @@
 | `--data-block-text-secondary-line-height`    | `--list-text-secondary-line-height`                    |
 | `--data-block-text-secondary-margin`         | calc(var(--space-0125) * -1) var(--space-0)            |
 | `--data-block-text-secondary-padding`        | `--space-0` `--space-0` `--space-0250` `--space-0`     |
-
+| `--data-block-selecting-block-width`         | `--row-size`                                           |
+| `--data-block-selecting-block-height`        | `--row-size`                                           |
 
 ## Color
 

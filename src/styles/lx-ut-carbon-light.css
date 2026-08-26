@@ -82,7 +82,7 @@
   --color-data-grid-column-header-background-hover: #d0d0d0;
   --color-data-grid-footer-background: var(--color-region);
   --color-data-grid-footer-text: var(--color-label);
-  --color-data-grid-background-hover: var(--color-tile-background-hover);
+  --color-data-grid-background-hover: var(--color-region-hover-background);
   --color-data-grid-foreground-hover: var(--color-data);
   --color-data-grid-border: transparent;
 
@@ -181,15 +181,38 @@
   --color-card-hover-background: var(--color-region-hover-background);
   --color-card-hover-foreground: var(--color-region-hover-foreground);
 
-  --color-tile-border: var(--color-list-item-border);
-  --color-tile-background: var(--color-list-item-background);
-  --color-tile-background-hover: var(--color-list-item-background-hover);
-  --color-tile-text-primary: var(--color-list-text-primary);
-  --color-tile-text-secondary: var(--color-list-text-secondary);
-  --color-tile-icon: var(--color-list-icon);
-  --color-tile-icon-hover: var(--color-list-icon-hover);
-  --color-tile-text-primary-hover: var(--color-list-text-primary-hover);
-  --color-tile-text-secondary-hover: var(--color-list-text-secondary-hover);
+  --color-nav-tile-border: var(--color-list-item-border);
+  --color-nav-tile-background: var(--color-list-item-background);
+  --color-nav-tile-background-hover: var(--color-list-item-background-hover);
+  --color-nav-tile-text-primary: var(--color-list-text-primary);
+  --color-nav-tile-text-secondary: var(--color-list-text-secondary);
+  --color-nav-tile-icon: var(--color-list-icon);
+  --color-nav-tile-icon-hover: var(--color-list-icon-hover);
+  --color-nav-tile-text-primary-hover: var(--color-list-text-primary-hover);
+  --color-nav-tile-text-secondary-hover: var(--color-list-text-secondary-hover);
+
+  --color-tile-background: var(--color-region);
+  --color-tile-border: var(--color-chrome);
+  --color-tile-text-primary: var(--color-data);
+  --color-tile-text-secondary: var(--color-label);
+  --color-tile-background-selected: var(--color-selected-background);
+  --color-tile-border-selected: var(--color-brand);
+  --color-tile-text-primary-selected: var(--color-selected);
+  --color-tile-text-secondary-selected: var(--color-selected);
+  --color-tile-background-hover: var(--color-region-hover);
+  --color-tile-border-hover: var(--color-chrome);
+  --color-tile-text-primary-hover: var(--color-region-hover-foreground);
+  --color-tile-text-secondary-hover: var(--color-region-hover-foreground);
+
+  --color-tag-background: var(--color-region);
+  --color-tag-border: var(--color-chrome);
+  --color-tag-text: var(--color-data);
+  --color-tag-background-selected: var(--color-selected-background);
+  --color-tag-border-selected: var(--color-brand);
+  --color-tag-text-selected: var(--color-selected);
+  --color-tag-background-hover: var(--color-region-hover);
+  --color-tag-border-hover: var(--color-chrome);
+  --color-tag-text-hover: var(--color-region-hover-foreground);
   
   --color-list-item-border: transparent;
   --color-list-item-background: var(--color-region);
@@ -646,6 +669,8 @@
   --color-data-block-border: var(--color-list-item-border);
   --color-data-block-text-primary: var(--color-list-text-primary);
   --color-data-block-text-secondary: var(--color-list-text-secondary);
+  --color-data-block-text-primary-hover: var(--color-list-text-primary-hover);
+  --color-data-block-text-secondary-hover: var(--color-list-text-primary-hover);
   --color-data-block-background: var(--color-list-item-background);
   --color-data-block-background-hover: var(--color-list-item-background-hover);
   --color-data-block-icon: var(--color-label);
@@ -732,8 +757,47 @@
   --color-sheet-button-border-focus: var(--color-button-ghost-border-focus);
   --color-sheet-button-border-hover: var(--color-button-ghost-border-hover);
   --color-sheet-button-border-active: var(--color-button-ghost-border-active);
-
   --color-tooltip-border: transparent;
+
+  --color-selecting-block-text-primary: var(--color-data);
+  --color-selecting-block-text-secondary: var(--color-label);
+
+  --color-radio-button-background-off: transparent;
+  --color-radio-button-background-on: transparent;
+  --color-radio-button-border-off: var(--color-data);
+  --color-radio-button-border-on: var(--color-data);
+  --color-radio-button-thumb: var(--color-data);
+
+  --color-radio-button-background-hover-off: var(--color-interactive-hover-background);
+  --color-radio-button-border-hover-off: transparent;
+  --color-radio-button-background-hover-on: var(--color-interactive-hover-background);
+  --color-radio-button-border-hover-on: transparent;
+  --color-radio-button-thumb-hover: var(--color-interactive-hover-foreground);
+
+  --color-checkbox-background-off: transparent;
+  --color-checkbox-background-on: var(--color-data);
+  --color-checkbox-border-off: var(--color-data);
+  --color-checkbox-border-on: var(--color-data);
+  --color-checkbox-tick: var(--color-region);
+  
+  --color-checkbox-background-hover-off: var(--color-interactive-hover-background);
+  --color-checkbox-border-hover-off: transparent;
+  --color-checkbox-background-hover-on: var(--color-interactive-hover-background);
+  --color-checkbox-border-hover-on: transparent;
+  --color-checkbox-tick-hover: var(--color-interactive-hover-foreground);
+
+  --color-indicator-border: var(--color-data);
+  --color-indicator-background: var(--color-region);
+  --color-indicator-icon: var(--color-data);
+  --color-indicator-background-hover: var(--color-region-hover-background);
+  --color-indicator-border-hover: var(--color-brand);
+  --color-indicator-icon-hover: var(--color-data);
+  --color-indicator-background-selected: var(--color-data);
+  --color-indicator-border-selected: var(--color-data);
+  --color-indicator-icon-selected: var(--color-region);
+  --color-indicator-background-selected-hover: var(--color-data);
+  --color-indicator-border-selected-hover: var(--color-data);
+  --color-indicator-icon-selected-hover: var(--color-data-grid-column-header-background-hover);
 
   --color-draft-background: var(--color-draft);
   --color-new-background: var(--color-new);

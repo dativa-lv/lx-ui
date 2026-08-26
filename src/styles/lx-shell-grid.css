@@ -597,7 +597,7 @@
 .lx-dashboard {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: repeat(auto-fill, minmax(calc(var(--tile-min-height) / 4), auto));
+  grid-template-rows: repeat(auto-fill, minmax(calc(var(--nav-tile-min-height) / 4), auto));
   gap: var(--space-1000);
   transition: grid-template-columns 0.1s ease-in-out;
 }
@@ -652,7 +652,7 @@
 .lx-dashboard .lx-widget-m-xxs {
   grid-column: span 2;
   grid-row: span 1;
-  height: calc(var(--tile-min-height) / 4);
+  height: calc(var(--nav-tile-min-height) / 4);
 }
 
 .lx-dashboard .lx-widget-m-s {
@@ -688,7 +688,7 @@
 .lx-dashboard .lx-widget-xl-s {
   grid-column: span 4;
   grid-row: span 4;
-  height: calc(var(--tile-min-height));
+  height: calc(var(--nav-tile-min-height));
 }
 
 .lx-dashboard .lx-widget-xl-m {
@@ -704,13 +704,13 @@
 .lx-dashboard .lx-widget-xl-xs {
   grid-column: span 4;
   grid-row: span 2;
-  height: calc(var(--tile-min-height) / 2);
+  height: calc(var(--nav-tile-min-height) / 2);
 }
 
 .lx-dashboard .lx-widget-xl-xxs {
   grid-column: span 4;
   grid-row: span 1;
-  height: calc(var(--tile-min-height) / 4);
+  height: calc(var(--nav-tile-min-height) / 4);
 }
 
 .lx-layout.lx-layout-cover,
@@ -1360,7 +1360,7 @@
 }
 
 .lx-widget.lx-widget-router:hover {
-  background-color: var(--color-tile-background-hover);
+  background-color: var(--color-nav-tile-background-hover);
   border: var(--border-width-2) solid var(--color-brand);
   color: var(--color-data);
   padding: var(--space-0);
@@ -1577,8 +1577,8 @@
   cursor: pointer;
 }
 
-.lx-touch-mode-controller {		
-  border-top-color: transparent;		
+.lx-touch-mode-controller {
+  border-top-color: transparent;
 }
 
 .lx-cover
@@ -2208,7 +2208,7 @@
 
 @media (max-width: 1600px) {
   .lx-list-3:has(.lx-list-item ~ .lx-list-item-actions):has(.lx-handle),
-  .lx-list-3:has(.lx-list-item ~  .lx-list-item-actions):has(.selecting-block) {
+  .lx-list-3:has(.lx-list-item ~  .lx-list-item-actions):has(.lx-selecting-block) {
     grid-template-columns: 1fr 1fr;
     align-items: stretch;
   }
@@ -2385,11 +2385,11 @@
     margin-left: calc(var(--space-0) - var(--space-3000));
   }
 
-  .lx-list-2 li,		
-  .lx-list-3 li {		
+  .lx-list-2 li,
+  .lx-list-3 li {
     display: flex;
-    width: 100%;		
-    max-width: 100%;		
+    width: 100%;
+    max-width: 100%;
   }
 
   .lx-layout.lx-layout-default > header .lx-header .lx-main-button {

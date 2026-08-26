@@ -369,8 +369,8 @@ test('LxValuePicker kind "single"', () => {
   const items = wrapper
     .find('.lx-value-picker-default-wrapper')
     .findAll('.lx-value-picker-default-item');
-  expect(items[0].find('.lx-radio-button').exists()).toBe(true);
-  expect(items[1].find('.lx-radio-button').exists()).toBe(true);
+  expect(items[0].find('.lx-radio-button-input').exists()).toBe(true);
+  expect(items[1].find('.lx-radio-button-input').exists()).toBe(true);
 });
 
 test('LxValuePicker kind "multiple"', () => {
@@ -405,9 +405,9 @@ test('LxValuePicker "default" nullable', () => {
       nullable: true,
     },
   });
-  expect(wrapper.find('.lx-value-picker-default-wrapper').findAll('.lx-radio-button').length).toBe(
-    3
-  );
+  expect(
+    wrapper.find('.lx-value-picker-default-wrapper').findAll('.lx-radio-button-input').length
+  ).toBe(3);
 });
 
 test('LxValuePicker default nullable advanced', async () => {
@@ -787,7 +787,7 @@ test('LxValuePicker default modelValue', async () => {
     },
   });
 
-  const items = wrapper.findAll('.lx-radio-button');
+  const items = wrapper.findAll('.lx-radio-button-input');
   expect(items[0].attributes('aria-checked')).toBe('true');
   expect(items[1].attributes('aria-checked')).toBe('false');
   await items[1].trigger('click');

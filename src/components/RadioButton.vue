@@ -57,11 +57,16 @@ defineExpose({ focus, scrollIntoView });
 </script>
 
 <template>
-  <div class="lx-radio-button-wrapper" data-component="lx-radio-button" :data-id="id">
+  <div
+    class="lx-radio-button-wrapper"
+    :class="{ 'lx-checked': model, 'lx-disabled': disabled }"
+    data-component="lx-radio-button"
+    :data-id="id"
+  >
     <input
       ref="inputRef"
       type="radio"
-      class="lx-radio-button"
+      class="lx-radio-button-input"
       :id="id"
       :name="groupId"
       v-model="model"
@@ -75,13 +80,12 @@ defineExpose({ focus, scrollIntoView });
       :aria-required="ariaRequired"
       @click="click"
     />
-    <label
-      :for="id"
-      class="lx-radio-button-label-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-2"
-    >
-      <span class="lx-radio-button-appearance">
-        <span class="lx-radio-thumb" />
+    <label :for="id" class="lx-selecting-block" aria-hidden="true">
+      <span class="lx-radio-button-container">
+        <span class="lx-radio-button-thumb" />
       </span>
+    </label>
+    <label v-if="label || $slots.default" :for="id" class="lx-radio-button-text-wrapper">
       <span class="lx-radio-button-label" v-if="label">{{ label }}</span>
       <template v-else><slot /></template>
     </label>

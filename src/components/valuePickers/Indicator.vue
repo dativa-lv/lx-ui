@@ -401,13 +401,26 @@ const indicatorTooltips = computed(() => {
   return tooltips;
 });
 const wrapperRef = ref();
+
+const colorfulCategories = ['red', 'orange', 'green', 'teal', 'yellow', 'blue', 'purple'];
+
+function isColorful(item) {
+  return colorfulCategories.includes(item[props.categoryAttribute]);
+}
+
+const isDisabledOrReadOnly = computed(() => props.disabled || props.readOnly);
 </script>
 
 <template>
   <div
     ref="wrapperRef"
     class="lx-value-picker-indicators"
-    :class="[{ 'lx-invalid': invalid }]"
+    :class="[
+      { 'lx-invalid': invalid },
+      { 'lx-disabled': disabled },
+      { 'lx-read-only': readOnly },
+      { 'lx-inactive': isDisabledOrReadOnly },
+    ]"
     v-if="variant === 'indicator'"
     :id="id"
     :title="tooltip"
@@ -419,7 +432,7 @@ const wrapperRef = ref();
     :aria-required="ariaRequired"
   >
     <LxToolbar
-      v-if="hasSearch || (hasSelectAll && selectionKind === 'multiple')"
+      v-if="(hasSearch || (hasSelectAll && selectionKind === 'multiple')) && !readOnly"
       class="lx-floating-toolbar"
       :disabled="disabled"
       :hasSearch="hasSearch"
@@ -454,9 +467,10 @@ const wrapperRef = ref();
         :id="getItemId(item[idAttribute])"
         :group-id="groupId"
         :class="{
-          'lx-indicators-selected': isSelected(item),
+          'lx-indicator-selected': isSelected(item),
           'lx-value-hidden': isElementHidden(item),
           [`lx-indicator-${item[categoryAttribute]}`]: item[categoryAttribute] && isSelected(item),
+          'lx-colorful-indicator': isColorful(item),
         }"
         :disabled="disabled"
         :aria-disabled="disabled"
@@ -501,10 +515,11 @@ const wrapperRef = ref();
         :id="getItemId(item[idAttribute])"
         :group-id="groupId"
         :class="{
-          'lx-indicators-selected': itemsModel[item[idAttribute]],
+          'lx-indicator-selected': itemsModel[item[idAttribute]],
           'lx-value-hidden': isElementHidden(item),
           [`lx-indicator-${item[categoryAttribute]}`]:
             item[categoryAttribute] && itemsModel[item[idAttribute]],
+          'lx-colorful-indicator': isColorful(item),
         }"
         :disabled="disabled"
         :aria-disabled="disabled"

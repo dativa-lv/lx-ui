@@ -49,6 +49,7 @@ export const commonStyles = [
   'lx-toolbars',
   'lx-day-input',
   'lx-chats',
+  'lx-value-pickers',
   // add new style file names here (without .css extension)
 ];
 

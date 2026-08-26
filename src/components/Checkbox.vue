@@ -90,7 +90,12 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
 </script>
 
 <template>
-  <div class="lx-checkbox-wrapper" data-component="lx-checkbox" :data-id="id">
+  <div
+    class="lx-checkbox-wrapper"
+    :class="{ 'lx-checked': model, 'lx-disabled': disabled }"
+    data-component="lx-checkbox"
+    :data-id="id"
+  >
     <input
       ref="inputRef"
       type="checkbox"
@@ -108,15 +113,14 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
       :aria-label="label"
       @click="click"
     />
-    <label
-      :for="id"
-      class="lx-checkbox-label-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-2"
-    >
-      <span class="lx-checkbox-appearance">
+    <label :for="id" class="lx-selecting-block" aria-hidden="true">
+      <span class="lx-checkbox-container">
         <span class="lx-checkbox-thumb">
           <LxIcon value="check" icon-set="cds" />
         </span>
       </span>
+    </label>
+    <label v-if="label || $slots.default" :for="id" class="lx-checkbox-text-wrapper">
       <span class="lx-checkbox-label" v-if="label">{{ label }}</span>
       <template v-else><slot /></template>
     </label>

@@ -40,6 +40,8 @@
 | `--data-grid-column-header-padding`             | `--space-0`                                   |
 | `--data-grid-column-header-cell-gap`            | `--space-0250`                                |
 | `--data-grid-column-header-text-font-weight`    | `--font-weight`                               |
+| `--data-block-selecting-block-width`            | `--row-size`                                  |
+| `--data-block-selecting-block-height`           | `--row-size`                                  |
 
 ### Color
 
@@ -47,7 +49,7 @@
 |-------------------------------------------------------|--------------------------------------------|
 | `--color-data-grid-border`                            | transparent                                |
 | `--color-data-grid-background`                        | `--color-region`                           |
-| `--color-data-grid-background-hover`                  | `--color-tile-background-hover`            |
+| `--color-data-grid-background-hover`                  | `--color-region-hover-background`          |
 | `--color-data-grid-foreground-hover`                  | `--color-data`                             |
 | `--color-data-grid-foreground-default`                | `--color-data`                             |
 | `--color-data-grid-foreground-primary`                | `--color-data`                             |

@@ -102,11 +102,6 @@
     width: var(--list-treelist-expander-width);
 }
 
-.lx-theme-contrast .tree-list .tree-item-small-parent .lx-checkbox-wrapper .lx-checkbox:not(:disabled):not(:checked):not(:hover)+.lx-checkbox-label-wrapper .lx-checkbox-appearance {
-    background-color: var(--contrast-background);
-    border-color: var(--contrast-background);
-}
-
 .tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) .lx-list-icon,
 .tree-list .tree-item-small-parent:has(.lx-list-item:not(.lx-list-item-disabled))
   .lx-list-item-actions

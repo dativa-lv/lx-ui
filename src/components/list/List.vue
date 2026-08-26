@@ -1777,7 +1777,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               </template>
             </LxListItem>
 
-            <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+            <template v-if="hasSelecting && selectableItems?.length !== 0">
               <template v-if="isSelectable(item)">
                 <LxRadioButton
                   v-if="selectionKind === 'single'"
@@ -1801,7 +1801,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 />
               </template>
               <p v-else class="lx-checkbox-placeholder"></p>
-            </div>
+            </template>
           </li>
         </ul>
 
@@ -1987,7 +1987,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                   </template>
                 </LxListItem>
 
-                <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+                <template v-if="hasSelecting && selectableItems?.length !== 0">
                   <template v-if="isSelectable(item)">
                     <LxRadioButton
                       v-if="selectionKind === 'single'"
@@ -2011,7 +2011,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                     />
                   </template>
                   <p v-else class="lx-checkbox-placeholder"></p>
-                </div>
+                </template>
               </li>
             </ul>
           </LxExpander>
@@ -2097,7 +2097,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 </template>
               </LxListItem>
 
-              <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
+              <template v-if="hasSelecting && selectableTreeItems?.length !== 0">
                 <template v-if="isSelectable(item)">
                   <LxRadioButton
                     v-if="selectionKind === 'single'"
@@ -2121,7 +2121,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                   />
                 </template>
                 <p v-else class="lx-checkbox-placeholder"></p>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -2251,10 +2251,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                       <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                     </template>
                   </LxListItem>
-                  <div
-                    class="selecting-block"
-                    v-if="hasSelecting && selectableTreeItems?.length !== 0"
-                  >
+                  <template v-if="hasSelecting && selectableTreeItems?.length !== 0">
                     <template v-if="isSelectable(item)">
                       <LxRadioButton
                         v-if="selectionKind === 'single'"
@@ -2278,7 +2275,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                       />
                     </template>
                     <p v-else class="lx-checkbox-placeholder"></p>
-                  </div>
+                  </template>
                 </div>
               </div>
             </div>
@@ -2337,7 +2334,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               </template>
             </LxListItem>
 
-            <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+            <template v-if="hasSelecting && selectableItems?.length !== 0">
               <template v-if="isSelectable(row.item)">
                 <LxRadioButton
                   v-if="selectionKind === 'single'"
@@ -2361,7 +2358,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 />
               </template>
               <p v-else class="lx-checkbox-placeholder"></p>
-            </div>
+            </template>
           </li>
         </ul>
         <ul
@@ -2406,7 +2403,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               </template>
             </LxListItem>
 
-            <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+            <template v-if="hasSelecting && selectableItems?.length !== 0">
               <template v-if="isSelectable(item)">
                 <LxRadioButton
                   v-if="selectionKind === 'single'"
@@ -2430,7 +2427,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 />
               </template>
               <p v-else class="lx-checkbox-placeholder"></p>
-            </div>
+            </template>
           </li>
         </ul>
         <div
@@ -2746,7 +2743,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             </template>
           </LxListItem>
 
-          <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
+          <template v-if="hasSelecting && selectableTreeItems?.length !== 0">
             <template v-if="isSelectable(element)">
               <LxRadioButton
                 v-if="selectionKind === 'single'"
@@ -2770,7 +2767,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               />
             </template>
             <p v-else class="lx-checkbox-placeholder"></p>
-          </div>
+          </template>
         </div>
       </div>
 

@@ -643,8 +643,8 @@
     border-top: var(--border-width-1) solid var(--color-chrome);
 }
 
-.lx-touch-mode-controller {		
-    border-bottom: var(--border-width-1) solid var(--color-chrome);		
+.lx-touch-mode-controller {
+    border-bottom: var(--border-width-1) solid var(--color-chrome);
 }
 
 .lx-touch-mode .lx-animations-controller,

@@ -81,7 +81,14 @@
   --body-column-size: 1300px;
   --form-column-size: 30rem;
   --aside-size: 16rem;
-  --indicator-size: 2.5rem;
+
+  --indicator-width: 2.5rem;
+  --indicator-height: 2.5rem;
+  --indicator-border-radius: var(--border-radius-0);
+  --indicator-border-width: var(--border-width-2);
+  --indicator-border-style: solid;
+  --indicator-icon-size: var(--icon-size-m);
+  --indicator-set-gap: var(--space-0250);
 
   --data-grid-text-default-font-weight: var(--font-weight);
   --data-grid-text-primary-font-weight: var(--font-weight-bold);
@@ -94,10 +101,9 @@
   --data-grid-action-icon-size: var(--button-icon-size);
   --data-grid-action-border: var(--button-ghost-border);
   --data-grid-action-border-radius: var(--button-border-radius);
-  --data-grid-action-height: 3rem;
-  --data-grid-action-width: 3rem;
+  --data-grid-action-height: var(--row-size);
+  --data-grid-action-width: var(--row-size);
   --data-grid-action-outline-offset: var(--button-ghost-outline-offset);
-
   --data-grid-footer-divider-border: var(--border-width-1) solid var(--color-chrome);
   --data-grid-footer-divider-height: stretch;
   --data-grid-footer-button-icon-size: var(--button-icon-size);
@@ -109,7 +115,6 @@
   --data-grid-footer-button-icon-only-width: var(--button-icon-only-width);
   --data-grid-footer-button-icon-only-min-width: var(--button-icon-only-min-width);
   --data-grid-footer-button-outline-offset: var(--button-ghost-outline-offset);
-
   --data-grid-footer-grid-template-columns: auto 1fr auto;
   --data-grid-footer-grid-areas: 'count-selector count-display paging-buttons';
   --data-grid-column-header-icon-size: var(--icon-size-s);
@@ -119,6 +124,40 @@
   --data-grid-border-width: var(--border-width-0);
   --data-grid-border-style: solid;
   --data-grid-border-radius: var(--border-radius-0);
+  --data-grid-selecting-block-width: var(--row-size);
+  --data-grid-selecting-block-height: var(--row-size);
+
+  --selecting-block-margin: var(--space-0500) var(--space-0);
+  --selecting-block-text-padding: var(--space-0125) var(--space-0);
+  --selecting-block-text-primary-font-size: var(--font-size);
+  --selecting-block-text-primary-font-weight: var(--font-weight);
+  --selecting-block-text-primary-line-height: 1.25;
+  --selecting-block-text-secondary-font-size: var(--font-size);
+  --selecting-block-text-secondary-font-weight: var(--font-weight);
+  --selecting-block-text-secondary-line-height: 1.25;
+  --selecting-block-width: 1.5rem;
+  --selecting-block-height: 1.5rem;
+  --selecting-block-gap: var(--space-0500);
+  --selecting-block-horizontal-width: var(--row-size);
+  --selecting-block-horizontal-height: var(--row-size);
+  --selecting-block-horizontal-gap: var(--space-0500);
+  --selecting-block-horizontal-set-gap: var(--space-0500);
+
+  --radio-button-height: 1.25rem;
+  --radio-button-width: 1.25rem;
+  --radio-button-border-width: var(--border-width-1);
+  --radio-button-border-style: solid;
+  --radio-button-border-radius: var(--border-radius-full);
+  --radio-button-thumb-height: 0.625rem;
+  --radio-button-thumb-width: 0.625rem;
+  --radio-button-thumb-border-radius: var(--border-radius-full);
+
+  --checkbox-height: 1rem;
+  --checkbox-width: 1rem;
+  --checkbox-border-width: var(--border-width-1);
+  --checkbox-border-style: solid;
+  --checkbox-border-radius: var(--border-radius-0);
+  --checkbox-tick-size: var(--icon-size-m);
 
   --aside-border: var(--border-width-0) solid var(--color-chrome);
   --region-border: var(--border-width-0);
@@ -213,43 +252,69 @@
   --list-treelist-indent-right: var(--space-0);
   --list-treelist-indent-child-left: var(--row-size);
   --list-treelist-indent-child-right: var(--space-0);
+  --list-selecting-block-width: var(--row-size);
+  --list-selecting-block-height: var(--row-size);
 
+  --nav-tile-width: 20rem;
+  --nav-tile-min-height: 12rem;
+  --nav-tile-mini-min-height: 3rem;
+  --nav-tile-grid-areas: 'icon-loader' 'content' 'custom-content';
+  --nav-tile-grid-template-columns: 1fr;
+  --nav-tile-grid-template-rows: auto 1fr auto;
+  --nav-tile-mini-grid-areas: 'icon-loader content';
+  --nav-tile-mini-grid-template-columns: auto 1fr;
+  --nav-tile-mini-grid-template-rows: 1fr;
+  --nav-tile-header-min-height: var(--list-item-header-min-height);
+  --nav-tile-mini-header-min-height: 2.25rem;
+  --nav-tile-border-width: var(--list-item-border-width);
+  --nav-tile-border-style: var(--list-item-border-style);
+  --nav-tile-border-radius: var(--list-item-inner-border-radius);
+  --nav-tile-border-radius-inner: var(--nav-tile-border-radius);
+  --nav-tile-icon-padding: var(--space-0);
+  --nav-tile-mini-icon-padding: var(--nav-tile-icon-padding);
+  --nav-tile-icon-size: var(--icon-size-l);
+  --nav-tile-loader-padding: var(--space-0500) var(--space-0) var(--space-0250) var(--space-0);
+  --nav-tile-mini-loader-padding: var(--space-0) var(--space-0750) var(--space-0) var(--space-0);
+  --nav-tile-header-padding: var(--space-0);
+  --nav-tile-padding: var(--space-1000);
+  --nav-tile-text-primary-font-size: var(--list-text-primary-font-size);
+  --nav-tile-text-primary-line-height: var(--list-text-primary-line-height);
+  --nav-tile-text-primary-font-weight: var(--list-text-primary-font-weight);
+  --nav-tile-text-primary-padding: var(--space-0);
+  --nav-tile-text-primary-margin: var(--space-1500) var(--space-0) var(--space-0) var(--space-0);
+  --nav-tile-mini-text-margin: var(--space-0) var(--space-0) var(--space-0) var(--space-1000);
+  --nav-tile-text-secondary-font-size: var(--list-text-secondary-font-size);
+  --nav-tile-text-secondary-line-height: var(--list-text-secondary-line-height);
+  --nav-tile-text-secondary-font-weight: var(--list-text-secondary-font-weight);
+  --nav-tile-text-secondary-padding: var(--space-0);
+  --nav-tile-text-secondary-margin: var(--space-1250) var(--space-0) var(--space-0) var(--space-0);
+
+  --tile-height: 12rem;
   --tile-width: 20rem;
-  --tile-width-x2-size: calc(var(--tile-width) * 2 + 1rem);
-  --tile-min-height: 12rem;
-  --tile-mini-min-height: 3rem;
-
-  --tile-grid-areas: 'icon-loader' 'content' 'custom-content';
-  --tile-grid-template-columns: 1fr;
-  --tile-grid-template-rows: auto 1fr auto;
-  --tile-mini-grid-areas: 'icon-loader content';
-  --tile-mini-grid-template-columns: auto 1fr;
-  --tile-mini-grid-template-rows: 1fr;
-  --tile-header-min-height: var(--list-item-header-min-height);
-  --tile-mini-header-min-height: 2.25rem;
-  
-  --tile-border-width: var(--list-item-border-width);
-  --tile-border-style: var(--list-item-border-style);
-  --tile-border-radius: var(--list-item-inner-border-radius);
-  --tile-border-radius-inner: var(--tile-border-radius);
-  --tile-icon-padding: var(--space-0);
-  --tile-mini-icon-padding: var(--tile-icon-padding);
-  --tile-icon-size: var(--icon-size-l);
-  --tile-loader-padding: var(--space-0500) var(--space-0) var(--space-0250) var(--space-0);
-  --tile-mini-loader-padding: var(--space-0) var(--space-0750) var(--space-0) var(--space-0);
-  --tile-header-padding: var(--space-0);
+  --tile-border-radius: var(--space-0);
+  --tile-set-gap: var(--space-0250);
+  --tile-row-gap: var(--space-1000);
+  --tile-column-gap: var(--space-1000);
+  --tile-text-primary-font-weight: var(--font-weight-bold);
+  --tile-text-primary-font-size: var(--font-size);
+  --tile-text-primary-line-height: 1.5;
+  --tile-text-secondary-font-weight: var(--font-weight);
+  --tile-text-secondary-font-size: var(--small-font-size);
+  --tile-text-secondary-line-height: 1.286;
   --tile-padding: var(--space-1000);
-  --tile-text-primary-font-size: var(--list-text-primary-font-size);
-  --tile-text-primary-line-height: var(--list-text-primary-line-height);
-  --tile-text-primary-font-weight: var(--list-text-primary-font-weight);
-  --tile-text-primary-padding: var(--space-0);
-  --tile-text-primary-margin: var(--space-1500) var(--space-0) var(--space-0) var(--space-0);
-  --tile-mini-text-primary-margin: var(--space-0) var(--space-0) var(--space-0) var(--space-1000);
-  --tile-text-secondary-font-size: var(--list-text-secondary-font-size);
-  --tile-text-secondary-line-height: var(--list-text-secondary-line-height);
-  --tile-text-secondary-font-weight: var(--list-text-secondary-font-weight);
-  --tile-text-secondary-padding: var(--space-0);
-  --tile-text-secondary-margin: var(--space-1250) var(--space-0) var(--space-0) var(--space-0);
+  --tile-border-width: var(--border-width-2);
+  --tile-border-style: solid;
+
+  --tag-height: auto;
+  --tag-width: auto;
+  --tag-border-radius: var(--space-0);
+  --tag-set-gap: var(--space-0500);
+  --tag-text-font-weight: var(--font-weight);
+  --tag-text-font-size: var(--font-size);
+  --tag-text-line-height: 1.5;
+  --tag-padding: var(--space-0250) var(--space-1000);
+  --tag-border-width: var(--border-width-2);
+  --tag-border-style: solid;
 
   --data-block-border-width: var(--list-item-border-width);
   --data-block-border-style: var(--list-item-border-style);
@@ -297,6 +362,8 @@
   --data-block-text-secondary-line-height: var(--list-text-secondary-line-height);
   --data-block-text-secondary-margin: calc(var(--space-0125) * -1) var(--space-0);
   --data-block-text-secondary-padding: var(--space-0) var(--space-0) var(--space-0250) var(--space-0);
+  --data-block-selecting-block-width: var(--list-selecting-block-width);
+  --data-block-selecting-block-height: var(--list-selecting-block-height);
 
   --appendable-list-button-padding: var(--space-0250);
   --appendable-list-padding: var(--space-1000) 
@@ -542,6 +609,7 @@
   --popover-item-tag-grid-template-rows: auto auto;
   --popover-item-tag-set-margin: var(--space-0500) var(--space-0250);
   --popover-item-tag-height: 4rem;
+  --popover-item-tag-icon-size: var(--icon-size-s);
   --popover-item-tag-icon-alignment: start;
   --popover-item-tag-text-alignment: start;
   --popover-item-tag-padding: var(--space-0500);
@@ -996,7 +1064,7 @@
   --toggle-padding-right-s: 0.1875rem;
   --toggle-padding-left-s: 0.1875rem;
   --toggle-text-font-weight: var(--font-weight);
-  --toggle-text-font-size: var(--small-font-size);
+  --toggle-text-font-size: var(--font-size);
   --toggle-text-line-height: 1.5;
   --toggle-gap: var(--space-0500);
 

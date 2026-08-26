@@ -270,7 +270,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
               <slot name="customItem" v-bind="item" />
             </template>
           </LxListItem>
-          <div class="selecting-block" v-if="hasSelecting">
+          <template v-if="hasSelecting">
             <template v-if="isSelectable(parent)">
               <LxRadioButton
                 v-if="selectionKind === 'single'"
@@ -297,7 +297,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
               />
             </template>
             <p v-else class="lx-checkbox-placeholder"></p>
-          </div>
+          </template>
         </div>
       </div>
       <div class="tree-item-invalid" v-if="states?.[parent?.[idAttribute]]?.invalid">
@@ -360,7 +360,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
               <slot name="customItem" v-bind="item" />
             </template>
           </LxListItem>
-          <div class="selecting-block" v-if="hasSelecting">
+          <template v-if="hasSelecting">
             <template v-if="isSelectable(item)">
               <LxRadioButton
                 v-if="selectionKind === 'single'"
@@ -387,7 +387,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
               />
             </template>
             <p v-else class="lx-checkbox-placeholder"></p>
-          </div>
+          </template>
         </div>
       </div>
     </div>

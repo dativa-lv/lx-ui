@@ -4,6 +4,25 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
+## 2.2.15 → 2.3
+
+### Breaking changes
+
+#### LxRadioButton, LxCheckbox, LxValuePicker, LxTile
+
+`LxRadioButton`, `LxCheckbox` and some `LxValuePicker` variant (`default`, `horizontal`, `indicator`, `tags`, `tiles` and their respective custom counterparts) styles have been moved to a separate file - `lx-value-pickers.css`. Import this file in your project to ensure correct component appearance and behavior.
+
+**Token renames**
+
+- `--indicator-size` → `--indicator-height`, `--indicator-width`
+- `--tile-mini-text-primary-margin` → `--nav-tile-mini-text-margin`
+
+LxTile and LxValuePicker `variant="tile"` tokens have been separated. LxTile tokens still use the previously defined `--tile-*` tokens, but they are now called `--nav-tile-*` and `--color-nav-tile-*`. LxValuePicker `variant="tile"` tokens use the new `--tile-*` tokens.
+
+**Token removals**
+
+The `--tile-width-x2-size` (`calc(var(--tile-width) * 2 + 1rem)`) token has been removed.
+
 ## 2.2.13 → 2.2.14
 
 ### Breaking changes
