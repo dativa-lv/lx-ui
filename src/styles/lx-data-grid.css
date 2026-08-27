@@ -1,7 +1,12 @@
 .lx-data-grid-wrapper {
   position: relative;
   background: var(--color-data-grid-header-background);
+  border-radius: var(--data-grid-border-radius);
   min-width: 0; /* So that scrolling works properly */
+}
+
+.lx-data-grid-wrapper:has(> header) {
+  background: transparent;
 }
 
 .lx-data-grid-table-wrapper {
@@ -200,6 +205,7 @@
   opacity: 0;
   opacity: var(--grid-top-shadow-opacity);
   pointer-events: none;
+  display: var(--native-sticky-shadow-display);
 }
 
 /*** Basic cell styles ***/

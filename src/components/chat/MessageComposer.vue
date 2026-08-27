@@ -218,7 +218,7 @@ watch(rawText, () => nextTick(measure));
       @keydown="onKeydown"
     />
     <LxToolbar
-      class="lx-chat-composer-toolbar"
+      class="lx-chat-composer-toolbar lx-embedded-toolbar"
       :id="`${id}-toolbar`"
       :actionDefinitions="sendActions"
       defaultArea="right"

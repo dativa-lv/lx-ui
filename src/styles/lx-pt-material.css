@@ -1,0 +1,408 @@
+.lx {
+    --font-family: 'RobotoLX', Arial, sans-serif;
+    --font-family-mono: 'RobotoLX', monospace, sans-serif;
+    --font-weight-data: 500;
+    --font-weight-bold: 500;
+    --font-weight-extra-bold: 600;
+
+    --native-sticky-shadow-display: none;
+
+    /* LxModal */
+    --modal-border-radius: var(--border-radius-1500);
+    --modal-content-padding: var(--space-0) var(--space-1500) var(--space-1500) var(--space-1500);
+    --modal-header-content-padding: var(--space-1500) var(--space-0500) var(--space-1000) var(--space-1500);
+    --modal-footer-padding: var(--space-1000) var(--space-1500);
+    --modal-button-set-gap: var(--space-0500);
+    --modal-button-set-justification: right;
+    --modal-button-header-border-radius: var(--border-radius-full);
+    --modal-button-header-margin: var(--space-0750) var(--space-0750) var(--space-0) var(--space-0);
+    --modal-button-primary-border-radius: var(--border-radius-full);
+    --modal-button-primary-text-alignment: center;
+    --modal-button-primary-height: var(--button-height);
+    --modal-button-primary-padding: var(--button-padding);
+    --modal-button-primary-width: auto;
+    --modal-button-secondary-border: var(--button-ghost-border);
+    --modal-button-secondary-border-radius: var(--border-radius-full);
+    --modal-button-secondary-text-alignment: center;
+    --modal-button-secondary-height: var(--button-height);
+    --modal-button-secondary-padding: var(--button-padding);
+    --modal-button-secondary-width: auto;
+    --modal-button-primary-min-width: 8rem;
+    --modal-button-secondary-min-width: 8rem;
+
+    --color-modal-button-secondary-text: var(--color-button-ghost-text);
+    --color-modal-button-secondary-background: var(--color-button-ghost-background);
+    --color-modal-button-secondary-text-focus: var(--color-button-ghost-text-focus);
+    --color-modal-button-secondary-background-focus: var(--color-button-ghost-background-focus);
+    --color-modal-button-secondary-border-focus: var(--color-button-ghost-border-focus);
+    --color-modal-button-secondary-text-active: var(--color-button-ghost-text-active);
+    --color-modal-button-secondary-background-active: var(--color-button-ghost-background-active);
+    --color-modal-button-secondary-border-active: var(--color-button-ghost-border-active);
+    --color-modal-button-secondary-text-disabled: var(--color-button-ghost-text-disabled);
+    --color-modal-button-secondary-background-disabled: var(--color-button-ghost-background-disabled);
+    --color-modal-button-secondary-border-disabled: var(--color-button-ghost-border-disabled);
+    --color-modal-button-secondary-text-hover: var(--color-button-ghost-text-hover);
+    --color-modal-button-secondary-background-hover: var(--color-button-ghost-background-hover);
+    --color-modal-button-secondary-border-hover: var(--color-button-ghost-border-hover);
+
+    /* LxInfoBox */
+    --info-box-border-radius: var(--border-radius-0250);
+    --info-box-border-width: var(--border-width-1);
+    --info-box-button-border-radius: var(--border-radius-0250);
+
+    /* LxLoader */
+    --loader-active-cap: round;
+    --loader-bar-border-radius-s: var(--border-radius-0125);
+    --loader-bar-border-radius-l: var(--border-radius-0250);
+
+    --color-loader-bar-stop-indicator: var(--color-interactive-background);
+
+    /* LxToggle */
+    --toggle-border-radius-m: var(--border-radius-full);
+    --toggle-border-width-m: var(--border-width-2);
+    --toggle-height-m: 1.75rem;
+    --toggle-width-m: 3.25rem;
+    --toggle-padding-left-m: var(--space-0250);
+    --toggle-padding-right-m: 0rem;
+    --toggle-thumb-height-on-m: 1.5rem;
+    --toggle-thumb-width-on-m: 1.5rem;
+    --toggle-height-s: 1.25rem;
+    --toggle-thumb-height-off-s: 0.75rem;
+    --toggle-thumb-width-off-s: 0.75rem;
+    --toggle-padding-right-s: 0.0625rem;
+    --toggle-thumb-height-on-s: 1rem;
+    --toggle-thumb-width-on-s: 1rem;
+    --toggle-checkmark-size: 0rem;
+    --toggle-text-padding: var(--space-0125) var(--space-0);
+
+    /* LxContentSwitcher */
+    --content-switcher-container-border-width: var(--border-width-0);
+    --content-switcher-container-border-disabled: var(--content-switcher-container-border-width) solid var(--color-disabled-foreground);
+    --content-switcher-container-border-radius: var(--border-radius-0250);
+    --content-switcher-container-padding: var(--space-0);
+    --content-switcher-item-border: var(--content-switcher-item-border-width) solid var(--color-data);
+    --content-switcher-item-border-disabled: var(--content-switcher-item-border-width) solid var(--color-disabled-background);
+    --content-switcher-inner-border-radius: var(--border-radius-0500);
+    --content-switcher-outer-border-radius: calc(var(--content-switcher-item-height) / 2);
+    --content-switcher-item-gap: var(--space-0125);
+    --content-switcher-border-selected: var(--content-switcher-item-border-width) solid var(--color-content-switcher-background-selected);
+    --content-switcher-inner-border-radius-selected: var(--content-switcher-outer-border-radius);
+    --content-switcher-divider-border: var(--border-width-0);
+    --content-switcher-content-alignment: center;
+
+    /* LxBadge */
+    --badge-border-width-s: var(--border-width-1);
+    --badge-border-s: var(--badge-border-width-s) solid var(--color-chrome);
+    --badge-border-radius-s: var(--border-radius-0250);
+    --badge-gap-s: var(--space-0375);
+
+    --color-badge-icon: var(--color-brand);
+
+    /* LxButton */
+    --button-border-radius: var(--border-radius-full);
+    --button-grid-areas: 'icon content';
+    --button-grid-template-columns: auto auto;
+    --button-alignment: center;
+    --button-text-alignment: center;
+    --button-gap: 0.5rem;
+    --button-border-width: var(--border-width-1);
+    --button-badge-empty-inset: calc(var(--space-0125) * -1) calc(var(--space-0125) * -1) auto auto;
+    --button-text-font-weight: 500;
+
+    /* Popovers */
+    --popover-checkmark-display: block;
+    --popover-padding: var(--space-0250);
+    --popover-border-radius: var(--border-radius-1000);
+    --popover-divider-margin: var(--space-0) var(--space-0750);
+    --popover-item-border-radius-outer: var(--border-radius-0750);
+    --popover-item-border-radius-inner: var(--border-radius-0250);
+    --popover-item-border-radius-selected: var(--border-radius-0750);
+    --popover-item-padding-s: var(--space-0250) var(--space-0750);
+    --popover-item-padding-l: var(--space-0750);
+    --popover-label-padding: var(--space-0500) var(--space-0750);
+    --popover-item-checkmark-display: block;
+    --popover-item-grid-areas: 'icon-toggle content';
+    --popover-item-grid-template-columns: auto 1fr;
+    --popover-item-tag-set-margin: var(--space-0250) var(--space-0250) var(--space-0500) var(--space-0250);
+    --popover-item-tag-border-radius: var(--border-radius-0750);
+
+    --color-popover-item-border-selected: transparent;
+
+    /* Inputs */
+    --input-border-radius: var(--border-radius-0250);
+    --input-border-width: var(--border-width-1);
+    --input-border-disabled: var(--border-width-1) solid var(--color-disabled-foreground);
+    --input-button-border-radius: var(--border-radius-0125);
+
+    --color-input-border: var(--color-label);
+    --color-input-background: transparent;
+
+    /* Nav items */
+    --nav-item-border-radius: var(--border-radius-full);
+    --nav-header-divider-border: var(--border-width-0);
+    --nav-public-item-border-radius: var(--border-radius-full);
+    --nav-tile-border-radius: var(--border-radius-1500);
+    --nav-tile-border-radius-inner: var(--border-radius-1500);
+
+    --color-nav-item-border-selected: transparent;
+
+    /* LxDataGrid */
+    --data-grid-border-radius: var(--space-0250);
+    --data-grid-border-width: var(--border-width-1);
+    --data-grid-column-header-text-font-weight: var(--font-weight-data);
+    --data-grid-action-set-padding: var(--space-0250);
+    --data-grid-footer-divider-height: 0;
+    --data-grid-cell-padding: var(--space-1000);
+    --data-grid-footer-grid-template-columns: 1fr auto auto auto;
+    --data-grid-footer-grid-areas: ". count-selector count-display paging-buttons";
+
+    --color-data-grid-border: var(--color-chrome);
+    --color-data-grid-column-header-background: var(--color-region);
+
+    /* LxList */
+    --list-item-outer-border-radius: var(--border-radius-1000);
+    --list-item-inner-border-radius: var(--border-radius-0250);
+    --list-item-outer-border-radius-selected: var(--border-radius-1000);
+    --list-item-inner-border-radius-selected: var(--border-radius-1000);
+    --list-item-gap: var(--space-0250);
+    --list-category-margin: var(--space-0500) var(--space-0250);
+    --list-category-border-radius: var(--border-radius-full);
+
+    /* LxTooltip, LxInfoWrapper */
+    --tooltip-border-radius: var(--border-radius-0250);
+    --info-wrapper-content-border-radius: var(--border-radius-0250);
+    --info-wrapper-border-radius: var(--border-radius-0500);
+    --info-wrapper-border-width: var(--border-width-1);
+    --info-wrapper-padding: var(--space-0750) var(--space-1000) var(--space-0500) var(--space-1000);
+    --info-wrapper-row-gap: var(--space-0250);
+    --info-wrapper-shadow: var(--shadow-dropdown);
+    --info-wrapper-text-primary-font-size: var(--font-size);
+    --info-wrapper-text-primary-font-weight: var(--font-weight);
+    --info-wrapper-text-secondary-font-weight: var(--font-weight-bold);
+
+    --color-info-wrapper-background: var(--color-region-2);
+    --color-info-wrapper-text-primary: var(--color-data);
+    --color-info-wrapper-text-secondary: var(--color-label);
+    --color-info-wrapper-border: var(--color-chrome);
+
+    /* LxDataBlock */
+    --data-block-button-border-radius: var(--border-radius-0250);
+    --data-block-button-border-radius-expanded: var(--border-radius-1000);
+    --data-block-border-radius-expanded: var(--border-radius-1000);
+    --data-block-header-border-radius-expanded: var(--border-radius-1000);
+
+    /* LxForm */
+    --form-border-radius: var(--border-radius-1500);
+    --form-footer-border-radius: var(--border-radius-1500);
+    --form-footer-button-min-width: 8rem;
+    --form-footer-divider-border: var(--border-width-1) solid var(--color-chrome);
+    --form-footer-divider-margin: var(--space-0);
+    --form-footer-padding: var(--space-1500);
+    --form-header-border-radius: var(--border-radius-1500) var(--border-radius-2000) var(--border-radius-0) var(--border-radius-0);
+    --form-header-divider-border: var(--border-width-1) solid var(--color-chrome);
+    --form-header-divider-margin: var(--space-0);
+    --form-header-footer-divider-display: none;
+    --form-section-divider-border: var(--border-width-1) solid var(--color-chrome);
+    --form-section-divider-margin: var(--space-0) var(--space-1500);
+    --form-section-padding: var(--space-2000) var(--space-1500);
+
+    /* LxToolbar */
+    --toolbar-box-shadow: var(--shadow-dropdown);
+    --toolbar-gap-bottom: var(--space-0250);
+    --toolbar-input-border-radius: var(--border-radius-full);
+    --toolbar-input-border-width: var(--border-width-0);
+    --toolbar-border-width: var(--border-width-0);
+    --toolbar-border-radius: var(--border-radius-full);
+    --toolbar-row-gap: var(--space-0250);
+    --toolbar-gap: var(--space-0500);
+    --toolbar-gap-bottom: var(--space-0500);
+    --toolbar-padding: var(--space-0250);
+    --toolbar-button-group-gap: var(--space-0500);
+    --toolbar-button-primary-border-radius: var(--border-radius-full);
+    --toolbar-button-secondary-border-radius: var(--border-radius-full);
+    --toolbar-button-tertiary-border-radius: var(--border-radius-full);
+    --toolbar-button-ghost-border-radius: var(--border-radius-full);
+    --toolbar-button-primary-grid-template-columns: auto minmax(max-content, 1fr);
+    --toolbar-button-secondary-grid-template-columns: auto minmax(max-content, 1fr);
+    --toolbar-button-tertiary-grid-template-columns: auto minmax(max-content, 1fr);
+    --toolbar-button-ghost-grid-template-columns: auto minmax(max-content, 1fr);
+    --toolbar-embedded-button-primary-grid-template-columns: auto minmax(max-content, 1fr);
+    --toolbar-embedded-button-secondary-grid-template-columns: auto minmax(max-content, 1fr);
+    --toolbar-embedded-button-tertiary-grid-template-columns: auto minmax(max-content, 1fr);
+    --toolbar-embedded-button-ghost-grid-template-columns: auto minmax(max-content, 1fr);
+    --toolbar-selection-button-grid-template-columns: auto minmax(max-content, 1fr);
+
+    --color-toolbar-background: var(--color-region);
+    --color-toolbar-input-background: var(--color-region);
+    --color-toolbar-toggle-background: var(--color-region);
+
+    /* LxCard */
+    --card-border-radius: var(--border-radius-1500);
+
+    /* LxTile */
+    --tile-border-radius: var(--border-radius-1500);
+
+    /* Complex inputs & displayers */
+    --input-complex-border-width: var(--border-width-1);
+    --input-complex-border-radius: var(--border-radius-0250);
+    --displayer-complex-border-width: var(--border-width-1);
+    --displayer-complex-border-radius: var(--border-radius-0250);
+    --displayer-complex-content-border-radius: var(--border-radius-0) var(--border-radius-0)var(--border-radius-0250) var(--border-radius-0250);
+
+    --toolbar-embedded-border-radius: var(--border-radius-0250) var(--border-radius-0250) var(--border-radius-0) var(--border-radius-0);
+    --toolbar-embedded-padding: var(--space-0250);
+    --toolbar-embedded-button-group-gap: var(--space-0250);
+    --toolbar-embedded-button-primary-border-radius: var(--border-radius-0250);
+    --toolbar-embedded-button-secondary-border-radius: var(--border-radius-0250);
+    --toolbar-embedded-button-tertiary-border-radius: var(--border-radius-0250);
+    --toolbar-embedded-button-ghost-border-radius: var(--border-radius-0250);
+
+    --color-displayer-complex-background: transparent;
+    --color-input-complex-background: transparent;
+    --color-input-complex-border-disabled: var(--color-disabled-foreground);
+
+    /* LxCheckBox */
+    --checkbox-border-radius: var(--border-radius-0125);
+    --checkbox-border-width: var(--border-width-2);
+    --checkbox-width: 1.25rem;
+    --checkbox-height: 1.25rem;
+
+    /* LxRadioButton */
+    --radio-button-border-width: var(--border-width-2);
+
+    /* LxValuePicker tiles */
+    --tile-border-radius: var(--border-radius-0750);
+    --tile-border-width: var(--border-width-1);
+    --tile-row-gap: var(--space-1250);
+
+    /* LxValuePicker tags */
+    --tag-border-radius: var(--border-radius-0500);
+    --tag-border-width: var(--border-width-1);
+    --tag-set-gap: var(--space-0250);
+
+    /* LxValuePicker indicators */
+    --indicator-border-radius: var(--border-radius-0500);
+    --indicator-border-width: var(--border-width-1);
+    --indicator-icon-size: var(--icon-size-s);
+
+    --color-indicator-border: var(--color-chrome);
+}
+
+.lx.lx-theme-dark {
+    /* LxModal */
+    --color-modal-button-secondary-text: var(--color-button-ghost-text);
+    --color-modal-button-secondary-background: var(--color-button-ghost-background);
+    --color-modal-button-secondary-text-focus: var(--color-button-ghost-text-focus);
+    --color-modal-button-secondary-background-focus: var(--color-button-ghost-background-focus);
+    --color-modal-button-secondary-border-focus: var(--color-button-ghost-border-focus);
+    --color-modal-button-secondary-text-active: var(--color-button-ghost-text-active);
+    --color-modal-button-secondary-background-active: var(--color-button-ghost-background-active);
+    --color-modal-button-secondary-border-active: var(--color-button-ghost-border-active);
+    --color-modal-button-secondary-text-disabled: var(--color-button-ghost-text-disabled);
+    --color-modal-button-secondary-background-disabled: var(--color-button-ghost-background-disabled);
+    --color-modal-button-secondary-border-disabled: var(--color-button-ghost-border-disabled);
+    --color-modal-button-secondary-text-hover: var(--color-button-ghost-text-hover);
+    --color-modal-button-secondary-background-hover: var(--color-button-ghost-background-hover);
+    --color-modal-button-secondary-border-hover: var(--color-button-ghost-border-hover);
+
+    /* LxLoader */
+    --color-loader-bar-stop-indicator: var(--color-interactive-background);
+
+    /* lxBadge */
+    --color-badge-icon: var(--color-brand);
+
+    /* Popovers */
+    --color-popover-item-border-selected: transparent;
+
+    /* Inputs */
+    --color-input-border: var(--color-label);
+    --color-input-background: transparent;
+
+    /* Nav */    
+    --color-nav-item-border-selected: transparent;
+
+    /* LxDataGrid */
+    --color-data-grid-border: var(--color-chrome);
+    --color-data-grid-column-header-background: var(--color-region);
+
+    /* LxTooltip, LxInfoWrapper */
+    --color-info-wrapper-background: var(--color-region-2);
+    --color-info-wrapper-text-primary: var(--color-data);
+    --color-info-wrapper-text-secondary: var(--color-label);
+    --color-info-wrapper-border: var(--color-chrome);
+
+    /* LxToolbar */
+    --color-toolbar-background: var(--color-region);
+    --color-toolbar-input-background: var(--color-region);
+    --color-toolbar-toggle-background: var(--color-region);
+
+    /* Complex inputs & displayers */
+    --color-displayer-complex-background: transparent;
+    --color-input-complex-background: transparent;
+    --color-input-complex-border-disabled: var(--color-disabled-foreground);
+
+    /* LxValuePicker indicators */
+    --color-indicator-border: var(--color-chrome);
+}
+
+.lx.lx.lx-theme-contrast {
+  --input-border-width: 1px;
+  --toolbar-input-border-width: var(--input-border-width);
+}
+
+
+.lx .lx-region .lx-component-toolbar,
+.lx .lx-region-component .lx-component-toolbar {
+  --color-toolbar-background: var(--color-region-2);
+}
+
+.lx .lx-component-toolbar .lx-toggle-appearance {
+  --color-toggle-background-off: var(--color-region-2);
+}
+
+.lx .lx-region .lx-input-wrapper,
+.lx .lx-region-component .lx-input-wrapper {
+  background: transparent;
+}
+
+.lx .lx-region .lx-toggle-appearance,
+.lx .lx-region-component .lx-toggle-appearance {
+  --color-toggle-background-off: var(--color-region);
+}
+
+.lx .lx-region .lx-complex-input, 
+.lx .lx-region-component .lx-complex-input,
+.lx .lx-region .lx-complex-displayer, 
+.lx .lx-region-component .lx-complex-displayer {
+  background: transparent;
+}
+
+.lx .lx-region .lx-embedded-toolbar,
+.lx .lx-region-component .lx-embedded-toolbar {
+  --color-toolbar-embedded-background: transparent;
+}
+
+.lx .lx-embedded-toolbar.lx-toolbar-sticky {
+  --color-toolbar-embedded-background: var(--color-background);
+}
+
+.lx .lx-region .lx-embedded-toolbar.lx-toolbar-sticky,
+.lx .lx-region-component .lx-embedded-toolbar.lx-toolbar-sticky {
+  --color-toolbar-embedded-background: var(--color-region);
+}
+
+.lx .lx-layout .lx-component-toolbar:not(.lx-embedded-toolbar),
+.lx .lx-layout .lx-region .lx-component-toolbar:not(.lx-embedded-toolbar),
+.lx .lx-layout .lx-region-component .lx-component-toolbar:not(.lx-embedded-toolbar) {
+  background: transparent;
+}
+
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+  background: var(--color-background);
+  border-radius: var(--border-radius-0);
+}
+
+.lx .lx-region .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region-component .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+  background: var(--color-data-grid-background);
+}

@@ -4,7 +4,8 @@
   border-width: var(--toolbar-border-width);
   border-style: var(--toolbar-border-style);
   border-color: var(--color-toolbar-border);
-  row-gap: var(--toolbar-row-gap);
+  margin-bottom: var(--toolbar-gap-bottom);
+  border-radius: var(--toolbar-border-radius);
 }
 
 .lx-embedded-toolbar {
@@ -54,15 +55,22 @@
 }
 
 .lx-component-toolbar .second-row {
+  background: var(--color-toolbar-background);
   border-radius: var(--toolbar-border-radius);
+  margin-top: var(--toolbar-row-gap);
   overflow: hidden;
+}
+
+.lx-component-toolbar .second-row:empty {
+  margin-top: var(--space-0);
+  box-shadow: none;
 }
 
 .lx-component-toolbar .second-row,
 .lx-component-toolbar .second-row .toolbar-search .lx-field-wrapper,
 .lx-component-toolbar .left-area:has(.lx-toolbar-search),
-.lx-component-toolbar .lx-toolbar-search,
-.lx-component-toolbar .lx-toolbar-search .lx-field-wrapper {
+.lx-component-toolbar .lx-toolbar-search .lx-field-wrapper,
+.lx-component-toolbar .lx-toolbar-search {
   width: 100%;
 }
 
@@ -72,25 +80,46 @@
 }
 
 .lx-component-toolbar .first-row-content,
+.lx-component-toolbar .lx-toolbar-outer-select-all,
 .lx-component-toolbar .lx-toolbar-search-select-group {
   background: var(--color-toolbar-background);
   border-radius: var(--toolbar-border-radius);
   padding: var(--toolbar-padding);
 }
 
+.lx-component-toolbar.lx-scrolled .second-row,
+.lx-component-toolbar.lx-scrolled .first-row-content,
+.lx-component-toolbar.lx-scrolled .lx-toolbar-outer-select-all,
+.lx-component-toolbar.lx-scrolled .lx-toolbar-search-select-group,
+.lx-component-toolbar.lx-scrolled .lx-toolbar-promoted-action .lx-button {
+  box-shadow: var(--toolbar-box-shadow);
+}
 .lx-component-toolbar.lx-selection-toolbar .first-row-content,
+.lx-component-toolbar.lx-selection-toolbar .lx-toolbar-outer-select-all,
 .lx-component-toolbar.lx-selection-toolbar .lx-toolbar-search-select-group {
   background: transparent;
-}
-
-.lx-component-toolbar .first-row-content.is-empty {
   padding: var(--space-0);
 }
 
+.lx-component-toolbar .first-row-content.is-empty {
+  margin: var(--toolbar-padding);
+  height: var(--button-height);
+  box-shadow: none;
+  background: transparent;
+}
+
 .lx-embedded-toolbar .first-row-content,
+.lx-embedded-toolbar .lx-toolbar-outer-select-all,
 .lx-embedded-toolbar .lx-toolbar-search-select-group {
   background: var(--color-toolbar-embedded-background);
   border-radius: var(--toolbar-embedded-border-radius);
+  padding: var(--space-0);
+}
+
+.lx-component-toolbar.lx-embedded-toolbar .first-row-content,
+.lx-component-toolbar.lx-embedded-toolbar .lx-toolbar-outer-select-all,
+.lx-component-toolbar.lx-embedded-toolbar .lx-toolbar-search-select-group {
+  box-shadow: none;
 }
 
 .lx-component-toolbar .left-area .lx-button[id*="select-all"] {
@@ -110,6 +139,8 @@
   background-color: var(--color-interactive-background);
   color: var(--color-interactive-foreground);
   border-radius: var(--toolbar-border-radius);
+  padding: var(--toolbar-padding);
+  column-gap: var(--toolbar-button-gap);
   justify-content: space-between;
 }
 
@@ -130,7 +161,13 @@
 
 .lx-embedded-toolbar .lx-group::before {
   height: var(--toolbar-embedded-divider-height);
+  border-right: var(--toolbar-embedded-divider-border);
   left: calc(var(--toolbar-embedded-button-group-gap) / -2);
+}
+
+.lx-embedded-toolbar .left-area > .lx-group:first-of-type::before,
+.lx-embedded-toolbar .left-area > .lx-toolbar-overflow-hidden + .lx-group::before {
+  border-right: var(--border-width-0);
 }
 
 /* Divider for groups after first group in same area */
@@ -221,6 +258,10 @@
   column-gap: var(--toolbar-button-group-gap);
 }
 
+.lx-component-toolbar.lx-selection-toolbar .left-area {
+  column-gap: var(--space-0);
+}
+
 .lx-embedded-toolbar .first-row,
 .lx-embedded-toolbar .left-area,
 .lx-embedded-toolbar .right-area,
@@ -232,6 +273,10 @@
   display: flex;
   align-items: center;
   position: relative;
+  column-gap: var(--toolbar-button-gap);
+}
+
+.lx-component-toolbar.lx-selection-toolbar .selection-action-buttons {
   column-gap: var(--toolbar-button-gap);
 }
 
@@ -1371,6 +1416,7 @@
   opacity: 0;
   opacity: var(--toolbar-top-shadow-opacity);
   pointer-events: none;
+  display: var(--native-sticky-shadow-display);
 }
 
 .lx.lx-no-transparency:not(.lx-theme-contrast) .lx-component-toolbar.lx-toolbar-sticky::after {

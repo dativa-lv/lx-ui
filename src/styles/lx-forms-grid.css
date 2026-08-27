@@ -4,6 +4,7 @@ svg .lx-shade {
 
 .lx-form-grid {
   display: grid;
+  border-radius: var(--form-border-radius);
   background-color: var(--color-region);
   grid-template-columns: minmax(0, 1fr);
   border: var(--region-border);
@@ -14,9 +15,14 @@ svg .lx-shade {
   position: inherit;
  }
 
+.lx-modal-form .lx-form-grid {
+  border: var(--border-width-0);
+ }
+
 .lx-appendable-list-item .lx-form-grid {
   position: unset;
   width: 100%;
+  border: var(--border-width-0);
 }
 
 .lx-data-block-content .lx-form-grid,
@@ -25,10 +31,27 @@ svg .lx-shade {
 }
 
 .lx-form-grid > header {
+  border-radius: var(--form-header-border-radius);
+  padding: var(--form-header-padding);
   min-height: var(--row-size);
-  border-bottom: var(--border-width-1) solid var(--color-chrome);
   display: grid;
   grid-template-columns: 1fr auto 1fr auto auto auto;
+}
+
+.lx-form-grid > header::before {
+  display: var(--form-header-footer-divider-display);
+  content: "";
+  top: var(--row-size);
+  left: var(--space-0);
+  right: var(--space-0);
+  border-bottom: var(--form-header-divider-border);
+  margin: var(--form-header-divider-margin);
+  pointer-events: none;
+  position: absolute;
+}
+
+.lx-form-grid.lx-header-scrolled > header::before { 
+  display: block;
 }
 
 .lx-form-grid > header.lx-sticky {
@@ -111,12 +134,27 @@ svg .lx-shade {
 
 .lx-form-grid > footer {
   min-height: var(--row-size);
-  padding: var(--space-1000) var(--gap-form);
-  padding-left: calc(var(--gap-form) + var(--space-0125));
-  border-top: var(--border-width-1) solid var(--color-chrome);
+  padding: var(--form-footer-padding);
+  border-radius: var(--form-footer-border-radius);
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: calc(var(--space-1000) / 2);
+}
+
+.lx-form-grid > footer::after {
+  content: "";
+  top: var(--space-0);
+  left: var(--space-0);
+  right: var(--space-0);
+  border-bottom: var(--form-footer-divider-border);
+  margin: var(--form-footer-divider-margin);
+  pointer-events: none;
+  position: absolute;
+  display: var(--form-header-footer-divider-display);
+}
+
+.lx-form-grid.lx-footer-scrolled > footer::after {
+  display: block;
 }
 
 .lx-form-grid > footer:has(.lx-footer-slot) {
@@ -136,15 +174,14 @@ svg .lx-shade {
 
 .lx-form-grid > footer > .lx-group {
   display: flex;
-  gap: var(--gap-buttons);
+  gap: var(--form-footer-button-set-gap);
 }
 
 .lx-form-grid > footer > .lx-group > .lx-button,
 .lx-form-grid > footer > .lx-group .lx-dropdown-toggler > .lx-button {
-  min-width: 12rem;
+  min-width: var(--form-footer-button-min-width);
   min-height: var(--row-size);
   flex-grow: 1;
-  flex-basis: 0;
 }
 
 .lx .lx-data-block-content > .lx-main > .lx-form-section {
@@ -156,14 +193,29 @@ svg .lx-shade {
 .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section,
 .lx-data-block-content > .lx-main > .lx-form-section,
 .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section {
-  padding: var(--gap-form);
+  padding: var(--form-section-padding);
+  margin-bottom: var(--space-3000);
   min-height: var(--row-size);
   display: grid;
   grid-template-columns: var(--form-column-size);
   gap: var(--gap-form);
-  border-top: var(--border-width-1) solid var(--color-chrome);
-  margin-bottom: var(--space-3000);
   align-items: baseline;
+  position: relative;
+}
+
+.lx-form-grid > .lx-main > .lx-form-section::before,
+.lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section::before,
+.lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section::before,
+.lx-data-block-content > .lx-main > .lx-form-section::before,
+.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section::before {
+  content: "";
+  top: var(--space-0);
+  left: var(--space-0);
+  right: var(--space-0);
+  pointer-events: none;
+  position: absolute;
+  border-top: var(--form-section-divider-border);
+  margin: var(--form-section-divider-margin);
 }
 
 .lx-filter-wrapper > .shortlist-wrapper > .lx-form-grid > .lx-main > .lx-form-section {
@@ -364,11 +416,11 @@ svg .lx-shade {
   border-color: var(--color-blue);
 }
 
-.lx-form-grid>.lx-main>.lx-form-section:first-of-type,
-.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main>.lx-form-section,
-.lx-data-block-content>.lx-main>.lx-form-section:first-of-type,
-.lx-form-grid>.lx-main>.lx-expander>.lx-body>.lx-form-section:first-of-type {
-  border-top: var(--border-width-0);
+.lx-form-grid>.lx-main>.lx-form-section:first-of-type::before,
+.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main>.lx-form-section::before,
+.lx-data-block-content>.lx-main>.lx-form-section:first-of-type::before,
+.lx-form-grid>.lx-main>.lx-expander>.lx-body>.lx-form-section:first-of-type::before {
+  display: none;
 }
 
 .lx-form-grid > .lx-main > .lx-form-section:last-of-type,
@@ -942,10 +994,6 @@ svg .lx-shade {
   padding: var(--appendable-list-button-padding);
 }
 
-.lx-appendable-list-item {
-  background: var(--color-data-block-background);
-}
-
 .lx-appendable-list-item:has(.appendable-list-remove-button-wrapper) {
   display: flex;
   justify-content: space-between;
@@ -999,9 +1047,15 @@ svg .lx-shade {
   gap: calc(var(--gap-form) / 2) var(--gap-form);
 }
 
-.lx-region .lx-appendable-list > .lx-appendable-list-item,
-.lx-region-component .lx-appendable-list > .lx-appendable-list-item {
-  background-color: var(--color-region-2);
+.lx-appendable-list.lx-region-component > .lx-appendable-list-item {
+  background: var(--color-region);
+  border-radius: var(--data-block-border-radius-expanded);
+  border: var(--region-border);
+}
+
+.lx-region .lx-appendable-list.lx-region-component > .lx-appendable-list-item,
+.lx-region-component .lx-appendable-list.lx-region-component > .lx-appendable-list-item {
+  background: var(--color-region-2);
 }
 
 .lx-appendable-list-simple > .lx-appendable-list-item .lx-row {
@@ -1402,6 +1456,7 @@ p .lx-person-display-wrapper {
 
 .lx-form-grid:not(.lx-theme-contrast .lx-form-grid)
   > header.lx-sticky:not(.lx-form-with-tabs):not(.lx-form-with-steps)::after {
+  display: var(--native-sticky-shadow-display);
   background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
   content: '';
   height: 3rem;
@@ -1416,6 +1471,7 @@ p .lx-person-display-wrapper {
 }
 
 .lx-form-grid:not(.lx-theme-contrast .lx-form-grid) > footer.lx-sticky::before {
+  display: var(--native-sticky-shadow-display);
   background: linear-gradient(180deg, transparent 0%, var(--color-background) 100%);
   content: '';
   height: 3rem;

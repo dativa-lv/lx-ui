@@ -359,12 +359,30 @@ const {
   isActionDropDown,
 });
 
+const leftAreaHasSelectAll = computed(
+  () =>
+    props.hasSelectAll && props.selectAllSide === 'left' && defaultAreaComputed.value === 'right'
+);
+
+const hasVisibleToolbarContent = computed(
+  () =>
+    leftActionsVisibleGrouped.value.length > 0 ||
+    rightActionsVisibleGrouped.value.length > 0 ||
+    actionsOverflow.value.length > 0 ||
+    hasDefaultSlotContent.value ||
+    hasLeftAreaSlotContent.value ||
+    hasRightAreaSlotContent.value ||
+    leftAreaHasSelectAll.value ||
+    (props.hasSearch && autoSearchMode.value === 'default')
+);
+
 const isLeftAreaEmpty = computed(
   () =>
     !(
       (props.hasSearch && autoSearchMode.value === 'default') ||
       hasLeftAreaSlotContent.value ||
       leftActionsVisibleGrouped.value.length > 0 ||
+      leftAreaHasSelectAll.value ||
       (defaultAreaComputed.value === 'right' && actionsOverflow.value.length > 0)
     )
 );
@@ -535,24 +553,30 @@ watch(wrapperTop, (newTop) => {
   }
 });
 
+const scrollProgress = computed(() => {
+  const wrapper = props.wrapperRef;
+
+  if (!wrapper || !toolbarRef.value) {
+    return 0;
+  }
+
+  const byWrapperScroll = Math.max(0, wrapperScrollTop.value || 0);
+  const baselineTop = baselineWrapperTop.value ?? wrapperTop.value;
+  const byBoundingDelta = Math.max(0, baselineTop - wrapperTop.value);
+
+  return Math.max(byWrapperScroll, byBoundingDelta);
+});
+
+const isScrolled = computed(() => props.sticky && scrollProgress.value > 0);
+
 const topOutOfBounds = computed(() => {
   const keyOpacity = '--toolbar-top-shadow-opacity';
   const keySize = '--toolbar-header-size';
 
   const limit = 100;
   const toolbarHeight = toolbarSize.height.value || 0;
-  const wrapper = props.wrapperRef;
 
-  if (!wrapper || !toolbarRef.value) {
-    return `${keyOpacity}: 0; ${keySize}: ${toolbarHeight}px;`;
-  }
-
-  const byWrapperScroll = Math.max(0, wrapperScrollTop.value || 0);
-  const baselineTop = baselineWrapperTop.value ?? wrapperTop.value;
-  const byBoundingDelta = Math.max(0, baselineTop - wrapperTop.value);
-  const progress = Math.max(byWrapperScroll, byBoundingDelta);
-
-  let opacity = Math.min(1, progress / limit);
+  let opacity = Math.min(1, scrollProgress.value / limit);
 
   if (!props.sticky) {
     opacity = 0;
@@ -560,18 +584,6 @@ const topOutOfBounds = computed(() => {
 
   return `${keyOpacity}: ${opacity}; ${keySize}: ${toolbarHeight}px;`;
 });
-
-const hasVisibleToolbarContent = computed(
-  () =>
-    leftActionsVisibleGrouped.value.length > 0 ||
-    rightActionsVisibleGrouped.value.length > 0 ||
-    actionsOverflow.value.length > 0 ||
-    hasDefaultSlotContent.value ||
-    hasLeftAreaSlotContent.value ||
-    hasRightAreaSlotContent.value ||
-    props.hasSelectAll ||
-    (props.hasSearch && autoSearchMode.value === 'default')
-);
 
 onUpdated(() => {
   updateSlotContentFlags();
@@ -599,6 +611,7 @@ const dataState = computed(() =>
       { 'lx-toolbar-empty': isToolbarEmpty },
       { 'lx-disabled': disabled || loading },
       { 'lx-toolbar-sticky': sticky },
+      { 'lx-scrolled': isScrolled },
     ]"
     :style="`${topOutOfBounds}`"
     role="toolbar"

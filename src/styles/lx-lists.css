@@ -83,6 +83,10 @@
                  var(--list-item-header-inner-border-radius);
 }
 
+.draggable-list-item-wrapper:first-of-type .lx-list-item-container .lx-list-item-interactive {
+  border-top-left-radius:  var(--list-item-header-inner-border-radius);
+}
+
 .lx-list-wrapper .tree-item:first-of-type .lx-list-item-container:has(.lx-list-item.lx-selected),
 .lx-list-default .lx-list-item-container:has(.lx-list-item.lx-selected):first-of-type {
   border-radius: var(--list-item-outer-border-radius-selected) 
@@ -119,6 +123,10 @@
                  var(--list-item-header-outer-border-radius);
 }
 
+.draggable-list-item-wrapper:last-of-type .lx-list-item-container .lx-list-item-interactive {
+  border-bottom-left-radius: var(--list-item-header-inner-border-radius);
+}
+
 .lx-list-wrapper .tree-item:last-of-type .lx-list-item-container:has(.lx-list-item.lx-selected),
 .lx-list-default .lx-list-item-container:has(.lx-list-item.lx-selected):last-of-type {
   border-radius: var(--list-item-inner-border-radius-selected) 
@@ -146,7 +154,7 @@
 .draggable-list-item-wrapper:only-child .lx-list-item-container .lx-list-item-interactive,
 .lx-list-wrapper .tree-item:only-child .lx-list-item-container .lx-list-item-interactive,
 .lx-list-default .lx-list-item-container:only-child .lx-list-item-interactive {
-  border-radius: var(--list-item-header-inner-border-radius);
+  border-radius: var(--list-item-header-outer-border-radius);
 }
 
 .lx-list-wrapper .tree-item:only-child .lx-list-item-container:has(.lx-list-item.lx-selected),
@@ -455,6 +463,11 @@
   border-radius: var(--list-item-inner-border-radius);
 }
 
+.lx-expander.lx-expander-row .lx-body .lx-list-default.lx-list .lx-list-item-container .lx-list-item-interactive,
+.lx-expander.lx-expander-row .lx-body .tree-list .tree-item .lx-list-item-container .lx-list-item-interactive {
+  border-radius: var(--list-item-header-inner-border-radius);
+}
+
 .lx-expander.lx-expander-row .lx-body .lx-list-default.lx-list .lx-list-item-container:has(.lx-list-item.lx-selected),
 .lx-expander.lx-expander-row .lx-body .tree-list .tree-item .lx-list-item-container:has(.lx-list-item.lx-selected) {
   border-radius: var(--list-item-inner-border-radius-selected);
@@ -664,6 +677,7 @@
 .lx .lx-region .draggable-list-item-wrapper .lx-handle,
 .lx .lx-region-component .draggable-list-item-wrapper .lx-handle,
 .lx .lx-region .lx-component-toolbar .second-row,
+.lx .lx-region-component .lx-component-toolbar .second-row,
 .lx .lx-region-component .lx-component-toolbar.lx-disabled .second-row {
   background: var(--color-region-2);
 }
@@ -947,11 +961,6 @@
 }
 
 /*** Toolbar styles ***/
-
-.lx-list-wrapper .lx-component-toolbar,
-.lx-appendable-list-wrapper .lx-component-toolbar {
-  margin-bottom: var(--list-item-gap);
-}
 
 .lx-list-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
   display: flex;

@@ -33,12 +33,18 @@
   flex-shrink: 0;
   width: var(--toggle-width-m);
   height: var(--toggle-height-m);
-  border: var(--toggle-border-m);
+  border-style: var(--toggle-border-style);
+  border-width: var(--toggle-border-width-m);
+  border-color: var(--color-toggle-border-off);
   border-radius: var(--toggle-border-radius-m);
   padding-left: var(--toggle-padding-left-m);
   padding-right: var(--toggle-padding-right-m);
   background: var(--color-toggle-background-off);
   cursor: pointer;
+}
+
+.lx-toggle-wrapper.lx-indeterminate .lx-toggle-appearance {
+  padding-right: var(--toggle-padding-left-m);
 }
 
 .lx-toggle-wrapper.lx-checked .lx-toggle-label-wrapper .lx-toggle-appearance {
@@ -90,8 +96,9 @@
   height: var(--toggle-thumb-height-off-m);
   border-radius: var(--toggle-thumb-border-radius-m);
   background: var(--color-toggle-thumb-off);
-  border: var(--toggle-border-m);
-  border-color: var(--color-toggle-thumb-off);
+  border-width: var(--toggle-border-width-m);
+  border-style: var(--toggle-border-style);
+  border-color: var(--color-toggle-border-off);
   transform: translateX(0);
 }
 
@@ -100,8 +107,7 @@
     calc((
       var(--toggle-width-m)
       - var(--toggle-thumb-width-off-m)
-      - var(--toggle-padding-left-m)
-      - var(--toggle-padding-right-m)
+      - (var(--toggle-padding-left-m) * 2)
       - (2 * var(--toggle-border-width-m))
     ) / 2)
   );
@@ -136,15 +142,18 @@
 .lx-toggle-wrapper.lx-small .lx-toggle-appearance {
   width: var(--toggle-width-s);
   height: var(--toggle-height-s);
-  border: var(--toggle-border-s);
+  border-width: var(--toggle-border-width-s);
   border-radius: var(--toggle-border-radius-s);
   padding-left: var(--toggle-padding-left-s);
   padding-right: var(--toggle-padding-right-s);
 }
 
+.lx-toggle-wrapper.lx-small.lx-indeterminate .lx-toggle-appearance {
+  padding-right: var(--toggle-padding-left-s);
+}
+
 .lx-toggle-wrapper.lx-small .lx-toggle-thumb {
-  border: var(--toggle-border-s);
-  border-color: var(--color-toggle-thumb-off);
+  border-width: var(--toggle-border-width-s);
   border-radius: var(--toggle-border-radius-s);
   width: var(--toggle-thumb-width-off-s);
   height: var(--toggle-thumb-height-off-s);
@@ -258,6 +267,7 @@
   .lx-dropdown-menu-toggle-wrapper:hover .lx-checked .lx-toggle-thumb,
   .lx-toggle-wrapper.lx-checked:not(.lx-disabled):hover:not(:has(.lx-toggle-helper-wrapper:hover)) .lx-toggle-thumb {
     background: var(--color-toggle-thumb-hover-on);
+    border-color: var(--color-toggle-thumb-hover-on);
   }
 
   .lx-dropdown-menu-toggle-wrapper:hover .lx-toggle-checkmark,
@@ -283,6 +293,7 @@
 }
 
 .lx-toggle-appearance ~ .lx-toggle-text {
+  padding: var(--toggle-text-padding);
   cursor: pointer;
 }
 

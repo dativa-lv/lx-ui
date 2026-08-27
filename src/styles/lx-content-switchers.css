@@ -120,7 +120,7 @@
 
 .lx-content-switcher.lx-disabled .lx-content-switcher-item.lx-selected {
   background: var(--color-disabled-background);
-  border: var(--content-switcher-border-selected);
+  border-color: var(--color-disabled-background);
 }
 
 .lx-content-switcher.lx-disabled .lx-content-switcher-item::before {

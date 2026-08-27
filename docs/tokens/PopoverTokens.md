@@ -11,11 +11,12 @@
 | `--popover-item-border-radius-outer`          | `--border-radius-default`               |
 | `--popover-item-border-radius-inner`          | `--border-radius-default`               |
 | `--popover-item-border-radius-selected`       | `--border-radius-default`               |
-| `--popover-item-text-font-size`               | `--button-text-font-size`               |
-| `--popover-item-text-font-weight`             | `--button-text-font-weight`             |
-| `--popover-item-text-alignment`               | `--button-text-alignment`               |
-| `--popover-item-text-decoration`              | `--button-text-decoration`              |
+| `--popover-item-text-font-size`               | `--font-size`                           |
+| `--popover-item-text-font-weight`             | `--font-weight`                         |
+| `--popover-item-text-alignment`               | left                                    |
+| `--popover-item-text-decoration`              | none                                    |
 | `--popover-item-gap`                          | `--space-0500`                          |
+| `--popover-item-alignment`                    | left                                    |
 | `--popover-item-grid-areas`                   | 'content icon-toggle'                   |
 | `--popover-item-grid-template-columns`        | 1fr auto                                |
 | `--popover-item-grid-template-rows`           | `--button-grid-template-rows`           |
@@ -88,6 +89,7 @@
 | `--color-popover-item-text-selected`       | `--color-selected`                                            |
 | `--color-popover-item-background-selected` | `--color-selected-background`                                 |
 | `--color-popover-item-border-selected`     | transparent transparent transparent `--color-selected-border` |
+| `--color-popover-background`               | `--color-region`                                              |
 | `--color-popover-border`                   | `--color-chrome`                                              |
 | `--color-popover-divider`                  | `--color-chrome`                                              |
 | `--color-popover-label`                    | `--color-label`                                               |

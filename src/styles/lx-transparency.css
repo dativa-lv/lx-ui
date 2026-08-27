@@ -1,6 +1,6 @@
-.lx.lx-no-transparency:not(.lx-theme-contrast) .lx-data-grid-wrapper>.lx-grid-header-wrapper:after,
+.lx.lx-no-transparency:not(.lx-theme-contrast) .lx-data-grid-wrapper>.lx-grid-header-wrapper::after,
 .lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid) > footer.lx-sticky::before,
-.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid)>header.lx-sticky:not(.lx-form-with-tabs):not(.lx-form-with-steps):after,
+.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid)>header.lx-sticky:not(.lx-form-with-tabs):not(.lx-form-with-steps)::after,
 .lx.lx-no-transparency:not(.lx-theme-contrast) .lx-chat-wrapper .lx-chat-footer::before,
 .lx.lx-no-transparency:not(.lx-theme-contrast) .lx-chat-wrapper::before {
     background: transparent;
@@ -88,4 +88,11 @@
     --shadow-dropdown: 0px 0px transparent;
     border-right: var(--border-width-2) solid var(--color-chrome);
   }
+}
+
+.lx.lx-no-transparency .lx-component-toolbar.lx-scrolled .second-row,
+.lx.lx-no-transparency .lx-component-toolbar.lx-scrolled .first-row-content,
+.lx.lx-no-transparency .lx-component-toolbar.lx-scrolled .lx-toolbar-search-select-group,
+.lx.lx-no-transparency .lx-component-toolbar.lx-scrolled .lx-toolbar-promoted-action .lx-button {
+  box-shadow: none;
 }

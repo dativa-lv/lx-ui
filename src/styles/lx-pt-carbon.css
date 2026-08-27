@@ -32,6 +32,7 @@
   --border-radius-0500: 0.5rem;
   --border-radius-0750: 0.75rem;
   --border-radius-1000: 1rem;
+  --border-radius-1500: 1.5rem;
   --border-radius-2000: 2rem;
   --border-radius-full: 100vh;
 
@@ -103,6 +104,7 @@
   --data-grid-action-height: var(--row-size);
   --data-grid-action-width: var(--row-size);
   --data-grid-action-outline-offset: var(--button-ghost-outline-offset);
+
   --data-grid-footer-divider-border: var(--border-width-1) solid var(--color-chrome);
   --data-grid-footer-divider-height: stretch;
   --data-grid-footer-button-icon-size: var(--button-icon-size);
@@ -174,6 +176,8 @@
   --shadow-1: 0 1px 2px 0 var(--color-shadow);
   --shadow-dropdown: 0 4px 8px 0 var(--color-shadow);
 
+  --native-sticky-shadow-display: block;
+
   --screen-xxxl: 2000px;
   --screen-xxl: 1900px;
   --screen-xl: 1784px;
@@ -185,7 +189,6 @@
   --screen-xxxs: 320px;
 
   --selected-border: var(--border-width-2) solid var(--color-selected-border);
-  --selected-dropdown-border: var(--border-width-2) solid var(--color-selected-dropdown-border);
 
   --card-min-height: 12rem;
   --card-border: var(--border-width-2) solid var(--color-card-background);
@@ -454,6 +457,7 @@
   --button-text-font-weight: var(--font-weight-interactive);
   --button-text-alignment: left;
   --button-text-decoration: none;
+  --button-alignment: left;
   --button-gap: var(--space-0750);
   --button-grid-areas: 'content icon';
   --button-grid-template-columns: 1fr auto;
@@ -478,6 +482,7 @@
   --button-primary-text-font-weight: var(--button-text-font-weight);
   --button-primary-text-alignment: var(--button-text-alignment);
   --button-primary-text-decoration: var(--button-text-decoration);
+  --button-primary-alignment: var(--button-alignment);
   --button-primary-gap: var(--button-gap);
   --button-primary-grid-areas: var(--button-grid-areas);
   --button-primary-grid-template-columns: var(--button-grid-template-columns);
@@ -502,6 +507,7 @@
   --button-secondary-text-font-weight: var(--button-text-font-weight);
   --button-secondary-text-alignment: var(--button-text-alignment);
   --button-secondary-text-decoration: var(--button-text-decoration);
+  --button-secondary-alignment: var(--button-alignment);
   --button-secondary-gap: var(--button-gap);
   --button-secondary-grid-areas: var(--button-grid-areas);
   --button-secondary-grid-template-columns: var(--button-grid-template-columns);
@@ -526,6 +532,7 @@
   --button-tertiary-text-font-weight: var(--button-text-font-weight);
   --button-tertiary-text-alignment: var(--button-text-alignment);
   --button-tertiary-text-decoration: var(--button-text-decoration);
+  --button-tertiary-alignment: var(--button-alignment);
   --button-tertiary-gap: var(--button-gap);
   --button-tertiary-grid-areas: var(--button-grid-areas);
   --button-tertiary-grid-template-columns: var(--button-grid-template-columns);
@@ -550,6 +557,7 @@
   --button-ghost-text-font-weight: var(--button-text-font-weight);
   --button-ghost-text-alignment: var(--button-text-alignment);
   --button-ghost-text-decoration: var(--button-text-decoration);
+  --button-ghost-alignment: var(--button-alignment);
   --button-ghost-gap: var(--button-gap);
   --button-ghost-grid-areas: var(--button-grid-areas);
   --button-ghost-grid-template-columns: var(--button-grid-template-columns);
@@ -577,10 +585,11 @@
   --popover-item-border-radius-outer: var(--border-radius-default);
   --popover-item-border-radius-inner: var(--border-radius-default);
   --popover-item-border-radius-selected: var(--border-radius-default);
-  --popover-item-text-font-size: var(--button-text-font-size);
-  --popover-item-text-font-weight: var(--button-text-font-weight);
-  --popover-item-text-alignment: var(--button-text-alignment);
-  --popover-item-text-decoration: var(--button-text-decoration);
+  --popover-item-text-font-size: var(--font-size);
+  --popover-item-text-font-weight: var(--font-weight);
+  --popover-item-text-alignment: left;
+  --popover-item-text-decoration: none;
+  --popover-item-alignment: left;
   --popover-item-gap: var(--space-0500);
   --popover-item-grid-areas: 'content icon-toggle';
   --popover-item-grid-template-columns: 1fr auto;
@@ -617,6 +626,8 @@
   --popover-item-tag-border-style: solid;
   --popover-item-tag-gap: var(--space-0250);
 
+  --toolbar-box-shadow: none;
+  --toolbar-gap-bottom: var(--space-0500);
   --toolbar-gap-top: var(--space-0);
   --toolbar-row-gap: var(--space-0);
   --toolbar-divider-height: 2rem;
@@ -634,8 +645,9 @@
   --toolbar-button-primary-text-font-weight: var(--button-primary-text-font-weight);
   --toolbar-button-primary-text-alignment: var(--button-primary-text-alignment);
   --toolbar-button-primary-text-decoration: var(--button-primary-text-decoration);
+  --toolbar-button-primary-alignment: var(--button-primary-alignment);
   --toolbar-button-primary-gap: var(--button-primary-gap);
-  --toolbar-button-primary-grid-areas: 'content icon';
+  --toolbar-button-primary-grid-areas: var(--button-primary-grid-areas);
   --toolbar-button-primary-grid-template-columns: minmax(max-content, 1fr) auto;
   --toolbar-button-primary-grid-template-rows: var(--button-primary-grid-template-rows);
   --toolbar-button-primary-height: var(--button-primary-height);
@@ -655,8 +667,9 @@
   --toolbar-button-secondary-text-font-weight: var(--button-secondary-text-font-weight);
   --toolbar-button-secondary-text-alignment: var(--button-secondary-text-alignment);
   --toolbar-button-secondary-text-decoration: var(--button-secondary-text-decoration);
+  --toolbar-button-secondary-alignment: var(--button-secondary-alignment);
   --toolbar-button-secondary-gap: var(--button-secondary-gap);
-  --toolbar-button-secondary-grid-areas: 'content icon';
+  --toolbar-button-secondary-grid-areas: var(--button-secondary-grid-areas);
   --toolbar-button-secondary-grid-template-columns: minmax(max-content, 1fr) auto;
   --toolbar-button-secondary-grid-template-rows: var(--button-secondary-grid-template-rows);
   --toolbar-button-secondary-height: var(--button-secondary-height);
@@ -676,8 +689,9 @@
   --toolbar-button-tertiary-text-font-weight: var(--button-tertiary-text-font-weight);
   --toolbar-button-tertiary-text-alignment: var(--button-tertiary-text-alignment);
   --toolbar-button-tertiary-text-decoration: var(--button-tertiary-text-decoration);
+  --toolbar-button-tertiary-alignment: var(--button-tertiary-alignment);
   --toolbar-button-tertiary-gap: var(--button-tertiary-gap);
-  --toolbar-button-tertiary-grid-areas: 'content icon';
+  --toolbar-button-tertiary-grid-areas: var(--button-tertiary-grid-areas);
   --toolbar-button-tertiary-grid-template-columns: minmax(max-content, 1fr) auto;
   --toolbar-button-tertiary-grid-template-rows: var(--button-tertiary-grid-template-rows);
   --toolbar-button-tertiary-height: var(--button-tertiary-height);
@@ -697,8 +711,9 @@
   --toolbar-button-ghost-text-font-weight: var(--button-ghost-text-font-weight);
   --toolbar-button-ghost-text-alignment: var(--button-ghost-text-alignment);
   --toolbar-button-ghost-text-decoration: var(--button-ghost-text-decoration);
+  --toolbar-button-ghost-alignment: var(--button-ghost-alignment);
   --toolbar-button-ghost-gap: var(--button-ghost-gap);
-  --toolbar-button-ghost-grid-areas: 'content icon';
+  --toolbar-button-ghost-grid-areas: var(--button-ghost-grid-areas);
   --toolbar-button-ghost-grid-template-columns: minmax(max-content, 1fr) auto;
   --toolbar-button-ghost-grid-template-rows: var(--button-ghost-grid-template-rows);
   --toolbar-button-ghost-height: var(--button-ghost-height);
@@ -732,8 +747,9 @@
   --toolbar-embedded-button-primary-text-font-weight: var(--button-primary-text-font-weight);
   --toolbar-embedded-button-primary-text-alignment: var(--button-primary-text-alignment);
   --toolbar-embedded-button-primary-text-decoration: var(--button-primary-text-decoration);
+  --toolbar-embedded-button-primary-alignment: var(--button-primary-alignment);
   --toolbar-embedded-button-primary-gap: var(--button-primary-gap);
-  --toolbar-embedded-button-primary-grid-areas: 'content icon';
+  --toolbar-embedded-button-primary-grid-areas: var(--button-primary-grid-areas);
   --toolbar-embedded-button-primary-grid-template-columns: minmax(max-content, 1fr) auto;
   --toolbar-embedded-button-primary-grid-template-rows: var(--button-primary-grid-template-rows);
   --toolbar-embedded-button-primary-height: var(--button-primary-height);
@@ -753,8 +769,9 @@
   --toolbar-embedded-button-secondary-text-font-weight: var(--button-secondary-text-font-weight);
   --toolbar-embedded-button-secondary-text-alignment: var(--button-secondary-text-alignment);
   --toolbar-embedded-button-secondary-text-decoration: var(--button-secondary-text-decoration);
+  --toolbar-embedded-button-secondary-alignment: var(--button-secondary-alignment);
   --toolbar-embedded-button-secondary-gap: var(--button-secondary-gap);
-  --toolbar-embedded-button-secondary-grid-areas: 'content icon';
+  --toolbar-embedded-button-secondary-grid-areas: var(--button-secondary-grid-areas);
   --toolbar-embedded-button-secondary-grid-template-columns: minmax(max-content, 1fr) auto;
   --toolbar-embedded-button-secondary-grid-template-rows: var(--button-secondary-grid-template-rows);
   --toolbar-embedded-button-secondary-height: var(--button-secondary-height);
@@ -774,8 +791,9 @@
   --toolbar-embedded-button-tertiary-text-font-weight: var(--button-tertiary-text-font-weight);
   --toolbar-embedded-button-tertiary-text-alignment: var(--button-tertiary-text-alignment);
   --toolbar-embedded-button-tertiary-text-decoration: var(--button-tertiary-text-decoration);
+  --toolbar-embedded-button-tertiary-alignment: var(--button-tertiary-alignment);
   --toolbar-embedded-button-tertiary-gap: var(--button-tertiary-gap);
-  --toolbar-embedded-button-tertiary-grid-areas: 'content icon';
+  --toolbar-embedded-button-tertiary-grid-areas: var(--button-tertiary-grid-areas);
   --toolbar-embedded-button-tertiary-grid-template-columns: minmax(max-content, 1fr) auto;
   --toolbar-embedded-button-tertiary-grid-template-rows: var(--button-tertiary-grid-template-rows);
   --toolbar-embedded-button-tertiary-height: var(--button-tertiary-height);
@@ -795,8 +813,9 @@
   --toolbar-embedded-button-ghost-text-font-weight: var(--button-ghost-text-font-weight);
   --toolbar-embedded-button-ghost-text-alignment: var(--button-ghost-text-alignment);
   --toolbar-embedded-button-ghost-text-decoration: var(--button-ghost-text-decoration);
+  --toolbar-embedded-button-ghost-alignment: var(--button-ghost-alignment);
   --toolbar-embedded-button-ghost-gap: var(--button-ghost-gap);
-  --toolbar-embedded-button-ghost-grid-areas: 'content icon';
+  --toolbar-embedded-button-ghost-grid-areas: var(--button-ghost-grid-areas);
   --toolbar-embedded-button-ghost-grid-template-columns: minmax(max-content, 1fr) auto;
   --toolbar-embedded-button-ghost-grid-template-rows: var(--button-ghost-grid-template-rows);
   --toolbar-embedded-button-ghost-height: var(--button-ghost-height);
@@ -816,8 +835,9 @@
   --toolbar-selection-button-text-font-weight: var(--button-text-font-weight);
   --toolbar-selection-button-text-alignment: var(--button-text-alignment);
   --toolbar-selection-button-text-decoration: var(--button-text-decoration);
+  --toolbar-selection-button-alignment: var(--button-alignment);
   --toolbar-selection-button-gap: var(--button-gap);
-  --toolbar-selection-button-grid-areas: 'content icon';
+  --toolbar-selection-button-grid-areas: var(--button-grid-areas);
   --toolbar-selection-button-grid-template-columns: minmax(max-content, 1fr) auto;
   --toolbar-selection-button-grid-template-rows: var(--button-grid-template-rows);
   --toolbar-selection-button-height: var(--button-height);
@@ -837,6 +857,7 @@
   --nav-item-text-font-weight: var(--font-weight-interactive);
   --nav-item-text-alignment: left;
   --nav-item-text-decoration: none;
+  --nav-item-alignment: left;
   --nav-item-gap: var(--space-0750);
   --nav-item-grid-areas: 'icon content';
   --nav-item-grid-template-columns: auto 1fr;
@@ -854,6 +875,7 @@
   --nav-public-item-text-font-weight: var(--font-weight-interactive);
   --nav-public-item-text-alignment: center;
   --nav-public-item-text-decoration: none;
+  --nav-public-item-alignment: center;
   --nav-public-item-gap: var(--space-1250);
   --nav-public-item-grid-areas: 'content';
   --nav-public-item-grid-template-columns: 1fr;
@@ -864,6 +886,9 @@
   --nav-public-item-outline-offset: -2px;
   --nav-public-item-padding: var(--space-0) calc(var(--space-1000) - var(--border-width-2)); /* padding - border so that icon is centered */
   --nav-public-item-width: auto;
+
+  --nav-header-divider-border: var(--border-width-1) solid var(--color-nav-foreground);
+  --nav-header-divider-margin: var(--space-0500) var(--space-0);
 
   --modal-header-grid-areas: 'content button';
   --modal-header-grid-template-columns: 1fr auto;
@@ -903,6 +928,7 @@
   --modal-button-primary-text-font-weight: var(--button-primary-text-font-weight);
   --modal-button-primary-text-alignment: var(--button-primary-text-alignment);
   --modal-button-primary-text-decoration: var(--button-primary-text-decoration);
+  --modal-button-primary-alignment: var(--button-primary-alignment);
   --modal-button-primary-height: 4.5rem;
   --modal-button-primary-min-width: var(--button-primary-min-width);
   --modal-button-primary-outline-offset: var(--button-primary-outline-offset);
@@ -915,6 +941,7 @@
   --modal-button-secondary-text-font-weight: var(--button-secondary-text-font-weight);
   --modal-button-secondary-text-alignment: var(--button-secondary-text-alignment);
   --modal-button-secondary-text-decoration: var(--button-secondary-text-decoration);
+  --modal-button-secondary-alignment: var(--button-secondary-alignment);
   --modal-button-secondary-height: 4.5rem;
   --modal-button-secondary-min-width: var(--button-secondary-min-width);
   --modal-button-secondary-outline-offset: var(--button-secondary-outline-offset);
@@ -968,6 +995,7 @@
   --info-box-button-outline-offset: var(--button-ghost-outline-offset);
   --info-box-button-icon-size: var(--button-ghost-icon-size);
 
+  --info-wrapper-content-border-radius: var(--border-radius-0);
   --info-wrapper-padding: var(--space-0500);
   --info-wrapper-gap: var(--space-0500);
   --info-wrapper-row-gap: var(--space-0);
@@ -982,8 +1010,7 @@
   --info-wrapper-text-secondary-font-size: var(--font-size-label);
   --info-wrapper-text-secondary-font-weight: inherit;
   --sheet-border-radius: var(--info-wrapper-border-radius);
-  --sheet-padding: var(--space-0500) var(--space-1000) var(--space-1000)
-    var(--space-1000);
+  --sheet-padding: var(--space-0500) var(--space-1000) var(--space-1000) var(--space-1000);
   --sheet-header-padding: var(--space-0);
   --sheet-header-border-width: var(--border-width-1);
   --sheet-handle-icon-size: var(--icon-size-l);
@@ -1039,8 +1066,7 @@
 
   --toggle-border-width-m: var(--border-width-1);
   --toggle-border-width-s: var(--border-width-1);
-  --toggle-border-m: var(--toggle-border-width-m) solid var(--color-toggle-border-off);
-  --toggle-border-s: var(--toggle-border-width-s) solid var(--color-toggle-border-off);
+  --toggle-border-style: solid;
   --toggle-width-m: 3rem;
   --toggle-height-m: 1.5rem;
   --toggle-width-s: 2rem;
@@ -1065,6 +1091,7 @@
   --toggle-text-font-weight: var(--font-weight);
   --toggle-text-font-size: var(--font-size);
   --toggle-text-line-height: 1.5;
+  --toggle-text-padding: var(--space-0);
   --toggle-gap: var(--space-0500);
 
   --content-switcher-container-border-width: var(--border-width-1);
@@ -1092,6 +1119,21 @@
   --content-switcher-text-font-weight: var(--font-weight);
   --content-switcher-text-line-height: 1.2em;
   --content-switcher-icon-size: var(--icon-size-s);
+
+  --form-border-radius: var(--border-radius-0);
+  --form-header-divider-border: var(--border-width-1) solid var(--color-chrome);
+  --form-header-divider-margin: var(--space-0);
+  --form-header-padding: var(--space-0);
+  --form-footer-divider-border: var(--border-width-1) solid var(--color-chrome);
+  --form-footer-divider-margin: var(--space-0);
+  --form-footer-padding: var(--space-1000) var(--space-2000);
+  --form-footer-button-set-gap: var(--space-0500);
+  --form-footer-button-min-width: 12rem;
+  --form-section-divider-border: var(--border-width-1) solid var(--color-chrome);
+  --form-section-divider-margin: var(--space-0);
+  --form-header-footer-divider-display: block;
+  --form-section-padding: var(--space-2000);
+
 }
 
 @media (pointer: coarse), (pointer: none) {

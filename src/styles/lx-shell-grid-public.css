@@ -71,6 +71,7 @@
   padding: var(--space-0250);
   height: var(--nav-row-size);
   padding-right: var(--space-0500);
+  border-radius: var(--button-ghost-border-radius);
   outline: 2px solid transparent;
   outline-offset: -2px;
 }

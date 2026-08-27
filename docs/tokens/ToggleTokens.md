@@ -8,8 +8,7 @@
 |----------------------------------|-------------------------------------------------------------|
 | `--toggle-border-width-m`        | `--border-width-1`                                          |
 | `--toggle-border-width-s`        | `--border-width-1`                                          |
-| `--toggle-border-m`              | `--toggle-border-width-m` solid `--color-toggle-border-off` |
-| `--toggle-border-s`              | `--toggle-border-width-s` solid `--color-toggle-border-off` |
+| `--toggle-border-style`          | solid                                                       |
 | `--toggle-width-m`               | 3rem                                                        |
 | `--toggle-height-m`              | 1.5rem                                                      |
 | `--toggle-width-s`               | 2rem                                                        |
@@ -34,6 +33,7 @@
 | `--toggle-text-font-weight`      | `--font-weight`                                             |
 | `--toggle-text-font-size`        | `--font-size-small`                                         |
 | `--toggle-text-line-height`      | 1.5                                                         |
+| `--toggle-text-padding`          | `--space-0`                                                 |
 | `--toggle-gap`                   | `--space-0500`                                              |
 
 ### Color

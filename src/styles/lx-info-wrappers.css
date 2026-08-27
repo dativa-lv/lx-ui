@@ -6,6 +6,10 @@
   cursor: help;
 }
 
+.lx-info-wrapper-content.lx-rich-kind {
+  border-radius: var(--info-wrapper-content-border-radius);
+}
+
 .lx-info-wrapper-content.lx-tooltip-kind:not(.lx-disabled) {
   cursor: default;
 }

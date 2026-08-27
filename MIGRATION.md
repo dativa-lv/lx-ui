@@ -8,21 +8,6 @@ Our goal is to make upgrading predictable, transparent, and worth the effort.
 
 ### Breaking changes
 
-#### LxRadioButton, LxCheckbox, LxValuePicker, LxTile
-
-`LxRadioButton`, `LxCheckbox` and some `LxValuePicker` variant (`default`, `horizontal`, `indicator`, `tags`, `tiles` and their respective custom counterparts) styles have been moved to a separate file - `lx-value-pickers.css`. Import this file in your project to ensure correct component appearance and behavior.
-
-**Token renames**
-
-- `--indicator-size` → `--indicator-height`, `--indicator-width`
-- `--tile-mini-text-primary-margin` → `--nav-tile-mini-text-margin`
-
-LxTile and LxValuePicker `variant="tile"` tokens have been separated. LxTile tokens still use the previously defined `--tile-*` tokens, but they are now called `--nav-tile-*` and `--color-nav-tile-*`. LxValuePicker `variant="tile"` tokens use the new `--tile-*` tokens.
-
-**Token removals**
-
-The `--tile-width-x2-size` (`calc(var(--tile-width) * 2 + 1rem)`) token has been removed.
-
 #### `sanitizeToPlainText` moved to `lxSanitizeUtils`
 
 `lxFormatUtils.sanitizeToPlainText` has moved to its own namespace, `lxSanitizeUtils`. It is the
@@ -75,15 +60,11 @@ this release — they were renamed from `.lx-day-input-*` in an earlier version.
 
 `LxNumberSlider` has been renamed to `LxNumberInput`.
 
-**Token renames**
-
-- `--number-slider-track-min-width` → `--number-input-track-min-width`
-- `--number-slider-track-max-width` → `--number-input-track-max-width`
-
 **CSS class renames**
 
 - `.lx-number-slider` → `.lx-number-input`
 - `.lx-number-slider-helper-wrapper` → `.lx-number-input-helper-wrapper`
+
 
 **`data-component` rename**
 
@@ -99,24 +80,6 @@ The `descriptionMinutes`, `descriptionMinutesSmall`, and `idleDescription` `text
 #### lx-pseudo-grid removed
 
 The `.lx-pseudo-grid` CSS (and its `.lx-cell-*`/`.lx-labels`/`.lx-row` helper classes) has been removed. It was unused internally and only served hand-rolled grid-like layouts in consumer apps.
-
-#### Base font tokens renamed to a property-first convention
-
-A handful of base tokens named the modifier before the CSS property they configure, inconsistent with every other token scale (`--font-weight-*`, `--border-width-*`, `--space-*`, etc.). They've been renamed to put the property first:
-
-- `--small-font-size` → `--font-size-small`
-- `--label-font-size` → `--font-size-label`
-- `--h1-font-size` → `--font-size-h1`
-- `--h2-font-size` → `--font-size-h2`
-- `--h3-font-size` → `--font-size-h3`
-- `--h1-font-weight` → `--font-weight-h1`
-- `--h2-font-weight` → `--font-weight-h2`
-- `--h3-font-weight` → `--font-weight-h3`
-- `--description-font-weight` → `--font-weight-description`
-
-**Token removed**
-
-- `--data-weight` (600) — this was a duplicate of `--font-weight-data`, which already held the identical value. Use `--font-weight-data` instead.
 
 #### LxFileUploader
 
@@ -142,6 +105,45 @@ Props `hasSelectButton` and `selectStatus` (and the `selectAll` event) have been
 `LxLoaderView`'s `labelDone` prop has been removed. Use `texts.loadingEnd` instead — pass `{ loadingEnd: '...' }` via the `texts` prop.
 
 `LxList`'s per-group select button (in grouped views) is now disabled instead of hidden while a search is active, matching the toolbar's `selectAll` checkbox behavior.
+
+#### Base font tokens renamed to a property-first convention
+
+A handful of base tokens named the modifier before the CSS property they configure, inconsistent with every other token scale (`--font-weight-*`, `--border-width-*`, `--space-*`, etc.). They've been renamed to put the property first:
+
+- `--small-font-size` → `--font-size-small`
+- `--label-font-size` → `--font-size-label`
+- `--h1-font-size` → `--font-size-h1`
+- `--h2-font-size` → `--font-size-h2`
+- `--h3-font-size` → `--font-size-h3`
+- `--h1-font-weight` → `--font-weight-h1`
+- `--h2-font-weight` → `--font-weight-h2`
+- `--h3-font-weight` → `--font-weight-h3`
+- `--description-font-weight` → `--font-weight-description`
+
+#### LxRadioButton, LxCheckbox, LxValuePicker, LxTile, LxToggle, popovers
+
+`LxRadioButton`, `LxCheckbox` and some `LxValuePicker` variant (`default`, `horizontal`, `indicator`, `tags`, `tiles` and their respective custom counterparts) styles have been moved to a separate file - `lx-value-pickers.css`. Import this file in your project to ensure correct component appearance and behavior.
+
+**Token renames**
+
+- `--indicator-size` → `--indicator-height`, `--indicator-width`
+- `--tile-mini-text-primary-margin` → `--nav-tile-mini-text-margin`
+- `--color-selected-dropdown` (use `--color-popover-item-text-selected` or `--color-popover-item-icon-selected` instead)
+- `--color-selected-dropdown-background` (use `--color-popover-item-background-selected` instead)
+- `--color-selected-dropdown-border` (use `--color-popover-item-border-selected` instead)
+- `--selected-dropdown-border` (use a combination of `--popover-item-border-width`, `--popover-item-border-style` and `--color-popover-item-border-selected` instead)
+- `--toggle-border-s` (use a combination of `--toggle-border-width-s`, `--toggle-border-style` and `--color-toggle-border-off/-on` instead)
+- `--toggle-border-m` (use a combination of `--toggle-border-width-m`, `--toggle-border-style` and `--color-toggle-border-off/-on` instead)
+- `--color-nav-item-border-left-selected` (`--color-brand`, merged into `--color-nav-item-border-selected`, which defines the full selected border)
+- `--number-slider-track-min-width` → `--number-input-track-min-width`
+- `--number-slider-track-max-width` → `--number-input-track-max-width`
+
+LxTile and LxValuePicker `variant="tile"` tokens have been separated. LxTile tokens still use the previously defined `--tile-*` tokens, but they are now called `--nav-tile-*` and `--color-nav-tile-*`. LxValuePicker `variant="tile"` tokens use the new `--tile-*` tokens.
+
+**Token removals**
+
+- `--tile-width-x2-size` (`calc(var(--tile-width) * 2 + 1rem)`)
+- `--data-weight` (use `--font-weight-data` instead)
 
 ## 2.2.13 → 2.2.14
 

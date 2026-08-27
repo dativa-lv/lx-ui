@@ -247,6 +247,7 @@
   padding: var(--space-0);
   padding-left: var(--space-1000);
   min-height: var(--row-size);
+  border-radius: var(--list-item-inner-border-radius);
   align-items: center;
 }
 
@@ -719,20 +720,23 @@
   max-height: var(--data-block-button-max-height-l);
 }
 
-.lx-data-block-wrapper-m .additional-buttons > .lx-button,
-.lx-data-block-wrapper-m .additional-buttons .lx-dropdown-toggler > .lx-button {
+.lx-data-block-wrapper .additional-buttons > .lx-button,
+.lx-data-block-wrapper .additional-buttons .lx-dropdown-toggler > .lx-button {
   height: 100%;
   border-radius: var(--data-block-button-border-radius);
-  max-height: var(--data-block-button-max-height-m);
-  min-width: var(--data-block-button-width-m);
   border: var(--data-block-button-border);
   background: var(--color-data-block-button-background);
   outline-offset: var(--data-block-button-outline-offset);
 }
 
+.lx-data-block-wrapper-m .additional-buttons > .lx-button,
+.lx-data-block-wrapper-m .additional-buttons .lx-dropdown-toggler > .lx-button {
+  max-height: var(--data-block-button-max-height-m);
+  min-width: var(--data-block-button-width-m);
+}
+
 .lx-data-block-wrapper-l .additional-buttons > .lx-button,
 .lx-data-block-wrapper-l .additional-buttons .lx-dropdown-toggler > .lx-button {
-  height: 100%;
   max-height: var(--data-block-button-max-height-l);
   min-width: var(--data-block-button-width-l);
 }

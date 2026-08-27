@@ -98,7 +98,6 @@
   color: var(--color-nav-item-text-selected);
   background-color: var(--color-nav-item-background-selected);
   border-color: var(--color-nav-item-border-selected);
-  border-left-color: var(--color-nav-item-border-left-selected);
   border-collapse: collapse;
 }
 

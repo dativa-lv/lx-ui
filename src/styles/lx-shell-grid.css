@@ -127,8 +127,9 @@
 .lx-layout.lx-layout-default > header .lx-header .lx-main-button::after,
 .lx-layout.lx-layout-default > header .lx-header #nav-toggle .lx-button-content-wrapper::after {
   content: ' ';
-  height: 2rem;
-  border-right: var(--border-width-1) solid var(--color-nav-foreground);
+  height: stretch;
+  margin: var(--nav-header-divider-margin);
+  border-right: var(--nav-header-divider-border);;
   opacity: 0.2;
   transition: opacity 0.1s ease-out;
 }
@@ -287,6 +288,7 @@
   cursor: pointer;
   outline: none;
   border: var(--border-width-2) solid transparent;
+  border-radius: var(--button-ghost-border-radius);
   box-sizing: border-box;
 }
 
@@ -1090,10 +1092,10 @@
 .lx .lx-layout .lx-header > .lx-group > .lx-shell-custom-button::before  {
   position: absolute;
   content: ' ';
-  height: 2rem;
-  margin-top: var(--space-0500);
+  height: stretch;
+  margin: var(--nav-header-divider-margin);
   margin-left: var(--space-3000);
-  border-right: var(--border-width-1) solid var(--color-nav-foreground);
+  border-right: var(--nav-header-divider-border);;
   opacity: 0.2;
   transition: opacity 0.1s ease-out;
 }
@@ -1373,6 +1375,7 @@
   width: var(--aside-size);
   max-width: var(--aside-size);
   padding-right: var(--space-0500);
+  border-radius: var(--button-ghost-border-radius);
 }
 
 .lx-layout.lx-layout-default > header .lx-header .lx-main-button > div {
@@ -1973,6 +1976,8 @@
 .lx-spotlight > .lx-spotlight-footer > .lx-button {
   --button-primary-height: 100%;
   --button-secondary-height: 100%;
+  --button-primary-border-radius: var(--border-radius-0);
+  --button-secondary-border-radius: var(--border-radius-0);
 }
 
 .lx-spotlight > .lx-spotlight-footer > .lx-button .lx-button-content{

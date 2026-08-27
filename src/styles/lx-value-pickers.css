@@ -657,12 +657,6 @@
   fill: var(--color-disabled-foreground);
 }
 
-/* Invalid styles */
-
-.lx-value-picker-indicators.lx-invalid .lx-indicator-set .lx-indicator {
-  border-color: var(--color-bad);
-}
-
 /* Read-only styles */
 
 .lx-value-picker-indicators.lx-read-only .lx-indicator {
@@ -738,6 +732,12 @@
 .lx-value-picker-indicators .lx-indicator.lx-indicator-purple .lx-indicator-icon,
 .lx-value-picker-indicators.lx-inactive .lx-indicator.lx-indicator-purple .lx-indicator-icon {
   fill: var(--color-region);
+}
+
+/* Invalid styles */
+
+.lx-layout .lx-value-picker-indicators.lx-invalid .lx-indicator-set .lx-indicator {
+  border-color: var(--color-bad);
 }
 
 /*** LxValuePicker tag styles ***/

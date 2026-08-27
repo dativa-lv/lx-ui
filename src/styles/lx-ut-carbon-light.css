@@ -171,9 +171,6 @@
   --color-selected: var(--color-data);
   --color-selected-border: var(--color-brand);
   --color-selected-background: var(--color-highlight);
-  --color-selected-dropdown: var(--color-selected);
-  --color-selected-dropdown-background: var(--color-selected-background);
-  --color-selected-dropdown-border: transparent transparent transparent var(--color-selected-border);
 
   --color-card-foreground: var(--color-data);
   --color-card-background: var(--color-region);
@@ -365,6 +362,7 @@
   --color-button-ghost-icon-focus: var(--color-interactive-background);
   --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 
+  --color-popover-background: var(--color-region);
   --color-popover-border: var(--color-chrome);
   --color-popover-divider: var(--color-chrome);
   --color-popover-label: var(--color-label);
@@ -601,8 +599,7 @@
   --color-nav-item-icon-selected: #111;
   --color-nav-item-text-selected: #111;
   --color-nav-item-background-selected: var(--color-highlight);
-  --color-nav-item-border-selected: transparent;
-  --color-nav-item-border-left-selected: var(--color-brand);
+  --color-nav-item-border-selected: transparent transparent transparent var(--color-brand);
   
   --color-nav-public-item-text: var(--color-nav-foreground);
   --color-nav-public-item-text-hover: var(--color-nav-foreground);

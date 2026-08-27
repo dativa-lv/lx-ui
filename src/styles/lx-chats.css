@@ -343,8 +343,14 @@
 .lx-chat-wrapper .lx-chat-composer.lx-chat-composer-multiline .lx-chat-composer-toolbar {
   order: -1;
   align-self: stretch;
-  border-radius: var(--toolbar-embedded-border-radius);
-  border-width: var(--toolbar-embedded-border-width);
-  border-style: var(--toolbar-embedded-border-style);
-  border-color: var(--color-toolbar-embedded-border);
+}
+
+.lx-chat-wrapper .lx-chat-composer .lx-chat-composer-toolbar .first-row-content.is-empty {
+  margin: var(--space-0);
+  height: 0;
+}
+
+.lx-material .lx-chat-composer:not(.lx-chat-composer-multiline) .lx-embedded-toolbar {
+  padding-right: var(--space-0);
+  padding-bottom: var(--space-0);
 }

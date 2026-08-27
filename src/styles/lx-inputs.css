@@ -969,6 +969,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-markdown-text-area-wrapper .lx-input-helper-wrapper {
   z-index: 2;
 }
+
 .lx:not(.lx-theme-contrast) .lx-input-helper-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):hover,
 .lx:not(.lx-theme-contrast) .lx-input-helper-wrapper .popper-wrapper .lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):focus {
   background: transparent;
@@ -2834,8 +2835,9 @@ h2.lx-section-header + p.lx-invalidation-message,
   grid-template-rows: auto 1fr;
 }
 
-.lx .lx-file-viewer:has(.lx-empty-state-wrapper) {
+.lx .lx-layout .lx-file-viewer:has(.lx-empty-state-wrapper) {
   background: transparent;
+  border: none;
 }
 
 .lx-file-viewer.lx-file-viewer-fullscreen .lx-pdf-canvas-wrapper {
@@ -3157,6 +3159,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-camera-wrapper .lx-camera-buttons {
   display: flex;
   justify-content: center;
+  padding-top: var(--space-0500);
 }
 
 .lx-draggable-wrapper {
@@ -3220,6 +3223,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: flex;
   justify-content: space-between;
   outline: none;
+  border-radius: var(--button-tertiary-border-radius);
 }
 
 .lx-file-upload-wrapper .lx-draggable-upload-wrapper > svg {

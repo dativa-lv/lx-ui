@@ -10,6 +10,7 @@
 
 | Variable name                    | Default value                                                 |
 |----------------------------------|---------------------------------------------------------------|
+| `--button-alignment`             | left                                                          |
 | `--button-cursor`                | pointer                                                       |
 | `--button-loader-margin`         | `--space-0`                                                   |
 | `--button-set-gap`               | `--space-0500`                                                |
@@ -49,6 +50,7 @@
 
 | Variable name                              | Default value                                                                      |
 |--------------------------------------------|------------------------------------------------------------------------------------|
+| `--button-primary-alignment`               | `--button-alignment`                                                               |
 | `--button-primary-badge-inset`             | `--button-badge-inset`                                                             |
 | `--button-primary-badge-empty-inset`       | `--button-badge-empty-inset`                                                       |
 | `--button-primary-border-width`            | `--button-border-width`                                                            |
@@ -72,6 +74,7 @@
 | `--button-primary-icon-only-min-width`     | `--button-icon-only-min-width`                                                     |
 | `--button-primary-icon-only-padding`       | `--button-icon-only-padding`                                                       |
 | `--button-primary-icon-only-width`         | `--button-icon-only-width`                                                         |
+| `--button-secondary-alignment`             | `--button-alignment`                                                               |
 | `--button-secondary-badge-inset`           | `--button-badge-inset`                                                             |
 | `--button-secondary-badge-empty-inset`     | `--button-badge-empty-inset`                                                       |
 | `--button-secondary-border-width`          | `--button-border-width`                                                            |
@@ -95,6 +98,7 @@
 | `--button-secondary-icon-only-min-width`   | `--button-icon-only-min-width`                                                     |
 | `--button-secondary-icon-only-padding`     | `--button-icon-only-padding`                                                       |
 | `--button-secondary-icon-only-width`       | `--button-icon-only-width`                                                         |
+| `--button-tertiary-alignment`              | `--button-alignment`                                                               |
 | `--button-tertiary-badge-inset`            | `--button-badge-inset`                                                             |
 | `--button-tertiary-badge-empty-inset`      | `--button-badge-empty-inset`                                                       |
 | `--button-tertiary-border-width`           | `--button-border-width`                                                            |
@@ -119,6 +123,7 @@
 | `--button-tertiary-icon-only-padding`      | `--button-icon-only-padding`                                                       |
 | `--button-tertiary-icon-only-width`        | `--button-icon-only-width`                                                         |
 | `--button-ghost-badge-inset`               | calc(`--space-0125` * -1) calc(`--space-0125` * -1) auto auto                      |
+| `--button-ghost-alignment`                 | `--button-alignment`                                                               |
 | `--button-ghost-badge-empty-inset`         | calc(`--space-0125` * -1) calc(`--space-0125` * -1) auto auto                      |
 | `--button-ghost-border-width`              | `--button-border-width`                                                            |
 | `--button-ghost-border`                    | `--button-ghost-border-width` solid transparent                                    |

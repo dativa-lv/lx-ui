@@ -55,6 +55,7 @@ header.lx.lx-layout-public>.lx-header .lx-main-button {
   padding: var(--space-0250);
   height: var(--nav-row-size);
   padding-right: var(--space-1000);
+  border-radius: var(--button-ghost-border-radius);
   outline: 2px solid transparent;
   outline-offset: -2px;
 }
@@ -804,6 +805,7 @@ header.lx.lx-header-wrapper .lx-header .lx-additional-nav-menu > .lx-additional-
   cursor: pointer;
   outline: none;
   border: var(--border-width-2) solid transparent;
+  border-radius: var(--button-ghost-border-radius);
   box-sizing: border-box;
 }
 

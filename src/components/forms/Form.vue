@@ -892,6 +892,19 @@ function setSelectedIndex(indexId) {
   }
 }
 
+const isHeaderScrolled = computed(() => {
+  if (!form.value) return false;
+  const v = bounding.top ? bounding.top.value - calculateOffset(form.value, false) : 0;
+  return v < 0;
+});
+
+const isFooterScrolled = computed(() => {
+  if (!form.value) return false;
+  const v =
+    bounding.bottom && windowSize.height ? bounding.bottom.value - windowSize.height.value : 0;
+  return v > 0;
+});
+
 watch(width, () => {
   nextTick(() => {
     const elementForm = document.getElementById(props.id);
@@ -983,6 +996,8 @@ if (props.builderOptions.useRegistry) {
     :class="[
       { 'lx-form-grid-stripped': kind === 'stripped' },
       { 'lx-region-component': !isInsideRegionContainer },
+      { 'lx-header-scrolled': isHeaderScrolled },
+      { 'lx-footer-scrolled': isFooterScrolled },
     ]"
     ref="form"
     :aria-labelledby="showHeader && kind !== 'stripped' ? `${id}-header` : null"

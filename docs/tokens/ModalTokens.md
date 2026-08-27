@@ -35,6 +35,7 @@
 | `--modal-width-xl`                          | 100%                                                                                                           |
 | `--modal-footer-padding`                    | `--space-0`                                                                                                    |
 | `--modal-footer-margin`                     | `--space-0`                                                                                                    |
+| `--modal-button-primary-alignment`          | `--button-primary-alignment`                                                                                   |
 | `--modal-button-primary-border`             | `--button-primary-border`                                                                                      |
 | `--modal-button-primary-border-radius`      | `--button-primary-border-radius`                                                                               |
 | `--modal-button-primary-text-font-size`     | `--button-primary-text-font-size`                                                                              |
@@ -46,6 +47,7 @@
 | `--modal-button-primary-outline-offset`     | `--button-primary-outline-offset`                                                                              |
 | `--modal-button-primary-padding`            | `--space-0` calc(`--space-1000` - `--border-width-2`) `--space-1250` calc(`--space-1000` - `--border-width-2`) |
 | `--modal-button-primary-width`              | 100%                                                                                                           |
+| `--modal-button-secondary-alignment`        | `--button-secondary-alignment`                                                                                 |
 | `--modal-button-secondary-border`           | `--button-secondary-border`                                                                                    |
 | `--modal-button-secondary-border-radius`    | `--button-secondary-border-radius`                                                                             |
 | `--modal-button-secondary-text-font-size`   | `--button-secondary-text-font-size`                                                                            |

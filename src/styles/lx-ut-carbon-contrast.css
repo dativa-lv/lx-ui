@@ -123,7 +123,6 @@
   --color-input-background-selected: var(--contrast-hover);
 
   --color-selected: var(--contrast-background);
-  --color-selected-dropdown: var(--contrast-background);
 
   --popover-border-width: var(--border-width-2);
   --color-popover-checkmark: var(--contrast-background);

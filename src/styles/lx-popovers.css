@@ -1,7 +1,7 @@
 /* Background lives on the wrapper (not the panel) so no empty gap shows when the scrollable panel is dragged/overscrolled aside. */
 .lx-layout .popper .lx-dropdown-default-content,
 .lx-layout .popper .lx-dropdown-panel-wrapper {
-  background: var(--color-region);
+  background: var(--color-popover-background);
   border-radius: var(--popover-border-radius);
 }
 
@@ -213,10 +213,10 @@
 
 .lx-dropdown-menu-toggle-wrapper .lx-dropdown-toggle-label,
 .lx-dropdown-default-content .lx-value-picker-item,
-.lx-dropdown-panel .user-menu-panel .lx-button-content,
-.lx-dropdown-panel .lx-button-set .lx-button-content,
-.lx-dropdown-panel > div > .lx-button .lx-button-content,
-.lx-dropdown-panel > .lx-button .lx-button-content {
+.lx-layout .lx-dropdown-panel .user-menu-panel .lx-button-content,
+.lx-layout .lx-dropdown-panel .lx-button-set .lx-button-content,
+.lx-layout .lx-dropdown-panel > div > .lx-button .lx-button-content,
+.lx-layout .lx-dropdown-panel > .lx-button .lx-button-content {
   text-align: var(--popover-item-text-alignment);
 }
 
@@ -334,11 +334,15 @@
   border-radius: var(--popover-item-border-radius-selected);
 }
 
-
-.lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all,
-.lx-dropdown-default-content .lx-value-picker-item.select-all {
+.lx-value-picker-dropdown-wrapper .lx-dropdown-default .lx-value-picker-item.select-all,
+.lx-dropdown-default-content .lx-dropdown-panel .lx-value-picker-item.select-all {
   position: relative;
   color: var(--color-brand);
+  margin-bottom: var(--popover-item-set-gap);
+  border-radius: var(--popover-item-border-radius-outer) 
+                 var(--popover-item-border-radius-outer) 
+                 var(--popover-item-border-radius-inner) 
+                 var(--popover-item-border-radius-inner);
 }
 
 .lx-dropdown-panel .lx-value-picker-item.select-all > svg,
@@ -396,6 +400,7 @@
   display: none;
 }
 
+.lx-dropdown-panel > .lx-button-set:first-child > .lx-button:first-child,
 .lx-dropdown-panel > .lx-dropdown-menu-group:first-of-type:not(:has(.lx-label)) > .lx-dropdown-menu-button:first-child .lx-button,
 .lx-dropdown-panel > .lx-dropdown-menu-group:first-of-type:not(:has(.lx-label)) > .lx-button:first-child,
 .lx-dropdown-default-content .lx-value-picker-item:first-of-type {

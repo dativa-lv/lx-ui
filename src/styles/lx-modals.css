@@ -107,6 +107,7 @@ dialog {
   opacity: 0;
   opacity: var(--modal-top-shadow-opacity);
   pointer-events: none;
+  display: var(--native-sticky-shadow-display);
 }
 
 #modals .lx-modal > footer::before {
@@ -120,6 +121,7 @@ dialog {
   opacity: 0;
   opacity: var(--modal-bottom-shadow-opacity);
   pointer-events: none;
+  display: var(--native-sticky-shadow-display);
 }
 
 .lx-theme-contrast #modals .lx-modal > header::after,
@@ -382,9 +384,10 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   background: var(--color-region);
   min-height: var(--row-size);
   border: var(--region-border);
-  border-radius: var(--border-radius-0);
+  border-radius: var(--modal-border-radius);
   min-width: var(--aside-size);
   grid-template-rows: 1fr auto;
+  overflow: hidden;
 }
 
 .lx-modal-form > .lx-main {

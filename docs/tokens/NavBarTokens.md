@@ -6,6 +6,7 @@
 
 | Variable name                             | Default value                                         |
 |-------------------------------------------|-------------------------------------------------------|
+| `--nav-item-alignment`                    | left                                                  |
 | `--nav-item-border`                       | `--border-width-2` solid transparent                  |
 | `--nav-item-border-radius`                | `--border-radius-0`                                   |
 | `--nav-item-text-font-size`               | inherit                                               |
@@ -22,6 +23,7 @@
 | `--nav-item-outline-offset`               | -2px                                                  |
 | `--nav-item-padding`                      | `--space-0` calc(`--space-0750` - `--border-width-2`) |
 | `--nav-item-width`                        | 100%                                                  |
+| `--nav-public-item-alignment`             | center                                                |
 | `--nav-public-item-border`                | `--border-width-0`                                    |
 | `--nav-public-item-border-radius`         | `--border-radius-0`                                   |
 | `--nav-public-item-text-font-size`        | inherit                                               |
@@ -38,43 +40,43 @@
 | `--nav-public-item-outline-offset`        | -2px                                                  |
 | `--nav-public-item-padding`               | `--space-0` calc(`--space-1000` - `--border-width-2`) |
 | `--nav-public-item-width`                 | auto                                                  |
+| `--nav-header-divider-border`             | `--border-width-1` solid `--color-nav-foreground`     |
+| `--nav-header-divider-margin`             | `--space-0500` `--space-0`                            |
 
 ## Color
 
-| Variable name                              | Default value                          |
-|--------------------------------------------|----------------------------------------|
-| `--color-nav-item-text`                    | #111                                   |
-| `--color-nav-item-background`              | transparent                            |
-| `--color-nav-item-text-hover`              | `--color-interactive-hover-foreground` |
-| `--color-nav-item-border-hover`            | transparent                            |
-| `--color-nav-item-background-hover`        | `--color-interactive-hover-background` |
-| `--color-nav-item-icon`                    | #111                                   |
-| `--color-nav-item-icon-hover`              | `--color-interactive-hover-foreground` |
-| `--color-nav-item-icon-selected`           | #111                                   |
-| `--color-nav-item-text-selected`           | #111                                   |
-| `--color-nav-item-background-selected`     | `--color-highlight`                    |
-| `--color-nav-item-border-selected`         | transparent                            |
-| `--color-nav-item-border-left-selected`    | `--color-brand`                        |
-| `--color-nav-public-item-text`             | `--color-nav-foreground`               |
-| `--color-nav-public-item-background`       | transparent                            |
-| `--color-nav-public-item-text-hover`       | `--color-nav-foreground`               |
-| `--color-nav-public-item-background-hover` | `--color-nav-hover-background`         |
-| `--color-nav-public-item-border-hover`     | transparent                            |
-| `--color-nav-public-item-icon`             | `--color-nav-foreground`               |
-| `--color-nav-public-item-icon-hover`       | `--color-nav-foreground`               |
-
+| Variable name                              | Default value                                       |
+|--------------------------------------------|-----------------------------------------------------|
+| `--color-nav-item-text`                    | #111                                              |
+| `--color-nav-item-background`              | transparent                                         |
+| `--color-nav-item-text-hover`              | `--color-interactive-hover-foreground`              |
+| `--color-nav-item-border-hover`            | transparent                                         |
+| `--color-nav-item-background-hover`        | `--color-interactive-hover-background`              |
+| `--color-nav-item-icon`                    | #111                                              |
+| `--color-nav-item-icon-hover`              | `--color-interactive-hover-foreground`              |
+| `--color-nav-item-icon-selected`           | #111                                              |
+| `--color-nav-item-text-selected`           | #111                                              |
+| `--color-nav-item-background-selected`     | `--color-highlight`                                 |
+| `--color-nav-item-border-selected`         | transparent transparent transparent `--color-brand` |
+| `--color-nav-public-item-text`             | `--color-nav-foreground`                            |
+| `--color-nav-public-item-background`       | transparent                                         |
+| `--color-nav-public-item-text-hover`       | `--color-nav-foreground`                            |
+| `--color-nav-public-item-background-hover` | `--color-nav-hover-background`                      |
+| `--color-nav-public-item-border-hover`     | transparent                                         |
+| `--color-nav-public-item-icon`             | `--color-nav-foreground`                            |
+| `--color-nav-public-item-icon-hover`       | `--color-nav-foreground`                            |
 
 <br/>
 Customized values for dark mode:
 <br />
 <br />
 
-| Variable name                          | Dark mode value |
-|----------------------------------------|-----------------|
-| `--color-nav-item-text`                | #eee            |
-| `--color-nav-item-icon`                | #eee            |
-| `--color-nav-item-icon-selected`       | #eee            |
-| `--color-nav-item-text-selected`       | #eee            |
+| Variable name                    | Dark mode value |
+|----------------------------------|-----------------|
+| `--color-nav-item-text`          | #eee          |
+| `--color-nav-item-icon`          | #eee          |
+| `--color-nav-item-icon-selected` | #eee          |
+| `--color-nav-item-text-selected` | #eee          |
 
 <br/>
 Customized values for contrast mode:
