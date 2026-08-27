@@ -156,7 +156,7 @@
 
 .lx-chat-wrapper .lx-chat-bubble-time {
   color: var(--color-label);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
 }
 
 .lx-chat-chat.lx-chat-m .lx-chat-user-me .lx-chat-bubble-time {
@@ -256,7 +256,7 @@
 
 .lx-chat-wrapper .lx-chat-invalid-message {
   color: var(--color-bad);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
 }
 
 .lx-chat-l .lx-chat-invalid-message,

@@ -121,7 +121,7 @@
 .lx-data-visualizer .sub-bar > p {
   line-height: 1em;
   font-weight: var(--font-weight-bold);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   color: var(--bar-text-color);
   position: absolute;
 }
@@ -261,7 +261,7 @@
 .lx-data-visualizer .lx-target-header > .target-value {
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   text-align: center;
   line-height: 1.2em;
 }
@@ -445,7 +445,7 @@
 .lx-data-visualizer .lx-bars-horizontal .bar-wrapper .lx-bar-group .lx-bar-group-label,
 .lx-data-visualizer .lx-bars-vertical .bar-wrapper .lx-bar-group .lx-bar-group-label {
   color: var(--color-label);
-  font-size: var(--label-font-size);
+  font-size: var(--font-size-label);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

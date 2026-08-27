@@ -7,7 +7,7 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxDataGrid from '@/components/DataGrid.vue';
 import LxLoader from '@/components/Loader.vue';
-import { formatDecimal } from '@/utils/formatUtils';
+import { formatDecimal } from '@/utils/format/number';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxListItem from '@/components/list/ListItem.vue';
 import { logWarn } from '@/utils/devUtils';

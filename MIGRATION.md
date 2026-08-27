@@ -23,6 +23,126 @@ LxTile and LxValuePicker `variant="tile"` tokens have been separated. LxTile tok
 
 The `--tile-width-x2-size` (`calc(var(--tile-width) * 2 + 1rem)`) token has been removed.
 
+#### `sanitizeToPlainText` moved to `lxSanitizeUtils`
+
+`lxFormatUtils.sanitizeToPlainText` has moved to its own namespace, `lxSanitizeUtils`. It is the
+only member of `lxFormatUtils` that needs DOMPurify, so it now lives on its own.
+
+**Before:**
+
+```js
+import { lxFormatUtils } from '@dativa-lv/lx-ui';
+
+const plain = lxFormatUtils.sanitizeToPlainText(value);
+```
+
+**After:**
+
+```js
+import { lxSanitizeUtils } from '@dativa-lv/lx-ui';
+
+const plain = lxSanitizeUtils.sanitizeToPlainText(value);
+```
+
+The function itself is unchanged — same signature.
+
+#### LxDayInput renamed to LxDurationInput
+
+`LxDayInput` has been renamed to `LxDurationInput` to match its internal naming. Update your imports/usages accordingly.
+
+Its stylesheet was renamed with it, and pluralised to match every other component stylesheet (`lx-buttons.css`, `lx-inputs.css`, `lx-lists.css`):
+
+- `dist/styles/lx-day-input.css` → `dist/styles/lx-duration-inputs.css`
+
+If you import component stylesheets individually rather than using a bundle, update that import:
+
+```js
+// Before
+import '@dativa-lv/lx-ui/dist/styles/lx-day-input.css';
+
+// After
+import '@dativa-lv/lx-ui/dist/styles/lx-duration-inputs.css';
+```
+
+Bundles under `dist/bundles/` already include it, so bundle consumers need no change.
+
+The CSS class names inside the stylesheet (`.lx-duration-input-wrapper` and friends) are unchanged in
+this release — they were renamed from `.lx-day-input-*` in an earlier version.
+
+> **If you select these components in tests, check your locators.** 
+
+#### LxNumberSlider renamed to LxNumberInput
+
+`LxNumberSlider` has been renamed to `LxNumberInput`.
+
+**Token renames**
+
+- `--number-slider-track-min-width` → `--number-input-track-min-width`
+- `--number-slider-track-max-width` → `--number-input-track-max-width`
+
+**CSS class renames**
+
+- `.lx-number-slider` → `.lx-number-input`
+- `.lx-number-slider-helper-wrapper` → `.lx-number-input-helper-wrapper`
+
+**`data-component` rename**
+
+- `data-component="lx-number-slider"` → `data-component="lx-number-input"`
+
+The same test-locator warning as for `LxDurationInput` applies here — and for this component the CSS
+class names changed too, so overrides and selectors both need updating.
+
+#### LxShell
+
+The `descriptionMinutes`, `descriptionMinutesSmall`, and `idleDescription` `texts` keys used a `{count}` placeholder, inconsistent with the rest of the library's `{0}`-style numbered placeholders. If you've overridden any of these `texts` keys, replace `{count}` with `{0}` in your custom strings.
+
+#### lx-pseudo-grid removed
+
+The `.lx-pseudo-grid` CSS (and its `.lx-cell-*`/`.lx-labels`/`.lx-row` helper classes) has been removed. It was unused internally and only served hand-rolled grid-like layouts in consumer apps.
+
+#### Base font tokens renamed to a property-first convention
+
+A handful of base tokens named the modifier before the CSS property they configure, inconsistent with every other token scale (`--font-weight-*`, `--border-width-*`, `--space-*`, etc.). They've been renamed to put the property first:
+
+- `--small-font-size` → `--font-size-small`
+- `--label-font-size` → `--font-size-label`
+- `--h1-font-size` → `--font-size-h1`
+- `--h2-font-size` → `--font-size-h2`
+- `--h3-font-size` → `--font-size-h3`
+- `--h1-font-weight` → `--font-weight-h1`
+- `--h2-font-weight` → `--font-weight-h2`
+- `--h3-font-weight` → `--font-weight-h3`
+- `--description-font-weight` → `--font-weight-description`
+
+**Token removed**
+
+- `--data-weight` (600) — this was a duplicate of `--font-weight-data`, which already held the identical value. Use `--font-weight-data` instead.
+
+#### LxFileUploader
+
+The `uploaderDescription` `texts` key has been removed — it's superseded by the `helperText` prop. If you were using `texts.uploaderDescription` to show a description under the uploader, pass that string as `helperText` instead.
+
+#### LxList, LxDataGrid
+
+The `selectionActionClick` event's parameter order has changed to match the `(actionName, actionValue, ...)` convention used elsewhere (e.g. `toolbarActionClick`):
+
+- Old: `(actionName, selectedItemsIds, actionValue)`
+- New: `(actionName, actionValue, selectedItemsIds)`
+
+If you handle `@selectionActionClick`, swap the 2nd and 3rd parameters.
+
+#### LxExpander
+
+Props `hasSelectButton` and `selectStatus` (and the `selectAll` event) have been removed. Use `actionDefinitions` instead — add an action object with the icon/label/disabled state you want, and handle it through `actionClick`.
+
+#### LxList, LxMap, LxLoaderView
+
+`texts.labelDone` renamed to `texts.loadingEnd` on `LxList` and `LxMap`, matching `LxDataGrid`'s naming for the same "loading finished" announcement text.
+
+`LxLoaderView`'s `labelDone` prop has been removed. Use `texts.loadingEnd` instead — pass `{ loadingEnd: '...' }` via the `texts` prop.
+
+`LxList`'s per-group select button (in grouped views) is now disabled instead of hidden while a search is active, matching the toolbar's `selectAll` checkbox behavior.
+
 ## 2.2.13 → 2.2.14
 
 ### Breaking changes

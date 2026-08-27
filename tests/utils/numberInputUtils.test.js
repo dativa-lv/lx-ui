@@ -1,5 +1,5 @@
 import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
-import { makeIntegerValidator } from '@/utils/numberSliderUtils';
+import { makeIntegerValidator } from '@/utils/numberInputUtils';
 import { setGlobalProperties } from '@/utils/global';
 
 let consoleWarnSpy;
@@ -124,7 +124,7 @@ describe('makeIntegerValidator', () => {
       validator(1.5, { id: 'slider-1' });
 
       const message = consoleWarnSpy.mock.calls[0][0];
-      expect(message).toContain('LxNumberSlider');
+      expect(message).toContain('LxNumberInput');
       expect(message).toContain('[slider-1]');
       expect(message).toContain('"modelValue"');
       expect(message).toContain('only supports whole numbers');

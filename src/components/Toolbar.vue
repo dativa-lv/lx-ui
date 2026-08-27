@@ -3,7 +3,6 @@ import {
   ref,
   computed,
   watch,
-  nextTick,
   onMounted,
   onUpdated,
   inject,
@@ -12,18 +11,20 @@ import {
   Comment,
   Fragment,
   Text,
+  defineAsyncComponent,
 } from 'vue';
 import { useDebounceFn, useElementSize, useElementBounding, useScroll } from '@vueuse/core';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import LxTextInput from '@/components/TextInput.vue';
 import LxToggle from '@/components/Toggle.vue';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { logWarn } from '@/utils/devUtils';
 import { useToolbarResponsiveness } from '@/hooks/useToolbarResponsiveness';
+
+const LxTextInput = defineAsyncComponent(() => import('@/components/TextInput.vue'));
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -108,9 +109,19 @@ const hasSecondRowSlotContent = ref(false);
 
 const isSearchExpanded = ref(false);
 const searchInputCompact = ref();
+const shouldFocusCompactSearch = ref(false);
 
 watch(isSearchExpanded, (value) => {
   emits('searchExpandedChange', value);
+});
+
+// LxTextInput loads on demand, so on the first expand the ref appears only once that module
+// resolves — focusing on the next tick would miss it. Focus when the input actually mounts.
+watch(searchInputCompact, (input) => {
+  if (input && shouldFocusCompactSearch.value) {
+    shouldFocusCompactSearch.value = false;
+    input.focus();
+  }
 });
 
 function updateSlotContentFlags() {
@@ -442,11 +453,7 @@ function toggleSearch() {
   searchStringRaw.value = '';
   isSearchExpanded.value = !isSearchExpanded.value;
 
-  nextTick(() => {
-    if (isSearchExpanded.value) {
-      searchInputCompact.value?.focus();
-    }
-  });
+  shouldFocusCompactSearch.value = isSearchExpanded.value;
 }
 
 function selectAll() {

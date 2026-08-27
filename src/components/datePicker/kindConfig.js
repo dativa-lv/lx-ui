@@ -13,18 +13,10 @@
  * Adding a new kind should mostly be a matter of adding one entry here (and,
  * for a non-calendar kind such as `day-month`, a small dedicated component).
  */
-import {
-  parseDate,
-  formatJSON,
-  formatDate,
-  formatDateTime,
-  formatDateJSON,
-  formatFull,
-  isDateValid,
-  isTimeValid,
-  getMonthYearString,
-  getMonthNames,
-} from '@/utils/dateUtils';
+import { formatDate, formatDateTime, formatFull } from '@/utils/date/format';
+import { getMonthNames, getMonthYearString } from '@/utils/date/intl';
+import { formatDateJSON, formatJSON, isDateValid, parseDate } from '@/utils/date/parse';
+import { isTimeValid } from '@/utils/date/validate';
 import {
   parseExact,
   extractMonthFromDate,

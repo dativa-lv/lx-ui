@@ -24,10 +24,10 @@ import useLx from '@/hooks/useLx';
 import useScrollVirtualizer from '@/hooks/useScrollVirtualizer';
 import { useGridKeyboardNavigation } from '@/hooks/useGridKeyboardNavigation';
 import { useLoadingAnnouncer } from '@/hooks/useLoadingAnnouncer';
-import { formatValueArray } from '@/utils/formatUtils';
-import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
-import { generateUUID, foldToAscii } from '@/utils/stringUtils';
-import { getDisplayTexts, remToPx, resolveRemToken, parsePaddingRem } from '@/utils/generalUtils';
+import { formatValueArray } from '@/utils/format/value';
+import { formatDate, formatDateTime, formatFull } from '@/utils/date/format';
+import { foldToAscii, generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts, parsePaddingRem, remToPx, resolveRemToken } from '@/utils/generalUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
@@ -668,9 +668,9 @@ function handleActionClick(actionName, rowCode, additionalParam) {
   }
 }
 
-function handleSelectionActionClick(actionName, selectedRowCodes, actionValue = undefined) {
+function handleSelectionActionClick(actionName, actionValue, selectedRowCodes) {
   if (!props.loading && !props.busy) {
-    emits('selectionActionClick', actionName, selectedRowCodes, actionValue);
+    emits('selectionActionClick', actionName, actionValue, selectedRowCodes);
   }
 }
 
@@ -1538,7 +1538,7 @@ function toolbarClick(action, value) {
   if (selectedRows.value.length === 0) {
     emits('toolbarActionClick', action, value);
   } else {
-    handleSelectionActionClick(action, selectedRows.value, value);
+    handleSelectionActionClick(action, value, selectedRows.value);
   }
 }
 
@@ -2185,7 +2185,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :badgeIcon="selectAction.badgeIcon"
                 :badgeTitle="selectAction.badgeTitle"
                 kind="ghost"
-                @click="handleSelectionActionClick(selectAction.id, selectedRows)"
+                @click="handleSelectionActionClick(selectAction.id, undefined, selectedRows)"
               />
             </div>
             <div
@@ -2196,7 +2196,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :actionDefinitions="selectionActionDefinitions"
                 :disabled="isDisabled"
                 @actionClick="
-                  (id, actionValue) => handleSelectionActionClick(id, selectedRows, actionValue)
+                  (id, actionValue) => handleSelectionActionClick(id, actionValue, selectedRows)
                 "
               >
                 <LxButton

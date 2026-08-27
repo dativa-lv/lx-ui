@@ -1,15 +1,11 @@
 <script setup>
 import { computed, inject, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
-import {
-  parseDate,
-  isDateValid,
-  formatDateJSON,
-  extractTimeFromDate,
-  humanizeDate,
-  formatFull,
-} from '@/utils/dateUtils';
-import { sanitizeToPlainText } from '@/utils/formatUtils';
+import { formatFull } from '@/utils/date/format';
+import { humanizeDate } from '@/utils/date/humanize';
+import { extractTimeFromDate } from '@/utils/date/intl';
+import { formatDateJSON, isDateValid, parseDate } from '@/utils/date/parse';
+import { sanitizeToPlainText } from '@/utils/sanitizeUtils';
 import useLx from '@/hooks/useLx';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';

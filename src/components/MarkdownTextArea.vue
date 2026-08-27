@@ -27,10 +27,10 @@ import LxToolbar from '@/components/Toolbar.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxLoader from '@/components/Loader.vue';
-import { isUrl, isUri, generateUUID, isEmail, isPhone } from '@/utils/stringUtils';
+import { generateUUID, isEmail, isPhone, isUri, isUrl } from '@/utils/stringUtils';
 import { checkArrayObjectProperty } from '@/utils/arrayUtils';
 import { getDisplayTexts, clampText, isNil } from '@/utils/generalUtils';
-import { formatValue, formatUrl } from '@/utils/formatUtils';
+import { formatUrl } from '@/utils/format/string';
 import { loadLibrary } from '@/utils/libLoader';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
@@ -752,7 +752,7 @@ function setLink() {
     return;
   }
 
-  const formatedUrl = formatValue(url.value, 'link');
+  const formatedUrl = formatUrl(url.value);
   // empty
   if (url.value === '' || url.value === undefined || url.value === null) {
     editUrlModal.value.close();

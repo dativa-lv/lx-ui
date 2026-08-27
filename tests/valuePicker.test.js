@@ -1,11 +1,14 @@
-import { test, expect, afterEach, beforeEach } from 'vitest';
+import { afterEach, beforeAll, beforeEach, expect, test, vi } from 'vitest';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { h } from 'vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import 'regenerator-runtime/runtime';
+
+// LxToolbar loads LxTextInput with defineAsyncComponent; pre-warm the module for these suites.
+beforeAll(() => import('@/components/TextInput.vue'));
 
 let wrapper;
 
@@ -271,6 +274,7 @@ test('LxValuePicker tags single-select arrow navigation includes search-dimmed i
     },
   });
 
+  await flushPromises(); // LxToolbar loads LxTextInput on demand
   const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   await search.setValue('o');
 
@@ -444,7 +448,7 @@ test('LxValuePicker default nullable advanced', async () => {
 });
 
 /* hasSearch */
-test('LxValuePicker default hasSearch', () => {
+test('LxValuePicker default hasSearch', async () => {
   expect(LxValuePicker).toBeTruthy();
 
   wrapper = mount(LxValuePicker, {
@@ -454,6 +458,7 @@ test('LxValuePicker default hasSearch', () => {
     },
   });
 
+  await flushPromises();
   expect(
     wrapper
       .find('.lx-value-picker-default-wrapper')
@@ -479,7 +484,7 @@ test('LxValuePicker dropdown hasSearch', () => {
   expect(wrapper.find('.lx-text-input').exists()).toBe(true);
 });
 
-test('LxValuePicker tags hasSearch', () => {
+test('LxValuePicker tags hasSearch', async () => {
   expect(LxValuePicker).toBeTruthy();
 
   wrapper = mount(LxValuePicker, {
@@ -489,10 +494,12 @@ test('LxValuePicker tags hasSearch', () => {
     },
   });
 
-  expect(wrapper.find('.lx-component-toolbar .lx-search-input').exists()).toBe(true);
+  await vi.waitFor(() =>
+    expect(wrapper.find('.lx-component-toolbar .lx-search-input').exists()).toBe(true)
+  );
 });
 
-test('LxValuePicker tiles hasSearch', () => {
+test('LxValuePicker tiles hasSearch', async () => {
   expect(LxValuePicker).toBeTruthy();
 
   wrapper = mount(LxValuePicker, {
@@ -502,7 +509,9 @@ test('LxValuePicker tiles hasSearch', () => {
     },
   });
 
-  expect(wrapper.find('.lx-component-toolbar .lx-search-input').exists()).toBe(true);
+  await vi.waitFor(() =>
+    expect(wrapper.find('.lx-component-toolbar .lx-search-input').exists()).toBe(true)
+  );
 });
 
 /* Tooltip */
@@ -1041,6 +1050,7 @@ test('LxValuePicker default search', async () => {
     },
   });
 
+  await flushPromises(); // LxToolbar loads LxTextInput on demand
   const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-value-picker-default-item');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
@@ -1070,6 +1080,7 @@ test('LxValuePicker default search 2', async () => {
     },
   });
 
+  await flushPromises(); // LxToolbar loads LxTextInput on demand
   const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-value-picker-default-item');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
@@ -1135,6 +1146,7 @@ test('LxValuePicker tags search', async () => {
     },
   });
 
+  await flushPromises(); // LxToolbar loads LxTextInput on demand
   const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-tag');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
@@ -1164,6 +1176,7 @@ test('LxValuePicker tiles search', async () => {
     },
   });
 
+  await flushPromises(); // LxToolbar loads LxTextInput on demand
   const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   let items = wrapper.findAll('.lx-value-picker-tile');
   expect(items.length).toBe(3);
@@ -1192,6 +1205,7 @@ test('LxValuePicker default searchAttributes', async () => {
     },
   });
 
+  await flushPromises(); // LxToolbar loads LxTextInput on demand
   const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-value-picker-default-item');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
@@ -1225,6 +1239,7 @@ test('LxValuePicker tags searchAttributes', async () => {
       stubs: ['router-link'],
     },
   });
+  await flushPromises(); // LxToolbar loads LxTextInput on demand
   const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-tag');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
@@ -1259,6 +1274,7 @@ test('LxValuePicker tiles searchAttributes', async () => {
     },
   });
 
+  await flushPromises(); // LxToolbar loads LxTextInput on demand
   const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   let items = wrapper.findAll('.lx-value-picker-tile');
   expect(items.length).toBe(3);

@@ -23,16 +23,16 @@
 
   --font-size: 16px;
 
-  --label-font-size: 0.875rem;
+  --font-size-label: 0.875rem;
 
-  --h1-font-size: 2rem;
-  --h1-font-weight: 700;
+  --font-size-h1: 2rem;
+  --font-weight-h1: 700;
 
-  --h2-font-size: 1.5rem;
-  --h2-font-weight: 400;
+  --font-size-h2: 1.5rem;
+  --font-weight-h2: 400;
 
-  --h3-font-size: 0.875rem;
-  --h3-font-weight: 600;
+  --font-size-h3: 0.875rem;
+  --font-weight-h3: 600;
 
   --list-item-inner-border-radius: var(--border-radius-0750);
   --list-header-min-height: 3.5rem;

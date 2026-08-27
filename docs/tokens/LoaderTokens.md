@@ -29,7 +29,7 @@
 | `--loader-text-primary-font-size`            | `--font-size`                                      |
 | `--loader-text-primary-font-weight`          | `--font-weight`                                    |
 | `--loader-text-primary-line-height`          | 1.5                                                |
-| `--loader-text-secondary-font-size`          | `--small-font-size`                                |
+| `--loader-text-secondary-font-size`          | `--font-size-small`                                |
 | `--loader-text-secondary-font-weight`        | `--font-weight`                                    |
 | `--loader-text-secondary-line-height`        | 1.1em                                              |
 | `--loader-state-indicator-size-l`            | 4rem                                               |

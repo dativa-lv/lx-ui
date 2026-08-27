@@ -177,16 +177,19 @@ const textsDefault = {
   skipLinkLabel: 'Izlaist sarakstu',
   skipLinkTitle: 'Izlaist sarakstu',
   overflowMenu: 'Atvērt papildu iespējas',
-  labelDone: 'Ielāde ir pabeigta', // TODO: rename to `loadingEnd` on the next major
+  loadingEnd: 'Ielāde ir pabeigta',
   loadingStart: 'Notiek ielāde',
   draggableItem: 'Pārvietojams rokturis',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxList'));
 
-// LxLoaderView announces the lazy library load. `loadingStart` goes through
-// `texts` because `label` is the visible caption and has to stay empty here.
-const loaderViewTexts = computed(() => ({ loadingStart: displayTexts.value.loadingStart }));
+// LxLoaderView announces the lazy library load. `loadingStart`/`loadingEnd` go
+// through `texts` because `label` is the visible caption and has to stay empty here.
+const loaderViewTexts = computed(() => ({
+  loadingStart: displayTexts.value.loadingStart,
+  loadingEnd: displayTexts.value.loadingEnd,
+}));
 
 const emits = defineEmits([
   'update:searchString',
@@ -1137,11 +1140,11 @@ const selectionState = computed(() => {
 });
 
 const hasGroupSelectButton = computed(
-  () =>
-    hasSelectAll.value &&
-    props.selectionKind === 'multiple' &&
-    !searchStringClient.value &&
-    !searchStringServer.value
+  () => hasSelectAll.value && props.selectionKind === 'multiple'
+);
+
+const isGroupSelectDisabled = computed(() =>
+  Boolean(searchStringClient.value || searchStringServer.value)
 );
 
 function selectRows(arr = null) {
@@ -1200,8 +1203,8 @@ const selectedLabel = computed(() => {
   return ret;
 });
 
-function selectionActionClick(actionId, selectedItemsIds, actionValue = undefined) {
-  emits('selectionActionClick', actionId, selectedItemsIds, actionValue);
+function selectionActionClick(actionId, actionValue, selectedItemsIds) {
+  emits('selectionActionClick', actionId, actionValue, selectedItemsIds);
 }
 
 const states = computed({
@@ -1281,6 +1284,28 @@ function selectSection(group) {
       selectChildren(item, false);
     });
   }
+}
+
+function groupSelectActionDefinitions(group) {
+  if (!hasGroupSelectButton.value || !hasSelectableItemsInGroup.value[prepareCode(group.id)]) {
+    return [];
+  }
+  const status = groupSelectionStatuses.value?.[group.id];
+  let icon = 'checkbox';
+  if (status === 'all') {
+    icon = 'checkbox-filled';
+  } else if (status === 'some') {
+    icon = 'checkbox-indeterminate';
+  }
+  return [
+    {
+      id: 'selectGroup',
+      icon,
+      label:
+        status === 'none' ? displayTexts.value.selectWholeGroup : displayTexts.value.clearSelected,
+      disabled: isGroupSelectDisabled.value,
+    },
+  ];
 }
 
 function getTabIndex(id) {
@@ -1563,15 +1588,10 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
   >
     <p class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
       <template v-if="shouldAnnounceLoading">{{ displayTexts.loadingStart }}</template>
-      <template v-else-if="shouldAnnounceDone">{{ displayTexts.labelDone }}</template>
+      <template v-else-if="shouldAnnounceDone">{{ displayTexts.loadingEnd }}</template>
     </p>
 
-    <LxLoaderView
-      :loading="loadingLib"
-      label=""
-      :labelDone="displayTexts.labelDone"
-      :texts="loaderViewTexts"
-    >
+    <LxLoaderView :loading="loadingLib" label="" :texts="loaderViewTexts">
       <LxSkipLink
         v-if="props.hasSkipLink"
         :label="displayTexts.skipLinkLabel"
@@ -1635,7 +1655,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 :badgeIcon="selectAction.badgeIcon"
                 :badgeTitle="selectAction.badgeTitle"
                 :href="selectAction.href"
-                @click="selectionActionClick(selectAction.id, selectedItems)"
+                @click="selectionActionClick(selectAction.id, undefined, selectedItems)"
               />
             </div>
 
@@ -1647,7 +1667,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 :disabled="loading || busy"
                 :actionDefinitions="selectionActionDefinitions"
                 @actionClick="
-                  (id, actionValue) => selectionActionClick(id, selectedItems, actionValue)
+                  (id, actionValue) => selectionActionClick(id, actionValue, selectedItems)
                 "
               >
                 <LxButton
@@ -1698,7 +1718,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                   :badgeIcon="selectAction.badgeIcon"
                   :badgeTitle="selectAction.badgeTitle"
                   :href="selectAction.href"
-                  @click="selectionActionClick(selectAction.id, selectedItems)"
+                  @click="selectionActionClick(selectAction.id, undefined, selectedItems)"
                 />
               </div>
 
@@ -1710,7 +1730,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                   :disabled="loading || busy"
                   :actionDefinitions="selectionActionDefinitions"
                   @actionClick="
-                    (id, actionValue) => selectionActionClick(id, selectedItems, actionValue)
+                    (id, actionValue) => selectionActionClick(id, actionValue, selectedItems)
                   "
                 >
                   <LxButton
@@ -1923,15 +1943,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :badge-title="group?.badgeTitle"
             :label="group.name"
             :id="group.id"
-            :has-select-button="
-              hasGroupSelectButton && hasSelectableItemsInGroup[prepareCode(group.id)]
-            "
-            :select-status="groupSelectionStatuses?.[group.id]"
-            :texts="{
-              selectWholeGroup: displayTexts.selectWholeGroup,
-              clearSelected: displayTexts.clearSelected,
-            }"
-            @select-all="selectSection(group)"
+            :action-definitions="groupSelectActionDefinitions(group)"
+            @action-click="() => selectSection(group)"
           >
             <template #customHeader v-if="$slots.customExpanderHeader">
               <slot
@@ -2142,15 +2155,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :badge-title="group?.badgeTitle"
             :label="group.name"
             :id="group.id"
-            :has-select-button="
-              hasGroupSelectButton && hasSelectableItemsInGroup[prepareCode(group.id)]
-            "
-            :select-status="groupSelectionStatuses?.[group.id]"
-            :texts="{
-              selectWholeGroup: displayTexts.selectWholeGroup,
-              clearSelected: displayTexts.clearSelected,
-            }"
-            @select-all="selectSection(group)"
+            :action-definitions="groupSelectActionDefinitions(group)"
+            @action-click="() => selectSection(group)"
           >
             <LxTreeList
               :items="filteredGroupedItems[prepareCode(group.id)]"
@@ -2206,15 +2212,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :badge-title="group?.badgeTitle"
             :label="group.name"
             :id="group.id"
-            :has-select-button="
-              hasGroupSelectButton && hasSelectableItemsInGroup[prepareCode(group.id)]
-            "
-            :select-status="groupSelectionStatuses?.[group.id]"
-            :texts="{
-              selectWholeGroup: displayTexts.selectWholeGroup,
-              clearSelected: displayTexts.clearSelected,
-            }"
-            @select-all="selectSection(group)"
+            :action-definitions="groupSelectActionDefinitions(group)"
+            @action-click="() => selectSection(group)"
           >
             <div class="tree-list-wrapper">
               <div class="tree-list-search" role="list">

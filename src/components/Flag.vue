@@ -1,9 +1,9 @@
 <script setup>
+import { ref, watch } from 'vue';
 import CountryFlag from 'vue-country-flag-next';
-import { formatCountryCode } from '@/utils/formatUtils';
 import useLx from '@/hooks/useLx';
 
-defineProps({
+const props = defineProps({
   value: {
     type: String,
     required: true,
@@ -31,6 +31,21 @@ const sizeMap = {
   m: 'normal',
   l: 'big',
 };
+
+const countryName = ref('');
+
+watch(
+  [() => props.value, () => props.locale, () => props.title],
+  async ([value, locale, title]) => {
+    if (title) {
+      countryName.value = '';
+      return;
+    }
+    const { formatCountryCode } = await import('@/utils/format/country');
+    countryName.value = formatCountryCode(value, locale) ?? '';
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <div
@@ -40,14 +55,14 @@ const sizeMap = {
       { 'lx-normal': size === 'm' },
       { 'lx-large': size === 'l' },
     ]"
-    :aria-label="title || formatCountryCode(value, locale)"
+    :aria-label="title || countryName"
     role="img"
     :aria-hidden="!meaningful"
   >
     <country-flag
       :country="value ?? ''"
       :size="sizeMap[size] || 'normal'"
-      :title="title || formatCountryCode(value, locale)"
+      :title="title || countryName"
     />
   </div>
 </template>

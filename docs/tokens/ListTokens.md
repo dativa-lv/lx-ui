@@ -44,8 +44,8 @@
 | `--list-text-primary-line-height`                 | 1.2em                                                         |
 | `--list-text-primary-margin`                      | -0.1rem 0 0 0                                                 |
 | `--list-text-primary-padding`                     | 0.1rem 0 0.1rem 0                                             |
-| `--list-text-secondary-font-size`                 | `--small-font-size`                                           |
-| `--list-text-secondary-font-weight`               | `--description-font-weight`                                   |
+| `--list-text-secondary-font-size`                 | `--font-size-small`                                           |
+| `--list-text-secondary-font-weight`               | `--font-weight-description`                                   |
 | `--list-text-secondary-line-height`               | 1.2em                                                         |
 | `--list-text-secondary-margin`                    | -0.15rem 0 -0.05rem 0                                         |
 | `--list-text-secondary-padding`                   | 0.1rem 0 0.05rem 0                                            |

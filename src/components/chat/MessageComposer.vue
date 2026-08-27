@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useElementSize, useMediaQuery } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
-import { sanitizeToPlainText } from '@/utils/formatUtils';
+import { sanitizeToPlainText } from '@/utils/sanitizeUtils';
 import LxTextArea from '@/components/TextArea.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 

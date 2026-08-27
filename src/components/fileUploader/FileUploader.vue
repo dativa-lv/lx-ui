@@ -100,7 +100,6 @@ const props = defineProps({
 const textsDefault = {
   clear: 'Notīrīt',
   buttonLabel: 'Izvēlēties datni',
-  uploaderDescription: '',
   draggablePlaceholder: 'Ievelciet datnes, vai nospiediet šeit, lai augšupielādētu',
   placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
   notFoundSearch: 'Nav atrasts:',
@@ -176,15 +175,8 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, '
 
 const hasHelperText = computed(() => isDefined(props.helperText) && props.helperText !== '');
 
-const usesDescriptionAsHelper = computed(
-  () => !hasHelperText.value && Boolean(displayTexts.value.uploaderDescription)
-);
-const helperTextClamped = computed(() =>
-  clampText(hasHelperText.value ? props.helperText : displayTexts.value.uploaderDescription)
-);
-const showInlineHelper = computed(
-  () => usesDescriptionAsHelper.value || (hasHelperText.value && props.helperTextKind === 'label')
-);
+const helperTextClamped = computed(() => clampText(props.helperText));
+const showInlineHelper = computed(() => hasHelperText.value && props.helperTextKind === 'label');
 const showInfoHelper = computed(() => hasHelperText.value && props.helperTextKind === 'icon');
 
 // states:
@@ -981,12 +973,7 @@ if (props.builderOptions?.useRegistry) {
     </div>
   </div>
 
-  <div
-    v-if="showInlineHelper"
-    class="lx-helper-text"
-    :class="{ 'lx-description': usesDescriptionAsHelper }"
-    :id="`${id}-helper`"
-  >
+  <div v-if="showInlineHelper" class="lx-helper-text" :id="`${id}-helper`">
     {{ helperTextClamped }}
   </div>
   <template v-else-if="showInfoHelper">

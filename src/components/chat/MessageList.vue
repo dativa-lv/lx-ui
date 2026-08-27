@@ -1,7 +1,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { parseDate, isDateValid, formatDateJSON } from '@/utils/dateUtils';
+import { formatDateJSON, isDateValid, parseDate } from '@/utils/date/parse';
 import MessageBubble from '@/components/chat/MessageBubble.vue';
 import TypingIndicator from '@/components/chat/TypingIndicator.vue';
 import LxEmptyState from '@/components/EmptyState.vue';

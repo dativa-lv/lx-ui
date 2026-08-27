@@ -68,7 +68,7 @@ export const LxMasterDetail = defineAsyncComponent(() => import('@/components/Ma
 export const LxModal = defineAsyncComponent(() => import('@/components/Modal.vue'));
 export const LxModalForm = defineAsyncComponent(() => import('@/components/ModalForm.vue'));
 export const LxNotification = defineAsyncComponent(() => import('@/components/Notification.vue'));
-export const LxNumberSlider = defineAsyncComponent(() => import('@/components/NumberSlider.vue'));
+export const LxNumberInput = defineAsyncComponent(() => import('@/components/NumberInput.vue'));
 export const LxPlaceholder = defineAsyncComponent(() =>
   import('@/components/forms/Placeholder.vue')
 );
@@ -99,7 +99,7 @@ export const LxValuePicker = defineAsyncComponent(() => import('@/components/Val
 export const LxViewLayout = defineAsyncComponent(() => import('@/components/ViewLayout.vue'));
 export const LxVisualPicker = defineAsyncComponent(() => import('@/components/VisualPicker.vue'));
 export const LxWidget = defineAsyncComponent(() => import('@/components/Widget.vue'));
-export const LxDayInput = defineAsyncComponent(() => import('@/components/DayInput.vue'));
+export const LxDurationInput = defineAsyncComponent(() => import('@/components/DurationInput.vue'));
 export const LxDrawPad = defineAsyncComponent(() => import('@/components/DrawPad.vue'));
 export const LxLogoDisplay = defineAsyncComponent(() => import('@/components/LogoDisplay.vue'));
 export const LxBadge = defineAsyncComponent(() => import('@/components/Badge.vue'));

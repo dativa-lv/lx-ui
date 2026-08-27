@@ -16,7 +16,7 @@
 .lx-page-header h1 {
   transition: font-size 0.1s ease-in-out;
   font-size: 2.5rem;
-  font-weight: var(--h1-font-weight);
+  font-weight: var(--font-weight-h1);
   line-height: 1.1em;
   margin-bottom: var(--space-0500);
 }
@@ -188,7 +188,7 @@
 
 .lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-secondary {
   color: var(--color-nav-foreground);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   margin-top: var(--space-0);
 }
 
@@ -423,7 +423,7 @@
 .lx .lx-layout .lx-dropdown-panel .lx-region .lx-description,
 .lx-modal .lx-region .lx-description {
   color: var(--color-label);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   line-height: 1.1em;
   margin-bottom: var(--space-0500);
 }
@@ -524,7 +524,7 @@
 
 .lx-breadcrumbs .lx-breadcrumb a {
   text-decoration: none;
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
 }
 
 .lx-breadcrumbs .lx-breadcrumb a:focus-visible,
@@ -536,7 +536,7 @@
   margin-left: var(--space-0500);
   content: '/';
   color: var(--color-label);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
 }
 
 .lx-breadcrumbs-truncate-first .lx-breadcrumb:first-child {
@@ -560,7 +560,7 @@
 .lx-breadcrumbs .lx-breadcrumb-overflow-toggle {
   color: var(--color-interactive-background);
   font-weight: var(--font-weight-interactive);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   cursor: pointer;
   padding: var(--space-0) var(--space-0500);
 }
@@ -1229,7 +1229,7 @@
 
 .lx-alert-button .lx-alert-description {
   color: var(--color-data);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   margin-bottom: var(--space-0250);
   overflow: hidden;
   line-height: 1.1em;
@@ -1292,7 +1292,7 @@
 .lx-layout.lx-layout-cover .lx-alert-data .lx-alert-description .lx-description,
 .lx-layout.lx-layout-cover-digives-lite .lx-alert-data .lx-alert-description .lx-description {
   margin: var(--space-0);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   line-height: 1.1em;
   color: var(--color-data);
   font-weight: var(--font-weight);
@@ -1382,7 +1382,7 @@
 .lx-layout.lx-layout-default > header .lx-header .lx-main-button .lx-badge {
   margin-left: var(--space-0500);
   font-weight: var(--font-weight-data);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
 }
 
 .lx .lx-layout.lx-layout-default > header .lx-header .lx-main-button.lx-main-button-collapsed .lx-project-name,
@@ -1959,7 +1959,7 @@
 }
 
 .lx-spotlight > .lx-spotlight-main .lx-spotlight-description {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   line-height: 1.2em;
 }
 
@@ -2118,7 +2118,7 @@
   --color-badge-background: var(--color-warning);
   --color-badge-text: var(--color-region);
   --badge-text-font-weight: var(--font-weight-bold);
-  --badge-text-font-size: var(--small-font-size);
+  --badge-text-font-size: var(--font-size-small);
   border-color: var(--color-nav-background);
 }
 

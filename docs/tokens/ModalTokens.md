@@ -21,8 +21,8 @@
 | `--modal-content-padding`                   | `--space-1000` `--space-1000` `--space-2000` `--space-1000`                                                    |
 | `--modal-header-content-padding`            | `--space-0500` `--space-0500` `--space-0250` `--space-1000`                                                    |
 | `--modal-header-content-alignment`          | left                                                                                                           |
-| `--modal-header-text-font-size`             | `--h2-font-size`                                                                                               |
-| `--modal-header-text-font-weight`           | `--h2-font-weight`                                                                                             |
+| `--modal-header-text-font-size`             | `--font-size-h2`                                                                                               |
+| `--modal-header-text-font-weight`           | `--font-weight-h2`                                                                                             |
 | `--modal-button-header-border-radius`       | `--border-radius-0`                                                                                            |
 | `--modal-button-header-width`               | `--button-width`                                                                                               |
 | `--modal-button-header-min-width`           | `--button-min-width`                                                                                           |

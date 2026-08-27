@@ -14,7 +14,6 @@ const props = defineProps({
   modelValue: { type: [Number, String], default: 0 },
   kind: { type: String, default: 'indeterminate' }, // 'indeterminate' or 'progress'
   label: { type: String, default: 'Notiek ielāde' }, // visible label under the loader
-  labelDone: { type: String, default: 'Ielāde ir pabeigta' }, // TODO: replace with texts.loadingEnd
   description: { type: String, default: '' },
   fakedDuration: { type: Number, default: 2000 },
   faked: { type: Boolean, default: false },
@@ -22,13 +21,13 @@ const props = defineProps({
   texts: { type: Object, default: () => ({}) },
 });
 
-// The announced texts fall back to the existing `label` / `labelDone` props, so
-// nothing changes for consumers that only set those. An explicitly passed
-// `texts` entry wins, which is what a caller with an empty visible `label`
-// needs in order to still announce a start message.
+// The start announcement falls back to the existing `label` prop, so nothing
+// changes for consumers that only set that. An explicitly passed `texts` entry
+// wins, which is what a caller with an empty visible `label` needs in order to
+// still announce a start message.
 const textsDefault = computed(() => ({
   loadingStart: props.label || 'Notiek ielāde',
-  loadingEnd: props.labelDone || 'Ielāde ir pabeigta',
+  loadingEnd: 'Ielāde ir pabeigta',
 }));
 
 const displayTexts = computed(() =>

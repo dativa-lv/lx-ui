@@ -14,7 +14,7 @@ import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-import { formatValueBool } from '@/utils/formatUtils';
+import { formatValueBool } from '@/utils/format/value';
 import { clampText, getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 

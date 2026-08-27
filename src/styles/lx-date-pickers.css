@@ -293,7 +293,7 @@
   -ms-user-select: none;
   user-select: none;
   margin-top: var(--space-1250);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-month-layout-year-label {
@@ -338,7 +338,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   color: var(--color-label);
   line-height: 1em;
   -webkit-user-select: none;
@@ -435,7 +435,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight);
   line-height: 1em;
   cursor: pointer;
@@ -636,7 +636,7 @@
   margin: var(--space-0) var(--space-0250);
   padding: var(--space-0250) var(--space-1250);
   cursor: pointer;
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight);
   user-select: none;
   color: var(--color-data);
@@ -960,7 +960,7 @@
 
 .popper.fullscreen-popper .lx-dropdown-panel-wrapper.date-picker-type .lx-row-header label {
   color: var(--color-label);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
 }
 
 .popper.fullscreen-popper .lx-dropdown-panel-wrapper.date-picker-type .lx-calendar-layouts .lx-list {

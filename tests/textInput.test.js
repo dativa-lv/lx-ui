@@ -1,10 +1,22 @@
 // @ts-nocheck
-import { test, expect, describe, afterEach } from 'vitest';
+import { test, expect, describe, afterEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 
 let wrapper;
+
+// LxFlag resolves its country name on demand as of this change (the country database is a
+// separate chunk), so poll for the label instead of asserting straight after mount.
+function expectFlagLabels(...expected) {
+  return vi.waitFor(() => {
+    const flags = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
+    expect(flags.length).toBe(expected.length);
+    expected.forEach((name, i) => {
+      expect(flags[i].attributes('aria-label')).toContain(name);
+    });
+  });
+}
 
 afterEach(() => {
   if (wrapper) {
@@ -725,7 +737,7 @@ test('LxTextInput numeric mask 2', async () => {
   expect(input.value).toBe('1234');
 });
 
-test('LxTextInput phone kind', () => {
+test('LxTextInput phone kind', async () => {
   wrapper = mount(LxTextInput, {
     props: {
       kind: 'phone',
@@ -733,12 +745,12 @@ test('LxTextInput phone kind', () => {
     },
   });
 
-  const flag = wrapper.find('.lx-input-flag-wrapper').find('.lx-flag');
-  expect(flag.exists()).toBe(true);
-  expect(flag.attributes('aria-label')).toContain('Igaunija');
+  // LxFlag is loaded on demand, so poll before asserting on the rendered flag.
+  await expectFlagLabels('Igaunija');
+  expect(wrapper.find('.lx-input-flag-wrapper').find('.lx-flag').exists()).toBe(true);
 });
 
-test('LxTextInput phone kind - two flags', () => {
+test('LxTextInput phone kind - two flags', async () => {
   wrapper = mount(LxTextInput, {
     props: {
       kind: 'phone',
@@ -746,13 +758,10 @@ test('LxTextInput phone kind - two flags', () => {
     },
   });
 
-  const flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
-  expect(flag.length).toBe(2);
-  expect(flag[0].attributes('aria-label')).toContain('Amerikas Savienotās Valstis');
-  expect(flag[1].attributes('aria-label')).toContain('Kanāda');
+  await expectFlagLabels('Amerikas Savienotās Valstis', 'Kanāda');
 });
 
-test('LxTextInput phone kind - default value', () => {
+test('LxTextInput phone kind - default value', async () => {
   wrapper = mount(LxTextInput, {
     props: {
       kind: 'phone',
@@ -760,11 +769,10 @@ test('LxTextInput phone kind - default value', () => {
     },
   });
 
-  const flag = wrapper.find('.lx-input-flag-wrapper').find('.lx-flag');
-  expect(flag.attributes('aria-label')).toContain('Latvija');
+  await expectFlagLabels('Latvija');
 });
 
-test('LxTextInput phone kind - changed default value', () => {
+test('LxTextInput phone kind - changed default value', async () => {
   wrapper = mount(LxTextInput, {
     props: {
       kind: 'phone',
@@ -775,8 +783,7 @@ test('LxTextInput phone kind - changed default value', () => {
     },
   });
 
-  const flag = wrapper.find('.lx-input-flag-wrapper').find('.lx-flag');
-  expect(flag.attributes('aria-label')).toContain('Itālija');
+  await expectFlagLabels('Itālija');
 });
 
 test('LxTextInput phone kind - longest possible match', async () => {
@@ -787,10 +794,8 @@ test('LxTextInput phone kind - longest possible match', async () => {
     },
   });
 
-  let flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
-  expect(flag.length).toBe(2);
-  expect(flag[0].attributes('aria-label')).toContain('Amerikas Savienotās Valstis');
-  expect(flag[1].attributes('aria-label')).toContain('Kanāda');
+  await expectFlagLabels('Amerikas Savienotās Valstis', 'Kanāda');
+  let flag;
   await wrapper.setProps({ modelValue: '+1-2' });
   flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
   expect(flag.length).toBe(2);
@@ -798,9 +803,7 @@ test('LxTextInput phone kind - longest possible match', async () => {
   flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
   expect(flag.length).toBe(2);
   await wrapper.setProps({ modelValue: '+1-268' });
-  flag = wrapper.find('.lx-input-flag-wrapper').findAll('.lx-flag');
-  expect(flag.length).toBe(1);
-  expect(flag[0].attributes('aria-label')).toContain('Antigva un Barbuda');
+  await expectFlagLabels('Antigva un Barbuda');
 });
 
 describe('LxTextInput required', () => {

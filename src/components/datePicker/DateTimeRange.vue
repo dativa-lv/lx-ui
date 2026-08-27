@@ -11,15 +11,10 @@ import {
 } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import useLx from '@/hooks/useLx';
-import {
-  formatDateJSON,
-  formatDate,
-  parseDate,
-  getMonthNames,
-  getMonthYearString,
-} from '@/utils/dateUtils';
+import { formatDate } from '@/utils/date/format';
+import { getMonthNames, getMonthYearString } from '@/utils/date/intl';
+import { formatDateJSON, parseDate } from '@/utils/date/parse';
 import { generateUUID } from '@/utils/stringUtils';
-
 import {
   dateFromYearAndQuarter,
   extractMonthFromDate,

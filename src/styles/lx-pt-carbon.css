@@ -54,15 +54,14 @@
 
   --color-preview-backdrop: rgba(0, 0, 0, 0.1);
 
-  --description-font-weight: 400;
+  --font-weight-description: 400;
 
-  --h1-font-size: 3.3rem;
-  --h1-font-weight: 300;
-  --h2-font-size: 1.5rem;
-  --h2-font-weight: 400;
-  --small-font-size: 0.875rem;
-  --label-font-size: 0.875rem;
-  --data-weight: 600;
+  --font-size-h1: 3.3rem;
+  --font-weight-h1: 300;
+  --font-size-h2: 1.5rem;
+  --font-weight-h2: 400;
+  --font-size-small: 0.875rem;
+  --font-size-label: 0.875rem;
 
   --letter-spacing-1: 0.01rem;
   --letter-spacing-2: 0.02rem;
@@ -233,8 +232,8 @@
   --list-text-primary-line-height: 1.2em;
   --list-text-primary-margin: -0.1rem 0 0 0; /* TODO: use tokens instead*/
   --list-text-primary-padding: 0.1rem 0 0.1rem 0;
-  --list-text-secondary-font-size: var(--small-font-size);
-  --list-text-secondary-font-weight: var(--description-font-weight);
+  --list-text-secondary-font-size: var(--font-size-small);
+  --list-text-secondary-font-weight: var(--font-weight-description);
   --list-text-secondary-line-height: 1.2em;
   --list-text-secondary-margin: -0.15rem 0 -0.05rem 0; /* TODO: use tokens instead*/
   --list-text-secondary-padding: 0.1rem 0 0.05rem 0;
@@ -299,7 +298,7 @@
   --tile-text-primary-font-size: var(--font-size);
   --tile-text-primary-line-height: 1.5;
   --tile-text-secondary-font-weight: var(--font-weight);
-  --tile-text-secondary-font-size: var(--small-font-size);
+  --tile-text-secondary-font-size: var(--font-size-small);
   --tile-text-secondary-line-height: 1.286;
   --tile-padding: var(--space-1000);
   --tile-border-width: var(--border-width-2);
@@ -414,8 +413,8 @@
   --input-text-area-padding-y: var(--space-0500);
   --input-text-area-min-height: 6rem;
 
-  --number-slider-track-max-width: 12.5rem;
-  --number-slider-track-min-width: 3rem;
+  --number-input-track-max-width: 12.5rem;
+  --number-input-track-min-width: 3rem;
 
   --input-complex-row-gap: var(--space-0);
   --input-complex-border-radius: var(--border-radius-0);
@@ -599,7 +598,7 @@
   --popover-item-padding-s: var(--space-0250) var(--space-0750);
   --popover-item-padding-l: var(--space-0750);
   --popover-label-padding: var(--space-0500) var(--space-0750);
-  --popover-label-font-size: var(--small-font-size);
+  --popover-label-font-size: var(--font-size-small);
   --popover-checkmark-inset-s: var(--space-0375) var(--space-0750) auto auto;
   --popover-checkmark-inset-l: var(--space-0750) var(--space-0750) auto auto;
   --popover-checkmark-size: var(--icon-size-s);
@@ -883,8 +882,8 @@
   --modal-content-padding: var(--space-1000) var(--space-1000) var(--space-2000) var(--space-1000);
   --modal-header-content-padding: var(--space-0500) var(--space-0500) var(--space-0250) var(--space-1000);
   --modal-header-content-alignment: left;
-  --modal-header-text-font-size: var(--h2-font-size);
-  --modal-header-text-font-weight: var(--h2-font-weight);
+  --modal-header-text-font-size: var(--font-size-h2);
+  --modal-header-text-font-weight: var(--font-weight-h2);
   --modal-button-header-border-radius: var(--border-radius-0);
   --modal-button-header-width: var(--button-width);
   --modal-button-header-min-width: var(--button-min-width);
@@ -959,7 +958,7 @@
   --info-box-content-padding: var(--space-0125) var(--space-0) var(--space-0) var(--space-0);
   --info-box-text-primary-font-weight: var(--font-weight-bold);
   --info-box-text-primary-line-height: 1.25;
-  --info-box-text-secondary-font-size: var(--small-font-size);
+  --info-box-text-secondary-font-size: var(--font-size-small);
   --info-box-text-secondary-line-height: 1.1em;
   --info-box-outline-offset: var(--space-0);
   --info-box-button-height: var(--button-ghost-icon-only-height);
@@ -979,8 +978,8 @@
   --info-wrapper-max-width: var(--aside-size);
   --info-wrapper-min-width: 2.5rem;
   --info-wrapper-text-primary-font-size: inherit;
-  --info-wrapper-text-primary-font-weight: var(--data-weight);
-  --info-wrapper-text-secondary-font-size: var(--label-font-size);
+  --info-wrapper-text-primary-font-weight: var(--font-weight-data);
+  --info-wrapper-text-secondary-font-size: var(--font-size-label);
   --info-wrapper-text-secondary-font-weight: inherit;
   --sheet-border-radius: var(--info-wrapper-border-radius);
   --sheet-padding: var(--space-0500) var(--space-1000) var(--space-1000)
@@ -1003,7 +1002,7 @@
   --tooltip-shadow: none;
   --tooltip-max-width: var(--aside-size);
   --tooltip-min-width: 2.5rem;
-  --tooltip-text-font-size: var(--label-font-size);
+  --tooltip-text-font-size: var(--font-size-label);
 
   --loader-height-l: 5.5rem;
   --loader-width-l: 5.5rem;
@@ -1028,7 +1027,7 @@
   --loader-text-primary-font-size: var(--font-size);
   --loader-text-primary-font-weight: var(--font-weight);
   --loader-text-primary-line-height: 1.5;
-  --loader-text-secondary-font-size: var(--small-font-size);
+  --loader-text-secondary-font-size: var(--font-size-small);
   --loader-text-secondary-font-weight: var(--font-weight);
   --loader-text-secondary-line-height: 1.1em;
   --loader-state-indicator-size-l: 4rem;

@@ -3,7 +3,7 @@ import { computed, watch, ref, provide, inject, defineAsyncComponent } from 'vue
 
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { useWindowSize } from '@vueuse/core';
-import { formatDate } from '@/utils/dateUtils';
+import { formatDate } from '@/utils/date/format';
 import LxButton from '@/components/Button.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxIcon from '@/components/Icon.vue';

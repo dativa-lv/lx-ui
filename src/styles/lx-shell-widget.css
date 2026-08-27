@@ -13,7 +13,7 @@ header.lx.lx-header-wrapper * {
 
 .lx-secondary {
   font-weight: var(--font-weight);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   color: var(--color-label);
   line-height: 1.1em;
   padding-top: var(--space-0);
@@ -173,7 +173,7 @@ header.lx .lx-header .lx-main-button .lx-primary {
 }
 
 header.lx.lx-layout-public>.lx-header .lx-main-button .lx-primary {
-  font-size: var(--h2-font-size);
+  font-size: var(--font-size-h2);
   font-weight: var(--font-weight-bold);
   color: var(--color-brand);
   margin-left: var(--space-0);
@@ -183,7 +183,7 @@ header.lx.lx-layout-public>.lx-header .lx-main-button .lx-primary {
 }
 
 header.lx.lx-layout-public > .lx-header .lx-main-button .lx-description {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight-bold);
   color: var(--color-label);
   margin-left: var(--space-0);
@@ -558,7 +558,7 @@ header.lx.lx-layout-default .lx-header .lx-user-button {
 
 .lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-secondary {
   color: var(--color-nav-foreground);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   margin-top: var(--space-0);
 }
 
@@ -583,7 +583,7 @@ header.lx.lx-layout-default > .lx-header .lx-user-button .lx-user-info > div {
 
 header.lx.lx-layout-default > .lx-header .lx-user-button .lx-secondary {
   color: var(--color-nav-foreground);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   margin-top: var(--space-0);
 }
 
@@ -657,7 +657,7 @@ header.lx.lx-layout-public>.lx-header .lx-user-button .lx-avatar {
 }
 
 header.lx.lx-layout-public>.lx-header .lx-user-button .lx-user-info .lx-secondary {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   color: var(--color-label);
   line-height: 1.1em;
   display: -webkit-box;
@@ -671,7 +671,7 @@ header.lx.lx-layout-public>.lx-header .lx-user-button .lx-user-info .lx-secondar
 
 header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge {
   font-weight: var(--font-weight-data);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   border: var(--border-width-2) solid transparent;
 }
 
@@ -700,7 +700,7 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
 }
 
 header.lx.lx-layout-public .lx-header .lx-main-button .lx-badge-text {
-  font-size: var(--h2-font-size);
+  font-size: var(--font-size-h2);
   font-weight: var(--font-weight-bold);
   line-height: 1em;
   transition: font-size .2s ease-in-out;
@@ -906,7 +906,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 
 .lx-info-box-button .lx-alert-description {
   color: var(--color-data);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   margin-bottom: var(--space-0250);
   margin-top: var(--space-0250);
   line-height: 1.1em;
@@ -976,7 +976,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   --color-badge-text: var(--color-region);
   --color-badge-icon: var(--color-region);
   --badge-text-font-weight: var(--font-weight-bold);
-  --badge-text-font-size: var(--small-font-size);
+  --badge-text-font-size: var(--font-size-small);
 }
 
 .lx-button.lx-button-ghost .lx-badge {
@@ -1725,7 +1725,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx .lx-header .lx-dropdown-panel .lx-region .lx-description,
 .lx-modal .lx-region .lx-description {
   color: var(--color-label);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   line-height: 1.1em;
   margin-bottom: var(--space-0500);
 }

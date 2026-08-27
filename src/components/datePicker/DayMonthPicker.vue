@@ -4,7 +4,7 @@ import { useWindowSize } from '@vueuse/core';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
-import { getMonthNames } from '@/utils/dateUtils';
+import { getMonthNames } from '@/utils/date/intl';
 import { maxDayOfMonth } from '@/components/datePicker/helpers';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import { clampText, getDisplayTexts } from '@/utils/generalUtils';

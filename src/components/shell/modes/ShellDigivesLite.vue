@@ -1,6 +1,6 @@
 <script setup>
 import { defineAsyncComponent } from 'vue';
-import { formatDate } from '@/utils/dateUtils';
+import { formatDate } from '@/utils/date/format';
 import LxFlag from '@/components/Flag.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';

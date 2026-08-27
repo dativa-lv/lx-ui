@@ -1,24 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
+import { isLeapYear } from '@/utils/date/arithmetic';
+import { formatDate, formatDateTime, formatFull } from '@/utils/date/format';
+import { humanizeDate } from '@/utils/date/humanize';
 import {
-  parseDate,
-  formatJSON,
-  isDateValid,
-  isTimeValid,
-  isTimeFullValid,
-  isSameDate,
-  formatDateJSON,
-  formatDate,
-  formatDateTime,
-  formatFull,
-  isLeapYear,
-  getMonthNames,
-  getWeekdayNames,
-  formatLocalizedDate,
-  getMonthYearString,
-  extractTimeFromDate,
   extractMonthFromDate,
-  humanizeDate,
-} from '@/utils/dateUtils';
+  extractTimeFromDate,
+  formatLocalizedDate,
+  getMonthNames,
+  getMonthYearString,
+  getWeekdayNames,
+} from '@/utils/date/intl';
+import { formatDateJSON, formatJSON, isDateValid, isSameDate, parseDate } from '@/utils/date/parse';
+import { isTimeFullValid, isTimeValid } from '@/utils/date/validate';
 
 process.env.TZ = 'UTC';
 

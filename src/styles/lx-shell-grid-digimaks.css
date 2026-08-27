@@ -293,7 +293,7 @@
     pointer-events: none;
     cursor: default;
     color: var(--color-label);
-    font-size: var(--small-font-size);
+    font-size: var(--font-size-small);
     opacity: 1;
     --color-button-tertiary-background: transparent;
     --color-button-tertiary-text: var(--color-label);

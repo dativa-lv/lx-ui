@@ -26,3 +26,19 @@ export function countryCodeToName(countryCode, lang = 'lv') {
   language = SUPPORTED_LANGUAGES.includes(language) ? language : 'lv';
   return countries.isValid(countryCode) ? countries.getName(countryCode, language) : null;
 }
+
+/**
+ * Resolves an ISO country code to its localized name, with a fallback.
+ *
+ * Lives here rather than in formatUtils so that module no longer has to import the country
+ * database — every formatUtils consumer used to inherit it. Still re-exported from
+ * formatUtils, so `lxFormatUtils.formatCountryCode` is unchanged.
+ *
+ * @param {string} value - ISO 3166 country code.
+ * @param {string} [language='lv'] - `'lv'` or `'en'`.
+ * @param {*} [notExistsValue=null] - Returned when the code has no name.
+ * @returns {string|*} The localized name, or `notExistsValue`.
+ */
+export function formatCountryCode(value, language = 'lv', notExistsValue = null) {
+  return countryCodeToName(value, language) || notExistsValue;
+}

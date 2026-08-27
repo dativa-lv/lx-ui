@@ -18,7 +18,7 @@
 | `--tooltip-shadow`          | none                          |
 | `--tooltip-max-width`       | `--aside-size`                |
 | `--tooltip-min-width`       | 2.5rem                        |
-| `--tooltip-text-font-size`  | `--label-font-size`           |
+| `--tooltip-text-font-size`  | `--font-size-label`           |
 
 ## Color
 

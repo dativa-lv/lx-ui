@@ -3,7 +3,7 @@ import { ref, computed, watch, onUnmounted, nextTick } from 'vue';
 import { subYears, addYears, subMonths, addMonths, addDays } from 'date-fns';
 import { useWindowSize, onClickOutside, useMediaQuery, useDebounceFn } from '@vueuse/core';
 import { useGridKeyboardNavigation } from '@/hooks/useGridKeyboardNavigation';
-import { formatLocalizedDate } from '@/utils/dateUtils';
+import { formatLocalizedDate } from '@/utils/date/intl';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts, isDefined, isNil, findFocusableElements } from '@/utils/generalUtils';
 import {

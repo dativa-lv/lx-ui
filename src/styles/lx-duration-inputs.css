@@ -24,7 +24,7 @@
 }
 
 .lx-duration-input-wrapper .lx-duration-result-label {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   letter-spacing: var(--letter-spacing-2);
   display: inline-block;
   color: var(--color-label);

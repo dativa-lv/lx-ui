@@ -76,7 +76,7 @@ svg .lx-shade {
   justify-content: center;
   width: 100%;
   color: var(--color-data);
-  font-weight: var(--data-weight);
+  font-weight: var(--font-weight-data);
   margin-left: var(--space-1000);
   margin-right: var(--space-1000);
 }
@@ -299,7 +299,7 @@ svg .lx-shade {
   position: static;
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   background: var(--color-blue);
   border-radius: var(--border-radius-1000);
   margin-right: var(--space-0500);
@@ -439,7 +439,7 @@ svg .lx-shade {
   .lx-description,
 .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section header .lx-description {
   color: var(--color-label);
-  font-size: var(--label-font-size);
+  font-size: var(--font-size-label);
 }
 
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row,
@@ -470,7 +470,7 @@ svg .lx-shade {
 .lx .lx-dropdown-panel .lx-mega-menu-container label,
 .lx-form-grid > .lx-main .lx-row > .lx-row-header .lx-info-wrapper-content label {
   color: var(--color-label);
-  font-size: var(--label-font-size);
+  font-size: var(--font-size-label);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -577,7 +577,7 @@ svg .lx-shade {
   p.lx-data {
   padding-top: var(--space-0250);
   padding-bottom: var(--space-0250);
-  font-weight: var(--data-weight);
+  font-weight: var(--font-weight-data);
   color: var(--color-data);
   min-height: 2.5rem;
   display: flex;
@@ -626,7 +626,7 @@ svg .lx-shade {
   > .lx-field-wrapper
   ul.lx-column-read-only-data {
   padding: var(--space-0250) var(--space-0);
-  font-weight: var(--data-weight);
+  font-weight: var(--font-weight-data);
   color: var(--color-data);
   line-height: 1.25em;
 }
@@ -654,7 +654,7 @@ svg .lx-shade {
 .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main .lx-row > div.lx-vertical > code,
 .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main .lx-row > div.lx-horizontal > code {
   color: var(--color-data);
-  font-weight: var(--data-weight);
+  font-weight: var(--font-weight-data);
 }
 
 .lx-form-grid .lx-main .lx-row div.lx-vertical .lx-value-picker-default-item:not(.lx-value-picker-item-disabled) .lx-value-picker-default-item-label {
@@ -824,14 +824,14 @@ svg .lx-shade {
 
 .lx-form-grid .lx-row > label span.lx-required,
 .lx-form-grid .lx-row > label span.lx-optional {
-  font-size: var(--label-font-size);
+  font-size: var(--font-size-label);
   padding-left: 1ch;
 }
 
 .lx-form-grid .lx-row > .lx-row-header label span.lx-required-asterisk,
 .lx-form-grid .lx-row > .lx-row-header .lx-info-wrapper-content label span.lx-required-asterisk {
   color: var(--color-red);
-  font-size: var(--label-font-size);
+  font-size: var(--font-size-label);
   font-weight: var(--font-weight-bold);
 }
 
@@ -1040,7 +1040,7 @@ svg .lx-shade {
 }
 
 .lx-person-display p.lx-description {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   color: var(--color-label);
   margin-top: calc(var(--space-0125) * -1);
 }
@@ -1118,14 +1118,14 @@ svg .lx-shade {
 
 .lx-avatar-display > .lx-avatar-initials {
   font-family: var(--font-family-mono);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight-data);
   line-height: 1;
   text-transform: uppercase;
 }
 
 .lx-avatar-display.lx-avatar-display-initials-s > .lx-avatar-initials {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
 }
 
 .lx-avatar-display.lx-avatar-display-initials-m > .lx-avatar-initials {
@@ -1280,7 +1280,7 @@ p .lx-person-display-wrapper {
   border-radius: var(--border-radius-full);
   height: 2rem;
   width: 2rem;
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   display: grid;
   justify-content: center;
   align-items: center;

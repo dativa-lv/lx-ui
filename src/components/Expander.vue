@@ -46,16 +46,12 @@ const props = defineProps({
     },
   },
 
-  hasSelectButton: { type: Boolean, default: false },
-  selectStatus: { type: String, default: 'none' }, // none, some, all
   customClass: { type: String, default: '' },
   texts: { type: Object, default: () => ({}) },
   actionDefinitions: { type: Array, default: () => [] },
 });
 
 const textsDefault = {
-  selectWholeGroup: 'Izvēlēties visu',
-  clearSelected: 'Attīrīt izvēles',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
@@ -73,7 +69,7 @@ const invalidationMessageClamped = computed(() => clampText(props.invalidationMe
 const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 const actionDefinitionsResolved = computed(() => props.actionDefinitions || []);
 
-const emits = defineEmits(['update:modelValue', 'selectAll', 'resetFilters', 'actionClick']);
+const emits = defineEmits(['update:modelValue', 'resetFilters', 'actionClick']);
 
 const isExpandedRaw = shallowRef(props.modelValue);
 
@@ -122,11 +118,6 @@ const ariaLabelWithBadge = computed(() => {
   }
   return `${props.label} (${badgeTypeText})`;
 });
-
-function selectExpander(event, id) {
-  event.stopPropagation();
-  emits('selectAll', id);
-}
 
 function handleActionClick(id) {
   emits('actionClick', id);
@@ -242,27 +233,6 @@ defineExpose({ focus });
             icon="filters-reset"
             :disabled="disabled"
             @click.stop="emits('resetFilters')"
-            @keydown.space.stop
-          />
-
-          <LxButton
-            v-if="hasSelectButton"
-            :id="`${id}-select-button`"
-            customClass="lx-expander-action"
-            kind="ghost"
-            :icon="
-              selectStatus === 'all'
-                ? 'checkbox-filled'
-                : selectStatus === 'some'
-                ? 'checkbox-indeterminate'
-                : 'checkbox'
-            "
-            variant="icon-only"
-            :label="
-              selectStatus === 'none' ? displayTexts.selectWholeGroup : displayTexts.clearSelected
-            "
-            :disabled="disabled"
-            @click="selectExpander($event, id)"
             @keydown.space.stop
           />
         </template>

@@ -6,7 +6,7 @@ import LxChat from '@/components/chat/Chat.vue';
 import MessageComposer from '@/components/chat/MessageComposer.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
-import { formatFull } from '@/utils/dateUtils';
+import { formatFull } from '@/utils/date/format';
 
 // Minimal stand-in for the optional LxFormBuilder (from @dativa-lv/lx-builders).
 const StubBuilder = defineComponent({

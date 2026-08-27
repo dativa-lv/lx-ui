@@ -64,7 +64,7 @@
 .lx-expander .lx-head .lx-badge {
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
-  --badge-text-font-size: var(--small-font-size);
+  --badge-text-font-size: var(--font-size-small);
   --badge-text-font-weight: var(--font-weight-bold);
   --badge-padding-s: var(--space-0125) var(--space-0500);
   --badge-padding-icon-only-s: var(--space-0);
@@ -193,7 +193,7 @@
   overflow: visible;
   max-height: 12.5rem;
   color: var(--color-bad);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   margin-top: var(--space-0125);
@@ -263,7 +263,7 @@
 
 .lx-expander header.lx-head h4+.lx-description,
 .lx-expander header.lx-head .heading-4+.lx-description {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   margin-top: calc(var(--space-0250) * -1);
   color: var(--color-label);
   white-space: nowrap;
@@ -997,8 +997,7 @@
 }
 
 .lx .lx-data-block-wrapper .lx-button-set:not(.lx-dropdown-panel .lx-button-set):not(.lx-modal .lx-button-set),
-.lx .lx-data-block-wrapper .lx-button-set .lx-group,
-.lx .lx-modal .lx-data-block-wrapper .lx-pseudo-grid .lx-button-set:not(.lx-dropdown-panel .lx-button-set):not(.lx-modal > footer.lx-button-set) {
+.lx .lx-data-block-wrapper .lx-button-set .lx-group {
   display: flex;
   gap: var(--space-0500);
   flex-wrap: wrap;

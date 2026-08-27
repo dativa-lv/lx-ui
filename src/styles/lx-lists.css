@@ -1246,7 +1246,7 @@
 .lx-tile-wrapper .lx-tile .lx-badge {
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
-  --badge-text-font-size: var(--small-font-size);
+  --badge-text-font-size: var(--font-size-small);
   --badge-width-s: max-content;
 }
 
@@ -1326,7 +1326,7 @@ a.lx-tile:not(.lx-disabled):hover {
 .lx-tile > header .lx-description {
   margin-top: var(--space-1250);
   color: var(--color-label);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   line-height: 1.1em;
 }
 

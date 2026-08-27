@@ -21,8 +21,7 @@
   --font-weight-data: 600;
   --font-weight-bold: 600;
   --font-weight-extra-bold: 700;
-  --data-weight: var(--font-weight-data);
-  --h1-font-size: 2.25rem;
+  --font-size-h1: 2.25rem;
 
   --color-cover-title: var(--color-brand);
 

@@ -77,7 +77,7 @@
 
 .lx-steps-description {
     line-height: 1.1em;
-    font-size: var(--small-font-size);
+    font-size: var(--font-size-small);
 }
 
 .lx-info-wrapper .lx-steps-description .lx-description {

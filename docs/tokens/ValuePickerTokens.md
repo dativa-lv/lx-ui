@@ -111,7 +111,7 @@ Here you may find tokens for LxCheckbox and LxRadioButton as well as LxValuePick
 | `--tile-text-primary-font-size`     | `--font-size`        |
 | `--tile-text-primary-line-height`   | 1.5                  |
 | `--tile-text-secondary-font-weight` | `--font-weight`      |
-| `--tile-text-secondary-font-size`   | `--small-font-size`  |
+| `--tile-text-secondary-font-size`   | `--font-size-small`  |
 | `--tile-text-secondary-line-height` | 1.286                |
 | `--tile-padding`                    | `--space-1000`       |
 | `--tile-border-width`               | `--border-width-2`   |

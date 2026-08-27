@@ -9,21 +9,21 @@
 
 ## Layout
 
-| Variable name                               | Default value       |
-| ------------------------------------------- | ------------------- |
-| `--info-wrapper-padding`                    | `--space-0500`      |
-| `--info-wrapper-gap`                        | `--space-0500`      |
-| `--info-wrapper-row-gap`                    | `--space-0`         |
-| `--info-wrapper-border-width`               | `--border-width-0`  |
-| `--info-wrapper-border-style`               | solid               |
-| `--info-wrapper-border-radius`              | `--border-radius-0` |
-| `--info-wrapper-shadow`                     | none                |
-| `--info-wrapper-max-width`                  | `--aside-size`      |
-| `--info-wrapper-min-width`                  | 2.5rem              |
-| `--info-wrapper-text-primary-font-size`     | inherit             |
-| `--info-wrapper-text-primary-font-weight`   | `--data-weight`     |
-| `--info-wrapper-text-secondary-font-size`   | `--label-font-size` |
-| `--info-wrapper-text-secondary-font-weight` | inherit             |
+| Variable name                               | Default value        |
+| ------------------------------------------- | -------------------- |
+| `--info-wrapper-padding`                    | `--space-0500`       |
+| `--info-wrapper-gap`                        | `--space-0500`       |
+| `--info-wrapper-row-gap`                    | `--space-0`          |
+| `--info-wrapper-border-width`               | `--border-width-0`   |
+| `--info-wrapper-border-style`               | solid                |
+| `--info-wrapper-border-radius`              | `--border-radius-0`  |
+| `--info-wrapper-shadow`                     | none                 |
+| `--info-wrapper-max-width`                  | `--aside-size`       |
+| `--info-wrapper-min-width`                  | 2.5rem               |
+| `--info-wrapper-text-primary-font-size`     | inherit              |
+| `--info-wrapper-text-primary-font-weight`   | `--font-weight-data` |
+| `--info-wrapper-text-secondary-font-size`   | `--font-size-label`  |
+| `--info-wrapper-text-secondary-font-weight` | inherit              |
 
 > **Note:** `--info-wrapper-gap` spaces the root elements of the `panel` slot, so it only has an
 > effect when that slot supplies more than one of them. For the gap between a panel row's label and

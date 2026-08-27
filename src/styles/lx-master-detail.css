@@ -49,7 +49,7 @@
 
 .lx-secondary {
     font-weight: var(--font-weight);
-    font-size: var(--small-font-size);
+    font-size: var(--font-size-small);
     color: var(--color-label);
     line-height: 1.1em;
     padding-top: var(--space-0);

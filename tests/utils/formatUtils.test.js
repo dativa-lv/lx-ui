@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'vitest';
-import { formatAddress, pluralize } from '@/utils/formatUtils';
+import { formatAddress } from '@/utils/format/address';
+import { pluralize } from '@/utils/format/plural';
 
 test('Format address city', async () => {
   const address = {

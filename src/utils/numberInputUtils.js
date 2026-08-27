@@ -5,7 +5,7 @@ export function makeIntegerValidator(propName) {
   return (v, p) => {
     if (!Number.isInteger(Number(v))) {
       logWarn(
-        `LxNumberSlider [${p.id}]: "${propName}" cannot be a decimal, LxNumberSlider only supports whole numbers`,
+        `LxNumberInput [${p.id}]: "${propName}" cannot be a decimal, LxNumberInput only supports whole numbers`,
         useLx().getGlobals()?.environment
       );
       return false;

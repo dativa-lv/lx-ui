@@ -32,7 +32,7 @@
 | `--toggle-padding-right-s`       | 0.1875rem                                                   |
 | `--toggle-padding-left-s`        | 0.1875rem                                                   |
 | `--toggle-text-font-weight`      | `--font-weight`                                             |
-| `--toggle-text-font-size`        | `--small-font-size`                                         |
+| `--toggle-text-font-size`        | `--font-size-small`                                         |
 | `--toggle-text-line-height`      | 1.5                                                         |
 | `--toggle-gap`                   | `--space-0500`                                              |
 

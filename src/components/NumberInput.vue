@@ -14,7 +14,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { clampText, getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
-import { makeIntegerValidator } from '@/utils/numberSliderUtils';
+import { makeIntegerValidator } from '@/utils/numberInputUtils';
 import { generateUUID } from '@/utils/stringUtils';
 import { ARIA_LIVE_ANNOUNCEMENT_CONSTANTS } from '@/constants';
 
@@ -207,12 +207,12 @@ if (props.builderOptions?.useRegistry) {
   // Adds default texts to ensure they are available in the builder instance
   instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
-    name: 'LxNumberSlider',
+    name: 'LxNumberInput',
     instance,
     props,
     builderName: props.builderOptions?.schemaPath,
     componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxNumberSlider' },
+      { id: props?.id, name: 'LxNumberInput' },
     ]),
   });
 
@@ -224,7 +224,7 @@ if (props.builderOptions?.useRegistry) {
 <template>
   <div
     class="lx-field-wrapper"
-    data-component="lx-number-slider"
+    data-component="lx-number-input"
     :data-id="id"
     :data-state="dataState"
   >
@@ -290,7 +290,7 @@ if (props.builderOptions?.useRegistry) {
             @click="onIncreaseStep"
           />
         </div>
-        <div v-if="showInfoHelper" class="lx-number-slider-helper-wrapper">
+        <div v-if="showInfoHelper" class="lx-number-input-helper-wrapper">
           <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
             <LxIcon customClass="lx-helper-icon" value="info" />
             <template #panel>
@@ -318,7 +318,7 @@ if (props.builderOptions?.useRegistry) {
         <input
           v-model="model"
           type="range"
-          class="lx-number-slider"
+          class="lx-number-input"
           :id="id"
           :min="minValue"
           :max="maxValue"
@@ -368,7 +368,7 @@ if (props.builderOptions?.useRegistry) {
           :builderOptions="{ innerComponent: true }"
         />
       </div>
-      <div v-if="showInfoHelper" class="lx-number-slider-helper-wrapper">
+      <div v-if="showInfoHelper" class="lx-number-input-helper-wrapper">
         <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
           <LxIcon customClass="lx-helper-icon" value="info" />
           <template #panel>

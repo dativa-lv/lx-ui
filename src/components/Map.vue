@@ -8,7 +8,7 @@ import { loadLibrary } from '@/utils/libLoader';
 
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import LxNumberSlider from '@/components/NumberSlider.vue';
+import LxNumberInput from '@/components/NumberInput.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxLoaderView from '@/components/LoaderView.vue';
@@ -86,15 +86,18 @@ const textsDefault = {
   errorTitle: 'Kļūda kartes attēlošanā',
   errorDescription: 'Nav definēts neviens kartes pamata slānis',
   overflowMenu: 'Atvērt papildu iespējas',
-  labelDone: 'Ielāde ir pabeigta', // TODO: rename to `loadingEnd` on the next major
+  loadingEnd: 'Ielāde ir pabeigta',
   loadingStart: 'Notiek ielāde',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxMap'));
 
-// LxLoaderView announces the lazy library load. `loadingStart` goes through
-// `texts` because `label` is the visible caption and has to stay empty here.
-const loaderViewTexts = computed(() => ({ loadingStart: displayTexts.value.loadingStart }));
+// LxLoaderView announces the lazy library load. `loadingStart`/`loadingEnd` go
+// through `texts` because `label` is the visible caption and has to stay empty here.
+const loaderViewTexts = computed(() => ({
+  loadingStart: displayTexts.value.loadingStart,
+  loadingEnd: displayTexts.value.loadingEnd,
+}));
 
 const zoom = computed({
   get() {
@@ -480,12 +483,7 @@ const wrapperRef = ref();
     :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
   >
     <!-- label="" keeps the spinner captionless; the announcement comes from texts -->
-    <LxLoaderView
-      :loading="loadingLib"
-      label=""
-      :labelDone="displayTexts.labelDone"
-      :texts="loaderViewTexts"
-    >
+    <LxLoaderView :loading="loadingLib" label="" :texts="loaderViewTexts">
       <LxToolbar
         v-if="showToolbar"
         :id="`${id}-toolbar`"
@@ -516,7 +514,7 @@ const wrapperRef = ref();
             <template #panel>
               <div class="lx-button-set lx-dropdown-menu-group lx-map-slider">
                 <div class="lx-label">{{ displayTexts.grayscale }}</div>
-                <LxNumberSlider
+                <LxNumberInput
                   v-model="grayscaleRef"
                   :min="0"
                   :max="100"

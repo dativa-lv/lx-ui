@@ -251,9 +251,9 @@ const textsDefault = {
   idleModalLabel: 'Tuvojas sesijas beigas',
   idleModalPrimaryLabel: 'Turpināt darbu',
   idleModalSecondaryLabel: 'Beigt darbu',
-  descriptionMinutes: 'Līdz sesijas beigām ir palikušas {count} minūtes',
-  descriptionMinutesSmall: 'un {count} sekundes',
-  idleDescription: 'Līdz sesijas beigām ir palikušas {count} sekundes',
+  descriptionMinutes: 'Līdz sesijas beigām ir palikušas {0} minūtes',
+  descriptionMinutesSmall: 'un {0} sekundes',
+  idleDescription: 'Līdz sesijas beigām ir palikušas {0} sekundes',
   themeLabel: 'Piekļūstamības izvēlne',
   themeTitle: 'Piekļūstamības un noformējuma izvēlne',
   themeAuto: 'Automātisks',
@@ -1228,13 +1228,13 @@ const idleModalDescription = computed(() => {
   if (props.secondsToLive >= 60) {
     const minutes = Math.floor(props.secondsToLive / 60);
     const seconds = props.secondsToLive % 60;
-    let description = displayTexts.value.descriptionMinutes.replace('{count}', minutes);
+    let description = displayTexts.value.descriptionMinutes.replace('{0}', minutes);
     if (seconds > 0) {
-      description += ` ${displayTexts.value.descriptionMinutesSmall.replace('{count}', seconds)}`;
+      description += ` ${displayTexts.value.descriptionMinutesSmall.replace('{0}', seconds)}`;
     }
     return description;
   }
-  return displayTexts.value.idleDescription.replace('{count}', props.secondsToLive);
+  return displayTexts.value.idleDescription.replace('{0}', props.secondsToLive);
 });
 
 const spotlight = ref();

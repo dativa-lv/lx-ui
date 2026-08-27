@@ -324,7 +324,7 @@
 
 .lx-layout.lx-layout-default.lx-layout-digives main.lx-main>ul.lx-digives-alert-list>li .lx-description {
   font-weight: var(--font-weight);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   color: var(--color-label);
   line-height: 1.1em;
   padding-top: var(--space-0);
@@ -447,7 +447,7 @@
   line-height: 1rem;
 }
 .custom-context-menu .selected-person-display p.lx-description {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   line-height: 1rem;
   color: var(--color-label);
 }

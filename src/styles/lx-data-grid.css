@@ -55,11 +55,11 @@
 .lx-data-grid-wrapper header h2,
 .lx-data-grid-wrapper header .heading-2 {
   margin-bottom: var(--space-0500);
-  font-weight: var(--h2-font-weight);
+  font-weight: var(--font-weight-h2);
 }
 
 .lx-data-grid-wrapper header .lx-description {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   line-height: 1.1em;
 }
 
@@ -819,7 +819,7 @@
   background-color: var(--color-chrome);
   border: var(--border-width-1) solid var(--color-chrome);
   color: var(--color-data);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   border-radius: var(--border-radius-0750);
   min-width: 1.5rem;
   height: 1.5rem;
@@ -892,7 +892,7 @@
 .lx-info-wrapper .lx-form-grid>.lx-main .lx-row>div.lx-vertical>p.lx-data,
 .lx .lx-form-grid>.lx-main .lx-row>div.lx-vertical .lx-field-wrapper .popper p.lx-data,
 .lx .popper .lx-info-wrapper-panel p.lx-data {
-  font-weight: var(--data-weight);
+  font-weight: var(--font-weight-data);
   color: var(--color-tooltip-text-primary);
   min-height: auto;
   display: flex;
@@ -1428,152 +1428,4 @@
   .lx-data-grid-wrapper.lx-grid-sticky > .lx-grid-header-wrapper {
     position: static;
   }
-}
-
-/*** Pseudo grid styles ***/
-
-.lx-pseudo-grid {
-  display: flex;
-  width: auto;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: flex-start;
-}
-
-.lx-pseudo-grid .lx-labels {
-  display: flex;
-  align-items: flex-end;
-  border-bottom: var(--border-width-1) solid var(--color-chrome);
-  min-height: auto;
-  position: sticky;
-  top: var(--nav-row-size);
-  background-color: var(--color-region);
-  z-index: 2;
-}
-
-.lx-modal .lx-pseudo-grid .lx-labels {
-  top: calc(var(--space-1000) * -1);
-}
-
-.lx-pseudo-grid .lx-labels label {
-  font-size: var(--small-font-size);
-}
-
-.lx .lx-pseudo-grid > .lx-row,
-.lx .lx-form .lx-pseudo-grid > .lx-row {
-  display: flex;
-  flex-direction: row;
-  width: auto;
-}
-
-.lx .lx-pseudo-grid > .lx-row {
-  min-height: var(--row-size);
-  border-bottom: var(--border-width-1) solid var(--color-chrome);
-}
-
-.lx .lx-pseudo-grid > .lx-row:last-of-type {
-  border-bottom: var(--border-width-0);
-}
-
-.lx-pseudo-grid > .lx-row .lx-cell,
-.lx-pseudo-grid > .lx-labels .lx-cell {
-  width: auto;
-  padding: var(--space-0500) var(--space-1000);
-  display: flex;
-  align-items: center;
-  justify-content: stretch;
-  justify-items: stretch;
-}
-
-.lx-pseudo-grid > .lx-row .lx-removed {
-  color: var(--color-disabled);
-  padding-left: var(--space-1000);
-  text-decoration: line-through;
-  text-decoration-color: var(--color-destructive);
-  text-decoration-thickness: 0.2rem;
-}
-
-.lx-pseudo-grid > .lx-row .lx-value {
-  padding-left: var(--space-1000);
-}
-
-.lx-pseudo-grid > .lx-row .lx-secondary {
-  font-size: var(--small-font-size);
-  color: var(--color-label);
-  padding-left: var(--space-1000);
-}
-
-.lx-pseudo-grid > .lx-row .lx-value .lx-secondary {
-  padding-left: var(--space-0);
-}
-
-.lx-pseudo-grid > .lx-row .lx-cell:first-child,
-.lx-pseudo-grid .lx-labels .lx-cell:first-child {
-  padding-left: var(--space-0);
-}
-
-.lx-pseudo-grid > .lx-row .lx-cell > div {
-  width: 100%;
-}
-
-.lx-pseudo-grid > .lx-row > .lx-button {
-  width: 100%;
-  max-width: 42rem;
-}
-
-.lx
-  .lx-form
-  .lx-pseudo-grid
-  .lx-button-set:not(.lx-modal > .lx-button-set):not(.lx-dropdown-panel > .lx-button-set) {
-  margin-top: var(--space-0);
-  flex-grow: 1;
-  width: 100%;
-  padding-right: var(--space-2000);
-}
-
-.lx .lx-form .lx-pseudo-grid .lx-button-set .lx-button {
-  width: auto;
-  flex-grow: 1;
-}
-
-.lx-pseudo-grid .lx-row .lx-cell {
-  align-items: flex-start;
-}
-
-.lx-pseudo-grid .lx-row .lx-cell.lx-cell-xs .lx-button {
-  margin-top: calc(var(--space-0250) * -1);
-  margin-bottom: calc(var(--space-0250) * -1);
-}
-
-.lx .lx-pseudo-grid .lx-button-set {
-  margin-top: var(--space-0) !important;
-}
-
-.lx .lx-form .lx-pseudo-grid .lx-button-set {
-  padding-right: var(--space-0);
-}
-
-.lx-pseudo-grid .lx-cell-xs {
-  min-width: 4rem;
-  max-width: 4rem;
-}
-
-.lx-pseudo-grid .lx-cell-s {
-  min-width: 6rem;
-  max-width: 6rem;
-}
-
-.lx-pseudo-grid .lx-cell-m {
-  min-width: 12rem;
-  max-width: 12rem;
-}
-
-.lx-pseudo-grid .lx-cell-l {
-  min-width: 20rem;
-  max-width: 20rem;
-}
-
-.lx-pseudo-grid .lx-cell-xl {
-  min-width: 30rem;
-  max-width: 30rem;
 }

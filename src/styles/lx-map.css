@@ -784,7 +784,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 
 .lx-dropdown-panel .lx-dropdown-menu-group.lx-map-slider .input-slider,
-.lx-dropdown-panel .lx-dropdown-menu-group.lx-map-slider .lx-number-slider,
+.lx-dropdown-panel .lx-dropdown-menu-group.lx-map-slider .lx-number-input,
 .lx-dropdown-panel .lx-dropdown-menu-group.lx-map-slider .input-slider-full {
   width: 10rem;
 }

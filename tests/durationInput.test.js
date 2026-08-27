@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { mount } from '@vue/test-utils';
 import { describe, test, expect, afterEach } from 'vitest';
-import LxDayInput from '@/components/DayInput.vue';
+import LxDurationInput from '@/components/DurationInput.vue';
 import 'regenerator-runtime/runtime';
 
 let wrapper;
@@ -12,21 +12,21 @@ afterEach(() => {
   }
 });
 
-describe('LxDayInput', () => {
+describe('LxDurationInput', () => {
   test('should be a valid component', () => {
-    expect(LxDayInput).toBeTruthy();
+    expect(LxDurationInput).toBeTruthy();
   });
 
   describe('Props', () => {
     describe('modelValue', () => {
       test('should have the correct default value', () => {
-        wrapper = mount(LxDayInput);
+        wrapper = mount(LxDurationInput);
         const props = wrapper.props();
         expect(props.modelValue).toBe(null);
       });
 
       test('should accept provided value', () => {
-        wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDurationInput, {
           props: {
             modelValue: 365,
             readOnly: true,
@@ -41,13 +41,13 @@ describe('LxDayInput', () => {
 
     describe('disabled', () => {
       test('should have the correct default value', () => {
-        wrapper = mount(LxDayInput);
+        wrapper = mount(LxDurationInput);
         const props = wrapper.props();
         expect(props.disabled).toBe(false);
       });
 
       test('should accept provided value', () => {
-        wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDurationInput, {
           props: { disabled: true },
         });
         const props = wrapper.props();
@@ -58,13 +58,13 @@ describe('LxDayInput', () => {
 
     describe('readOnly', () => {
       test('should have the correct default value', () => {
-        wrapper = mount(LxDayInput);
+        wrapper = mount(LxDurationInput);
         const props = wrapper.props();
         expect(props.readOnly).toBe(false);
       });
 
       test('should accept provided value', () => {
-        wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDurationInput, {
           props: { readOnly: true },
         });
         const props = wrapper.props();
@@ -75,13 +75,13 @@ describe('LxDayInput', () => {
 
     describe('kind', () => {
       test('should have the correct default value', () => {
-        wrapper = mount(LxDayInput);
+        wrapper = mount(LxDurationInput);
         const props = wrapper.props();
         expect(props.kind).toBe('label');
       });
 
       test('should accept provided value', () => {
-        wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDurationInput, {
           props: { kind: 'icon' },
         });
         const props = wrapper.props();
@@ -92,14 +92,14 @@ describe('LxDayInput', () => {
 
     describe('variant', () => {
       test('should have the correct default value', () => {
-        wrapper = mount(LxDayInput);
+        wrapper = mount(LxDurationInput);
         const props = wrapper.props();
         expect(props.variant).toBe('default');
       });
 
       test('should accept provided value', () => {
         ['default', 'hours', 'days', 'months'].forEach((variant) => {
-          wrapper = mount(LxDayInput, {
+          wrapper = mount(LxDurationInput, {
             props: { variant },
           });
           const props = wrapper.props();
@@ -112,13 +112,13 @@ describe('LxDayInput', () => {
 
     describe('invalid', () => {
       test('should have the correct default value', () => {
-        wrapper = mount(LxDayInput);
+        wrapper = mount(LxDurationInput);
         const props = wrapper.props();
         expect(props.invalid).toBe(false);
       });
 
       test('should accept provided value', () => {
-        wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDurationInput, {
           props: { invalid: true },
         });
         const props = wrapper.props();
@@ -129,13 +129,13 @@ describe('LxDayInput', () => {
 
     describe('invalidationMessage', () => {
       test('should have the correct default value', () => {
-        wrapper = mount(LxDayInput);
+        wrapper = mount(LxDurationInput);
         const props = wrapper.props();
         expect(props.invalidationMessage).toBe(null);
       });
 
       test('should accept provided value', () => {
-        wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDurationInput, {
           props: { invalidationMessage: 'Custom invalidation message' },
         });
         const props = wrapper.props();
@@ -146,7 +146,7 @@ describe('LxDayInput', () => {
 
     describe('texts', () => {
       test('should accept provided values', () => {
-        wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDurationInput, {
           props: {
             texts: {
               inputDaysPlaceholder: 'Custom days placeholder',
@@ -178,7 +178,7 @@ describe('LxDayInput', () => {
 
   describe('Behaviour', () => {
     test('should not render NaN result when null value is passed and unit is switched', async () => {
-      wrapper = mount(LxDayInput, {
+      wrapper = mount(LxDurationInput, {
         props: {
           modelValue: {
             value: null,
@@ -201,9 +201,9 @@ describe('LxDayInput', () => {
   });
 });
 
-describe('LxDayInput required', () => {
+describe('LxDurationInput required', () => {
   test('default variant hands required to the value input and the unit picker', () => {
-    wrapper = mount(LxDayInput, { props: { variant: 'default', required: true } });
+    wrapper = mount(LxDurationInput, { props: { variant: 'default', required: true } });
 
     expect(
       wrapper.find('.lx-duration-single-value .lx-text-input').attributes('aria-required')
@@ -214,7 +214,7 @@ describe('LxDayInput required', () => {
   });
 
   test('segmented variant sets aria-required on every segment', () => {
-    wrapper = mount(LxDayInput, { props: { variant: 'days', required: true } });
+    wrapper = mount(LxDurationInput, { props: { variant: 'days', required: true } });
 
     const inputs = wrapper.findAll('.lx-duration-fields input');
     expect(inputs.length).toBeGreaterThan(0);
@@ -222,7 +222,7 @@ describe('LxDayInput required', () => {
   });
 
   test('aria-required is omitted by default', () => {
-    wrapper = mount(LxDayInput, { props: { variant: 'days' } });
+    wrapper = mount(LxDurationInput, { props: { variant: 'days' } });
 
     const inputs = wrapper.findAll('.lx-duration-fields input');
     expect(inputs.every((input) => input.attributes('aria-required') === undefined)).toBe(true);

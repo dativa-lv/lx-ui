@@ -13,7 +13,7 @@ import { onClickOutside, useDebounceFn, useWindowSize } from '@vueuse/core';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
 import { clampText, getDisplayTexts, isBoolean, isDefined, isNil } from '@/utils/generalUtils';
 import { logWarn, logError } from '@/utils/devUtils';
-import { objectClone } from '@/utils/formatUtils';
+import { objectClone } from '@/utils/format/object';
 import useLx from '@/hooks/useLx';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';

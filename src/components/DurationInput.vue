@@ -20,7 +20,7 @@ import { getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 import { logWarn } from '@/utils/devUtils';
-import { pluralize } from '@/utils/formatUtils';
+import { pluralize } from '@/utils/format/plural';
 import { hasOverflow } from '@/utils/overflowUtils';
 import useLx from '@/hooks/useLx';
 import { DURATION_CONVERSION } from '@/constants';
@@ -76,7 +76,7 @@ const textsDefault = {
   helperTextLabel: 'Papildinformācija',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDayInput'));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDurationInput'));
 const showInvalidationMessage = computed(() => props.invalid && props.invalidationMessage);
 
 const emits = defineEmits(['update:modelValue']);
@@ -301,7 +301,7 @@ function isValueValid(value, maxLength, field) {
 
   if (!isValid) {
     logWarn(
-      `LxDayInput [${props.id}]: Value ${value} for ${field} is not valid, defaulting to null`,
+      `LxDurationInput [${props.id}]: Value ${value} for ${field} is not valid, defaulting to null`,
       useLx().getGlobals()?.environment
     );
   }
@@ -454,12 +454,12 @@ if (props.builderOptions?.useRegistry) {
   // Adds default texts to ensure they are available in the builder instance
   instance.type.props.texts.options = textsDefault;
   registerBuilderInstance({
-    name: 'LxDayInput',
+    name: 'LxDurationInput',
     instance,
     props,
     builderName: props.builderOptions?.schemaPath,
     componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxDayInput' },
+      { id: props?.id, name: 'LxDurationInput' },
     ]),
   });
 
@@ -608,7 +608,12 @@ const dataState = computed(() =>
 </script>
 
 <template>
-  <div class="lx-field-wrapper" :data-id="id" data-component="lx-day-input" :data-state="dataState">
+  <div
+    class="lx-field-wrapper"
+    :data-id="id"
+    data-component="lx-duration-input"
+    :data-state="dataState"
+  >
     <div
       ref="durationInputWrapper"
       class="lx-duration-input-wrapper"

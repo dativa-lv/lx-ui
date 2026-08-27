@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
-import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
-import { mount, RouterLinkStub } from '@vue/test-utils';
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { RouterLinkStub, flushPromises, mount } from '@vue/test-utils';
 import { nextTick, ref } from 'vue';
 import LxList from '@/components/list/List.vue';
 import * as libLoader from '@/utils/libLoader';
@@ -11,6 +11,10 @@ import {
   checkActionDefinitionsButtonsMultiple,
 } from './helpers/actionDefinitionsHelpers';
 import { checkLoadingAnnouncement } from './helpers/loadingAnnouncementHelpers';
+
+// LxToolbar loads LxTextInput with defineAsyncComponent; pre-warm it so suites that install
+// fake timers can still resolve the module.
+beforeAll(() => import('@/components/TextInput.vue'));
 
 let wrapper;
 
@@ -388,6 +392,7 @@ describe('Search', () => {
       const initialItems = wrapper.findAll(itemSelector);
       expect(initialItems.length).toBe(props.items.length);
 
+      await vi.advanceTimersByTimeAsync(0); // LxToolbar loads LxTextInput on demand
       const searchInput = wrapper.get('.lx-component-toolbar .lx-search-input');
       await searchInput.setValue(searchValue);
       await vi.advanceTimersByTimeAsync(searchDelay);
@@ -449,6 +454,7 @@ describe('Search', () => {
 
       expect(items.length).toBe(0);
 
+      await vi.advanceTimersByTimeAsync(0); // LxToolbar loads LxTextInput on demand
       const clearButton = wrapper.get('.lx-component-toolbar .lx-button[title="Notīrīt"]');
       await clearButton.trigger('click');
       await vi.advanceTimersByTimeAsync(searchDelay);
@@ -456,6 +462,7 @@ describe('Search', () => {
       items = wrapper.findAll(itemSelector);
       expect(items.length).toBe(props.items.length);
 
+      await vi.advanceTimersByTimeAsync(0); // LxToolbar loads LxTextInput on demand
       const searchInput = wrapper.get('.lx-component-toolbar .lx-search-input');
       expect(searchInput.text()).toBe('');
     });
@@ -465,9 +472,11 @@ describe('Search', () => {
     test('clear button resets query', async () => {
       wrapper = mountComponent({ props: { ...props, searchSide: 'server' } });
 
+      await flushPromises(); // LxToolbar loads LxTextInput on demand
       const searchInput = wrapper.get('.lx-component-toolbar .lx-text-input');
       await searchInput.setValue('x');
 
+      await flushPromises(); // LxToolbar loads LxTextInput on demand
       const clearButton = wrapper.get('.lx-component-toolbar .lx-button[title="Notīrīt"]');
       await clearButton.trigger('click');
 
@@ -481,6 +490,7 @@ describe('Search', () => {
     test('toggleSearch expands and collapses compact search input', async () => {
       wrapper = mountComponent({ props: { ...props, searchMode: 'compact' } });
 
+      await flushPromises(); // LxToolbar loads LxTextInput on demand
       let searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(false);
@@ -488,6 +498,7 @@ describe('Search', () => {
       wrapper.vm.toggleSearch();
       await wrapper.vm.$nextTick();
 
+      await flushPromises(); // LxToolbar loads LxTextInput on demand
       searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(true);
@@ -495,6 +506,7 @@ describe('Search', () => {
       wrapper.vm.toggleSearch();
       await wrapper.vm.$nextTick();
 
+      await flushPromises(); // LxToolbar loads LxTextInput on demand
       searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(false);
@@ -503,6 +515,7 @@ describe('Search', () => {
     test('toggleSearch has no effect when search mode is not compact', async () => {
       wrapper = mountComponent({ props });
 
+      await flushPromises(); // LxToolbar loads LxTextInput on demand
       let searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(false);
@@ -510,9 +523,26 @@ describe('Search', () => {
       wrapper.vm.toggleSearch();
       await wrapper.vm.$nextTick();
 
+      await flushPromises(); // LxToolbar loads LxTextInput on demand
       searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(false);
+    });
+
+    test('toggleSearch focuses the compact input once it has loaded', async () => {
+      wrapper = mountComponent({
+        props: { ...props, searchMode: 'compact' },
+        attachTo: document.body,
+      });
+
+      wrapper.vm.toggleSearch();
+
+      // LxTextInput is loaded on demand, so focus must survive the module load.
+      await vi.waitFor(() => {
+        const searchInput = wrapper.find(searchInputCompactSelector);
+        expect(searchInput.exists()).toBe(true);
+        expect(document.activeElement).toBe(searchInput.element);
+      });
     });
   });
 });
@@ -940,16 +970,11 @@ describe('Virtualization', () => {
 });
 
 describe('Loading announcement', () => {
-  // LxList still names the end text `labelDone` (to be renamed `loadingEnd`).
   checkLoadingAnnouncement(
     mountComponent,
     (w) => {
       wrapper = w;
     },
-    {
-      props: { hasVirtualization: false },
-      texts: { loadingStart: 'Loading has started', labelDone: 'Loading has finished' },
-      expected: { start: 'Loading has started', end: 'Loading has finished' },
-    }
+    { props: { hasVirtualization: false } }
   );
 });

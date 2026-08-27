@@ -1,4 +1,4 @@
-import { formatDateJSON } from '@/utils/dateUtils';
+import { formatDateJSON } from '@/utils/date/parse';
 import { capitalizeFirstLetter } from '@/utils/stringUtils';
 import {
   endOfMonth,

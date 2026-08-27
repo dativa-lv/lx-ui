@@ -8,6 +8,7 @@ import {
   inject,
   nextTick,
   getCurrentInstance,
+  defineAsyncComponent,
 } from 'vue';
 import { IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
@@ -20,11 +21,12 @@ import { PHONE_MAX_LENGTH_BY_PREFIX } from '@/constants';
 import { loadLibrary } from '@/utils/libLoader';
 
 import LxIcon from '@/components/Icon.vue';
-import LxFlag from '@/components/Flag.vue';
 import LxButton from '@/components/Button.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+
+const LxFlag = defineAsyncComponent(() => import('@/components/Flag.vue'));
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },

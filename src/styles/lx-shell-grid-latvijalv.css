@@ -119,7 +119,7 @@
   }
   
   .lx .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-main-button .lx-primary {
-    font-size: var(--h2-font-size);
+    font-size: var(--font-size-h2);
     font-weight: var(--font-weight-bold);
     color: var(--color-brand);
     margin-left: var(--space-0);
@@ -132,7 +132,7 @@
   }
 
   .lx .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-main-button .lx-badge-text {
-    font-size: var(--h2-font-size);
+    font-size: var(--font-size-h2);
     font-weight: var(--font-weight-bold);
     line-height: 1em;
     transition: font-size 0.2s ease-in-out;
@@ -143,7 +143,7 @@
   }
   
   .lx .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-main-button .lx-description {
-    font-size: var(--small-font-size);
+    font-size: var(--font-size-small);
     font-weight: var(--font-weight-bold);
     color: var(--color-label);
     margin-left: var(--space-0);
@@ -246,7 +246,7 @@
   }
   
   .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-user-button .lx-user-info .lx-secondary {
-    font-size: var(--small-font-size);
+    font-size: var(--font-size-small);
     color: var(--color-label);
     line-height: 1.1em;
     display: -webkit-box;

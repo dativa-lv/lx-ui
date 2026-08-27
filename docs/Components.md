@@ -19,11 +19,11 @@ LX/UI provides over 50 components for different needs. Check these live demos fr
 - [🌐 LxFileUploader](https://lx-ui.dev/sandbox/file-uploader)
 - [🌐 LxQrScanner](https://lx-ui.dev/sandbox/qr-scanner)
 - [🌐 LxCamera](https://lx-ui.dev/sandbox/camera)
-- [🌐 LxDayInput](https://lx-ui.dev/sandbox/day-input)
+- [🌐 LxDurationInput](https://lx-ui.dev/sandbox/duration-input)
 
 - [🌐 LxDrawPad](https://lx-ui.dev/sandbox/draw-pad)
 - [🌐 LxVisualPicker](https://lx-ui.dev/sandbox/visual-picker)
-- [🌐 LxNumberSlider](https://lx-ui.dev/sandbox/number-slider)
+- [🌐 LxNumberInput](https://lx-ui.dev/sandbox/number-input)
 
 ## Clickable Thingies
 - [🌐 LxButton](https://lx-ui.dev/sandbox/button)

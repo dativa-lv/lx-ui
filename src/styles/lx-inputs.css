@@ -180,7 +180,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   letter-spacing: var(--letter-spacing-1);
   line-height: 1.2em;
   height: var(--input-tag-height);
@@ -350,7 +350,7 @@
   overflow: visible;
   max-height: 12.5rem;
   color: var(--color-bad);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   margin-top: var(--space-0125);
@@ -364,7 +364,7 @@
 .lx-helper-text {
   display: block;
   color: var(--color-label);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   margin-top: var(--space-0125);
@@ -386,7 +386,7 @@
   display: inline-flex;
   gap: var(--space-0250);
   color: var(--color-label);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
 }
@@ -417,7 +417,7 @@
 }
 
 .lx-text-length {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   letter-spacing: var(--letter-spacing-2);
   display: inline-block;
   color: var(--color-label);
@@ -460,7 +460,7 @@
 .lx-field-wrapper .lx-invalidation-message {
   display: block;
   color: var(--color-bad);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   margin-top: var(--space-0125);
@@ -524,7 +524,7 @@
   word-break: break-word;
 }
 
-/*** LxDTP + LxDTR + LxDayInput styles ***/
+/*** LxDTP + LxDTR + LxDurationInput styles ***/
 
 .lx-date-time-picker-wrapper.lx-date,
 .lx-date-time-picker-wrapper.lx-time,
@@ -626,7 +626,7 @@
   overflow: visible;
   max-height: 12.5rem;
   color: var(--color-bad);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   margin-top: var(--space-0125);
@@ -922,7 +922,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .heading-2.lx-section-header + p.lx-invalidation-message {
   display: block;
   max-height: inherit;
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   color: var(--color-bad);
   margin-top: calc(var(--space-1000) * -1);
 }
@@ -1289,7 +1289,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   text-overflow: ellipsis;
 }
 
-/*** Number slider styles ***/
+/*** Number input styles ***/
 
 .input-slider-container-wrapper {
   align-items: center;
@@ -1312,13 +1312,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: fit-content;
 }
 
-.lx-number-slider-helper-wrapper {
+.lx-number-input-helper-wrapper {
   display: flex;
   align-items: center;
 }
 
 .lx-toggle-helper-wrapper svg,
-.lx-number-slider-helper-wrapper svg,
+.lx-number-input-helper-wrapper svg,
 .lx-duration-result-icon svg,
 .lx-day-month-info svg {
   height: var(--icon-size-m);
@@ -1327,21 +1327,21 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-toggle-helper-wrapper .lx-info-wrapper-content,
-.lx-number-slider-helper-wrapper .lx-info-wrapper-content,
+.lx-number-input-helper-wrapper .lx-info-wrapper-content,
 .lx-duration-result-icon .lx-info-wrapper-content,
 .lx-day-month-info .lx-info-wrapper-content {
   height: var(--input-height);
 }
 
 .lx-toggle-helper-wrapper .lx-info-wrapper-content:focus,
-.lx-number-slider-helper-wrapper .lx-info-wrapper-content:focus,
+.lx-number-input-helper-wrapper .lx-info-wrapper-content:focus,
 .lx-duration-result-icon .lx-info-wrapper-content:focus,
 .lx-day-month-info .lx-info-wrapper-content:focus {
   outline-offset: calc(var(--border-width-2) * -1);
 }
 
 .lx-toggle-helper-wrapper .popper-wrapper,
-.lx-number-slider-helper-wrapper .popper-wrapper,
+.lx-number-input-helper-wrapper .popper-wrapper,
 .lx-duration-result-icon .popper-wrapper,
 .lx-day-month-info .popper-wrapper {
   width: fit-content;
@@ -1371,8 +1371,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   flex-shrink: 1;
   flex-basis: auto;
   width: auto;
-  min-width: var(--number-slider-track-min-width);
-  max-width: var(--number-slider-track-max-width);
+  min-width: var(--number-input-track-min-width);
+  max-width: var(--number-input-track-max-width);
   position: relative;
 }
 
@@ -1388,15 +1388,15 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-brand);
 }
 
-.input-slider-container-wrapper.lx-disabled input.lx-number-slider:disabled,
-.lx.lx-theme-contrast .lx-override .input-slider-container-wrapper.lx-disabled input.lx-number-slider:disabled {
+.input-slider-container-wrapper.lx-disabled input.lx-number-input:disabled,
+.lx.lx-theme-contrast .lx-override .input-slider-container-wrapper.lx-disabled input.lx-number-input:disabled {
   border: var(--border-width-0); /* removes the default Lx input :disabled underline */
 }
 
-.input-slider-container-wrapper.lx-disabled input.lx-number-slider::-webkit-slider-thumb {
+.input-slider-container-wrapper.lx-disabled input.lx-number-input::-webkit-slider-thumb {
   background-color: var(--color-input-text-disabled);
 }
-.input-slider-container-wrapper.lx-disabled input.lx-number-slider::-moz-range-thumb {
+.input-slider-container-wrapper.lx-disabled input.lx-number-input::-moz-range-thumb {
   background-color: var(--color-input-text-disabled);
 }
 
@@ -1409,7 +1409,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   cursor: not-allowed;
 }
 
-/*** Number slider stepper kind styles ***/
+/*** Number input stepper kind styles ***/
 
 .lx .lx-number-stepper-wrapper.lx-input-wrapper {
   --input-grid-areas: 'input button-decrease button-increase';
@@ -1661,7 +1661,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-markdown-tag-item > div > p.lx-data {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   display: inline-block;
   max-width: 100%;
   overflow: hidden;
@@ -2278,7 +2278,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-file-additional-info > .lx-invalidation-message {
   color: var(--color-bad);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
 }
 
 .lx-file-main-part .lx-file-name {
@@ -2335,11 +2335,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-radius: var(--border-radius-full);
   height: 1rem;
   width: 1rem;
-}
-
-.lx-file-upload-wrapper + .lx-description {
-  font-size: var(--small-font-size);
-  color: var(--color-label);
 }
 
 .lx-file-upload-wrapper .lx-list-item {
@@ -2592,7 +2587,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: flex;
   flex-direction: column;
   padding: var(--space-1000);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   line-height: 1.5em;
 }
 
@@ -2741,7 +2736,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   position: absolute;
   right: var(--space-0500);
   border-color: transparent;
-  --badge-text-font-size: var(--small-font-size);
+  --badge-text-font-size: var(--font-size-small);
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge,
@@ -3138,7 +3133,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-rotator-set .lx-rotator-tag > p {
-  --input-text-font-weight: var(--data-weight);
+  --input-text-font-weight: var(--font-weight-data);
   user-select: none;
 }
 
@@ -3258,7 +3253,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 /*** Mystery styles ***/
 
 .lx-label {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight);
   letter-spacing: var(--letter-spacing-1);
   display: inline-block;

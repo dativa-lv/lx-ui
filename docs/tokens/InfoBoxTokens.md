@@ -18,7 +18,7 @@
 | `--info-box-content-padding`            | `--space-0125` `--space-0` `--space-0` `--space-0`        |
 | `--info-box-text-primary-font-weight`   | `--font-weight-bold`                                      |
 | `--info-box-text-primary-line-height`   | 1.25                                                      |
-| `--info-box-text-secondary-font-size`   | `--small-font-size`                                       |
+| `--info-box-text-secondary-font-size`   | `--font-size-small`                                       |
 | `--info-box-text-secondary-line-height` | 1.1em                                                     |
 | `--info-box-outline-offset`             | `--space-0`                                               |
 | `--info-box-button-height`              | `--button-ghost-icon-only-height`                         |

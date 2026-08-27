@@ -666,7 +666,7 @@
 
 .lx-layout.lx-layout-default.lx-layout-digives-lite main.lx-main>ul.lx-digives-lite-alert-list>li .lx-description {
   font-weight: var(--font-weight);
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   color: var(--color-label);
   line-height: 1.1em;
   padding-top: var(--space-0);
@@ -810,7 +810,7 @@ border-top: var(--border-width-2) solid var(--color-brand-secondary);
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
   z-index: 1;
-  --badge-text-font-size: var(--small-font-size);
+  --badge-text-font-size: var(--font-size-small);
   --color-badge-background: var(--color-warning);
   --color-badge-text: var(--color-region);
   --badge-text-font-weight: 700;

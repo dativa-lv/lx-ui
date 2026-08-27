@@ -2,7 +2,7 @@
 import { mount, config } from '@vue/test-utils';
 import { describe, test, expect, afterEach, vi } from 'vitest';
 import { ref } from 'vue';
-import LxNumberSlider from '@/components/NumberSlider.vue';
+import LxNumberInput from '@/components/NumberInput.vue';
 import { ARIA_LIVE_ANNOUNCEMENT_CONSTANTS } from '@/constants';
 import 'regenerator-runtime/runtime';
 
@@ -20,7 +20,7 @@ const ID = 'test-slider';
 
 // Wires modelValue back like a real v-model, so consecutive steps build on each other
 function mountWithModel(props = {}) {
-  const mounted = mount(LxNumberSlider, {
+  const mounted = mount(LxNumberInput, {
     props: {
       id: ID,
       ...props,
@@ -39,14 +39,14 @@ function lastEmitted(component) {
   return values[values.length - 1];
 }
 
-describe('LxNumberSlider', () => {
+describe('LxNumberInput', () => {
   test('should be a valid component', () => {
-    expect(LxNumberSlider).toBeTruthy();
+    expect(LxNumberInput).toBeTruthy();
   });
 
   describe('Props', () => {
     test('should have the correct default props', () => {
-      wrapper = mount(LxNumberSlider);
+      wrapper = mount(LxNumberInput);
       const props = wrapper.props();
 
       expect(props.id).toBeTypeOf('string');
@@ -72,7 +72,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should accept provided prop values', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: {
           id: ID,
           modelValue: 42,
@@ -121,8 +121,8 @@ describe('LxNumberSlider', () => {
     });
 
     test('should generate a unique id per instance when none is given', () => {
-      wrapper = mount(LxNumberSlider);
-      const other = mount(LxNumberSlider);
+      wrapper = mount(LxNumberInput);
+      const other = mount(LxNumberInput);
 
       expect(wrapper.props().id).not.toBe(other.props().id);
       other.unmount();
@@ -130,23 +130,23 @@ describe('LxNumberSlider', () => {
 
     describe('kind', () => {
       test('should render the slider kind by default', () => {
-        wrapper = mount(LxNumberSlider);
+        wrapper = mount(LxNumberInput);
 
         expect(wrapper.find('.input-slider-container-wrapper').exists()).toBe(true);
-        expect(wrapper.find('input.lx-number-slider').exists()).toBe(true);
+        expect(wrapper.find('input.lx-number-input').exists()).toBe(true);
         expect(wrapper.find('.lx-number-stepper-wrapper').exists()).toBe(false);
       });
 
       test('should render the stepper kind when requested', () => {
-        wrapper = mount(LxNumberSlider, { props: { kind: 'stepper' } });
+        wrapper = mount(LxNumberInput, { props: { kind: 'stepper' } });
 
         expect(wrapper.find('.lx-number-stepper-wrapper').exists()).toBe(true);
         expect(wrapper.find('.input-slider-container-wrapper').exists()).toBe(false);
-        expect(wrapper.find('input.lx-number-slider').exists()).toBe(false);
+        expect(wrapper.find('input.lx-number-input').exists()).toBe(false);
       });
 
       test('should fall back to the slider kind for an unknown value', () => {
-        wrapper = mount(LxNumberSlider, { props: { kind: 'nonsense' } });
+        wrapper = mount(LxNumberInput, { props: { kind: 'nonsense' } });
 
         expect(wrapper.find('.input-slider-container-wrapper').exists()).toBe(true);
       });
@@ -155,10 +155,10 @@ describe('LxNumberSlider', () => {
 
   describe('Rendering - slider kind', () => {
     test('should pass min, max and step down to the range input', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { id: ID, modelValue: 5, min: -10, max: 10, step: 2 },
       });
-      const input = wrapper.find('input.lx-number-slider');
+      const input = wrapper.find('input.lx-number-input');
 
       expect(input.attributes('type')).toBe('range');
       expect(input.attributes('id')).toBe(ID);
@@ -169,7 +169,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should render the min and max range labels', () => {
-      wrapper = mount(LxNumberSlider, { props: { min: -10, max: 250 } });
+      wrapper = mount(LxNumberInput, { props: { min: -10, max: 250 } });
       const labels = wrapper.findAll('.input-slider-range-label p');
 
       expect(labels.length).toBe(2);
@@ -178,13 +178,13 @@ describe('LxNumberSlider', () => {
     });
 
     test('should expose the current value as the slider tooltip', () => {
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 7 } });
+      wrapper = mount(LxNumberInput, { props: { modelValue: 7 } });
 
       expect(wrapper.find('.input-slider').attributes('title')).toBe('7');
     });
 
     test('should render both track parts', () => {
-      wrapper = mount(LxNumberSlider);
+      wrapper = mount(LxNumberInput);
 
       expect(wrapper.find('.input-slider-filled').exists()).toBe(true);
       expect(wrapper.find('.input-slider-full').exists()).toBe(true);
@@ -197,7 +197,7 @@ describe('LxNumberSlider', () => {
         ['100%', 10],
         ['30%', 3],
       ])('should be %s filled for modelValue %i', (expected, modelValue) => {
-        wrapper = mount(LxNumberSlider, { props: { modelValue, min: 0, max: 10 } });
+        wrapper = mount(LxNumberInput, { props: { modelValue, min: 0, max: 10 } });
 
         expect(wrapper.find('.input-slider-filled').attributes('style')).toBe(
           `width: ${expected};`
@@ -205,31 +205,31 @@ describe('LxNumberSlider', () => {
       });
 
       test('should stay proportional for a non-zero min', () => {
-        wrapper = mount(LxNumberSlider, { props: { modelValue: 150, min: 100, max: 200 } });
+        wrapper = mount(LxNumberInput, { props: { modelValue: 150, min: 100, max: 200 } });
 
         expect(wrapper.find('.input-slider-filled').attributes('style')).toBe('width: 50%;');
       });
     });
 
     test('should mark the wrapper as disabled and disable the range input', () => {
-      wrapper = mount(LxNumberSlider, { props: { disabled: true } });
+      wrapper = mount(LxNumberInput, { props: { disabled: true } });
 
       expect(wrapper.find('.input-slider-container-wrapper').classes()).toContain('lx-disabled');
-      expect(wrapper.find('input.lx-number-slider').attributes('disabled')).toBeDefined();
+      expect(wrapper.find('input.lx-number-input').attributes('disabled')).toBeDefined();
     });
 
     test('should not mark the wrapper as disabled when enabled', () => {
-      wrapper = mount(LxNumberSlider);
+      wrapper = mount(LxNumberInput);
 
       expect(wrapper.find('.input-slider-container-wrapper').classes()).not.toContain(
         'lx-disabled'
       );
-      expect(wrapper.find('input.lx-number-slider').attributes('disabled')).toBeUndefined();
+      expect(wrapper.find('input.lx-number-input').attributes('disabled')).toBeUndefined();
     });
 
     describe('hasInput', () => {
       test('should keep the value input hidden by default', () => {
-        wrapper = mount(LxNumberSlider);
+        wrapper = mount(LxNumberInput);
         const rangeText = wrapper.find('.input-slider-range-text');
 
         expect(rangeText.exists()).toBe(true);
@@ -237,7 +237,7 @@ describe('LxNumberSlider', () => {
       });
 
       test('should reveal the value input when hasInput is true', () => {
-        wrapper = mount(LxNumberSlider, { props: { id: ID, hasInput: true, modelValue: 12 } });
+        wrapper = mount(LxNumberInput, { props: { id: ID, hasInput: true, modelValue: 12 } });
         const rangeText = wrapper.find('.input-slider-range-text');
 
         expect(rangeText.element.style.display).toBe('');
@@ -246,9 +246,9 @@ describe('LxNumberSlider', () => {
       });
 
       test('should keep the range input id separate from the text input id', () => {
-        wrapper = mount(LxNumberSlider, { props: { id: ID, hasInput: true } });
+        wrapper = mount(LxNumberInput, { props: { id: ID, hasInput: true } });
 
-        expect(wrapper.find(`input.lx-number-slider#${ID}`).exists()).toBe(true);
+        expect(wrapper.find(`input.lx-number-input#${ID}`).exists()).toBe(true);
         expect(wrapper.find(`input#${ID}-text`).exists()).toBe(true);
       });
     });
@@ -256,7 +256,7 @@ describe('LxNumberSlider', () => {
 
   describe('Rendering - stepper kind', () => {
     test('should render the value, the decrease and the increase buttons', () => {
-      wrapper = mount(LxNumberSlider, { props: { id: ID, kind: 'stepper', modelValue: 3 } });
+      wrapper = mount(LxNumberInput, { props: { id: ID, kind: 'stepper', modelValue: 3 } });
 
       expect(wrapper.find('.lx-number-stepper-value').text()).toBe('3');
       expect(wrapper.find(`button#${ID}-decrease`).exists()).toBe(true);
@@ -264,7 +264,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should mark the buttons with their own custom classes', () => {
-      wrapper = mount(LxNumberSlider, { props: { id: ID, kind: 'stepper' } });
+      wrapper = mount(LxNumberInput, { props: { id: ID, kind: 'stepper' } });
 
       expect(wrapper.find(`button#${ID}-decrease`).classes()).toContain(
         'lx-number-stepper-decrease'
@@ -275,7 +275,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should render both buttons as ghost icon-only buttons', () => {
-      wrapper = mount(LxNumberSlider, { props: { id: ID, kind: 'stepper' } });
+      wrapper = mount(LxNumberInput, { props: { id: ID, kind: 'stepper' } });
       const decrease = wrapper.find(`button#${ID}-decrease`);
 
       expect(decrease.classes()).toContain('lx-button-ghost');
@@ -283,7 +283,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should add the no-input class and skip the text input by default', () => {
-      wrapper = mount(LxNumberSlider, { props: { id: ID, kind: 'stepper' } });
+      wrapper = mount(LxNumberInput, { props: { id: ID, kind: 'stepper' } });
 
       expect(wrapper.find('.lx-number-stepper-wrapper').classes()).toContain(
         'lx-number-stepper-no-input'
@@ -293,7 +293,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should swap the static value for a text input when hasInput is true', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { id: ID, kind: 'stepper', hasInput: true, modelValue: 8 },
       });
 
@@ -306,13 +306,13 @@ describe('LxNumberSlider', () => {
     });
 
     test('should keep the stepper wrapper an lx-input-wrapper so it inherits input styling', () => {
-      wrapper = mount(LxNumberSlider, { props: { kind: 'stepper' } });
+      wrapper = mount(LxNumberInput, { props: { kind: 'stepper' } });
 
       expect(wrapper.find('.lx-number-stepper-wrapper').classes()).toContain('lx-input-wrapper');
     });
 
     test('should mark the wrapper and the buttons as disabled', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { id: ID, kind: 'stepper', modelValue: 5, min: 0, max: 10, disabled: true },
       });
 
@@ -322,7 +322,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should disable the text input when disabled', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { id: ID, kind: 'stepper', hasInput: true, disabled: true },
       });
 
@@ -331,7 +331,7 @@ describe('LxNumberSlider', () => {
 
     describe('button availability at the bounds', () => {
       test('should disable only decrease at min', () => {
-        wrapper = mount(LxNumberSlider, {
+        wrapper = mount(LxNumberInput, {
           props: { id: ID, kind: 'stepper', modelValue: 0, min: 0, max: 10 },
         });
 
@@ -340,7 +340,7 @@ describe('LxNumberSlider', () => {
       });
 
       test('should disable only increase at max', () => {
-        wrapper = mount(LxNumberSlider, {
+        wrapper = mount(LxNumberInput, {
           props: { id: ID, kind: 'stepper', modelValue: 10, min: 0, max: 10 },
         });
 
@@ -349,7 +349,7 @@ describe('LxNumberSlider', () => {
       });
 
       test('should enable both between the bounds', () => {
-        wrapper = mount(LxNumberSlider, {
+        wrapper = mount(LxNumberInput, {
           props: { id: ID, kind: 'stepper', modelValue: 5, min: 0, max: 10 },
         });
 
@@ -358,7 +358,7 @@ describe('LxNumberSlider', () => {
       });
 
       test('should re-enable the button once the value moves away from the bound', async () => {
-        wrapper = mount(LxNumberSlider, {
+        wrapper = mount(LxNumberInput, {
           props: { id: ID, kind: 'stepper', modelValue: 0, min: 0, max: 10 },
         });
         expect(wrapper.find(`button#${ID}-decrease`).attributes('disabled')).toBeDefined();
@@ -371,14 +371,14 @@ describe('LxNumberSlider', () => {
 
     describe('focus handling', () => {
       test('should keep the buttons tabbable when there is no text input', () => {
-        wrapper = mount(LxNumberSlider, { props: { id: ID, kind: 'stepper' } });
+        wrapper = mount(LxNumberInput, { props: { id: ID, kind: 'stepper' } });
 
         expect(wrapper.find(`button#${ID}-decrease`).attributes('tabindex')).toBe('0');
         expect(wrapper.find(`button#${ID}-increase`).attributes('tabindex')).toBe('0');
       });
 
       test('should take the buttons out of the tab order when the text input owns focus', () => {
-        wrapper = mount(LxNumberSlider, {
+        wrapper = mount(LxNumberInput, {
           props: { id: ID, kind: 'stepper', hasInput: true },
         });
 
@@ -387,7 +387,7 @@ describe('LxNumberSlider', () => {
       });
 
       test('should prevent the default mousedown so the text input keeps focus', () => {
-        wrapper = mount(LxNumberSlider, {
+        wrapper = mount(LxNumberInput, {
           props: { id: ID, kind: 'stepper', hasInput: true, modelValue: 5, min: 0, max: 10 },
         });
 
@@ -398,7 +398,7 @@ describe('LxNumberSlider', () => {
       });
 
       test('should not prevent the default mousedown when there is no text input', () => {
-        wrapper = mount(LxNumberSlider, {
+        wrapper = mount(LxNumberInput, {
           props: { id: ID, kind: 'stepper', modelValue: 5, min: 0, max: 10 },
         });
 
@@ -412,7 +412,7 @@ describe('LxNumberSlider', () => {
 
   describe('Rendering - readOnly', () => {
     test('should render the value as plain data for the slider kind', () => {
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 33, readOnly: true } });
+      wrapper = mount(LxNumberInput, { props: { modelValue: 33, readOnly: true } });
 
       expect(wrapper.find('p.lx-data').text()).toBe('33');
       expect(wrapper.find('.input-slider-container-wrapper').exists()).toBe(false);
@@ -420,7 +420,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should render the value as plain data for the stepper kind', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { id: ID, modelValue: 33, kind: 'stepper', readOnly: true },
       });
 
@@ -430,7 +430,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should win over hasInput', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { modelValue: 33, kind: 'stepper', hasInput: true, readOnly: true },
       });
 
@@ -441,42 +441,40 @@ describe('LxNumberSlider', () => {
 
   describe('Accessibility', () => {
     test('should keep the wrapper data-id in sync with the id prop', () => {
-      wrapper = mount(LxNumberSlider, { props: { id: ID } });
+      wrapper = mount(LxNumberInput, { props: { id: ID } });
 
       expect(wrapper.find('.lx-field-wrapper').attributes('data-id')).toBe(ID);
     });
 
     test('should label the range input with the labelId prop', () => {
-      wrapper = mount(LxNumberSlider, { props: { labelId: 'custom-label' } });
+      wrapper = mount(LxNumberInput, { props: { labelId: 'custom-label' } });
 
-      expect(wrapper.find('input.lx-number-slider').attributes('aria-labelledby')).toBe(
+      expect(wrapper.find('input.lx-number-input').attributes('aria-labelledby')).toBe(
         'custom-label'
       );
     });
 
     test('should label the range input with the injected rowId when no labelId is given', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         global: { provide: { rowId: ref('row-label') } },
       });
 
-      expect(wrapper.find('input.lx-number-slider').attributes('aria-labelledby')).toBe(
-        'row-label'
-      );
+      expect(wrapper.find('input.lx-number-input').attributes('aria-labelledby')).toBe('row-label');
     });
 
     test('should let labelId win over the injected rowId', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { labelId: 'custom-label' },
         global: { provide: { rowId: ref('row-label') } },
       });
 
-      expect(wrapper.find('input.lx-number-slider').attributes('aria-labelledby')).toBe(
+      expect(wrapper.find('input.lx-number-input').attributes('aria-labelledby')).toBe(
         'custom-label'
       );
     });
 
     test('should label the read-only value', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { readOnly: true, labelId: 'custom-label' },
       });
 
@@ -484,7 +482,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should expose the stepper value as a spinbutton with its range', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: {
           kind: 'stepper',
           modelValue: 5,
@@ -503,7 +501,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should keep the spinbutton value in sync with the model', async () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { kind: 'stepper', modelValue: 5, min: 0, max: 10 },
       });
 
@@ -513,7 +511,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should render a polite live region for the slider kind', () => {
-      wrapper = mount(LxNumberSlider);
+      wrapper = mount(LxNumberInput);
       const status = wrapper.find('[role="status"]');
 
       expect(status.exists()).toBe(true);
@@ -523,13 +521,13 @@ describe('LxNumberSlider', () => {
     });
 
     test('should render a live region for the stepper kind without a text input', () => {
-      wrapper = mount(LxNumberSlider, { props: { kind: 'stepper' } });
+      wrapper = mount(LxNumberInput, { props: { kind: 'stepper' } });
 
       expect(wrapper.find('[role="status"]').exists()).toBe(true);
     });
 
     test('should skip the live region when the stepper has a text input', () => {
-      wrapper = mount(LxNumberSlider, { props: { kind: 'stepper', hasInput: true } });
+      wrapper = mount(LxNumberInput, { props: { kind: 'stepper', hasInput: true } });
 
       expect(wrapper.find('[role="status"]').exists()).toBe(false);
     });
@@ -537,7 +535,7 @@ describe('LxNumberSlider', () => {
     test('should announce the new value after the announcement delay', async () => {
       vi.useFakeTimers();
       try {
-        wrapper = mount(LxNumberSlider, { props: { modelValue: 5, min: 0, max: 10 } });
+        wrapper = mount(LxNumberInput, { props: { modelValue: 5, min: 0, max: 10 } });
         vi.advanceTimersByTime(ARIA_LIVE_ANNOUNCEMENT_CONSTANTS.DELAY);
         await wrapper.vm.$nextTick();
         expect(wrapper.find('[role="status"]').text()).toBe('5');
@@ -556,7 +554,7 @@ describe('LxNumberSlider', () => {
     test('should only announce the last value of a rapid burst', async () => {
       vi.useFakeTimers();
       try {
-        wrapper = mount(LxNumberSlider, { props: { modelValue: 1, min: 0, max: 10 } });
+        wrapper = mount(LxNumberInput, { props: { modelValue: 1, min: 0, max: 10 } });
         vi.advanceTimersByTime(ARIA_LIVE_ANNOUNCEMENT_CONSTANTS.DELAY);
         await wrapper.vm.$nextTick();
 
@@ -579,7 +577,7 @@ describe('LxNumberSlider', () => {
 
   describe('Texts', () => {
     test('should label the stepper buttons with the default texts', () => {
-      wrapper = mount(LxNumberSlider, { props: { id: ID, kind: 'stepper' } });
+      wrapper = mount(LxNumberInput, { props: { id: ID, kind: 'stepper' } });
 
       expect(wrapper.find(`button#${ID}-decrease`).attributes('aria-label')).toBe(
         'Samazināt vērtību'
@@ -590,7 +588,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should label the stepper buttons with the provided texts', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: {
           id: ID,
           kind: 'stepper',
@@ -607,7 +605,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should keep the default for the keys that are not overridden', () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { id: ID, kind: 'stepper', texts: { increaseValue: 'Custom increase' } },
       });
 
@@ -620,7 +618,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should react to a texts prop change', async () => {
-      wrapper = mount(LxNumberSlider, { props: { id: ID, kind: 'stepper' } });
+      wrapper = mount(LxNumberInput, { props: { id: ID, kind: 'stepper' } });
 
       await wrapper.setProps({ texts: { increaseValue: 'Later' } });
 
@@ -630,32 +628,32 @@ describe('LxNumberSlider', () => {
 
   describe('Model', () => {
     test('should round a decimal model value when rendering', () => {
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 5.6, readOnly: true } });
+      wrapper = mount(LxNumberInput, { props: { modelValue: 5.6, readOnly: true } });
 
       expect(wrapper.find('p.lx-data').text()).toBe('6');
     });
 
     test('should round the min and max used for the range', () => {
-      wrapper = mount(LxNumberSlider, { props: { min: -2.4, max: 10.5 } });
-      const input = wrapper.find('input.lx-number-slider');
+      wrapper = mount(LxNumberInput, { props: { min: -2.4, max: 10.5 } });
+      const input = wrapper.find('input.lx-number-input');
 
       expect(input.attributes('min')).toBe('-2');
       expect(input.attributes('max')).toBe('11');
     });
 
     test('should emit a whole number when the range input reports a decimal', async () => {
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 5, min: 0, max: 10 } });
+      wrapper = mount(LxNumberInput, { props: { modelValue: 5, min: 0, max: 10 } });
 
-      await wrapper.find('input.lx-number-slider').setValue('7.4');
+      await wrapper.find('input.lx-number-input').setValue('7.4');
 
       expect(lastEmitted(wrapper)).toBe(7);
       expect(lastEmitted(wrapper)).toBeTypeOf('number');
     });
 
     test('should emit a number when the range input reports a string', async () => {
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 5, min: 0, max: 10 } });
+      wrapper = mount(LxNumberInput, { props: { modelValue: 5, min: 0, max: 10 } });
 
-      await wrapper.find('input.lx-number-slider').setValue('8');
+      await wrapper.find('input.lx-number-input').setValue('8');
 
       expect(lastEmitted(wrapper)).toBe(8);
       expect(lastEmitted(wrapper)).toBeTypeOf('number');
@@ -903,7 +901,7 @@ describe('LxNumberSlider', () => {
   });
 
   describe('Behaviour - slider keyboard', () => {
-    const slider = () => wrapper.find('input.lx-number-slider');
+    const slider = () => wrapper.find('input.lx-number-input');
 
     test('should step up with ArrowUp and ArrowRight', async () => {
       wrapper = mountWithModel({ modelValue: 5, min: 0, max: 10 });
@@ -1001,8 +999,8 @@ describe('LxNumberSlider', () => {
         .spyOn(globalThis, 'getSelection')
         .mockReturnValue({ removeAllRanges });
 
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 5, min: 0, max: 10 } });
-      await wrapper.find('input.lx-number-slider').trigger('mousedown');
+      wrapper = mount(LxNumberInput, { props: { modelValue: 5, min: 0, max: 10 } });
+      await wrapper.find('input.lx-number-input').trigger('mousedown');
 
       expect(getSelectionSpy).toHaveBeenCalled();
       expect(removeAllRanges).toHaveBeenCalled();
@@ -1013,7 +1011,7 @@ describe('LxNumberSlider', () => {
 
   describe('Behaviour - clamping on prop changes', () => {
     test('should pull a value above max back down to max', async () => {
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 5, min: 0, max: 10 } });
+      wrapper = mount(LxNumberInput, { props: { modelValue: 5, min: 0, max: 10 } });
 
       await wrapper.setProps({ modelValue: 20 });
 
@@ -1021,7 +1019,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should pull a value below min back up to min', async () => {
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 5, min: 0, max: 10 } });
+      wrapper = mount(LxNumberInput, { props: { modelValue: 5, min: 0, max: 10 } });
 
       await wrapper.setProps({ modelValue: -20 });
 
@@ -1029,7 +1027,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should leave a value that lands exactly on a bound alone', async () => {
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 5, min: 0, max: 10 } });
+      wrapper = mount(LxNumberInput, { props: { modelValue: 5, min: 0, max: 10 } });
 
       await wrapper.setProps({ modelValue: 10 });
       await wrapper.setProps({ modelValue: 0 });
@@ -1067,7 +1065,7 @@ describe('LxNumberSlider', () => {
     });
 
     test('should not clamp anything before the model is touched', () => {
-      wrapper = mount(LxNumberSlider, { props: { modelValue: 50, min: 0, max: 10 } });
+      wrapper = mount(LxNumberInput, { props: { modelValue: 50, min: 0, max: 10 } });
 
       expect(wrapper.emitted()['update:modelValue']).toBeFalsy();
     });
@@ -1075,19 +1073,19 @@ describe('LxNumberSlider', () => {
 
   describe('Emits', () => {
     test('should declare update:modelValue', () => {
-      wrapper = mount(LxNumberSlider);
+      wrapper = mount(LxNumberInput);
 
       expect(wrapper.vm.$options.emits).toContain('update:modelValue');
     });
 
     test('should not emit anything on mount', () => {
-      wrapper = mount(LxNumberSlider, { props: { kind: 'stepper', modelValue: 5, max: 10 } });
+      wrapper = mount(LxNumberInput, { props: { kind: 'stepper', modelValue: 5, max: 10 } });
 
       expect(wrapper.emitted()['update:modelValue']).toBeFalsy();
     });
 
     test('should emit exactly once per stepper click while the model prop stays put', async () => {
-      wrapper = mount(LxNumberSlider, {
+      wrapper = mount(LxNumberInput, {
         props: { id: ID, kind: 'stepper', modelValue: 5, min: 0, max: 10 },
       });
 
@@ -1125,26 +1123,26 @@ describe('LxNumberSlider', () => {
   });
 });
 
-describe('LxNumberSlider required', () => {
+describe('LxNumberInput required', () => {
   test('slider kind sets aria-required on the range input', () => {
-    wrapper = mount(LxNumberSlider, { props: { required: true } });
-    expect(wrapper.find('.lx-number-slider').attributes('aria-required')).toBe('true');
+    wrapper = mount(LxNumberInput, { props: { required: true } });
+    expect(wrapper.find('.lx-number-input').attributes('aria-required')).toBe('true');
   });
 
   test('stepper kind hands required to the inner LxTextInput', () => {
-    wrapper = mount(LxNumberSlider, {
+    wrapper = mount(LxNumberInput, {
       props: { kind: 'stepper', hasInput: true, required: true },
     });
     expect(wrapper.find('.lx-text-input').attributes('aria-required')).toBe('true');
   });
 
   test('stepper kind without an input sets aria-required on the spinbutton', () => {
-    wrapper = mount(LxNumberSlider, { props: { kind: 'stepper', required: true } });
+    wrapper = mount(LxNumberInput, { props: { kind: 'stepper', required: true } });
     expect(wrapper.find('[role="spinbutton"]').attributes('aria-required')).toBe('true');
   });
 
   test('aria-required is omitted by default', () => {
-    wrapper = mount(LxNumberSlider);
-    expect(wrapper.find('.lx-number-slider').attributes('aria-required')).toBeUndefined();
+    wrapper = mount(LxNumberInput);
+    expect(wrapper.find('.lx-number-input').attributes('aria-required')).toBeUndefined();
   });
 });
