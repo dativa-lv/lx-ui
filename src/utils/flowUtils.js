@@ -101,20 +101,18 @@ const getError = (error) => {
   };
 };
 
-function handleAnonymousRoute(to, from, next, successCallbackFn) {
+function handleAnonymousRoute(to, from, successCallbackFn) {
   const allowAnonymous = to.matched.some((record) => record.meta.anonymous);
   if (allowAnonymous) {
     if (typeof successCallbackFn === 'function') {
-      successCallbackFn(to, from, next);
-    } else {
-      next();
+      return successCallbackFn(to, from);
     }
     return true;
   }
-  return false;
+  return null;
 }
 
-async function ensureSession(authStore, appStore, next) {
+async function ensureSession(authStore, appStore) {
   // Checking if session is ok
   if (authStore.session.st === null) {
     try {
@@ -125,7 +123,6 @@ async function ensureSession(authStore, appStore, next) {
         authStore.$reset();
       } else {
         appStore.setError(e?.data);
-        next();
         return false;
       }
     }
@@ -150,24 +147,23 @@ function checkAuthorizationAndScope(to, authStore) {
   return { isAuthorized, hasScopeInternal };
 }
 
-function redirectTo(next, routeName, path) {
-  next({
+function redirectTo(routeName, path) {
+  return {
     params: { pathMatch: path.substring(1) },
     query: { returnPath: path },
     replace: true,
     name: routeName,
-  });
+  };
 }
 
 /**
  * @param { import('vue-router').RouteLocationNormalized } to
  * @param { import('vue-router').RouteLocationNormalized } from
- * @param { import('vue-router').NavigationGuardNext} next
  * @param { any } appStore - Pinia LX store
  * @param { any } authStore - Pinia LX store
- * @param {(to: import('vue-router').RouteLocationNormalized, from: import('vue-router').RouteLocationNormalized, next: import('vue-router').NavigationGuardNext) => void } [successCallbackFn] - optional callback function to be called after authStore, returns true if navigation should continue
+ * @param {(to: import('vue-router').RouteLocationNormalized, from: import('vue-router').RouteLocationNormalized) => any } [successCallbackFn] - optional callback function to be called after authStore, returns true if navigation should continue
  */
-export async function beforeEach(to, from, next, appStore, authStore, successCallbackFn = null) {
+export async function beforeEach(to, from, appStore, authStore, successCallbackFn = null) {
   appStore.$reset();
   appStore.startNavigating();
 
@@ -180,40 +176,37 @@ export async function beforeEach(to, from, next, appStore, authStore, successCal
   }
 
   // Handle anonymous routes
-  if (handleAnonymousRoute(to, from, next, successCallbackFn)) {
-    return;
+  const anonymousRouteResult = handleAnonymousRoute(to, from, successCallbackFn);
+  if (anonymousRouteResult !== null) {
+    return anonymousRouteResult;
   }
 
   // Ensure session is valid
-  if (!(await ensureSession(authStore, appStore, next))) {
-    return;
+  if (!(await ensureSession(authStore, appStore))) {
+    return true;
   }
 
   // Check authorization and scope
   const { isAuthorized, hasScopeInternal } = checkAuthorizationAndScope(to, authStore);
 
   if (!isAuthorized) {
-    redirectTo(next, 'notAuthorized', to.path);
-    return;
+    return redirectTo('notAuthorized', to.path);
   }
 
   // If authorized, but route requires scopes:
   if (isAuthorized && hasScopeInternal) {
     if (typeof successCallbackFn === 'function') {
-      successCallbackFn(to, from, next);
-      return;
+      return successCallbackFn(to, from);
     }
-    next();
-    return;
+    return true;
   }
 
   if (isAuthorized && !hasScopeInternal) {
-    redirectTo(next, 'forbidden', to.path);
-    return;
+    return redirectTo('forbidden', to.path);
   }
 
   // Default error case
-  redirectTo(next, 'error', to.path);
+  return redirectTo('error', to.path);
 }
 
 export async function afterEach(to, from, appStore, viewStore) {

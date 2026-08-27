@@ -3,6 +3,24 @@
 As LX/UI evolves, some features are refined, simplified, or replaced by better alternatives. This guide documents all breaking changes and recommended migration paths between releases.
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
+## 2.2.15 → 2.3
+
+### Breaking changes
+
+#### Migrating from next() to return-based guards
+
+`beforeEach`/`afterEach` no longer accept or call a `next` callback. Instead, the guard functions must return a value, and vue router's `beforeEach` resolves navigation based on that return value.
+
+- Remove the `next` parameter from all custom guards and callbacks.
+- Replace every `next(...)` call with an equivalent `return` statement.
+
+| Old (`next()`)            | New (return-based)          |
+|---------------------------|-----------------------------|
+| `next()`                  | `return true;`              |
+| `next(false)`             | `return false;`             |
+| `next({ name: 'login' })` | `return { name: 'login' };` |
+| `next('/some/path')`      | `return '/some/path';`      |
+| `next(error)`             | `throw error;`              |
 
 ## 2.2.15 → 2.3
 
