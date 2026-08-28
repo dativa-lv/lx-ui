@@ -4,6 +4,7 @@ import { lxDateUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 import { getKindConfig } from '@/components/datePicker/kindConfig';
 import { generateUUID } from '@/utils/stringUtils';
+import { DATE_VALIDATION_RESULT } from '@/constants';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import LxDayMonthPicker from '@/components/datePicker/DayMonthPicker.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
@@ -102,7 +103,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxDateTimePicker'));
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'outOfRange']);
 const { dateFormat, dateTimeFormat, dateTimeFullFormat } = useLx().getGlobals();
 
 const localeComputed = computed(() => (props.locale?.locale ? props.locale?.locale : 'lv-LV'));
@@ -151,6 +152,16 @@ const model = computed({
   get: getModelValue,
   set: setModelValue,
 });
+
+function onOutOfRange(validationResult) {
+  if (
+    [DATE_VALIDATION_RESULT.OUT_OF_RANGE_MIN, DATE_VALIDATION_RESULT.OUT_OF_RANGE_MAX].includes(
+      validationResult
+    )
+  ) {
+    emits('outOfRange', validationResult);
+  }
+}
 
 // Composite kinds (day-month) own the raw string model value directly, so they
 // bypass the Date-based `model` above and pass the value straight through.
@@ -315,6 +326,7 @@ if (props.builderOptions?.useRegistry) {
           :texts="displayTexts"
           :required="required"
           :labelled-by="labelledBy"
+          @outOfRange="onOutOfRange"
         />
       </div>
     </template>

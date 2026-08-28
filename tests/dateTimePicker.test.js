@@ -4,7 +4,7 @@ import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
 import LxDayMonthPicker from '@/components/datePicker/DayMonthPicker.vue';
-import { ARIA_LIVE_ANNOUNCEMENT_CONSTANTS } from '@/constants';
+import { ARIA_LIVE_ANNOUNCEMENT_CONSTANTS, DATE_VALIDATION_RESULT } from '@/constants';
 import { isSingleChoiceKind } from '@/components/datePicker/helpers';
 
 let wrapper;
@@ -2361,5 +2361,47 @@ describe('LxDateTimePicker required', () => {
     const pickers = wrapper.findAllComponents({ name: 'LxValuePicker' });
     expect(pickers.length).toBe(2);
     expect(pickers.every((picker) => picker.props('required') === true)).toBe(true);
+  });
+});
+
+describe('LxDateTimePicker outOfRange', () => {
+  const mountPicker = (props) =>
+    mount(LxDateTimePicker, {
+      props: { kind: 'date', ...props },
+      global: {
+        stubs: ['router-link'],
+        directives: { ClickAway: dummyClickAway },
+      },
+    });
+
+  const typeDate = async (wrp, value) => {
+    const input = wrp.find('.lx-date-time-picker');
+    input.element.value = value;
+    await input.trigger('change');
+    await nextTick();
+  };
+
+  test('emits OUT_OF_RANGE_MIN for a date before minDate', async () => {
+    wrapper = mountPicker({ minDate: new Date(2026, 0, 1) });
+    await typeDate(wrapper, '01.01.2020.');
+    expect(wrapper.emitted('outOfRange')).toEqual([[DATE_VALIDATION_RESULT.OUT_OF_RANGE_MIN]]);
+  });
+
+  test('emits OUT_OF_RANGE_MAX for a date after maxDate', async () => {
+    wrapper = mountPicker({ maxDate: new Date(2026, 0, 1) });
+    await typeDate(wrapper, '01.01.2030.');
+    expect(wrapper.emitted('outOfRange')).toEqual([[DATE_VALIDATION_RESULT.OUT_OF_RANGE_MAX]]);
+  });
+
+  test('stays silent for a date inside the range', async () => {
+    wrapper = mountPicker({ minDate: new Date(2026, 0, 1), maxDate: new Date(2026, 11, 31) });
+    await typeDate(wrapper, '15.06.2026.');
+    expect(wrapper.emitted('outOfRange')).toBeUndefined();
+  });
+
+  test('stays silent for an unparsable value', async () => {
+    wrapper = mountPicker({ minDate: new Date(2026, 0, 1) });
+    await typeDate(wrapper, 'not-a-date');
+    expect(wrapper.emitted('outOfRange')).toBeUndefined();
   });
 });
