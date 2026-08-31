@@ -828,6 +828,31 @@ describe('LxDateTimePicker', () => {
       return container;
     };
 
+    // mirrors a real parent: whatever the picker emits is bound straight back to it
+    const openCalendarWithBoundModel = async (kind) => {
+      wrapper = mount(LxDateTimePicker, {
+        props: {
+          modelValue: null,
+          variant: 'default',
+          kind,
+          'onUpdate:modelValue': (value) => wrapper.setProps({ modelValue: value }),
+        },
+        global: {
+          stubs: ['router-link'],
+          directives: {
+            ClickAway: dummyClickAway,
+          },
+        },
+      });
+
+      const pickerInput = wrapper.find('.lx-date-time-picker.lx-input-area');
+      await pickerInput.trigger('keyup', { key: 'ArrowDown' });
+
+      const container = document.body.querySelector('.lx-calendar-container');
+      expect(container).toBeTruthy();
+      return container;
+    };
+
     const clickTime = async (container, column) => {
       const item = container.querySelector(
         `.lx-time-list-item[data-column="${column}"]:not(.is-disabled)`
@@ -848,6 +873,58 @@ describe('LxDateTimePicker', () => {
       await wrapper.vm.$nextTick();
       return dayNumber;
     };
+
+    const clickTimeAt = async (container, column, index) => {
+      const items = container.querySelectorAll(
+        `.lx-time-list-item[data-column="${column}"]:not(.is-disabled)`
+      );
+      const item = items[index];
+      expect(item).toBeTruthy();
+      item.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+      return Number(item.getAttribute('data-value'));
+    };
+
+    const selectYear = async (container, year) => {
+      container
+        .querySelector('.lx-calendar-years-select-button')
+        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+
+      const cell = container.querySelector(`.lx-calendar-year[aria-label="${year}"]`);
+      expect(cell).toBeTruthy();
+      cell.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+    };
+
+    const selectMonth = async (container, monthIndex) => {
+      container
+        .querySelector('.lx-calendar-months-select-button')
+        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+
+      const cell = container.querySelectorAll('.lx-calendar-month')[monthIndex];
+      expect(cell).toBeTruthy();
+      cell.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await wrapper.vm.$nextTick();
+    };
+
+    const slide = async (container, direction) => {
+      const button = container.querySelector(`.lx-${direction}-slide-button`);
+      expect(button).toBeTruthy();
+
+      // the slide buttons are debounced, so the timers are run without waiting for them
+      vi.useFakeTimers();
+      try {
+        button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        vi.advanceTimersByTime(100);
+      } finally {
+        vi.useRealTimers();
+      }
+      await wrapper.vm.$nextTick();
+    };
+
+    const emittedCount = () => wrapper.emitted('update:modelValue')?.length ?? 0;
 
     const lastEmittedDate = () => {
       const emitted = wrapper.emitted('update:modelValue');
@@ -892,6 +969,176 @@ describe('LxDateTimePicker', () => {
         expect(value.getHours()).toBe(hour);
         expect(value.getMinutes()).toBe(minute);
         if (isFull) expect(value.getSeconds()).toBe(second);
+      });
+
+      it('keeps emitting on every time change while the date stays the same', async () => {
+        const container = await openCalendar(kind);
+
+        const dayNumber = await clickDay(container);
+        await clickTime(container, 'hours');
+        await clickTime(container, 'minutes');
+        if (isFull) await clickTime(container, 'seconds');
+
+        const emitCount = emittedCount();
+        const hour = await clickTimeAt(container, 'hours', 2);
+
+        expect(emittedCount()).toBe(emitCount + 1);
+        const value = lastEmittedDate();
+        expect(value.getDate()).toBe(dayNumber);
+        expect(value.getHours()).toBe(hour);
+      });
+
+      it('applies a time change to the emitted date while the year picker moved on', async () => {
+        const container = await openCalendar(kind);
+
+        const dayNumber = await clickDay(container);
+        await clickTime(container, 'hours');
+        await clickTime(container, 'minutes');
+        if (isFull) await clickTime(container, 'seconds');
+
+        const emitted = lastEmittedDate();
+        const year = emitted.getFullYear() + 3;
+        await selectYear(container, year);
+
+        const emitCount = emittedCount();
+        const hour = await clickTimeAt(container, 'hours', 2);
+
+        // the browsed year is not part of the value yet, only the new hour is
+        expect(emittedCount()).toBe(emitCount + 1);
+        const timeOnly = lastEmittedDate();
+        expect(timeOnly.getFullYear()).toBe(emitted.getFullYear());
+        expect(timeOnly.getMonth()).toBe(emitted.getMonth());
+        expect(timeOnly.getDate()).toBe(dayNumber);
+        expect(timeOnly.getHours()).toBe(hour);
+
+        const newDayNumber = await clickDay(container);
+
+        const value = lastEmittedDate();
+        expect(value.getFullYear()).toBe(year);
+        expect(value.getDate()).toBe(newDayNumber);
+        expect(value.getHours()).toBe(hour);
+      });
+
+      it('applies a time change to the emitted date while the month picker moved on', async () => {
+        const container = await openCalendar(kind);
+
+        const dayNumber = await clickDay(container);
+        await clickTime(container, 'hours');
+        await clickTime(container, 'minutes');
+        if (isFull) await clickTime(container, 'seconds');
+
+        const emitted = lastEmittedDate();
+        const month = (emitted.getMonth() + 1) % 12;
+        await selectMonth(container, month);
+
+        const emitCount = emittedCount();
+        const hour = await clickTimeAt(container, 'hours', 2);
+
+        expect(emittedCount()).toBe(emitCount + 1);
+        const timeOnly = lastEmittedDate();
+        expect(timeOnly.getMonth()).toBe(emitted.getMonth());
+        expect(timeOnly.getDate()).toBe(dayNumber);
+        expect(timeOnly.getHours()).toBe(hour);
+
+        const newDayNumber = await clickDay(container);
+
+        const value = lastEmittedDate();
+        expect(value.getMonth()).toBe(month);
+        expect(value.getDate()).toBe(newDayNumber);
+        expect(value.getHours()).toBe(hour);
+      });
+
+      it('applies a time change to the emitted date while the slide arrows moved on', async () => {
+        const container = await openCalendar(kind);
+
+        const dayNumber = await clickDay(container);
+        await clickTime(container, 'hours');
+        await clickTime(container, 'minutes');
+        if (isFull) await clickTime(container, 'seconds');
+
+        const emitted = lastEmittedDate();
+        await slide(container, 'next');
+
+        const emitCount = emittedCount();
+        const hour = await clickTimeAt(container, 'hours', 2);
+
+        expect(emittedCount()).toBe(emitCount + 1);
+        const timeOnly = lastEmittedDate();
+        expect(timeOnly.getMonth()).toBe(emitted.getMonth());
+        expect(timeOnly.getDate()).toBe(dayNumber);
+        expect(timeOnly.getHours()).toBe(hour);
+
+        const newDayNumber = await clickDay(container);
+
+        const value = lastEmittedDate();
+        expect(value.getMonth()).toBe((emitted.getMonth() + 1) % 12);
+        expect(value.getDate()).toBe(newDayNumber);
+        expect(value.getHours()).toBe(hour);
+      });
+
+      it('keeps the date on time changes made after sliding back and forth', async () => {
+        const container = await openCalendar(kind);
+
+        const dayNumber = await clickDay(container);
+        await clickTime(container, 'hours');
+        await clickTime(container, 'minutes');
+        if (isFull) await clickTime(container, 'seconds');
+
+        const emitted = lastEmittedDate();
+        await slide(container, 'next');
+        await slide(container, 'previous');
+
+        const emitCount = emittedCount();
+        const hour = await clickTimeAt(container, 'hours', 2);
+
+        expect(emittedCount()).toBe(emitCount + 1);
+        const value = lastEmittedDate();
+        expect(value.getMonth()).toBe(emitted.getMonth());
+        expect(value.getDate()).toBe(dayNumber);
+        expect(value.getHours()).toBe(hour);
+      });
+
+      it('keeps the browsed month out of the value when the model is bound back', async () => {
+        const container = await openCalendarWithBoundModel(kind);
+
+        const dayNumber = await clickDay(container);
+        await clickTime(container, 'hours');
+        await clickTime(container, 'minutes');
+        if (isFull) await clickTime(container, 'seconds');
+
+        const emitted = lastEmittedDate();
+        await slide(container, 'next');
+
+        const hour = await clickTimeAt(container, 'hours', 2);
+
+        const timeOnly = lastEmittedDate();
+        expect(timeOnly.getMonth()).toBe(emitted.getMonth());
+        expect(timeOnly.getDate()).toBe(dayNumber);
+        expect(timeOnly.getHours()).toBe(hour);
+
+        const newDayNumber = await clickDay(container);
+
+        const value = lastEmittedDate();
+        expect(value.getMonth()).toBe((emitted.getMonth() + 1) % 12);
+        expect(value.getDate()).toBe(newDayNumber);
+        expect(value.getHours()).toBe(hour);
+      });
+
+      it('keeps emitting when the year picker is left on the selected year', async () => {
+        const container = await openCalendar(kind);
+
+        await clickDay(container);
+        await clickTime(container, 'hours');
+        await clickTime(container, 'minutes');
+        if (isFull) await clickTime(container, 'seconds');
+
+        await selectYear(container, lastEmittedDate().getFullYear());
+
+        const emitCount = emittedCount();
+        const hour = await clickTimeAt(container, 'hours', 2);
+
+        expect(emittedCount()).toBe(emitCount + 1);
+        expect(lastEmittedDate().getHours()).toBe(hour);
       });
     });
   });

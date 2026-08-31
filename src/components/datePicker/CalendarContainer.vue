@@ -120,6 +120,11 @@ const emits = defineEmits(['update:modelValue', 'focusActiveInput']);
 const containerRef = ref();
 
 const isDateMode = computed(() => ['date', 'birth-date'].includes(props.mode));
+const isDateTimeMode = computed(() => isDateBasedMode(props.mode) && hasTimeColumns(props.mode));
+// the multi month variants anchor `currentDate` to the viewport, not to the selected month
+const isSingleMonthView = computed(
+  () => !['full', 'full-rows', 'full-columns'].includes(props.variant)
+);
 
 const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
 
@@ -142,7 +147,9 @@ const todayDate = ref(new Date());
 const currentDate = ref(todayDate.value);
 const activeCalendarDate = ref(currentDate.value);
 const selectedManually = ref(false);
-const hasCommittedDateTimeSelection = ref(false);
+const hasEmittedDateTimeSelection = ref(false);
+// the calendar is browsed away from the emitted month or year, waiting for a day pick
+const hasPendingDateNavigation = ref(false);
 
 const selectedDate = ref();
 const selectedDay = ref();
@@ -948,6 +955,22 @@ function syncVisibleQuarterAfterDecadeChange(direction = 1, shouldRestoreGridFoc
   }, DEBOUNCE_MS);
 }
 
+// browsing to another month or year desyncs the emitted value; browsing back to it restores it
+function syncDateNavigationWithView() {
+  if (!isDateTimeMode.value || !isSingleMonthView.value) return;
+
+  const emitted = selectedDate.value;
+  const view = currentDate.value;
+  if (!(emitted instanceof Date) || !(view instanceof Date)) return;
+
+  const viewOnEmitted =
+    view.getFullYear() === emitted.getFullYear() && view.getMonth() === emitted.getMonth();
+  const selectionOnEmitted =
+    selectedYear.value === emitted.getFullYear() && selectedMonth.value === emitted.getMonth();
+
+  hasPendingDateNavigation.value = !(viewOnEmitted && selectionOnEmitted);
+}
+
 function selectPreviousSlide(shouldRestoreQuarterGridFocus = false) {
   transitionName.value = computedPrevTransitionName.value;
 
@@ -982,6 +1005,7 @@ function selectPreviousSlide(shouldRestoreQuarterGridFocus = false) {
   }
 
   currentDate.value = prevMonthOrYear;
+  syncDateNavigationWithView();
 }
 
 function selectNextSlide(shouldRestoreQuarterGridFocus = false) {
@@ -1017,6 +1041,7 @@ function selectNextSlide(shouldRestoreQuarterGridFocus = false) {
     syncVisibleQuarterAfterDecadeChange(1, shouldRestoreQuarterGridFocus);
   }
   currentDate.value = nextMonthOrYear;
+  syncDateNavigationWithView();
 }
 
 const debouncedPrevious = useDebounceFn(() => selectPreviousSlide(false), DEBOUNCE_MS);
@@ -1044,7 +1069,8 @@ function clearSelectedValues(handleActiveInputSwitch = true) {
 
   hoveredDate.value = null;
   selectedManually.value = false;
-  hasCommittedDateTimeSelection.value = false;
+  hasEmittedDateTimeSelection.value = false;
+  hasPendingDateNavigation.value = false;
   tempSelectedYear.value = null;
 
   emits('update:modelValue', null);
@@ -1894,7 +1920,7 @@ function buildAndEmitFinalDateTime(date, baseDate, fullTime = false, triggerKey 
   if (fullTime) date.setSeconds(selectedSecond.value || 0);
 
   currentDate.value = date;
-  hasCommittedDateTimeSelection.value = true;
+  hasEmittedDateTimeSelection.value = true;
   emits('update:modelValue', date);
 
   handleLayoutDisplay();
@@ -1928,7 +1954,7 @@ function syncTimeViewport() {
 function isTimeSelectionComplete(isFullTimeMode) {
   const isComplete = isFullTimeMode ? isCompleteTimeFullSelection() : isCompleteTimeSelection();
 
-  return isComplete && hasCommittedDateTimeSelection.value;
+  return isComplete && hasEmittedDateTimeSelection.value;
 }
 
 function handleEnterKeyFocus(key) {
@@ -1952,7 +1978,7 @@ function handleDateTimePartSelection(updatedDate, selectedValue, key, mode) {
   applyTimeBounds(selectedValue, isFullTimeMode);
   syncTimeViewport();
 
-  hasCommittedDateTimeSelection.value = true;
+  hasEmittedDateTimeSelection.value = true;
 
   if (isTimeSelectionComplete(isFullTimeMode)) {
     buildAndEmitFinalDateTime(updatedDate, selectedValue, isFullTimeMode, key);
@@ -1988,6 +2014,7 @@ function handleDateOnlySelection(updatedDate, key) {
 }
 
 function updateSelectedDateParts(selectedValue) {
+  hasPendingDateNavigation.value = false;
   selectedDay.value = selectedValue.getDate();
   selectedMonth.value = selectedValue.getMonth();
   selectedYear.value = selectedValue.getFullYear();
@@ -2049,6 +2076,36 @@ function openDayLayoutAfterMonth(key) {
   });
 }
 
+// changing month or year only browses: the new month or year lands on the value with a day pick
+function markDateNavigation({ year = null, month = null }) {
+  if (!isDateTimeMode.value) return;
+
+  const yearChanged =
+    isDefined(year) && isDefined(selectedYear.value) && year !== selectedYear.value;
+  const monthChanged =
+    isDefined(month) && isDefined(selectedMonth.value) && month !== selectedMonth.value;
+
+  if (yearChanged || monthChanged) hasPendingDateNavigation.value = true;
+}
+
+// a browsed month or year that never got a day pick is dropped when the picker closes
+function revertPendingDateNavigation() {
+  if (!hasPendingDateNavigation.value) return;
+  hasPendingDateNavigation.value = false;
+
+  const emitted = selectedDate.value;
+  if (!(emitted instanceof Date)) return;
+
+  selectedYear.value = emitted.getFullYear();
+  selectedMonth.value = emitted.getMonth();
+  selectedDay.value = emitted.getDate();
+  selectedHour.value = emitted.getHours();
+  selectedMinute.value = emitted.getMinutes();
+  if (modeHasSeconds(props.mode)) selectedSecond.value = emitted.getSeconds();
+
+  currentDate.value = new Date(emitted);
+}
+
 function handleMonthSelection(selectedValue, newDate, key) {
   newDate.setDate(1);
   newDate.setMonth(selectedValue.orderIndex);
@@ -2057,6 +2114,11 @@ function handleMonthSelection(selectedValue, newDate, key) {
   currentDate.value = newDate;
 
   const monthIndex = Number(selectedValue.orderIndex);
+  const navigatedYear = Number(selectedValue.year);
+  markDateNavigation({
+    year: Number.isFinite(navigatedYear) ? navigatedYear : null,
+    month: monthIndex,
+  });
   selectedMonth.value = monthIndex;
 
   if (isDateMode.value) {
@@ -2112,6 +2174,7 @@ function handleYearSelection(selectedValue, newDate, key) {
   newDate.setFullYear(numericYear);
   currentDate.value = newDate;
 
+  markDateNavigation({ year: numericYear });
   selectedYear.value = numericYear;
 
   const decadeStart = findDecadeStartYear(numericYear);
@@ -2599,6 +2662,7 @@ function returnToToday() {
   );
   selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
   specialDatesLayout.value = false;
+  syncDateNavigationWithView();
   updateVisibleHours();
   updateVisibleMinutes();
   updateVisibleSeconds();
@@ -2612,6 +2676,46 @@ function returnToToday() {
       if (isTouchMode.value) return;
       focusInitialPickerCell(newDate);
     });
+  }
+}
+
+// The time columns only ever change the time: while the calendar is browsed away from the emitted
+// month or year, the date parts stay put until a day is picked.
+function emitDateTimeFromTimeColumns() {
+  const isFullMode = props.mode === 'date-time-full';
+  if (props.mode !== 'date-time' && !isFullMode) return;
+
+  const browsedAway = hasPendingDateNavigation.value && selectedDate.value instanceof Date;
+  const dateSource = browsedAway ? selectedDate.value : null;
+
+  const year = dateSource ? dateSource.getFullYear() : selectedYear.value;
+  const month = dateSource ? dateSource.getMonth() : selectedMonth.value;
+  const day = dateSource ? dateSource.getDate() : selectedDay.value;
+
+  if (!isDefined(year) || !isDefined(month) || !isDefined(day)) return;
+  if (!isDefined(selectedHour.value) || !isDefined(selectedMinute.value)) return;
+  if (isFullMode && !isDefined(selectedSecond.value)) return;
+
+  // Construct the date (include seconds only for full mode)
+  const updatedDate = new Date(
+    year,
+    month,
+    day,
+    Number(selectedHour.value),
+    Number(selectedMinute.value),
+    isFullMode ? Number(selectedSecond.value) : 0
+  );
+
+  selectedDate.value = updatedDate;
+  hasEmittedDateTimeSelection.value = true;
+  emits('update:modelValue', updatedDate);
+
+  // keep the browsed month on screen - only a day pick moves the value to it
+  if (!browsedAway) currentDate.value = updatedDate;
+
+  if (!isMobileScreen.value) {
+    handleLayoutDisplay();
+    props.setActiveInput('startInput', props.id);
   }
 }
 
@@ -2658,35 +2762,7 @@ const selectHour = (hourObj, isNotSelectable) => {
     props.setActiveInput('startInput', props.id);
   }
 
-  if (
-    isDefined(selectedYear.value) &&
-    isDefined(selectedMonth.value) &&
-    isDefined(selectedDay.value) &&
-    isDefined(selectedHour.value) &&
-    isDefined(selectedMinute.value) &&
-    (props.mode === 'date-time' ||
-      (props.mode === 'date-time-full' && isDefined(selectedSecond.value)))
-  ) {
-    // Construct the date (include seconds only for full mode)
-    const updatedDate = new Date(
-      selectedYear.value,
-      selectedMonth.value,
-      selectedDay.value,
-      selectedHour.value,
-      selectedMinute.value,
-      props.mode === 'date-time-full' ? selectedSecond.value : 0
-    );
-
-    selectedDate.value = updatedDate;
-    currentDate.value = updatedDate;
-    hasCommittedDateTimeSelection.value = true;
-    emits('update:modelValue', updatedDate);
-
-    if (!isMobileScreen.value) {
-      handleLayoutDisplay();
-      props.setActiveInput('startInput', props.id);
-    }
-  }
+  emitDateTimeFromTimeColumns();
 };
 
 const selectMinute = (minuteObj, isNotSelectable) => {
@@ -2732,34 +2808,7 @@ const selectMinute = (minuteObj, isNotSelectable) => {
     props.setActiveInput('startInput', props.id);
   }
 
-  if (
-    isDefined(selectedYear.value) &&
-    isDefined(selectedMonth.value) &&
-    isDefined(selectedDay.value) &&
-    isDefined(selectedHour.value) &&
-    isDefined(selectedMinute.value) &&
-    (props.mode === 'date-time' ||
-      (props.mode === 'date-time-full' && isDefined(selectedSecond.value)))
-  ) {
-    const updatedDate = new Date(
-      selectedYear.value,
-      selectedMonth.value,
-      selectedDay.value,
-      Number(selectedHour.value),
-      Number(selectedMinute.value),
-      props.mode === 'date-time-full' ? Number(selectedSecond.value) : 0
-    );
-
-    selectedDate.value = updatedDate;
-    currentDate.value = updatedDate;
-    hasCommittedDateTimeSelection.value = true;
-    emits('update:modelValue', updatedDate);
-
-    if (!isMobileScreen.value) {
-      handleLayoutDisplay();
-      props.setActiveInput('startInput', props.id);
-    }
-  }
+  emitDateTimeFromTimeColumns();
 };
 
 const selectSecond = (secondObj, isNotSelectable) => {
@@ -2795,34 +2844,7 @@ const selectSecond = (secondObj, isNotSelectable) => {
     props.setActiveInput('startInput', props.id);
   }
 
-  if (
-    isDefined(selectedYear.value) &&
-    isDefined(selectedMonth.value) &&
-    isDefined(selectedDay.value) &&
-    isDefined(selectedHour.value) &&
-    isDefined(selectedMinute.value) &&
-    (props.mode === 'date-time' ||
-      (props.mode === 'date-time-full' && isDefined(selectedSecond.value)))
-  ) {
-    const updatedDate = new Date(
-      selectedYear.value,
-      selectedMonth.value,
-      selectedDay.value,
-      Number(selectedHour.value),
-      Number(selectedMinute.value),
-      props.mode === 'date-time-full' ? Number(selectedSecond.value) : undefined
-    );
-
-    selectedDate.value = updatedDate;
-    currentDate.value = updatedDate;
-    hasCommittedDateTimeSelection.value = true;
-    emits('update:modelValue', updatedDate);
-
-    if (!isMobileScreen.value) {
-      handleLayoutDisplay();
-      props.setActiveInput('startInput', props.id);
-    }
-  }
+  emitDateTimeFromTimeColumns();
 };
 
 function setTimeSelected(column, offset, keepFocus = false) {
@@ -3702,6 +3724,7 @@ const onToday = computed(() => {
 });
 
 function handleSinglePickerUnmount() {
+  revertPendingDateNavigation();
   handleDateTimeSelection();
 
   if (!selectedDate.value && !isMinMaxInFuture.value && !isMinMaxInPast.value) {
@@ -4201,7 +4224,8 @@ watch(
         endYear.value = decadeStartYear + 10;
 
         if (props.mode === 'date-time' || props.mode === 'date-time-full') {
-          hasCommittedDateTimeSelection.value = true;
+          hasEmittedDateTimeSelection.value = true;
+          syncDateNavigationWithView();
         }
 
         if (props.mode === 'date-time' || props.mode === 'date-time-full') {
