@@ -2924,7 +2924,7 @@ function moveCalendar(minDate, maxDate) {
   }
 }
 
-const DATE_TIME_FALLBACK_MODES = ['date-time', 'date-time-full', 'time'];
+const DATE_TIME_FALLBACK_MODES = new Set(['date-time', 'date-time-full', 'time']);
 
 // The selection is missing a part the mode requires
 function isIncompleteDateTimeSelection(mode) {
@@ -3006,7 +3006,7 @@ function handleDateTimeSelection() {
   const { mode, clearIfNotExact } = props;
 
   // only these modes fill in or clear a partially picked date-time
-  if (!DATE_TIME_FALLBACK_MODES.includes(mode)) return;
+  if (!DATE_TIME_FALLBACK_MODES.has(mode)) return;
 
   if (clearIfNotExact) {
     if (isIncompleteDateTimeSelection(mode)) clearSelectedValues();

@@ -1,12 +1,5 @@
 /*** LxCheckbox + LxRadioButton styles ***/
 
-.lx-radio-button-wrapper,
-.lx-checkbox-wrapper {
-  width: fit-content;
-  height: fit-content;
-  margin: var(--selecting-block-margin);
-}
-
 .lx-selecting-block {
   display: flex;
   align-items: center;
@@ -129,16 +122,14 @@
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   letter-spacing: var(--letter-spacing-1);
+  width: fit-content;
+  height: fit-content;
+  margin: var(--selecting-block-margin);
   font-size: var(--selecting-block-text-primary-font-size);
   font-weight: var(--selecting-block-text-primary-font-weight);
   line-height: var(--selecting-block-text-primary-line-height);
   color: var(--color-selecting-block-text-primary);
   column-gap: var(--selecting-block-gap);
-}
-
-.lx-radio-button-wrapper.lx-disabled,
-.lx-checkbox-wrapper.lx-disabled {
-  color: var(--color-disabled-foreground);
 }
 
 .lx-embedded-selecting-block {
@@ -308,8 +299,6 @@
 }
 
 .lx-radio-button-container .lx-radio-button-thumb {
-  width: 100%;
-  height: 100%;
   opacity: 0;
   height: var(--radio-button-thumb-height);
   width: var(--radio-button-thumb-width);
@@ -505,10 +494,6 @@
   align-items: center;
   flex-direction: column-reverse;
   gap: var(--selecting-block-horizontal-gap);
-}
-
-.lx-value-picker-horizontal-wrapper .lx-radio-button-wrapper, 
-.lx-value-picker-horizontal-wrapper .lx-checkbox-wrapper {
   --selecting-block-margin: var(--space-0);
 }
 
@@ -632,7 +617,6 @@
   fill: var(--color-indicator-icon-selected);
 }
 
-.lx-value-picker-indicators .lx-indicator-set .lx-indicator-selected:hover,
 .lx-value-picker-indicators .lx-indicator-set .lx-indicator-selected:hover {
   background: var(--color-indicator-background-selected-hover);
   border-color: var(--color-indicator-border-selected-hover);

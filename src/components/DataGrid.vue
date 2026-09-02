@@ -1988,17 +1988,17 @@ function handleStickyHeaderFocusIn(event) {
 function handleHeaderSortButtonFocus(colId) {
   focusedHeaderColumnId.value = colId;
 
-  const scroller = resolveDataGridScrollParent(container.value) || window;
+  const scroller = resolveDataGridScrollParent(container.value) || globalThis;
   const before =
-    scroller === window
-      ? { top: window.scrollY, left: window.scrollX }
+    scroller === globalThis
+      ? { top: globalThis.scrollY, left: globalThis.scrollX }
       : { top: scroller.scrollTop, left: scroller.scrollLeft };
 
   if (scrollCompensationRaf) cancelAnimationFrame(scrollCompensationRaf);
   scrollCompensationRaf = requestAnimationFrame(() => {
     scrollCompensationRaf = null;
-    if (scroller === window) {
-      window.scrollTo({ top: before.top, left: before.left, behavior: 'instant' });
+    if (scroller === globalThis) {
+      globalThis.scrollTo({ top: before.top, left: before.left, behavior: 'instant' });
     } else {
       scroller.scrollTop = before.top;
       scroller.scrollLeft = before.left;
@@ -2011,6 +2011,7 @@ function handleHeaderSortButtonBlur() {
 }
 
 function forwardHeaderClick(colId) {
+  if (!props.hasSorting) return;
   headerSortButtonRefs.get(colId)?.click();
 }
 

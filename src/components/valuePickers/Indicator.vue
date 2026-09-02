@@ -402,10 +402,10 @@ const indicatorTooltips = computed(() => {
 });
 const wrapperRef = ref();
 
-const colorfulCategories = ['red', 'orange', 'green', 'teal', 'yellow', 'blue', 'purple'];
+const colorfulCategories = new Set(['red', 'orange', 'green', 'teal', 'yellow', 'blue', 'purple']);
 
 function isColorful(item) {
-  return colorfulCategories.includes(item[props.categoryAttribute]);
+  return colorfulCategories.has(item[props.categoryAttribute]);
 }
 
 const isDisabledOrReadOnly = computed(() => props.disabled || props.readOnly);

@@ -804,30 +804,22 @@ export function getGrid(type, rowLgth, startYr, endYr) {
 
 // Function to get months layout array for different cases ([Array(2),[Array(2)], [Array(1),[Array(1)], [Array(2)])
 export function getMonths(currentDate, variant, mode, pickerType, isMobileScreen) {
-  const months = [];
-  let monthsToShow = 0;
+  const isSingleDateMode = (mode === 'date' || mode === 'birth-date') && pickerType === 'single';
+  const isTwoColumnLayout =
+    (variant === 'full-columns' && isSingleDateMode) || (pickerType === 'range' && !isMobileScreen);
 
   // Determine the number of months to show and elements per row based on variant and mode
-  if (variant === 'full' && (mode === 'date' || mode === 'birth-date') && pickerType === 'single') {
+  let monthsToShow = 0;
+  if (variant === 'full' && isSingleDateMode) {
     monthsToShow = 3; // Show the current month and the next 3 months
-  }
-  if (
-    variant === 'full-rows' &&
-    (mode === 'date' || mode === 'birth-date') &&
-    pickerType === 'single'
-  ) {
+  } else if (variant === 'full-rows' && isSingleDateMode) {
     monthsToShow = 1; // Show the current month and the next month
-  }
-  if (
-    (variant === 'full-columns' &&
-      (mode === 'date' || mode === 'birth-date') &&
-      pickerType === 'single') ||
-    (pickerType === 'range' && !isMobileScreen)
-  ) {
+  } else if (isTwoColumnLayout) {
     monthsToShow = 1; // Show the current month and the next month
   }
 
   // Generate the list of months based on the calculated monthsToShow
+  const months = [];
   for (let i = 0; i <= monthsToShow; i += 1) {
     const month = addMonths(currentDate, i); // Add months to the current date
     months.push(month);
@@ -836,29 +828,16 @@ export function getMonths(currentDate, variant, mode, pickerType, isMobileScreen
   const rows = [[], []];
 
   // Special logic for 'full-columns' variant: add two months to the first row
-  if (
-    (variant === 'full-columns' &&
-      (mode === 'date' || mode === 'birth-date') &&
-      pickerType === 'single') ||
-    (pickerType === 'range' && !isMobileScreen)
-  ) {
+  if (isTwoColumnLayout) {
     rows[0].push(months[0], months[1]); // First two months go to the first row
     // Remaining months in alternating rows
     months.slice(2).forEach((month, index) => {
-      if (index % 2 === 0) {
-        rows[1].push(month); // Alternate remaining months to row 1
-      } else {
-        rows[0].push(month); // Alternate remaining months to row 0
-      }
+      rows[index % 2 === 0 ? 1 : 0].push(month); // Alternate remaining months
     });
   } else {
     // Default alternating pattern for other variants
     months.forEach((month, index) => {
-      if (index % 2 === 0) {
-        rows[0].push(month);
-      } else {
-        rows[1].push(month);
-      }
+      rows[index % 2 === 0 ? 0 : 1].push(month);
     });
   }
 

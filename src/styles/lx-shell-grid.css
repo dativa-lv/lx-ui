@@ -129,7 +129,7 @@
   content: ' ';
   height: stretch;
   margin: var(--nav-header-divider-margin);
-  border-right: var(--nav-header-divider-border);;
+  border-right: var(--nav-header-divider-border);
   opacity: 0.2;
   transition: opacity 0.1s ease-out;
 }
@@ -1095,7 +1095,7 @@
   height: stretch;
   margin: var(--nav-header-divider-margin);
   margin-left: var(--space-3000);
-  border-right: var(--nav-header-divider-border);;
+  border-right: var(--nav-header-divider-border);
   opacity: 0.2;
   transition: opacity 0.1s ease-out;
 }
