@@ -1070,11 +1070,24 @@ if (props.builderOptions?.useRegistry) {
   });
 }
 
+const dataState = computed(() =>
+  JSON.stringify({
+    readOnly: props.readOnly,
+  })
+);
+
 defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, getPlainText });
 </script>
 
 <template>
-  <div :id="props.id" class="lx-field-wrapper" ref="markdownWrapper" :data-id="id">
+  <div
+    :id="props.id"
+    class="lx-field-wrapper"
+    ref="markdownWrapper"
+    :data-id="id"
+    data-component="lx-markdown-text-area"
+    :data-state="dataState"
+  >
     <!--eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
     <div
       v-if="!readOnly && !loading"

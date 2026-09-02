@@ -39,6 +39,13 @@ const vCleanHtml = buildVueDompurifyHTMLDirective({
 watch(
   () => props.value,
   async (newMarkdown) => {
+    // marked() throws on null/undefined, and an explicit null from the parent skips the prop default
+    if (!newMarkdown) {
+      markdown.value = '';
+      markdownLoading.value = false;
+      return;
+    }
+
     markdownLoading.value = true;
     await loadMarked();
 
