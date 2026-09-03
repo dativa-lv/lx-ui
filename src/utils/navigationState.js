@@ -9,12 +9,10 @@ export function trackNavigationState(to) {
 }
 
 export function resetNavigationTracking() {
-  intendedRoute = null;
+  // A version reload is in flight - keep intended_route for restoreRouteAndNotify
+  if (sessionStorage.getItem('version_reload_pending') === 'true') return;
 
-  setTimeout(() => {
-    sessionStorage.removeItem('is_navigating');
-    sessionStorage.removeItem('intended_route');
-    sessionStorage.removeItem('version_update_notification');
-    sessionStorage.removeItem('version_reload_pending');
-  }, 200);
+  intendedRoute = null;
+  sessionStorage.removeItem('is_navigating');
+  sessionStorage.removeItem('intended_route');
 }

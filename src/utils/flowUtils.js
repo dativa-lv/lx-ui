@@ -172,7 +172,8 @@ export async function beforeEach(to, from, appStore, authStore, successCallbackF
 
   // Check for version change on route change if we're navigating from a known route
   if (from.name) {
-    await isAppVersionChanged(undefined);
+    // Abort the navigation - the page is reloading into the intended route instead
+    if (await isAppVersionChanged(undefined)) return false;
   }
 
   // Handle anonymous routes
