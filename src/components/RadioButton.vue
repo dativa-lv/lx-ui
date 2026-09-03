@@ -10,7 +10,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   required: { type: Boolean, default: null },
   value: { type: String, default: 'none' },
-  tabindex: { type: Number, default: null },
+  tabindex: { type: String, default: '0' },
   labelId: { type: String, default: null },
 });
 
