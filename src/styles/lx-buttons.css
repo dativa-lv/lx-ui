@@ -1134,6 +1134,25 @@ a.lx-button.lx-button-ghost svg {
   cursor: progress !important;
 }
 
+.lx-button.lx-button-text-only.lx-busy .lx-loader-container {
+  grid-area: auto;
+}
+
+.lx-button.lx-button-text-only.lx-busy .lx-button-content-wrapper {
+  grid-template-areas: none;
+  grid-template-columns: 1fr;
+}
+
+.lx-button.lx-button-text-only.lx-busy .lx-button-content {
+  grid-area: auto;
+  visibility: hidden;
+  height: 0;
+}
+
+.lx-button.lx-button-text-only.lx-busy .lx-button-label {
+  height: 0;
+}
+
 .lx-button-set>.lx-error-action-definitions {
   display: flex;
   gap: var(--space-0500);

@@ -105,9 +105,7 @@ const isIconOnly = computed(() =>
   Boolean(props.variant === 'icon-only' || (!props.label && !slots.default && props.icon))
 );
 
-const isTextOnly = computed(() =>
-  Boolean((props.label || slots.default) && !props.icon && !props.busy)
-);
+const isTextOnly = computed(() => Boolean((props.label || slots.default) && !props.icon));
 
 const accessibleTitle = computed(() => {
   unref(overflowCheckTrigger);
