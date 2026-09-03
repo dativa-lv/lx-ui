@@ -3,6 +3,18 @@
 As LX/UI evolves, some features are refined, simplified, or replaced by better alternatives. This guide documents all breaking changes and recommended migration paths between releases.
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
+
+## 2.3.0 → 2.3.1
+
+### Breaking changes
+
+#### LxToolbar, LxShell
+
+**Token removals**
+
+- `--nav-header-divider-margin` (use `--nav-header-divider-height` to control the divider's height instead)
+- `--toolbar-gap-bottom` (the token has been split into `--list-toolbar-gap-bottom`, `--data-grid-toolbar-gap-bottom`, `--appendable-list-toolbar-gap-bottom` and `--value-picker-toolbar-gap-bottom`, scoped to each toolbar variant)
+
 ## 2.2.15 → 2.3
 
 ### Breaking changes

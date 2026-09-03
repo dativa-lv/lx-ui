@@ -104,7 +104,6 @@
   --data-grid-action-height: var(--row-size);
   --data-grid-action-width: var(--row-size);
   --data-grid-action-outline-offset: var(--button-ghost-outline-offset);
-
   --data-grid-footer-divider-border: var(--border-width-1) solid var(--color-chrome);
   --data-grid-footer-divider-height: stretch;
   --data-grid-footer-button-icon-size: var(--button-icon-size);
@@ -127,6 +126,7 @@
   --data-grid-border-radius: var(--border-radius-0);
   --data-grid-selecting-block-width: var(--row-size);
   --data-grid-selecting-block-height: var(--row-size);
+  --data-grid-toolbar-gap-bottom: var(--space-0);
 
   --selecting-block-margin: var(--space-0500) var(--space-0);
   --selecting-block-text-padding: var(--space-0125) var(--space-0);
@@ -256,6 +256,7 @@
   --list-treelist-indent-child-right: var(--space-0);
   --list-selecting-block-width: var(--row-size);
   --list-selecting-block-height: var(--row-size);
+  --list-toolbar-gap-bottom: var(--list-item-gap);
 
   --nav-tile-width: 20rem;
   --nav-tile-min-height: 12rem;
@@ -318,6 +319,8 @@
   --tag-border-width: var(--border-width-2);
   --tag-border-style: solid;
 
+  --value-picker-toolbar-gap-bottom: var(--space-0500);
+
   --data-block-border-width: var(--list-item-border-width);
   --data-block-border-style: var(--list-item-border-style);
   --data-block-border-radius: var(--list-item-inner-border-radius);
@@ -367,6 +370,7 @@
   --data-block-selecting-block-width: var(--list-selecting-block-width);
   --data-block-selecting-block-height: var(--list-selecting-block-height);
 
+  --appendable-list-toolbar-gap-bottom: var(--list-item-toolbar-gap-bottom);
   --appendable-list-button-padding: var(--space-0250);
   --appendable-list-padding: var(--space-1000) 
                              calc(var(--button-ghost-icon-only-min-width) + var(--space-0500)) 
@@ -627,7 +631,6 @@
   --popover-item-tag-gap: var(--space-0250);
 
   --toolbar-box-shadow: none;
-  --toolbar-gap-bottom: var(--space-0500);
   --toolbar-gap-top: var(--space-0);
   --toolbar-row-gap: var(--space-0);
   --toolbar-divider-height: 2rem;
@@ -888,7 +891,7 @@
   --nav-public-item-width: auto;
 
   --nav-header-divider-border: var(--border-width-1) solid var(--color-nav-foreground);
-  --nav-header-divider-margin: var(--space-0500) var(--space-0);
+  --nav-header-divider-height: 2rem;
 
   --modal-header-grid-areas: 'content button';
   --modal-header-grid-template-columns: 1fr auto;

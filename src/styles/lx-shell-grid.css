@@ -127,8 +127,7 @@
 .lx-layout.lx-layout-default > header .lx-header .lx-main-button::after,
 .lx-layout.lx-layout-default > header .lx-header #nav-toggle .lx-button-content-wrapper::after {
   content: ' ';
-  height: stretch;
-  margin: var(--nav-header-divider-margin);
+  height: var(--nav-header-divider-height);
   border-right: var(--nav-header-divider-border);
   opacity: 0.2;
   transition: opacity 0.1s ease-out;
@@ -1083,6 +1082,17 @@
   cursor: pointer;
 }
 
+.lx .lx-layout .lx-header > .lx-group > .lx-language-menu,
+.lx .lx-layout .lx-header > .lx-group > .lx-alert-menu,
+.lx .lx-layout .lx-header > .lx-group > .lx-help-button,
+.lx .lx-layout .lx-header > .lx-group > .lx-theme-menu,
+.lx .lx-layout .lx-header > .lx-group > .lx-mega-menu,
+.lx .lx-layout .lx-header > .lx-group > .lx-spotlight-button,
+.lx .lx-layout .lx-header > .lx-group > .lx-shell-custom-button {
+  display: flex;
+  align-items: center;
+}
+
 .lx .lx-layout .lx-header > .lx-group > .lx-language-menu::before,
 .lx .lx-layout .lx-header > .lx-group > .lx-alert-menu::before,
 .lx .lx-layout .lx-header > .lx-group > .lx-help-button::before,
@@ -1092,8 +1102,7 @@
 .lx .lx-layout .lx-header > .lx-group > .lx-shell-custom-button::before  {
   position: absolute;
   content: ' ';
-  height: stretch;
-  margin: var(--nav-header-divider-margin);
+  height: var(--nav-header-divider-height);
   margin-left: var(--space-3000);
   border-right: var(--nav-header-divider-border);
   opacity: 0.2;

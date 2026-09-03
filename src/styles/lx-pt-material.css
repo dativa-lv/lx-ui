@@ -147,6 +147,7 @@
     --color-nav-item-border-selected: transparent;
 
     /* LxDataGrid */
+    --data-grid-toolbar-gap-bottom: var(--space-0500);
     --data-grid-border-radius: var(--space-0250);
     --data-grid-border-width: var(--border-width-1);
     --data-grid-column-header-text-font-weight: var(--font-weight-data);
@@ -160,6 +161,7 @@
     --color-data-grid-column-header-background: var(--color-region);
 
     /* LxList */
+    --list-toolbar-gap-bottom: var(--space-0500);
     --list-item-outer-border-radius: var(--border-radius-1000);
     --list-item-inner-border-radius: var(--border-radius-0250);
     --list-item-outer-border-radius-selected: var(--border-radius-1000);
@@ -208,14 +210,12 @@
 
     /* LxToolbar */
     --toolbar-box-shadow: var(--shadow-dropdown);
-    --toolbar-gap-bottom: var(--space-0250);
     --toolbar-input-border-radius: var(--border-radius-full);
     --toolbar-input-border-width: var(--border-width-0);
     --toolbar-border-width: var(--border-width-0);
     --toolbar-border-radius: var(--border-radius-full);
     --toolbar-row-gap: var(--space-0250);
     --toolbar-gap: var(--space-0500);
-    --toolbar-gap-bottom: var(--space-0500);
     --toolbar-padding: var(--space-0250);
     --toolbar-button-group-gap: var(--space-0500);
     --toolbar-button-primary-border-radius: var(--border-radius-full);
@@ -267,8 +267,14 @@
     --checkbox-width: 1.25rem;
     --checkbox-height: 1.25rem;
 
+    --color-checkbox-border-on: var(--color-brand);
+    --color-checkbox-background-on: var(--color-brand);
+
     /* LxRadioButton */
     --radio-button-border-width: var(--border-width-2);
+
+    --color-radio-button-border-on: var(--color-brand);
+    --color-radio-button-thumb: var(--color-brand);
 
     /* LxValuePicker tiles */
     --tile-border-radius: var(--border-radius-0750);
@@ -286,6 +292,9 @@
     --indicator-icon-size: var(--icon-size-s);
 
     --color-indicator-border: var(--color-chrome);
+
+    /* LxAppendableList */
+    --appendable-list-toolbar-gap-bottom: var(--space-0500);
 }
 
 .lx.lx-theme-dark {
@@ -341,15 +350,22 @@
     --color-input-complex-background: transparent;
     --color-input-complex-border-disabled: var(--color-disabled-foreground);
 
+    /* LxCheckBox */
+    --color-checkbox-border-on: var(--color-brand);
+    --color-checkbox-background-on: var(--color-brand);
+
+    /* LxRadioButton */
+    --color-radio-button-border-on: var(--color-brand);
+    --color-radio-button-thumb: var(--color-brand);
+
     /* LxValuePicker indicators */
     --color-indicator-border: var(--color-chrome);
 }
 
-.lx.lx.lx-theme-contrast {
+.lx.lx-theme-contrast {
   --input-border-width: 1px;
   --toolbar-input-border-width: var(--input-border-width);
 }
-
 
 .lx .lx-region .lx-component-toolbar,
 .lx .lx-region-component .lx-component-toolbar {
@@ -405,4 +421,42 @@
 .lx .lx-region .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region-component .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky {
   background: var(--color-data-grid-background);
+}
+
+.lx-component-toolbar.lx-floating-toolbar .second-row,
+.lx-component-toolbar.lx-floating-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
+.lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar .second-row,
+.lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
+  --color-toolbar-button-ghost-background: transparent;
+  --color-toolbar-button-ghost-background-focus: transparent;
+  --color-toolbar-button-ghost-border: transparent;
+  --color-toolbar-button-ghost-border-focus: transparent;
+  --color-toolbar-selection-button-background: var(--color-region);
+  --color-toolbar-selection-button-background-focus: var(--color-region);
+  --color-toolbar-selection-button-border: var(--color-region);
+  --color-toolbar-selection-button-border-focus: var(--color-region);
+  --color-input-background: transparent;
+}
+
+.lx-region .lx-component-toolbar.lx-floating-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
+.lx-region-component .lx-component-toolbar.lx-floating-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
+.lx-region .lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
+.lx-region-component .lx-data-grid-wrapper .lx-component-toolbar.lx-grid-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
+  --color-toolbar-selection-button-background: var(--color-region-2);
+  --color-toolbar-selection-button-background-focus: var(--color-region-2);
+  --color-toolbar-selection-button-border: var(--color-region-2);
+  --color-toolbar-selection-button-border-focus: var(--color-region-2);
+}
+
+.lx .lx-layout .lx-component-toolbar.lx-floating-toolbar.lx-disabled .second-row {
+  background: var(--color-region);
+}
+
+.lx .lx-layout .lx-region .lx-component-toolbar.lx-floating-toolbar.lx-disabled .second-row,
+.lx .lx-layout .lx-region-component .lx-component-toolbar.lx-floating-toolbar.lx-disabled .second-row {
+  background: var(--color-region-2);
+}
+
+.lx .lx-layout .lx-component-toolbar.lx-disabled.lx-selection-toolbar.lx-floating-toolbar .second-row {
+  background: var(--color-toolbar-selection-button-background-disabled);
 }

@@ -4,6 +4,14 @@
 
 Here you may find tokens for LxCheckbox and LxRadioButton as well as LxValuePicker `default`, `horizontal`, `indicator`,`tiles`, and `tags` variants.
 
+## Shared across all LxValuePicker variants
+
+### Layout
+
+| Variable name                       | Default value  |
+|-------------------------------------|----------------|
+| `--value-picker-toolbar-gap-bottom` | `--space-0500` |
+
 ## Variant="default", variant="horizontal", LxCheckbox, LxRadioButton
 
 > Note: `--selecting-block-*` tokens describe the wrapper around radio buttons and checkboxes, and are shared between the two.

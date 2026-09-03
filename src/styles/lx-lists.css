@@ -962,6 +962,10 @@
 
 /*** Toolbar styles ***/
 
+.lx-list-wrapper .lx-component-toolbar {
+  margin-bottom: var(--list-toolbar-gap-bottom);
+}
+
 .lx-list-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
   display: flex;
   align-items: center;

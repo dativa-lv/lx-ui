@@ -40,8 +40,9 @@
 | `--data-grid-column-header-padding`             | `--space-0`                                   |
 | `--data-grid-column-header-cell-gap`            | `--space-0250`                                |
 | `--data-grid-column-header-text-font-weight`    | `--font-weight`                               |
-| `--data-block-selecting-block-width`            | `--row-size`                                  |
-| `--data-block-selecting-block-height`           | `--row-size`                                  |
+| `--data-grid-selecting-block-width`             | `--row-size`                                  |
+| `--data-grid-selecting-block-height`            | `--row-size`                                  |
+| `--data-grid-toolbar-gap-bottom`                | `--space-0`                                   |
 
 ### Color
 

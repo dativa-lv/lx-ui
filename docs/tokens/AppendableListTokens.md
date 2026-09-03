@@ -11,3 +11,4 @@
 | `--appendable-list-padding-compact`            | `--space-0500` calc(`--button-ghost-icon-only-min-width` + `--space-0500`) `--space-0500` `--space-0500` |
 | `--appendable-list-padding-expandable`         | `--space-1000`                                                                                           |
 | `--appendable-list-padding-expandable-compact` | `--space-0500`                                                                                           |
+| `--appendable-list-toolbar-gap-bottom`         | `--list-item-toolbar-gap-bottom`                                                                         |

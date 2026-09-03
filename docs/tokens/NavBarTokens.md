@@ -41,7 +41,7 @@
 | `--nav-public-item-padding`               | `--space-0` calc(`--space-1000` - `--border-width-2`) |
 | `--nav-public-item-width`                 | auto                                                  |
 | `--nav-header-divider-border`             | `--border-width-1` solid `--color-nav-foreground`     |
-| `--nav-header-divider-margin`             | `--space-0500` `--space-0`                            |
+| `--nav-header-divider-height`             | 2rem                                                  |
 
 ## Color
 

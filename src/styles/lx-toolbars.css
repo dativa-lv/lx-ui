@@ -4,7 +4,6 @@
   border-width: var(--toolbar-border-width);
   border-style: var(--toolbar-border-style);
   border-color: var(--color-toolbar-border);
-  margin-bottom: var(--toolbar-gap-bottom);
   border-radius: var(--toolbar-border-radius);
 }
 
@@ -94,11 +93,17 @@
 .lx-component-toolbar.lx-scrolled .lx-toolbar-promoted-action .lx-button {
   box-shadow: var(--toolbar-box-shadow);
 }
+
 .lx-component-toolbar.lx-selection-toolbar .first-row-content,
 .lx-component-toolbar.lx-selection-toolbar .lx-toolbar-outer-select-all,
 .lx-component-toolbar.lx-selection-toolbar .lx-toolbar-search-select-group {
   background: transparent;
   padding: var(--space-0);
+}
+
+.lx-component-toolbar .first-row-content .lx-toolbar-outer-select-all {
+  padding: var(--space-0);
+  box-shadow: none;
 }
 
 .lx-component-toolbar .first-row-content.is-empty {
@@ -788,7 +793,8 @@
 }
 
 .lx-component-toolbar .second-row,
-.lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
+.lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
+.lx-data-grid-wrapper .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
   --color-toolbar-button-ghost-icon: var(--color-data);
   --color-toolbar-button-ghost-icon-focus: var(--color-data);
   --color-toolbar-button-ghost-background: var(--color-input-background);
@@ -810,8 +816,10 @@
 .lx-region-component .lx-component-toolbar .second-row,
 .lx-region .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
 .lx-region-component .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
-.lx-data-grid-wrapper .lx-component-toolbar .second-row,
-.lx-data-grid-wrapper .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
+.lx-region .lx-data-grid-wrapper .lx-component-toolbar .second-row,
+.lx-region-component .lx-data-grid-wrapper .lx-component-toolbar .second-row,
+.lx-region .lx-data-grid-wrapper .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded,
+.lx-region-component .lx-data-grid-wrapper .lx-component-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
   --color-toolbar-button-ghost-icon: var(--color-data);
   --color-toolbar-button-ghost-icon-focus: var(--color-data);
   --color-toolbar-button-ghost-background: var(--color-region-2);
@@ -1375,7 +1383,8 @@
 
 .lx .lx-region .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region-component .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-region-component .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region-component .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-region .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
@@ -1385,7 +1394,8 @@
 
 .lx .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
 .lx .lx-value-picker-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+.lx .lx-appendable-list-wrapper .lx-component-toolbar.lx-toolbar-sticky,
+.lx .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky {
   background: var(--color-background);
 }
 
@@ -1546,7 +1556,7 @@
 /*** lxValuePicker toolbar ***/
 
 .lx-value-picker-wrapper .lx-component-toolbar {
-  margin-bottom: var(--space-0500);
+  margin-bottom: var(--value-picker-toolbar-gap-bottom);
 }
 
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area,

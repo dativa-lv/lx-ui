@@ -848,7 +848,6 @@
   max-width: 100%;
   text-overflow: ellipsis;
   overflow-y: auto;
-  height: 100%;
 }
 
 .lx-value-picker-tile:focus,

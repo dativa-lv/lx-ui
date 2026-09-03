@@ -1092,6 +1092,10 @@
   padding-left: var(--space-1000);
 }
 
+.lx-data-grid-wrapper .lx-component-toolbar {
+  margin-bottom: var(--data-grid-toolbar-gap-bottom);
+}
+
 /*** Footer styles ***/
 
 .lx-data-grid-wrapper .lx-statusbar {

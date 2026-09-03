@@ -65,12 +65,13 @@
 | `--list-treelist-indent-child-right`              | `--space-0`                                                   |
 | `--list-selecting-block-width`                    | `--row-size`                                                  |
 | `--list-selecting-block-height`                   | `--row-size`                                                  |
+| `--list-toolbar-gap-bottom`                       | `--list-item-gap`                                             |
 
 ## Color
 
 | Variable name                              | Default value                              |
 |--------------------------------------------|--------------------------------------------|
-| `--color-list-item-border`                 | `transparent`                              |
+| `--color-list-item-border`                 | transparent                                |
 | `--color-list-item-background`             | `--color-region`                           |
 | `--color-list-draggable-handle-icon`       | `--color-label`                            |
 | `--color-list-draggable-handle-icon-hover` | `--color-region-hover-foreground`          |

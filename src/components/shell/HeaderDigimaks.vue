@@ -440,7 +440,6 @@ const themeDisplayItems = computed(() => {
         description: themeNames.value[item],
         name: themeNames.value[item],
         icon: themeIcons[item],
-        iconSet: 'cds',
       });
     });
   }

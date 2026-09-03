@@ -981,6 +981,10 @@ svg .lx-shade {
   background-color: transparent;
 }
 
+.lx-appendable-list-wrapper .lx-component-toolbar {
+  margin-bottom: var(--appendable-list-toolbar-gap-bottom);
+}
+
 .lx-appendable-list {
   display: flex;
   flex-direction: column;

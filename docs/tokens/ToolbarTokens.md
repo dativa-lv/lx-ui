@@ -12,7 +12,6 @@ LxToolbar has two contexts - floating (LxList, LxDataGrid, LxAppendableList) and
 |----------------------------------------------------|-----------------------------------------------------------------------------|
 | `--toolbar-box-shadow`                             | `--space-0`                                                                 |
 | `--toolbar-gap-top`                                | `--space-0`                                                                 |
-| `--toolbar-gap-bottom`                             | `--space-0500`                                                              |
 | `--toolbar-row-gap`                                | `--space-0`                                                                 |
 | `--toolbar-divider-height`                         | 2rem                                                                        |
 | `--toolbar-divider-border`                         | `--border-width-1` solid `--color-chrome`                                   |
