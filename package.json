@@ -57,7 +57,7 @@
     "@braintree/sanitize-url": "^7.0.0",
     "@floating-ui/vue": "^2.0.0",
     "@tanstack/vue-virtual": "3.13.21",
-    "@tiptap/core": "2.27.2",
+    "@tiptap/core": "3.30.4",
     "@tiptap/extension-character-count": "2.27.2",
     "@tiptap/extension-color": "2.27.2",
     "@tiptap/extension-heading": "2.27.2",
