@@ -4,7 +4,7 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
-## 2.3.0 → 2.3.1
+## 2.3 → 2.3.1
 
 ### Breaking changes
 
@@ -33,10 +33,6 @@ Our goal is to make upgrading predictable, transparent, and worth the effort.
 | `next({ name: 'login' })` | `return { name: 'login' };` |
 | `next('/some/path')`      | `return '/some/path';`      |
 | `next(error)`             | `throw error;`              |
-
-## 2.2.15 → 2.3
-
-### Breaking changes
 
 #### `sanitizeToPlainText` moved to `lxSanitizeUtils`
 
@@ -352,7 +348,7 @@ watch(
 
 If your project passes decimal values to any of these props, round them before passing.
 
-## 2.1.12 → 2.2.0
+## 2.1.12 → 2.2
 
 ### Breaking changes
 
@@ -638,7 +634,7 @@ The `--color-content-switcher-foreground` token has been split into `--color-con
 - `lx-content-switcher-grid` → `lx-content-switcher`
 - `--content-switcher-height` → `--content-switcher-item-height`; container height is now derived from `--content-switcher-container-padding`
 
-## 2.1.0 → 2.1.1
+## 2.1 → 2.1.1
 
 ### Breaking changes
 
