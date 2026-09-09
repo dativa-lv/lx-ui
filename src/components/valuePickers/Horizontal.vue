@@ -399,9 +399,9 @@ function getTabIndex(id) {
     itemsDisplay.value.length > 0 && itemsDisplay.value[0][props.idAttribute] === id;
   const isValidModel = itemsDisplay.value.find((item) => item[props.idAttribute] === model.value);
   if (model.value === id || (isFirstItem && !isValidModel)) {
-    return 0;
+    return '0';
   }
-  return -1;
+  return '-1';
 }
 
 function isAnyItemSelected() {
@@ -537,7 +537,7 @@ const wrapperRef = ref();
               :group-id="groupId"
               :disabled="disabled"
               :value="item[idAttribute].toString()"
-              :tabindex="disabled ? -1 : getTabIndex(item[idAttribute])"
+              :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])"
               @click="selectSingle(item[idAttribute])"
               @keydown.right.prevent="!disabled && focusNext()"
               @keydown.down.prevent="!disabled && focusNext()"

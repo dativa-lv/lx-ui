@@ -301,7 +301,6 @@ function extractVirtualRangeWithPinned(range, pinnedIndex) {
 const isDataGridLayoutVisible = ref(false);
 
 const focusedHeaderColumnId = ref(null);
-const headerSortButtonRefs = new Map();
 let pendingHeaderScrollRaf = null;
 let pendingContainerScrollRaf = null;
 let pendingBoundingRaf = null;
@@ -2010,9 +2009,9 @@ function handleHeaderSortButtonBlur() {
   focusedHeaderColumnId.value = null;
 }
 
-function forwardHeaderClick(colId) {
+function forwardHeaderClick(colId, colIndex) {
   if (!props.hasSorting) return;
-  headerSortButtonRefs.get(colId)?.click();
+  handleHeaderClick(colId, colIndex);
 }
 
 watch(
@@ -2239,7 +2238,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
 
           <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
           <div
-            v-for="col in gridColumnsDisplay"
+            v-for="(col, colIndex) in gridColumnsDisplay"
             :key="col.id"
             :data-col-id="col.id"
             :title="formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)"
@@ -2260,10 +2259,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               { 'lx-cell-stretch': col.size === '*' },
               { 'lx-cell-header-highlighted': focusedHeaderColumnId === col.id },
             ]"
-            @click="forwardHeaderClick(col.id)"
+            @click="forwardHeaderClick(col.id, colIndex)"
             @keydown.space.prevent
-            @keyup.space.prevent="forwardHeaderClick(col.id)"
-            @keyup.enter="forwardHeaderClick(col.id)"
+            @keyup.space.prevent="forwardHeaderClick(col.id, colIndex)"
+            @keyup.enter="forwardHeaderClick(col.id, colIndex)"
           >
             <div class="lx-sticky-header-content-wrapper">
               <p class="lx-primary" v-if="col.size !== 'xs'">{{ col.name }}</p>
@@ -2354,12 +2353,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 role="button"
                 class="lx-cell-header-sort-button"
                 :data-col-id="col.id"
-                :ref="
-                  (el) => {
-                    registerCell(el, 0, showSelecting ? colIndex + 1 : colIndex);
-                    headerSortButtonRefs.set(col.id, el);
-                  }
-                "
+                :ref="(el) => registerCell(el, 0, showSelecting ? colIndex + 1 : colIndex)"
                 :tabindex="getTabIndex(0, showSelecting ? colIndex + 1 : colIndex)"
                 @click="handleHeaderClick(col.id, colIndex)"
                 @keyup.enter="handleHeaderClick(col.id, colIndex)"

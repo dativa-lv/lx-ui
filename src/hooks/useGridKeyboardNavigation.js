@@ -294,7 +294,7 @@ export function useGridKeyboardNavigation({ getScrollMarginTop } = {}) {
   }
 
   function getTabIndex(row, col, item = 0) {
-    return isActiveCell(row, col, item) ? 0 : -1;
+    return isActiveCell(row, col, item) ? '0' : '-1';
   }
 
   function getFocusable(row, col, item = 0) {

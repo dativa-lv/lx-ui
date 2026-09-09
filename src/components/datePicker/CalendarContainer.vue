@@ -4158,391 +4158,336 @@ watch(
   }
 );
 
+// Clears the calendar and reports an empty value; returns true so callers can bail out
+function rejectModelValue(handleActiveInputSwitch = true) {
+  clearSelectedValues(handleActiveInputSwitch);
+  emits('update:modelValue', null);
+  return true;
+}
+
+// A range model is empty when it is missing entirely or has neither end set
+function isRangeEmpty(value) {
+  return isNil(value) || (!value.start && !value.end);
+}
+
+// Day-level bounds only apply to modes that select an actual date
+function limitsDaySelection() {
+  return props.mode !== 'month' && props.mode !== 'quarters';
+}
+
+function isSelectableDate(date) {
+  return canSelectDate(date, props.minDateRef, props.maxDateRef, props.mode);
+}
+
+function isSelectableQuarter(selection) {
+  return isQuarterValid(selection, props.minDateRef, props.maxDateRef);
+}
+
+function applyDecadeWindow(year) {
+  const decadeStartYear = findDecadeStartYear(year);
+  startYear.value = decadeStartYear - 1;
+  endYear.value = decadeStartYear + 10;
+}
+
+function applyQuarterDecadeWindow(year) {
+  const decadeStartYear = findDecadeStartYear(year);
+  startQuarterYear.value = decadeStartYear;
+  endQuarterYear.value = decadeStartYear + 9;
+}
+
+// 'YYYY-QN' code for ordering, plus the { year, quarter } shape isQuarterValid expects
+function parseQuarter(date) {
+  const code = extractQuarterFromDate(date);
+  const [year, quarter] = code.split('-');
+  return { code, selection: { year: Number(year), quarter: quarter.split('Q')[1] } };
+}
+
+function applySingleDate(newValue) {
+  selectedDate.value = newValue;
+  if (!selectedManually.value) currentDate.value = selectedDate.value;
+
+  selectedDay.value = newValue.getDate();
+  selectedMonth.value = newValue.getMonth();
+  selectedYear.value = newValue.getFullYear();
+
+  selectedHour.value = newValue.getHours();
+  selectedMinute.value = newValue.getMinutes();
+  selectedSecond.value = newValue.getSeconds();
+  currentHourIndex.value = getTimeOrderIndex(hours.value, newValue.getHours());
+
+  const cadenceM = props.cadenceOfMinutes;
+  const cadenceS = props.cadenceOfSeconds;
+  const minutesValue = newValue.getMinutes();
+  const secondsValue = newValue.getSeconds();
+  currentMinuteIndex.value = resolveCadenceIndex(cadenceM, minutesValue, filteredMinutes.value);
+  currentSecondIndex.value = resolveCadenceIndex(cadenceS, secondsValue, filteredSeconds.value);
+
+  selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+  selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+
+  selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value].id;
+  selectedSecondId.value = filteredSeconds.value[currentSecondIndex.value].id;
+
+  applyDecadeWindow(newValue.getFullYear());
+
+  if (props.mode === 'date-time' || props.mode === 'date-time-full') {
+    hasEmittedDateTimeSelection.value = true;
+    syncDateNavigationWithView();
+    syncTimeColumnViewportWithSelection();
+  }
+
+  emits('update:modelValue', newValue);
+}
+
+function applySingleTime(newValue) {
+  currentHourIndex.value = getTimeOrderIndex(hours.value, newValue.getHours());
+
+  const cadence = props.cadenceOfMinutes;
+  const minutesValue = newValue.getMinutes();
+  currentMinuteIndex.value = resolveCadenceIndex(cadence, minutesValue, filteredMinutes.value);
+
+  selectedHour.value = newValue.getHours();
+  selectedMinute.value = newValue.getMinutes();
+  selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
+  selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
+
+  syncTimeColumnViewportWithSelection();
+
+  emits('update:modelValue', newValue);
+}
+
+function applySingleTimeFull(newValue) {
+  currentHourIndex.value = getTimeOrderIndex(hours.value, newValue.getHours());
+
+  const cadenceM = props.cadenceOfMinutes;
+  const cadenceS = props.cadenceOfSeconds;
+  const minutesValue = newValue.getMinutes();
+  const secondsValue = newValue.getSeconds();
+  currentMinuteIndex.value = resolveCadenceIndex(cadenceM, minutesValue, filteredMinutes.value);
+  currentSecondIndex.value = resolveCadenceIndex(cadenceS, secondsValue, filteredSeconds.value);
+
+  selectedHour.value = newValue.getHours();
+
+  selectedMinute.value = newValue.getMinutes();
+  selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
+  selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
+
+  selectedSecond.value = newValue.getSeconds();
+  selectedSecondId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
+  selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
+
+  syncTimeColumnViewportWithSelection();
+
+  emits('update:modelValue', newValue);
+}
+
+function applySingleMonth(newValue) {
+  selectedDate.value = newValue;
+  selectedMonth.value = newValue.getMonth();
+  if (!selectedManually.value) currentDate.value = selectedDate.value;
+  emits('update:modelValue', selectedDate.value);
+}
+
+function applySingleYear(newValue) {
+  selectedDate.value = newValue;
+  selectedYear.value = newValue.getFullYear();
+
+  applyDecadeWindow(newValue.getFullYear());
+
+  emits('update:modelValue', selectedDate.value);
+}
+
+function applySingleMonthYear(newValue) {
+  selectedDate.value = newValue;
+  selectedMonth.value = newValue.getMonth();
+  selectedYear.value = newValue.getFullYear();
+  if (!selectedManually.value) currentDate.value = selectedDate.value;
+
+  applyDecadeWindow(newValue.getFullYear());
+
+  emits('update:modelValue', selectedDate.value);
+}
+
+function applySingleQuarter(newValue) {
+  const { selection } = parseQuarter(newValue);
+
+  if (!isSelectableQuarter(selection)) return rejectModelValue();
+
+  selectedQuarter.value = selection.quarter;
+  selectedYear.value = selection.year;
+
+  applyQuarterDecadeWindow(selection.year);
+
+  emits('update:modelValue', newValue);
+  return false;
+}
+
+// Returns true when the value was rejected and the watcher should bail out
+function applySingleValue(newValue) {
+  if (limitsDaySelection() && !isSelectableDate(newValue)) return rejectModelValue();
+
+  if (isDateMode.value || props.mode === 'date-time' || props.mode === 'date-time-full') {
+    applySingleDate(newValue);
+  }
+  if (props.mode === 'time') applySingleTime(newValue);
+  if (props.mode === 'time-full') applySingleTimeFull(newValue);
+  if (props.mode === 'month') applySingleMonth(newValue);
+  if (props.mode === 'year') applySingleYear(newValue);
+  if (props.mode === 'month-year') applySingleMonthYear(newValue);
+  if (props.mode === 'quarters') return applySingleQuarter(newValue);
+
+  return false;
+}
+
+function applyRangeAnchor(date) {
+  if (props.menuState) {
+    updateCurrentDateIfNotInMonthsList(date);
+  } else {
+    currentDate.value = date;
+  }
+}
+
+function setRangeStart(date) {
+  selectedStartDate.value = date;
+  selectedStartDay.value = date.getDate();
+  selectedStartMonth.value = date.getMonth();
+  selectedStartYear.value = date.getFullYear();
+}
+
+function clearRangeStart() {
+  selectedStartDate.value = null;
+  selectedStartDay.value = null;
+  selectedStartMonth.value = null;
+  selectedStartYear.value = null;
+}
+
+function setRangeEnd(date) {
+  selectedEndDate.value = date;
+  selectedEndDay.value = date.getDate();
+  selectedEndMonth.value = date.getMonth();
+  selectedEndYear.value = date.getFullYear();
+}
+
+function clearRangeEnd() {
+  selectedEndDate.value = null;
+  selectedEndDay.value = null;
+  selectedEndMonth.value = null;
+  selectedEndYear.value = null;
+}
+
+// Validates both quarter ends and frames the quarter decade; true when the value is rejected
+function applyRangeQuarterBounds(newValue) {
+  const start = parseQuarter(newValue.start);
+  const end = parseQuarter(newValue.end);
+
+  if (start.code > end.code) return rejectModelValue();
+
+  if (!isSelectableQuarter(start.selection) || !isSelectableQuarter(end.selection)) {
+    return rejectModelValue();
+  }
+
+  applyQuarterDecadeWindow(start.selection.year);
+  return false;
+}
+
+function applyRangeBothEnds(newValue) {
+  if (props.mode !== 'quarters' && newValue.start > newValue.end) return rejectModelValue();
+
+  if (
+    limitsDaySelection() &&
+    (!isSelectableDate(newValue.start) || !isSelectableDate(newValue.end))
+  ) {
+    return rejectModelValue();
+  }
+
+  if (props.mode === 'quarters' && applyRangeQuarterBounds(newValue)) return true;
+
+  const rangeAnchor = props.activeInput === 'endInput' ? newValue.end : newValue.start;
+
+  applyRangeAnchor(rangeAnchor);
+
+  setRangeStart(newValue.start);
+  setRangeEnd(newValue.end);
+
+  applyDecadeWindow(rangeAnchor.getFullYear());
+  applyQuarterDecadeWindow(rangeAnchor.getFullYear());
+
+  emits('update:modelValue', {
+    start: selectedStartDate.value,
+    end: selectedEndDate.value,
+  });
+  return false;
+}
+
+function applyRangeStartOnly(newValue) {
+  if (limitsDaySelection() && !isSelectableDate(newValue.start)) return rejectModelValue();
+
+  if (props.mode === 'quarters') {
+    const { selection } = parseQuarter(newValue.start);
+    if (!isSelectableQuarter(selection)) return rejectModelValue();
+    applyQuarterDecadeWindow(selection.year);
+  }
+
+  applyRangeAnchor(newValue.start);
+
+  setRangeStart(newValue.start);
+  clearRangeEnd();
+
+  applyDecadeWindow(newValue.start.getFullYear());
+
+  emits('update:modelValue', {
+    start: selectedStartDate.value,
+    end: null,
+  });
+  return false;
+}
+
+function applyRangeEndOnly(newValue) {
+  if (limitsDaySelection() && !isSelectableDate(newValue.end)) return rejectModelValue();
+
+  if (props.mode === 'quarters') {
+    const { selection } = parseQuarter(newValue.end);
+    if (!isSelectableQuarter(selection)) return rejectModelValue();
+    applyQuarterDecadeWindow(selection.year);
+  }
+
+  applyRangeAnchor(newValue.end);
+
+  clearRangeStart();
+  setRangeEnd(newValue.end);
+
+  applyDecadeWindow(newValue.end.getFullYear());
+
+  emits('update:modelValue', {
+    start: null,
+    end: selectedEndDate.value,
+  });
+  return false;
+}
+
+// Returns true when the value was rejected and the watcher should bail out
+function applyRangeValue(newValue) {
+  if (newValue.start && newValue.end) return applyRangeBothEnds(newValue);
+  if (newValue.start) return applyRangeStartOnly(newValue);
+  if (newValue.end) return applyRangeEndOnly(newValue);
+  return false;
+}
+
 watch(
   () => props.modelValue,
   (newValue) => {
-    if (isNil(newValue) && props.pickerType === 'single') {
-      clearSelectedValues();
-      emits('update:modelValue', null);
+    if (props.pickerType === 'single' && isNil(newValue)) {
+      rejectModelValue();
       return;
     }
 
-    if ((isNil(newValue) || (!newValue.start && !newValue.end)) && props.pickerType === 'range') {
-      clearSelectedValues(false);
-      emits('update:modelValue', null);
+    if (props.pickerType === 'range' && isRangeEmpty(newValue)) {
+      rejectModelValue(false);
       return;
     }
 
-    if (
-      props.pickerType === 'single' &&
-      props.mode !== 'month' &&
-      props.mode !== 'quarters' &&
-      !canSelectDate(newValue, props.minDateRef, props.maxDateRef, props.mode)
-    ) {
-      clearSelectedValues();
-      emits('update:modelValue', null);
-      return;
-    }
-
-    if (props.pickerType === 'single' && isDefined(newValue)) {
-      if (isDateMode.value || props.mode === 'date-time' || props.mode === 'date-time-full') {
-        selectedDate.value = newValue;
-        if (!selectedManually.value) currentDate.value = selectedDate.value;
-
-        selectedDay.value = newValue.getDate();
-        selectedMonth.value = newValue.getMonth();
-        selectedYear.value = newValue.getFullYear();
-
-        selectedHour.value = newValue.getHours();
-        selectedMinute.value = newValue.getMinutes();
-        selectedSecond.value = newValue.getSeconds();
-        currentHourIndex.value = getTimeOrderIndex(hours.value, newValue.getHours());
-
-        const cadenceM = props.cadenceOfMinutes;
-        const cadenceS = props.cadenceOfSeconds;
-        const minutesValue = newValue.getMinutes();
-        const secondsValue = newValue.getSeconds();
-        currentMinuteIndex.value = resolveCadenceIndex(
-          cadenceM,
-          minutesValue,
-          filteredMinutes.value
-        );
-        currentSecondIndex.value = resolveCadenceIndex(
-          cadenceS,
-          secondsValue,
-          filteredSeconds.value
-        );
-
-        selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
-        selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
-
-        selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value].id;
-        selectedSecondId.value = filteredSeconds.value[currentSecondIndex.value].id;
-
-        const decadeStartYear = findDecadeStartYear(newValue.getFullYear());
-        startYear.value = decadeStartYear - 1;
-        endYear.value = decadeStartYear + 10;
-
-        if (props.mode === 'date-time' || props.mode === 'date-time-full') {
-          hasEmittedDateTimeSelection.value = true;
-          syncDateNavigationWithView();
-        }
-
-        if (props.mode === 'date-time' || props.mode === 'date-time-full') {
-          syncTimeColumnViewportWithSelection();
-        }
-
-        emits('update:modelValue', newValue);
-      }
-
-      if (props.mode === 'time') {
-        currentHourIndex.value = getTimeOrderIndex(hours.value, newValue.getHours());
-
-        const cadence = props.cadenceOfMinutes;
-        const minutesValue = newValue.getMinutes();
-        currentMinuteIndex.value = resolveCadenceIndex(
-          cadence,
-          minutesValue,
-          filteredMinutes.value
-        );
-
-        selectedHour.value = newValue.getHours();
-        selectedMinute.value = newValue.getMinutes();
-        selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
-        selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
-
-        syncTimeColumnViewportWithSelection();
-
-        emits('update:modelValue', newValue);
-      }
-
-      if (props.mode === 'time-full') {
-        currentHourIndex.value = getTimeOrderIndex(hours.value, newValue.getHours());
-
-        const cadenceM = props.cadenceOfMinutes;
-        const cadenceS = props.cadenceOfSeconds;
-        const minutesValue = newValue.getMinutes();
-        const secondsValue = newValue.getSeconds();
-        currentMinuteIndex.value = resolveCadenceIndex(
-          cadenceM,
-          minutesValue,
-          filteredMinutes.value
-        );
-        currentSecondIndex.value = resolveCadenceIndex(
-          cadenceS,
-          secondsValue,
-          filteredSeconds.value
-        );
-
-        selectedHour.value = newValue.getHours();
-
-        selectedMinute.value = newValue.getMinutes();
-        selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
-        selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
-
-        selectedSecond.value = newValue.getSeconds();
-        selectedSecondId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
-        selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
-
-        syncTimeColumnViewportWithSelection();
-
-        emits('update:modelValue', newValue);
-      }
-
-      if (props.mode === 'month') {
-        selectedDate.value = newValue;
-        selectedMonth.value = newValue.getMonth();
-        if (!selectedManually.value) currentDate.value = selectedDate.value;
-        emits('update:modelValue', selectedDate.value);
-      }
-
-      if (props.mode === 'year') {
-        selectedDate.value = newValue;
-        selectedYear.value = newValue.getFullYear();
-
-        const decadeStartYear = findDecadeStartYear(newValue.getFullYear());
-        startYear.value = decadeStartYear - 1;
-        endYear.value = decadeStartYear + 10;
-
-        emits('update:modelValue', selectedDate.value);
-      }
-
-      if (props.mode === 'month-year') {
-        selectedDate.value = newValue;
-        selectedMonth.value = newValue.getMonth();
-        selectedYear.value = newValue.getFullYear();
-        if (!selectedManually.value) currentDate.value = selectedDate.value;
-
-        const decadeStartYear = findDecadeStartYear(newValue.getFullYear());
-        startYear.value = decadeStartYear - 1;
-        endYear.value = decadeStartYear + 10;
-
-        emits('update:modelValue', selectedDate.value);
-      }
-
-      if (props.mode === 'quarters') {
-        const getQuarterStringFromDateObj = extractQuarterFromDate(newValue);
-        const [year, quarter] = getQuarterStringFromDateObj.split('-');
-        const normalizedQuarter = quarter.split('Q');
-        const constructedQuarterObj = {
-          year: Number(year),
-          quarter: normalizedQuarter[1],
-        };
-
-        if (!isQuarterValid(constructedQuarterObj, props.minDateRef, props.maxDateRef)) {
-          clearSelectedValues();
-          emits('update:modelValue', null);
-          return;
-        }
-
-        selectedQuarter.value = constructedQuarterObj?.quarter;
-        selectedYear.value = constructedQuarterObj?.year;
-
-        startQuarterYear.value = findDecadeStartYear(constructedQuarterObj.year);
-        endQuarterYear.value = findDecadeStartYear(constructedQuarterObj.year) + 9;
-        emits('update:modelValue', newValue);
-      }
-    }
-
-    if (props.pickerType === 'range' && newValue) {
-      if (newValue.start && newValue.end) {
-        if (props.mode !== 'quarters' && newValue.start > newValue.end) {
-          clearSelectedValues();
-          emits('update:modelValue', null);
-          return;
-        }
-
-        if (
-          (props.mode !== 'month' &&
-            props.mode !== 'quarters' &&
-            !canSelectDate(newValue.start, props.minDateRef, props.maxDateRef, props.mode)) ||
-          (props.mode !== 'month' &&
-            props.mode !== 'quarters' &&
-            !canSelectDate(newValue.end, props.minDateRef, props.maxDateRef, props.mode))
-        ) {
-          clearSelectedValues();
-          emits('update:modelValue', null);
-          return;
-        }
-
-        if (props.mode === 'quarters') {
-          const getStartQuarterStringFromDateObj = extractQuarterFromDate(newValue.start);
-          const getEndQuarterStringFromDateObj = extractQuarterFromDate(newValue.end);
-          const [startQrYear, startQuarter] = getStartQuarterStringFromDateObj.split('-');
-          const [endQrYear, endQuarter] = getEndQuarterStringFromDateObj.split('-');
-          const normalizeStartQuarter = startQuarter.split('Q');
-          const normalizeEndQuarter = endQuarter.split('Q');
-
-          const constructedStartQuarterObj = {
-            year: Number(startQrYear),
-            quarter: normalizeStartQuarter[1],
-          };
-          const constructedEndQuarterObj = {
-            year: Number(endQrYear),
-            quarter: normalizeEndQuarter[1],
-          };
-
-          if (getStartQuarterStringFromDateObj > getEndQuarterStringFromDateObj) {
-            clearSelectedValues();
-            emits('update:modelValue', null);
-            return;
-          }
-          if (
-            !isQuarterValid(constructedStartQuarterObj, props.minDateRef, props.maxDateRef) ||
-            !isQuarterValid(constructedEndQuarterObj, props.minDateRef, props.maxDateRef)
-          ) {
-            clearSelectedValues();
-            emits('update:modelValue', null);
-            return;
-          }
-
-          const decadeStartYear = findDecadeStartYear(constructedStartQuarterObj.year);
-          startQuarterYear.value = decadeStartYear;
-          endQuarterYear.value = decadeStartYear + 9;
-        }
-
-        const rangeAnchor = props.activeInput === 'endInput' ? newValue.end : newValue.start;
-
-        if (props.menuState) {
-          updateCurrentDateIfNotInMonthsList(rangeAnchor);
-        } else {
-          currentDate.value = rangeAnchor;
-        }
-
-        selectedStartDate.value = newValue.start;
-        selectedStartDay.value = newValue.start.getDate();
-        selectedStartMonth.value = newValue.start.getMonth();
-        selectedStartYear.value = newValue.start.getFullYear();
-
-        selectedEndDate.value = newValue.end;
-        selectedEndDay.value = newValue.end.getDate();
-        selectedEndMonth.value = newValue.end.getMonth();
-        selectedEndYear.value = newValue.end.getFullYear();
-
-        const decadeStartYear = findDecadeStartYear(rangeAnchor.getFullYear());
-        startYear.value = decadeStartYear - 1;
-        endYear.value = decadeStartYear + 10;
-        startQuarterYear.value = decadeStartYear;
-        endQuarterYear.value = decadeStartYear + 9;
-
-        emits('update:modelValue', {
-          start: selectedStartDate.value,
-          end: selectedEndDate.value,
-        });
-      } else if (newValue.start && !newValue.end) {
-        if (
-          props.mode !== 'month' &&
-          props.mode !== 'quarters' &&
-          !canSelectDate(newValue.start, props.minDateRef, props.maxDateRef, props.mode)
-        ) {
-          clearSelectedValues();
-          emits('update:modelValue', null);
-          return;
-        }
-
-        if (props.mode === 'quarters') {
-          const getStartQuarterStringFromDateObj = extractQuarterFromDate(newValue.start);
-          const [startQrYear, startQuarter] = getStartQuarterStringFromDateObj.split('-');
-          const normalizeStartQuarter = startQuarter.split('Q');
-
-          const constructedStartQuarterObj = {
-            year: Number(startQrYear),
-            quarter: normalizeStartQuarter[1],
-          };
-
-          if (!isQuarterValid(constructedStartQuarterObj, props.minDateRef, props.maxDateRef)) {
-            clearSelectedValues();
-            emits('update:modelValue', null);
-            return;
-          }
-
-          const decadeStartYear = findDecadeStartYear(constructedStartQuarterObj.year);
-          startQuarterYear.value = decadeStartYear;
-          endQuarterYear.value = decadeStartYear + 9;
-        }
-
-        if (props.menuState) {
-          updateCurrentDateIfNotInMonthsList(newValue.start);
-        } else {
-          currentDate.value = newValue.start;
-        }
-
-        selectedStartDate.value = newValue.start;
-        selectedStartDay.value = newValue.start.getDate();
-        selectedStartMonth.value = newValue.start.getMonth();
-        selectedStartYear.value = newValue.start.getFullYear();
-
-        selectedEndDate.value = null;
-        selectedEndDay.value = null;
-        selectedEndMonth.value = null;
-        selectedEndYear.value = null;
-
-        const decadeStartYear = findDecadeStartYear(newValue.start.getFullYear());
-        startYear.value = decadeStartYear - 1;
-        endYear.value = decadeStartYear + 10;
-
-        emits('update:modelValue', {
-          start: selectedStartDate.value,
-          end: null,
-        });
-      } else if (!newValue.start && newValue.end) {
-        if (
-          props.mode !== 'month' &&
-          props.mode !== 'quarters' &&
-          !canSelectDate(newValue.end, props.minDateRef, props.maxDateRef, props.mode)
-        ) {
-          clearSelectedValues();
-          emits('update:modelValue', null);
-          return;
-        }
-
-        if (props.mode === 'quarters') {
-          const getEndQuarterStringFromDateObj = extractQuarterFromDate(newValue.end);
-          const [endQrYear, endQuarter] = getEndQuarterStringFromDateObj.split('-');
-          const normalizeEndQuarter = endQuarter.split('Q');
-
-          const constructedEndQuarterObj = {
-            year: Number(endQrYear),
-            quarter: normalizeEndQuarter[1],
-          };
-
-          if (!isQuarterValid(constructedEndQuarterObj, props.minDateRef, props.maxDateRef)) {
-            clearSelectedValues();
-            emits('update:modelValue', null);
-            return;
-          }
-
-          const decadeStartYear = findDecadeStartYear(constructedEndQuarterObj.year);
-          startQuarterYear.value = decadeStartYear;
-          endQuarterYear.value = decadeStartYear + 9;
-        }
-
-        if (props.menuState) {
-          updateCurrentDateIfNotInMonthsList(newValue.end);
-        } else {
-          currentDate.value = newValue.end;
-        }
-
-        selectedStartDate.value = null;
-        selectedStartDay.value = null;
-        selectedStartMonth.value = null;
-        selectedStartYear.value = null;
-
-        selectedEndDate.value = newValue.end;
-        selectedEndDay.value = newValue.end.getDate();
-        selectedEndMonth.value = newValue.end.getMonth();
-        selectedEndYear.value = newValue.end.getFullYear();
-
-        const decadeStartYear = findDecadeStartYear(newValue.end.getFullYear());
-        startYear.value = decadeStartYear - 1;
-        endYear.value = decadeStartYear + 10;
-
-        emits('update:modelValue', {
-          start: null,
-          end: selectedEndDate.value,
-        });
-      }
-    }
+    if (props.pickerType === 'single' && applySingleValue(newValue)) return;
+    if (props.pickerType === 'range' && applyRangeValue(newValue)) return;
 
     // Initialize the visible hours, minutes and seconds
     updateVisibleHours();

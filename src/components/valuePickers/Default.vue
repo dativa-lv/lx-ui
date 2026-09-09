@@ -416,9 +416,9 @@ function getTabIndex(id) {
     itemsDisplay.value.length > 0 && itemsDisplay.value[0][props.idAttribute] === id;
   const isValidModel = itemsDisplay.value.find((item) => item[props.idAttribute] === model.value);
   if (model.value === id || (isFirstItem && !isValidModel)) {
-    return 0;
+    return '0';
   }
-  return -1;
+  return '-1';
 }
 const wrapperRef = ref();
 </script>

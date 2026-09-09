@@ -541,7 +541,7 @@ const wrapperRef = ref();
                     item[idAttribute] === checkNull(model)
                   "
                   :disabled="disabled"
-                  :tabindex="-1"
+                  tabindex="-1"
                   aria-hidden="true"
                   inert
                 />
@@ -562,7 +562,7 @@ const wrapperRef = ref();
                   item[idAttribute] === checkNull(model)
                 "
                 :disabled="disabled"
-                :tabindex="-1"
+                tabindex="-1"
                 aria-hidden="true"
                 inert
               />

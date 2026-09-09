@@ -1314,9 +1314,9 @@ function getTabIndex(id) {
   const hasSelectedItem = Object.keys(selectedItemsRaw.value).length > 0;
 
   if (selectedItemsRaw.value[id] || (isFirstSelectable && !hasSelectedItem)) {
-    return 0;
+    return '0';
   }
-  return -1;
+  return '-1';
 }
 
 function getGroupedTabIndex(id, groupId) {
@@ -1336,9 +1336,9 @@ function getGroupedTabIndex(id, groupId) {
   );
 
   if (selectedItemsRaw.value[id] || (isFirstSelectable && !hasSelectedItemInGroup)) {
-    return 0;
+    return '0';
   }
-  return -1;
+  return '-1';
 }
 
 const autoSearchMode = computed(() => {
