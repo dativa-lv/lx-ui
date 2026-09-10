@@ -66,29 +66,7 @@ export function useGridKeyboardNavigation({ getScrollMarginTop } = {}) {
 
   const cellRefs = ref([]);
 
-  function registerCell(el, row, col, item = 0) {
-    if (!el) return;
-
-    let target = null;
-
-    const exposedElement = typeof el.getElement === 'function' ? el.getElement() : null;
-
-    if (el instanceof HTMLElement) {
-      target = el;
-    } else if (exposedElement instanceof HTMLElement) {
-      target = exposedElement;
-    } else if (el.focusEl?.value instanceof HTMLElement) {
-      target = el.focusEl.value;
-    } else if (typeof el.focus === 'function') {
-      target = el;
-    }
-
-    if (target) {
-      cellRefs.value[row] ??= {};
-      cellRefs.value[row][col] ??= [];
-      cellRefs.value[row][col][item] = target;
-    }
-  }
+  let normalizationScheduled = false;
 
   function isActiveCell(row, col, item = 0) {
     return activeRow.value === row && activeCol.value === col && activeItem.value === item;
@@ -143,6 +121,62 @@ export function useGridKeyboardNavigation({ getScrollMarginTop } = {}) {
       (bestMatch, candidate) => pickBestFocusableCandidate(bestMatch, candidate),
       null
     );
+  }
+
+  // Cell (0, 0) is not always focusable — a selecting grid puts a placeholder there.
+  function ensureActiveCellFocusable() {
+    if (getFocusableCellTargets(activeRow.value, activeCol.value).length > 0) return;
+
+    const fallback = findClosestFocusableCell(activeRow.value, activeCol.value);
+    if (!fallback) return;
+
+    activeRow.value = fallback.row;
+    activeCol.value = fallback.col;
+    activeItem.value = fallback.item ?? 0;
+  }
+
+  function scheduleActiveCellNormalization() {
+    if (normalizationScheduled) return;
+    normalizationScheduled = true;
+
+    nextTick(() => {
+      normalizationScheduled = false;
+      ensureActiveCellFocusable();
+    });
+  }
+
+  // Cells never unregister, so a column change leaves every coordinate stale.
+  function resetCells(columnOffset = 0) {
+    cellRefs.value = [];
+
+    if (columnOffset) activeCol.value = Math.max(0, activeCol.value + columnOffset);
+
+    scheduleActiveCellNormalization();
+  }
+
+  function registerCell(el, row, col, item = 0) {
+    if (!el) return;
+
+    let target = null;
+
+    const exposedElement = typeof el.getElement === 'function' ? el.getElement() : null;
+
+    if (el instanceof HTMLElement) {
+      target = el;
+    } else if (exposedElement instanceof HTMLElement) {
+      target = exposedElement;
+    } else if (el.focusEl?.value instanceof HTMLElement) {
+      target = el.focusEl.value;
+    } else if (typeof el.focus === 'function') {
+      target = el;
+    }
+
+    if (target) {
+      cellRefs.value[row] ??= {};
+      cellRefs.value[row][col] ??= [];
+      cellRefs.value[row][col][item] = target;
+      scheduleActiveCellNormalization();
+    }
   }
 
   function resolveCellTarget(row, col, preferredItem) {
@@ -311,6 +345,7 @@ export function useGridKeyboardNavigation({ getScrollMarginTop } = {}) {
     onKeydown,
     onGridFocus,
     setActiveFromClick,
+    resetCells,
     isCellDelegated,
   };
 }

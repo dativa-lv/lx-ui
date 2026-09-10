@@ -418,6 +418,7 @@ const {
   onKeydown,
   isCellDelegated,
   setActiveFromClick,
+  resetCells,
 } = useGridKeyboardNavigation({ getScrollMarginTop: getStickyHeaderOverlap });
 
 const isDisabled = computed(() => props.loading || props.busy);
@@ -1775,6 +1776,12 @@ function search(string) {
     emits('search', string);
   }
 }
+
+// The selecting column shifts every other column by one, invalidating the cell
+// coordinates the roving tab stop is built on.
+watch(showSelecting, (isSelecting) => {
+  resetCells(isSelecting ? 1 : -1);
+});
 
 watch(
   [

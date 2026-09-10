@@ -468,6 +468,97 @@ describe('Action button keyboard focus', () => {
   });
 });
 
+describe('Selecting column keyboard entry', () => {
+  const props = {
+    id: 'grid',
+    idAttribute: 'id',
+    items: [
+      { id: 'one', name: 'Item one' },
+      { id: 'two', name: 'Item two' },
+    ],
+    columnDefinitions: [{ id: 'name', attributeName: 'name', name: 'Name' }],
+    hasSelecting: true,
+    hasSorting: true,
+    hasVirtualization: false,
+  };
+
+  test('keeps a tab stop when the selecting column owns cell (0, 0)', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    // The selecting column pushes an empty placeholder into the header's first
+    // cell, where the roving tab stop starts — it has to move to a real cell.
+    const stops = wrapper.findAll('.lx-grid-table [tabindex="0"]');
+
+    expect(stops.length).toBe(1);
+    expect(stops[0].classes()).toContain('lx-cell-header-sort-button');
+  });
+
+  test('keeps a tab stop when selecting is turned on after mount', async () => {
+    wrapper = mountComponent({ props: { ...props, hasSelecting: false }, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    await wrapper.setProps({ hasSelecting: true });
+    await flushVirtualizationSetup();
+
+    // Cells register by coordinate, so the column the selecting checkbox pushes
+    // aside must not leave the tab stop behind on a stale coordinate.
+    expect(wrapper.findAll('.lx-grid-table [tabindex="0"]').length).toBe(1);
+
+    await wrapper.setProps({ hasSelecting: false });
+    await flushVirtualizationSetup();
+
+    expect(wrapper.findAll('.lx-grid-table [tabindex="0"]').length).toBe(1);
+  });
+
+  test('carries the tab stop across with the column it was on', async () => {
+    wrapper = mountComponent({
+      props: {
+        ...props,
+        hasSelecting: false,
+        columnDefinitions: [
+          { id: 'name', attributeName: 'name', name: 'Name' },
+          { id: 'surname', attributeName: 'surname', name: 'Surname' },
+        ],
+        items: [
+          { id: 'one', name: 'Item one', surname: 'Surname one' },
+          { id: 'two', name: 'Item two', surname: 'Surname two' },
+        ],
+      },
+      attachTo: document.body,
+    });
+
+    await flushVirtualizationSetup();
+
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowDown' });
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowRight' });
+    await nextTick();
+
+    await wrapper.setProps({ hasSelecting: true });
+    await flushVirtualizationSetup();
+
+    const stops = wrapper.findAll('.lx-grid-table [tabindex="0"]');
+
+    expect(stops.length).toBe(1);
+    expect(stops[0].text()).toBe('Surname one');
+  });
+
+  test('arrows from the entry point into the row checkbox', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowDown' });
+    await nextTick();
+    await wrapper.find('.lx-data-grid').trigger('keydown', { key: 'ArrowLeft' });
+    await nextTick();
+
+    expect(wrapper.find('#select-grid-one').attributes('tabindex')).toBe('0');
+  });
+});
+
 describe('Action column header', () => {
   const props = {
     id: 'grid',
