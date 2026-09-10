@@ -639,8 +639,14 @@
 /*** Selected + hover container styles ***/
 
 .lx-list-item-container .lx-radio-button-wrapper,
-.lx-list-item-container .lx-checkbox-wrapper {
+.lx-list-item-container .lx-checkbox-wrapper,
+.lx-list-item-container > .lx-checkbox-placeholder {
   grid-area: selecting;
+}
+
+/* Keeps the selecting column reserved on items that can't be selected */
+.lx-list-item-container > .lx-checkbox-placeholder {
+  width: var(--list-selecting-block-width);
 }
 
 .lx a.lx-list-item:hover {
