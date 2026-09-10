@@ -483,14 +483,15 @@
   color: var(--contrast-background);
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):not(.lx-disabled-date):hover,
-.lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):not(.lx-disabled-month):hover,
-.lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):not(.lx-disabled-year):hover,
-.lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):not(.lx-disabled-quarter):hover {
-  background-color: var(--color-data-grid-background-hover);
-  color: var(--contrast-background);
+@media (hover: hover) and (pointer: fine) {
+  .lx .lx-layout .lx-calendar-container .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):not(.lx-disabled-date):hover,
+  .lx .lx-layout .lx-calendar-container .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):not(.lx-disabled-month):hover,
+  .lx .lx-layout .lx-calendar-container .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):not(.lx-disabled-year):hover,
+  .lx .lx-layout .lx-calendar-container .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):not(.lx-disabled-quarter):hover {
+    background-color: var(--color-data-grid-background-hover);
+    color: var(--contrast-background);
+  }
 }
-
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-day.lx-today:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):focus,
 .lx .lx-layout .lx-calendar-container .lx-calendar-month.lx-today:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):focus,
