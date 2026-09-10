@@ -3018,10 +3018,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   gap: var(--space-0250);
 }
 
-.lx .lx-visual-picker-wrapper .lx-tag-set .lx-tag .lx-flag {
-  display: flex;
-}
-
 .lx-visual-picker-wrapper .visual-select {
   display: flex;
   flex-direction: column;
@@ -3035,8 +3031,18 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx .lx-visual-picker-wrapper .lx-tag-set .lx-tag {
   background-color: var(--color-region);
   height: var(--row-size);
-  padding-top: var(--space-0);
-  padding-bottom: var(--space-0);
+  padding: var(--space-0) var(--space-1000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lx .lx-visual-picker-wrapper .lx-tag-set .lx-tag .lx-button {
+  margin-left: var(--space-0250);
+}
+
+.lx .lx-visual-picker-wrapper .lx-tag-set .lx-tag:has(.lx-button) {
+  padding-right: var(--space-0);
 }
 
 .lx-visual-picker-wrapper .visual-select-picture > svg {
