@@ -99,7 +99,7 @@ const textsDefault = {
   link: 'Saite',
   image: 'Attēls',
   templatePicker: 'Vietturi',
-  modalLabel: 'Saites izveidošana',
+  modalLabel: 'Saites pievienošana',
   modalDescription: 'Pievienot saiti uz:',
   save: 'Saglabāt',
   close: 'Aizvērt',
@@ -545,12 +545,17 @@ function clearModalVariables() {
 
 function closeImageModal() {
   markdownImageModal.value.close();
-  clearModalVariables();
 }
 
 function openImage() {
   markdownImageModal.value.open();
   isModalOpen.value = true;
+}
+
+function handleMarkdownImageModalClose() {
+  isModalOpen.value = false;
+  isNotImage.value = false;
+  clearModalVariables();
 }
 
 function getImageSource() {
@@ -772,13 +777,16 @@ function checkIfOpen() {
   if (isModalOpen.value) {
     editUrlModal.value.close();
   } else {
-    isModalOpen.value = !isModalOpen.value;
+    inputLink.value = editor.value?.getAttributes('link')?.href || '';
+    isNotLink.value = false;
+    isModalOpen.value = true;
     editUrlModal.value.open();
   }
 }
 
 function handleEditUrlModalClose() {
   isModalOpen.value = false;
+  isNotLink.value = false;
 }
 
 function handleEditUrlActionClick(action) {
@@ -1186,7 +1194,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
           size="s"
           :button-secondary-is-cancel="false"
           :action-definitions="modalActionDefinitions"
-          @close="clearModalVariables()"
+          @close="handleMarkdownImageModalClose"
           @action-click="handleMarkdownImageActionClick"
         >
           <LxContentSwitcher :items="imageInputTypes" v-model="imageModalInputType" />

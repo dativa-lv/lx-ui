@@ -95,8 +95,7 @@ function close(source = null) {
 function handleKeyDown(event) {
   if (event.key === 'Escape') {
     if (props.escEnabled) {
-      isOpenModal.value = false;
-      deactivate();
+      close('esc');
     } else {
       event.preventDefault();
     }
