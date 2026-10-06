@@ -162,6 +162,7 @@ const normalizedIconAndType = computed(() => {
 </script>
 <template>
   <LxForm
+    class="lx-file-uploader-details"
     :showHeader="false"
     :showFooter="false"
     :column-count="3"

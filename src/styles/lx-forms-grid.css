@@ -2266,3 +2266,7 @@ p .lx-person-display-wrapper {
     opacity: 0 !important;
   }
 }
+
+.lx-file-uploader-details .lx-main > .lx-form-section:first-child {
+  display: none;
+}
