@@ -599,3 +599,63 @@
 .lx-dropdown-panel .lx-dropdown-menu-tag-wrapper .lx-tag.lx-tags-tile-selected svg {
   fill: var(--color-popover-item-icon-selected);
 }
+
+/* LxAutoComplete item content (list items and the selected value) */
+.lx-autocomplete-item-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--popover-item-gap);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.lx-autocomplete-item-content > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx-autocomplete-item-content > svg {
+  flex-shrink: 0;
+  width: var(--popover-item-icon-size-s);
+  height: var(--popover-item-icon-size-s);
+  /* TODO: workaround to center the icon on the first line, fix with the popover icon height update */
+  margin-top: max(0px, calc((1lh - var(--popover-item-icon-size-s)) / 2));
+  fill: var(--color-popover-item-icon);
+}
+
+.lx-touch-mode .lx-autocomplete-item-content > svg {
+  width: var(--popover-item-icon-size-l);
+  height: var(--popover-item-icon-size-l);
+  margin-top: max(0px, calc((1lh - var(--popover-item-icon-size-l)) / 2));
+}
+
+.lx-dropdown-panel .lx-popover-item-text-only:has(> div > .lx-autocomplete-item-content) {
+  --popover-item-gap: inherit;
+}
+
+.lx-dropdown-panel .lx-value-picker-item:hover .lx-autocomplete-item-content > svg {
+  fill: var(--color-popover-item-icon-hover);
+}
+
+.lx-dropdown-panel .lx-value-picker-item:active .lx-autocomplete-item-content > svg {
+  fill: var(--color-popover-item-icon-active);
+}
+
+.lx-dropdown-panel .lx-value-picker-item:focus .lx-autocomplete-item-content > svg,
+.lx-dropdown-panel .lx-value-picker-item.lx-highlighted-item .lx-autocomplete-item-content > svg {
+  fill: var(--color-popover-item-icon-focus);
+}
+
+.lx-dropdown-panel .lx-value-picker-item.lx-selected .lx-autocomplete-item-content > svg {
+  fill: var(--color-popover-item-icon-selected);
+}
+
+.lx-dropdown-default-content .lx-value-picker-item > .lx-autocomplete-custom-item {
+  display: flex;
+  align-items: center;
+}
+
+.lx-dropdown-default-content .lx-value-picker-item > .lx-autocomplete-custom-item > * {
+  min-width: 0;
+}

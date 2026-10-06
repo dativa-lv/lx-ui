@@ -116,6 +116,9 @@ export const createLx = plugin;
 // Mirrors the `texts` option of createLx; reactive – mounted components update automatically.
 export { setComponentTexts as setLxComponentTexts } from '@/utils/global';
 
+// Async search state for LxAutoComplete mode="new"
+export { default as useLxAutoCompleteSearch } from '@/hooks/useAutoCompleteSearch';
+
 // Exports for individual use
 export * from '@/stores';
 export * from '@/components';

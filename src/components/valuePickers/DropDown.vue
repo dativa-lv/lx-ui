@@ -15,6 +15,7 @@ import {
   focusNextFocusableElement,
   getDisplayTexts,
   isDefined,
+  isNil,
 } from '@/utils/generalUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxDropDown from '@/components/DropDown.vue';
@@ -151,6 +152,25 @@ const itemsDisplay = computed(() => {
     });
 
   return res;
+});
+
+function toId(value) {
+  return value !== null && typeof value === 'object' ? value[props.idAttribute] : value;
+}
+
+const autoCompleteModel = computed({
+  get() {
+    const { value } = model;
+    if (props.selectionKind === 'multiple') {
+      if (isNil(value)) return [];
+      return Array.isArray(value) ? value : [value];
+    }
+    return Array.isArray(value) ? value[0] ?? null : value;
+  },
+  set(value) {
+    if (Array.isArray(value)) model.value = value.map(toId);
+    else model.value = isNil(value) ? null : toId(value);
+  },
 });
 
 function activateItems() {
@@ -664,13 +684,15 @@ function countDigits(number) {
   <template v-else>
     <LxAutoComplete
       v-if="hasSearch"
+      mode="new"
       :id="id"
-      v-model="model"
+      v-model="autoCompleteModel"
       v-model:searchString="query"
       :selectionKind="selectionKind"
       :items="itemsDisplay"
       :id-attribute="idAttribute"
       :name-attribute="nameAttribute"
+      :icon-attribute="null"
       :placeholder="displayTexts.searchPlaceholder"
       :tooltip="tooltip"
       :readOnly="readOnly"
@@ -685,8 +707,8 @@ function countDigits(number) {
       :labelId="labelId"
       :hasSelectAll="hasSelectAll"
     >
-      <template v-if="variant === 'dropdown-custom'" v-slot:customItem="slotData">
-        <slot name="customItemDropdown" v-bind="slotData" />
+      <template v-if="variant === 'dropdown-custom'" v-slot:customItem="{ item }">
+        <slot name="customItemDropdown" v-bind="item" />
       </template>
     </LxAutoComplete>
 

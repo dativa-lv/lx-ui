@@ -4,6 +4,119 @@ As LX/UI evolves, some features are refined, simplified, or replaced by better a
 
 Our goal is to make upgrading predictable, transparent, and worth the effort.
 
+## Upcoming changes
+
+These changes are available now as opt-in. The old behaviour will be deprecated and later removed, so
+plan the migration ahead.
+
+### LxAutoComplete: object-based `mode="new"`
+
+> **Warning:** LxAutoComplete has a new implementation that works with objects instead of ids. It is
+> opt-in for now via `mode="new"`; `mode="legacy"` (the default) will be deprecated and removed in a
+> future release, together with `preloadedItems` and function `items`.
+
+The `mode` prop picks the implementation:
+
+- `legacy` (default) — the current component, unchanged.
+- `new` — `v-model` holds the selected object (or an array of objects for `selectionKind="multiple"`),
+  not its id.
+
+```js
+// legacy
+model.value = 'mt';
+// new
+model.value = { id: 'mt', name: 'Dishonored' };
+```
+
+What changes in `mode="new"`:
+
+- **`v-model` and `items` hold objects.** The selected value carries its own name, so it is shown even
+  when it is not in `items`.
+- **Plain strings (and numbers) work too.** A string is shown as `{ id: value, name: value }` and
+  returned as the same string, so a simple string list needs no mapping. A string `v-model` value is
+  matched against object `items` by id to find its name.
+- **`preloadedItems` is gone.** Pass the items to show before typing through `items`.
+- **`items` must be an array.** Functions are not accepted; for async search, use
+  `useLxAutoCompleteSearch` (see below).
+- **Predefined items or your own search, decided by `@search`.** Without a `@search` listener, `items`
+  are filtered by the query. With one, you do the searching: `items` are shown as given (your results)
+  and `search` is emitted while typing (debounced by `queryDebounce`) so you can load them. As in
+  legacy, `queryMinLength` applies only when you search; predefined items are always listed. Listening
+  to `@search` only to log it also stops the local filtering.
+- **One `customItem` template renders both the selected value and the list items.** Its slot props
+  are `{ item, context, selected, searchString }`, where `context` is `'value'` or `'item'`. Legacy
+  templates received the item fields spread (`#customItem="{ name }"`); in the new mode use
+  `#customItem="{ item }"` and `item.name`.
+- **New `iconAttribute` prop** (default `'icon'`) shows an icon next to the item name, in the list and
+  in the selected value, styled with the popover item icon tokens. Pass `null` to turn it off.
+- While `loading` is true the list is hidden and the value cannot change: `Enter` does nothing.
+- `idAttribute`, `nameAttribute` and all other props keep working. `hasSelectAll` is ignored with
+  a `@search` listener.
+- `v-model:searchString` still sets and reports the typed text: `update:searchString` is emitted on
+  every change (also when the text is cleared), with or without `@search`. `search` is only for loading
+  results: debounced, and skipped for queries shorter than `queryMinLength`. With a `@search`
+  listener, an initial `searchString` is searched for right away, as legacy did with function `items`.
+
+**Usage**
+
+```vue
+<LxAutoComplete mode="new" v-model="game" :items="games" />
+```
+
+**Async search**
+
+```vue
+<script setup>
+import { useLxAutoCompleteSearch } from '@dativa-lv/lx-ui';
+
+const { items, loading, search } = useLxAutoCompleteSearch((query) => api.searchGames(query), {
+  queryMinLength: 2,
+});
+</script>
+
+<template>
+  <LxAutoComplete
+    mode="new"
+    v-model="game"
+    :items="items"
+    :loading="loading"
+    :queryMinLength="2"
+    @search="search"
+  />
+</template>
+```
+
+`useLxAutoCompleteSearch` loads items on each `search` event and ignores responses that arrive after a
+newer request. Options: `queryMinLength`, `initialItems` (shown for shorter queries; both can be refs or
+getters) and `immediate` (fetch once for an empty query; on by default when `queryMinLength` is `0` and
+no `searchString` is given).
+
+Pass `searchString` (a value or a ref, e.g. restored from the URL) to start with that text: it is shown
+and searched for, and a ref follows what the user types. The helper returns it as `searchString` too.
+
+The helper is optional: any `items` array works together with `@search`. It also returns `bindings`, an
+optional shortcut for the props and listeners above, including `v-model:searchString`
+(`v-bind="gameSearch.bindings"`, where `gameSearch` is the helper's return value).
+
+**Builders**
+
+`mode="new"` is not registered in the builder registry yet; `builderOptions` only applies to
+`mode="legacy"`, which registers as before. Registration moves to the new implementation when legacy
+is removed.
+
+**LxValuePicker**
+
+The `dropdown` and `dropdown-custom` variants with `hasSearch` now use `mode="new"` internally.
+LxValuePicker's own API does not change: `v-model` still holds ids (passed to LxAutoComplete as
+strings and matched against `items`) and `customItem` still receives the item fields spread. An id that
+is missing from `items` is now shown as the id instead of an empty field.
+
+**How to prepare**
+
+- Keep whole objects in your model instead of reducing selections to ids.
+- Don't add new usages of `preloadedItems` or function `items`.
+- Update `customItem` templates to the `{ item, context }` slot props when switching to `mode="new"`.
+
 ## 2.3.5 → 2.3.6
 
 ### New state color tokens

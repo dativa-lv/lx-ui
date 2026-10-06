@@ -1785,6 +1785,20 @@ h2.lx-section-header + p.lx-invalidation-message,
   overflow: hidden;
 }
 
+.lx .lx-input-wrapper .lx-value .lx-autocomplete-item-content > svg {
+  fill: var(--color-input-icon);
+}
+
+.lx .lx-input-wrapper.lx-disabled .lx-value .lx-autocomplete-item-content > svg {
+  fill: var(--color-input-icon-disabled);
+}
+
+.lx-autocomplete-read-only-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-0250) var(--space-0500);
+}
+
 .lx-empty.additional-text {
   border-bottom: var(--border-width-1) solid var(--color-chrome);
   align-items: start;
