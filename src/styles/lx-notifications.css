@@ -105,9 +105,6 @@
   grid-area: button;
   width: var(--notification-icon-close-size);
   height: var(--notification-icon-close-size);
-}
-
-.lx-notification .lx-close-icon {
   fill: var(--color-notification-icon-close);
 }
 

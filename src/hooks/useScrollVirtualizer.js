@@ -203,6 +203,74 @@ export default function useScrollVirtualizer({
     resolve?.();
   }
 
+  function stepScrollToIndex(state, timestamp) {
+    scrollToIndexRaf = null;
+
+    const { instance, index, reduceMotion } = state;
+    const target = getOffsetToCenter(instance, index);
+
+    if (target === null) {
+      cancelScrollToIndex();
+      return;
+    }
+
+    if (state.startedAt === null) {
+      state.startedAt = timestamp;
+
+      const maxAnimated = SCROLL_TO_INDEX_MAX_ANIMATED_VIEWPORTS * instance.getSize();
+      if (!reduceMotion && Math.abs(target - state.startOffset) > maxAnimated) {
+        state.startOffset = target - Math.sign(target - state.startOffset) * maxAnimated;
+        scrollToOffsetInstantly(state.startOffset);
+      }
+    }
+
+    const elapsed = timestamp - state.startedAt;
+    // Duration follows the current distance, so a growing target slows the rest down.
+    const viewports = Math.abs(target - state.startOffset) / instance.getSize();
+    const duration = Math.min(
+      SCROLL_TO_INDEX_MAX_MS,
+      Math.max(SCROLL_TO_INDEX_MIN_MS, viewports * SCROLL_TO_INDEX_MS_PER_VIEWPORT)
+    );
+
+    state.progress = reduceMotion
+      ? 1
+      : Math.min(1, state.progress + (timestamp - (state.lastTimestamp ?? timestamp)) / duration);
+    state.lastTimestamp = timestamp;
+
+    const current = getScrollOffset();
+    const isMounted = instance.getVirtualItems().some((item) => item.index === index);
+    const isSettled =
+      Math.abs(target - current) < 1 &&
+      state.lastTarget !== null &&
+      Math.abs(target - state.lastTarget) < 1;
+
+    state.stableFrames = isSettled && isMounted ? state.stableFrames + 1 : 0;
+    state.lastTarget = target;
+
+    if (elapsed > SCROLL_TO_INDEX_TIMEOUT_MS) {
+      scrollToOffsetInstantly(target);
+      cancelScrollToIndex();
+      return;
+    }
+
+    if (state.stableFrames >= SCROLL_TO_INDEX_STABLE_FRAMES) {
+      cancelScrollToIndex();
+      return;
+    }
+
+    const move =
+      state.startOffset + (target - state.startOffset) * easeInOutSine(state.progress) - current;
+
+    // At most a viewport per frame, so every stretch gets rendered and measured.
+    const capped = reduceMotion
+      ? move
+      : Math.sign(move) * Math.min(Math.abs(move), instance.getSize());
+
+    if (capped !== 0) scrollToOffsetInstantly(current + capped);
+
+    scrollToIndexRaf = globalThis.requestAnimationFrame((ts) => stepScrollToIndex(state, ts));
+  }
+
   // Eases to the item like a native smooth scroll, retargeting each frame as items get measured.
   function scrollToIndex(index) {
     cancelScrollToIndex();
@@ -210,12 +278,18 @@ export default function useScrollVirtualizer({
     if (!instance || isItemInView(instance, index)) return Promise.resolve();
 
     const reduceMotion = !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    let startOffset = getScrollOffset();
-    let startedAt = null;
-    let lastTimestamp = null;
-    let progress = 0;
-    let lastTarget = null;
-    let stableFrames = 0;
+    const state = {
+      instance,
+      index,
+      reduceMotion,
+      startOffset: getScrollOffset(),
+      startedAt: null,
+      lastTimestamp: null,
+      progress: 0,
+      lastTarget: null,
+      stableFrames: 0,
+    };
+
     isScrollingToIndex = true;
     // The user scrolling takes over.
     globalThis.addEventListener?.('wheel', cancelScrollToIndex, { passive: true });
@@ -223,60 +297,8 @@ export default function useScrollVirtualizer({
 
     return new Promise((resolve) => {
       finishScrollToIndex = resolve;
-      const step = (timestamp) => {
-        scrollToIndexRaf = null;
-        const target = getOffsetToCenter(instance, index);
-        if (target === null) {
-          cancelScrollToIndex();
-          return;
-        }
-        if (startedAt === null) {
-          startedAt = timestamp;
-          const maxAnimated = SCROLL_TO_INDEX_MAX_ANIMATED_VIEWPORTS * instance.getSize();
-          if (!reduceMotion && Math.abs(target - startOffset) > maxAnimated) {
-            startOffset = target - Math.sign(target - startOffset) * maxAnimated;
-            scrollToOffsetInstantly(startOffset);
-          }
-        }
-        const elapsed = timestamp - startedAt;
-        // Duration follows the current distance, so a growing target slows the rest down.
-        const viewports = Math.abs(target - startOffset) / instance.getSize();
-        const duration = Math.min(
-          SCROLL_TO_INDEX_MAX_MS,
-          Math.max(SCROLL_TO_INDEX_MIN_MS, viewports * SCROLL_TO_INDEX_MS_PER_VIEWPORT)
-        );
-        progress = reduceMotion
-          ? 1
-          : Math.min(1, progress + (timestamp - (lastTimestamp ?? timestamp)) / duration);
-        lastTimestamp = timestamp;
-        const current = getScrollOffset();
-        const isMounted = instance.getVirtualItems().some((item) => item.index === index);
-        const isSettled =
-          Math.abs(target - current) < 1 &&
-          lastTarget !== null &&
-          Math.abs(target - lastTarget) < 1;
-        stableFrames = isSettled && isMounted ? stableFrames + 1 : 0;
-        lastTarget = target;
 
-        if (elapsed > SCROLL_TO_INDEX_TIMEOUT_MS) {
-          scrollToOffsetInstantly(target);
-          cancelScrollToIndex();
-          return;
-        }
-        if (stableFrames >= SCROLL_TO_INDEX_STABLE_FRAMES) {
-          cancelScrollToIndex();
-          return;
-        }
-
-        const move = startOffset + (target - startOffset) * easeInOutSine(progress) - current;
-        // At most a viewport per frame, so every stretch gets rendered and measured.
-        const capped = reduceMotion
-          ? move
-          : Math.sign(move) * Math.min(Math.abs(move), instance.getSize());
-        if (capped !== 0) scrollToOffsetInstantly(current + capped);
-        scrollToIndexRaf = globalThis.requestAnimationFrame(step);
-      };
-      scrollToIndexRaf = globalThis.requestAnimationFrame(step);
+      scrollToIndexRaf = globalThis.requestAnimationFrame((ts) => stepScrollToIndex(state, ts));
     });
   }
 

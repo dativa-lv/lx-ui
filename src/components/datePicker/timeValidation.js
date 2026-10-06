@@ -1,72 +1,13 @@
 import { isDefined, isNil } from '@/utils/generalUtils';
 import { isSameDay } from '@/components/datePicker/helpers';
 
-function canSelectTimeOnlyHour(rawValue, bounds, selectedTime) {
-  const { min: minDateParsed, max: maxDateParsed } = bounds;
-  const { minutes: selectedMinutes, seconds: selectedSeconds } = selectedTime;
-  const hour = Number(rawValue);
-
-  const minHour = minDateParsed?.getHours();
-  const minMinute = minDateParsed?.getMinutes();
-  const minSecond = minDateParsed?.getSeconds();
-  const maxHour = maxDateParsed?.getHours();
-  const maxMinute = maxDateParsed?.getMinutes();
-  const maxSecond = maxDateParsed?.getSeconds();
-
-  // If no minutes selected (or no seconds when seconds are needed), validate hour normally
-  if (isNil(selectedMinutes) && isNil(selectedSeconds)) {
-    return !((minDateParsed && hour < minHour) || (maxDateParsed && hour > maxHour));
-  }
-
-  // minutes selected but no seconds
-  if (!isNil(selectedMinutes) && isNil(selectedSeconds)) {
-    if (minDateParsed && (hour < minHour || (hour === minHour && selectedMinutes < minMinute))) {
-      return false;
-    }
-    if (maxDateParsed && (hour > maxHour || (hour === maxHour && selectedMinutes > maxMinute))) {
-      return false;
-    }
-    return true;
-  }
-
-  // both minutes and seconds selected
-  if (!isNil(selectedMinutes) && !isNil(selectedSeconds)) {
-    if (
-      minDateParsed &&
-      (hour < minHour ||
-        (hour === minHour && selectedMinutes < minMinute) ||
-        (hour === minHour && selectedMinutes === minMinute && selectedSeconds < minSecond))
-    ) {
-      return false;
-    }
-
-    if (
-      maxDateParsed &&
-      (hour > maxHour ||
-        (hour === maxHour && selectedMinutes > maxMinute) ||
-        (hour === maxHour && selectedMinutes === maxMinute && selectedSeconds > maxSecond))
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  // only seconds selected (no minutes)
-  // keep hours within min/max hour boundaries (don’t unlock everything)
-  if (isNil(selectedMinutes) && !isNil(selectedSeconds)) {
-    return !((minDateParsed && hour < minHour) || (maxDateParsed && hour > maxHour));
-  }
-
-  return true;
-}
-
 // Below minDate
-function isBeforeMinTime(hour, minute, second, minDateParsed) {
+function isBeforeMinTime(hour, minute, second, minDateParsed, minTimeParts = null) {
   if (!minDateParsed) return false;
 
-  const minHour = minDateParsed.getHours();
-  const minMinute = minDateParsed.getMinutes();
-  const minSecond = minDateParsed.getSeconds();
+  const minHour = minTimeParts ? minTimeParts.hour : minDateParsed.getHours();
+  const minMinute = minTimeParts ? minTimeParts.minute : minDateParsed.getMinutes();
+  const minSecond = minTimeParts ? minTimeParts.second : minDateParsed.getSeconds();
 
   return (
     hour < minHour ||
@@ -76,17 +17,47 @@ function isBeforeMinTime(hour, minute, second, minDateParsed) {
 }
 
 // Above maxDate
-function isAfterMaxTime(hour, minute, second, maxDateParsed) {
+function isAfterMaxTime(hour, minute, second, maxDateParsed, maxTimeParts = null) {
   if (!maxDateParsed) return false;
 
-  const maxHour = maxDateParsed.getHours();
-  const maxMinute = maxDateParsed.getMinutes();
-  const maxSecond = maxDateParsed.getSeconds();
+  const maxHour = maxTimeParts ? maxTimeParts.hour : maxDateParsed.getHours();
+  const maxMinute = maxTimeParts ? maxTimeParts.minute : maxDateParsed.getMinutes();
+  const maxSecond = maxTimeParts ? maxTimeParts.second : maxDateParsed.getSeconds();
 
   return (
     hour > maxHour ||
     (hour === maxHour && minute > maxMinute) ||
     (hour === maxHour && minute === maxMinute && !isNil(second) && second > maxSecond)
+  );
+}
+
+function canSelectTimeOnlyHour(rawValue, bounds, selectedTime) {
+  const { min: minDateParsed, max: maxDateParsed } = bounds;
+  const { minutes: selectedMinutes, seconds: selectedSeconds } = selectedTime;
+  const hour = Number(rawValue);
+
+  const minTimeParts = {
+    hour: minDateParsed?.getHours(),
+    minute: minDateParsed?.getMinutes(),
+    second: minDateParsed?.getSeconds(),
+  };
+
+  const maxTimeParts = {
+    hour: maxDateParsed?.getHours(),
+    minute: maxDateParsed?.getMinutes(),
+    second: maxDateParsed?.getSeconds(),
+  };
+
+  if (isNil(selectedMinutes)) {
+    return !(
+      (minDateParsed && hour < minTimeParts.hour) ||
+      (maxDateParsed && hour > maxTimeParts.hour)
+    );
+  }
+
+  return !(
+    isBeforeMinTime(hour, selectedMinutes, selectedSeconds, minDateParsed, minTimeParts) ||
+    isAfterMaxTime(hour, selectedMinutes, selectedSeconds, maxDateParsed, maxTimeParts)
   );
 }
 
