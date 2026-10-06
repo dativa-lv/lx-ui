@@ -84,6 +84,19 @@ test('LxDropDownMenu component mounts successfully', () => {
   expect(wrapper.exists()).toBe(true);
 });
 
+describe('Test locator contract', () => {
+  test('should expose data-component and data-id on the root', () => {
+    wrapper = mountComponent({ props: { id: 'test-id' } });
+
+    const root = wrapper.find('[data-component="lx-drop-down-menu"]');
+
+    expect(root.exists()).toBe(true);
+    expect(root.element).toBe(wrapper.element);
+    expect(root.attributes('data-id')).toBe('test-id');
+    expect(wrapper.find('.lx-dropdown-toggler').attributes('id')).toBe('test-id');
+  });
+});
+
 describe('Action definitions', () => {
   test('renders with no actions correctly', async () => {
     wrapper = mountComponent();

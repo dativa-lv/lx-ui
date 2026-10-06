@@ -511,7 +511,12 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
 </script>
 
 <template>
-  <div class="lx-context-container" :class="[{ 'lx-selected': menuOpen }, customClass]">
+  <div
+    class="lx-context-container"
+    :class="[{ 'lx-selected': menuOpen }, customClass]"
+    data-component="lx-drop-down-menu"
+    :data-id="id"
+  >
     <LxPopper
       :placement="placement"
       :offset-skid="offsetSkid"
