@@ -49,6 +49,9 @@ What changes in `mode="new"`:
   `#customItem="{ item }"` and `item.name`.
 - **New `iconAttribute` prop** (default `'icon'`) shows an icon next to the item name, in the list and
   in the selected value, styled with the popover item icon tokens. Pass `null` to turn it off.
+- **New `valueSeparator` prop** chooses the separator between the selected names with
+  `selectionKind="multiple"`: `comma` (default, `a, b`), `slash` (`a / b`), `arrow` (`a › b`),
+  `dash` (`a - b`), `dot` (`a · b`) or `pipe` (`a | b`). Other values fall back to `comma`.
 - While `loading` is true the list is hidden and the value cannot change: `Enter` does nothing.
 - `idAttribute`, `nameAttribute` and all other props keep working. `hasSelectAll` is ignored with
   a `@search` listener.

@@ -41,6 +41,7 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   hasDetails: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'single' }, // 'single' || 'multiple'
+  valueSeparator: { type: String, default: 'comma' }, // 'comma' || 'slash' || 'arrow' || 'dash' || 'dot' || 'pipe'
   detailMode: { type: String, default: 'simple' }, // 'simple' || 'detailed'
   // Declared as a prop only to know whether @search is listened to; emit('search') still calls it
   onSearch: { type: Function, default: null },
@@ -177,7 +178,26 @@ function getItemTooltip(entry) {
   return tooltipValue || getName(entry) || '';
 }
 
-const selectedNames = computed(() => modelEntries.value.map(getName).join(', '));
+const valueSeparators = {
+  comma: ', ',
+  slash: ' / ',
+  arrow: ' › ',
+  dash: ' - ',
+  dot: ' · ',
+  pipe: ' | ',
+};
+
+const valueSeparator = computed(() => {
+  if (Object.hasOwn(valueSeparators, props.valueSeparator))
+    return valueSeparators[props.valueSeparator];
+  logError(
+    `LxAutoComplete [${props.id}]: unknown "valueSeparator" "${props.valueSeparator}"`,
+    globalEnvironment
+  );
+  return valueSeparators.comma;
+});
+
+const selectedNames = computed(() => modelEntries.value.map(getName).join(valueSeparator.value));
 
 const customTooltip = computed(() => {
   if (isMultiple.value) return '';

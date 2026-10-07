@@ -151,6 +151,24 @@ describe('LxAutoComplete mode="new" model', () => {
     mountNew({ readOnly: true, selectionKind: 'multiple', modelValue: games.slice(0, 2) });
     expect(wrapper.find('.lx-data').text()).toBe('Dishonored, Crysis');
   });
+
+  test.each([
+    ['comma', 'Dishonored, Crysis'],
+    ['slash', 'Dishonored / Crysis'],
+    ['arrow', 'Dishonored › Crysis'],
+    ['dash', 'Dishonored - Crysis'],
+    ['dot', 'Dishonored · Crysis'],
+    ['pipe', 'Dishonored | Crysis'],
+    ['unknown', 'Dishonored, Crysis'],
+  ])('valueSeparator "%s" shows "%s"', (valueSeparator, text) => {
+    mountNew({
+      readOnly: true,
+      selectionKind: 'multiple',
+      valueSeparator,
+      modelValue: games.slice(0, 2),
+    });
+    expect(wrapper.find('.lx-data').text()).toBe(text);
+  });
 });
 
 describe('LxAutoComplete mode="new" search', () => {
