@@ -13,6 +13,7 @@ const props = defineProps({
     default: 'chat',
     options: ['chat', 'comments'],
   },
+  mode: { type: String, default: 'default' }, // 'default', 'compact'
   userDefinitions: { type: Array, default: () => [] }, // Per-user info by message.userId: { id, name, isMe, isAi, icon, iconSet, description, role, institution }.
   avatarKind: { type: String, default: null }, // 'default', 'initials' — passed to LxPersonDisplay/LxAvatar; falls back to the global avatarKind when unset.
   messageText: { type: String, default: null },
@@ -110,6 +111,7 @@ onBeforeUnmount(() => {
 
 const sizeClass = computed(() => `lx-chat-${size.value}`);
 const kindClass = computed(() => `lx-chat-${props.kind}`);
+const modeClass = computed(() => `lx-chat-mode-${props.mode}`);
 
 // Scroll-to-bottom button + footer shadow opacity (state lives in MessageList; rendered here above the composer).
 const messageListRef = ref(null);
@@ -163,7 +165,7 @@ provide('lxChatTypingActionClick', (id) => emits('typing-action-click', { id }))
   <div
     ref="wrapperRef"
     class="lx-chat-wrapper"
-    :class="[sizeClass, kindClass]"
+    :class="[sizeClass, kindClass, modeClass]"
     :style="{ '--lx-chat-top-shadow-opacity': topShadowOpacity }"
     :id="id"
     data-component="lx-chat"

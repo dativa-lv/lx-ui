@@ -37,6 +37,11 @@
   padding-bottom: var(--space-4000);
 }
 
+.lx-chat-wrapper.lx-chat-mode-compact .lx-chat-message-list {
+  padding: var(--space-0500);
+  padding-bottom: var(--space-4000);
+}
+
 .lx-chat-wrapper .lx-chat-message-list .lx-chat-message-list-items,
 .lx-chat-wrapper .lx-chat-message-list .lx-chat-user-messages-group {
   display: flex;
@@ -45,6 +50,10 @@
 
 .lx-chat-wrapper .lx-chat-message-list .lx-chat-message-list-items {
   gap: var(--space-1500);
+}
+
+.lx-chat-wrapper.lx-chat-mode-compact .lx-chat-message-list .lx-chat-message-list-items {
+  gap: var(--space-1000);
 }
 
 .lx-chat-wrapper .lx-chat-message-list .lx-chat-user-messages-group {
@@ -73,6 +82,10 @@
   margin-right: auto;
 }
 
+.lx-chat-wrapper.lx-chat-mode-compact .lx-chat-bubble-wrapper {
+  gap: var(--space-0);
+}
+
 .lx-chat-l .lx-chat-bubble-wrapper {
   max-width: min(80%, 46.5rem);
 }
@@ -87,6 +100,11 @@
 
 .lx-chat-comments .lx-chat-bubble-wrapper {
   max-width: min(100%, 46.5rem);
+}
+
+.lx-chat-chat.lx-chat-mode-compact .lx-chat-bubble-wrapper,
+.lx-chat-chat.lx-chat-m.lx-chat-mode-compact .lx-chat-user-me .lx-chat-bubble-wrapper {
+  max-width: min(94%, 46.5rem);
 }
 
 .lx-chat-wrapper .lx-chat-bubble .lx-list-item-actions.lx-list-actions-hidden {
@@ -109,6 +127,10 @@
   background: transparent !important;
 }
 
+.lx-chat-wrapper.lx-chat-mode-compact .lx-chat-bubble .lx-category-displayer {
+  display: none;
+}
+
 .lx-chat-wrapper .lx-chat-bubble .lx-article {
   margin-top: var(--space-0500);
   margin-bottom: var(--space-0500);
@@ -128,12 +150,12 @@
   margin-left: auto;
 }
 
-.lx-chat-l .lx-chat-bubble-content,
-.lx-chat-l .lx-chat-bubble-time,
-.lx-chat-comments .lx-chat-bubble-content,
-.lx-chat-comments .lx-chat-bubble-time,
-.lx-chat-chat.lx-chat-m .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-bubble-content,
-.lx-chat-chat.lx-chat-m .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-bubble-time {
+.lx-chat-l:not(.lx-chat-mode-compact) .lx-chat-bubble-content,
+.lx-chat-l:not(.lx-chat-mode-compact) .lx-chat-bubble-time,
+.lx-chat-comments:not(.lx-chat-mode-compact) .lx-chat-bubble-content,
+.lx-chat-comments:not(.lx-chat-mode-compact) .lx-chat-bubble-time,
+.lx-chat-chat.lx-chat-m:not(.lx-chat-mode-compact) .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-bubble-content,
+.lx-chat-chat.lx-chat-m:not(.lx-chat-mode-compact) .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-bubble-time {
   margin-left: var(--space-3000);
 }
 
@@ -224,6 +246,10 @@
   color: var(--color-data);
 }
 
+.lx-chat-wrapper.lx-chat-mode-compact .lx-chat-bubble .lx-list-item > header {
+  padding: var(--space-0) var(--space-0500);
+}
+
 .lx-chat-wrapper .lx-chat-form-prompt {
   display: block;
   margin-bottom: var(--space-1000);
@@ -282,9 +308,9 @@
   font-size: var(--font-size-small);
 }
 
-.lx-chat-l .lx-chat-invalid-message,
-.lx-chat-comments .lx-chat-invalid-message,
-.lx-chat-chat.lx-chat-m .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-invalid-message {
+.lx-chat-l:not(.lx-chat-mode-compact) .lx-chat-invalid-message,
+.lx-chat-comments:not(.lx-chat-mode-compact) .lx-chat-invalid-message,
+.lx-chat-chat.lx-chat-m:not(.lx-chat-mode-compact) .lx-chat-user-group:not(.lx-chat-user-me) .lx-chat-invalid-message {
   margin-left: calc(var(--space-2500) + 1ch);
 }
 
