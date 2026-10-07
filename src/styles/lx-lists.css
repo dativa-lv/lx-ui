@@ -1511,3 +1511,11 @@ li .lx-list-item.lx-inactive {
     flex-direction: column;
   }
 }
+
+/*** LxSearchView styles ***/
+
+.lx-search-view {
+  display: grid;
+  gap: var(--space-0500);
+}
+

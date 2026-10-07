@@ -106,5 +106,6 @@ export const LxBadge = defineAsyncComponent(() => import('@/components/Badge.vue
 export const LxAccessibilitySettings = defineAsyncComponent(() =>
   import('@/components/AccessibilitySettings.vue')
 );
+export const LxSearchView = defineAsyncComponent(() => import('@/components/SearchView.vue'));
 
 // Other components you plan to publish go here
