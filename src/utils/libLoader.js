@@ -34,10 +34,9 @@ const libraryLoaders = {
   },
 
   c2pa: async () => {
-    const { createC2pa, selectProducer } = await import('c2pa');
-    const wasmSrc = (await import('c2pa/dist/assets/wasm/toolkit_bg.wasm?url')).default;
-    const workerSrc = (await import('c2pa/dist/c2pa.worker.js?url')).default;
-    return { createC2pa, selectProducer, wasmSrc, workerSrc };
+    const { createC2pa, Reader } = await import('@contentauth/c2pa-web');
+    const wasmSrc = (await import('@contentauth/c2pa-web/resources/c2pa.wasm?url')).default;
+    return { createC2pa, Reader, wasmSrc };
   },
 
   sanitizeUrl: async () => {

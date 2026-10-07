@@ -251,62 +251,63 @@ export async function extractC2paMetadata(arrayBuffer, fileType) {
     'ChatGPT',
   ];
 
-  let selectProducer;
   let c2pa;
+  let Reader;
 
   try {
-    const {
-      createC2pa,
-      selectProducer: iSelectProducer,
-      wasmSrc,
-      workerSrc,
-    } = await loadLibrary('c2pa');
-    selectProducer = iSelectProducer;
-
-    c2pa = await createC2pa({
-      wasmSrc,
-      workerSrc,
-    });
+    const { createC2pa, Reader: iReader, wasmSrc } = await loadLibrary('c2pa');
+    Reader = iReader;
+    c2pa = await createC2pa({ wasmSrc });
   } catch {
     return { error: true };
   }
 
+  let reader;
   try {
     const c2paBlob = new Blob([arrayBuffer], { type: fileType });
 
-    const { manifestStore } = await c2pa.read(c2paBlob);
-    const activeManifest = manifestStore?.activeManifest;
-    const assertionDataActions = activeManifest.assertions.get('c2pa.actions');
+    reader = await Reader.fromBlob(c2pa, fileType, c2paBlob);
+    const manifestStore = await reader.manifestStore();
+    const activeManifest = manifestStore?.manifests?.[manifestStore.active_manifest];
+    const signatureInfo = activeManifest.signature_info;
 
-    let softwareAgent = null;
+    const actionsAssertion = activeManifest.assertions?.find((assertion) =>
+      ['c2pa.actions', 'c2pa.actions.v2'].includes(assertion.label)
+    );
 
-    if (assertionDataActions && assertionDataActions?.length > 0) {
-      const { actions } = assertionDataActions[0].data;
-      const softwareAgentAction = actions.find((action) => action.softwareAgent);
-      if (softwareAgentAction) {
-        softwareAgent = softwareAgentAction.softwareAgent;
-      }
-    }
+    const softwareAgent = actionsAssertion?.data?.actions?.find(
+      (action) => action.softwareAgent
+    )?.softwareAgent;
+    const softwareAgentName =
+      typeof softwareAgent === 'string' ? softwareAgent : softwareAgent?.name;
 
     // Check if softwareAgent or if its not present claimGenerator name matches any AI tool name in the list
+    const claimGenerator =
+      activeManifest.claim_generator_info?.[0]?.name ?? activeManifest.claim_generator;
     const isAIGenerated =
-      aiToolList.some((aiTool) => softwareAgent?.includes(aiTool)) ||
-      aiToolList.some((aiTool) => activeManifest.claimGenerator.includes(aiTool));
+      aiToolList.some((aiTool) => softwareAgentName?.includes(aiTool)) ||
+      aiToolList.some((aiTool) => claimGenerator?.includes(aiTool));
+
+    const producer = activeManifest.assertions
+      ?.find((assertion) => assertion.label === 'stds.schema-org.CreativeWork')
+      ?.data?.author?.find((author) => author['@type'] === 'Person');
 
     return {
-      signatureId: activeManifest.signatureInfo?.cert_serial_number,
+      signatureId: signatureInfo?.cert_serial_number,
       isAIGenerated,
       signerInfo: {
         eSignType: 'c2pa',
-        nameAndSurname: selectProducer(activeManifest)?.name, // producer
-        eSignIssuer: activeManifest.signatureInfo?.issuer, // signatureIssuer
-        eSignDate: activeManifest.signatureInfo?.time // signatureDate
-          ? formatFull(activeManifest.signatureInfo?.time)
+        nameAndSurname: producer?.name, // producer
+        eSignIssuer: signatureInfo?.issuer, // signatureIssuer
+        eSignDate: signatureInfo?.time // signatureDate
+          ? formatFull(signatureInfo.time)
           : '',
       },
     };
   } catch {
     return null;
+  } finally {
+    await reader?.free();
   }
 }
 

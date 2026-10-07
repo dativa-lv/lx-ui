@@ -1,6 +1,6 @@
 # Library Loader Usage Guide
 
-A reusable, performant utility for lazy-loading heavy JavaScript libraries (e.g., jsrsasign, pdfjs-dist, c2pa) in a Vite-based project. It handles dynamic imports safely, avoids duplicate loads, supports concurrent calls, and includes optional caching.
+A reusable, performant utility for lazy-loading heavy JavaScript libraries (e.g., jsrsasign, pdfjs-dist, @contentauth/c2pa-web) in a Vite-based project. It handles dynamic imports safely, avoids duplicate loads, supports concurrent calls, and includes optional caching.
 
 ## Importing the Loader
 ```js
