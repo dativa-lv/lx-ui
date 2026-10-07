@@ -237,7 +237,7 @@ provide('insideHeader', insideHeader);
             <div class="header-profile-name">
               {{ fullName }}
             </div>
-            <div class="header-profile-role" :title="userInfo?.description">
+            <div class="header-profile-role" v-tooltip="userInfo?.description">
               {{ userInfo?.description }}
             </div>
           </template>
@@ -270,7 +270,7 @@ provide('insideHeader', insideHeader);
           <div class="header-profile-name">
             {{ selectedContextPerson?.name }}
           </div>
-          <div class="header-profile-role" :title="selectedContextPerson?.description">
+          <div class="header-profile-role" v-tooltip="selectedContextPerson?.description">
             {{ selectedContextPerson?.description }}
           </div>
         </template>
@@ -291,7 +291,9 @@ provide('insideHeader', insideHeader);
             >
               <div
                 v-if="selectedContextPerson?.code !== userInfo?.code"
-                :title="`${selectedContextPerson?.name}\r\n${selectedContextPerson?.description}`"
+                v-tooltip="
+                  `${selectedContextPerson?.name}\r\n${selectedContextPerson?.description}`
+                "
               >
                 <p class="lx-primary">{{ selectedContextPerson?.name }}</p>
                 <p class="lx-description">

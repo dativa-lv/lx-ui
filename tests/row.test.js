@@ -66,7 +66,7 @@ test('LxRow description', () => {
     },
   });
 
-  const title = wrapper.find('.lx-row').find('label').attributes('title');
+  const title = wrapper.find('.lx-row').find('label').attributes('data-lx-tooltip');
   expect(title).toBe('Label\nDescription');
 });
 

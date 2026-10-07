@@ -436,7 +436,7 @@ const wrapperRef = ref();
     role="radiogroup"
     :aria-labelledby="labelId"
     :aria-required="ariaRequired"
-    :title="tooltip"
+    v-tooltip="tooltip"
     :id="id"
     data-container="value-picker-items-wrapper"
   >

@@ -490,7 +490,7 @@ const wrapperRef = ref();
         :aria-invalid="invalid"
         :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
         :aria-describedby="describedBy"
-        :title="tooltip"
+        v-tooltip="tooltip"
         :aria-labelledby="labelId"
         :aria-required="ariaRequired"
         data-container="value-picker-items-wrapper"
@@ -639,14 +639,14 @@ const wrapperRef = ref();
           :aria-invalid="invalid"
           :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
           :aria-describedby="describedBy"
-          :title="tooltip"
+          v-tooltip="tooltip"
           data-container="value-picker-items-wrapper"
         >
           <li
             v-for="item in itemsDisplay"
             :key="item[idAttribute]"
             class="lx-tag"
-            :title="item[descriptionAttribute]"
+            v-tooltip="item[descriptionAttribute]"
             :id="getItemId(item[idAttribute])"
             :group-id="groupId"
             :class="{
@@ -693,14 +693,14 @@ const wrapperRef = ref();
           :aria-invalid="invalid"
           :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
           :aria-describedby="describedBy"
-          :title="tooltip"
+          v-tooltip="tooltip"
           data-container="value-picker-items-wrapper"
         >
           <li
             v-for="item in itemsDisplay"
             :key="item[idAttribute]"
             class="lx-tag"
-            :title="item[descriptionAttribute]"
+            v-tooltip="item[descriptionAttribute]"
             :id="getItemId(item[idAttribute])"
             :group-id="groupId"
             :class="{

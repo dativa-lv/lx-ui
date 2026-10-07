@@ -625,7 +625,7 @@ const dataState = computed(() =>
       ]"
     >
       <div class="lx-duration-container">
-        <p v-if="readOnly" class="lx-data" :title="computedTitle" :aria-labelledby="labelledBy">
+        <p v-if="readOnly" class="lx-data" v-tooltip="computedTitle" :aria-labelledby="labelledBy">
           <LxEmptyValue v-if="!result" :texts="{ emptyValue: displayTexts.emptyValue }" />
           <span v-else>{{ result }}</span>
         </p>

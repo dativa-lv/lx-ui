@@ -1,11 +1,13 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { flushPromises, mount } from '@vue/test-utils';
+import { config, flushPromises, mount } from '@vue/test-utils';
 import { h, nextTick } from 'vue';
 import LxAutoComplete from '@/components/AutoComplete.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import useAutoCompleteSearch from '@/hooks/useAutoCompleteSearch';
 import { textSearch } from '@/utils/stringUtils';
 import 'regenerator-runtime/runtime';
+
+config.global.stubs = { ...config.global.stubs, 'router-link': true };
 
 const games = [
   { id: 'mt', name: 'Dishonored' },

@@ -62,7 +62,7 @@ watch(
     <country-flag
       :country="value ?? ''"
       :size="sizeMap[size] || 'normal'"
-      :title="title || countryName"
+      v-tooltip="title || countryName"
     />
   </div>
 </template>

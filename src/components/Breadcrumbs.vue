@@ -67,7 +67,7 @@ const trailingCrumbs = computed(() =>
       >
         <span
           class="lx-breadcrumb-overflow-toggle"
-          :title="displayTexts.tooltip"
+          v-tooltip="displayTexts.tooltip"
           :aria-label="displayTexts.tooltip"
           >...</span
         >

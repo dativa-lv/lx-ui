@@ -4733,7 +4733,7 @@ if (typeof globalThis !== 'undefined') {
                         :key="idx"
                         class="lx-calendar-weekday"
                         role="columnheader"
-                        :title="item.fullName"
+                        v-tooltip="item.fullName"
                         :aria-label="item.fullName"
                       >
                         {{ item.narrowName }}
@@ -5669,7 +5669,6 @@ if (typeof globalThis !== 'undefined') {
                 kind="ghost"
                 icon="caret-up"
                 :label="displayTexts.scrollUp"
-                :title="displayTexts.scrollUp"
                 @click="stepTimeColumn(column, -1, false)"
               />
 
@@ -5710,7 +5709,6 @@ if (typeof globalThis !== 'undefined') {
                 kind="ghost"
                 icon="caret-down"
                 :label="displayTexts.scrollDown"
-                :title="displayTexts.scrollDown"
                 @click="stepTimeColumn(column, 1, false)"
               />
             </div>

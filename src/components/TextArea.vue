@@ -197,7 +197,7 @@ const dataState = computed(() =>
             :rows="props.rows"
             :disabled="props.disabled"
             :maxlength="props.maxlength"
-            :title="props.tooltip"
+            v-tooltip="props.tooltip"
             :aria-labelledby="labelledBy"
             :aria-required="ariaRequired"
             :aria-errormessage="showInvalidationMessage ? `${props.id}-invalidation-message` : null"

@@ -237,7 +237,7 @@ defineExpose({ open, close });
           :aria-labelledby="`${id}-label`"
         >
           <header ref="modalHeader">
-            <div :id="`${id}-label`" class="lx-primary" :title="label">{{ label }}</div>
+            <div :id="`${id}-label`" class="lx-primary" v-tooltip="label">{{ label }}</div>
             <LxButton
               v-if="!disableClosing"
               :id="`${id}-close-button`"

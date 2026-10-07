@@ -498,7 +498,7 @@ const wrapperRef = ref();
       :role="props.selectionKind === 'single' ? 'radiogroup' : 'group'"
       :aria-labelledby="labelId"
       :aria-required="ariaRequired"
-      :title="tooltip"
+      v-tooltip="tooltip"
       :aria-invalid="invalid"
       :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
       :aria-describedby="describedBy"

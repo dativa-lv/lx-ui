@@ -1,11 +1,13 @@
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from 'vitest';
+import { config, flushPromises, mount } from '@vue/test-utils';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
-import { flushPromises, mount } from '@vue/test-utils';
 import { h } from 'vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import 'regenerator-runtime/runtime';
+
+config.global.stubs = { ...config.global.stubs, 'router-link': true };
 
 // LxToolbar loads LxTextInput with defineAsyncComponent; pre-warm the module for these suites.
 beforeAll(() => import('@/components/TextInput.vue'));
@@ -530,7 +532,9 @@ test('LxValuePicker default tooltip', () => {
       },
     },
   });
-  expect(wrapper.find('.lx-value-picker-default-wrapper').attributes('title')).toBe('Tooltip text');
+  expect(wrapper.find('.lx-value-picker-default-wrapper').attributes('data-lx-tooltip')).toBe(
+    'Tooltip text'
+  );
 });
 
 test('LxValuePicker dropdown tooltip', () => {
@@ -550,7 +554,9 @@ test('LxValuePicker dropdown tooltip', () => {
     },
   });
 
-  expect(wrapper.find('.lx-dropdown-default-panel').attributes('title')).toBe('Tooltip text');
+  expect(wrapper.find('.lx-dropdown-default-panel').attributes('data-lx-tooltip')).toBe(
+    'Tooltip text'
+  );
 });
 
 test('LxValuePicker tags tooltip', () => {
@@ -569,7 +575,7 @@ test('LxValuePicker tags tooltip', () => {
     },
   });
 
-  expect(wrapper.find('.lx-tag-set').attributes('title')).toBe('Tooltip text');
+  expect(wrapper.find('.lx-tag-set').attributes('data-lx-tooltip')).toBe('Tooltip text');
 });
 
 test('LxValuePicker tiles tooltip', () => {
@@ -588,7 +594,9 @@ test('LxValuePicker tiles tooltip', () => {
     },
   });
 
-  expect(wrapper.find('.lx-value-picker-tile-wrapper').attributes('title')).toBe('Tooltip text');
+  expect(wrapper.find('.lx-value-picker-tile-wrapper').attributes('data-lx-tooltip')).toBe(
+    'Tooltip text'
+  );
 });
 
 /* readOnly */

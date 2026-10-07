@@ -423,7 +423,7 @@ const isDisabledOrReadOnly = computed(() => props.disabled || props.readOnly);
     ]"
     v-if="variant === 'indicator'"
     :id="id"
-    :title="tooltip"
+    v-tooltip="tooltip"
     :role="selectionKind === 'single' ? 'radiogroup' : 'group'"
     :aria-invalid="invalid"
     :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"

@@ -49,6 +49,7 @@ const vueConfig = defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
+    setupFiles: ['./tests/setup.js'],
     testTimeout: 30_000,
   },
 });

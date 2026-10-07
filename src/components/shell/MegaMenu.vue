@@ -182,7 +182,7 @@ const safeShowAllHref = computedAsync(() => computeSafeTo(props.showAllHref), nu
               { 'default-icon': !item.id },
             ]"
           >
-            <router-link v-if="item.href" :to="item.href" :title="item?.description">
+            <router-link v-if="item.href" :to="item.href" v-tooltip="item?.description">
               <LxIcon
                 :value="getIcon(item)"
                 :iconSet="getIconSet(item)"
@@ -195,7 +195,7 @@ const safeShowAllHref = computedAsync(() => computeSafeTo(props.showAllHref), nu
               v-else
               role="button"
               tabindex="0"
-              :title="item?.description"
+              v-tooltip="item?.description"
               @click="updateSelectedMegaMenuItem(item.id)"
               @keyup.enter.prevent="updateSelectedMegaMenuItem(item.id)"
             >
@@ -212,7 +212,7 @@ const safeShowAllHref = computedAsync(() => computeSafeTo(props.showAllHref), nu
             <router-link
               v-if="safeShowAllHref"
               :to="safeShowAllHref"
-              :title="displayTexts.showAllLabel"
+              v-tooltip="displayTexts.showAllLabel"
             >
               <LxIcon value="open" :title="displayTexts.showAllLabel" />
               <div class="lx-data">{{ displayTexts.showAllLabel }}</div>
@@ -221,7 +221,7 @@ const safeShowAllHref = computedAsync(() => computeSafeTo(props.showAllHref), nu
               v-else
               role="button"
               tabindex="0"
-              :title="displayTexts.showAllLabel"
+              v-tooltip="displayTexts.showAllLabel"
               @click="triggerShowAllClick"
               @keyup.enter.prevent="triggerShowAllClick"
             >

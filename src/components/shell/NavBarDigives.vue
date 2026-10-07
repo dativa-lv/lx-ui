@@ -242,7 +242,7 @@ onClickOutside(navPanel, toggleNavBar);
             <div class="header-profile-name">
               {{ selectedContextPerson?.name }}
             </div>
-            <div class="header-profile-role" :title="selectedContextPerson?.description">
+            <div class="header-profile-role" v-tooltip="selectedContextPerson?.description">
               {{ selectedContextPerson?.description }}
             </div>
           </li>
@@ -265,7 +265,9 @@ onClickOutside(navPanel, toggleNavBar);
             >
               <div
                 v-if="selectedContextPerson?.code !== userInfo?.code"
-                :title="`${selectedContextPerson?.name}\r\n${selectedContextPerson?.description}`"
+                v-tooltip="
+                  `${selectedContextPerson?.name}\r\n${selectedContextPerson?.description}`
+                "
               >
                 <p class="lx-primary">{{ selectedContextPerson?.name }}</p>
                 <p class="lx-description">

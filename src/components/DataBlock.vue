@@ -213,14 +213,14 @@ const expandIconTitle = computed(() => {
             <div
               :class="[{ 'lx-primary-uppercase': uppercase }]"
               class="lx-primary lx-title"
-              :title="name"
+              v-tooltip="name"
             >
               {{ name }}
             </div>
             <div
               class="lx-secondary"
               :id="`data-block-${id}-desc`"
-              :title="description"
+              v-tooltip="description"
               :aria-hidden="width <= 500 || expanded ? 'true' : null"
               v-show="description"
             >

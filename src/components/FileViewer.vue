@@ -1722,7 +1722,7 @@ onUnmounted(() => {
           />
         </div>
         <div class="pdf-page-indicator">
-          <div class="placeholder" :title="displayTexts.inputTooltip">
+          <div class="placeholder" v-tooltip="displayTexts.inputTooltip">
             {{ currentPage }} / {{ totalPages }}
           </div>
         </div>

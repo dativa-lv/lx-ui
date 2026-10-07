@@ -1032,7 +1032,7 @@ if (props.builderOptions.useRegistry) {
             @keyup.enter="scrollTo(i.id)"
             @keydown.space.prevent="scrollTo(i.id)"
             @click="scrollTo(i.id)"
-            :title="i.invalid ? clampText(i.invalidationMessage) : ''"
+            v-tooltip="i.invalid ? clampText(i.invalidationMessage) : ''"
           >
             {{ sectionLocations[`${props.id}-${i.id}`] }}
             <p>{{ i.name }}</p>
@@ -1057,7 +1057,7 @@ if (props.builderOptions.useRegistry) {
           <div
             class="index-text"
             :class="{ 'lx-invalid': i?.invalid }"
-            :title="i.invalid ? clampText(i.invalidationMessage) : ''"
+            v-tooltip="i.invalid ? clampText(i.invalidationMessage) : ''"
             role="button"
             tabindex="0"
             @keyup.enter="scrollTo(i.id)"
@@ -1257,7 +1257,7 @@ if (props.builderOptions.useRegistry) {
                     { 'lx-active': findIfSectionSelected(i.id) },
                     { 'lx-invalid': i?.invalid },
                   ]"
-                  :title="i.invalid ? clampText(i.invalidationMessage) : ''"
+                  v-tooltip="i.invalid ? clampText(i.invalidationMessage) : ''"
                   tabindex="0"
                   role="button"
                   @keyup.enter="scrollTo(i.id)"
@@ -1304,7 +1304,7 @@ if (props.builderOptions.useRegistry) {
                   { 'lx-active': findIfSectionSelected(i.id) },
                   { 'lx-invalid': i?.invalid },
                 ]"
-                :title="i.invalid ? clampText(i.invalidationMessage) : ''"
+                v-tooltip="i.invalid ? clampText(i.invalidationMessage) : ''"
                 tabindex="0"
                 role="button"
                 @keyup.enter="scrollTo(i.id)"

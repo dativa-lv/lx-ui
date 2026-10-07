@@ -164,7 +164,7 @@ onMounted(() => {
           ref="itemRefs"
           class="lx-tab"
           :class="[{ 'lx-selected': t.id === model }, { 'lx-invalid': t.invalid }]"
-          :title="t.invalid ? clampText(t.invalidationMessage) : ''"
+          v-tooltip="t.invalid ? clampText(t.invalidationMessage) : ''"
           :tabindex="t.id === model ? '0' : '-1'"
           role="tab"
           :aria-selected="t.id === model"

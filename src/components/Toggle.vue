@@ -239,7 +239,7 @@ const dataState = computed(() =>
       }"
       :data-disabled="disabled ? '' : null"
       :data-invalid="invalid ? '' : null"
-      :title="tooltipValue"
+      v-tooltip="tooltipValue"
     >
       <!-- it's labelled by the label below, or if that's absent, by aria-label -->
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label-->

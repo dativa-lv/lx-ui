@@ -177,7 +177,7 @@ describe('Action definitions', () => {
       expect(inputElement.getAttribute('aria-label')).toContain(toggles[i].name);
 
       if (toggles[i].title) {
-        expect(wrapperElement.getAttribute('title')).toContain(toggles[i].title);
+        expect(wrapperElement.getAttribute('data-lx-tooltip')).toContain(toggles[i].title);
       }
 
       if (toggles[i].disabled) {

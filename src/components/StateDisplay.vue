@@ -132,7 +132,7 @@ const stateIcon = computed(() => {
       }`,
       { 'lx-tooltip-state': definition?.title, 'lx-state-icon-only': isIconOnly },
     ]"
-    :title="definition?.title"
+    v-tooltip="definition?.title"
     data-component="lx-state-display"
     :id="id"
   >

@@ -472,7 +472,7 @@ const getSelectedItem = computed(
                 modelValue === '' || modelValue === undefined || modelValue === null,
             },
           ]"
-          :title="tooltip"
+          v-tooltip="tooltip"
           :disabled="isDisabled"
           :aria-labelledby="labelledBy"
           :aria-required="ariaRequired"
@@ -557,7 +557,7 @@ const getSelectedItem = computed(
             <div
               class="lx-dropdown-default-panel lx-input-wrapper"
               :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
-              :title="tooltip"
+              v-tooltip="tooltip"
             >
               <div class="pseudo-input" />
 
@@ -569,7 +569,7 @@ const getSelectedItem = computed(
                 </div>
               </template>
 
-              <div v-else class="lx-dropdown-default-data lx-input-area" :title="tooltip">
+              <div v-else class="lx-dropdown-default-data lx-input-area" v-tooltip="tooltip">
                 <span class="lx-input-text">{{ name }}</span>
               </div>
 

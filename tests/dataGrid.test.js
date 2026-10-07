@@ -594,7 +594,7 @@ describe('Action column header', () => {
     expect(actionHeader.exists()).toBe(true);
     expect(actionHeader.attributes('tabindex')).toBeUndefined();
     // No tooltip either — there is nothing under the pointer to describe.
-    expect(actionHeader.attributes('title')).toBeUndefined();
+    expect(actionHeader.attributes('data-lx-tooltip')).toBeUndefined();
 
     // Arrowing past the last sortable column must not land on the empty placeholder.
     await wrapper.find('.lx-grid-header-wrapper .lx-cell-header').trigger('click');

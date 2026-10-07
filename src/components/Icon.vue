@@ -100,8 +100,8 @@ const gradientComputed = computed(() => {
     focusable="false"
     data-component="lx-icon"
     :id="id"
+    v-tooltip="props.title"
   >
-    <title>{{ props.title }}</title>
     <desc>{{ props.desc ? props.desc : `${displayTexts.iconLabel} "${icon}"` }}</desc>
     <defs v-if="variant !== 'default'">
       <linearGradient id="gradient">

@@ -77,7 +77,7 @@ const loaderAriaHidden = computed(() => {
         { 'lx-loader-small': size === 's' },
         { 'lx-loader-large': size === 'l' },
       ]"
-      :title="props.description"
+      v-tooltip="props.description"
       :role="kind === 'progress' ? 'progressbar' : undefined"
       :aria-valuenow="kind === 'progress' ? model : undefined"
       :aria-valuemin="kind === 'progress' ? 0 : undefined"

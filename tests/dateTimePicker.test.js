@@ -83,7 +83,9 @@ describe('LxDateTimePicker', () => {
       },
     });
 
-    expect(wrapper.find('.lx-date-time-picker-wrapper').attributes('title')).toBe('Tooltip text');
+    expect(wrapper.find('.lx-date-time-picker-wrapper').attributes('data-lx-tooltip')).toBe(
+      'Tooltip text'
+    );
   });
 
   describe('kind', () => {

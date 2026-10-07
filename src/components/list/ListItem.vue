@@ -134,7 +134,7 @@ defineExpose({ focus });
       @keyup.enter="performClick"
       @keyup.space="performClick"
       @keydown.space.prevent
-      :title="clickable ? tooltip : ''"
+      v-tooltip="clickable ? tooltip : ''"
       :class="[
         { 'lx-list-item-interactive': href || clickable },
         { 'lx-list-item-has-description': description },
@@ -252,7 +252,7 @@ defineExpose({ focus });
       :aria-invalid="invalid"
       :to="safeTo"
       @keydown.space.prevent
-      :title="tooltip"
+      v-tooltip="tooltip"
       :class="[
         { 'lx-list-item-interactive': href || clickable },
         { 'lx-list-item-has-description': description },

@@ -15,7 +15,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 <template>
   <span>
-    <span aria-hidden="true" :title="displayTexts.emptyValue">—</span>
+    <span aria-hidden="true" v-tooltip="displayTexts.emptyValue">—</span>
     <span class="lx-invisible">{{ displayTexts.emptyValue }}</span>
   </span>
 </template>

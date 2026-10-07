@@ -594,11 +594,13 @@ watch(
         <div
           class="header-system-name"
           v-if="systemNameFormatted"
-          :title="systemNameFormatted"
+          v-tooltip="systemNameFormatted"
           v-clean-html="systemNameFormatted"
         ></div>
-        <div class="header-system-name" :title="systemNameShort" v-else>{{ systemNameShort }}</div>
-        <div class="header-system-subheader" :title="systemSubheader">{{ systemSubheader }}</div>
+        <div class="header-system-name" v-tooltip="systemNameShort" v-else>
+          {{ systemNameShort }}
+        </div>
+        <div class="header-system-subheader" v-tooltip="systemSubheader">{{ systemSubheader }}</div>
       </div>
     </div>
 
@@ -876,7 +878,7 @@ watch(
             </LxRow>
           </template>
         </LxInfoWrapper>
-        <div v-else class="no-patient-icon" :title="displayTexts.contextPersonsInfoTitle">
+        <div v-else class="no-patient-icon" v-tooltip="displayTexts.contextPersonsInfoTitle">
           <LxIcon
             class="patient-inactive-icon"
             value="patient-inactive"

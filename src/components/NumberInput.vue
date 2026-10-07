@@ -342,7 +342,7 @@ if (props.builderOptions?.useRegistry) {
         <p>{{ minValue }}</p>
       </div>
 
-      <div class="input-slider" :title="tooltip">
+      <div class="input-slider" v-tooltip="tooltip">
         <input
           v-model="sliderModel"
           type="range"

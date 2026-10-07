@@ -283,7 +283,7 @@ if (props.builderOptions?.useRegistry) {
         :class="cfg.cssClass"
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
-        :title="isComposite ? null : tooltip"
+        v-tooltip="isComposite ? null : tooltip"
       >
         <LxDayMonthPicker
           v-if="isComposite"

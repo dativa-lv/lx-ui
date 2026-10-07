@@ -2250,7 +2250,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             v-for="(col, colIndex) in gridColumnsDisplay"
             :key="col.id"
             :data-col-id="col.id"
-            :title="formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)"
+            v-tooltip="
+              formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
+            "
             class="lx-cell-header"
             :class="[
               {
@@ -2487,7 +2489,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   v-if="isRenderableTextType(col.type)"
                   :is="isDateType(col.type) ? 'time' : 'span'"
                   :aria-label="getAriaLabel(col, row)"
-                  :title="getTextTooltip(col, row)"
+                  v-tooltip="getTextTooltip(col, row)"
                   :class="{
                     'lx-cell-tooltip':
                       col.type === 'tooltip-text' || ['xs', 's', 'm'].includes(col.size),

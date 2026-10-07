@@ -697,7 +697,7 @@ provide('insideHeader', insideHeader);
                   </p>
                   <p
                     class="lx-secondary"
-                    :title="
+                    v-tooltip="
                       selectedContextPersonModel
                         ? selectedContextPersonModel?.description
                         : userInfo?.description

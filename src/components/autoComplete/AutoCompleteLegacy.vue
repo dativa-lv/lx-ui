@@ -1286,7 +1286,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
             <div
               ref="refAutocomplete"
               class="lx-autocomplete"
-              :title="customTooltip"
+              v-tooltip="customTooltip"
               tabindex="-1"
               @keydown.esc.prevent="closeDropDownDefaultOnEsc"
               @keydown.enter.prevent="onEnter"
@@ -1299,7 +1299,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
               <div
                 class="lx-autocomplete-default-panel"
                 :class="[{ multiselect: selectionKind === 'multiple' }]"
-                :title="selectionKind === 'single' ? customTooltip : props.tooltip"
+                v-tooltip="selectionKind === 'single' ? customTooltip : props.tooltip"
               >
                 <div
                   class="lx-autocomplete-default-data"
@@ -1383,7 +1383,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     </div>
 
                     <template v-if="shouldShowValuePlaceholder">
-                      <div class="lx-value lx-input-area" :title="customTooltip">
+                      <div class="lx-value lx-input-area" v-tooltip="customTooltip">
                         <div>
                           <template v-if="$slots.customItem && selectionKind === 'single'">
                             <slot name="customItem" v-bind="selectedItem"></slot>
@@ -1485,7 +1485,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                     <div
                       class="lx-autocomplete-loader"
                       v-if="loadingState || loading"
-                      :title="displayTexts.loadingState"
+                      v-tooltip="displayTexts.loadingState"
                     >
                       <LxLoader loading size="s" />
                     </div>
@@ -1580,7 +1580,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                             @keydown.enter.prevent="selectAll"
                             @click="selectAll"
                             @focus="highlightedItemId = 'select-all'"
-                            :title="
+                            v-tooltip="
                               areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
                             "
                           >
@@ -1623,7 +1623,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                           :group-id="groupId"
                           :label="item[nameAttribute]"
                           :disabled="loading"
-                          :title="getItemTooltip(item)"
+                          v-tooltip="getItemTooltip(item)"
                           @click.prevent="
                             props.selectionKind === 'single'
                               ? selectSingle(item)

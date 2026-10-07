@@ -681,7 +681,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
           <div class="lx-autocomplete-input-icon-container">
             <div
               class="lx-autocomplete"
-              :title="customTooltip"
+              v-tooltip="customTooltip"
               tabindex="-1"
               @keydown.esc.prevent="closeOnEsc"
               @keydown.enter.prevent="onEnter"
@@ -694,7 +694,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
               <div
                 class="lx-autocomplete-default-panel"
                 :class="[{ multiselect: isMultiple }]"
-                :title="isMultiple ? tooltip : customTooltip"
+                v-tooltip="isMultiple ? tooltip : customTooltip"
               >
                 <div
                   class="lx-autocomplete-default-data"
@@ -776,7 +776,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
                     <div
                       v-if="shouldShowValue"
                       class="lx-value lx-input-area"
-                      :title="customTooltip"
+                      v-tooltip="customTooltip"
                     >
                       <div>
                         <slot
@@ -859,7 +859,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
                     <div
                       class="lx-autocomplete-loader"
                       v-if="loading"
-                      :title="displayTexts.loadingState"
+                      v-tooltip="displayTexts.loadingState"
                     >
                       <LxLoader loading size="s" />
                     </div>
@@ -938,7 +938,9 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
                         tabindex="-1"
                         role="option"
                         :aria-selected="areAllSelected"
-                        :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+                        v-tooltip="
+                          areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
+                        "
                         @keydown.enter.prevent="toggleSelectAll"
                         @click="toggleSelectAll"
                         @focus="highlightedKey = SELECT_ALL_KEY"
@@ -973,7 +975,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
                         'autocomplete-default-item': !$slots.customItem,
                       }"
                       :id="getItemId(entry.key)"
-                      :title="getItemTooltip(entry)"
+                      v-tooltip="getItemTooltip(entry)"
                       @click.prevent="selectEntry(entry)"
                       @focus="highlightedKey = entry.key"
                     >

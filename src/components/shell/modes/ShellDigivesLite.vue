@@ -176,7 +176,7 @@ const {
             </LxRow>
           </template>
         </LxInfoWrapper>
-        <div v-else class="no-patient-icon" :title="displayTexts.contextPersonsInfoTitle">
+        <div v-else class="no-patient-icon" v-tooltip="displayTexts.contextPersonsInfoTitle">
           <LxIcon
             class="patient-inactive-icon"
             value="patient-inactive"

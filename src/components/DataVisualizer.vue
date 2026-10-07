@@ -547,7 +547,7 @@ watch(
             <p
               v-if="Array.isArray(item?.[valueAttribute])"
               class="lx-bar-group-label"
-              :title="item?.[nameAttribute]"
+              v-tooltip="item?.[nameAttribute]"
             >
               {{ item?.[nameAttribute] }}
             </p>
@@ -557,7 +557,7 @@ watch(
               :key="subItem[idAttribute]"
               :id="`${id}-${subItem[idAttribute]}`"
               class="bar-name sub-bar"
-              :title="subItem?.[nameAttribute]"
+              v-tooltip="subItem?.[nameAttribute]"
               :value="subItem?.[valueAttribute]"
             >
               {{ subItem?.[nameAttribute] }}
@@ -575,7 +575,7 @@ watch(
                 'sub-bar-after': hasSubBarAfter(index),
               },
             ]"
-            :title="item?.[nameAttribute]"
+            v-tooltip="item?.[nameAttribute]"
             :value="item?.[valueAttribute]"
           >
             {{ item?.[nameAttribute] }}
@@ -600,7 +600,7 @@ watch(
           :style="`${getBarWidth(item)}; ${getBarColor(item)}; ${getSubItemCount(
             item?.[valueAttribute]
           )}; ${getBackTextColor(item)}`"
-          :title="
+          v-tooltip="
             Array.isArray(item?.[valueAttribute])
               ? null
               : showValues === 'never'
@@ -631,7 +631,7 @@ watch(
                 :style="`${getBarWidth(subItem)}; ${getBarColor(subItem)}; ${getBackTextColor(
                   subItem
                 )}`"
-                :title="
+                v-tooltip="
                   showValues === 'never'
                     ? `${subItem?.[nameAttribute]}`
                     : `${subItem?.[nameAttribute]} \n${formatDecimal(
@@ -675,7 +675,11 @@ watch(
           :class="[{ 'lx-target-wrapper-multiple': target.list?.length > 1 }]"
         >
           <div class="lx-target-header" v-if="showValues !== 'never' || target.list?.length > 1">
-            <div class="target-value" v-if="target.list?.length == 1" :title="target.absoluteValue">
+            <div
+              class="target-value"
+              v-if="target.list?.length === 1"
+              v-tooltip="target.absoluteValue"
+            >
               {{ target.absoluteValue }}
             </div>
 
@@ -728,7 +732,7 @@ watch(
             :style="`${getBarHeight(item)}; ${getBarColor(item)}; ${getSubItemCount(
               item?.[valueAttribute]
             )}; ${getBackTextColor(item)}`"
-            :title="
+            v-tooltip="
               Array.isArray(item?.[valueAttribute])
                 ? null
                 : showValues === 'never'
@@ -759,7 +763,7 @@ watch(
                   :style="`${getBarHeight(subItem)}; ${getBarColor(subItem)}; ${getBackTextColor(
                     subItem
                   )}`"
-                  :title="
+                  v-tooltip="
                     showValues === 'never'
                       ? `${subItem?.[nameAttribute]}`
                       : `${subItem?.[nameAttribute]} \n${formatDecimal(
@@ -806,7 +810,7 @@ watch(
               <div
                 class="target-value"
                 v-if="target.list?.length == 1"
-                :title="target.absoluteValue"
+                v-tooltip="target.absoluteValue"
               >
                 {{ target.absoluteValue }}
               </div>
@@ -839,7 +843,7 @@ watch(
               <p
                 v-if="Array.isArray(item?.[valueAttribute])"
                 class="lx-bar-group-label"
-                :title="item?.[nameAttribute]"
+                v-tooltip="item?.[nameAttribute]"
               >
                 {{ item?.[nameAttribute] }}
               </p>
@@ -849,7 +853,7 @@ watch(
                 :key="subItem[idAttribute]"
                 :id="`${id}-${subItem[idAttribute]}`"
                 class="bar-name sub-bar"
-                :title="subItem?.[nameAttribute]"
+                v-tooltip="subItem?.[nameAttribute]"
                 :value="subItem?.[valueAttribute]"
               >
                 {{ subItem?.[nameAttribute] }}
@@ -867,7 +871,7 @@ watch(
                   'sub-bar-after': hasSubBarAfter(index),
                 },
               ]"
-              :title="item?.[nameAttribute]"
+              v-tooltip="item?.[nameAttribute]"
               :value="item?.[valueAttribute]"
             >
               {{ item?.[nameAttribute] }}

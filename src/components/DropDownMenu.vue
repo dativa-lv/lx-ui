@@ -641,7 +641,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
               <div
                 v-if="getGroupLabel(groupName)"
                 :id="`${groupName}-group`"
-                :title="getGroupLabel(groupName)"
+                v-tooltip="getGroupLabel(groupName)"
                 class="lx-label"
               >
                 {{ getGroupLabel(groupName) }}
@@ -765,7 +765,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
               <div
                 v-if="getGroupLabel(groupName)"
                 :id="`${groupName}-group`"
-                :title="getGroupLabel(groupName)"
+                v-tooltip="getGroupLabel(groupName)"
                 class="lx-label"
               >
                 {{ getGroupLabel(groupName) }}

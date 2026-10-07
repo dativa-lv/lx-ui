@@ -129,7 +129,7 @@ const additionalInfoTitle = computed(() => {
         :class="{
           'lx-list-item-interactive': isDownloadInteractive,
         }"
-        :title="props.hasDownloadButton ? displayTexts.download : ''"
+        v-tooltip="props.hasDownloadButton ? displayTexts.download : ''"
         :aria-invalid="props.customItem.state === 'invalid'"
         :aria-errormessage="
           props.customItem.state === 'invalid' && props.customItem.invalidDescription
@@ -259,15 +259,15 @@ const additionalInfoTitle = computed(() => {
         </div>
         <div class="lx-file-addition-data-wrapper">
           <div class="lx-file-meta" v-if="props.customItem.meta">
-            <p class="lx-data" :title="displayTexts.metaAdditionalInfoSizeTitle">
+            <p class="lx-data" v-tooltip="displayTexts.metaAdditionalInfoSizeTitle">
               {{ fileUploaderUtils.convertBytesToFormattedString(props.customItem.meta?.size) }}
             </p>
-            <p class="lx-data" :title="displayTexts.metaAdditionalInfoExtensionTitle">
+            <p class="lx-data" v-tooltip="displayTexts.metaAdditionalInfoExtensionTitle">
               {{ fileUploaderUtils.getFileExtension(props.customItem.name) }}
             </p>
             <p
               class="lx-data meta-description"
-              :title="
+              v-tooltip="
                 additionalInfoTitle ||
                 fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts)
               "
@@ -321,7 +321,7 @@ const additionalInfoTitle = computed(() => {
           :class="{
             'lx-list-item-interactive': isDownloadInteractive,
           }"
-          :title="props.hasDownloadButton ? displayTexts.download : ''"
+          v-tooltip="props.hasDownloadButton ? displayTexts.download : ''"
           @keyup.space="downloadFile(props.customItem.id)"
           @keyup.enter="downloadFile(props.customItem.id)"
           @click="downloadFile(props.customItem.id)"

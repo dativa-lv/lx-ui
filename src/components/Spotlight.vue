@@ -308,8 +308,12 @@ defineExpose({ setSpotlightItem, spotlightEnd });
           </div>
         </div>
         <div class="lx-spotlight-main">
-          <div class="lx-spotlight-label" :title="item?.name">{{ item?.name }}</div>
-          <div class="lx-spotlight-description" v-if="item?.description" :title="item?.description">
+          <div class="lx-spotlight-label" v-tooltip="item?.name">{{ item?.name }}</div>
+          <div
+            class="lx-spotlight-description"
+            v-if="item?.description"
+            v-tooltip="item?.description"
+          >
             {{ item?.description }}
           </div>
           <div class="lx-spotlight-show-more" v-if="item?.showMore ?? hasShowMore">

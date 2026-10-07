@@ -775,7 +775,7 @@ function countDigits(number) {
           <div
             class="lx-dropdown-default-panel lx-input-wrapper"
             :class="[{ 'lx-invalid': invalid && !hasSearch }, { 'lx-disabled': disabled }]"
-            :title="tooltip"
+            v-tooltip="tooltip"
             tabindex="-1"
           >
             <slot>
@@ -813,7 +813,7 @@ function countDigits(number) {
               <div
                 class="lx-dropdown-default-data dropdown-multiple lx-input-area"
                 :class="[{ emptyModel: model?.length === 0 }]"
-                :title="tooltip"
+                v-tooltip="tooltip"
               >
                 <div
                   class="lx-value-picker-placeholder"
@@ -897,7 +897,9 @@ function countDigits(number) {
                           highlightedItemId === 'select-all' ? '0' : !highlightedItemId ? '0' : '-1'
                         "
                         role="button"
-                        :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+                        v-tooltip="
+                          areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
+                        "
                         @keydown.enter.prevent="selectAll"
                         @keydown.space.prevent="selectAll"
                         @click="selectAll"
@@ -921,7 +923,7 @@ function countDigits(number) {
                     <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events, vuejs-accessibility/interactive-supports-focus -- keyboard selection is handled by the panel's keydown listeners (Enter/Space via onEnter) using roving tabindex; the lint rules can't evaluate the conditional :tabindex expression below, which always resolves to '0' or '-1' -->
                     <div
                       v-if="getIdAttributeString(item) !== 'select-all'"
-                      :title="item[nameAttribute]"
+                      v-tooltip="item[nameAttribute]"
                       class="lx-value-picker-item lx-popover-item-text-only lx-embedded-selecting-block"
                       :tabindex="
                         highlightedItemId && highlightedItemId === getIdAttributeString(item)

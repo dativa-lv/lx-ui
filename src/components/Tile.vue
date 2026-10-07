@@ -93,7 +93,7 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
       :to="to || href"
       class="lx-tile lx-region-component"
       :class="[{ 'lx-mini': kind === 'mini' }, { 'lx-disabled': isDisabled }]"
-      :title="tooltipComputed"
+      v-tooltip="tooltipComputed"
       :aria-labelledby="label ? `${id}-label` : null"
       :aria-describedby="description ? `${id}-desc` : null"
     >

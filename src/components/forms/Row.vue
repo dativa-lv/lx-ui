@@ -264,7 +264,7 @@ if (props.builderOptions.useRegistry) {
     ]"
   >
     <div v-if="showHeaderWithoutInfo" class="lx-row-header">
-      <label :title="!$slots.info ? tooltip : ''" :for="inputId" v-if="!hideLabel" :id="id">
+      <label v-tooltip="!$slots.info ? tooltip : ''" :for="inputId" v-if="!hideLabel" :id="id">
         {{ label ? label : '&nbsp;' }}
         <span class="lx-required" v-if="rowRequiredMode === 'required' && required && !hideLabel">
           {{ requiredTexts.required }}
@@ -339,7 +339,7 @@ if (props.builderOptions.useRegistry) {
 
     <div v-if="showHeaderWithInfo" class="lx-row-header">
       <LxInfoWrapper class="lx-info-slot-wrapper" placement="right" v-if="!hideLabel">
-        <label :title="!$slots.info ? tooltip : ''" :for="inputId" :id="id">
+        <label v-tooltip="!$slots.info ? tooltip : ''" :for="inputId" :id="id">
           {{ label ? label : '&nbsp;' }}
           <span class="lx-required" v-if="rowRequiredMode === 'required' && required && !hideLabel">
             {{ requiredTexts.required }}

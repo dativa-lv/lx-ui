@@ -152,7 +152,7 @@ defineExpose({ focus });
         ref="expanderHeader"
         :class="[{ 'lx-head': !$slots.customHeader }, { 'lx-custom-header': $slots.customHeader }]"
         :for="id"
-        :title="tooltip"
+        v-tooltip="tooltip"
         :tabindex="disabled ? null : 0"
         role="button"
         :aria-label="ariaLabelWithBadge"

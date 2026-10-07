@@ -177,7 +177,7 @@ const dataState = computed(() =>
         :id="`${id}-${item[props.idAttribute]}`"
         :disabled="disabled"
         :tabindex="disabled ? '-1' : checkIfHighlighted(item[props.idAttribute])"
-        :title="props.tooltip ? `${props.tooltip}: ${item.name}` : item.name"
+        v-tooltip="props.tooltip ? `${props.tooltip}: ${item.name}` : item.name"
         role="tab"
         class="lx-content-switcher-item"
         :class="[{ 'lx-selected': modelValue === item[props.idAttribute] }]"

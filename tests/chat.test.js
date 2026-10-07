@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { mount, shallowMount } from '@vue/test-utils';
+import { mount, shallowMount, RouterLinkStub } from '@vue/test-utils';
 import { describe, test, expect, afterEach } from 'vitest';
-import { defineComponent, h, nextTick } from 'vue';
+import { defineComponent, h, markRaw, nextTick } from 'vue';
 import LxChat from '@/components/chat/Chat.vue';
 import MessageComposer from '@/components/chat/MessageComposer.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
@@ -9,24 +9,26 @@ import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import { formatFull } from '@/utils/date/format';
 
 // Minimal stand-in for the optional LxFormBuilder (from @dativa-lv/lx-builders).
-const StubBuilder = defineComponent({
-  name: 'StubBuilder',
-  props: {
-    modelValue: { type: Object, default: () => ({}) },
-    schema: { type: Object, default: null },
-    readOnly: { type: Boolean, default: false },
-  },
-  emits: ['update:modelValue'],
-  setup(props, { expose }) {
-    expose({ validateModel: () => [] });
-    return () => h('div', { class: 'stub-builder' }, 'form');
-  },
-});
+const StubBuilder = markRaw(
+  defineComponent({
+    name: 'StubBuilder',
+    props: {
+      modelValue: { type: Object, default: () => ({}) },
+      schema: { type: Object, default: null },
+      readOnly: { type: Boolean, default: false },
+    },
+    emits: ['update:modelValue'],
+    setup(props, { expose }) {
+      expose({ validateModel: () => [] });
+      return () => h('div', { class: 'stub-builder' }, 'form');
+    },
+  })
+);
 
 let wrapper;
 
 // LxChat renders a teleported LxModal; stub Teleport so mounts stay self-contained.
-const mountOptions = { global: { stubs: { teleport: true } } };
+const mountOptions = { global: { stubs: { teleport: true, RouterLink: RouterLinkStub } } };
 
 afterEach(() => {
   if (wrapper) {

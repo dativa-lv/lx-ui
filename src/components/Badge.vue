@@ -50,7 +50,7 @@ const isEmpty = computed(
       'lx-badge-text-only': isTextOnly,
       'lx-badge-empty': isEmpty,
     }"
-    :title="tooltip"
+    v-tooltip="tooltip"
     :id="id"
     :aria-label="tooltip"
     data-component="lx-badge"

@@ -287,7 +287,7 @@ describe('LxTextInput', () => {
           },
         });
 
-        expect(wrapper.find('.lx-text-input').attributes('title')).toBe('Tooltip text');
+        expect(wrapper.find('.lx-text-input').attributes('data-lx-tooltip')).toBe('Tooltip text');
       });
 
       test('tooltip with new text', async () => {
@@ -297,9 +297,11 @@ describe('LxTextInput', () => {
           },
         });
 
-        expect(wrapper.find('.lx-text-input').attributes('title')).toBe('Tooltip text');
+        expect(wrapper.find('.lx-text-input').attributes('data-lx-tooltip')).toBe('Tooltip text');
         await wrapper.setProps({ tooltip: 'New tooltip text' });
-        expect(wrapper.find('.lx-text-input').attributes('title')).toBe('New tooltip text');
+        expect(wrapper.find('.lx-text-input').attributes('data-lx-tooltip')).toBe(
+          'New tooltip text'
+        );
       });
     });
 

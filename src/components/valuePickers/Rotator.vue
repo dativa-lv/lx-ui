@@ -410,7 +410,7 @@ function onUp() {
       :id="id"
       class="lx-value-picker-tags lx-rotator"
       :class="[{ 'lx-invalid': invalid }]"
-      :title="tooltip"
+      v-tooltip="tooltip"
     >
       <LxDropDownMenu
         ref="dropdownMenuRef"

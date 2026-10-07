@@ -189,7 +189,7 @@ describe('LxNumberInput', () => {
     test('should expose the current value as the slider tooltip', () => {
       wrapper = mount(LxNumberInput, { props: { modelValue: 7 } });
 
-      expect(wrapper.find('.input-slider').attributes('title')).toBe('7');
+      expect(wrapper.find('.input-slider').attributes('data-lx-tooltip')).toBe('7');
     });
 
     test('should render both track parts', () => {
@@ -936,11 +936,11 @@ describe('LxNumberInput', () => {
       wrapper = mountWithModel({ modelValue: 10, min: 0, max: 10 });
 
       await slider().trigger('keydown', { key: 'ArrowRight' });
-      expect(wrapper.find('.input-slider').attributes('title')).toBe('10');
+      expect(wrapper.find('.input-slider').attributes('data-lx-tooltip')).toBe('10');
 
       await slider().trigger('keydown', { key: 'ArrowLeft' });
       await slider().trigger('keydown', { key: 'ArrowLeft' });
-      expect(wrapper.find('.input-slider').attributes('title')).toBe('8');
+      expect(wrapper.find('.input-slider').attributes('data-lx-tooltip')).toBe('8');
     });
 
     test('should ignore ArrowUp and ArrowDown when disableArrowKeys is true', async () => {
@@ -1051,7 +1051,7 @@ describe('LxNumberInput', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.props().modelValue).toBe(10);
-      expect(wrapper.find('.input-slider').attributes('title')).toBe('10');
+      expect(wrapper.find('.input-slider').attributes('data-lx-tooltip')).toBe('10');
     });
 
     test('should settle at min when the whole model is out of range', async () => {
@@ -1061,7 +1061,7 @@ describe('LxNumberInput', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.props().modelValue).toBe(0);
-      expect(wrapper.find('.input-slider').attributes('title')).toBe('0');
+      expect(wrapper.find('.input-slider').attributes('data-lx-tooltip')).toBe('0');
     });
 
     test('should leave an in-range value alone', async () => {
@@ -1070,7 +1070,7 @@ describe('LxNumberInput', () => {
       await wrapper.setProps({ modelValue: 7 });
 
       expect(wrapper.props().modelValue).toBe(7);
-      expect(wrapper.find('.input-slider').attributes('title')).toBe('7');
+      expect(wrapper.find('.input-slider').attributes('data-lx-tooltip')).toBe('7');
     });
 
     test('should clamp a value handed in above max on mount', () => {
@@ -1315,7 +1315,7 @@ describe('LxNumberInput', () => {
     test('should not treat an unspecified value as 0 in the slider tooltip', () => {
       wrapper = mount(LxNumberInput, { props: { modelValue: null, min: 0, max: 10 } });
 
-      expect(wrapper.find('.input-slider').attributes('title')).toBe('Nav norādīts');
+      expect(wrapper.find('.input-slider').attributes('data-lx-tooltip')).toBe('Nav norādīts');
     });
 
     test('should still apply the prop default when modelValue is omitted', () => {
