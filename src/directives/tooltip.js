@@ -219,6 +219,7 @@ function show(el, cursorX, cursorY) {
   state.currentEl = el;
   state.isOpen = true;
   state.savedCursorPos = { x: cursorX, y: cursorY };
+  el.addEventListener('blur', onTriggerBlur);
 
   // Must run after insertion – the clamp needs the panel's measured size
   positionPanel(cursorX, cursorY + CURSOR_HEIGHT);
@@ -236,6 +237,7 @@ function hide() {
     el.removeAttribute('aria-describedby');
     entry.ownsAria = false;
   }
+  el?.removeEventListener('blur', onTriggerBlur);
 
   const { nodes } = state;
   if (nodes) {
@@ -461,7 +463,6 @@ function mounted(el, binding) {
 
   el.addEventListener('mousemove', onTriggerMove);
   el.addEventListener('mouseleave', onTriggerLeave);
-  el.addEventListener('blur', onTriggerBlur);
 
   warnOnTitleConflict(el, entry);
 }
@@ -508,7 +509,6 @@ function unmounted(el) {
 
   el.removeEventListener('mousemove', onTriggerMove);
   el.removeEventListener('mouseleave', onTriggerLeave);
-  el.removeEventListener('blur', onTriggerBlur);
   el.removeAttribute(MARKER_ATTR);
   registry.delete(el);
 
