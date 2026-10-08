@@ -14,7 +14,7 @@ const props = defineProps({
     options: ['chat', 'comments'],
   },
   mode: { type: String, default: 'default' }, // 'default', 'compact'
-  userDefinitions: { type: Array, default: () => [] }, // Per-user info by message.userId: { id, name, isMe, isAi, icon, iconSet, description, role, institution }.
+  userDefinitions: { type: Array, default: () => [] }, // Per-user info by message.userId: { id, name, isMe, isAi, icon, iconSet, description, role, institution, badge, badgeType, badgeIcon, badgeTitle }.
   avatarKind: { type: String, default: null }, // 'default', 'initials' — passed to LxPersonDisplay/LxAvatar; falls back to the global avatarKind when unset.
   messageText: { type: String, default: null },
   items: { type: Array, default: () => [] },

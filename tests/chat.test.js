@@ -6,6 +6,7 @@ import LxChat from '@/components/chat/Chat.vue';
 import MessageComposer from '@/components/chat/MessageComposer.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
+import LxBadge from '@/components/Badge.vue';
 import { formatFull } from '@/utils/date/format';
 
 // Minimal stand-in for the optional LxFormBuilder (from @dativa-lv/lx-builders).
@@ -600,6 +601,102 @@ describe('LxChat', () => {
         .props('customAttributes')
         .map((a) => a.attributeName);
       expect(attributeNames).toEqual(['fullTime']);
+    });
+  });
+
+  describe('Person badge', () => {
+    const day = new Date('2026-07-20T10:00:00.000Z');
+
+    function mountWithUser(userDefinition, texts = {}) {
+      return mount(LxChat, {
+        props: {
+          texts,
+          userDefinitions: [{ id: 'user-other', name: 'Other', ...userDefinition }],
+          items: [{ id: 'm1', userId: 'user-other', text: 'hi', createdAt: day }],
+        },
+        ...mountOptions,
+      });
+    }
+
+    function headerBadge() {
+      return wrapper.find('.lx-chat-bubble-header').findComponent(LxBadge);
+    }
+
+    test('renders no badge for a regular user without badge info', () => {
+      wrapper = mountWithUser({});
+
+      expect(headerBadge().exists()).toBe(false);
+    });
+
+    test('renders the default AI badge for an AI user without specified badge info', () => {
+      wrapper = mountWithUser({ isAi: true }, { ai: 'Artificial intelligence' });
+
+      const badge = headerBadge();
+      expect(badge.exists()).toBe(true);
+      expect(badge.props('icon')).toBe('ai');
+      expect(badge.props('value')).toBe(null);
+      expect(badge.props('tooltip')).toBe('Artificial intelligence');
+      expect(badge.classes()).toContain('lx-badge-default-ai');
+    });
+
+    test('renders a text badge from userDefinitions with its type class and tooltip', () => {
+      wrapper = mountWithUser({
+        badge: 'VIP',
+        badgeType: 'success',
+        badgeTitle: 'Status',
+      });
+
+      const badge = headerBadge();
+      expect(badge.exists()).toBe(true);
+      expect(badge.props('value')).toBe('VIP');
+      expect(badge.props('icon')).toBe(null);
+      expect(badge.props('tooltip')).toBe('Status');
+      expect(badge.classes()).toContain('lx-badge-success');
+      expect(badge.classes()).not.toContain('lx-badge-default-ai');
+    });
+
+    test('renders an icon-only badge from userDefinitions', () => {
+      wrapper = mountWithUser({ badgeIcon: 'star', badgeTitle: 'Favorite' });
+
+      const badge = headerBadge();
+      expect(badge.props('icon')).toBe('star');
+      expect(badge.props('tooltip')).toBe('Favorite');
+    });
+
+    test.each(['info', 'success', 'warning', 'error'])(
+      'applies the matching lx-badge-* class for badgeType "%s"',
+      (badgeType) => {
+        wrapper = mountWithUser({ badge: '1', badgeType, badgeTitle: 'Count' });
+
+        expect(headerBadge().classes()).toContain(`lx-badge-${badgeType}`);
+      }
+    );
+
+    test('a custom badge on an AI user replaces the default AI badge', () => {
+      wrapper = mountWithUser({
+        isAi: true,
+        badge: 'Beta',
+        badgeIcon: 'star',
+        badgeType: 'warning',
+        badgeTitle: 'Model',
+      });
+
+      const badges = wrapper.find('.lx-chat-bubble-header').findAllComponents(LxBadge);
+      expect(badges).toHaveLength(1);
+      expect(badges[0].props('icon')).toBe('star');
+      expect(badges[0].props('value')).toBe('Beta');
+      expect(badges[0].props('tooltip')).toBe('Model');
+      expect(badges[0].classes()).toContain('lx-badge-warning');
+      expect(badges[0].classes()).not.toContain('lx-badge-default-ai');
+    });
+
+    test('badgeType/badgeTitle alone (without badge or badgeIcon) do not override the AI default', () => {
+      wrapper = mountWithUser({ isAi: true, badgeType: 'error', badgeTitle: 'Ignored' });
+
+      const badge = headerBadge();
+      expect(badge.props('icon')).toBe('ai');
+      expect(badge.classes()).toContain('lx-badge-default-ai');
+      expect(badge.classes()).not.toContain('lx-badge-error');
     });
   });
 

@@ -163,7 +163,7 @@
   list-style: initial;
 }
 
-/* --- Person header (name + AI badge) --- */
+/* --- Person header (name + badge) --- */
 
 .lx-chat-wrapper .lx-chat-bubble-header {
   display: flex;
@@ -173,12 +173,11 @@
 
 .lx-chat-wrapper .lx-chat-bubble-header .lx-badge {
   margin-top: var(--space-0250);
-  --color-badge-background: var(--color-purple);
-  --color-badge-icon: var(--color-interactive-foreground);
 }
 
-.lx-chat-wrapper .lx-chat-bubble-header .lx-badge svg {
-  fill: var(--color-badge-icon);
+.lx-chat-wrapper .lx-chat-bubble-header .lx-badge.lx-badge-default-ai {
+  --color-badge-background: var(--color-purple);
+  --color-badge-icon: var(--color-interactive-foreground);
 }
 
 .lx-chat-wrapper .lx-chat-bubble-time {

@@ -86,6 +86,25 @@ const showFullPerson = computed(
     (props.showPersonHeader && (!props.isMe || props.kind === 'comments' || props.size === 'l'))
 );
 const isCollapsedHeader = computed(() => props.showPersonHeader && !showFullPerson.value);
+
+// Badge from user definition; AI users fall back to the default AI badge when none is specified.
+const badgeTypes = ['info', 'success', 'warning', 'error'];
+const personBadge = computed(() => {
+  const { badge, badgeIcon, badgeType, badgeTitle } = props.message;
+  if (badge || badgeIcon) {
+    return {
+      icon: badgeIcon ?? null,
+      value: badge ?? null,
+      tooltip: badgeTitle ?? null,
+      class: badgeTypes.includes(badgeType) ? `lx-badge-${badgeType}` : null,
+    };
+  }
+  if (props.isAi) {
+    return { icon: 'ai', value: null, tooltip: props.texts.ai, class: 'lx-badge-default-ai' };
+  }
+  return null;
+});
+
 const showTimeLabel = computed(() => isCollapsedHeader.value || props.showTimestamp);
 
 const timeOnly = computed(() => {
@@ -233,7 +252,13 @@ defineExpose({ focus });
         :icon="message.avatarIcon"
         :iconSet="message.avatarIconSet"
       />
-      <LxBadge v-if="isAi" icon="ai" :tooltip="texts.ai" />
+      <LxBadge
+        v-if="personBadge"
+        :icon="personBadge.icon"
+        :value="personBadge.value"
+        :tooltip="personBadge.tooltip"
+        :class="personBadge.class"
+      />
     </div>
 
     <div v-else-if="showTimeLabel" class="lx-chat-bubble-time">{{ timeLabelText }}</div>

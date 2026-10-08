@@ -69,6 +69,10 @@ const clusters = computed(() => {
       description: userDefinition.description,
       role: userDefinition.role,
       institution: userDefinition.institution,
+      badge: userDefinition.badge,
+      badgeType: userDefinition.badgeType,
+      badgeIcon: userDefinition.badgeIcon,
+      badgeTitle: userDefinition.badgeTitle,
     };
 
     const lastCluster = result[result.length - 1] ?? null;
