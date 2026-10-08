@@ -374,7 +374,7 @@
   -ms-user-select: none;
   user-select: none;
   margin-top: var(--space-1250);
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-label);
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-month-layout-year-label {
@@ -871,7 +871,7 @@
 
 .lx .lx-layout .lx-calendar-special-dates-wrapper .lx-row-header label {
   color: var(--color-label);
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-label);
 }
 
 .lx .lx-layout .lx-calendar-special-dates-wrapper .lx-list {

@@ -142,14 +142,14 @@
   height: var(--loader-bar-stop-indicator-height-l);
   width: var(--loader-bar-stop-indicator-width-l);
   background: var(--color-loader-bar-stop-indicator);
-  border-radius: var(--loader-bar-border-radius-l);
+  border-radius: var(--border-radius-full);
 }
 
 .lx-loader-progress.lx-loader-small .lx-loader-bar-track::after {
   right: var(--loader-bar-stop-indicator-margin-right-s);
   height: var(--loader-bar-stop-indicator-height-s);
   width: var(--loader-bar-stop-indicator-width-s);
-  border-radius: var(--loader-bar-border-radius-s);
+  border-radius: var(--border-radius-full);
 }
 
 .lx-loader-progress .state-success .lx-loader-bar-track::after {

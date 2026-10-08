@@ -42,7 +42,7 @@
 | `--popover-item-border-width`                 | `--border-width-0` `--border-width-2`   |
 | `--popover-item-border-style`                 | solid                                   |
 | `--popover-label-padding`                     | `--space-0500` `--space-0750`           |
-| `--popover-label-font-size`                   | `--font-size-small`                     |
+| `--popover-label-font-size`                   | `--font-size-label`                     |
 | `--popover-checkmark-inset-s`                 | `--space-0375` `--space-0750` auto auto |
 | `--popover-checkmark-inset-l`                 | `--space-0750` `--space-0750` auto auto |
 | `--popover-checkmark-size`                    | `--icon-size-s`                         |

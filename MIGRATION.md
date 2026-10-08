@@ -120,6 +120,19 @@ is missing from `items` is now shown as the id instead of an empty field.
 - Don't add new usages of `preloadedItems` or function `items`.
 - Update `customItem` templates to the `{ item, context }` slot props when switching to `mode="new"`.
 
+## 2.3.6 → 2.3.7
+
+### Breaking changes
+
+#### LxNumberInput
+
+**Token renames**
+
+- `--input-divider-height` → `--input-stepper-divider-height`
+- `--input-divider-border` → `--input-stepper-divider-border`
+- `--number-input-track-max-width` → `--input-slider-max-width`
+- `--number-input-track-min-width` → `--input-slider-min-width`
+
 ## 2.3.5 → 2.3.6
 
 ### New state color tokens

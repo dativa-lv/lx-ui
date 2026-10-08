@@ -184,7 +184,7 @@
 /* interactions */
 .lx:not(.lx-no-animations) .lx-layout-default .lx-nav-panel ul li {
   transition: background-color 0.2s ease-in, color 0.2s ease-in, font-weight 0.2s ease-in,
-    border-color 0.2s ease-in, border-thickness 0.2s ease-in;
+  border-color 0.2s ease-in, border-thickness 0.2s ease-in;
 }
 
 .lx:not(.lx-no-animations) .lx-layout-default > nav {
@@ -204,6 +204,23 @@
 .lx-layout-latvijalv .lx-latvijalv-alert-list .lx-alert-clickable,
 .lx:not(.lx-no-animations) .lx-alert-menu .lx-button > .lx-badge {
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
+}
+
+.lx:not(.lx-no-animations) .lx-number-slider-container .lx-number-slider-track-filled,
+.lx:not(.lx-no-animations) .lx-number-slider-container .lx-number-slider-track-unfilled {
+  transition:
+    background 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83),
+    border-color 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83);
+}
+
+.lx:not(.lx-no-animations) .lx-number-slider-container .lx-number-slider::-webkit-slider-thumb,
+.lx:not(.lx-no-animations) .lx-number-slider-container .lx-number-slider::-moz-range-thumb {
+  transition:
+    background 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83),
+    border-color 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83),
+    width 0.1s ease,
+    height 0.1s ease,
+    transform 0.1s ease;
 }
 
 .lx:not(.lx-no-animations) .lx-header .lx-badge {

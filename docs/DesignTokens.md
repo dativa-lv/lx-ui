@@ -33,7 +33,6 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 - [LxNavBar](tokens/NavBarTokens.md)
 - [LxModal](tokens/ModalTokens.md)
 - [Popovers](tokens/PopoverTokens.md)
-- [LxNumberInput](tokens/NumberInputTokens.md)
 - [LxDataGrid](tokens/DataGridTokens.md)
 - [LxValuePicker](tokens/ValuePickerTokens.md)
 - [LxForm](tokens/FormTokens.md)

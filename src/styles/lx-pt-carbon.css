@@ -416,8 +416,41 @@
   --input-text-area-padding-y: var(--space-0500);
   --input-text-area-min-height: 6rem;
 
-  --number-input-track-max-width: 12.5rem;
-  --number-input-track-min-width: 3rem;
+  --input-slider-max-width: 12.5rem;
+  --input-slider-min-width: 3rem;
+  --input-slider-track-gap: var(--space-0);
+  --input-slider-stop-indicator-margin-right: var(--space-0250);
+  --input-slider-stop-indicator-width: 0.25rem;
+  --input-slider-stop-indicator-height: 0.25rem;
+  --input-slider-thumb-width: 1rem;
+  --input-slider-thumb-height: 1rem;
+  --input-slider-thumb-width-active: 1rem;
+  --input-slider-thumb-height-active: 1rem;
+  --input-slider-thumb-width-hover: 1.25rem;
+  --input-slider-thumb-height-hover: 1.25rem;
+  --input-slider-thumb-width-active: 1.25rem;
+  --input-slider-thumb-height-active: 1.25rem;
+  --input-slider-thumb-border-radius: var(--border-radius-full);
+  --input-slider-thumb-border-width: var(--border-width-0);
+  --input-slider-thumb-border-style: solid;
+  --input-slider-track-height: 0.25rem;
+  --input-slider-track-border-radius-inner: var(--border-radius-0);
+  --input-slider-track-border-radius-outer: var(--border-radius-0);
+  --input-slider-text-font-size: var(--font-size);
+  --input-slider-text-font-weight: var(--font-weight);
+  --input-slider-text-line-height: 1.5;
+  --input-slider-gap: var(--space-0500);
+
+  --input-stepper-grid-areas: 'input button-decrease button-increase';
+  --input-stepper-grid-template-columns: 1fr auto auto;
+  --input-stepper-padding-right: calc(2 * var(--input-button-width) + var(--space-0250));
+  --input-stepper-padding-left: var(--input-padding-left);
+  --input-stepper-divider-height: 1.5rem;
+  --input-stepper-divider-border: var(--border-width-1) solid var(--color-chrome);
+  --input-stepper-display-border-radius: var(--input-border-radius);
+  --input-stepper-display-border-width: var(--input-border-width);
+  --input-stepper-display-border-style: var(--input-border-style);
+  --input-stepper-display-text-font-weight: var(--font-weight-data);
 
   --input-complex-row-gap: var(--space-0);
   --input-complex-border-radius: var(--border-radius-0);
@@ -607,7 +640,7 @@
   --popover-item-padding-s: var(--space-0250) var(--space-0750);
   --popover-item-padding-l: var(--space-0750);
   --popover-label-padding: var(--space-0500) var(--space-0750);
-  --popover-label-font-size: var(--font-size-small);
+  --popover-label-font-size: var(--font-size-label);
   --popover-checkmark-inset-s: var(--space-0375) var(--space-0750) auto auto;
   --popover-checkmark-inset-l: var(--space-0750) var(--space-0750) auto auto;
   --popover-checkmark-size: var(--icon-size-s);

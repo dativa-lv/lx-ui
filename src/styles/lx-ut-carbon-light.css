@@ -314,6 +314,30 @@
   --color-input-button-icon-active: var(--color-button-ghost-icon-active);
   --color-input-button-icon-disabled: var(--color-button-ghost-icon-disabled);
 
+  --color-input-slider-track-filled: var(--color-data);
+  --color-input-slider-track-unfilled: var(--color-chrome);
+  --color-input-slider-stop-indicator: transparent;
+  --color-input-slider-stop-indicator-disabled: transparent;
+  --color-input-slider-track-filled-disabled: var(--color-disabled-foreground);
+  --color-input-slider-track-unfilled-disabled: var(--color-disabled-background);
+  --color-input-slider-track-filled-focus: var(--color-interactive-background);
+  --color-input-slider-track-filled-active: var(--color-interactive-background);
+  --color-input-slider-thumb: var(--color-data);
+  --color-input-slider-thumb-border: var(--color-data);
+  --color-input-slider-thumb-disabled: var(--color-disabled-foreground);
+  --color-input-slider-thumb-border-disabled: var(--color-disabled-foreground);
+  --color-input-slider-thumb-focus: var(--color-interactive-background);
+  --color-input-slider-thumb-border-focus: var(--color-interactive-background);
+  --color-input-slider-thumb-active: var(--color-interactive-background);
+  --color-input-slider-thumb-border-active: var(--color-interactive-background);
+  --color-input-slider-text: var(--color-data);
+  --color-input-slider-text-disabled: var(--color-disabled-foreground);
+  --color-input-stepper-display-border: transparent transparent var(--color-chrome) transparent;
+  --color-input-stepper-display-text: var(--color-data);
+  --color-input-stepper-display-background: transparent;
+  --color-input-stepper-display-border-disabled: transparent transparent var(--color-disabled-foreground) transparent;
+  --color-input-stepper-display-background-disabled: transparent;
+
   --color-input-complex-background: var(--color-input-background);
   --color-input-complex-content-background: transparent;
   --color-input-complex-border: var(--color-input-border);

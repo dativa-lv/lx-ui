@@ -16,6 +16,7 @@ The following input components share these tokens as they are visually and funct
 - LxDrawPad
 - LxQrScanner
 - LxCamera
+- LxNumberInput
 
 LxMarkdownTextArea, LxQrScanner, LxDrawPad and LxCamera are considered complex inputs - they have separate tokens but appear visually similar to other inputs and [complex displayers](./DisplayerTokens.md) (LxMap, LxFileViewer) by default. Both complex inputs and complex displayers use an [embedded toolbar](./ToolbarTokens.md).
 
@@ -59,8 +60,43 @@ LxMarkdownTextArea, LxQrScanner, LxDrawPad and LxCamera are considered complex i
 | `--input-tag-margin`                | `--space-0` `--space-0500`                                                  |
 | `--input-text-area-padding-y`       | `--space-0500`                                                              |
 | `--input-text-area-min-height`      | 6rem                                                                        |
-| `--input-divider-height`            | 1.5rem                                                                      |
-| `--input-divider-border`            | `--border-width-1` solid `--color-chrome`                                   |
+
+### Number Input
+
+| Variable name                                 | Default value                                                               |
+|-----------------------------------------------|-----------------------------------------------------------------------------|
+| `--input-slider-min-width`                    | 3rem                                                                        |
+| `--input-slider-max-width`                    | 12.5rem                                                                     |
+| `--input-slider-track-gap`                    | `--space-0`                                                                 |
+| `--input-slider-stop-indicator-margin-right`  | `--space-0250`                                                              |
+| `--input-slider-stop-indicator-width`         | 0.25rem                                                                     |
+| `--input-slider-stop-indicator-height`        | 0.25rem                                                                     |
+| `--input-slider-thumb-width`                  | 1rem                                                                        |
+| `--input-slider-thumb-height`                 | 1rem                                                                        |
+| `--input-slider-thumb-width-active`           | 1.25rem                                                                     |
+| `--input-slider-thumb-height-active`          | 1.25rem                                                                     |
+| `--input-slider-thumb-width-hover`            | 1.25rem                                                                     |
+| `--input-slider-thumb-height-hover`           | 1.25rem                                                                     |
+| `--input-slider-thumb-border-radius`          | `--border-radius-full`                                                      |
+| `--input-slider-thumb-border-width`           | `--border-width-0`                                                          |
+| `--input-slider-thumb-border-style`           | solid                                                                       |
+| `--input-slider-track-height`                 | 0.25rem                                                                     |
+| `--input-slider-track-unfilled-border-radius` | `--border-radius-0`                                                         |
+| `--input-slider-track-filled-border-radius`   | `--border-radius-0`                                                         |
+| `--input-slider-text-font-size`               | `--font-size`                                                               |
+| `--input-slider-text-font-weight`             | `--font-weight`                                                             |
+| `--input-slider-text-line-height`             | 1.5                                                                         |
+| `--input-slider-gap`                          | `--space-0500`                                                              |
+| `--input-stepper-grid-areas`                  | 'input button-decrease button-increase'                                     |
+| `--input-stepper-grid-template-columns`       | 1fr auto auto                                                               |
+| `--input-stepper-padding-right`               | calc(2 * `--input-button-width` + `--space-0250`)                           |
+| `--input-stepper-padding-left`                | `--input-padding-left`                                                      |
+| `--input-stepper-divider-height`              | 1.5rem                                                                      |
+| `--input-stepper-divider-border`              | `--border-width-1` solid `--color-chrome`                                   |
+| `--input-stepper-display-border-width`        | `--border-width-2` `--border-width-2` `--border-width-1` `--border-width-2` |
+| `--input-stepper-display-border-style`        | `--input-border-style`                                                      |
+| `--input-stepper-display-text-font-weight`    | `--font-weight-data`                                                        |
+
 
 ### Complex Input
 
@@ -104,6 +140,34 @@ LxMarkdownTextArea, LxQrScanner, LxDrawPad and LxCamera are considered complex i
 | `--color-input-button-icon-active`         | `--color-button-ghost-icon-active`                                |
 | `--color-input-button-icon-disabled`       | `--color-button-ghost-icon-disabled`                              |
 
+### Number Input
+
+| Variable name                                       | Light value                                                       |
+|-----------------------------------------------------|-------------------------------------------------------------------|
+| `--color-input-slider-track-filled`                 | `--color-data`                                                    |
+| `--color-input-slider-track-unfilled`               | `--color-chrome`                                                  |
+| `--color-input-slider-track-filled-disabled`        | `--color-disabled-foreground`                                     |
+| `--color-input-slider-track-unfilled-disabled`      | `--color-disabled-background`                                     |
+| `--color-input-slider-track-filled-focus`           | `--color-interactive-background`                                  |
+| `--color-input-slider-track-filled-active`          | `--color-interactive-background`                                  |
+| `--color-input-slider-thumb`                        | `--color-data`                                                    |
+| `--color-input-slider-thumb-border`                 | `--color-data`                                                    |
+| `--color-input-slider-thumb-disabled`               | `--color-disabled-foreground`                                     |
+| `--color-input-slider-thumb-border-disabled`        | `--color-disabled-foreground`                                     |
+| `--color-input-slider-thumb-focus`                  | `--color-interactive-background`                                  |
+| `--color-input-slider-thumb-border-focus`           | `--color-interactive-background`                                  |
+| `--color-input-slider-thumb-active`                 | `--color-interactive-background`                                  |
+| `--color-input-slider-thumb-border-active`          | `--color-interactive-background`                                  |
+| `--color-input-slider-text`                         | `--color-data`                                                    |
+| `--color-input-slider-text-disabled`                | `--color-disabled-foreground`                                     |
+| `--color-input-slider-stop-indicator`               | transparent                                                       |
+| `--color-input-slider-stop-indicator-disabled`      | transparent                                                       |
+| `--color-input-stepper-display-border`              | transparent transparent `--color-chrome` transparent              |
+| `--color-input-stepper-display-text`                | `--color-data`                                                    |
+| `--color-input-stepper-display-background`          | transparent                                                       |
+| `--color-input-stepper-display-border-disabled`     | transparent transparent `--color-disabled-foreground` transparent |
+| `--color-input-stepper-display-background-disabled` | transparent                                                       |
+
 ### Complex Input
 
 | Variable name                                       | Default value                       |
@@ -122,10 +186,11 @@ Customized values for contrast mode:
 <br />
 <br />
 
-| Variable name                       | Contrast mode value     |
-|-------------------------------------|-------------------------|
-| `--input-border-width`              | `--border-width-2`      |
-| `--color-input`                     | `--contrast-foreground` |
-| `--color-input-disabled`            | `--contrast-foreground` |
-| `--color-input-text-disabled`       | `--contrast-foreground` |
-| `--color-input-background-selected` | `--contrast-hover`      |
+| Variable name                         | Contrast mode value     |
+|---------------------------------------|-------------------------|
+| `--input-border-width`                | `--border-width-2`      |
+| `--color-input`                       | `--contrast-foreground` |
+| `--color-input-disabled`              | `--contrast-foreground` |
+| `--color-input-text-disabled`         | `--contrast-foreground` |
+| `--color-input-background-selected`   | `--contrast-hover`      |
+| `--color-input-slider-track-unfilled` | `--contrast-background` |

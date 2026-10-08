@@ -783,16 +783,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
   filter: invert(1) grayscale(var(--map-grayscale));
 }
 
-.lx-dropdown-panel .lx-dropdown-menu-group.lx-map-slider .input-slider,
-.lx-dropdown-panel .lx-dropdown-menu-group.lx-map-slider .lx-number-input,
-.lx-dropdown-panel .lx-dropdown-menu-group.lx-map-slider .input-slider-full {
-  width: 10rem;
-}
-
-.lx .lx-layout .popper .lx-dropdown-panel-wrapper .lx-dropdown-panel .lx-dropdown-menu-group.lx-map-slider {
-  border-bottom: var(--border-width-0);
-}
-
 .overlay-layer {
   display: flex;
   align-items: center;

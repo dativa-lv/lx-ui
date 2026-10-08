@@ -195,9 +195,13 @@ const sliderModel = computed({
   },
 });
 
-const fillingUp = computed(
-  () => ((sliderModel.value - minValue.value) / (maxValue.value - minValue.value)) * 100
-);
+const fillingUp = computed(() => {
+  const range = maxValue.value - minValue.value;
+
+  if (!Number.isFinite(range) || range === 0) return 0;
+
+  return Math.min(100, Math.max(0, ((sliderModel.value - minValue.value) / range) * 100));
+});
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
@@ -259,7 +263,7 @@ if (props.builderOptions?.useRegistry) {
     <template v-else-if="kind === 'stepper'">
       <div class="lx-number-stepper-container-wrapper">
         <div
-          class="lx-number-stepper-wrapper lx-input-wrapper"
+          class="lx-number-stepper lx-input-wrapper"
           :class="[{ 'lx-disabled': disabled }, { 'lx-number-stepper-no-input': !hasInput }]"
         >
           <LxTextInput
@@ -267,7 +271,7 @@ if (props.builderOptions?.useRegistry) {
             :id="id"
             v-model="model"
             mask="integer"
-            class="lx-number-stepper-field"
+            class="lx-number-stepper-text-input"
             :labelId="labelledBy"
             :disabled
             :required="required"
@@ -279,7 +283,7 @@ if (props.builderOptions?.useRegistry) {
             @keydown.page-up.prevent="onIncreasePage"
             @keydown.page-down.prevent="onDecreasePage"
           />
-          <p
+          <div
             v-else
             class="lx-number-stepper-value lx-input-area"
             role="spinbutton"
@@ -292,7 +296,7 @@ if (props.builderOptions?.useRegistry) {
             :aria-valuemax="maxValue"
           >
             {{ model }}
-          </p>
+          </div>
           <LxButton
             :id="`${id}-decrease`"
             customClass="lx-number-stepper-decrease"
@@ -322,7 +326,7 @@ if (props.builderOptions?.useRegistry) {
           <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
             <LxIcon customClass="lx-helper-icon" value="info" />
             <template #panel>
-              <p class="lx-data">{{ helperTextClamped }}</p>
+              <div class="lx-data">{{ helperTextClamped }}</div>
             </template>
           </LxInfoWrapper>
         </div>
@@ -337,20 +341,24 @@ if (props.builderOptions?.useRegistry) {
         {{ liveAnnouncement }}
       </div>
     </template>
-    <div v-else class="input-slider-container-wrapper" :class="{ 'lx-disabled': disabled }">
-      <div class="input-slider-range-label">
-        <p>{{ minValue }}</p>
-      </div>
+    <div v-else class="lx-number-slider-wrapper" :class="{ 'lx-disabled': disabled }">
+      <div class="lx-number-slider-range-label">{{ minValue }}</div>
 
-      <div class="input-slider" v-tooltip="tooltip">
+      <div
+        class="lx-number-slider-container"
+        v-tooltip="tooltip"
+        :style="{ '--fill': `${fillingUp}%` }"
+      >
         <input
           v-model="sliderModel"
           type="range"
-          class="lx-number-input"
+          class="lx-number-slider lx-number-input"
+          :class="{ 'lx-disabled': disabled }"
           :id="id"
           :min="minValue"
           :max="maxValue"
           :step="stepValue"
+          :value="sliderModel"
           :aria-labelledby="labelledBy"
           :aria-required="ariaRequired"
           :aria-describedby="describedBy"
@@ -365,18 +373,19 @@ if (props.builderOptions?.useRegistry) {
           @keydown.shift.down.exact.prevent="!props.disableArrowKeys && onDecreaseMultiplier()"
           @keydown.shift.left.exact.prevent="onDecreaseMultiplier"
         />
-        <div class="input-slider-filled" :style="`width: ${fillingUp}%`" />
-        <div class="input-slider-full" />
+        <div class="lx-number-slider-track">
+          <div class="lx-number-slider-track-unfilled" />
+          <div class="lx-number-slider-track-filled" />
+          <span class="lx-number-slider-track-stop-indicator" aria-hidden="true" />
+        </div>
       </div>
       <div class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
         {{ liveAnnouncement }}
       </div>
 
-      <div class="input-slider-range-label">
-        <p>{{ maxValue }}</p>
-      </div>
+      <div class="lx-number-slider-range-label">{{ maxValue }}</div>
       <div
-        class="input-slider-range-text"
+        class="lx-number-slider-range-text"
         v-show="hasInput"
         @keydown.up.exact.prevent="!props.disableArrowKeys && onIncreaseStep()"
         @keydown.down.exact.prevent="!props.disableArrowKeys && onDecreaseStep()"
@@ -400,7 +409,7 @@ if (props.builderOptions?.useRegistry) {
         <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
           <LxIcon customClass="lx-helper-icon" value="info" />
           <template #panel>
-            <p class="lx-data">{{ helperTextClamped }}</p>
+            <div class="lx-data">{{ helperTextClamped }}</div>
           </template>
         </LxInfoWrapper>
       </div>

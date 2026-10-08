@@ -103,7 +103,7 @@
 }
 
 .lx .lx-form .lx-row label:not(.lx-button label):not(.lx-radio-button-wrapper label):not(.lx-autocomplete-default label):not(.lx-value-picker-dropdown-wrapper label) {
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-label);
 }
 
 .lx .lx-form .lx-row .lx-data:not(.lx-badge-text),

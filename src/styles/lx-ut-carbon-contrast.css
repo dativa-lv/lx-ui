@@ -133,6 +133,7 @@
   --color-input-border-disabled: var(--contrast-foreground);
   --color-input-text-disabled: var(--contrast-foreground);
   --color-input-background-selected: var(--contrast-hover);
+  --color-input-slider-track-unfilled: var(--contrast-background);
 
   --color-selected: var(--contrast-background);
 

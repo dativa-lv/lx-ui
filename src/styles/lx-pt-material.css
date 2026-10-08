@@ -9,7 +9,7 @@
 
     /* LxModal */
     --modal-border-radius: var(--border-radius-1500);
-    --modal-content-padding: var(--space-0) var(--space-1500) var(--space-1500) var(--space-1500);
+    --modal-content-padding: var(--space-0250) var(--space-1500) var(--space-1500) var(--space-1500);
     --modal-header-content-padding: var(--space-1500) var(--space-0500) var(--space-1000) var(--space-1500);
     --modal-footer-padding: var(--space-1000) var(--space-1500);
     --modal-button-set-gap: var(--space-0500);
@@ -139,7 +139,24 @@
     --input-button-border-radius: var(--border-radius-0125);
 
     --color-input-border: var(--color-label);
+    --color-input-border-disabled: var(--color-disabled-foreground);
     --color-input-background: transparent;
+    --color-input-stepper-display-border: var(--color-chrome);
+    --color-input-stepper-display-border-disabled: var(--color-disabled-foreground);
+
+    --input-slider-track-height: 1rem;
+    --input-slider-track-border-radius-outer: var(--border-radius-0500);
+    --input-slider-track-border-radius-inner: var(--border-radius-0125);
+    --input-slider-track-gap: var(--space-0375);
+    --input-slider-thumb-height: 2.5rem;
+    --input-slider-thumb-width: 0.25rem;
+    --input-slider-thumb-height-hover: 2.5rem;
+    --input-slider-thumb-width-hover: 0.25rem;
+    --input-slider-thumb-height-active: 2.5rem;
+    --input-slider-thumb-width-active: 0.125rem;
+
+    --color-input-slider-stop-indicator: var(--color-data);
+    --color-input-slider-stop-indicator-disabled: var(--color-disabled-foreground);
 
     /* Nav items */
     --nav-item-border-radius: var(--border-radius-full);
@@ -329,7 +346,13 @@
 
     /* Inputs */
     --color-input-border: var(--color-label);
+    --color-input-border-disabled: var(--color-disabled-foreground);
     --color-input-background: transparent;
+    --color-input-stepper-display-border: var(--color-chrome);
+    --color-input-stepper-display-border-disabled: var(--color-disabled-foreground);
+
+    --color-input-slider-stop-indicator: var(--color-data);
+    --color-input-slider-stop-indicator-disabled: var(--color-disabled-foreground);
 
     /* Nav */    
     --color-nav-item-border-selected: transparent;

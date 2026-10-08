@@ -512,7 +512,7 @@ const wrapperRef = ref();
               tabindex="-1"
             />
             <template #panel>
-              <div class="lx-button-set lx-dropdown-menu-group lx-map-slider">
+              <div class="lx-button-set lx-dropdown-menu-group">
                 <div class="lx-label">{{ displayTexts.grayscale }}</div>
                 <LxNumberInput
                   v-model="grayscaleRef"
