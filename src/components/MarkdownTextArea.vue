@@ -210,8 +210,6 @@ let EditorContent = null;
 let Heading = null;
 let StarterKit = null;
 let Placeholder = null;
-let Link = null;
-let Underline = null;
 let CharacterCount = null;
 let TextStyle = null;
 let Color = null;
@@ -415,6 +413,11 @@ function createEditorExtensions() {
     Markdown,
     StarterKit.configure({
       heading: false,
+      trailingNode: false,
+      link: {
+        autolink: false,
+        validate: (href) => /^[a-z][a-z0-9+.-]*:/i.test(href),
+      },
     }),
     TextStyle,
     Color,
@@ -423,12 +426,6 @@ function createEditorExtensions() {
     }),
     CustomHeadingWithAutoId,
     HiddenIdNode,
-    Underline,
-
-    Link.configure({
-      autolink: false,
-      validate: (href) => /^[a-z][a-z0-9+.-]*:/i.test(href),
-    }),
 
     Placeholder.configure({
       placeholder: props.placeholder,
@@ -732,8 +729,6 @@ async function loadTiptap() {
   Heading = lib.Heading;
   StarterKit = lib.StarterKit;
   Placeholder = lib.Placeholder;
-  Link = lib.Link;
-  Underline = lib.Underline;
   CharacterCount = lib.CharacterCount;
   TextStyle = lib.TextStyle;
   Color = lib.Color;
