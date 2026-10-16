@@ -2,8 +2,8 @@ import { defineAsyncComponent } from 'vue';
 
 /* shell */
 export const LxShell = defineAsyncComponent(() => import('@/components/shell/Shell.vue'));
-export const LxShellHeaderButtons = defineAsyncComponent(() =>
-  import('@/components/shell/ShellHeaderButtons.vue')
+export const LxShellHeaderButtons = defineAsyncComponent(
+  () => import('@/components/shell/ShellHeaderButtons.vue')
 );
 
 /* forms */
@@ -12,11 +12,11 @@ export const LxSection = defineAsyncComponent(() => import('@/components/forms/S
 export const LxForm = defineAsyncComponent(() => import('@/components/forms/Form.vue'));
 
 /* components */
-export const LxAppendableList = defineAsyncComponent(() =>
-  import('@/components/forms/AppendableList.vue')
+export const LxAppendableList = defineAsyncComponent(
+  () => import('@/components/forms/AppendableList.vue')
 );
-export const LxAppendableListSimple = defineAsyncComponent(() =>
-  import('@/components/forms/AppendableListSimple.vue')
+export const LxAppendableListSimple = defineAsyncComponent(
+  () => import('@/components/forms/AppendableListSimple.vue')
 );
 export const LxAutoComplete = defineAsyncComponent(() => import('@/components/AutoComplete.vue'));
 export const LxAvatar = defineAsyncComponent(() => import('@/components/Avatar.vue'));
@@ -25,19 +25,19 @@ export const LxCamera = defineAsyncComponent(() => import('@/components/Camera.v
 export const LxCard = defineAsyncComponent(() => import('@/components/Card.vue'));
 export const LxChat = defineAsyncComponent(() => import('@/components/chat/Chat.vue'));
 export const LxCheckbox = defineAsyncComponent(() => import('@/components/Checkbox.vue'));
-export const LxContentSwitcher = defineAsyncComponent(() =>
-  import('@/components/ContentSwitcher.vue')
+export const LxContentSwitcher = defineAsyncComponent(
+  () => import('@/components/ContentSwitcher.vue')
 );
 export const LxDataBlock = defineAsyncComponent(() => import('@/components/DataBlock.vue'));
 export const LxDataGrid = defineAsyncComponent(() => import('@/components/DataGrid.vue'));
-export const LxDataVisualizer = defineAsyncComponent(() =>
-  import('@/components/DataVisualizer.vue')
+export const LxDataVisualizer = defineAsyncComponent(
+  () => import('@/components/DataVisualizer.vue')
 );
-export const LxDateTimePicker = defineAsyncComponent(() =>
-  import('@/components/datePicker/DateTimePicker.vue')
+export const LxDateTimePicker = defineAsyncComponent(
+  () => import('@/components/datePicker/DateTimePicker.vue')
 );
-export const LxDateTimeRange = defineAsyncComponent(() =>
-  import('@/components/datePicker/DateTimeRange.vue')
+export const LxDateTimeRange = defineAsyncComponent(
+  () => import('@/components/datePicker/DateTimeRange.vue')
 );
 export const LxDialog = defineAsyncComponent(() => import('@/components/Dialog.vue'));
 export const LxDropDownMenu = defineAsyncComponent(() => import('@/components/DropDownMenu.vue'));
@@ -45,8 +45,8 @@ export const LxEmptyState = defineAsyncComponent(() => import('@/components/Empt
 export const LxEmptyValue = defineAsyncComponent(() => import('@/components/EmptyValue.vue'));
 export const LxErrorPage = defineAsyncComponent(() => import('@/components/ErrorPage.vue'));
 export const LxExpander = defineAsyncComponent(() => import('@/components/Expander.vue'));
-export const LxFileUploader = defineAsyncComponent(() =>
-  import('@/components/fileUploader/FileUploader.vue')
+export const LxFileUploader = defineAsyncComponent(
+  () => import('@/components/fileUploader/FileUploader.vue')
 );
 export const LxFileViewer = defineAsyncComponent(() => import('@/components/FileViewer.vue'));
 export const LxFilters = defineAsyncComponent(() => import('@/components/Filters.vue'));
@@ -61,27 +61,27 @@ export const LxListItem = defineAsyncComponent(() => import('@/components/list/L
 export const LxLoader = defineAsyncComponent(() => import('@/components/Loader.vue'));
 export const LxLoaderView = defineAsyncComponent(() => import('@/components/LoaderView.vue'));
 export const LxMap = defineAsyncComponent(() => import('@/components/Map.vue'));
-export const LxMarkdownTextArea = defineAsyncComponent(() =>
-  import('@/components/MarkdownTextArea.vue')
+export const LxMarkdownTextArea = defineAsyncComponent(
+  () => import('@/components/MarkdownTextArea.vue')
 );
 export const LxMasterDetail = defineAsyncComponent(() => import('@/components/MasterDetail.vue'));
 export const LxModal = defineAsyncComponent(() => import('@/components/Modal.vue'));
 export const LxModalForm = defineAsyncComponent(() => import('@/components/ModalForm.vue'));
 export const LxNotification = defineAsyncComponent(() => import('@/components/Notification.vue'));
 export const LxNumberInput = defineAsyncComponent(() => import('@/components/NumberInput.vue'));
-export const LxPlaceholder = defineAsyncComponent(() =>
-  import('@/components/forms/Placeholder.vue')
+export const LxPlaceholder = defineAsyncComponent(
+  () => import('@/components/forms/Placeholder.vue')
 );
 export const LxPersonDisplay = defineAsyncComponent(() => import('@/components/PersonDisplay.vue'));
 export const LxQr = defineAsyncComponent(() => import('@/components/Qr.vue'));
 export const LxQrScanner = defineAsyncComponent(() => import('@/components/QrScanner.vue'));
 export const LxRating = defineAsyncComponent(() => import('@/components/Rating.vue'));
 export const LxRadioButton = defineAsyncComponent(() => import('@/components/RadioButton.vue'));
-export const LxRichTextDisplay = defineAsyncComponent(() =>
-  import('@/components/RichTextDisplay.vue')
+export const LxRichTextDisplay = defineAsyncComponent(
+  () => import('@/components/RichTextDisplay.vue')
 );
-export const LxSearchableText = defineAsyncComponent(() =>
-  import('@/components/SearchableText.vue')
+export const LxSearchableText = defineAsyncComponent(
+  () => import('@/components/SearchableText.vue')
 );
 export const LxSiteMap = defineAsyncComponent(() => import('@/components/SiteMap.vue'));
 export const LxStack = defineAsyncComponent(() => import('@/components/Stack.vue'));
@@ -103,8 +103,8 @@ export const LxDurationInput = defineAsyncComponent(() => import('@/components/D
 export const LxDrawPad = defineAsyncComponent(() => import('@/components/DrawPad.vue'));
 export const LxLogoDisplay = defineAsyncComponent(() => import('@/components/LogoDisplay.vue'));
 export const LxBadge = defineAsyncComponent(() => import('@/components/Badge.vue'));
-export const LxAccessibilitySettings = defineAsyncComponent(() =>
-  import('@/components/AccessibilitySettings.vue')
+export const LxAccessibilitySettings = defineAsyncComponent(
+  () => import('@/components/AccessibilitySettings.vue')
 );
 export const LxSearchView = defineAsyncComponent(() => import('@/components/SearchView.vue'));
 
