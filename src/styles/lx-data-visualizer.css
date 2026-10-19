@@ -3,6 +3,8 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-1000);
+  --gauge-progress-default: var(--color-brand);
+  --gauge-goal-default: var(--color-region);
 }
 
 .lx-data-visualizer .lx-bars-horizontal .bar-wrapper {
@@ -503,11 +505,6 @@
   color: var(--color-data);
   margin: 0;
   text-align: center;
-}
-
-.lx-data-visualizer {
-  --gauge-progress-default: var(--color-brand);
-  --gauge-goal-default: var(--color-region);
 }
 
 .lx-region .lx-data-visualizer,

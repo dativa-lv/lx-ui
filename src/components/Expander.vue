@@ -148,13 +148,16 @@ defineExpose({ focus });
     data-component="lx-expander"
   >
     <div class="lx-expander-head">
+      <!-- Focusable via the bound tabindex; the rule only recognizes literal tabindex values. -->
+      <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
       <header
         ref="expanderHeader"
         :class="[{ 'lx-head': !$slots.customHeader }, { 'lx-custom-header': $slots.customHeader }]"
         :for="id"
         v-tooltip="tooltip"
-        :tabindex="disabled ? null : 0"
+        :tabindex="disabled ? -1 : 0"
         role="button"
+        :aria-disabled="disabled ? 'true' : null"
         :aria-label="ariaLabelWithBadge"
         :aria-describedby="
           ((badge || badgeIcon) && badgeTitle) || description || invalid
@@ -191,9 +194,9 @@ defineExpose({ focus });
               <div :id="`${id}-label`" v-if="label" class="heading-4">
                 {{ label }}
               </div>
-              <legend :id="`${id}-desc`" v-if="description" class="lx-description">
+              <div :id="`${id}-desc`" v-if="description" class="lx-description">
                 {{ description }}
-              </legend>
+              </div>
             </div>
             <div class="lx-expander-additional-info" v-if="$slots.additionalInfo">
               <LxInfoWrapper :disabled="disabled">

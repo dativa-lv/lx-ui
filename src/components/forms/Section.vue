@@ -437,12 +437,12 @@ onBeforeUnmount(() => {
         { 'lx-form-section-8': columnCountComputed === 8 },
       ]"
       :role="ariaRole"
-      :aria-describedby="description ? `${sectionPrefix}-desc` : null"
+      :aria-describedby="description ? `${sectionUUID}-desc` : null"
     >
       <header v-if="description">
-        <legend :id="`${sectionUUID}-desc`" class="lx-description">
+        <div :id="`${sectionUUID}-desc`" class="lx-description">
           {{ description }}
-        </legend>
+        </div>
       </header>
       <slot />
     </section>
@@ -476,9 +476,9 @@ onBeforeUnmount(() => {
         >
           {{ label }}
         </div>
-        <legend :id="`${sectionUUID}-desc`" v-if="description" class="lx-description">
+        <div :id="`${sectionUUID}-desc`" v-if="description" class="lx-description">
           {{ description }}
-        </legend>
+        </div>
       </div>
       <div v-if="actionDefinitions?.length > 0">
         <LxButton

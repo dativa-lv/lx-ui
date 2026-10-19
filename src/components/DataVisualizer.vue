@@ -587,7 +587,7 @@ const { width: lineChartWidth } = useElementSize(lineChartEl, undefined, { box: 
 const { width: lineYAxisWidth } = useElementSize(lineYAxisEl);
 
 const getPx = (element, property) =>
-  element ? parseFloat(getComputedStyle(element)[property]) || 0 : 0;
+  element ? Number.parseFloat(getComputedStyle(element)[property]) || 0 : 0;
 
 const lineEdgeOverhang = computed(() => {
   const widths = lineLabelWidths.value;

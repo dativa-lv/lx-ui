@@ -89,6 +89,19 @@ function normalizeScrollMargin(value) {
   return Math.round(value);
 }
 
+function easeInOutSine(progress) {
+  return 0.5 - Math.cos(Math.PI * progress) / 2;
+}
+
+// Centers the item, like a native focus scroll; taller items align to the top.
+function getOffsetToCenter(instance, index) {
+  const item = instance.getMeasurements()[index];
+  if (!item) return null;
+  const size = instance.getSize();
+  const target = item.size > size ? item.start : item.start - (size - item.size) / 2;
+  return Math.max(0, Math.min(target, instance.getMaxScrollOffset()));
+}
+
 export default function useScrollVirtualizer({
   enabled,
   scrollParentSourceRef,
@@ -172,22 +185,11 @@ export default function useScrollVirtualizer({
   let finishScrollToIndex = null;
   let isScrollingToIndex = false;
 
-  const easeInOutSine = (progress) => 0.5 - Math.cos(Math.PI * progress) / 2;
-
   function isItemInView(instance, index) {
     const item = instance.getMeasurements()[index];
     if (!item) return false;
     const current = getScrollOffset();
     return item.start >= current && item.end <= current + instance.getSize();
-  }
-
-  // Centres the item, like a native focus scroll; taller items align to the top.
-  function getOffsetToCenter(instance, index) {
-    const item = instance.getMeasurements()[index];
-    if (!item) return null;
-    const size = instance.getSize();
-    const target = item.size > size ? item.start : item.start - (size - item.size) / 2;
-    return Math.max(0, Math.min(target, instance.getMaxScrollOffset()));
   }
 
   function cancelScrollToIndex() {
