@@ -25,6 +25,7 @@ export const LxCamera = defineAsyncComponent(() => import('@/components/Camera.v
 export const LxCard = defineAsyncComponent(() => import('@/components/Card.vue'));
 export const LxChat = defineAsyncComponent(() => import('@/components/chat/Chat.vue'));
 export const LxCheckbox = defineAsyncComponent(() => import('@/components/Checkbox.vue'));
+export const LxConfirmButton = defineAsyncComponent(() => import('@/components/ConfirmButton.vue'));
 export const LxContentSwitcher = defineAsyncComponent(
   () => import('@/components/ContentSwitcher.vue')
 );

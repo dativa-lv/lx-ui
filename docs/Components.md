@@ -27,6 +27,7 @@ LX/UI provides over 50 components for different needs. Check these live demos fr
 
 ## Clickable Thingies
 - [🌐 LxButton](https://lx-ui.dev/sandbox/button)
+- [🌐 LxConfirmButton](https://lx-ui.dev/sandbox/confirm-button)
 - [🌐 LxLink](https://lx-ui.dev/sandbox/link)
 
 ## Lists
