@@ -24,7 +24,7 @@ import useLx from '@/hooks/useLx';
 import { logWarn } from '@/utils/devUtils';
 import { useToolbarResponsiveness } from '@/hooks/useToolbarResponsiveness';
 
-const LxTextInput = defineAsyncComponent(() => import('@/components/TextInput.vue'));
+const LxAutoComplete = defineAsyncComponent(() => import('@/components/AutoComplete.vue'));
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -38,6 +38,7 @@ const props = defineProps({
   searchSide: { type: String, default: 'client' }, // client, server
   searchMode: { type: String, default: 'default' }, // default, compact, defaultForce
   useSearchDebounce: { type: Boolean, default: false },
+  searchItems: { type: Array, default: () => [] }, // server side only. Suggestions for the typed searchString
   hasSelectAll: { type: Boolean, default: false },
   sticky: { type: Boolean, default: false },
   selectionState: { type: String, default: 'checkbox' }, // checkbox, checkbox-filled, checkbox-indeterminate, radiobutton-filled
@@ -115,12 +116,12 @@ watch(isSearchExpanded, (value) => {
   emits('searchExpandedChange', value);
 });
 
-// LxTextInput loads on demand, so on the first expand the ref appears only once that module
+// LxAutoComplete loads on demand, so on the first expand the ref appears only once that module
 // resolves — focusing on the next tick would miss it. Focus when the input actually mounts.
 watch(searchInputCompact, (input) => {
   if (input && shouldFocusCompactSearch.value) {
     shouldFocusCompactSearch.value = false;
-    input.focus();
+    document.getElementById(`${props.id}-search-input`)?.focus();
   }
 });
 
@@ -158,8 +159,8 @@ function getArea(action) {
   );
 
   return parentAction
-    ? parentAction.area ?? defaultAreaComputed.value
-    : action.area ?? defaultAreaComputed.value;
+    ? (parentAction.area ?? defaultAreaComputed.value)
+    : (action.area ?? defaultAreaComputed.value);
 }
 
 function applyDefaults(action, overrides = {}) {
@@ -421,18 +422,28 @@ function serverSideSearch() {
 }
 
 const searchInputRefresh = ref(0);
+const searchValue = ref(null);
 
-function clear() {
-  searchStringRaw.value = '';
-  isSearchActive.value = false;
-  searchInputRefresh.value += 1;
-
-  if (props.searchSide === 'client') {
-    clientSideSearch();
-  } else if (props.searchSide === 'server') {
-    serverSideSearch();
-  }
+function confirmServerSearch(value) {
+  searchStringRaw.value = value;
+  serverSideSearch();
 }
+
+// Server side searches on Enter or a picked suggestion; client side filters while typing
+const searchBindings = computed(() => {
+  const isServer = props.searchSide === 'server';
+  return {
+    id: `${props.id}-search-input`,
+    mode: 'new',
+    kind: 'search',
+    searchTrigger: isServer ? 'confirm' : 'input',
+    items: isServer ? props.searchItems : [],
+    placeholder: displayTexts.value.placeholder,
+    disabled: props.disabled || props.loading || props.busy,
+    texts: { clear: displayTexts.value.clear },
+    ...(isServer ? { onSearch: confirmServerSearch } : {}),
+  };
+});
 
 const isSelectAllDisabled = computed(
   () => props.disabled || props.loading || props.busy || isSearchActive.value
@@ -459,6 +470,7 @@ watch(
 watch(
   () => props.searchSide,
   () => {
+    searchValue.value = null;
     searchInputRefresh.value += 1;
   }
 );
@@ -469,6 +481,7 @@ function toggleSearch() {
   }
 
   searchStringRaw.value = '';
+  searchValue.value = null;
   isSearchExpanded.value = !isSearchExpanded.value;
 
   shouldFocusCompactSearch.value = isSearchExpanded.value;
@@ -791,41 +804,11 @@ const dataState = computed(() =>
             v-if="hasSearch && autoSearchMode === 'default'"
             class="lx-toolbar-search"
           >
-            <LxTextInput
-              ref="searchInputDefault"
-              :id="`${id}-search-input`"
+            <LxAutoComplete
               :key="searchInputRefresh"
-              role="search"
-              v-model="searchStringRaw"
-              :kind="searchSide === 'server' ? 'default' : 'search'"
-              :placeholder="displayTexts.placeholder"
-              :disabled="disabled || loading || busy"
-              :builderOptions="{
-                innerComponent: true,
-              }"
-              @keydown.enter="serverSideSearch"
-            />
-            <LxButton
-              v-if="searchSide === 'server'"
-              :id="`${id}-search-button`"
-              icon="search"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.search"
-              :disabled="disabled || loading || busy"
-              :loading="loading"
-              @click="serverSideSearch"
-            />
-            <LxButton
-              v-if="searchStringRaw"
-              :id="`${id}-search-clear-button`"
-              icon="clear"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.clear"
-              :disabled="disabled || loading || busy"
-              :loading="loading"
-              @click="clear"
+              v-bind="searchBindings"
+              v-model="searchValue"
+              v-model:searchString="searchStringRaw"
             />
           </LxToolbarGroup>
 
@@ -1026,45 +1009,12 @@ const dataState = computed(() =>
         v-if="hasSearch && isSearchExpanded && autoSearchMode === 'compact'"
         class="toolbar-search"
       >
-        <LxTextInput
+        <LxAutoComplete
           ref="searchInputCompact"
-          :id="`${id}-search-input`"
-          role="search"
-          v-model="searchStringRaw"
-          :kind="searchSide === 'server' ? 'default' : 'search'"
-          :placeholder="displayTexts.placeholder"
-          :disabled="disabled || loading || busy"
-          :builderOptions="{
-            innerComponent: true,
-          }"
-          @keydown.enter="serverSideSearch"
+          v-bind="searchBindings"
+          v-model="searchValue"
+          v-model:searchString="searchStringRaw"
         />
-
-        <div class="lx-group lx-slot-wrapper">
-          <LxButton
-            v-if="searchSide === 'server'"
-            :id="`${id}-search-button`"
-            icon="search"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.search"
-            :disabled="disabled || loading || busy"
-            :loading="loading"
-            @click="serverSideSearch"
-          />
-
-          <LxButton
-            v-if="searchStringRaw"
-            :id="`${id}-search-clear-button`"
-            icon="clear"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.clear"
-            :disabled="disabled || loading || busy"
-            :loading="loading"
-            @click="clear"
-          />
-        </div>
       </div>
 
       <slot name="secondRow" />

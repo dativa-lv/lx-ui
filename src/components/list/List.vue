@@ -92,6 +92,7 @@ const props = defineProps({
     sequence: 10,
     options: ['client', 'server'],
   },
+  searchItems: { type: Array, default: () => [] }, // searchSide 'server' only. Suggestions for the typed searchString
   showLoadMore: { type: Boolean, default: false, group: 'main', sequence: 13 },
   loading: { type: Boolean, default: false, group: 'mode', sequence: 1 },
   busy: { type: Boolean, default: false, group: 'mode', sequence: 2 },
@@ -1573,6 +1574,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         :hasSearch="hasSearch"
         v-model:searchString="reactiveSearchString"
         :searchSide="searchSide"
+        :searchItems="searchItems"
         :searchMode="autoSearchMode"
         :useSearchDebounce="true"
         :hasSelectAll="hasSelectAll"

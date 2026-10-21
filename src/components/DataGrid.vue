@@ -173,6 +173,7 @@ const props = defineProps({
   },
   searchString: { type: String, default: '' },
   searchSide: { type: String, default: 'server' }, // server, TODO add client search
+  searchItems: { type: Array, default: () => [] }, // Suggestions for the typed searchString
   locale: { type: String, default: null }, // lv, en
   fullBleed: { type: Boolean, default: true, group: 'main', sequence: 23 },
   badgeDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 12 },
@@ -2138,6 +2139,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :busy="busy"
         :hasSearch="hasSearch"
         :searchSide="searchSide"
+        :searchItems="searchItems"
         :searchMode="autoSearchMode"
         v-model:searchString="reactiveSearchString"
         :hasSelectAll="showSelecting && (selectionKind !== 'single' || selectedRows.length > 0)"

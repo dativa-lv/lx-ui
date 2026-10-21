@@ -12,9 +12,9 @@ import {
 } from './helpers/actionDefinitionsHelpers';
 import { checkLoadingAnnouncement } from './helpers/loadingAnnouncementHelpers';
 
-// LxToolbar loads LxTextInput with defineAsyncComponent; pre-warm it so suites that install
+// LxToolbar loads LxAutoComplete with defineAsyncComponent; pre-warm it so suites that install
 // fake timers can still resolve the module.
-beforeAll(() => import('@/components/TextInput.vue'));
+beforeAll(() => import('@/components/AutoComplete.vue'));
 
 let wrapper;
 
@@ -392,7 +392,7 @@ describe('Search', () => {
       const initialItems = wrapper.findAll(itemSelector);
       expect(initialItems.length).toBe(props.items.length);
 
-      await vi.advanceTimersByTimeAsync(0); // LxToolbar loads LxTextInput on demand
+      await vi.advanceTimersByTimeAsync(0); // LxToolbar loads LxAutoComplete on demand
       const searchInput = wrapper.get('.lx-component-toolbar .lx-search-input');
       await searchInput.setValue(searchValue);
       await vi.advanceTimersByTimeAsync(searchDelay);
@@ -454,7 +454,7 @@ describe('Search', () => {
 
       expect(items.length).toBe(0);
 
-      await vi.advanceTimersByTimeAsync(0); // LxToolbar loads LxTextInput on demand
+      await vi.advanceTimersByTimeAsync(0); // LxToolbar loads LxAutoComplete on demand
       const clearButton = wrapper.get(
         '.lx-component-toolbar .lx-button[data-lx-tooltip="Notīrīt"]'
       );
@@ -464,37 +464,88 @@ describe('Search', () => {
       items = wrapper.findAll(itemSelector);
       expect(items.length).toBe(props.items.length);
 
-      await vi.advanceTimersByTimeAsync(0); // LxToolbar loads LxTextInput on demand
+      await vi.advanceTimersByTimeAsync(0); // LxToolbar loads LxAutoComplete on demand
       const searchInput = wrapper.get('.lx-component-toolbar .lx-search-input');
       expect(searchInput.text()).toBe('');
     });
   });
 
   describe('Server side', () => {
-    test('clear button resets query', async () => {
-      wrapper = mountComponent({ props: { ...props, searchSide: 'server' } });
+    async function mountServerSide(extraProps = {}) {
+      wrapper = mountComponent({ props: { ...props, searchSide: 'server', ...extraProps } });
+      await flushPromises(); // LxToolbar loads LxAutoComplete on demand
+      return wrapper.get('.lx-component-toolbar .lx-search-input');
+    }
 
-      await flushPromises(); // LxToolbar loads LxTextInput on demand
-      const searchInput = wrapper.get('.lx-component-toolbar .lx-text-input');
+    test('typing updates searchString without searching', async () => {
+      const searchInput = await mountServerSide();
       await searchInput.setValue('x');
 
-      await flushPromises(); // LxToolbar loads LxTextInput on demand
+      expect(wrapper.emitted('update:searchString').at(-1)).toEqual(['x']);
+      expect(wrapper.emitted('search')).toBeUndefined();
+    });
+
+    test('Enter searches the typed text', async () => {
+      const searchInput = await mountServerSide();
+      await searchInput.setValue('x');
+      await searchInput.trigger('keydown', { key: 'Enter' });
+
+      expect(wrapper.emitted('search')).toEqual([['x']]);
+    });
+
+    test('searchItems are shown as suggestions and picking one searches it', async () => {
+      wrapper = mountComponent({
+        props: {
+          ...props,
+          searchSide: 'server',
+          searchItems: [
+            { id: 's1', name: 'Suggestion one' },
+            { id: 's2', name: 'Other' },
+          ],
+        },
+        attachTo: document.body,
+      });
+      await flushPromises(); // LxToolbar loads LxAutoComplete on demand
+      const searchInput = wrapper.get('.lx-component-toolbar .lx-search-input');
+      searchInput.element.focus();
+      await searchInput.trigger('keydown', { key: 'g' });
+      await searchInput.setValue('sugg');
+      await flushPromises();
+
+      const options = [...document.querySelectorAll('[role="option"]')];
+      const suggestion = options.find((option) => option.textContent.trim() === 'Suggestion one');
+      expect(suggestion).toBeDefined();
+      expect(options.some((option) => option.textContent.trim() === 'Other')).toBe(false);
+
+      suggestion.click();
+      await flushPromises();
+
+      expect(wrapper.emitted('search')).toEqual([['Suggestion one']]);
+    });
+
+    test('clear button resets query and searches again', async () => {
+      const searchInput = await mountServerSide();
+      await searchInput.setValue('x');
+      await searchInput.trigger('keydown', { key: 'Enter' });
+      await flushPromises();
+
       const clearButton = wrapper.get(
         '.lx-component-toolbar .lx-button[data-lx-tooltip="Notīrīt"]'
       );
       await clearButton.trigger('click');
 
-      expect(searchInput.text()).toBe('');
+      expect(searchInput.element.value).toBe('');
+      expect(wrapper.emitted('search')).toEqual([['x'], ['']]);
     });
   });
 
   describe('Exposed function toggleSearch', () => {
-    const searchInputCompactSelector = '.lx-component-toolbar .second-row .lx-text-input';
+    const searchInputCompactSelector = '.lx-component-toolbar .second-row .lx-search-input';
 
     test('toggleSearch expands and collapses compact search input', async () => {
       wrapper = mountComponent({ props: { ...props, searchMode: 'compact' } });
 
-      await flushPromises(); // LxToolbar loads LxTextInput on demand
+      await flushPromises(); // LxToolbar loads LxAutoComplete on demand
       let searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(false);
@@ -502,7 +553,7 @@ describe('Search', () => {
       wrapper.vm.toggleSearch();
       await wrapper.vm.$nextTick();
 
-      await flushPromises(); // LxToolbar loads LxTextInput on demand
+      await flushPromises(); // LxToolbar loads LxAutoComplete on demand
       searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(true);
@@ -510,7 +561,7 @@ describe('Search', () => {
       wrapper.vm.toggleSearch();
       await wrapper.vm.$nextTick();
 
-      await flushPromises(); // LxToolbar loads LxTextInput on demand
+      await flushPromises(); // LxToolbar loads LxAutoComplete on demand
       searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(false);
@@ -519,7 +570,7 @@ describe('Search', () => {
     test('toggleSearch has no effect when search mode is not compact', async () => {
       wrapper = mountComponent({ props });
 
-      await flushPromises(); // LxToolbar loads LxTextInput on demand
+      await flushPromises(); // LxToolbar loads LxAutoComplete on demand
       let searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(false);
@@ -527,7 +578,7 @@ describe('Search', () => {
       wrapper.vm.toggleSearch();
       await wrapper.vm.$nextTick();
 
-      await flushPromises(); // LxToolbar loads LxTextInput on demand
+      await flushPromises(); // LxToolbar loads LxAutoComplete on demand
       searchInput = wrapper.find(searchInputCompactSelector);
 
       expect(searchInput.exists()).toBe(false);

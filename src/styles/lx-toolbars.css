@@ -810,6 +810,14 @@
   --color-toolbar-selection-button-icon: var(--color-data);
 }
 
+/* The field's own buttons overlap the input, so an opaque background would hide its border and outline */
+.lx-component-toolbar .second-row .lx-input-wrapper {
+  --color-toolbar-button-ghost-background: transparent;
+  --color-toolbar-button-ghost-background-focus: transparent;
+  --color-toolbar-button-ghost-border: transparent;
+  --color-toolbar-button-ghost-border-focus: transparent;
+}
+
 .lx-component-toolbar.lx-selection-toolbar .lx-toolbar-search-button-wrapper.is-expanded {
   --color-toolbar-selection-button-background-focus: var(--color-input-background);
   --color-toolbar-selection-button-icon-focus: var(--color-data);
