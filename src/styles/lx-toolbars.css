@@ -594,7 +594,7 @@
   color: var(--color-toolbar-button-tertiary-text-focus);
 }
 
-.lx-component-toolbar .lx-button-tertiary:focus:hover {
+.lx-component-toolbar .first-row .lx-button.lx-button-tertiary:focus:hover {
   background: var(--color-toolbar-button-tertiary-background-hover);
   border-color: var(--color-toolbar-button-tertiary-border-hover);
   color: var(--color-toolbar-button-tertiary-text-hover);
