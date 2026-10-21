@@ -338,6 +338,16 @@ watch(
   }
 );
 
+let isDeselectedByEdit = false;
+
+function deselectOnEdit(text) {
+  if (!isSearchKind.value || !selectedEntry.value) return;
+  const name = String(getName(selectedEntry.value) ?? '');
+  if ((text || '').toLowerCase() === name.toLowerCase()) return;
+  isDeselectedByEdit = true;
+  commitEntries([]);
+}
+
 watch(
   finalQuery,
   (value, oldValue) => {
@@ -347,6 +357,7 @@ watch(
       if (isSilent) return;
     }
     if (oldValue !== undefined && isPlainSearch.value) scheduleTypedCommit(value);
+    if (oldValue !== undefined && !isPlainSearch.value) deselectOnEdit(value);
     if (!searchesWhileTyping.value) return;
     if (value && isQueryTooShort.value) return;
     emitSearch(value);
@@ -364,6 +375,10 @@ function syncQueryToValue(valueKey, oldValueKey) {
   if (!isSearchKind.value) return;
   // Without a value on the first run, keep an initial searchString
   if (valueKey === null && oldValueKey === undefined) return;
+  if (isDeselectedByEdit) {
+    isDeselectedByEdit = false;
+    if (valueKey === null) return;
+  }
   const name = selectedEntry.value ? String(getName(selectedEntry.value) ?? '') : '';
   // Same text in another case or with spaces around it (e.g. "dota 2 " for "Dota 2") is left as typed
   if ((query.value || '').trim().toLowerCase() === name.toLowerCase()) return;
@@ -802,7 +817,9 @@ watch(
 );
 
 watch(menuOpen, (open) => {
-  if (!open) hasPanelShown.value = false;
+  if (open) return;
+  hasPanelShown.value = false;
+  highlightedKey.value = null;
 });
 const panelTransition = computed(() =>
   menuOpen.value && hasPanelShown.value ? 'none' : 'appear-down'
@@ -869,7 +886,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
 
     <template v-else>
       <div
-        class="lx-autocomplete-default"
+        class="lx-autocomplete-default lx-autocomplete-new"
         ref="refContainer"
         :class="[
           { 'lx-autocomplete-search': isSearchKind },
@@ -989,11 +1006,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
                       {{ displayTexts.loadingState }}
                     </div>
 
-                    <div
-                      v-if="shouldShowValue"
-                      class="lx-value lx-input-area"
-                      v-tooltip="customTooltip"
-                    >
+                    <div v-if="shouldShowValue" class="lx-value lx-input-area">
                       <div>
                         <slot
                           v-if="$slots.customItem && selectedEntry"

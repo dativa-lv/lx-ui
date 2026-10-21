@@ -240,6 +240,11 @@
   --input-button-indent-right: 0rem;
 }
 
+/* TODO: assumes both buttons are on the right; fix with "Inputs: button indent" task */
+.lx .lx-layout div.lx-input-wrapper:has(> .lx-button ~ .lx-button.lx-autocomplete-details-button) .lx-input-area {
+  --input-button-indent-right: calc(var(--input-button-width) * 2);
+}
+
 /* Multiple, valid */
 
 .lx .lx-layout div.lx-input-wrapper:has(.lx-tag) .lx-input-area {
@@ -1876,6 +1881,13 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-input-wrapper > .lx-button.lx-autocomplete-details-button {
   grid-area: button-details;
+}
+
+/* Safari shows a native tooltip over truncated text, so hover goes to the input below */
+/* TODO: drop .lx-autocomplete-new scoping (here and in AutoCompleteNew.vue) once AutoCompleteLegacy is removed */
+.lx-autocomplete-new .lx-input-wrapper > .lx-value,
+.lx-autocomplete-new .lx-input-wrapper > .lx-placeholder {
+  pointer-events: none;
 }
 
 .lx .lx-autocomplete-search .lx-text-input.lx-autocomplete-text-hidden {
