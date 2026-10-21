@@ -266,6 +266,8 @@ const fullName = computed(() => {
   return '';
 });
 
+const userIcon = computed(() => props.userInfo?.icon || 'doctor');
+
 const navBarSwitchModel = computed({
   get() {
     return props.navBarSwitch;
@@ -890,7 +892,7 @@ watch(
         <LxDropDownMenu ref="dropDownMenu" :disabled="headerNavDisable">
           <div class="lx-user-button" tabindex="-1" role="button">
             <div class="lx-avatar" v-if="!hasAvatar">
-              <LxIcon value="doctor" customClass="lx-icon" />
+              <LxIcon :value="userIcon" customClass="lx-icon" />
             </div>
 
             <div class="lx-user-info">
@@ -913,7 +915,7 @@ watch(
             <div class="user-menu-panel" :class="[{ 'has-timeout': hasSessionTimeoutBadge }]">
               <div class="lx-region user-menu-context">
                 <div class="lx-avatar-display lx-avatar-display-xl">
-                  <LxIcon value="doctor" />
+                  <LxIcon :value="userIcon" />
                 </div>
                 <div class="lx-data">{{ fullName }}</div>
                 <div class="lx-description" v-if="userInfo?.description">

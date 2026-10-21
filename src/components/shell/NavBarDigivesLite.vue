@@ -278,6 +278,9 @@ const fullName = computed(() => {
   }
   return '';
 });
+
+const userIcon = computed(() => props.userInfo?.icon || 'doctor');
+
 const selectedAlternativeProfileModel = computed({
   get() {
     if (!props.selectedAlternativeProfile && props.alternativeProfilesInfo) {
@@ -689,7 +692,7 @@ onClickOutside(navPanel, toggleNavBar);
             @keydown.enter.prevent="triggerUserMenu"
           >
             <div class="lx-avatar" v-if="!hasAvatar">
-              <LxIcon value="doctor" customClass="lx-icon" />
+              <LxIcon :value="userIcon" customClass="lx-icon" />
             </div>
 
             <div class="lx-user-info">
@@ -720,7 +723,7 @@ onClickOutside(navPanel, toggleNavBar);
                 :class="[{ 'has-timeout': hasSessionTimeoutBadge }]"
               >
                 <div class="lx-avatar-display lx-avatar-display-xl">
-                  <LxIcon value="doctor" />
+                  <LxIcon :value="userIcon" />
                 </div>
                 <div class="lx-data">{{ fullName }}</div>
                 <div class="lx-description" v-if="userInfo?.description">
