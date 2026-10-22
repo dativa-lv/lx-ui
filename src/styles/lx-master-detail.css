@@ -125,12 +125,12 @@
         border-left: solid var(--color-chrome) 0.125rem;
     }
 
-    .lx-master-detail>nav {
+    .lx-master-detail > nav {
         overflow-y: auto;
         overflow-x: hidden;
     }
 
-    .lx-master-detail>nav.lx-master>ul {
+    .lx-master-detail > nav.lx-master>ul {
         overflow-y: auto;
         height: calc(100% - var(--row-size));
     }

@@ -621,11 +621,9 @@ export function useToolbarResponsiveness({
       return;
     }
 
-    const header = form.querySelector(':scope > header.lx-sticky');
-    const formBar = form.querySelector(
-      ':scope > .lx-tab-control > header.lx-toolbar, :scope > .lx-wizard > header.lx-toolbar'
-    );
-    const footer = form.querySelector(':scope > footer.lx-sticky');
+    const header = form.querySelector(':scope > .lx-form-grid-header-sticky');
+    const formBar = form.querySelector(':scope > .lx-tab-wizard > .lx-tab-wizard-toolbar');
+    const footer = form.querySelector(':scope > .lx-form-grid-footer-sticky');
 
     const stickyTopElements = [header, formBar].filter((element) => element instanceof HTMLElement);
     const stickyBottomElements = [footer].filter((element) => element instanceof HTMLElement);

@@ -59,7 +59,7 @@
     display: flex;
 }
 
-.lx-form-grid>.lx-main .lx-row .lx-steps-label {
+.lx-form-grid > .lx-main .lx-row .lx-steps-label {
   color: var(--color-data);
 }
 

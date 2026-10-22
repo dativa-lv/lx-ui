@@ -263,23 +263,23 @@
 /* Drop the form section's and footer's left/right padding, so the submit button sits flush
    instead of indented (the bubble already has its own inset). */
 .lx-chat-wrapper .lx-chat-bubble .lx-form-grid .lx-form-section,
-.lx-chat-wrapper .lx-chat-bubble .lx-form-grid > footer {
+.lx-chat-wrapper .lx-chat-bubble .lx-form-grid .lx-form-grid-footer {
   padding-left: var(--space-0);
   padding-right: var(--space-0);
 }
 
-.lx-chat-wrapper .lx-chat-bubble .lx-form-grid > footer .responsive-overflow,
-.lx-chat-wrapper .lx-chat-bubble .lx-form-grid > footer > .lx-group:empty {
+.lx-chat-wrapper .lx-chat-bubble .lx-form-grid .lx-form-grid-footer .responsive-overflow,
+.lx-chat-wrapper .lx-chat-bubble .lx-form-grid .lx-form-grid-footer > .lx-group:empty {
   display: none;
 }
 
-.lx-chat-wrapper .lx-chat-bubble .lx-form-grid > footer .responsive-button {
+.lx-chat-wrapper .lx-chat-bubble .lx-form-grid .lx-form-grid-footer .responsive-button {
   display: flex;
 }
 
 @container lx-chat-wrapper (max-width: 950px) {
-  .lx-chat-wrapper .lx-chat-bubble .lx-form-grid > footer,
-  .lx-chat-wrapper .lx-chat-bubble .lx-form-grid > footer > .lx-group {
+  .lx-chat-wrapper .lx-chat-bubble .lx-form-grid .lx-form-grid-footer,
+  .lx-chat-wrapper .lx-chat-bubble .lx-form-grid .lx-form-grid-footer > .lx-group {
     display: flex;
     flex-direction: column;
     gap: var(--form-footer-button-set-gap);

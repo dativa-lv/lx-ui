@@ -12,7 +12,6 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: '' },
   items: { type: Array, default: () => [] },
-  level: { type: Number, default: 1 },
   kind: { type: String, default: 'default' }, // 'default', 'icon-only', 'combo'
   texts: { type: Object, default: () => ({}) },
 });
@@ -145,17 +144,13 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div :id="id" class="lx-tab-control" :style="`${topOutOfBounds}`" ref="tabControl">
+  <div :id="id" class="lx-tab-control lx-tab-wizard" :style="`${topOutOfBounds}`" ref="tabControl">
     <header
       ref="tabHeader"
-      class="lx-toolbar"
-      :class="[
-        { 'lx-sticky': level === 1 },
-        { 'lx-sticky-2': level > 1 },
-        { 'tab-control-default': kind === 'default' },
-      ]"
+      class="lx-tab-wizard-toolbar"
+      :class="[{ 'lx-tab-control-default': kind === 'default' }]"
     >
-      <div class="lx-tab-container">
+      <div class="lx-tab-container lx-tab-wizard-container">
         <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
         <div
           v-for="t in props.items"
@@ -182,11 +177,15 @@ onMounted(() => {
           @keydown.right.prevent="focusNextTab"
           @keydown.space.prevent
         >
-          <p class="lx-primary" v-if="kind !== 'icon-only'">{{ t.name }}</p>
-          <LxIcon :value="t.icon" customClass="item-icon" v-if="kind !== 'default' && !t.invalid" />
+          <div class="lx-primary" v-if="kind !== 'icon-only'">{{ t.name }}</div>
+          <LxIcon
+            :value="t.icon"
+            customClass="lx-tab-icon lx-icon"
+            v-if="kind !== 'default' && !t.invalid"
+          />
           <LxIcon
             value="invalid"
-            customClass="invalid"
+            customClass="lx-invalidation-icon lx-icon"
             v-show="!(kind !== 'default' && !t.invalid)"
           />
           <span
@@ -292,7 +291,7 @@ onMounted(() => {
       </div>
     </header>
 
-    <article class="lx-tab-body">
+    <article class="lx-tab-body lx-tab-wizard-body">
       <transition name="nav">
         <slot name="body" />
       </transition>

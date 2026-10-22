@@ -56,12 +56,8 @@
   background-color: var(--color-region);
 }
 
-.lx-sticky-header .lx-tab-control>header {
+.lx-sticky-header .lx-tab-control > header {
   box-shadow: 0px 1rem 2rem -1rem rgba(0, 0, 0, 0.2);
-}
-
-.lx-sticky-footer>footer {
-  box-shadow: 0px -1rem 2rem -1rem rgba(0, 0, 0, 0.2);
 }
 
 .lx .lx-form .lx-button-set.lx-justified-toolbar {
@@ -297,65 +293,11 @@
   font-size: var(--font-size-label);
 }
 
-.lx-tab-control .lx-dropdown-container {
-  display: none;
-  position: sticky;
-  top: calc(var(--nav-row-size) + var(--row-size));
-  z-index: 10;
-}
-
-.lx-tab-control .lx-dropdown-container::after {
-  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: 3rem;
-  position: absolute;
-  top: var(--row-size);
-  top: var(--tab-control-header-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: 0;
-  opacity: var(--tab-control-shadow-opacity);
-  pointer-events: none;
-}
-
-.lx-wizard .lx-dropdown-container::after {
-  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: 3rem;
-  position: absolute;
-  top: var(--row-size);
-  top: var(--wizard-header-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: 0;
-  opacity: var(--wizard-shadow-opacity);
-  pointer-events: none;
-}
-
-.lx-tab-control .lx-dropdown-container .lx-dropdown-default-data {
-  padding-left: var(--space-2000);
-}
-
-.lx-tab-control .lx-dropdown-container .lx-dropdown-default-content .lx-value-picker-item {
-  padding: var(--space-0500) var(--space-2000);
-}
-
-.lx-tab-control .lx-dropdown-container .lx-dropdown-default-panel:not(.lx-dropdown-default[disabled='true'] .lx-dropdown-default-panel) {
-  border-bottom: var(--border-width-1) solid var(--color-chrome);
-}
-
 .lx-row .lx-action-controller .lx-action-toggle {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: var(--space-0500) var(--space-0) var(--space-0500) var(--space-1000);
-}
-
-@media (max-width: 700px) {
-  .lx-tab-control .tab-control-default .lx-dropdown-container {
-    display: block;
-    width: 100%;
-  }
 }
 
 @media (max-width: 1300px) {

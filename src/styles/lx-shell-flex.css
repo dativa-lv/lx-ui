@@ -69,7 +69,7 @@
   flex-grow: 1;
 }
 
-.lx-layout-default>main {
+.lx-layout-default > main {
   display: flex;
   margin-top: var(--nav-row-size);
   flex-grow: 1;
@@ -548,7 +548,7 @@ code {
   margin-bottom: var(--space-3000);
 }
 
-.lx-widget>header {
+.lx-widget > header {
   height: var(--row-size);
   justify-content: space-between;
   display: flex;
@@ -559,7 +559,7 @@ code {
   color: var(--color-data);
 }
 
-.lx .lx-widget>header>p {
+.lx .lx-widget > header > p {
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
@@ -1077,7 +1077,7 @@ code {
   opacity: 1;
 }
 
-.lx .lx-document .lx-form-region>header.lx-wide-toolbar.lx-sticky {
+.lx .lx-document .lx-form-region > header.lx-wide-toolbar.lx-sticky {
   border-bottom: var(--border-width-2) var(--color-background) solid;
   margin-top: calc(var(--row-size) * -1);
   display: flex;
@@ -1086,7 +1086,7 @@ code {
   z-index: 10;
 }
 
-.lx .lx-document .lx-form-region>footer {
+.lx .lx-document .lx-form-region > footer {
   margin-left: calc(var(--space-2000) * -1);
   margin-right: calc(var(--space-2000) * -1);
   margin-top: var(--space-0);
@@ -1138,7 +1138,7 @@ code {
 .lx-tag-set .lx-tag>span,
 .lx-main h1,
 .lx-main .heading-1,
-.lx-list-item>header>p,
+.lx-list-item > header > p,
 .lx-master-detail .lx-master ul li>span {
   display: -webkit-box;
   -webkit-line-clamp: 3;

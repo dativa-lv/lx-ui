@@ -394,7 +394,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   padding: var(--space-0);
 }
 
-.lx-layout .lx-modal.lx-modal-form .lx-main .lx-form-grid > header.lx-sticky {
+.lx-layout .lx-modal.lx-modal-form .lx-main .lx-form-grid .lx-form-grid-header-sticky {
   top: var(--space-0);
 }
 
@@ -410,7 +410,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 }
 
 @media (max-height: 499px) {
-  .lx-modal-form .lx-form-grid > header.lx-sticky {
+  .lx-modal-form .lx-form-grid .lx-form-grid-header-sticky {
     position: sticky;
   }
 }

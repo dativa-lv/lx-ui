@@ -44,7 +44,7 @@ test('LxForm not sticky header', () => {
     },
   });
   const header = wrapper.find('header');
-  expect(header.classes()).not.toContain('lx-sticky');
+  expect(header.classes()).not.toContain('lx-form-grid-header-sticky');
 });
 
 test('LxForm not sticky footer', () => {
@@ -55,7 +55,7 @@ test('LxForm not sticky footer', () => {
     },
   });
   const header = wrapper.find('footer');
-  expect(header.classes()).not.toContain('lx-sticky');
+  expect(header.classes()).not.toContain('lx-form-grid-footer-sticky');
 });
 
 test('LxForm compact kind', () => {

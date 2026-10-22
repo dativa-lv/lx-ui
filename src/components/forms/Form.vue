@@ -982,6 +982,7 @@ if (props.builderOptions.useRegistry) {
       { 'lx-region-component': !isInsideRegionContainer },
       { 'lx-header-scrolled': isHeaderScrolled },
       { 'lx-footer-scrolled': isFooterScrolled },
+      { 'lx-form-with-tabs-steps': props.indexType === 'tabs' || props.indexType === 'wizard' },
     ]"
     ref="form"
     :aria-labelledby="showHeader && kind !== 'stripped' ? `${id}-header` : null"
@@ -1062,11 +1063,10 @@ if (props.builderOptions.useRegistry) {
 
     <header
       ref="formHeader"
+      class="lx-form-grid-header"
       :class="[
-        { 'lx-sticky': stickyHeader },
+        { 'lx-form-grid-header-sticky': stickyHeader },
         { 'lx-simple': slots.preHeader === undefined },
-        { 'lx-form-with-tabs': props.indexType === 'tabs' },
-        { 'lx-form-with-steps': props.indexType === 'wizard' },
         { 'lx-form-with-aside': props.indexType === 'default' && index?.length > 0 },
       ]"
       v-if="showHeader && kind !== 'stripped'"
@@ -1392,8 +1392,9 @@ if (props.builderOptions.useRegistry) {
     </div>
 
     <footer
+      class="lx-form-grid-footer"
       :class="[
-        { 'lx-sticky': stickyFooter },
+        { 'lx-form-grid-footer-sticky': stickyFooter },
         { 'crowded-primary-buttons': primaryButtons?.length > 1 },
         { 'crowded-not-primary-buttons': notPrimaryButtonCount > 2 },
       ]"

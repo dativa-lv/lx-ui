@@ -56,14 +56,14 @@ const modifiedItems = computed(() =>
 );
 </script>
 <template>
-  <div :id="id" class="lx-wizard" :style="`${topOutOfBounds}`" ref="wizard">
-    <header ref="wizardHeader" class="lx-toolbar lx-sticky">
-      <div class="lx-wizard-container">
+  <div :id="id" class="lx-wizard lx-tab-wizard" :style="`${topOutOfBounds}`" ref="wizard">
+    <header ref="wizardHeader" class="lx-tab-wizard-toolbar">
+      <div class="lx-wizard-container lx-tab-wizard-container">
         <LxSteps :id="`${id}-steps`" v-model="model" :items="modifiedItems" kind="compact" />
       </div>
     </header>
 
-    <article class="lx-wizard-body">
+    <article class="lx-wizard-body lx-tab-wizard-body">
       <transition name="nav">
         <slot name="body" />
       </transition>

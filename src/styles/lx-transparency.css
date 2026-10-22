@@ -1,21 +1,21 @@
 .lx.lx-no-transparency:not(.lx-theme-contrast) .lx-data-grid-wrapper>.lx-grid-header-wrapper::after,
-.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid) > footer.lx-sticky::before,
-.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid)>header.lx-sticky:not(.lx-form-with-tabs):not(.lx-form-with-steps)::after,
+.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid) .lx-form-grid-footer-sticky::before,
+.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid) .lx-form-grid-header-sticky::after,
 .lx.lx-no-transparency:not(.lx-theme-contrast) .lx-chat-wrapper .lx-chat-footer::before,
 .lx.lx-no-transparency:not(.lx-theme-contrast) .lx-chat-wrapper::before {
-    background: transparent;
+  background: transparent;
 }
 
 .lx.lx-no-transparency .lx-curtain {
-    --color-cover-background : rgba(0, 0, 0, 0.9);
+  --color-cover-background : rgba(0, 0, 0, 0.9);
 }
 
 .lx.lx-theme-light.lx-no-transparency .lx-loader-screen {
-    --color-background-overlay: rgba(238, 238, 238, 0.9);
+  --color-background-overlay: rgba(238, 238, 238, 0.9);
 }
 
 .lx.lx-theme-dark.lx-no-transparency .lx-loader-screen {
-    --color-background-overlay: rgba(24, 24, 26, 0.9);
+  --color-background-overlay: rgba(24, 24, 26, 0.9);
 }
 
 .lx.lx-no-transparency .lx-spotlight {
@@ -96,4 +96,7 @@
 
 .lx.lx-no-transparency .lx-layout-digimaks .lx-glow {
   visibility: hidden;
+}
+.lx.lx-no-transparency .lx-tab-wizard-toolbar::after {
+  display: none;
 }

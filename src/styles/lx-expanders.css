@@ -43,7 +43,7 @@
     color: var(--color-region-hover-foreground);
 }
 
-.lx-form-grid>.lx-main .lx-row .lx-expander {
+.lx-form-grid > .lx-main .lx-row .lx-expander {
   color: var(--color-data);
 }
 
