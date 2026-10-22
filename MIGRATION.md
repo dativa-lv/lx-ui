@@ -158,6 +158,33 @@ is missing from `items` is now shown as the id instead of an empty field.
 - Don't add new usages of `preloadedItems` or function `items`.
 - Update `customItem` templates to the `{ item, context }` slot props when switching to `mode="new"`.
 
+## 2.3.8 → 2.3.9
+
+### Breaking changes
+
+#### LxFileUploader
+
+The drag-and-drop area (`draggable`) is now an LxButton (kind `tertiary`, dashed border) instead of a
+custom `<div role="button">`. It uses the tertiary button tokens and states (hover, focus, active,
+disabled). The component API does not change.
+
+**Class changes**
+
+If you override the upload button styles or target it in tests, update the selectors. In both default and
+`draggable` modes, the upload button is now wrapped in `.lx-draggable-drop-zone`.
+
+| Removed                                                   | Use instead                                                      |
+|-----------------------------------------------------------|------------------------------------------------------------------|
+| `.lx-draggable-upload-wrapper`                            | `.lx-draggable-upload-button`                                    |
+| `.lx-draggable-upload-wrapper > p`                        | `.lx-draggable-upload-button .lx-button-label`                   |
+| `.lx-draggable-upload-wrapper > svg`                      | `.lx-draggable-upload-button .lx-button-icon`                    |
+| `.lx-draggable-upload-wrapper > svg.lx-invalidation-icon` | `.lx-draggable-upload-button .lx-button-icon` (icon `invalid`)   |
+| `.lx-draggable-upload-wrapper > .lx-loader-wrapper`       | `.lx-draggable-upload-button .lx-loader-container`               |
+| `.lx-draggable-upload-wrapper.lx-dragging`                | `.lx-draggable-upload-button.lx-dragging`                        |
+| `.lx-draggable-upload-wrapper.lx-disabled`                | `.lx-draggable-upload-button.lx-disabled`                        |
+| `.lx-draggable-upload-wrapper.lx-invalid`                 | `.lx-file-upload-wrapper.lx-invalid .lx-draggable-upload-button` |
+| `.lx-draggable-wrapper > .lx-button:first-child`          | `.lx-draggable-wrapper > .lx-draggable-drop-zone > .lx-button`   |
+
 ## 2.3.7 → 2.3.8
 
 ### Breaking changes

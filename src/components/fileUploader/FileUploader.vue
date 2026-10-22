@@ -13,7 +13,6 @@ import FileUploaderItem from '@/components/fileUploader/FileUploaderItem.vue';
 import LxCamera from '@/components/Camera.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-import LxLoader from '@/components/Loader.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
@@ -578,7 +577,14 @@ async function processFiles(files) {
 
 const isDragging = ref(false);
 
-const handleDragOver = () => {
+const handleDragOver = (event) => {
+  event.preventDefault();
+  if (props.disabled || props.loading || props.busy) {
+    // Shows the "not allowed" cursor and cancels the drop, so the browser does not open the file
+    // eslint-disable-next-line no-param-reassign
+    event.dataTransfer.dropEffect = 'none';
+    return;
+  }
   isDragging.value = true;
 };
 
@@ -617,27 +623,32 @@ async function uploadFiles(event) {
 }
 
 async function handleDrop(event) {
+  event.preventDefault();
+  isDragging.value = false;
   if (props.disabled || props.loading || props.busy) {
     return;
   }
-  event.preventDefault();
-  if (props.draggable) {
-    const incoming = Array.from(event.dataTransfer.files);
-    let files = incoming;
+  const incoming = Array.from(event.dataTransfer.files);
+  // Dropped text or links have no files
+  if (!incoming.length) return;
+  let files = incoming;
 
-    if (props.selectionKind === 'single') {
-      files = [files[0]];
-    } else {
-      files = limitFilesToRemainingSlots(incoming);
-    }
-
-    isUploading.value = true;
-    await processFiles(files);
-    await updateModel();
-    isUploading.value = false;
+  if (props.selectionKind === 'single') {
+    files = [files[0]];
+  } else {
+    files = limitFilesToRemainingSlots(incoming);
   }
-  isDragging.value = false;
+
+  isUploading.value = true;
+  await processFiles(files);
+  await updateModel();
+  isUploading.value = false;
 }
+
+// Drag-and-drop is only handled in draggable mode, the plain upload button does not accept drops
+const dropZoneListeners = computed(() =>
+  props.draggable ? { dragover: handleDragOver, dragleave: handleDragLeave, drop: handleDrop } : {}
+);
 
 onMounted(() => {
   if (props.modelValue) {
@@ -762,7 +773,7 @@ if (props.builderOptions?.useRegistry) {
     role="group"
     :data-id="id"
   >
-    <template v-if="selectionKind === 'single' && !readOnly">
+    <template v-if="!readOnly">
       <input
         :id="id"
         class="lx-invisible"
@@ -770,143 +781,32 @@ if (props.builderOptions?.useRegistry) {
         ref="fileInput"
         :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
         @change="uploadFiles"
+        :multiple="selectionKind === 'multiple'"
         :aria-required="ariaRequired"
         tabindex="-1"
         aria-hidden="true"
         role="presentation"
       />
 
-      <div class="lx-draggable-wrapper" v-if="!draggable && advancedFilesData.length < 1">
-        <LxButton
-          :id="`${id}-action-file-upload`"
-          :label="displayTexts.buttonLabel"
-          kind="tertiary"
-          :icon="invalid ? 'invalid' : 'upload'"
-          :disabled="disabled || isAtMaxLength"
-          :loading="loading"
-          :busy="busy"
-          @click="triggerFileUpload"
-        />
-
-        <LxButton
-          v-if="showCameraButton"
-          :id="`${id}-action-camera`"
-          customClass="camera-button"
-          icon="camera"
-          kind="tertiary"
-          variant="icon-only"
-          :label="displayTexts.useCamera"
-          :disabled="disabled || loading || busy || isAtMaxLength"
-          @click="cameraModal.open()"
-        />
-      </div>
-      <div class="lx-draggable-wrapper" v-if="draggable && advancedFilesData.length < 1">
-        <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
-        <div
-          :id="`${id}-action-file-upload`"
-          class="lx-draggable-upload-wrapper"
-          :class="[
-            { 'lx-dragging': isDragging },
-            { 'lx-disabled': disabled || loading || busy || isAtMaxLength },
-            { 'lx-invalid': invalid },
-          ]"
-          @dragover.prevent="handleDragOver"
-          @dragleave="handleDragLeave"
-          @drop="handleDrop"
-          @keyup.space="triggerFileUpload"
-          @keyup.enter="triggerFileUpload"
-          @click="triggerFileUpload"
-          role="button"
-          :tabindex="disabled || loading || busy || isAtMaxLength ? -1 : 0"
-          :aria-disabled="disabled || loading || busy || isAtMaxLength"
-          :aria-label="displayTexts.draggablePlaceholder"
-        >
-          <p>{{ displayTexts.draggablePlaceholder }}</p>
-
-          <LxLoader :loading="true" size="s" v-if="busy" />
-          <LxIcon customClass="lx-invalidation-icon" value="invalid" v-else-if="invalid" />
-          <LxIcon value="upload" v-else />
-        </div>
-
-        <LxButton
-          v-if="showCameraButton"
-          :id="`${id}-action-camera`"
-          customClass="camera-button"
-          icon="camera"
-          kind="tertiary"
-          variant="icon-only"
-          :label="displayTexts.useCamera"
-          :disabled="disabled || loading || busy || isAtMaxLength"
-          @click="cameraModal.open()"
-        />
-      </div>
-    </template>
-
-    <template v-if="selectionKind === 'multiple' && !readOnly">
-      <input
-        :id="id"
-        class="lx-invisible"
-        type="file"
-        ref="fileInput"
-        :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
-        @change="uploadFiles"
-        multiple
-        :aria-required="ariaRequired"
-        tabindex="-1"
-        aria-hidden="true"
-        role="presentation"
-      />
-
-      <div class="lx-draggable-wrapper" v-if="!draggable">
-        <LxButton
-          :id="`${id}-action-file-upload`"
-          :label="displayTexts.buttonLabel"
-          kind="tertiary"
-          :icon="invalid ? 'invalid' : 'upload'"
-          :disabled="disabled || isAtMaxLength"
-          :loading="loading"
-          :busy="busy"
-          @click="triggerFileUpload"
-        />
-        <LxButton
-          v-if="showCameraButton"
-          :id="`${id}-action-camera`"
-          customClass="camera-button"
-          icon="camera"
-          kind="tertiary"
-          variant="icon-only"
-          :label="displayTexts.useCamera"
-          :disabled="disabled || loading || busy || isAtMaxLength"
-          @click="cameraModal.open()"
-        />
-      </div>
-
-      <div class="lx-draggable-wrapper" v-else>
-        <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
-        <div
-          :id="`${id}-action-file-upload`"
-          class="lx-draggable-upload-wrapper"
-          :class="[
-            { 'lx-dragging': isDragging },
-            { 'lx-disabled': disabled || loading || busy || isAtMaxLength },
-            { 'lx-invalid': invalid },
-          ]"
-          @dragover.prevent="handleDragOver"
-          @dragleave="handleDragLeave"
-          @drop="handleDrop"
-          @keyup.space="triggerFileUpload"
-          @keyup.enter="triggerFileUpload"
-          @click="triggerFileUpload"
-          role="button"
-          :tabindex="disabled || loading || busy || isAtMaxLength ? -1 : 0"
-          :aria-disabled="disabled || loading || busy || isAtMaxLength"
-          :aria-label="displayTexts.draggablePlaceholder"
-        >
-          <p>{{ displayTexts.draggablePlaceholder }}</p>
-
-          <LxLoader :loading="true" size="s" v-if="busy" />
-          <LxIcon customClass="lx-invalidation-icon" value="invalid" v-else-if="invalid" />
-          <LxIcon value="upload" v-else />
+      <div
+        class="lx-draggable-wrapper"
+        v-if="selectionKind === 'multiple' || advancedFilesData.length < 1"
+      >
+        <!-- Drag handlers are on a wrapper so a drop at max length still emits the maxLength error -->
+        <!-- (the upload button is disabled then and gets no drag events) -->
+        <div class="lx-draggable-drop-zone" v-on="dropZoneListeners">
+          <LxButton
+            :id="`${id}-action-file-upload`"
+            :label="draggable ? displayTexts.draggablePlaceholder : displayTexts.buttonLabel"
+            kind="tertiary"
+            :icon="invalid ? 'invalid' : 'upload'"
+            :disabled="disabled || isAtMaxLength"
+            :loading="loading"
+            :busy="busy"
+            :customClass="draggable ? 'lx-draggable-upload-button' : ''"
+            :class="{ 'lx-dragging': isDragging }"
+            @click="triggerFileUpload"
+          />
         </div>
 
         <LxButton

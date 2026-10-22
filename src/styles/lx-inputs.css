@@ -2287,7 +2287,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-file-upload-wrapper {
   position: relative;
-  overflow: hidden;
 }
 
 .lx-file-upload-wrapper .lx-overlay {
@@ -2360,37 +2359,28 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-color: var(--color-bad);
 }
 
-.lx-draggable-upload-wrapper {
-  border: var(--border-width-2) dashed var(--color-brand);
-  min-height: var(--button-height);
-  width: inherit;
-  align-items: center;
-  padding: var(--space-0500) var(--space-0750);
-  gap: var(--space-0750);
+.lx-file-upload-wrapper .lx-button.lx-button-tertiary.lx-draggable-upload-button {
+  border-style: dashed;
 }
 
-.lx-form-grid .lx-draggable-upload-wrapper {
-  min-height: var(--input-height);
-  padding: var(--space-0375) var(--space-0500);
-  gap: var(--space-0500);
+/* Firefox does not dispatch drag events on a disabled button, so let them reach the drop zone */
+.lx-file-upload-wrapper .lx-draggable-drop-zone:has(> .lx-draggable-upload-button.lx-disabled) {
+  cursor: not-allowed;
 }
 
-.lx-draggable-upload-wrapper > p {
-  color: var(--color-brand);
-  overflow: hidden;
-  text-overflow: ellipsis;
+.lx-file-upload-wrapper .lx-draggable-upload-button.lx-disabled {
+  pointer-events: none;
 }
 
-.lx-draggable-upload-wrapper:hover,
-.lx-draggable-upload-wrapper:focus,
-.lx-draggable-upload-wrapper.lx-dragging {
-  cursor: pointer;
-  border: var(--border-width-2) solid var(--color-interactive-hover-background);
+/* Dragging a file over the button looks the same as hovering it */
+.lx-file-upload-wrapper .lx-draggable-upload-button.lx-dragging:not(.lx-disabled) {
+  background: var(--color-button-tertiary-background-hover);
+  color: var(--color-button-tertiary-text-hover);
+  border-color: var(--color-button-tertiary-border-hover);
 }
 
-.lx-draggable-upload-wrapper:hover > p,
-.lx-draggable-upload-wrapper.lx-dragging > p {
-  text-decoration: underline;
+.lx-file-upload-wrapper .lx-draggable-upload-button.lx-dragging:not(.lx-disabled) svg {
+  fill: var(--color-button-tertiary-icon-hover);
 }
 
 .lx-draft-indicator {
@@ -2424,19 +2414,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: 100%;
 }
 
-.lx-draggable-upload-wrapper.lx-disabled,
-.lx-draggable-upload-wrapper:hover.lx-disabled {
-  border: var(--border-width-2) dashed var(--color-disabled);
-  color: var(--color-disabled-foreground);
-  cursor: not-allowed;
-}
-
-.lx-draggable-upload-wrapper.lx-disabled p,
-.lx-draggable-upload-wrapper:hover.lx-disabled p {
-  color: var(--color-disabled-foreground);
-  text-decoration: none;
-}
-
 .lx-file-upload-wrapper .lx-invalidation-message {
   display: block;
   color: var(--color-bad);
@@ -2446,33 +2423,12 @@ h2.lx-section-header + p.lx-invalidation-message,
   margin-top: var(--space-0125);
 }
 
-.lx-draggable-upload-wrapper.lx-invalid:not(.lx-disabled) {
-  border: var(--border-width-2) dashed var(--color-bad);
-}
-
-.lx-draggable-upload-wrapper:hover.lx-invalid:not(.lx-disabled),
-.lx-draggable-upload-wrapper:focus.lx-invalid:not(.lx-disabled) {
-  border: var(--border-width-2) solid var(--color-bad);
-}
-
-.lx-draggable-upload-wrapper.lx-invalid:not(.lx-disabled) > p {
-  color: var(--color-bad);
-}
-
-.lx-file-upload-wrapper .lx-draggable-upload-wrapper > svg.lx-invalidation-icon {
-  fill: var(--color-bad);
-}
-
-.lx-file-upload-wrapper.lx-invalid:not(.lx-disabled) .lx-draggable-wrapper .lx-button.lx-button-tertiary {
+.lx-file-upload-wrapper.lx-invalid .lx-draggable-wrapper .lx-button-tertiary:not(.lx-disabled, :hover, :active, .lx-dragging) {
   border-color: var(--color-bad);
   color: var(--color-bad);
 }
 
-.lx-file-upload-wrapper:hover.lx-invalid:not(.lx-disabled) .lx-draggable-wrapper .lx-button.lx-button-tertiary {
-  background: none;
-}
-
-.lx-file-upload-wrapper.lx-invalid:not(.lx-disabled) .lx-button.lx-button-tertiary .lx-button-icon {
+.lx-file-upload-wrapper.lx-invalid .lx-draggable-wrapper .lx-button-tertiary:not(.lx-disabled, :hover, :active, .lx-dragging) .lx-button-icon {
   fill: var(--color-bad);
 }
 
@@ -3177,23 +3133,22 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: flex;
 }
 
-.lx-draggable-wrapper>.lx-draggable-upload-wrapper,
-.lx-file-upload-wrapper>.lx-draggable-wrapper:not(:has(.lx-draggable-upload-wrapper)) .lx-button:first-child,
-.lx-camera-wrapper .lx-camera-buttons > .lx-button{
+.lx-draggable-drop-zone {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-draggable-drop-zone > .lx-button,
+.lx-camera-wrapper .lx-camera-buttons > .lx-button {
   width: 100%;
 }
 
-.lx-draggable-wrapper:has(.lx-draggable-upload-wrapper)>.lx-button.camera-button{
-  height: 3.7rem;
-  width: 4.12rem;
+.lx-form-grid .lx-draggable-wrapper > .lx-button.camera-button {
+  min-width: var(--input-height);
 }
 
-.lx-draggable-wrapper>.lx-button.camera-button{
-  height: 3rem;
-  width: 3.25rem;
-}
-
-.lx-camera-wrapper .lx-input-wrapper .lx-loader-wrapper{
+.lx-camera-wrapper .lx-input-wrapper .lx-loader-wrapper {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -3201,22 +3156,22 @@ h2.lx-section-header + p.lx-invalidation-message,
   margin-bottom: calc(var(--space-3000) + var(--space-0250));
 }
 
-.lx-camera-wrapper .lx-input-wrapper .lx-camera-error{
+.lx-camera-wrapper .lx-input-wrapper .lx-camera-error {
   height: 100%;
 }
 
-.lx-camera-wrapper .lx-camera-error>.lx-empty-state-wrapper{
+.lx-camera-wrapper .lx-camera-error > .lx-empty-state-wrapper {
   width: 100%;
   align-items: center;
   aspect-ratio: 4/3;
   border: var(--border-width-0);
 }
 
-.lx-camera-wrapper .lx-camera-error>.lx-empty-state-wrapper>.lx-empty-state-data>svg{
+.lx-camera-wrapper .lx-camera-error > .lx-empty-state-wrapper > .lx-empty-state-data > svg {
   fill: var(--color-bad);
 }
 
-.lx-file-uploader-photo-preview{
+.lx-file-uploader-photo-preview {
   display: flex;
   flex-direction: column;
   gap: var(--space-1000);
@@ -3228,29 +3183,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-file-upload-wrapper .lx-button.camera-button {
   margin-left: var(--space-0250);
-}
-
-.lx-file-upload-wrapper .lx-draggable-upload-wrapper{
-  display: flex;
-  justify-content: space-between;
-  outline: none;
-  border-radius: var(--button-tertiary-border-radius);
-}
-
-.lx-file-upload-wrapper .lx-draggable-upload-wrapper > svg {
-  width: var(--icon-size-m);
-  fill: var(--color-brand);
-  flex-shrink: 0;
-}
-
-.lx-file-upload-wrapper .lx-draggable-upload-wrapper > .lx-loader-wrapper{
-  height: auto;
-  display: flex;
-  margin-right: var(--space-1000);
-}
-
-.lx-file-upload-wrapper .lx-draggable-upload-wrapper.lx-disabled > svg {
-  fill: var(--color-disabled-foreground);
 }
 
 .lx-file-upload-wrapper .lx-list-item .lx-file-wrapper .lx-file-preview > img {

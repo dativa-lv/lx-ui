@@ -766,7 +766,7 @@ svg .lx-shade {
   width: 100%;
 }
 
-.lx-form-grid .lx-main .lx-row > div > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-file-upload-wrapper > .lx-draggable-wrapper .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-list-wrapper .lx-load-more-button > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-camera-wrapper .lx-camera-buttons > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-master-detail > .lx-master > .lx-button,
@@ -774,7 +774,7 @@ svg .lx-shade {
 .lx-form-grid .lx-main .lx-row > div > .lx-appendable-list > div > .lx-button,
 .lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-button,
 .lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-button,
-.lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-file-upload-wrapper > .lx-draggable-wrapper .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-list-wrapper .lx-load-more-button > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-camera-wrapper .lx-camera-buttons > .lx-button,
 .lx-form-grid .lx-main .lx-row > div > .lx-stack > .lx-master-detail > .lx-master > .lx-button,
