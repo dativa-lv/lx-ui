@@ -13,7 +13,7 @@ const componentProps = defineProps({
   tabindex: { type: [Number, String], default: 0 },
 });
 
-const componentEmits = defineEmits(['select']);
+const componentEmits = defineEmits(['select', 'openDetails']);
 
 const { props, displayTexts, emits } = inject(shellContextKey, {});
 const router = getCurrentInstance()?.appContext.config.globalProperties.$router;
@@ -54,6 +54,11 @@ const selectedModel = computed({
   },
 });
 
+function openDetails() {
+  emits('globalSearchDetailsClick', query.value);
+  componentEmits('openDetails');
+}
+
 function getDetailsButton() {
   return rootRef.value?.querySelector(`#${componentProps.id}-detailsButton`);
 }
@@ -77,7 +82,7 @@ useEventListener(
     if (isOnDetails && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault();
       event.stopPropagation();
-      if (event.key === ' ') emits('globalSearchDetailsClick', query.value);
+      if (event.key === ' ') openDetails();
     } else if (event.key === 'Tab' && !event.shiftKey && !isOnDetails && detailsButton) {
       event.preventDefault();
       event.stopPropagation();
@@ -107,7 +112,7 @@ defineExpose({ isInSearch, getDetailsButton });
       :placeholder="texts.placeholder"
       :texts="autoCompleteTexts"
       @search="search"
-      @openDetails="emits('globalSearchDetailsClick', query)"
+      @openDetails="openDetails"
     >
       <template #customItem="{ item }">
         <span

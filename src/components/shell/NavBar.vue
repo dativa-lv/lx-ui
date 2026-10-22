@@ -364,6 +364,7 @@ provide('insideNavBar', insideNavBar);
         id="lx-shell-nav-global-search-input"
         :tabindex="getTabIndex"
         @select="emits('nav-toggle', true)"
+        @openDetails="emits('nav-toggle', true)"
       />
     </div>
     <ul class="lx-nav-group">

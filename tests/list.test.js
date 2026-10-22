@@ -441,6 +441,14 @@ describe('Search', () => {
       expect(items[1].get('.lx-secondary').get('.lx-highlight').text()).toBe(searchValue);
     });
 
+    test('initial searchString filters the items and is not cleared', async () => {
+      wrapper = mountComponent({ props: { ...props, searchString: '1' } });
+      await vi.advanceTimersByTimeAsync(searchDelay);
+
+      expect(wrapper.findAll(itemSelector).length).toBe(1);
+      expect(wrapper.emitted('update:searchString') ?? []).not.toContainEqual(['']);
+    });
+
     test('gets no items when query does not match any item', async () => {
       const searchValue = 'x';
       const items = await searchItems(searchValue);

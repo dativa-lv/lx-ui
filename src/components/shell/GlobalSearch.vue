@@ -162,6 +162,7 @@ defineExpose({ open, close });
         id="lx-shell-global-search-input"
         :autoOpen="true"
         @select="close()"
+        @openDetails="close()"
       />
     </div>
   </Teleport>

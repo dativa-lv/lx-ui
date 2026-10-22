@@ -973,6 +973,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
                       :id="id"
                       v-model="query"
                       class="lx-text-input lx-value-picker-placeholder lx-input-area"
+                      autocomplete="off"
                       :class="{
                         'lx-search-input': isSearchKind,
                         'lx-autocomplete-text-hidden': isSearchKind && shouldShowValue,

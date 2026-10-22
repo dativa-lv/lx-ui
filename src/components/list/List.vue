@@ -235,6 +235,14 @@ const defaultListGap = ref(8);
 const searchStringClient = ref(props.searchSide === 'client' ? props.searchString : '');
 const searchStringClientRaw = ref('');
 const searchStringServer = ref(props.searchSide === 'server' ? props.searchString : '');
+// The toolbar doesn't emit a searchString set by the parent
+watch(
+  () => props.searchString,
+  (value) => {
+    searchStringClientRaw.value = value ?? '';
+  },
+  { immediate: true }
+);
 
 let invisibleBlockTimeout;
 let observer;

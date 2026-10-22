@@ -226,6 +226,11 @@ describe('LxAutoComplete mode="new" template', () => {
     ).toEqual(['mt', 'de', 'ma']);
   });
 
+  test('turns off browser autofill so it does not cover the suggestions', () => {
+    mountNew();
+    expect(wrapper.find('#ac').attributes('autocomplete')).toBe('off');
+  });
+
   test('renders item icons from iconAttribute', async () => {
     mountNew({ modelValue: games[2] });
     expect(wrapper.find('.lx-value .lx-autocomplete-item-content svg').exists()).toBe(true);

@@ -221,6 +221,18 @@ describe('LxGlobalSearch', () => {
     expect(emits).toHaveBeenCalledWith('globalSearchDetailsClick', 'abc');
   });
 
+  test('details button emits the query and closes the panel', async () => {
+    const { emits } = await mountComponent();
+    const autoComplete = await openPanel();
+    autoComplete.vm.$emit('update:searchString', 'abc');
+
+    autoComplete.vm.$emit('openDetails');
+    await flushPromises();
+
+    expect(emits).toHaveBeenCalledWith('globalSearchDetailsClick', 'abc');
+    expect(isPanelOpen()).toBe(false);
+  });
+
   test('Enter on the details button is left to the button itself, so it emits only once', async () => {
     const { emits } = await mountComponent();
     await openPanel();
