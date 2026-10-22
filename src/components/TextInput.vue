@@ -10,7 +10,7 @@ import {
   getCurrentInstance,
   defineAsyncComponent,
 } from 'vue';
-import { IMaskDirective as vImask } from 'vue-imask';
+import { IMask, IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
 import { computedAsync } from '@vueuse/core';
 
@@ -19,6 +19,8 @@ import { flagMap } from '@/utils/flagUtils';
 import { getDisplayTexts, isDefined, isNil, clampText } from '@/utils/generalUtils';
 import { PHONE_MAX_LENGTH_BY_PREFIX } from '@/constants';
 import { loadLibrary } from '@/utils/libLoader';
+import { logWarn } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
 
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
@@ -27,6 +29,9 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const LxFlag = defineAsyncComponent(() => import('@/components/Flag.vue'));
+const LxAutoCompleteNew = defineAsyncComponent(
+  () => import('@/components/autoComplete/AutoCompleteNew.vue')
+);
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -130,6 +135,7 @@ const textsDefault = {
   showPassword: 'Rādīt paroli',
   hidePassword: 'Paslēpt paroli',
   helperTextLabel: 'Papildinformācija',
+  clearSearch: 'Notīrīt meklēšanu',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxTextInput'));
@@ -142,11 +148,24 @@ const emits = defineEmits(['update:modelValue']);
 const flags = flagMap;
 
 const input = ref();
+const searchInput = ref();
 const valueRaw = ref();
 const isUpdatingMask = ref(false);
+let shouldFocusSearchInput = false;
+
+// LxAutoComplete loads on demand; focus it once mounted
+watch(searchInput, (component) => {
+  if (component && shouldFocusSearchInput) {
+    shouldFocusSearchInput = false;
+    component.focus();
+  }
+});
 
 function focus() {
-  if (input.value !== null && input.value !== undefined) input.value.focus();
+  if (props.kind === 'search') {
+    if (searchInput.value) searchInput.value.focus();
+    else shouldFocusSearchInput = true;
+  } else if (input.value !== null && input.value !== undefined) input.value.focus();
 }
 
 const minValueComp = computed(() => 10 ** Number(props.maxlength || 20) - 1);
@@ -649,6 +668,64 @@ if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) 
   });
 }
 
+const searchInputMask = computed(() =>
+  props.mask && !['default', 'currency'].includes(props.mask) ? inputMask.value : null
+);
+
+const globalEnvironment = useLx().getGlobals()?.environment;
+
+watch(
+  () => props.kind === 'search' && props.mask === 'currency',
+  (isUnsupported) => {
+    if (!isUnsupported) return;
+    logWarn(
+      `LxTextInput [${props.id}]: mask "currency" is not supported with kind "search" and is ignored`,
+      globalEnvironment
+    );
+  },
+  { immediate: true }
+);
+const searchMask = computed(() =>
+  searchInputMask.value ? IMask.createMask(searchInputMask.value) : null
+);
+
+function unmaskSearchText(text) {
+  if (!searchMask.value) return text;
+  searchMask.value.resolve(text);
+  return searchMask.value.unmaskedValue;
+}
+
+function maskSearchValue(value) {
+  if (!searchMask.value) return String(value);
+  searchMask.value.unmaskedValue = String(value);
+  return searchMask.value.value;
+}
+
+// Kept while it matches the model, so half-typed masked text is not reformatted
+const searchTyped = ref(null);
+
+const searchText = computed(() => {
+  const value = isNil(props.modelValue) ? '' : String(props.modelValue);
+  if (searchTyped.value !== null) {
+    const typedValue = convertValue(unmaskSearchText(searchTyped.value));
+    if ((isNil(typedValue) ? '' : String(typedValue)) === value) return searchTyped.value || null;
+  }
+  return value === '' ? null : maskSearchValue(value);
+});
+
+function onSearchInput(text) {
+  searchTyped.value = text;
+  const value = convertValue(unmaskSearchText(text));
+  const current = isNil(props.modelValue) ? '' : String(props.modelValue);
+  if ((isNil(value) ? '' : String(value)) !== current) emits('update:modelValue', value);
+}
+
+const searchTexts = computed(() => ({
+  emptyValue: displayTexts.value.emptyValue,
+  helperTextLabel: displayTexts.value.helperTextLabel,
+  clear: displayTexts.value.clearSearch,
+}));
+
 const dataState = computed(() =>
   JSON.stringify({
     readOnly: props.readOnly,
@@ -666,140 +743,164 @@ defineExpose({ focus });
     :data-id="id"
     :data-state="dataState"
   >
-    <p
-      v-if="readOnly && props.kind !== 'password'"
-      class="lx-data"
+    <LxAutoCompleteNew
+      v-if="kind === 'search'"
+      ref="searchInput"
+      :id="id"
       :class="{ 'lx-uppercase': uppercase }"
-      :aria-labelledby="labelledBy"
-    >
-      <a v-if="isReadOnlyEmail()" class="lx-text-input-link" :href="sanitizedEmail">{{ model }}</a>
-      <template v-else>
-        {{ forcedMaskedValue }}
-        <LxEmptyValue
-          v-if="
-            model === null ||
-            model === undefined ||
-            (typeof model === 'string' && model?.trim() === '')
-          "
-          :texts="{ emptyValue: displayTexts.emptyValue }"
-        />
-      </template>
-    </p>
-    <div
-      class="lx-text-input-wrapper lx-input-wrapper"
-      :class="[
-        { 'password-mask': kind === 'password' },
-        { 'lx-invalid': invalid },
-        { 'lx-disabled': disabled },
-      ]"
-      :data-invalid="invalid ? '' : null"
-      v-if="!readOnly"
-    >
-      <div v-if="invalid" class="lx-invalidation-icon-wrapper">
-        <LxIcon customClass="lx-invalidation-icon" value="invalid" />
-      </div>
-
-      <div v-if="kind === 'search'" class="lx-input-icon-wrapper">
-        <LxIcon customClass="lx-modifier-icon" value="search" />
-      </div>
-
-      <div v-if="kind === 'phone'" class="lx-input-flag-wrapper">
-        <div
-          v-if="matchedFlags?.length > 0"
-          :class="[{ 'multiple-flags': matchedFlags?.length > 1 }]"
-        >
-          <LxFlag
-            v-for="flag in matchedFlags"
-            :key="flag"
-            :value="flag"
-            :locale="options?.locale"
-          />
-        </div>
-
-        <div v-else>
-          <LxFlag :value="options?.phone" :locale="options?.locale" />
-        </div>
-      </div>
-
-      <div class="pseudo-input" />
-      <input
-        v-if="mask !== 'currency'"
-        v-imask="inputMask"
-        ref="input"
-        :type="props.kind === 'password' && hidePassword ? 'password' : 'text'"
-        :autocomplete="autocomplete"
-        class="lx-text-input lx-input-area"
-        :class="[
-          { 'lx-invalid': invalid },
-          { 'lx-search-input': kind === 'search' },
-          { 'lx-phone-input': kind === 'phone' },
-          { 'lx-uppercase': uppercase },
-        ]"
-        :id="id"
-        :value="valueRaw"
-        :placeholder="placeholder"
-        :aria-invalid="invalid"
-        :aria-label="placeholder"
-        :disabled="disabled"
-        :maxlength="maxLengthValue"
-        v-tooltip="tooltip"
+      kind="search"
+      searchTrigger="input"
+      :modelValue="searchText"
+      :searchString="searchText"
+      :placeholder="placeholder"
+      :tooltip="tooltip"
+      :readOnly="readOnly"
+      :disabled="disabled"
+      :required="required"
+      :invalid="invalid"
+      :invalidationMessage="invalidationMessage"
+      :helperText="helperText"
+      :helperTextKind="helperTextKind"
+      :queryMaxLength="maxLengthValue"
+      :inputMask="searchInputMask"
+      :inputMode="inputMode"
+      :labelId="labelId"
+      :texts="searchTexts"
+      @update:searchString="onSearchInput"
+    />
+    <template v-else>
+      <p
+        v-if="readOnly && props.kind !== 'password'"
+        class="lx-data"
+        :class="{ 'lx-uppercase': uppercase }"
         :aria-labelledby="labelledBy"
-        :aria-required="ariaRequired"
-        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
-        :aria-describedby="describedBy"
-        :inputmode="inputMode"
-        @accept="onAccept"
-        @blur="onBlur"
-      />
+      >
+        <a v-if="isReadOnlyEmail()" class="lx-text-input-link" :href="sanitizedEmail">{{
+          model
+        }}</a>
+        <template v-else>
+          {{ forcedMaskedValue }}
+          <LxEmptyValue
+            v-if="
+              model === null ||
+              model === undefined ||
+              (typeof model === 'string' && model?.trim() === '')
+            "
+            :texts="{ emptyValue: displayTexts.emptyValue }"
+          />
+        </template>
+      </p>
+      <div
+        class="lx-text-input-wrapper lx-input-wrapper"
+        :class="[
+          { 'password-mask': kind === 'password' },
+          { 'lx-invalid': invalid },
+          { 'lx-disabled': disabled },
+        ]"
+        :data-invalid="invalid ? '' : null"
+        v-if="!readOnly"
+      >
+        <div v-if="invalid" class="lx-invalidation-icon-wrapper">
+          <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+        </div>
 
-      <div v-if="showInfoHelper" class="lx-input-helper-wrapper">
-        <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
-          <LxIcon customClass="lx-helper-icon" value="info" />
-          <template #panel>
-            <p class="lx-data">{{ helperTextClamped }}</p>
-          </template>
-        </LxInfoWrapper>
+        <div v-if="kind === 'phone'" class="lx-input-flag-wrapper">
+          <div
+            v-if="matchedFlags?.length > 0"
+            :class="[{ 'multiple-flags': matchedFlags?.length > 1 }]"
+          >
+            <LxFlag
+              v-for="flag in matchedFlags"
+              :key="flag"
+              :value="flag"
+              :locale="options?.locale"
+            />
+          </div>
+
+          <div v-else>
+            <LxFlag :value="options?.phone" :locale="options?.locale" />
+          </div>
+        </div>
+
+        <div class="pseudo-input" />
+        <input
+          v-if="mask !== 'currency'"
+          v-imask="inputMask"
+          ref="input"
+          :type="props.kind === 'password' && hidePassword ? 'password' : 'text'"
+          :autocomplete="autocomplete"
+          class="lx-text-input lx-input-area"
+          :class="[
+            { 'lx-invalid': invalid },
+            { 'lx-phone-input': kind === 'phone' },
+            { 'lx-uppercase': uppercase },
+          ]"
+          :id="id"
+          :value="valueRaw"
+          :placeholder="placeholder"
+          :aria-invalid="invalid"
+          :aria-label="placeholder"
+          :disabled="disabled"
+          :maxlength="maxLengthValue"
+          v-tooltip="tooltip"
+          :aria-labelledby="labelledBy"
+          :aria-required="ariaRequired"
+          :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+          :aria-describedby="describedBy"
+          :inputmode="inputMode"
+          @accept="onAccept"
+          @blur="onBlur"
+        />
+
+        <div v-if="showInfoHelper" class="lx-input-helper-wrapper">
+          <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
+            <LxIcon customClass="lx-helper-icon" value="info" />
+            <template #panel>
+              <p class="lx-data">{{ helperTextClamped }}</p>
+            </template>
+          </LxInfoWrapper>
+        </div>
+
+        <LxButton
+          :id="hidePassword ? `${id}-show-password` : `${id}-hide-password`"
+          variant="icon-only"
+          kind="ghost"
+          :icon="hidePassword ? 'visible' : 'hidden'"
+          :disabled="disabled"
+          :label="hidePassword ? displayTexts.showPassword : displayTexts.hidePassword"
+          v-if="props.kind === 'password'"
+          @click="showPasswordChange()"
+        />
+
+        <Money3Component
+          v-if="mask === 'currency'"
+          v-model="model"
+          v-bind="config"
+          :disabled="disabled"
+          v-tooltip="tooltip"
+          :placeholder="placeholder"
+          :aria-invalid="invalid"
+          :aria-required="ariaRequired"
+          :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
+          :aria-describedby="describedBy"
+          class="lx-text-input lx-input-area"
+          :class="[{ 'lx-invalid': invalid }]"
+        />
       </div>
 
-      <LxButton
-        :id="hidePassword ? `${id}-show-password` : `${id}-hide-password`"
-        variant="icon-only"
-        kind="ghost"
-        :icon="hidePassword ? 'visible' : 'hidden'"
-        :disabled="disabled"
-        :label="hidePassword ? displayTexts.showPassword : displayTexts.hidePassword"
-        v-if="props.kind === 'password'"
-        @click="showPasswordChange()"
-      />
-
-      <Money3Component
-        v-if="mask === 'currency'"
-        v-model="model"
-        v-bind="config"
-        :disabled="disabled"
-        v-tooltip="tooltip"
-        :placeholder="placeholder"
-        :aria-invalid="invalid"
-        :aria-required="ariaRequired"
-        :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
-        :aria-describedby="describedBy"
-        class="lx-text-input lx-input-area"
-        :class="[{ 'lx-invalid': invalid }, { 'lx-search-input': props.kind === 'search' }]"
-      />
-    </div>
-
-    <div
-      class="lx-invalidation-message"
-      v-if="showInvalidationMessage"
-      :id="`${id}-invalidation-message`"
-    >
-      {{ invalidationMessageClamped }}
-    </div>
-    <div class="lx-helper-text" v-if="showInlineHelper && !readOnly" :id="`${id}-helper`">
-      {{ helperTextClamped }}
-    </div>
-    <div class="lx-invisible" v-else-if="showInfoHelper && !readOnly" :id="`${id}-helper`">
-      {{ helperTextClamped }}
-    </div>
+      <div
+        class="lx-invalidation-message"
+        v-if="showInvalidationMessage"
+        :id="`${id}-invalidation-message`"
+      >
+        {{ invalidationMessageClamped }}
+      </div>
+      <div class="lx-helper-text" v-if="showInlineHelper && !readOnly" :id="`${id}-helper`">
+        {{ helperTextClamped }}
+      </div>
+      <div class="lx-invisible" v-else-if="showInfoHelper && !readOnly" :id="`${id}-helper`">
+        {{ helperTextClamped }}
+      </div>
+    </template>
   </div>
 </template>

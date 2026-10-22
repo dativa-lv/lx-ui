@@ -3,6 +3,7 @@ import { test, expect, describe, afterEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
+import * as devUtils from '@/utils/devUtils';
 
 let wrapper;
 
@@ -242,6 +243,18 @@ describe('LxTextInput', () => {
 
         expect(wrapper.find('.lx-uppercase').exists()).toBe(true);
         expect(props.uppercase).toBe(true);
+      });
+
+      test('kind:search - is applied to the search field, v-model keeps typed case', async () => {
+        wrapper = mount(LxTextInput, {
+          props: { kind: 'search', uppercase: true, modelValue: 'Fallout 4' },
+        });
+        await vi.waitFor(() => {
+          expect(wrapper.find('.lx-search-input').exists()).toBe(true);
+        });
+
+        expect(wrapper.find('.lx-uppercase .lx-search-input').exists()).toBe(true);
+        expect(wrapper.get('.lx-search-input').element.value).toBe('Fallout 4');
       });
     });
 
@@ -594,7 +607,7 @@ describe('LxTextInput', () => {
         expect(wrapper.find('.lx-input-wrapper').exists()).toBe(true);
       });
 
-      test('kind:search - text-input and search-input wrapper should exist', () => {
+      test('kind:search - renders LxAutoComplete search with the model value as text', async () => {
         wrapper = mount(LxTextInput, {
           props: {
             kind: 'search',
@@ -604,10 +617,162 @@ describe('LxTextInput', () => {
         const props = wrapper.props();
 
         expect(props.kind).toBe('search');
-        expect(props.kind).toBeTypeOf('string');
         expect(props.modelValue).toBe('Custom model value');
-        expect(props.modelValue).toBeTypeOf('string');
-        expect(wrapper.find('.lx-text-input.lx-search-input').exists()).toBe(true);
+        await vi.waitFor(() => {
+          expect(wrapper.find('[data-component="lx-auto-complete"]').exists()).toBe(true);
+        });
+        const searchInput = wrapper.get('.lx-text-input.lx-search-input');
+        expect(searchInput.element.value).toBe('Custom model value');
+        expect(searchInput.attributes('role')).toBe('searchbox');
+        expect(
+          wrapper
+            .find('[data-component="lx-text-input"] [data-component="lx-auto-complete"]')
+            .exists()
+        ).toBe(true);
+        expect(JSON.parse(wrapper.attributes('data-state')).kind).toBe('search');
+      });
+
+      test('kind:search - typing updates v-model right away', async () => {
+        wrapper = mount(LxTextInput, {
+          props: {
+            kind: 'search',
+            modelValue: null,
+            'onUpdate:modelValue': (value) => wrapper.setProps({ modelValue: value }),
+          },
+        });
+        await vi.waitFor(() => {
+          expect(wrapper.find('.lx-search-input').exists()).toBe(true);
+        });
+
+        await wrapper.get('.lx-search-input').setValue('wit');
+
+        expect(wrapper.emitted('update:modelValue').at(-1)).toEqual(['wit']);
+        expect(wrapper.props('modelValue')).toBe('wit');
+      });
+
+      test('kind:search - clear button empties v-model', async () => {
+        wrapper = mount(LxTextInput, {
+          props: {
+            kind: 'search',
+            modelValue: 'witcher',
+            'onUpdate:modelValue': (value) => wrapper.setProps({ modelValue: value }),
+          },
+        });
+        await vi.waitFor(() => {
+          expect(wrapper.find('.lx-search-input').exists()).toBe(true);
+        });
+
+        await wrapper.get('.lx-button').trigger('click');
+
+        expect(wrapper.emitted('update:modelValue').at(-1)).toEqual(['']);
+        expect(wrapper.get('.lx-search-input').element.value).toBe('');
+        expect(wrapper.find('.lx-button').exists()).toBe(false);
+      });
+
+      test('kind:search - maxlength limits the search text', async () => {
+        wrapper = mount(LxTextInput, {
+          props: { kind: 'search', maxlength: 5 },
+        });
+        await vi.waitFor(() => {
+          expect(wrapper.find('.lx-search-input').exists()).toBe(true);
+        });
+
+        expect(wrapper.get('.lx-search-input').attributes('maxlength')).toBe('5');
+      });
+
+      test('kind:search - focus requested before load is applied once loaded', async () => {
+        wrapper = mount(LxTextInput, {
+          props: { kind: 'search' },
+          attachTo: document.body,
+        });
+
+        wrapper.vm.focus();
+
+        await vi.waitFor(() => {
+          const searchInput = wrapper.find('.lx-search-input');
+          expect(searchInput.exists()).toBe(true);
+          expect(document.activeElement).toBe(searchInput.element);
+        });
+      });
+
+      function mountMaskedSearch(props) {
+        wrapper = mount(LxTextInput, {
+          props: {
+            kind: 'search',
+            modelValue: null,
+            'onUpdate:modelValue': (value) => wrapper.setProps({ modelValue: value }),
+            ...props,
+          },
+        });
+        return vi.waitFor(() => {
+          expect(wrapper.find('.lx-search-input').exists()).toBe(true);
+        });
+      }
+
+      test('kind:search - personCodeLv mask formats typed text, v-model is unmasked', async () => {
+        await mountMaskedSearch({ mask: 'personCodeLv' });
+        const input = wrapper.get('.lx-search-input');
+
+        await input.setValue('0102ab0320102');
+
+        expect(input.element.value).toBe('010203-20102');
+        expect(wrapper.props('modelValue')).toBe('01020320102');
+        expect(input.attributes('inputmode')).toBe('numeric');
+      });
+
+      test('kind:search - personCodeLv mask shows an external value masked', async () => {
+        await mountMaskedSearch({ mask: 'personCodeLv', modelValue: '01020320102' });
+
+        expect(wrapper.get('.lx-search-input').element.value).toBe('010203-20102');
+      });
+
+      test('kind:search - decimal mask with convertToString false gives a number', async () => {
+        await mountMaskedSearch({ mask: 'decimal', convertToString: false });
+        const input = wrapper.get('.lx-search-input');
+
+        await input.setValue('12,75');
+
+        expect(input.element.value).toBe('12,75');
+        expect(wrapper.props('modelValue')).toBe(12.75);
+      });
+
+      test('kind:search - integer mask rejects letters', async () => {
+        await mountMaskedSearch({ mask: 'integer' });
+        const input = wrapper.get('.lx-search-input');
+
+        await input.setValue('12a3');
+
+        expect(input.element.value).toBe('123');
+        expect(wrapper.props('modelValue')).toBe('123');
+      });
+
+      test('kind:search - external null stays null', async () => {
+        await mountMaskedSearch({ mask: 'personCodeLv', modelValue: '01020320102' });
+
+        await wrapper.setProps({ modelValue: null });
+
+        expect(wrapper.get('.lx-search-input').element.value).toBe('');
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+      });
+
+      test('kind:search - currency mask is ignored with a dev warning', async () => {
+        const logWarnSpy = vi.spyOn(devUtils, 'logWarn').mockImplementation(() => {});
+
+        try {
+          await mountMaskedSearch({ id: 'price', mask: 'currency' });
+          const input = wrapper.get('.lx-search-input');
+
+          await input.setValue('12abc');
+
+          expect(input.element.value).toBe('12abc');
+          expect(wrapper.findAll('input')).toHaveLength(1);
+          expect(logWarnSpy).toHaveBeenCalledWith(
+            'LxTextInput [price]: mask "currency" is not supported with kind "search" and is ignored',
+            undefined
+          );
+        } finally {
+          logWarnSpy.mockRestore();
+        }
       });
 
       test('kind:password - input type should be "password"', () => {

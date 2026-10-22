@@ -479,7 +479,9 @@
 }
 
 .lx-text-input.lx-uppercase,
-.lx-data.lx-uppercase {
+.lx-data.lx-uppercase,
+.lx-uppercase .lx-text-input,
+.lx-uppercase .lx-data {
   text-transform: uppercase;
 }
 

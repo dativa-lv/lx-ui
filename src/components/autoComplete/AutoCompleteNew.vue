@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, nextTick, watch, inject, onUnmounted, useSlots } from 'vue';
 import { onClickOutside, useDebounceFn, useWindowSize } from '@vueuse/core';
+import { IMaskDirective as vImask } from 'vue-imask';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
 import { clampText, getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import { logError } from '@/utils/devUtils';
@@ -55,6 +56,9 @@ const props = defineProps({
   searchAttributes: { type: Array, default: null },
   searchString: { type: String, default: null },
   enableAdditionalText: { type: Boolean, default: false },
+  // LxTextInput kind 'search' only
+  inputMask: { type: Object, default: null },
+  inputMode: { type: String, default: null },
 });
 
 const emit = defineEmits(['update:modelValue', 'openDetails', 'update:searchString', 'search']);
@@ -364,6 +368,16 @@ watch(
   },
   { immediate: true }
 );
+
+// No v-model: with inputMask the text comes from imask's accept event
+function onQueryInput(e) {
+  if (props.inputMask || e.isComposing) return;
+  query.value = e.target.value;
+}
+
+function onMaskAccept(e) {
+  query.value = e.detail.value;
+}
 
 function setQueryWithoutSearch(value) {
   const text = (value || '').trim();
@@ -856,7 +870,11 @@ onUnmounted(() => {
   clearTimeout(selectionTimeout);
 });
 
-defineExpose({ autoCompleteState, autoCompleteQuery });
+function focus() {
+  refQuery.value?.focus();
+}
+
+defineExpose({ autoCompleteState, autoCompleteQuery, focus });
 </script>
 
 <template>
@@ -972,7 +990,8 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
                       ref="refQuery"
                       :placeholder="inputPlaceholder"
                       :id="id"
-                      v-model="query"
+                      v-imask="inputMask"
+                      :value="query"
                       class="lx-text-input lx-value-picker-placeholder lx-input-area"
                       autocomplete="off"
                       :class="{
@@ -998,8 +1017,12 @@ defineExpose({ autoCompleteState, autoCompleteQuery });
                       :aria-busy="loading"
                       :maxlength="queryMaxLength || null"
                       :enterkeyhint="enterKeyHint"
+                      :inputmode="inputMode"
                       :tabindex="disabled ? '-1' : tabindex"
                       :disabled="disabled"
+                      @input="onQueryInput"
+                      @compositionend="onQueryInput"
+                      @accept="onMaskAccept"
                       @focus="isInputFocused = true"
                       @focusout="handleFocusOut"
                     />
