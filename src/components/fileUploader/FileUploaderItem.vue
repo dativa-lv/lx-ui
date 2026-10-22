@@ -142,6 +142,8 @@ const additionalInfoTitle = computed(() => {
       'lx-invalid': isInvalid,
       'lx-disabled': isDisabled,
     }"
+    data-container="file-uploader-item"
+    :id="customItem.id"
     ref="wrapperContainer"
   >
     <!-- Mirrors the LxListItem structure, so the row is laid out and styled by the LxList tokens -->

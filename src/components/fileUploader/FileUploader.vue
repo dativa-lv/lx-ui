@@ -736,6 +736,15 @@ const ariaRequired = computed(() => {
   return value ? true : null;
 });
 
+const dataState = computed(() =>
+  JSON.stringify({
+    selectionKind: props.selectionKind,
+    mode: props.mode,
+    draggable: props.draggable,
+    readOnly: props.readOnly,
+  })
+);
+
 defineExpose({ getFiles, isUploading });
 
 if (props.builderOptions?.useRegistry) {
@@ -772,6 +781,8 @@ if (props.builderOptions?.useRegistry) {
     :aria-describedby="showInlineHelper || showInfoHelper ? `${id}-helper` : null"
     role="group"
     :data-id="id"
+    data-component="lx-file-uploader"
+    :data-state="dataState"
   >
     <template v-if="!readOnly">
       <input
@@ -823,7 +834,7 @@ if (props.builderOptions?.useRegistry) {
       </div>
     </template>
 
-    <div class="lx-uploaded-file-list-wrapper">
+    <div class="lx-uploaded-file-list-wrapper" data-container="file-uploader-items-wrapper">
       <LxList
         v-if="readOnly || !(advancedFilesData.length === 0 && selectionKind === 'single')"
         :id="`${id}-list`"
