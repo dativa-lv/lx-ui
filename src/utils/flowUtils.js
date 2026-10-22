@@ -147,10 +147,10 @@ function checkAuthorizationAndScope(to, authStore) {
   return { isAuthorized, hasScopeInternal };
 }
 
-function redirectTo(routeName, path) {
+function redirectTo(routeName, to) {
   return {
-    params: { pathMatch: path.substring(1) },
-    query: { returnPath: path },
+    params: { ...to.params, pathMatch: to.path.substring(1) },
+    query: { returnPath: to.path },
     replace: true,
     name: routeName,
   };
@@ -191,7 +191,7 @@ export async function beforeEach(to, from, appStore, authStore, successCallbackF
   const { isAuthorized, hasScopeInternal } = checkAuthorizationAndScope(to, authStore);
 
   if (!isAuthorized) {
-    return redirectTo('notAuthorized', to.path);
+    return redirectTo('notAuthorized', to);
   }
 
   // If authorized, but route requires scopes:
@@ -203,11 +203,11 @@ export async function beforeEach(to, from, appStore, authStore, successCallbackF
   }
 
   if (isAuthorized && !hasScopeInternal) {
-    return redirectTo('forbidden', to.path);
+    return redirectTo('forbidden', to);
   }
 
   // Default error case
-  return redirectTo('error', to.path);
+  return redirectTo('error', to);
 }
 
 export async function afterEach(to, from, appStore, viewStore) {

@@ -185,6 +185,34 @@ If you override the upload button styles or target it in tests, update the selec
 | `.lx-draggable-upload-wrapper.lx-invalid`                 | `.lx-file-upload-wrapper.lx-invalid .lx-draggable-upload-button` |
 | `.lx-draggable-wrapper > .lx-button:first-child`          | `.lx-draggable-wrapper > .lx-draggable-drop-zone > .lx-button`   |
 
+### Other changes
+
+#### Router guard must return `lxFlowUtils.beforeEach`
+
+Since 2.3, `lxFlowUtils.beforeEach` returns the redirect (`notAuthorized`, `forbidden`, `error`)
+instead of calling `next`. If your guard only awaits it, the redirect is lost and protected routes
+open for users without a session or scope. Return the result:
+
+**Before:**
+
+```js
+router.beforeEach(async (to, from) => {
+  await lxFlowUtils.beforeEach(to, from, appStore, authStore, routeCheckCallback);
+});
+```
+
+**After:**
+
+```js
+router.beforeEach(async (to, from) => {
+  return lxFlowUtils.beforeEach(to, from, appStore, authStore, routeCheckCallback);
+});
+```
+
+The redirects now also keep the current route params, so they work when the error routes are nested
+under a parent with a required param (e.g. `/:lang`). Workarounds that add those params to the
+returned redirect can be removed.
+
 ## 2.3.7 → 2.3.8
 
 ### Breaking changes
@@ -364,6 +392,7 @@ New `texts.emptyValue` key (default `'Nav norādīts'`), shown in `readOnly` mod
 
 - Remove the `next` parameter from all custom guards and callbacks.
 - Replace every `next(...)` call with an equivalent `return` statement.
+- Return the result of `lxFlowUtils.beforeEach` from your `router.beforeEach` guard (see 2.3.8 → 2.3.9).
 
 | Old (`next()`)            | New (return-based)          |
 |---------------------------|-----------------------------|
