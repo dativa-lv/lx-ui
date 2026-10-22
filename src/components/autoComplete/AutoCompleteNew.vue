@@ -649,6 +649,7 @@ function handleKeydown(e) {
   const inputElement = document.activeElement;
 
   if (e.key === 'Tab' && menuOpen.value) {
+    if (refListbox.value?.contains(inputElement)) refQuery.value?.focus();
     resetMenuState();
     return;
   }
