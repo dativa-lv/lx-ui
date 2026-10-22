@@ -1883,14 +1883,21 @@ onMounted(() => {
     passive: true,
   });
 
+  let scrollLeftBeforeLoading = 0;
   watch(
     () => props.loading,
-    (newValue) => {
-      if (!newValue) {
-        nextTick(() => {
-          syncContainerScroll();
-        });
+    (isLoading) => {
+      if (isLoading) {
+        scrollLeftBeforeLoading = container.value?.scrollLeft ?? 0;
+        return;
       }
+      nextTick(() => {
+        if (!container.value) return;
+        mirroredHeaderLeft = null;
+        mirroredContainerLeft = null;
+        container.value.scrollLeft = scrollLeftBeforeLoading;
+        syncHeaderScroll();
+      });
     },
     { immediate: false }
   );
