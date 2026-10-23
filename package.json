@@ -74,7 +74,7 @@
     "axios": "1.20.0",
     "cyrillic-to-translit-js": "^3.2.1",
     "date-fns": "4.4.0",
-    "dompurify": "3.4.16",
+    "dompurify": "3.4.17",
     "exifreader": "4.47.0",
     "focus-trap": "^8",
     "i18n-iso-countries": "^7.14.0",

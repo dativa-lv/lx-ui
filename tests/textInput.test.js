@@ -1,11 +1,13 @@
 // @ts-nocheck
-import { test, expect, describe, afterEach, vi } from 'vitest';
+import { test, expect, describe, afterEach, beforeAll, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 import * as devUtils from '@/utils/devUtils';
 
 let wrapper;
+
+beforeAll(() => import('@/components/autoComplete/AutoCompleteNew.vue'), 30000);
 
 // LxFlag resolves its country name on demand as of this change (the country database is a
 // separate chunk), so poll for the label instead of asserting straight after mount.
