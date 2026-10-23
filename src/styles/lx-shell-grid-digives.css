@@ -200,36 +200,20 @@
 .lx-layout.lx-layout-default.lx-layout-digives.lx-hide-nav-bar > nav .lx-nav-panel.lx-responsive,
 .lx-layout.lx-layout-default.lx-layout-digives.lx-hide-nav-bar > nav .lx-nav-panel,
 .lx-layout.lx-layout-default.lx-layout-digives.lx-hide-nav-bar > nav,
-.lx-layout.lx-layout-default.lx-layout-digives.lx-collapsed > nav  {
+.lx-layout.lx-layout-default.lx-layout-digives.lx-collapsed > nav {
   display: none;
 }
 
-.lx-layout.lx-layout-digives
-  > nav
-  .lx-nav-panel.lx-responsive
-  > .lx-nav-group:last-child
-  .lx-button {
+.lx-layout.lx-layout-digives > nav .lx-nav-panel.lx-responsive > .lx-nav-group:last-child .lx-button {
   background-color: var(--color-background);
 }
 
-.lx-layout.lx-layout-digives
-  > nav
-  .lx-nav-panel.lx-responsive
-  > .lx-nav-group
-  .e-veseliba-button
-  .lx-button {
+.lx-layout.lx-layout-digives > nav .lx-nav-panel.lx-responsive > .lx-nav-group .e-veseliba-button .lx-button {
   color: var(--color-interactive-hover-background);
   border-top: var(--border-width-1) var(--color-chrome) solid;
 }
 
-.lx-layout.lx-layout-digives
-  > nav
-  .lx-nav-panel.lx-responsive
-  > .lx-nav-group
-  .e-veseliba-button
-  .lx-button
-  > .lx-button-content-wrapper
-  svg {
+.lx-layout.lx-layout-digives > nav .lx-nav-panel.lx-responsive > .lx-nav-group .e-veseliba-button .lx-button > .lx-button-content-wrapper svg {
   fill: var(--color-interactive-hover-background);
 }
 
@@ -273,19 +257,11 @@
 .lx-layout-digives .lx-nav-panel.lx-responsive ul li.lx-selected .lx-button {
   border-width: 6px 0 6px 6px;
   border-style: solid;
-  -webkit-border-image: -webkit-linear-gradient(
-      right,
-      var(--color-brand),
-      var(--color-brand-secondary)
-    )
-    1 100%;
-  -moz-border-image: -moz-linear-gradient(right, var(--color-brand), var(--color-brand-secondary)) 1
-    100%;
-  -o-border-image: -o-linear-gradient(right, var(--color-brand), var(--color-brand-secondary)) 1
-    100%;
+  -webkit-border-image: -webkit-linear-gradient(right, var(--color-brand), var(--color-brand-secondary)) 1 100%;
+  -moz-border-image: -moz-linear-gradient(right, var(--color-brand), var(--color-brand-secondary)) 1 100%;
+  -o-border-image: -o-linear-gradient(right, var(--color-brand), var(--color-brand-secondary)) 1 100%;
   border-image: linear-gradient(to right, var(--color-brand), var(--color-brand-secondary)) 1 100%;
 }
-
 
 .lx .lx-layout.lx-layout-digives > footer {
   grid-column-start: 1;
@@ -306,20 +282,19 @@
   color: var(--color-brand);
 }
 
-.lx-layout.lx-layout-default.lx-layout-digives main.lx-main>ul.lx-digives-alert-list {
+.lx-layout.lx-layout-default.lx-layout-digives main.lx-main > ul.lx-digives-alert-list {
   list-style-type: none;
   margin: var(--space-0);
   padding: var(--space-0);
   padding-top: var(--space-1000);
-
 }
 
-.lx-layout.lx-layout-default.lx-layout-digives main.lx-main>ul.lx-digives-alert-list>li {
+.lx-layout.lx-layout-default.lx-layout-digives main.lx-main > ul.lx-digives-alert-list > li {
   padding: var(--space-0500);
   padding-left: var(--space-0125);
 }
 
-.lx-layout.lx-layout-default.lx-layout-digives main.lx-main>ul.lx-digives-alert-list>li .lx-description {
+.lx-layout.lx-layout-default.lx-layout-digives main.lx-main > ul.lx-digives-alert-list > li .lx-description {
   font-weight: var(--font-weight);
   font-size: var(--font-size-small);
   color: var(--color-label);
@@ -385,19 +360,8 @@
   align-items: start;
 }
 
-.lx-layout-digives
-  .person-data-section
-  .lx-dropdown-default
-  .popper
-  .lx-value-picker-item
-  > .lx-description,
-.lx-layout-digives
-  nav
-  .nav-bar-user-info
-  .lx-dropdown-default
-  .popper
-  .lx-value-picker-item
-  > .lx-description {
+.lx-layout-digives .person-data-section .lx-dropdown-default .popper .lx-value-picker-item > .lx-description,
+.lx-layout-digives nav .nav-bar-user-info .lx-dropdown-default .popper .lx-value-picker-item > .lx-description {
   font-weight: 200;
   font-size: 0.8em;
 }
@@ -492,25 +456,13 @@
   justify-content: start;
 }
 
-.lx-layout.lx-layout-digives
-  > nav
-  .lx-nav-panel.lx-responsive
-  > .lx-nav-group:last-child
-  .default-buttons
-  .lx-button:hover {
+.lx-layout.lx-layout-digives > nav .lx-nav-panel.lx-responsive > .lx-nav-group:last-child .default-buttons .lx-button:hover {
   background-color: var(--color-interactive-hover-background);
   border-color: transparent;
   color: var(--color-interactive-hover-foreground);
 }
 
-.lx-layout.lx-layout-digives
-  > nav
-  .lx-nav-panel.lx-responsive
-  > .lx-nav-group:last-child
-  .default-buttons
-  .lx-button:hover
-  > .lx-button-content-wrapper
-  svg {
+.lx-layout.lx-layout-digives > nav .lx-nav-panel.lx-responsive > .lx-nav-group:last-child .default-buttons .lx-button:hover > .lx-button-content-wrapper svg {
   fill: var(--color-interactive-hover-foreground);
 }
 
@@ -535,12 +487,7 @@
   line-height: 1.1em;
 }
 
-.lx-layout-digives
-  .lx-nav-panel
-  .nav-bar-user-info
-  .custom-context-menu
-  .selected-person-display
-  .lx-primary {
+.lx-layout-digives .lx-nav-panel .nav-bar-user-info .custom-context-menu .selected-person-display .lx-primary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -551,31 +498,18 @@
 }
 
 .lx-header-digives > .person-data-section .custom-context-menu .selected-person-display:focus,
-.lx-layout-digives
-  .lx-nav-panel
-  .nav-bar-user-info
-  .custom-context-menu
-  .selected-person-display:focus {
+.lx-layout-digives .lx-nav-panel .nav-bar-user-info .custom-context-menu .selected-person-display:focus {
   outline: 2px solid var(--color-focus-background);
 }
 
-.lx-header-digives
-  > .person-data-section
-  .custom-context-menu
-  .selected-person-display
-  .lx-description {
+.lx-header-digives > .person-data-section .custom-context-menu .selected-person-display .lx-description {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 14.5rem;
 }
 
-.lx-layout-digives
-  .lx-nav-panel
-  .nav-bar-user-info
-  .custom-context-menu
-  .selected-person-display
-  .lx-description {
+.lx-layout-digives .lx-nav-panel .nav-bar-user-info .custom-context-menu .selected-person-display .lx-description {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -600,8 +534,8 @@
   top: calc(var(--nav-row-size) + var(--row-size));
 }
 
-.lx-layout-digives .lx-form-grid:not(:has(> .lx-form-grid-header))>.lx-tab-wizard > .lx-tab-wizard-toolbar {
-    top: calc(var(--nav-row-size));
+.lx-layout-digives .lx-form-grid:not(:has(> .lx-form-grid-header)) > .lx-tab-wizard > .lx-tab-wizard-toolbar {
+  top: calc(var(--nav-row-size));
 }
 
 @media (max-width: 1800px) {

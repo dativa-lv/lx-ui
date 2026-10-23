@@ -82,19 +82,19 @@
 }
 
 .lx-duration-input-wrapper.lx-duration-responsive.lx-duration-variant-hours .lx-duration-fields {
-  grid-template-areas: "hours minutes";
+  grid-template-areas: 'hours minutes';
 }
 
 .lx-duration-input-wrapper.lx-duration-responsive.lx-duration-variant-days .lx-duration-fields {
   grid-template-areas:
-    "days ."
-    "hours minutes";
+    'days .'
+    'hours minutes';
 }
 
 .lx-duration-input-wrapper.lx-duration-responsive.lx-duration-variant-months .lx-duration-fields {
   grid-template-areas:
-    "months days"
-    "hours minutes";
+    'months days'
+    'hours minutes';
 }
 
 .lx-duration-input-wrapper.lx-duration-responsive .lx-duration-input-months {

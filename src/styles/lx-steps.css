@@ -1,62 +1,62 @@
 .lx .lx-steps-container-wrapper {
-    width: auto;
-    position: relative;
-    justify-content: left;
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    padding: var(--space-1000);
-    min-width: 5rem;
+  width: auto;
+  position: relative;
+  justify-content: left;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  padding: var(--space-1000);
+  min-width: 5rem;
 }
 
 .lx-steps-filled-slider {
-    position: relative;
-    background-color: var(--color-data);
-    margin-top: var(--space-0750);
-    height: 0.2rem;
-    z-index: 10;
+  position: relative;
+  background-color: var(--color-data);
+  margin-top: var(--space-0750);
+  height: 0.2rem;
+  z-index: 10;
 }
 
 .lx-steps-slider {
-    flex-direction: row;
-    height: 20px;
+  flex-direction: row;
+  height: 20px;
 }
 
 .lx-steps-full-slider {
-    position: relative;
-    background-color: var(--color-background);
-    margin-top: calc(var(--space-0250) * -1);
-    width: 100%;
-    height: 0.2rem;
-    z-index: 1;
+  position: relative;
+  background-color: var(--color-background);
+  margin-top: calc(var(--space-0250) * -1);
+  width: 100%;
+  height: 0.2rem;
+  z-index: 1;
 }
 
 .lx-steps-data {
-    display: flex;
-    align-items: baseline;
-    bottom: var(--space-2000);
-    width: auto;
+  display: flex;
+  align-items: baseline;
+  bottom: var(--space-2000);
+  width: auto;
 }
 
 .lx-steps-data-block {
-    display: flex;
-    align-items: top;
-    width: 100%;
-    height: auto;
+  display: flex;
+  align-items: top;
+  width: 100%;
+  height: auto;
 }
 
 .lx-steps-compact .lx-steps-data {
-    overflow-x: auto;
-    overflow-y: hidden;
-    gap: var(--space-1000);
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: var(--space-1000);
 }
 
 .lx-steps-compact .lx-steps-data-block {
-    width: auto;
+  width: auto;
 }
 
 .lx-steps-compact .lx-steps-data-block-small .lx-info-wrapper-content {
-    display: flex;
+  display: flex;
 }
 
 .lx-form-grid > .lx-main .lx-row .lx-steps-label {
@@ -64,54 +64,54 @@
 }
 
 .lx-steps-icon {
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
 }
 
 .lx-steps-loader {
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
-    --loader-width-s: var(--icon-size-xs);
-    --loader-height-s: var(--icon-size-xs);
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+  --loader-width-s: var(--icon-size-xs);
+  --loader-height-s: var(--icon-size-xs);
 }
 
 .lx-steps-description {
-    line-height: 1.1em;
-    font-size: var(--font-size-small);
+  line-height: 1.1em;
+  font-size: var(--font-size-small);
 }
 
 .lx-info-wrapper .lx-steps-description .lx-description {
-    color: var(--color-tooltip-text-secondary);
+  color: var(--color-tooltip-text-secondary);
 }
 
 .lx-steps-container-wrapper-disabled {
-    color: var(--color-disabled-background);
-    cursor: not-allowed;
+  color: var(--color-disabled-background);
+  cursor: not-allowed;
 }
 
 .lx-steps-data-block.lx-steps-data-block-small {
-    display: none;
+  display: none;
 }
 
-.lx-steps-data-block-small>.lx-info-wrapper .lx-info-wrapper-panel .lx-steps-description>.lx-description {
-    color: var(--color-tooltip-text-primary)
+.lx-steps-data-block-small > .lx-info-wrapper .lx-info-wrapper-panel .lx-steps-description > .lx-description {
+  color: var(--color-tooltip-text-primary);
 }
 
 .lx .lx-layout .lx-info-wrapper svg.lx-steps-icon {
-    fill: var(--color-info-wrapper-text-primary);
+  fill: var(--color-info-wrapper-text-primary);
 }
 
 @media (max-width: 800px) {
-    .lx-steps-container-wrapper .lx-steps-data .lx-steps-data-block {
-        display: none;
-    }
+  .lx-steps-container-wrapper .lx-steps-data .lx-steps-data-block {
+    display: none;
+  }
 
-    .lx-steps-data-block.lx-steps-data-block-small.lx-selected {
-        display: flex;
-    }
+  .lx-steps-data-block.lx-steps-data-block-small.lx-selected {
+    display: flex;
+  }
 
-    .lx-steps-data-block.lx-steps-data-block-small .lx-info-wrapper {
-        width: 100%;
-        height: auto;
-    }
+  .lx-steps-data-block.lx-steps-data-block-small .lx-info-wrapper {
+    width: 100%;
+    height: auto;
+  }
 }

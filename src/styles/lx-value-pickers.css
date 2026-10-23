@@ -23,38 +23,38 @@
 .lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-selecting-block,
 .lx-theme-contrast .lx-value-picker-tile-wrapper .lx-value-picker-tile:hover .lx-selecting-block,
 .lx-theme-contrast .lx-data-block-wrapper .lx-data-block-header:hover .lx-selecting-block {
- --color-checkbox-border-off: var(--contrast-background);
- --color-checkbox-background-off: var(--contrast-hover);
- --color-checkbox-border-hover-off: var(--contrast-foreground);
- --color-checkbox-background-hover-off: var(--contrast-foreground);
- --color-checkbox-border-on: var(--contrast-background);
- --color-checkbox-background-on: var(--contrast-background);
- --color-checkbox-tick: var(--contrast-foreground);
- --color-checkbox-border-hover-on: var(--contrast-foreground);
- --color-checkbox-background-hover-on: var(--contrast-foreground);
- --color-checkbox-tick-hover: var(--contrast-background);
- --color-radio-button-border-off: var(--contrast-background);
- --color-radio-button-background-off: var(--contrast-hover);
- --color-radio-button-border-hover-off: var(--contrast-foreground);
- --color-radio-button-background-hover-off: var(--contrast-foreground);
- --color-radio-button-border-on: var(--contrast-background);
- --color-radio-button-background-on: var(--contrast-background);
- --color-radio-button-thumb: var(--contrast-foreground);
- --color-radio-button-border-hover-on: var(--contrast-foreground);
- --color-radio-button-background-hover-on: var(--contrast-foreground);
- --color-radio-button-thumb-hover: var(--contrast-background);
+  --color-checkbox-border-off: var(--contrast-background);
+  --color-checkbox-background-off: var(--contrast-hover);
+  --color-checkbox-border-hover-off: var(--contrast-foreground);
+  --color-checkbox-background-hover-off: var(--contrast-foreground);
+  --color-checkbox-border-on: var(--contrast-background);
+  --color-checkbox-background-on: var(--contrast-background);
+  --color-checkbox-tick: var(--contrast-foreground);
+  --color-checkbox-border-hover-on: var(--contrast-foreground);
+  --color-checkbox-background-hover-on: var(--contrast-foreground);
+  --color-checkbox-tick-hover: var(--contrast-background);
+  --color-radio-button-border-off: var(--contrast-background);
+  --color-radio-button-background-off: var(--contrast-hover);
+  --color-radio-button-border-hover-off: var(--contrast-foreground);
+  --color-radio-button-background-hover-off: var(--contrast-foreground);
+  --color-radio-button-border-on: var(--contrast-background);
+  --color-radio-button-background-on: var(--contrast-background);
+  --color-radio-button-thumb: var(--contrast-foreground);
+  --color-radio-button-border-hover-on: var(--contrast-foreground);
+  --color-radio-button-background-hover-on: var(--contrast-foreground);
+  --color-radio-button-thumb-hover: var(--contrast-background);
 }
 
 .lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row.lx-selected .lx-selecting-block,
 .lx-theme-contrast .lx-list-item-container:has(.lx-list-item.lx-selected) .lx-selecting-block,
 .lx-theme-contrast .lx-data-block-wrapper.lx-data-block-selected .lx-data-block-header .lx-selecting-block,
 .lx-theme-contrast .lx-value-picker-tile-wrapper .lx-value-picker-tile.lx-value-picker-tile-selected .lx-selecting-block {
- --color-checkbox-border-on: var(--contrast-background);
- --color-checkbox-background-on: var(--contrast-background);
- --color-checkbox-tick: var(--contrast-foreground);
- --color-radio-button-border-on: var(--contrast-background);
- --color-radio-button-background-on: var(--contrast-background);
- --color-radio-button-thumb: var(--contrast-foreground);
+  --color-checkbox-border-on: var(--contrast-background);
+  --color-checkbox-background-on: var(--contrast-background);
+  --color-checkbox-tick: var(--contrast-foreground);
+  --color-radio-button-border-on: var(--contrast-background);
+  --color-radio-button-background-on: var(--contrast-background);
+  --color-radio-button-thumb: var(--contrast-foreground);
 }
 
 .lx-list-item-container .lx-selecting-block,
@@ -153,7 +153,7 @@
   flex-shrink: 0;
 }
 
-.lx-layout.lx-override input[type="checkbox"] {
+.lx-layout.lx-override input[type='checkbox'] {
   -webkit-appearance: none;
   appearance: none;
   display: flex;
@@ -170,47 +170,47 @@
   cursor: pointer;
 }
 
-.lx-override input[type="checkbox"]:focus {
+.lx-override input[type='checkbox']:focus {
   outline-color: var(--color-focus-background);
 }
 
-.lx-override input[type="checkbox"][tabindex="-1"]:focus {
+.lx-override input[type='checkbox'][tabindex='-1']:focus {
   outline: none;
 }
 
 /* Necessary for cases, where a native checkbox needs to look like an LX checkbox */
-.lx-override input[type="checkbox"]::before {
-  content: "✔";
+.lx-override input[type='checkbox']::before {
+  content: '✔';
   color: transparent;
   font-size: 0.75rem;
   opacity: 0;
 }
 
-.lx-override input[type="checkbox"]:checked {
+.lx-override input[type='checkbox']:checked {
   background: var(--color-checkbox-background-on);
   border-color: var(--color-checkbox-border-on);
 }
 
-.lx-override input[type="checkbox"]:hover {
+.lx-override input[type='checkbox']:hover {
   background: var(--color-checkbox-background-hover-off);
   border-color: var(--color-checkbox-border-hover-off);
 }
 
-.lx-override input[type="checkbox"]:checked:hover {
+.lx-override input[type='checkbox']:checked:hover {
   background: var(--color-checkbox-background-hover-on);
   border-color: var(--color-checkbox-border-hover-on);
 }
 
-.lx-override input[type="checkbox"]:checked::before {
+.lx-override input[type='checkbox']:checked::before {
   color: var(--color-checkbox-tick);
   opacity: 1;
 }
 
-.lx-override input[type="checkbox"]:checked:hover::before {
+.lx-override input[type='checkbox']:checked:hover::before {
   color: var(--color-checkbox-tick-hover);
 }
 
-.lx-layout.lx-override input[type="radio"] {
+.lx-layout.lx-override input[type='radio'] {
   appearance: none;
   display: flex;
   align-items: center;
@@ -226,45 +226,45 @@
   cursor: pointer;
 }
 
-.lx-override input[type="radio"]:focus {
+.lx-override input[type='radio']:focus {
   outline-color: var(--color-focus-background);
 }
 
-.lx-override input[type="radio"][tabindex="-1"]:focus{
+.lx-override input[type='radio'][tabindex='-1']:focus {
   outline: none;
 }
 
 /* Necessary for cases, where a native radio button needs to look like an LX radio button */
-.lx-override input[type="radio"]::before {
-  content: "●";
+.lx-override input[type='radio']::before {
+  content: '●';
   color: transparent;
   font-size: 1.6rem;
   margin-top: calc(var(--space-0250) * -1);
   opacity: 0;
 }
 
-.lx-override input[type="radio"]:checked {
+.lx-override input[type='radio']:checked {
   background: var(--color-radio-button-background-on);
   border-color: var(--color-radio-button-border-on);
 }
 
-.lx-override input[type="radio"]:hover {
+.lx-override input[type='radio']:hover {
   background: var(--color-interactive-hover-background);
   border-color: transparent;
 }
 
-.lx-override input[type="radio"]:checked:hover::before {
+.lx-override input[type='radio']:checked:hover::before {
   color: var(--color-interactive-hover-foreground);
   border-color: transparent;
 }
 
-.lx-override input[type="radio"]:checked::before {
+.lx-override input[type='radio']:checked::before {
   color: var(--color-radio-button-thumb);
   opacity: 1;
 }
 
-.lx-override input[type="checkbox"]:checked::before,
-.lx-override input[type="radio"]:checked::before {
+.lx-override input[type='checkbox']:checked::before,
+.lx-override input[type='radio']:checked::before {
   content: '';
 }
 
@@ -489,7 +489,7 @@
   overflow-x: auto;
 }
 
-.lx-value-picker-horizontal-wrapper .lx-radio-button-wrapper, 
+.lx-value-picker-horizontal-wrapper .lx-radio-button-wrapper,
 .lx-value-picker-horizontal-wrapper .lx-checkbox-wrapper {
   align-items: center;
   flex-direction: column-reverse;
@@ -852,8 +852,8 @@
 
 .lx-value-picker-tile:focus,
 .lx-value-picker-tile:focus-visible,
-.lx-value-picker-description[tabindex="0"]:focus,
-.lx-value-picker-description[tabindex="0"]:focus-visible {
+.lx-value-picker-description[tabindex='0']:focus,
+.lx-value-picker-description[tabindex='0']:focus-visible {
   box-shadow: var(--shadow-1);
   outline: 2px solid var(--color-focus-background);
 }
@@ -863,7 +863,7 @@
   outline-offset: -2px;
 }
 
-.lx-value-picker-description[tabindex="-1"] {
+.lx-value-picker-description[tabindex='-1'] {
   pointer-events: none;
 }
 
@@ -904,7 +904,7 @@
 }
 
 .lx-value-picker-tile.lx-value-picker-tile-selected .lx-value-picker-description {
-  color:  var(--color-tile-text-secondary-selected);
+  color: var(--color-tile-text-secondary-selected);
 }
 
 .lx-value-picker-tile-wrapper.lx-invalid .lx-value-picker-tile {

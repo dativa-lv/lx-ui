@@ -127,7 +127,7 @@
   grid-template-columns: var(--popover-item-toggle-grid-template-columns);
   grid-template-rows: var(--popover-item-toggle-grid-template-rows);
   align-items: center;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .lx-layout .lx-dropdown-panel .lx-dropdown-menu-toggle-wrapper .lx-dropdown-toggle-label {
@@ -362,9 +362,10 @@
   position: relative;
   color: var(--color-brand);
   margin-bottom: var(--popover-item-set-gap);
-  border-radius: var(--popover-item-border-radius-outer) 
-                 var(--popover-item-border-radius-outer) 
-                 var(--popover-item-border-radius-inner) 
+  /* prettier-ignore */
+  border-radius: var(--popover-item-border-radius-outer)
+                 var(--popover-item-border-radius-outer)
+                 var(--popover-item-border-radius-inner)
                  var(--popover-item-border-radius-inner);
 }
 
@@ -419,7 +420,7 @@
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel .user-menu-context::after,
 .lx-dropdown-default-content .select-all-wrapper::after {
   display: block;
-  content: "";
+  content: '';
   position: absolute;
   background: var(--color-popover-divider);
   width: stretch;
@@ -445,9 +446,10 @@
 .lx-dropdown-panel > .lx-dropdown-menu-group:first-of-type:not(:has(.lx-label)) > .lx-dropdown-menu-button:first-child .lx-button,
 .lx-dropdown-panel > .lx-dropdown-menu-group:first-of-type:not(:has(.lx-label)) > .lx-button:first-child,
 .lx-dropdown-default-content .lx-value-picker-item:first-of-type {
-  border-radius: var(--popover-item-border-radius-outer) 
-                 var(--popover-item-border-radius-outer) 
-                 var(--popover-item-border-radius-inner) 
+  /* prettier-ignore */
+  border-radius: var(--popover-item-border-radius-outer)
+                 var(--popover-item-border-radius-outer)
+                 var(--popover-item-border-radius-inner)
                  var(--popover-item-border-radius-inner);
 }
 
@@ -457,9 +459,10 @@
 .lx-dropdown-panel > .user-menu-panel:not(:has(.lx-button-set)) > .lx-button:last-of-type,
 .lx-dropdown-panel > .lx-dropdown-menu-group:has(+ .lx-mega-menu-container) > .lx-dropdown-menu-button:last-child > .lx-button,
 .lx-dropdown-panel > .lx-dropdown-menu-group:last-of-type > .lx-dropdown-menu-button:last-child .lx-button {
-  border-radius: var(--popover-item-border-radius-inner) 
-                 var(--popover-item-border-radius-inner) 
-                 var(--popover-item-border-radius-outer) 
+  /* prettier-ignore */
+  border-radius: var(--popover-item-border-radius-inner)
+                 var(--popover-item-border-radius-inner)
+                 var(--popover-item-border-radius-outer)
                  var(--popover-item-border-radius-outer);
 }
 
@@ -693,7 +696,7 @@
 
 .lx-dropdown-default-content .lx-autocomplete-search-for-wrapper.lx-separated::before {
   display: block;
-  content: "";
+  content: '';
   position: absolute;
   background: var(--color-popover-divider);
   width: stretch;

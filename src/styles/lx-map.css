@@ -5,8 +5,8 @@
 .leaflet-marker-icon,
 .leaflet-marker-shadow,
 .leaflet-tile-container,
-.leaflet-pane>svg,
-.leaflet-pane>canvas,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
 .leaflet-zoom-box,
 .leaflet-image-layer,
 .leaflet-layer {
@@ -294,14 +294,14 @@ svg.leaflet-zoom-animated {
 .leaflet-marker-icon,
 .leaflet-marker-shadow,
 .leaflet-image-layer,
-.leaflet-pane>svg path,
+.leaflet-pane > svg path,
 .leaflet-tile-container {
   pointer-events: none;
 }
 
 .leaflet-marker-icon.leaflet-interactive,
 .leaflet-image-layer.leaflet-interactive,
-.leaflet-pane>svg path.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
 svg.leaflet-image-layer.leaflet-interactive path {
   pointer-events: visiblePainted;
   /* IE 9-10 doesn't have auto */
@@ -387,7 +387,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-  font: bold 18px 'Lucida Console', Monaco, monospace;
+  font:
+    bold 18px 'Lucida Console',
+    Monaco,
+    monospace;
   text-indent: 1px;
 }
 
@@ -588,7 +591,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
   text-align: center;
   width: 24px;
   height: 24px;
-  font: 16px/24px Tahoma, Verdana, sans-serif;
+  font:
+    16px/24px Tahoma,
+    Verdana,
+    sans-serif;
   color: #757575;
   text-decoration: none;
   background: transparent;
@@ -718,7 +724,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 /* Printing */
 
 @media print {
-
   /* Prevent printers from removing background-images of controls. */
   .leaflet-control {
     -webkit-print-color-adjust: exact;
@@ -828,7 +833,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   box-shadow: var(--shadow-dropdown);
 }
 
-.leaflet-popup-tip-container>.leaflet-popup-tip {
+.leaflet-popup-tip-container > .leaflet-popup-tip {
   background-color: var(--color-tooltip-background);
 }
 

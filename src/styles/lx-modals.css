@@ -52,7 +52,7 @@ dialog.lx-modal > header > .lx-primary,
   border: var(--modal-border);
   border-radius: var(--modal-border-radius);
   margin: var(--space-3000);
-  max-height:  calc(100vh - calc(var(--space-3000) * 2)); /* --space-3000 * 2 to account for top & bottom margin */
+  max-height: calc(100vh - calc(var(--space-3000) * 2)); /* --space-3000 * 2 to account for top & bottom margin */
 }
 
 dialog.lx-modal {
@@ -337,7 +337,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   text-overflow: ellipsis;
 }
 
-/*** LxDialog ***/ 
+/*** LxDialog ***/
 
 .lx-dialog > header .lx-illustration {
   height: var(--modal-illustration-size);

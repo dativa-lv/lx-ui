@@ -1,17 +1,17 @@
 .lx {
-    --color-h: 213;
-    --color-s: 21%;
-    --color-l: 36%;
-    
-    --color-highlight: #d8dce1;
-    --color-background: #eff0f3;
-    --color-data: #12161e;
+  --color-h: 213;
+  --color-s: 21%;
+  --color-l: 36%;
 
-    --color-nav-item-background-selected: var(--color-highlight);
-  }
-  
-  .lx.lx-theme-dark {
-    --color-highlight: #404751;
+  --color-highlight: #d8dce1;
+  --color-background: #eff0f3;
+  --color-data: #12161e;
 
-    --color-nav-item-background-selected: var(--color-highlight);
-  }
+  --color-nav-item-background-selected: var(--color-highlight);
+}
+
+.lx.lx-theme-dark {
+  --color-highlight: #404751;
+
+  --color-nav-item-background-selected: var(--color-highlight);
+}

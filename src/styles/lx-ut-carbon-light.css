@@ -265,7 +265,7 @@
   --color-tag-background-hover: var(--color-region-hover);
   --color-tag-border-hover: var(--color-chrome);
   --color-tag-text-hover: var(--color-region-hover-foreground);
-  
+
   --color-list-item-border: transparent;
   --color-list-item-background: var(--color-region);
   --color-list-draggable-handle-icon: var(--color-label);
@@ -346,12 +346,12 @@
   --color-input-complex-content-border-disabled: transparent;
   --color-input-complex-background-disabled: var(--color-input-background-disabled);
   --color-input-complex-content-background-disabled: transparent;
-  
+
   --color-displayer-complex-background: var(--color-input-background);
   --color-displayer-complex-content-background: transparent;
   --color-displayer-complex-border: var(--color-input-border);
   --color-displayer-complex-content-border: transparent;
-  
+
   --color-button-active-mode: var(--color-data);
   --color-button-active-mode-background: var(--color-highlight);
   --color-button-active-mode-border: var(--color-highlight);
@@ -360,7 +360,7 @@
   --color-button-destructive-background: var(--color-destructive);
   --color-button-destructive-border: var(--color-destructive);
   --color-button-destructive-icon: var(--color-interactive-foreground);
-  
+
   --color-button-primary-text: var(--color-interactive-foreground);
   --color-button-primary-background: var(--color-interactive-background);
   --color-button-primary-text-focus: var(--color-interactive-foreground);
@@ -420,7 +420,7 @@
   --color-button-tertiary-icon-disabled: var(--color-disabled-foreground);
   --color-button-tertiary-icon-focus: var(--color-interactive-background);
   --color-button-tertiary-icon-hover: var(--color-interactive-hover-foreground);
-  
+
   --color-button-ghost-text: var(--color-interactive-background);
   --color-button-ghost-background: transparent;
   --color-button-ghost-text-focus: var(--color-interactive-background);
@@ -679,7 +679,7 @@
   --color-nav-item-text-selected: #111;
   --color-nav-item-background-selected: var(--color-highlight);
   --color-nav-item-border-selected: transparent transparent transparent var(--color-brand);
-  
+
   --color-nav-public-item-text: var(--color-nav-foreground);
   --color-nav-public-item-text-hover: var(--color-nav-foreground);
   --color-nav-public-item-background-hover: var(--color-nav-hover-background);
@@ -862,7 +862,7 @@
   --color-checkbox-border-off: var(--color-data);
   --color-checkbox-border-on: var(--color-data);
   --color-checkbox-tick: var(--color-region);
-  
+
   --color-checkbox-background-hover-off: var(--color-interactive-hover-background);
   --color-checkbox-border-hover-off: transparent;
   --color-checkbox-background-hover-on: var(--color-interactive-hover-background);

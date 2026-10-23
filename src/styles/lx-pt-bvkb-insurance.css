@@ -1,22 +1,22 @@
 .lx {
-  --color-brand: #146E69;
-  --color-interactive-background: #146E69;
-  --color-interactive-hover-background: #0E4E4A;
-  --color-background: #F2F3F3;
-  --color-region-2: #F2F3F3;
-  --color-region-hover: #E3E8E8;
+  --color-brand: #146e69;
+  --color-interactive-background: #146e69;
+  --color-interactive-hover-background: #0e4e4a;
+  --color-background: #f2f3f3;
+  --color-region-2: #f2f3f3;
+  --color-region-hover: #e3e8e8;
   --color-layout-background: #293232;
   --color-interactive-secondary-background: #293232;
-  --color-data: #161D1D;
-  --color-highlight: #D7EAE9;
+  --color-data: #161d1d;
+  --color-highlight: #d7eae9;
   --color-nav-item-background-selected: var(--color-highlight);
-  --color-footer-label: #A3A3A3;
+  --color-footer-label: #a3a3a3;
 }
 
 .lx.lx-theme-dark {
-  --color-brand: #43C1B9;
-  --color-interactive-background: #43C1B9;
-  --color-interactive-hover-background: #146E69;
-  --color-highlight: #2E3838;
+  --color-brand: #43c1b9;
+  --color-interactive-background: #43c1b9;
+  --color-interactive-hover-background: #146e69;
+  --color-highlight: #2e3838;
   --color-nav-item-background-selected: var(--color-highlight);
 }

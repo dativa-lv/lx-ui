@@ -28,10 +28,10 @@ a.lx-sitemap-link {
 
 .lx .lx-layout .lx-button,
 .lx-layout.lx-override button,
-.lx .lx-layout.lx-override input[type="button"],
-.lx .lx-layout.lx-override input[type="submit"],
-.lx .lx-layout.lx-override input[type="reset"],
-.lx .lx-layout.lx-override input[type="file"]::file-selector-button {
+.lx .lx-layout.lx-override input[type='button'],
+.lx .lx-layout.lx-override input[type='submit'],
+.lx .lx-layout.lx-override input[type='reset'],
+.lx .lx-layout.lx-override input[type='file']::file-selector-button {
   display: flex;
   position: relative;
   padding: var(--button-primary-padding);
@@ -50,9 +50,9 @@ a.lx-sitemap-link {
   outline-offset: var(--button-primary-outline-offset);
 }
 
-.lx-layout.lx-override input[type="submit"],
-.lx-layout.lx-override input[type="reset"],
-.lx-layout.lx-override input[type="button"] {
+.lx-layout.lx-override input[type='submit'],
+.lx-layout.lx-override input[type='reset'],
+.lx-layout.lx-override input[type='button'] {
   cursor: pointer;
 }
 
@@ -74,10 +74,10 @@ a.lx-sitemap-link {
 
 .lx .lx-button .lx-button-content,
 .lx-override button,
-.lx-override input[type="button"],
-.lx-override input[type="submit"],
-.lx-override input[type="reset"],
-.lx-override input[type="file"]::file-selector-button {
+.lx-override input[type='button'],
+.lx-override input[type='submit'],
+.lx-override input[type='reset'],
+.lx-override input[type='file']::file-selector-button {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -85,7 +85,7 @@ a.lx-sitemap-link {
 }
 
 .lx .lx-button .lx-button-content .lx-button-label {
-  display: block;        
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -96,10 +96,10 @@ a.lx-sitemap-link {
 }
 
 .lx-override button,
-.lx-override input[type="button"],
-.lx-override input[type="submit"],
-.lx-override input[type="reset"],
-.lx-override input[type="file"]::file-selector-button { 
+.lx-override input[type='button'],
+.lx-override input[type='submit'],
+.lx-override input[type='reset'],
+.lx-override input[type='file']::file-selector-button {
   align-items: center;
 }
 
@@ -107,7 +107,7 @@ a.lx-sitemap-link {
 
 .lx .lx-button.lx-button-secondary,
 .lx-override button.lx-button-secondary,
-.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary) {
+.lx .lx-layout.lx-override input[type='button']:where(.lx-button-secondary) {
   padding: var(--button-secondary-padding);
   text-decoration: var(--button-secondary-text-decoration);
   height: var(--button-secondary-height);
@@ -132,7 +132,7 @@ a.lx-sitemap-link {
 
 .lx .lx-button.lx-button-secondary .lx-button-content,
 .lx-override button.lx-button-secondary,
-.lx-override input[type="button"]:where(.lx-button-secondary) {
+.lx-override input[type='button']:where(.lx-button-secondary) {
   text-align: var(--button-secondary-text-alignment);
 }
 
@@ -140,7 +140,7 @@ a.lx-sitemap-link {
 
 .lx .lx-button.lx-button-tertiary,
 .lx-override button.lx-button-tertiary,
-.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary) {
+.lx .lx-layout.lx-override input[type='button']:where(.lx-button-tertiary) {
   padding: var(--button-tertiary-padding);
   text-decoration: var(--button-tertiary-text-decoration);
   height: var(--button-tertiary-height);
@@ -165,7 +165,7 @@ a.lx-sitemap-link {
 
 .lx .lx-button.lx-button-tertiary .lx-button-content,
 .lx-override button.lx-button-tertiary,
-.lx-override input[type="button"]:where(.lx-button-tertiary) {
+.lx-override input[type='button']:where(.lx-button-tertiary) {
   text-align: var(--button-tertiary-text-alignment);
 }
 
@@ -173,7 +173,7 @@ a.lx-sitemap-link {
 
 .lx .lx-button.lx-button-ghost,
 .lx-override button.lx-button-ghost,
-.lx-override input[type="button"]:where(.lx-button-ghost) {
+.lx-override input[type='button']:where(.lx-button-ghost) {
   padding: var(--button-ghost-padding);
   text-decoration: var(--button-ghost-text-decoration);
   height: var(--button-ghost-height);
@@ -202,7 +202,7 @@ a.lx-sitemap-link {
 
 .lx .lx-button.lx-button-ghost .lx-button-content,
 .lx-override button.lx-button-ghost,
-.lx-override input[type="button"]:where(.lx-button-ghost) {
+.lx-override input[type='button']:where(.lx-button-ghost) {
   text-align: var(--button-ghost-text-alignment);
 }
 
@@ -524,7 +524,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button,
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button,
-.lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper >.lx-button,
+.lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button,
 .lx-layout-public .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-context-container .lx-dropdown-toggler .lx-button,
 .lx-layout-public .lx-nav-panel ul li > .lx-context-container .lx-dropdown-toggler .lx-button,
@@ -684,10 +684,10 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-button:hover,
 .lx-override button:hover,
-.lx .lx-layout.lx-override input[type="button"]:where(:hover),
-.lx .lx-layout.lx-override input[type="submit"]:where(:hover),
-.lx .lx-layout.lx-override input[type="reset"]:where(:hover),
-.lx .lx-layout.lx-override input[type="file"]:where(:hover)::file-selector-button {
+.lx .lx-layout.lx-override input[type='button']:where(:hover),
+.lx .lx-layout.lx-override input[type='submit']:where(:hover),
+.lx .lx-layout.lx-override input[type='reset']:where(:hover),
+.lx .lx-layout.lx-override input[type='file']:where(:hover)::file-selector-button {
   background: var(--color-button-primary-background-hover);
   color: var(--color-button-primary-text-hover);
   border-color: var(--color-button-primary-border-hover);
@@ -695,7 +695,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-secondary:hover,
 .lx-override button.lx-button-secondary:hover,
-.lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:hover) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-secondary:where(:hover) {
   background: var(--color-button-secondary-background-hover);
   color: var(--color-button-secondary-text-hover);
   border-color: var(--color-button-secondary-border-hover);
@@ -703,7 +703,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-tertiary:hover,
 .lx-override button.lx-button-tertiary:hover,
-.lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:hover) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-tertiary:where(:hover) {
   background: var(--color-button-tertiary-background-hover);
   color: var(--color-button-tertiary-text-hover);
   border-color: var(--color-button-tertiary-border-hover);
@@ -711,7 +711,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-ghost:hover,
 .lx-override button.lx-button-ghost:hover,
-.lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:hover) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-ghost:where(:hover) {
   background: var(--color-button-ghost-background-hover);
   color: var(--color-button-ghost-text-hover);
   border-color: var(--color-button-ghost-border-hover);
@@ -722,10 +722,10 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-button:focus,
 .lx-override button:focus,
 .lx-dropdown-toggler:focus .lx-button,
-.lx .lx-layout.lx-override input[type="button"]:where(:focus),
-.lx .lx-layout.lx-override input[type="submit"]:where(:focus),
-.lx .lx-layout.lx-override input[type="reset"]:where(:focus),
-.lx .lx-layout.lx-override input[type="file"]:where(:focus)::file-selector-button {
+.lx .lx-layout.lx-override input[type='button']:where(:focus),
+.lx .lx-layout.lx-override input[type='submit']:where(:focus),
+.lx .lx-layout.lx-override input[type='reset']:where(:focus),
+.lx .lx-layout.lx-override input[type='file']:where(:focus)::file-selector-button {
   background: var(--color-button-primary-background-focus);
   border-color: var(--color-button-primary-border-focus);
   outline: 2px solid var(--color-focus-background);
@@ -734,14 +734,14 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-user-menu .lx-dropdown-toggler:focus .lx-user-button {
-    outline: 2px solid var(--color-focus-background);
-    outline-offset: -2px;
+  outline: 2px solid var(--color-focus-background);
+  outline-offset: -2px;
 }
 
 .lx-button.lx-button-secondary:focus,
 .lx-override button.lx-button-secondary:focus,
 .lx-dropdown-toggler:focus .lx-button.lx-button-secondary,
-.lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-secondary:where(:focus) {
   background: var(--color-button-secondary-background-focus);
   border-color: var(--color-button-secondary-border-focus);
   color: var(--color-button-secondary-text);
@@ -750,7 +750,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-button.lx-button-tertiary:focus,
 .lx-override button.lx-button-tertiary:focus,
 .lx-dropdown-toggler:focus .lx-button.lx-button-tertiary,
-.lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-tertiary:where(:focus) {
   background: var(--color-button-tertiary-background-focus);
   border-color: var(--color-button-tertiary-border-focus);
   color: var(--color-button-tertiary-text);
@@ -760,7 +760,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-override button.lx-button-ghost:focus,
 .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
 .lx-header .popper-wrapper > .lx-dropdown-toggler:focus .lx-button,
-.lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-ghost:where(:focus) {
   background: var(--color-button-ghost-background-focus);
   border-color: var(--color-button-ghost-border-focus);
   color: var(--color-button-ghost-text);
@@ -771,22 +771,22 @@ a.lx-button.lx-button-ghost svg {
 .lx-button:focus:hover,
 .lx-override button:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button,
-.lx .lx-layout.lx-override input[type="button"]:where(:focus:hover),
-.lx .lx-layout.lx-override input[type="submit"]:where(:focus:hover),
-.lx .lx-layout.lx-override input[type="reset"]:where(:focus:hover),
-.lx .lx-layout.lx-override input[type="file"]:where(:focus:hover)::file-selector-button {
+.lx .lx-layout.lx-override input[type='button']:where(:focus:hover),
+.lx .lx-layout.lx-override input[type='submit']:where(:focus:hover),
+.lx .lx-layout.lx-override input[type='reset']:where(:focus:hover),
+.lx .lx-layout.lx-override input[type='file']:where(:focus:hover)::file-selector-button {
   background: var(--color-button-primary-background-hover);
   color: var(--color-button-primary-text-hover);
 }
 
 .lx .lx-layout .lx-component-toolbar .lx-button:focus:where(:hover) {
-    --color-toolbar-button-primary-border-hover: var(--color-button-primary-border-focus);
+  --color-toolbar-button-primary-border-hover: var(--color-button-primary-border-focus);
 }
 
 .lx-button.lx-button-secondary:focus:hover,
 .lx-override button.lx-button-secondary:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-secondary,
-.lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus:hover) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-secondary:where(:focus:hover) {
   background: var(--color-button-secondary-background-hover);
   color: var(--color-button-secondary-text-hover);
 }
@@ -794,7 +794,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-button.lx-button-tertiary:focus:hover,
 .lx-override button.lx-button-tertiary:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-tertiary,
-.lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus:hover) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-tertiary:where(:focus:hover) {
   background: var(--color-button-tertiary-background-hover);
   color: var(--color-button-tertiary-text-hover);
 }
@@ -802,7 +802,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-button.lx-button-ghost:focus:hover,
 .lx-override button.lx-button-ghost:focus:where(:hover),
 .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-ghost,
-.lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus:hover) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-ghost:where(:focus:hover) {
   background: var(--color-button-ghost-background-hover);
   color: var(--color-button-ghost-text-hover);
 }
@@ -811,10 +811,10 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-button:active,
 .lx-dropdown-toggler:active .lx-button,
 .lx-override button:active,
-.lx .lx-layout.lx-override input[type="button"]:where(:active),
-.lx .lx-layout.lx-override input[type="submit"]:where(:active),
-.lx .lx-layout.lx-override input[type="reset"]:where(:active),
-.lx .lx-layout.lx-override input[type="file"]:where(:active)::file-selector-button {
+.lx .lx-layout.lx-override input[type='button']:where(:active),
+.lx .lx-layout.lx-override input[type='submit']:where(:active),
+.lx .lx-layout.lx-override input[type='reset']:where(:active),
+.lx .lx-layout.lx-override input[type='file']:where(:active)::file-selector-button {
   background: var(--color-button-primary-background-active);
   color: var(--color-button-primary-text-active);
   border-color: var(--color-button-primary-border-active);
@@ -823,7 +823,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-button.lx-button-secondary:active,
 .lx-override button.lx-button-secondary:active,
 .lx-dropdown-toggler:active .lx-button.lx-button-secondary,
-.lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:active) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-secondary:where(:active) {
   background: var(--color-button-secondary-background-active);
   color: var(--color-button-secondary-text-active);
   border-color: var(--color-button-secondary-border-active);
@@ -832,7 +832,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-button.lx-button-tertiary:active,
 .lx-override button.lx-button-tertiary:active,
 .lx-dropdown-toggler:active .lx-button.lx-button-tertiary,
-.lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:active) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-tertiary:where(:active) {
   background: var(--color-button-tertiary-background-active);
   color: var(--color-button-tertiary-text-active);
   border-color: var(--color-button-tertiary-border-active);
@@ -841,7 +841,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-button.lx-button-ghost:active,
 .lx-override button.lx-button-ghost:active,
 .lx-dropdown-toggler:active .lx-button.lx-button-ghost,
-.lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:active) {
+.lx .lx-layout.lx-override input[type='button'].lx-button-ghost:where(:active) {
   background: var(--color-button-ghost-background-active);
   color: var(--color-button-ghost-text-active);
   border-color: var(--color-button-ghost-border-active);
@@ -853,8 +853,8 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-destructive:not(.lx-disabled):hover,
 .lx-layout.lx-override button.lx-destructive:not(.lx-disabled):hover,
 .lx-layout.lx-override button.lx-destructive:not([disabled]):hover,
-.lx .lx-layout.lx-override input[type="button"].lx-destructive:not(.lx-disabled):hover,
-.lx .lx-layout.lx-override input[type="button"].lx-destructive:not([disabled]):hover {
+.lx .lx-layout.lx-override input[type='button'].lx-destructive:not(.lx-disabled):hover,
+.lx .lx-layout.lx-override input[type='button'].lx-destructive:not([disabled]):hover {
   background: var(--color-button-destructive-background);
   border-color: var(--color-button-destructive-border);
   color: var(--color-button-destructive);
@@ -865,14 +865,14 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-button.lx-disabled,
 .lx-layout.lx-override button.lx-disabled,
 .lx-layout.lx-override button[disabled],
-.lx .lx-layout.lx-override input[type="button"].lx-disabled,
-.lx .lx-layout.lx-override input[type="button"][disabled],
-.lx .lx-layout.lx-override input[type="submit"].lx-disabled,
-.lx .lx-layout.lx-override input[type="submit"][disabled],
-.lx .lx-layout.lx-override input[type="reset"].lx-disabled,
-.lx .lx-layout.lx-override input[type="reset"][disabled],
-.lx .lx-layout.lx-override input[type="file"].lx-disabled::file-selector-button,
-.lx .lx-layout.lx-override input[type="file"][disabled]::file-selector-button {
+.lx .lx-layout.lx-override input[type='button'].lx-disabled,
+.lx .lx-layout.lx-override input[type='button'][disabled],
+.lx .lx-layout.lx-override input[type='submit'].lx-disabled,
+.lx .lx-layout.lx-override input[type='submit'][disabled],
+.lx .lx-layout.lx-override input[type='reset'].lx-disabled,
+.lx .lx-layout.lx-override input[type='reset'][disabled],
+.lx .lx-layout.lx-override input[type='file'].lx-disabled::file-selector-button,
+.lx .lx-layout.lx-override input[type='file'][disabled]::file-selector-button {
   background: var(--color-button-primary-background-disabled);
   color: var(--color-button-primary-text-disabled);
   border-color: var(--color-button-primary-border-disabled);
@@ -883,8 +883,8 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-button.lx-button-secondary.lx-disabled,
 .lx-override button.lx-button-secondary.lx-disabled,
 .lx-override button.lx-button-secondary[disabled],
-.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary.lx-disabled),
-.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary[disabled]) {
+.lx .lx-layout.lx-override input[type='button']:where(.lx-button-secondary.lx-disabled),
+.lx .lx-layout.lx-override input[type='button']:where(.lx-button-secondary[disabled]) {
   background: var(--color-button-secondary-background-disabled);
   color: var(--color-button-secondary-text-disabled);
   border-color: var(--color-button-secondary-border-disabled);
@@ -893,8 +893,8 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-button.lx-button-tertiary.lx-disabled,
 .lx-override button.lx-button-tertiary.lx-disabled,
 .lx-override button.lx-button-tertiary[disabled],
-.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary.lx-disabled),
-.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary[disabled]) {
+.lx .lx-layout.lx-override input[type='button']:where(.lx-button-tertiary.lx-disabled),
+.lx .lx-layout.lx-override input[type='button']:where(.lx-button-tertiary[disabled]) {
   background: var(--color-button-tertiary-background-disabled);
   color: var(--color-button-tertiary-text-disabled);
   border-color: var(--color-button-tertiary-border-disabled);
@@ -903,8 +903,8 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-button.lx-button-ghost.lx-disabled,
 .lx-override button.lx-button-ghost.lx-disabled,
 .lx-override button.lx-button-ghost[disabled],
-.lx-layout.lx-override input[type="button"].lx-button-ghost.lx-disabled,
-.lx-layout.lx-override input[type="button"].lx-button-ghost[disabled] {
+.lx-layout.lx-override input[type='button'].lx-button-ghost.lx-disabled,
+.lx-layout.lx-override input[type='button'].lx-button-ghost[disabled] {
   background: var(--color-button-ghost-background-disabled);
   color: var(--color-button-ghost-text-disabled);
   border-color: var(--color-button-ghost-border-disabled);
@@ -1081,16 +1081,16 @@ a.lx-button.lx-button-ghost svg {
   opacity: 1;
 }
 
-.lx:not(.lx-theme-contrast)  .lx-button.lx-button-ghost .lx-loader-container .lx-loader svg .lx-loader-background {
+.lx:not(.lx-theme-contrast) .lx-button.lx-button-ghost .lx-loader-container .lx-loader svg .lx-loader-background {
   opacity: 1;
 }
 
 /*** SiteMap styles ***/
 
 .lx-sitemap-wrapper {
- display: grid;
- row-gap: var(--space-0250);
- grid-template-rows: auto 1fr;
+  display: grid;
+  row-gap: var(--space-0250);
+  grid-template-rows: auto 1fr;
 }
 
 .lx-sitemap-wrapper .lx-sitemap {
@@ -1153,7 +1153,7 @@ a.lx-button.lx-button-ghost svg {
   height: 0;
 }
 
-.lx-button-set>.lx-error-action-definitions {
+.lx-button-set > .lx-error-action-definitions {
   display: flex;
   gap: var(--space-0500);
 }
@@ -1186,14 +1186,14 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-skip-link-wrapper .lx-button {
   visibility: visible;
-  clip: rect(0,0,0,0);
+  clip: rect(0, 0, 0, 0);
   block-size: 1px;
   border: var(--border-width-0);
   inline-size: 1px;
   position: absolute;
 }
 
-.lx .lx-layout>.lx-skip-link-wrapper .lx-button {
+.lx .lx-layout > .lx-skip-link-wrapper .lx-button {
   border: var(--border-width-0);
 }
 
@@ -1255,7 +1255,7 @@ a.lx-button.lx-button-ghost svg {
   .lx .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
   .lx .lx-layout-latvijalv .lx-nav-panel ul li .lx-nav-item-wrapper > .lx-button .lx-button-content-wrapper,
   .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
-  .lx .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper ,
+  .lx .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper,
   .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper {
     --nav-public-item-grid-areas: 'icon content';
     --nav-public-item-grid-template-columns: auto 1fr;
@@ -1264,7 +1264,7 @@ a.lx-button.lx-button-ghost svg {
 }
 
 @media (max-width: 500px) {
-  .lx .lx-cover>.lx-content>.lx-button-set .lx-button {
+  .lx .lx-cover > .lx-content > .lx-button-set .lx-button {
     width: 100%;
   }
 }

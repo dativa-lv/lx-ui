@@ -3,14 +3,14 @@
   --color-s: 53%;
   --color-l: 37%;
   --color-highlight: #ecd4d9;
-  --color-background: #F0EDED;
+  --color-background: #f0eded;
   --color-data: #18181b;
 
   --color-nav-item-background-selected: var(--color-highlight);
 }
 
 .lx.lx-theme-dark {
-  --color-highlight: #553A4A;
-  
+  --color-highlight: #553a4a;
+
   --color-nav-item-background-selected: var(--color-highlight);
 }

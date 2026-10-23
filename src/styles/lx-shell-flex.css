@@ -60,7 +60,7 @@
   width: 10rem;
 }
 
-.lx-cover>div {
+.lx-cover > div {
   width: var(--body-column-size);
 }
 
@@ -879,8 +879,6 @@ code {
   color: var(--color-tooltip-text-primary) !important;
 }
 
-
-
 .lx .lx-info-wrapper .lx-tooltip .lx-row {
   width: var(--aside-size);
   flex-wrap: nowrap;
@@ -1126,20 +1124,20 @@ code {
   margin-bottom: var(--space-1000);
 }
 
-.lx .lx-document>.lx-form {
+.lx .lx-document > .lx-form {
   width: var(--body-column-size);
 }
 
-.lx .lx-toolbar .lx-data+.lx-secondary {
+.lx .lx-toolbar .lx-data + .lx-secondary {
   margin-top: calc(var(--space-0500) * -1);
   line-height: 1.2em;
 }
 
-.lx-tag-set .lx-tag>span,
+.lx-tag-set .lx-tag > span,
 .lx-main h1,
 .lx-main .heading-1,
 .lx-list-item > header > p,
-.lx-master-detail .lx-master ul li>span {
+.lx-master-detail .lx-master ul li > span {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -1149,7 +1147,7 @@ code {
 
 /* InfoWrapper */
 
-.lx .lx-layout .popper  .lx-info-wrapper-panel {
+.lx .lx-layout .popper .lx-info-wrapper-panel {
   background-color: var(--color-tooltip-background);
   padding: var(--space-0500) var(--space-1000);
   color: var(--color-tooltip-text-primary);
@@ -1169,8 +1167,8 @@ code {
   background: var(--color-tooltip-background);
 }
 
-.lx-info-wrapper .popper>#arrow::before,
-.lx-info-wrapper .popper:hover>#arrow::before {
+.lx-info-wrapper .popper > #arrow::before,
+.lx-info-wrapper .popper:hover > #arrow::before {
   background: var(--color-tooltip-background) !important;
 }
 
@@ -1214,7 +1212,7 @@ code {
     padding-right: var(--space-3000);
   }
 
-  .lx-cover>div {
+  .lx-cover > div {
     width: 100%;
     margin-left: var(--space-3000);
     margin-right: var(--space-3000);
@@ -1239,7 +1237,7 @@ code {
     display: inherit;
   }
 
-  .lx .lx-document>.lx-form {
+  .lx .lx-document > .lx-form {
     width: 100%;
   }
 }
@@ -1274,7 +1272,7 @@ code {
     padding-right: var(--space-0);
   }
 
-  .lx-cover>div {
+  .lx-cover > div {
     width: 100%;
     margin-left: var(--space-3000);
     margin-right: var(--space-3000);
@@ -1282,7 +1280,7 @@ code {
     padding-right: var(--space-0);
   }
 
-  .lx-layout-default .lx-content .lx-main+.lx-divider {
+  .lx-layout-default .lx-content .lx-main + .lx-divider {
     display: none;
   }
 

@@ -1,25 +1,24 @@
 .lx {
-  --color-brand: #0042BA;
-  --color-background: #EEEAE3;
-  --color-data: #3C402B;
-  --color-chrome: #DADADA;
-  --color-region: #FFF;
-  --color-label: #3C402B;
-  --color-placeholder: #6C6C6C;
-  --color-interactive-background: #0042BA;
+  --color-brand: #0042ba;
+  --color-background: #eeeae3;
+  --color-data: #3c402b;
+  --color-chrome: #dadada;
+  --color-region: #fff;
+  --color-label: #3c402b;
+  --color-placeholder: #6c6c6c;
+  --color-interactive-background: #0042ba;
   --color-interactive-secondary-foreground: var(--color-data);
-  --color-interactive-secondary-background: #FFF;
-  --color-modal-button-secondary-background: #3C402B;
+  --color-interactive-secondary-background: #fff;
+  --color-modal-button-secondary-background: #3c402b;
   --color-modal-button-secondary-text: var(--color-region);
   --color-modal-button-primary-text-disabled: #8d8d8d;
   --color-modal-button-primary-border-disabled: var(--color-modal-button-primary-background-disabled);
-  --color-button-primary-background-disabled: #86A5D0;
-  --color-button-secondary-background-disabled: #F7F5F3;
-  --color-button-primary-text-disabled: #E8E8E8;
-  --color-button-secondary-text-disabled: #B3B3B3;
+  --color-button-primary-background-disabled: #86a5d0;
+  --color-button-secondary-background-disabled: #f7f5f3;
+  --color-button-primary-text-disabled: #e8e8e8;
+  --color-button-secondary-text-disabled: #b3b3b3;
   --color-button-primary-icon-disabled: var(--color-button-primary-text-disabled);
   --color-button-secondary-icon-disabled: var(--color-button-secondary-text-disabled);
-
 
   --font-size: 16px;
 
@@ -66,13 +65,13 @@
   --color-interactive-secondary-background: #5c5a4e;
   --color-interactive-hover-background: #2e61a7;
   --color-nav-item-background-selected: var(--color-region-2);
-  --color-modal-button-primary-text-disabled: #8C8982;
+  --color-modal-button-primary-text-disabled: #8c8982;
   --color-modal-button-primary-background-disabled: #514e4b;
-  --color-modal-button-primary-border-disabled: var(--color-modal-button-primary-background-disabled);  --color-button-primary-background-disabled: #323242;
+  --color-modal-button-primary-border-disabled: var(--color-modal-button-primary-background-disabled);
+  --color-button-primary-background-disabled: #323242;
   --color-button-secondary-background-disabled: #383633;
-  --color-button-primary-text-disabled: #6F717C;
-  --color-button-secondary-text-disabled: #8C8982;
+  --color-button-primary-text-disabled: #6f717c;
+  --color-button-secondary-text-disabled: #8c8982;
   --color-button-primary-icon-disabled: var(--color-button-primary-text-disabled);
   --color-button-secondary-icon-disabled: var(--color-button-secondary-text-disabled);
-  
 }

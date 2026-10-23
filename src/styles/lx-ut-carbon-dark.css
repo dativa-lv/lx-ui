@@ -313,7 +313,7 @@
   --color-input-complex-content-border-disabled: transparent;
   --color-input-complex-background-disabled: var(--color-input-background-disabled);
   --color-input-complex-content-background-disabled: transparent;
-  
+
   --color-input-slider-track-filled: var(--color-data);
   --color-input-slider-track-unfilled: var(--color-chrome);
   --color-input-slider-stop-indicator: transparent;
@@ -337,7 +337,7 @@
   --color-input-stepper-display-background: transparent;
   --color-input-stepper-display-border-disabled: transparent transparent var(--color-disabled-foreground) transparent;
   --color-input-stepper-display-background-disabled: transparent;
-  
+
   --color-displayer-complex-background: var(--color-input-background);
   --color-displayer-complex-content-background: transparent;
   --color-displayer-complex-border: var(--color-input-border);
@@ -351,7 +351,7 @@
   --color-button-destructive-background: var(--color-destructive);
   --color-button-destructive-border: var(--color-destructive);
   --color-button-destructive-icon: var(--color-interactive-foreground);
-  
+
   --color-button-primary-text: var(--color-interactive-foreground);
   --color-button-primary-background: var(--color-interactive-background);
   --color-button-primary-text-focus: var(--color-interactive-foreground);
@@ -411,7 +411,7 @@
   --color-button-tertiary-icon-disabled: var(--color-disabled-foreground);
   --color-button-tertiary-icon-focus: var(--color-interactive-background);
   --color-button-tertiary-icon-hover: var(--color-interactive-hover-foreground);
-  
+
   --color-button-ghost-text: var(--color-interactive-background);
   --color-button-ghost-background: transparent;
   --color-button-ghost-text-focus: var(--color-interactive-background);
@@ -431,7 +431,7 @@
   --color-button-ghost-icon-disabled: var(--color-disabled-foreground);
   --color-button-ghost-icon-focus: var(--color-interactive-background);
   --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
-  
+
   --color-popover-background: var(--color-region);
   --color-popover-border: var(--color-chrome);
   --color-popover-divider: var(--color-chrome);
@@ -658,7 +658,7 @@
   --color-toolbar-selection-button-icon-disabled: var(--color-disabled-foreground);
   --color-toolbar-selection-button-icon-focus: var(--color-interactive-foreground);
   --color-toolbar-selection-button-icon-hover: var(--color-interactive-hover-foreground);
-  
+
   --color-nav-item-text: #eee;
   --color-nav-item-background: transparent;
   --color-nav-item-text-hover: var(--color-interactive-hover-foreground);
@@ -670,7 +670,7 @@
   --color-nav-item-text-selected: #eee;
   --color-nav-item-background-selected: var(--color-highlight);
   --color-nav-item-border-selected: transparent transparent transparent var(--color-brand);
-  
+
   --color-nav-public-item-text: var(--color-nav-foreground);
   --color-nav-public-item-background: transparent;
   --color-nav-public-item-text-hover: var(--color-nav-foreground);
@@ -853,7 +853,7 @@
   --color-checkbox-border-off: var(--color-data);
   --color-checkbox-border-on: var(--color-data);
   --color-checkbox-tick: var(--color-region);
-  
+
   --color-checkbox-background-hover-off: var(--color-interactive-hover-background);
   --color-checkbox-border-hover-off: transparent;
   --color-checkbox-background-hover-on: var(--color-interactive-hover-background);

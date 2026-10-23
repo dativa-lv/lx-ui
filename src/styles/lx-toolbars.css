@@ -127,10 +127,10 @@
   box-shadow: none;
 }
 
-.lx-component-toolbar .left-area .lx-button[id*="select-all"] {
-  --toolbar-button-ghost-grid-areas: "icon content";
+.lx-component-toolbar .left-area .lx-button[id*='select-all'] {
+  --toolbar-button-ghost-grid-areas: 'icon content';
   --toolbar-button-ghost-grid-template-columns: auto 1fr;
-  --toolbar-embedded-button-ghost-grid-areas: "icon content";
+  --toolbar-embedded-button-ghost-grid-areas: 'icon content';
   --toolbar-embedded-button-ghost-grid-template-columns: auto 1fr;
 }
 
@@ -306,7 +306,7 @@
   margin-right: var(--space-0500);
 }
 
-.lx-component-toolbar .lx-button:not([id$="-select-all"]) {
+.lx-component-toolbar .lx-button:not([id$='-select-all']) {
   flex-shrink: 0;
 }
 
@@ -932,7 +932,7 @@
   border-color: var(--color-toolbar-selection-button-border-disabled);
 }
 
-/*** Toolbar icon-only styles ***/ 
+/*** Toolbar icon-only styles ***/
 
 .lx-component-toolbar .lx-button.lx-button-icon-only {
   padding: var(--toolbar-button-primary-icon-only-padding);
@@ -969,7 +969,7 @@
   min-width: var(--toolbar-selection-button-icon-only-min-width);
 }
 
-/* Embedded toolbar icon-only styles */ 
+/* Embedded toolbar icon-only styles */
 
 .lx-embedded-toolbar .lx-button.lx-button-icon-only {
   padding: var(--toolbar-embedded-button-primary-icon-only-padding);
@@ -1273,7 +1273,7 @@
   fill: var(--color-toolbar-selection-button-icon);
 }
 
-.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:hover svg  {
+.lx-selection-toolbar.lx-component-toolbar .first-row .lx-button-ghost:hover svg {
   fill: var(--color-toolbar-selection-button-icon-hover);
 }
 
@@ -1350,11 +1350,11 @@
 /*** Sticky toolbar ***/
 
 .lx .lx-sticky-toolbar-list-wrapper,
-.lx .lx-component-toolbar.lx-toolbar-sticky  {
+.lx .lx-component-toolbar.lx-toolbar-sticky {
   position: sticky;
   top: calc(var(--nav-row-size) + var(--toolbar-gap-top, 0rem));
   z-index: 10;
- }
+}
 
 .lx .lx-component-toolbar.lx-toolbar-sticky.lx-toolbar-hidden-under-footer {
   z-index: 5;
@@ -1437,8 +1437,8 @@
 }
 
 .lx:not(.lx-theme-contrast):not(.lx-no-transparency) .lx-component-toolbar.lx-toolbar-sticky::after {
-  background: linear-gradient(0deg,transparent 0%,var(--color-background) 100%);
-  content: "";
+  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
+  content: '';
   height: 3rem;
   position: absolute;
   top: var(--row-size);
@@ -1464,7 +1464,7 @@
 
 .lx #modals .lx-modal .lx-sticky-toolbar-list-wrapper,
 .lx #modals .lx-modal .lx-component-toolbar.lx-toolbar-sticky {
-  top: calc(var(--space-1000)* -1);
+  top: calc(var(--space-1000) * -1);
 }
 
 .lx #modals .lx-modal .lx-form-grid .lx-form-grid-header-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky,
@@ -1548,7 +1548,7 @@
 
 .lx-form-with-tabs-steps .lx-tab-wizard .lx-sticky-toolbar-list-wrapper,
 .lx-layout-public .lx-form-grid > .lx-tab-wizard .lx-sticky-toolbar-list-wrapper {
-  top: calc(var(--nav-row-size) + var(--row-size)  * 2 + var(--border-width-1));
+  top: calc(var(--nav-row-size) + var(--row-size) * 2 + var(--border-width-1));
 }
 
 /*** lxValuePicker toolbar ***/
@@ -1558,24 +1558,24 @@
 }
 
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area,
-.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group:not(:has(.lx-button[id*="select-all"])),
+.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group:not(:has(.lx-button[id*='select-all'])),
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group > .lx-field-wrapper {
   width: 100%;
 }
 
 .lx-value-picker-default-wrapper.select-all > .lx-component-toolbar > .first-row .lx-button,
 .lx-value-picker-indicators > .lx-component-toolbar > .first-row .lx-button {
-  --toolbar-button-ghost-grid-areas: "icon content";
+  --toolbar-button-ghost-grid-areas: 'icon content';
   --toolbar-button-ghost-grid-template-columns: auto 1fr;
 }
 
 .lx-value-picker-tile-tag-container > .lx-component-toolbar > .first-row .lx-button {
-  --toolbar-button-ghost-grid-areas: "icon content";
+  --toolbar-button-ghost-grid-areas: 'icon content';
   --toolbar-button-ghost-grid-template-columns: auto 1fr;
 }
 
 .lx-value-picker-horizontal-container > .lx-component-toolbar > .first-row .lx-button {
-  --toolbar-button-ghost-grid-areas: "icon content";
+  --toolbar-button-ghost-grid-areas: 'icon content';
   --toolbar-button-ghost-grid-template-columns: auto 1fr;
 }
 
@@ -1611,7 +1611,7 @@
 @media (max-height: 499px) {
   .lx .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-sticky-toolbar-list-wrapper {
-      position: static;
+    position: static;
   }
 
   .lx .lx-component-toolbar.lx-toolbar-sticky::after {
@@ -1622,12 +1622,12 @@
 @media (max-width: 900px) {
   .lx .lx-layout.lx-layout-public .lx-component-toolbar.lx-toolbar-sticky,
   .lx .lx-layout.lx-layout-latvijalv .lx-component-toolbar.lx-toolbar-sticky {
-	  top: var(--row-size);
-	}
-  
+    top: var(--row-size);
+  }
+
   .lx .lx-layout.lx-layout-public .lx-form-grid .lx-form-grid-header-sticky + .lx-main .lx-sticky-toolbar-list-wrapper,
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid .lx-form-grid-header-sticky + .lx-main .lx-sticky-toolbar-list-wrapper {
-    top: calc(var(--row-size)*2 + var(--border-width-1)) !important;
+    top: calc(var(--row-size) * 2 + var(--border-width-1)) !important;
   }
 
   .lx .lx-layout.lx-layout-public .lx-data-grid-wrapper.lx-grid-sticky-toolbar .lx-grid-header-wrapper,
@@ -1654,7 +1654,7 @@
   .lx .lx-layout.lx-layout-latvijalv .lx-form-grid .lx-form-grid-header-sticky + .lx-main .lx-component-toolbar.lx-toolbar-sticky {
     top: calc(var(--public-nav-header-size) + var(--border-width-1));
   }
-  
+
   .lx-layout-public .lx-data-grid-wrapper .lx-grid-header-wrapper,
   .lx-layout-latvijalv .lx-data-grid-wrapper .lx-grid-header-wrapper {
     top: var(--row-size);
@@ -1664,7 +1664,7 @@
   .lx .lx-layout.lx-layout-latvijalv.lx-sticky-toolbar-list-wrapper {
     top: var(--nav-row-size);
   }
- 
+
   .lx .lx-layout.lx-layout-public .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar,
   .lx .lx-layout.lx-layout-latvijalv .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
     top: var(--row-size);

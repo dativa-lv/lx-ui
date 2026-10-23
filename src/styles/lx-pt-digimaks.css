@@ -3,7 +3,7 @@
   --color-s: 92%;
   --color-l: 58%;
 
-  --color-brand-secondary: #4B0DA7;
+  --color-brand-secondary: #4b0da7;
 
   --color-background: #f5efff;
   --color-chrome: rgba(0, 0, 0, 0.1);
@@ -91,9 +91,9 @@
   --color-popover-item-icon-hover: var(--color-popover-item-icon);
   --color-popover-item-text-focus: var(--color-popover-item-text);
   --color-popover-item-background-focus: var(--color-popover-item-background);
-  --color-popover-item-border-focus:  var(--color-popover-item-background);
+  --color-popover-item-border-focus: var(--color-popover-item-background);
   --color-popover-item-icon-focus: var(--color-popover-item-icon);
-  --color-popover-item-text-active:  var(--color-popover-item-text);
+  --color-popover-item-text-active: var(--color-popover-item-text);
   --color-popover-item-background-active: var(--color-popover-item-background);
   --color-popover-item-border-active: var(--color-popover-item-background);
   --color-popover-item-icon-active: var(--color-popover-item-icon);
@@ -118,7 +118,7 @@
   --color-modal-button-secondary-border-active: transparent;
 
   --color-modal-button-header-background-hover: transparent;
-  --color-modal-button-header-background-focus:transparent;
+  --color-modal-button-header-background-focus: transparent;
   --color-modal-button-header-background-active: transparent;
   --color-modal-button-header-icon-hover: var(--color-data);
   --color-modal-button-header-icon-focus: var(--color-data);
@@ -178,7 +178,7 @@
   --color-s-dark: 100%;
   --color-l-dark: 73%;
 
-  --color-brand-secondary: #993FFF;
+  --color-brand-secondary: #993fff;
 
   --color-highlight: hsl(264, 50%, 33%);
   --color-background: #18151d;
@@ -231,9 +231,9 @@
   --color-popover-item-icon-hover: var(--color-popover-item-icon);
   --color-popover-item-text-focus: var(--color-popover-item-text);
   --color-popover-item-background-focus: var(--color-popover-item-background);
-  --color-popover-item-border-focus:  var(--color-popover-item-background);
+  --color-popover-item-border-focus: var(--color-popover-item-background);
   --color-popover-item-icon-focus: var(--color-popover-item-icon);
-  --color-popover-item-text-active:  var(--color-popover-item-text);
+  --color-popover-item-text-active: var(--color-popover-item-text);
   --color-popover-item-background-active: var(--color-popover-item-background);
   --color-popover-item-border-active: var(--color-popover-item-background);
   --color-popover-item-icon-active: var(--color-popover-item-icon);

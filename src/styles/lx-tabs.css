@@ -157,7 +157,7 @@
 }
 
 .lx-tab.lx-selected .lx-tab-icon {
-  fill: var(--color-data)
+  fill: var(--color-data);
 }
 
 .lx-tab .lx-icon {
@@ -165,7 +165,7 @@
 }
 
 .lx-tab .lx-tab-icon {
-  fill: var(--color-label)
+  fill: var(--color-label);
 }
 
 .lx-tab-control .lx-tab:hover {
@@ -245,7 +245,7 @@
   .lx-tab-control .lx-dropdown-container .additional-buttons {
     display: flex;
   }
-  
+
   .lx-tab-control .lx-dropdown-container .additional-buttons .lx-button.lx-button-ghost svg {
     fill: var(--color-data);
   }

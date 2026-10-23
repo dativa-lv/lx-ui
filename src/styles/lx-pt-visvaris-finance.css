@@ -1,16 +1,16 @@
 .lx {
-    --color-h: 128;
-    --color-s: 38%;
-    --color-l: 27%;
-    --color-highlight: #d2ddd3;
-    --color-background: #f0f0f0;
-    --color-data: #0f1a0d;
+  --color-h: 128;
+  --color-s: 38%;
+  --color-l: 27%;
+  --color-highlight: #d2ddd3;
+  --color-background: #f0f0f0;
+  --color-data: #0f1a0d;
 
-    --color-nav-item-background-selected: var(--color-highlight);
-  }
-  
-  .lx.lx-theme-dark {
-    --color-highlight: #2F3C36;
-    
-    --color-nav-item-background-selected: var(--color-highlight);
-  }
+  --color-nav-item-background-selected: var(--color-highlight);
+}
+
+.lx.lx-theme-dark {
+  --color-highlight: #2f3c36;
+
+  --color-nav-item-background-selected: var(--color-highlight);
+}

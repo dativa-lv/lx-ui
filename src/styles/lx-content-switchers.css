@@ -43,16 +43,18 @@
 }
 
 .lx-content-switcher-item:first-of-type {
-  border-radius: var(--content-switcher-outer-border-radius) 
-                 var(--content-switcher-inner-border-radius) 
-                 var(--content-switcher-inner-border-radius) 
+  /* prettier-ignore */
+  border-radius: var(--content-switcher-outer-border-radius)
+                 var(--content-switcher-inner-border-radius)
+                 var(--content-switcher-inner-border-radius)
                  var(--content-switcher-outer-border-radius);
 }
 
 .lx-content-switcher-item:last-of-type {
-  border-radius: var(--content-switcher-inner-border-radius) 
-                 var(--content-switcher-outer-border-radius) 
-                 var(--content-switcher-outer-border-radius) 
+  /* prettier-ignore */
+  border-radius: var(--content-switcher-inner-border-radius)
+                 var(--content-switcher-outer-border-radius)
+                 var(--content-switcher-outer-border-radius)
                  var(--content-switcher-inner-border-radius);
 }
 
@@ -69,16 +71,18 @@
 }
 
 .lx-content-switcher-item.lx-selected:first-of-type {
-  border-radius: var(--content-switcher-outer-border-radius-selected) 
-                 var(--content-switcher-inner-border-radius-selected) 
-                 var(--content-switcher-inner-border-radius-selected) 
+  /* prettier-ignore */
+  border-radius: var(--content-switcher-outer-border-radius-selected)
+                 var(--content-switcher-inner-border-radius-selected)
+                 var(--content-switcher-inner-border-radius-selected)
                  var(--content-switcher-outer-border-radius-selected);
 }
 
 .lx-content-switcher-item.lx-selected:last-of-type {
-  border-radius: var(--content-switcher-inner-border-radius-selected) 
-                 var(--content-switcher-outer-border-radius-selected) 
-                 var(--content-switcher-outer-border-radius-selected) 
+  /* prettier-ignore */
+  border-radius: var(--content-switcher-inner-border-radius-selected)
+                 var(--content-switcher-outer-border-radius-selected)
+                 var(--content-switcher-outer-border-radius-selected)
                  var(--content-switcher-inner-border-radius-selected);
 }
 

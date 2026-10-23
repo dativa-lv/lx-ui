@@ -1,16 +1,16 @@
 .lx {
-    --color-h: 218;
-    --color-s: 60%;
-    --color-l: 40%;
-    --color-highlight: #d2dcee;
-    --color-background: #eeeef2;
-    --color-data: #111827;
+  --color-h: 218;
+  --color-s: 60%;
+  --color-l: 40%;
+  --color-highlight: #d2dcee;
+  --color-background: #eeeef2;
+  --color-data: #111827;
 
-    --color-nav-item-background-selected: var(--color-highlight);
-  }
-  
-  .lx.lx-theme-dark {
-    --color-highlight: #2F3B4D;
-    
-    --color-nav-item-background-selected: var(--color-highlight);
-  }
+  --color-nav-item-background-selected: var(--color-highlight);
+}
+
+.lx.lx-theme-dark {
+  --color-highlight: #2f3b4d;
+
+  --color-nav-item-background-selected: var(--color-highlight);
+}

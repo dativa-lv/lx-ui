@@ -31,14 +31,14 @@
   --notification-text-primary-font-weight: var(--font-weight-data);
 }
 .lx.lx-theme-dark {
-	--color-brand: #cb728c;
-	--color-interactive-background: #cb728c;
-	--color-interactive-hover-background: #9f1853;
-	--color-interactive-secondary-background: #3c3e44;
-	--color-highlight: #291e1f;
-	--color-background: #131516;
-	--color-region: #212123;
-	--color-region-2: #151719;
-	--color-region-hover: #2f2f31;
-	--color-nav-item-background-selected: var(--color-highlight);
+  --color-brand: #cb728c;
+  --color-interactive-background: #cb728c;
+  --color-interactive-hover-background: #9f1853;
+  --color-interactive-secondary-background: #3c3e44;
+  --color-highlight: #291e1f;
+  --color-background: #131516;
+  --color-region: #212123;
+  --color-region-2: #151719;
+  --color-region-hover: #2f2f31;
+  --color-nav-item-background-selected: var(--color-highlight);
 }

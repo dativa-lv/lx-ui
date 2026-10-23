@@ -1,185 +1,176 @@
 .lx-list-wrapper .tree-list {
-    display: flex;
-    flex-direction: column;
-    overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
 }
 
 .lx-list-wrapper .tree-list .tree-item {
-    padding-top: var(--list-item-gap);
-    min-width: 20rem;
+  padding-top: var(--list-item-gap);
+  min-width: 20rem;
 }
 
-.lx-list-wrapper .tree-list .tree-item>.tree-item {
-    padding-left: var(--list-treelist-indent-child-left);
-    padding-right: var(--list-treelist-indent-child-right);
+.lx-list-wrapper .tree-list .tree-item > .tree-item {
+  padding-left: var(--list-treelist-indent-child-left);
+  padding-right: var(--list-treelist-indent-child-right);
 }
 
-.lx-list-wrapper .tree-list>.tree-item {
-    padding-left: var(--space-0);
-    padding-right: var(--space-0);
+.lx-list-wrapper .tree-list > .tree-item {
+  padding-left: var(--space-0);
+  padding-right: var(--space-0);
 }
 
 .lx-list-wrapper .tree-list .tree-item .tree-item-body,
 .lx-list-wrapper .tree-list-small .tree-item-small {
-    display: grid;
-    grid-template-areas: var(--list-treelist-grid-areas);
-    grid-template-columns: var(--list-treelist-grid-template-columns);
-    min-height: var(--list-item-min-height);
+  display: grid;
+  grid-template-areas: var(--list-treelist-grid-areas);
+  grid-template-columns: var(--list-treelist-grid-template-columns);
+  min-height: var(--list-item-min-height);
 }
 
 .lx-list-wrapper .tree-list .tree-item .lx-list-item-wrapper {
-    width: auto;
+  width: auto;
 }
 
 .lx-list-wrapper .tree-list .lx-list-item-container {
-    grid-area: treelist-content;
+  grid-area: treelist-content;
 }
 
-.lx-list-wrapper .tree-list .tree-item>.tree-item-body.not-expandable .lx-list-item-container {
-    margin-left: var(--list-treelist-indent-left);
-    margin-right: var(--list-treelist-indent-right);
+.lx-list-wrapper .tree-list .tree-item > .tree-item-body.not-expandable .lx-list-item-container {
+  margin-left: var(--list-treelist-indent-left);
+  margin-right: var(--list-treelist-indent-right);
 }
 
 .tree-item-small.not-expandable {
-    padding-left: var(--list-treelist-indent-left);
+  padding-left: var(--list-treelist-indent-left);
 }
 
-.tree-item-small>.lx-list-item-wrapper {
-    width: 100%;
+.tree-item-small > .lx-list-item-wrapper {
+  width: 100%;
 }
 
 .lx-list-wrapper .tree-list-small {
-    display: none;
+  display: none;
 }
 
 .tree-list .tree-item .tree-item-invalid,
-.tree-list-small>.tree-item-invalid {
-    border: var(--border-width-2) solid var(--color-red);
-    height: var(--row-size);
-    margin-left: calc(2 * var(--space-3000));
-    margin-top: var(--space-0500);
-    color: var(--color-red);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--color-list-item-background);
+.tree-list-small > .tree-item-invalid {
+  border: var(--border-width-2) solid var(--color-red);
+  height: var(--row-size);
+  margin-left: calc(2 * var(--space-3000));
+  margin-top: var(--space-0500);
+  color: var(--color-red);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-list-item-background);
 }
 
-.tree-list .tree-item .tree-item-invalid>.lx-button{
-    height: calc(var(--row-size) - 2px);
+.tree-list .tree-item .tree-item-invalid > .lx-button {
+  height: calc(var(--row-size) - 2px);
 }
 
 .lx-region-component .tree-list .tree-item .tree-item-invalid,
 .lx-region .tree-list .tree-item .tree-item-invalid,
-.lx-region-component .tree-list-small>.tree-item-invalid
-.lx-region .tree-list-small>.tree-item-invalid {
-    --color-list-item-background: var(--color-region-2);
+.lx-region-component .tree-list-small > .tree-item-invalid .lx-region .tree-list-small > .tree-item-invalid {
+  --color-list-item-background: var(--color-region-2);
 }
 
-.tree-list-small>.tree-item-invalid {
-    margin-left: var(--space-3000);
+.tree-list-small > .tree-item-invalid {
+  margin-left: var(--space-3000);
 }
 
-.tree-list .tree-item .tree-item-invalid>.invalid-text,
-.tree-list-small>.tree-item-invalid>.invalid-text {
-    padding-left: var(--space-1000);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-0500);
+.tree-list .tree-item .tree-item-invalid > .invalid-text,
+.tree-list-small > .tree-item-invalid > .invalid-text {
+  padding-left: var(--space-1000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-0500);
 }
 
-.tree-list .tree-item .tree-item-invalid>.invalid-text>svg,
-.tree-list-small>.tree-item-invalid>.invalid-text>svg {
-    fill: var(--color-red);
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
+.tree-list .tree-item .tree-item-invalid > .invalid-text > svg,
+.tree-list-small > .tree-item-invalid > .invalid-text > svg {
+  fill: var(--color-red);
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
 }
 
 .tree-list .tree-item .tree-item-body > .lx-button {
-    grid-area: expander;
-    height: var(--list-treelist-expander-height);
-    width: var(--list-treelist-expander-width);
+  grid-area: expander;
+  height: var(--list-treelist-expander-height);
+  width: var(--list-treelist-expander-width);
 }
 
 .tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) .lx-list-icon,
-.tree-list .tree-item-small-parent:has(.lx-list-item:not(.lx-list-item-disabled))
-  .lx-list-item-actions
-  .lx-dropdown-toggler
-  .lx-button
-  svg,
-.tree-list .tree-item-small-parent:has(.lx-list-item:not(.lx-list-item-disabled))
-  .lx-list-item-actions
-  > .lx-button
-  svg {
-    fill: var(--color-selected);
+.tree-list .tree-item-small-parent:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-list-item-actions .lx-dropdown-toggler .lx-button svg,
+.tree-list .tree-item-small-parent:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-list-item-actions > .lx-button svg {
+  fill: var(--color-selected);
 }
 
 .tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) p.lx-primary,
 .tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) p.lx-secondary {
-    color: var(--color-selected);
+  color: var(--color-selected);
 }
 
 .lx .tree-list .tree-item-small-parent:not(:has(.lx-list-item-container)) .lx-list-item-wrapper,
 .lx .tree-list .tree-item-small-parent .lx-list-item-container {
-    background-color: var(--color-selected-background);
-    border-color: var(--color-selected-border);
+  background-color: var(--color-selected-background);
+  border-color: var(--color-selected-border);
 }
 
 .lx .lx-region .tree-list .tree-item-small-parent:not(:has(.lx-list-item-container)) .lx-list-item-wrapper,
 .lx .lx-region .tree-list .tree-item-small-parent .lx-list-item-container {
-    background-color: var(--color-selected-background);
+  background-color: var(--color-selected-background);
 }
-  
+
 .lx .tree-item-small-parent .lx-list-item.lx-list-item-interactive:not(.lx-list-item-disabled):hover {
-    background-color: var(--color-list-item-background-hover);
+  background-color: var(--color-list-item-background-hover);
 }
 
-.tree-list .tree-item .tree-item-invalid>.lx-button:not(.lx-disabled) svg,
-.tree-list-small>.tree-item-invalid>.lx-button:not(.lx-disabled) svg,
-.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button:not(.lx-disabled) > .lx-button-content-wrapper svg,
-.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button:not(.lx-disabled) > .lx-button-content-wrapper svg {
-    fill: var(--color-list-icon);
+.tree-list .tree-item .tree-item-invalid > .lx-button:not(.lx-disabled) svg,
+.tree-list-small > .tree-item-invalid > .lx-button:not(.lx-disabled) svg,
+.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent) > .lx-button:not(.lx-disabled) > .lx-button-content-wrapper svg,
+.lx-list-wrapper .tree-list .tree-item .tree-item-body > .lx-button:not(.lx-disabled) > .lx-button-content-wrapper svg {
+  fill: var(--color-list-icon);
 }
 
-.tree-list .tree-item .tree-item-invalid>.lx-button:hover:not(.lx-disabled) svg,
-.tree-list-small>.tree-item-invalid>.lx-button:hover:not(.lx-disabled) svg,
-.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button:hover:not(.lx-disabled)>.lx-button-content-wrapper svg,
-.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button:hover:not(.lx-disabled)>.lx-button-content-wrapper svg {
-    fill: var(--color-interactive-hover-foreground);
+.tree-list .tree-item .tree-item-invalid > .lx-button:hover:not(.lx-disabled) svg,
+.tree-list-small > .tree-item-invalid > .lx-button:hover:not(.lx-disabled) svg,
+.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent) > .lx-button:hover:not(.lx-disabled) > .lx-button-content-wrapper svg,
+.lx-list-wrapper .tree-list .tree-item .tree-item-body > .lx-button:hover:not(.lx-disabled) > .lx-button-content-wrapper svg {
+  fill: var(--color-interactive-hover-foreground);
 }
 
 .tree-list-search {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-0500);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0500);
 }
 
-.lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children>.lx-button {
-    background-color: var(--color-highlight-background);
+.lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children > .lx-button {
+  background-color: var(--color-highlight-background);
 }
 
-.tree-list .tree-item .tree-item-body.selected-children>.lx-button:not(.lx-disabled) > .lx-button-content-wrapper svg {
-    fill: var(--color-selected);
+.tree-list .tree-item .tree-item-body.selected-children > .lx-button:not(.lx-disabled) > .lx-button-content-wrapper svg {
+  fill: var(--color-selected);
 }
 
-.lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children>.lx-button:hover:not(.lx-disabled) {
-    background-color: var(--color-interactive-hover-background);
+.lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children > .lx-button:hover:not(.lx-disabled) {
+  background-color: var(--color-interactive-hover-background);
 }
 
 .lx-list-wrapper .tree-list .tree-item:first-child {
-    padding-top: var(--space-0);
+  padding-top: var(--space-0);
 }
 
 @media (max-width: 800px) {
+  .lx-list-wrapper .tree-list {
+    display: none;
+  }
 
-    .lx-list-wrapper .tree-list {
-        display: none;
-    }
-
-    .lx-list-wrapper .tree-list-small {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-0500);
-    }
+  .lx-list-wrapper .tree-list-small {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0500);
+  }
 }

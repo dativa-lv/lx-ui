@@ -112,9 +112,7 @@
 }
 
 .lx-chat-wrapper .lx-chat-bubble.lx-list-item-wrapper:has(.lx-category-displayer):not(:has(.lx-invalid)):not(:has(.lx-list-item-actions:not(.lx-list-actions-hidden))) {
-  --list-item-header-padding: var(--space-0250)
-    calc(0.35rem + var(--list-category-width) + 2 * var(--list-category-margin)) 0.2rem
-    var(--space-0250);
+  --list-item-header-padding: var(--space-0250) calc(0.35rem + var(--list-category-width) + 2 * var(--list-category-margin)) 0.2rem var(--space-0250);
 }
 
 .lx-chat-wrapper .lx-chat-bubble .lx-list-item:focus-visible {

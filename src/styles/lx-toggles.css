@@ -11,7 +11,7 @@
 }
 
 /* Check out why -1px */
-.lx-layout .lx-toggle-wrapper input[type="checkbox"].lx-toggle {
+.lx-layout .lx-toggle-wrapper input[type='checkbox'].lx-toggle {
   position: absolute;
   overflow: hidden;
   height: 0;
@@ -102,24 +102,26 @@
   transform: translateX(0);
 }
 
+/* prettier-ignore */
 .lx-toggle-wrapper.lx-indeterminate .lx-toggle-appearance .lx-toggle-thumb {
   transform: translateX(
     calc((
       var(--toggle-width-m)
-      - var(--toggle-thumb-width-off-m)
-      - (var(--toggle-padding-left-m) * 2)
-      - (2 * var(--toggle-border-width-m))
+       - var(--toggle-thumb-width-off-m) 
+       - (var(--toggle-padding-left-m) * 2) 
+       - (2 * var(--toggle-border-width-m))
     ) / 2)
   );
 }
 
+/* prettier-ignore */
 .lx-toggle-wrapper.lx-checked .lx-toggle-appearance .lx-toggle-thumb {
   transform: translateX(
     calc(
-      var(--toggle-width-m)
-      - var(--toggle-thumb-width-on-m)
-      - var(--toggle-padding-left-m)
-      - var(--toggle-padding-right-m)
+      var(--toggle-width-m) 
+      - var(--toggle-thumb-width-on-m) 
+      - var(--toggle-padding-left-m) 
+      - var(--toggle-padding-right-m) 
       - (2 * var(--toggle-border-width-m))
     )
   );
@@ -132,7 +134,7 @@
 /*** Small toggle styles ***/
 
 .lx-form-grid .lx-small .lx-toggle-label-wrapper {
-  margin: var(--space-0750) var(--space-0); /* --toggle-height-s + 0.75 * 2 = --input-height */ 
+  margin: var(--space-0750) var(--space-0); /* --toggle-height-s + 0.75 * 2 = --input-height */
 }
 
 .lx-form-grid .lx-row-header .lx-small .lx-toggle-label-wrapper {
@@ -159,6 +161,7 @@
   height: var(--toggle-thumb-height-off-s);
 }
 
+/* prettier-ignore */
 .lx-toggle-wrapper.lx-small.lx-checked .lx-toggle-thumb {
   transform: translateX(
     calc(
@@ -174,6 +177,7 @@
   height: var(--toggle-thumb-height-on-s);
 }
 
+/* prettier-ignore */
 .lx-toggle-wrapper.lx-small.lx-indeterminate .lx-toggle-thumb {
   transform: translateX(
     calc((
@@ -289,7 +293,7 @@
   font-size: var(--toggle-text-font-size);
   line-height: var(--toggle-text-line-height);
   color: var(--color-toggle-text);
-  margin: var(--space-0500) var(--space-0); /* --toggle-height-m + 0.5 * 2 = --input-height */ 
+  margin: var(--space-0500) var(--space-0); /* --toggle-height-m + 0.5 * 2 = --input-height */
 }
 
 .lx-toggle-appearance ~ .lx-toggle-text {
