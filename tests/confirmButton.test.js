@@ -1,5 +1,5 @@
 import { nextTick } from 'vue';
-import { describe, test, expect, afterEach, beforeEach } from 'vitest';
+import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
 import { mount, RouterLinkStub } from '@vue/test-utils';
 import LxConfirmButton from '@/components/ConfirmButton.vue';
 
@@ -96,5 +96,74 @@ describe('LxConfirmButton', () => {
     expect(document.querySelector('#cb-dialog-label').textContent).toBe(
       'Vai tiešām gribat PDF lejupielāde?'
     );
+  });
+});
+
+describe('LxConfirmButton hold shortcut', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  async function press(duration) {
+    const btn = wrapper.find('#cb');
+    await btn.trigger('pointerdown', { button: 0 });
+    vi.advanceTimersByTime(duration);
+    await nextTick();
+    await btn.trigger('pointerup');
+    await btn.trigger('click');
+    await nextTick();
+  }
+
+  test('emits click without dialog after holding', async () => {
+    wrapper = mountButton({ icon: 'delete' });
+    const btn = wrapper.find('#cb');
+    await btn.trigger('pointerdown', { button: 0 });
+    vi.advanceTimersByTime(500);
+    await nextTick();
+    expect(btn.classes()).toContain('lx-confirm-button-holding');
+
+    vi.advanceTimersByTime(1000);
+    await nextTick();
+    expect(btn.classes()).toContain('lx-confirm-button-hold-done');
+    expect(wrapper.emitted('click')).toHaveLength(1);
+
+    await btn.trigger('pointerup');
+    await btn.trigger('click');
+    await nextTick();
+    expect(wrapper.emitted('click')).toHaveLength(1);
+    expect(document.querySelector('#cb-dialog')).toBeNull();
+
+    vi.advanceTimersByTime(1000);
+    await nextTick();
+    expect(btn.classes()).not.toContain('lx-confirm-button-hold-done');
+  });
+
+  test('releasing early cancels without dialog', async () => {
+    wrapper = mountButton();
+    await press(1000);
+
+    expect(wrapper.emitted('click')).toBeUndefined();
+    expect(document.querySelector('#cb-dialog')).toBeNull();
+  });
+
+  test('short press still opens dialog', async () => {
+    wrapper = mountButton();
+    await press(100);
+
+    expect(wrapper.emitted('click')).toBeUndefined();
+    expect(document.querySelector('#cb-dialog')).not.toBeNull();
+  });
+
+  test('holding does nothing when disabled', async () => {
+    wrapper = mountButton({ disabled: true });
+    await wrapper.find('#cb').trigger('pointerdown', { button: 0 });
+    vi.advanceTimersByTime(5000);
+    await nextTick();
+
+    expect(wrapper.emitted('click')).toBeUndefined();
   });
 });

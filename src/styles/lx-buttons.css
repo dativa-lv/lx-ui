@@ -1275,3 +1275,120 @@ a.lx-button.lx-button-ghost svg {
     width: 100%;
   }
 }
+
+/*** Confirm button hold styles ***/
+
+@property --lx-confirm-hold-progress {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@keyframes lx-confirm-hold {
+  from {
+    --lx-confirm-hold-progress: 0%;
+  }
+
+  to {
+    --lx-confirm-hold-progress: 100%;
+  }
+}
+
+.lx-button.lx-confirm-button-hold {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.lx-button.lx-confirm-button-holding:not(.lx-disabled),
+.lx-button.lx-confirm-button-hold-done:not(.lx-disabled) {
+  background: var(--color-button-primary-background-active);
+  color: var(--color-button-primary-text-active);
+  border-color: var(--color-button-primary-border-active);
+}
+
+.lx-button.lx-button-secondary.lx-confirm-button-holding:not(.lx-disabled),
+.lx-button.lx-button-secondary.lx-confirm-button-hold-done:not(.lx-disabled) {
+  background: var(--color-button-secondary-background-active);
+  color: var(--color-button-secondary-text-active);
+  border-color: var(--color-button-secondary-border-active);
+}
+
+.lx-button.lx-button-tertiary.lx-confirm-button-holding:not(.lx-disabled),
+.lx-button.lx-button-tertiary.lx-confirm-button-hold-done:not(.lx-disabled) {
+  background: var(--color-button-tertiary-background-active);
+  color: var(--color-button-tertiary-text-active);
+  border-color: var(--color-button-tertiary-border-active);
+}
+
+.lx-button.lx-button-ghost.lx-confirm-button-holding:not(.lx-disabled),
+.lx-button.lx-button-ghost.lx-confirm-button-hold-done:not(.lx-disabled) {
+  background: var(--color-button-ghost-background-active);
+  color: var(--color-button-ghost-text-active);
+  border-color: var(--color-button-ghost-border-active);
+}
+
+.lx-button.lx-confirm-button-hold-done:not(.lx-disabled) svg {
+  fill: var(--color-button-primary-icon-active);
+}
+
+.lx-button.lx-button-secondary.lx-confirm-button-hold-done:not(.lx-disabled) svg {
+  fill: var(--color-button-secondary-icon-active);
+}
+
+.lx-button.lx-button-tertiary.lx-confirm-button-hold-done:not(.lx-disabled) svg {
+  fill: var(--color-button-tertiary-icon-active);
+}
+
+.lx-button.lx-button-ghost.lx-confirm-button-hold-done:not(.lx-disabled) svg {
+  fill: var(--color-button-ghost-icon-active);
+}
+
+.lx-button.lx-confirm-button-holding .lx-button-icon {
+  visibility: hidden;
+}
+
+/* Skip the original icon's leave animation so only the tick shows after the ring */
+.lx-button.lx-confirm-button-hold-done .lx-button-icon .icon-default-leave-active {
+  display: none;
+}
+
+.lx-button.lx-confirm-button-holding:not(.lx-button-text-only) .lx-button-content-wrapper::after {
+  content: '';
+  grid-area: icon;
+  justify-self: center;
+  width: var(--button-primary-icon-size);
+  height: var(--button-primary-icon-size);
+  border-radius: 50%;
+  background: conic-gradient(transparent var(--lx-confirm-hold-progress), currentColor 0);
+  mask: radial-gradient(farthest-side, transparent 62%, #000 64%);
+  scale: 0.875; /* match icon glyph size, icons have 2/32 padding */
+  animation: lx-confirm-hold var(--lx-confirm-hold-duration) linear forwards;
+}
+
+.lx-button.lx-button-secondary.lx-confirm-button-holding .lx-button-content-wrapper::after {
+  width: var(--button-secondary-icon-size);
+  height: var(--button-secondary-icon-size);
+}
+
+.lx-button.lx-button-tertiary.lx-confirm-button-holding .lx-button-content-wrapper::after {
+  width: var(--button-tertiary-icon-size);
+  height: var(--button-tertiary-icon-size);
+}
+
+.lx-button.lx-button-ghost.lx-confirm-button-holding .lx-button-content-wrapper::after {
+  width: var(--button-ghost-icon-size);
+  height: var(--button-ghost-icon-size);
+}
+
+.lx-button.lx-confirm-button-holding.lx-button-text-only::after {
+  content: '';
+  position: absolute;
+  left: var(--space-0);
+  bottom: var(--space-0);
+  height: var(--border-width-3);
+  width: calc(100% - var(--lx-confirm-hold-progress));
+  background: currentColor;
+  animation: lx-confirm-hold var(--lx-confirm-hold-duration) linear forwards;
+}

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxDialog from '@/components/Dialog.vue';
 import useLx from '@/hooks/useLx';
@@ -105,7 +105,88 @@ function close() {
   dialogRef.value?.close();
 }
 
+const HOLD_START_DELAY = 300;
+const HOLD_DURATION = 1500;
+const HOLD_DONE_DURATION = 1000;
+
+const holdState = ref('idle'); // idle, pressed, holding, done
+let holdTimers = [];
+let suppressClick = false;
+
+const isHoldDisabled = computed(() => props.disabled || props.loading || props.busy);
+
+const holdClass = computed(() =>
+  [
+    props.customClass,
+    'lx-confirm-button-hold',
+    holdState.value === 'holding' && 'lx-confirm-button-holding',
+    holdState.value === 'done' && 'lx-confirm-button-hold-done',
+  ]
+    .filter(Boolean)
+    .join(' ')
+);
+
+const holdStyle = { '--lx-confirm-hold-duration': `${HOLD_DURATION - HOLD_START_DELAY}ms` };
+
+function clearHoldTimers() {
+  holdTimers.forEach(clearTimeout);
+  holdTimers = [];
+}
+
+function holdStart(e) {
+  if (isHoldDisabled.value || holdState.value !== 'idle') return;
+  suppressClick = false;
+  holdState.value = 'pressed';
+  holdTimers.push(
+    setTimeout(() => {
+      holdState.value = 'holding';
+    }, HOLD_START_DELAY),
+    setTimeout(() => {
+      clearHoldTimers();
+      holdState.value = 'done';
+      suppressClick = true;
+      emits('click', e);
+      holdTimers.push(
+        setTimeout(() => {
+          holdState.value = 'idle';
+        }, HOLD_DONE_DURATION)
+      );
+    }, HOLD_DURATION)
+  );
+}
+
+function holdEnd() {
+  if (holdState.value === 'holding') suppressClick = true;
+  if (holdState.value === 'pressed' || holdState.value === 'holding') {
+    clearHoldTimers();
+    holdState.value = 'idle';
+  }
+}
+
+function pointerDown(e) {
+  if (e.button !== 0) return;
+  holdStart(e);
+}
+
+function keyDown(e) {
+  if (e.repeat || (e.key !== 'Enter' && e.key !== ' ')) return;
+  holdStart(e);
+}
+
+function keyUp(e) {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  holdEnd();
+}
+
+function contextMenu(e) {
+  if (holdState.value !== 'idle') e.preventDefault();
+}
+
 function buttonClick(...args) {
+  if (suppressClick || holdState.value === 'holding' || holdState.value === 'done') {
+    suppressClick = false;
+    return;
+  }
   pendingClickArgs.value = args;
   open();
 }
@@ -126,6 +207,8 @@ function dialogClose() {
   buttonRef.value?.focus();
 }
 
+onBeforeUnmount(clearHoldTimers);
+
 defineOptions({ inheritAttrs: false });
 
 defineExpose({
@@ -143,7 +226,7 @@ defineExpose({
     :label="label"
     :title="title"
     :busyTooltip="busyTooltip"
-    :icon="icon"
+    :icon="holdState === 'done' && icon ? 'tick' : icon"
     :iconSet="iconSet"
     :iconVariant="iconVariant"
     :kind="kind"
@@ -159,9 +242,18 @@ defineExpose({
     :badgeTitle="badgeTitle"
     :active="active"
     :tabindex="tabindex"
-    :customClass="customClass"
+    :customClass="holdClass"
+    :style="holdStyle"
     :texts="{ badgeTypes: displayTexts.badgeTypes }"
     @click="buttonClick"
+    @pointerdown="pointerDown"
+    @pointerup="holdEnd"
+    @pointerleave="holdEnd"
+    @pointercancel="holdEnd"
+    @keydown="keyDown"
+    @keyup="keyUp"
+    @blur="holdEnd"
+    @contextmenu="contextMenu"
   />
   <LxDialog
     ref="dialogRef"
