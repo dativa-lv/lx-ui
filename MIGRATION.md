@@ -158,6 +158,19 @@ is missing from `items` is now shown as the id instead of an empty field.
 - Don't add new usages of `preloadedItems` or function `items`.
 - Update `customItem` templates to the `{ item, context }` slot props when switching to `mode="new"`.
 
+## 2.3.9 → 2.3.10
+
+### Breaking changes
+
+#### Links
+
+**Token renames**
+
+The `--text-decoration-link` (previous value: `underline`) token has been split into four tokens to support two types of links:
+
+- Inline links use `--link-inline-text-decoration` and `--link-inline-text-decoration-hover`. They appear within or between text elements, such as in LxMarkdownTextArea or LxRichTextDisplay.
+- Standalone links use `--link-standalone-text-decoration` and `--link-standalone-text-decoration-hover`. They appear independently, where their placement and styling make them recognizable as links, such as in breadcrumbs or a site map.
+
 ## 2.3.8 → 2.3.9
 
 ### Breaking changes

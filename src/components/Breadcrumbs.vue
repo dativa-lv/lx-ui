@@ -57,7 +57,7 @@ const trailingCrumbs = computed(() =>
     :class="{ 'lx-breadcrumbs-truncate-first': truncateFirst }"
   >
     <li class="lx-breadcrumb">
-      <router-link :to="firstCrumb.to">{{ firstCrumb.label }}</router-link>
+      <router-link class="lx-link" :to="firstCrumb.to">{{ firstCrumb.label }}</router-link>
     </li>
     <li v-if="collapsed" class="lx-breadcrumb lx-breadcrumb-overflow">
       <LxDropDownMenu
@@ -74,7 +74,7 @@ const trailingCrumbs = computed(() =>
       </LxDropDownMenu>
     </li>
     <li v-for="crumb in trailingCrumbs" :key="crumb.index" class="lx-breadcrumb">
-      <router-link :to="crumb.to">{{ crumb.label }}</router-link>
+      <router-link class="lx-link" :to="crumb.to">{{ crumb.label }}</router-link>
     </li>
   </ul>
 </template>

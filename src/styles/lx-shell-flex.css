@@ -87,8 +87,8 @@
 }
 
 .lx-breadcrumbs .lx-breadcrumb a {
-  text-decoration: none;
-  font-size: var(--font-size-small);
+  --link-inline-text-decoration: none;
+  --link-inline-text-decoration-hover: underline;
 }
 
 .lx-breadcrumbs .lx-breadcrumb:first-of-type {

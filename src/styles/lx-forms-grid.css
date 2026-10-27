@@ -481,6 +481,12 @@ svg .lx-shade {
   line-height: 1.25em;
 }
 
+.lx-form-grid .lx-row a,
+.lx-form-grid .lx-row .lx-link {
+  --link-text-font-weight: var(--font-weight-data);
+  word-break: break-word;
+}
+
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-field-wrapper > .lx-date-time-picker-wrapper p.lx-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-field-wrapper > .lx-date-time-picker-wrapper p.lx-data {
   min-height: 0;

@@ -12,10 +12,10 @@ const isHrefString = computed(() => typeof props.href === 'string');
   <div class="lx-link-wrapper">
     <template v-if="href">
       <template v-if="isHrefString">
-        <a :href="href" rel="noopener noreferrer"> <slot /></a>
+        <a class="lx-link" :href="href" rel="noopener noreferrer"> <slot /></a>
       </template>
       <template v-else>
-        <RouterLink :to="href"> <slot /></RouterLink>
+        <RouterLink class="lx-link" :to="href"> <slot /></RouterLink>
       </template>
     </template>
     <template v-else>

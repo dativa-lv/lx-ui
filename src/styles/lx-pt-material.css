@@ -316,6 +316,9 @@
 
   /* LxAppendableList */
   --appendable-list-toolbar-gap-bottom: var(--space-0500);
+
+  /* Links */
+  --link-border-radius: var(--border-radius-0250);
 }
 
 .lx.lx-theme-dark {

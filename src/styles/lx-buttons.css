@@ -1,22 +1,3 @@
-/*** Link styles ***/
-
-.lx a {
-  color: var(--color-interactive-background);
-  font-size: var(--font-size);
-  font-weight: var(--font-weight-interactive);
-  text-decoration: var(--text-decoration-link);
-}
-
-.lx a:hover {
-  color: var(--color-interactive-hover-foreground);
-  background: var(--color-interactive-hover-background);
-}
-
-.lx-link-wrapper a,
-a.lx-sitemap-link {
-  display: inline-block;
-}
-
 /*** General styles ***/
 
 .lx-button-set {
@@ -1085,6 +1066,56 @@ a.lx-button.lx-button-ghost svg {
   opacity: 1;
 }
 
+/*** Link styles ***/
+
+.lx a,
+.lx .lx-link,
+.lx button.lx-link {
+  color: var(--color-link-text);
+  font-size: var(--link-text-font-size);
+  font-weight: var(--link-text-font-weight);
+  line-height: var(--link-text-line-height);
+  background: var(--color-link-background);
+  border-radius: var(--link-border-radius);
+  -webkit-text-decoration: var(--link-inline-text-decoration);
+  text-decoration: var(--link-inline-text-decoration);
+  text-underline-offset: var(--link-text-decoration-offset);
+  transition: none;
+}
+
+.lx a:visited,
+.lx .lx-link:visited,
+.lx button.lx-link:visited {
+  color: var(--color-link-text-visited);
+  background: var(--color-link-background-visited);
+}
+
+.lx a:focus,
+.lx .lx-link:focus,
+.lx button.lx-link:focus {
+  outline: 2px solid var(--color-focus-background);
+}
+
+.lx a:hover,
+.lx .lx-link:hover,
+.lx button.lx-link:hover {
+  color: var(--color-link-text-hover);
+  background: var(--color-link-background-hover);
+  text-decoration: var(--link-inline-text-decoration-hover);
+}
+
+.lx a:active,
+.lx .lx-link:active,
+.lx button.lx-link:active {
+  color: var(--color-link-text-active);
+  background: var(--color-link-background-active);
+}
+
+.lx-link-wrapper a,
+a.lx-sitemap-link {
+  display: inline-block;
+}
+
 /*** SiteMap styles ***/
 
 .lx-sitemap-wrapper {
@@ -1108,15 +1139,18 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-sitemap-wrapper .lx-sitemap .lx-sitemap-link {
-  text-decoration: none;
+  text-decoration: var(--link-standalone-text-decoration);
+}
+
+.lx-sitemap-wrapper .lx-sitemap .lx-sitemap-link:hover {
+  text-decoration: var(--link-standalone-text-decoration-hover);
 }
 
 .lx-layout > footer .lx-sitemap .lx-sitemap-link {
-  color: var(--color-nav-foreground);
-}
-
-.lx-layout > footer .lx-sitemap .lx-sitemap-link:hover {
-  color: var(--color-interactive-hover-foreground);
+  --color-link-text: var(--color-nav-foreground);
+  --color-link-text-hover: var(--color-nav-foreground);
+  --color-link-text-visited: var(--color-nav-foreground);
+  --color-link-text-active: var(--color-nav-foreground);
 }
 
 /*** Misc styles ***/

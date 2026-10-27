@@ -1023,17 +1023,11 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 
 .lx:not(.lx-no-animations) .lx-button,
 .lx:not(.lx-no-animations) .lx-alert-menu .lx-button > .lx-badge {
-  transition:
-    background-color 0.1s ease-in,
-    color 0.1s ease-in,
-    border-color 0.1s ease-in;
+  transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
 
 .lx:not(.lx-no-animations) .primary-menu-tile {
-  transition:
-    background-color 0.1s ease-in,
-    color 0.1s ease-in,
-    border-color 0.1s ease-in;
+  transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
 
 @media (max-height: calc(8rem * 5)) {
@@ -1666,7 +1660,8 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 }
 
 .lx .lx-header .lx-mega-menu-container ul li.primary-menu-tile > a {
-  text-decoration: none;
+  --link-inline-text-decoration: none;
+  --link-inline-text-decoration-hover: none;
 }
 
 .lx .lx-header .lx-mega-menu-container ul li.primary-menu-tile > *:focus-visible {

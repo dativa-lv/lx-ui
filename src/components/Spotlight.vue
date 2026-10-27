@@ -317,7 +317,7 @@ defineExpose({ setSpotlightItem, spotlightEnd });
             {{ item?.description }}
           </div>
           <div class="lx-spotlight-show-more" v-if="item?.showMore ?? hasShowMore">
-            <button class="link-button" type="button" @click="showMore">
+            <button class="link-button lx-link" type="button" @click="showMore">
               {{ displayTexts.showMore }}
             </button>
           </div>

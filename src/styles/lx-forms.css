@@ -116,10 +116,6 @@
   white-space: pre-wrap;
 }
 
-.lx .lx-form .lx-row .lx-data a {
-  font-weight: var(--font-weight-data);
-}
-
 .lx-highlight {
   background-color: var(--color-highlight);
   color: var(--color-highlight-foreground);

@@ -718,13 +718,14 @@
   width: 100%;
 }
 
-.lx .lx-markdown-text-area a {
+.lx .lx-markdown-text-area.lx-input-area a {
   cursor: pointer !important;
+  --link-text-font-weight: unset;
 }
 
 /* Color picker sets an inline color on a span inside the link, override it on hover for contrast */
 .lx-markdown-text-area a:hover span {
-  color: var(--color-interactive-hover-foreground) !important;
+  color: var(--color-link-text-hover) !important;
 }
 
 .lx-markdown-text-area .ProseMirror p {

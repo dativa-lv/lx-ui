@@ -910,4 +910,13 @@
   --color-orange-foreground: var(--color-region);
   --color-yellow-foreground: #333;
   --color-teal-foreground: var(--color-region);
+
+  --color-link-text: var(--color-interactive-background);
+  --color-link-text-hover: var(--color-interactive-background);
+  --color-link-text-visited: var(--color-interactive-background);
+  --color-link-text-active: var(--color-interactive-background);
+  --color-link-background: transparent;
+  --color-link-background-hover: transparent;
+  --color-link-background-visited: transparent;
+  --color-link-background-active: transparent;
 }

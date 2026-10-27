@@ -12,7 +12,6 @@
   --font-weight-data: 600;
   --font-weight-bold: 600;
   --font-weight-extra-bold: 700;
-  --text-decoration-link: underline;
 
   --icon-size-xs: 1rem;
   --icon-size-s: 1.25rem;
@@ -1209,6 +1208,16 @@
   --form-section-divider-margin: var(--space-0);
   --form-header-footer-divider-display: block;
   --form-section-padding: var(--space-2000);
+
+  --link-inline-text-decoration: underline;
+  --link-inline-text-decoration-hover: none;
+  --link-standalone-text-decoration: none;
+  --link-standalone-text-decoration-hover: underline;
+  --link-border-radius: var(--border-radius-0);
+  --link-text-font-weight: var(--font-weight-interactive);
+  --link-text-font-size: var(--font-size);
+  --link-text-line-height: 1.5;
+  --link-text-decoration-offset: auto;
 }
 
 @media (pointer: coarse), (pointer: none) {

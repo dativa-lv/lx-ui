@@ -309,11 +309,10 @@
 }
 
 .lx-layout.lx-layout-digives > footer .lx-sitemap .lx-sitemap-link {
-  color: var(--color-interactive-background);
-}
-
-.lx-layout.lx-layout-digives > footer .lx-sitemap .lx-sitemap-link:hover {
-  color: var(--color-interactive-hover-foreground);
+  --color-link-text: var(--color-interactive-background);
+  --color-link-text-hover: var(--color-interactive-background);
+  --color-link-text-visited: var(--color-interactive-background);
+  --color-link-text-active: var(--color-interactive-background);
 }
 
 .lx .digives-footer .lx-sitemap-wrapper .lx-sitemap-label {

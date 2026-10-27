@@ -496,8 +496,8 @@
   display: flex;
   align-items: center;
   list-style: none;
-  padding-inline-start: 0;
-  margin: var(--space-0) var(--space-0) var(--space-0) var(--space-1000);
+  padding-inline-start: var(--space-0);
+  margin: var(--space-0125) var(--space-0) var(--space-0125) var(--space-1000);
   min-width: 0;
   max-width: var(--body-column-size);
   white-space: nowrap;
@@ -509,8 +509,11 @@
 }
 
 .lx-breadcrumbs .lx-breadcrumb a {
-  text-decoration: none;
-  font-size: var(--font-size-small);
+  text-decoration: var(--link-standalone-text-decoration);
+}
+
+.lx-breadcrumbs .lx-breadcrumb a:hover {
+  text-decoration: var(--link-standalone-text-decoration-hover);
 }
 
 .lx-breadcrumbs .lx-breadcrumb a:focus-visible,
@@ -1799,7 +1802,8 @@
 }
 
 .lx .lx-layout .lx-mega-menu-container ul li.primary-menu-tile > a {
-  text-decoration: none;
+  --link-inline-text-decoration: none;
+  --link-inline-text-decoration-hover: none;
 }
 
 .lx .lx-layout .lx-mega-menu-container ul li.primary-menu-tile > *:focus-visible {
@@ -2041,24 +2045,14 @@
   z-index: 100;
 }
 
-.lx .lx-spotlight > .lx-spotlight-main > .lx-spotlight-show-more > button.link-button {
-  background: none;
+.lx-spotlight > .lx-spotlight-main > .lx-spotlight-show-more > .lx-link {
   border: var(--border-width-0);
-  text-decoration: underline dashed;
-  text-underline-offset: 0.25rem;
   cursor: pointer;
   font: inherit;
   padding: var(--space-0);
   height: auto;
-  color: var(--color-interactive-background);
-  font-size: var(--font-size);
-  font-weight: var(--font-weight-interactive);
   display: inline-block;
-}
-
-.lx .lx-spotlight > .lx-spotlight-main > .lx-spotlight-show-more > button.link-button:hover {
-  color: var(--color-interactive-hover-foreground);
-  background-color: var(--color-interactive-hover-background);
+  transition: none;
 }
 
 .lx-spotlight > .lx-spotlight-main > .lx-spotlight-label,
@@ -2213,9 +2207,7 @@
     justify-content: space-between;
     position: fixed;
     height: calc(100% - var(--nav-row-size));
-    transition:
-      0.1s ease-out width,
-      0.1s ease-out box-shadow;
+    transition: 0.1s ease-out width, 0.1s ease-out box-shadow;
     z-index: 900;
     box-shadow: var(--shadow-dropdown);
   }
