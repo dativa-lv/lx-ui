@@ -88,7 +88,7 @@ svg .lx-shade {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  line-height: 1.1em;
+  line-height: 1.25;
   max-height: var(--row-size);
   overflow: hidden;
   text-overflow: ellipsis;
