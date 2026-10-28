@@ -10,8 +10,10 @@ const props = defineProps({
 });
 
 const typingActionDefinitionsGetter = inject('lxChatTypingActionDefinitions', null);
+const typingActionGroupDefinitionsGetter = inject('lxChatTypingActionGroupDefinitions', null);
 const typingActionClick = inject('lxChatTypingActionClick', null);
 const typingActions = computed(() => typingActionDefinitionsGetter?.() || []);
+const typingActionGroupDefinitions = computed(() => typingActionGroupDefinitionsGetter?.() || null);
 
 const typingNames = computed(() => props.typingUserNames.map((user) => user.name).filter(Boolean));
 
@@ -49,6 +51,8 @@ function onActionClick(actionId) {
         label=""
         :value="{}"
         :actionDefinitions="typingActions"
+        :actionGroupDefinitions="typingActionGroupDefinitions"
+        :texts="{ overflowMenu: texts.overflowMenu }"
         @actionClick="onActionClick"
       >
         <template #customItem>

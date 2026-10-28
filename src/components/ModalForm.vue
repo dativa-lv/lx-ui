@@ -2,9 +2,11 @@
 import { ref, nextTick, provide, computed, watch, onUnmounted } from 'vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { useElementSize, useScroll } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -16,6 +18,7 @@ const props = defineProps({
   disableClosing: { default: false, type: Boolean },
   escEnabled: { default: true, type: Boolean },
   buttonSecondaryIsCancel: { default: true, type: Boolean },
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   columnCount: { type: Number, default: 1 },
   showPreHeaderInfo: { type: Boolean, default: true },
@@ -97,16 +100,27 @@ function indexUpdated(event) {
   emits('update:index', event);
 }
 
+const actionDefinitionsResolved = computed(
+  () =>
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions),
+      { inheritKind: true }
+    ) || []
+);
+
 const actionDefinitionsDisplay = computed(() => {
-  if (!props.actionDefinitions || !props.actionDefinitions.length) return [];
+  if (!actionDefinitionsResolved.value.length) return [];
 
-  let primary = props.actionDefinitions?.filter((action) => action?.kind === 'primary') || [];
+  let primary =
+    actionDefinitionsResolved.value?.filter((action) => action?.kind === 'primary') || [];
   if (primary.length === 0) {
-    primary = props.actionDefinitions?.filter((action) => !action?.kind) || [];
+    primary = actionDefinitionsResolved.value?.filter((action) => !action?.kind) || [];
   }
-  const secondary = props.actionDefinitions?.filter((action) => action?.kind === 'secondary') || [];
+  const secondary =
+    actionDefinitionsResolved.value?.filter((action) => action?.kind === 'secondary') || [];
 
-  const tertiary = props.actionDefinitions?.filter((action) => action?.kind === 'tertiary') || [];
+  const tertiary =
+    actionDefinitionsResolved.value?.filter((action) => action?.kind === 'tertiary') || [];
 
   const env = useLx().getGlobals()?.environment;
   if (primary.length > 1) {
@@ -132,7 +146,7 @@ const actionDefinitionsDisplay = computed(() => {
 });
 
 const additionalButtons = computed(() =>
-  props.actionDefinitions?.filter((action) => action?.kind === 'additional')
+  actionDefinitionsResolved.value?.filter((action) => action?.kind === 'additional')
 );
 
 const bottomOutOfBounds = computed(() => {
@@ -284,23 +298,12 @@ defineExpose({ open, close });
             ]"
           >
             <template v-if="actionDefinitionsDisplay?.length > 0">
-              <LxButton
+              <LxActionButton
                 v-for="action in actionDefinitionsDisplay"
                 :key="action?.id"
+                :action="action"
+                :omit="['icon', 'iconSet', 'variant']"
                 :id="`${id}-action-${action?.id}`"
-                :label="action?.name || action?.label"
-                :title="action?.title || action?.tooltip"
-                :kind="action?.kind"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
-                :disabled="action?.disabled"
-                :active="action?.active"
-                :badge="action?.badge"
-                :badgeType="action?.badgeType"
-                :badgeIcon="action?.badgeIcon"
-                :badgeTitle="action?.badgeTitle"
-                :href="action?.href"
                 @click="handleActionClick(action)"
               />
             </template>

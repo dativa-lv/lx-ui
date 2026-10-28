@@ -88,3 +88,29 @@ describe('LxModalForm focus trap provisioning', () => {
     expect(unpauseSpy).toHaveBeenCalled();
   });
 });
+
+describe('LxModalForm nested actions', () => {
+  test('places children of a nested trigger where the trigger would be', async () => {
+    wrapper = mount(LxModalForm, {
+      props: {
+        id: 'modal',
+        label: 'Test modal',
+        actionDefinitions: [
+          { id: 'save', name: 'Save', kind: 'primary', nestedGroupId: 'save', disabled: true },
+          { id: 'saveDraft', name: 'Save draft', groupId: 'save' },
+          { id: 'cancel', name: 'Cancel', kind: 'secondary' },
+        ],
+      },
+      global: { stubs: { RouterLink: RouterLinkStub } },
+    });
+
+    wrapper.vm.open();
+    await nextTick();
+
+    const ids = [...document.body.querySelectorAll('#modals button[id^="modal-action-"]')].map(
+      (b) => b.id
+    );
+    expect(ids).toEqual(['modal-action-saveDraft', 'modal-action-cancel']);
+    expect(document.getElementById('modal-action-saveDraft').disabled).toBe(true);
+  });
+});

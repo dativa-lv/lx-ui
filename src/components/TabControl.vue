@@ -2,6 +2,7 @@
 import { onMounted, ref, computed, nextTick, watch, inject } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
@@ -196,23 +197,10 @@ onMounted(() => {
             {{ clampText(t.invalidationMessage) }}
           </span>
           <div v-if="getSectionActions(t.id).length > 0" class="additional-buttons">
-            <LxButton
+            <LxActionButton
               v-if="getSectionActions(t.id).length === 1"
+              :action="getSectionActions(t.id)[0]"
               :id="getSectionActions(t.id)[0]?.id"
-              :label="getSectionActions(t.id)[0]?.name || getSectionActions(t.id)[0]?.label"
-              :title="getSectionActions(t.id)[0]?.title || getSectionActions(t.id)[0]?.tooltip"
-              :icon="getSectionActions(t.id)[0]?.icon"
-              :iconSet="getSectionActions(t.id)[0]?.iconSet"
-              :loading="getSectionActions(t.id)[0]?.loading"
-              :busy="getSectionActions(t.id)[0]?.busy"
-              :disabled="getSectionActions(t.id)[0]?.disabled"
-              :destructive="getSectionActions(t.id)[0]?.destructive"
-              :active="getSectionActions(t.id)[0]?.active"
-              :badge="getSectionActions(t.id)[0]?.badge"
-              :badgeType="getSectionActions(t.id)[0]?.badgeType"
-              :badgeIcon="getSectionActions(t.id)[0]?.badgeIcon"
-              :badgeTitle="getSectionActions(t.id)[0]?.badgeTitle"
-              :href="getSectionActions(t.id)[0]?.href"
               variant="icon-only"
               kind="ghost"
               @click.stop="getSectionActionHandler(t.id)?.(getSectionActions(t.id)[0]?.id)"
@@ -259,23 +247,10 @@ onMounted(() => {
           @update:modelValue="setActiveTab"
         />
         <div v-if="getSectionActions(model).length > 0" class="additional-buttons">
-          <LxButton
+          <LxActionButton
             v-if="getSectionActions(model).length === 1"
+            :action="getSectionActions(model)[0]"
             :id="getSectionActions(model)[0]?.id"
-            :label="getSectionActions(model)[0]?.name || getSectionActions(model)[0]?.label"
-            :title="getSectionActions(model)[0]?.title || getSectionActions(model)[0]?.tooltip"
-            :icon="getSectionActions(model)[0]?.icon"
-            :iconSet="getSectionActions(model)[0]?.iconSet"
-            :loading="getSectionActions(model)[0]?.loading"
-            :busy="getSectionActions(model)[0]?.busy"
-            :disabled="getSectionActions(model)[0]?.disabled"
-            :destructive="getSectionActions(model)[0]?.destructive"
-            :active="getSectionActions(model)[0]?.active"
-            :badge="getSectionActions(model)[0]?.badge"
-            :badgeType="getSectionActions(model)[0]?.badgeType"
-            :badgeIcon="getSectionActions(model)[0]?.badgeIcon"
-            :badgeTitle="getSectionActions(model)[0]?.badgeTitle"
-            :href="getSectionActions(model)[0]?.href"
             variant="icon-only"
             kind="ghost"
             @click.stop="getSectionActionHandler(model)?.(getSectionActions(model)[0]?.id)"

@@ -162,6 +162,38 @@ describe('Action definitions', () => {
 
     checkActionDefinitionsButtonsMultiple(buttonElements, { wrapper });
   });
+
+  test('nested trigger with one child renders the child as a single button', () => {
+    wrapper = mountComponent({
+      props: {
+        ...props,
+        actionDefinitions: [
+          { id: 'share', name: 'Share', icon: 'share', nestedGroupId: 'share' },
+          { id: 'shareLink', name: 'Copy link', icon: 'link', groupId: 'share' },
+        ],
+      },
+    });
+
+    const buttons = wrapper.findAll('.lx-list-item-actions .lx-button');
+
+    expect(wrapper.find('.lx-list-item-actions .lx-dropdown-toggler').exists()).toBe(false);
+    expect(buttons.length).toBe(1);
+    expect(buttons[0].attributes('id')).toMatch(/-action-shareLink$/);
+  });
+
+  test('nested children are hidden when the trigger is hidden', () => {
+    wrapper = mountComponent({
+      props: {
+        ...props,
+        actionDefinitions: [
+          { id: 'share', icon: 'share', nestedGroupId: 'share', visibleByAttribute: 'canShare' },
+          { id: 'shareLink', icon: 'link', groupId: 'share' },
+        ],
+      },
+    });
+
+    expect(wrapper.find('.lx-list-item-actions .lx-button').exists()).toBe(false);
+  });
 });
 
 describe('Item and action interactions', () => {

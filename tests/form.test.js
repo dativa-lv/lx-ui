@@ -416,3 +416,21 @@ test('LxForm indexes', () => {
   const aside = wrapper.find('aside');
   expect(aside.html()).toContain('li');
 });
+
+test('LxForm places children of a nested trigger where the trigger would be', () => {
+  wrapper = mount(LxForm, {
+    props: {
+      actionDefinitions: [
+        { id: 'save', name: 'Save', kind: 'primary', nestedGroupId: 'save' },
+        { id: 'saveDraft', name: 'Save draft', groupId: 'save' },
+        { id: 'saveFinal', name: 'Save final', groupId: 'save' },
+      ],
+    },
+    global: {
+      stubs: ['router-link'],
+    },
+  });
+
+  const labels = wrapper.findAll('.lx-button').map((b) => b.text());
+  expect(labels).toEqual(['Save draft', 'Save final']);
+});

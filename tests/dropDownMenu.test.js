@@ -222,6 +222,43 @@ describe('Action definitions', () => {
     // +1 for ungrouped items
     expect(groupElements.length).toBe(groupIds.length + 1);
   });
+
+  test('skips nested group triggers and renders their children as a group', async () => {
+    wrapper = mountComponent({
+      props: {
+        actionDefinitions: [
+          { id: 'save', name: 'Save', icon: 'save' },
+          { id: 'share', name: 'Share', icon: 'share', nestedGroupId: 'share' },
+          { id: 'shareEmail', name: 'Send by email', icon: 'email', groupId: 'share' },
+          { id: 'shareLink', name: 'Copy link', icon: 'link', groupId: 'share' },
+        ],
+      },
+    });
+
+    const panelElement = await openMenu();
+    const groupElements = panelElement.querySelectorAll('.lx-dropdown-menu-group');
+    const buttonIds = [...panelElement.querySelectorAll('button')].map((b) => b.id);
+
+    expect(groupElements.length).toBe(2);
+    expect(buttonIds).not.toContain('share');
+    expect(buttonIds).toEqual(expect.arrayContaining(['save', 'shareEmail', 'shareLink']));
+  });
+
+  test('renders an action with nestedGroupId as a regular item when it has no children', async () => {
+    wrapper = mountComponent({
+      props: {
+        actionDefinitions: [
+          { id: 'save', name: 'Save', icon: 'save' },
+          { id: 'share', name: 'Share', icon: 'share', nestedGroupId: 'share' },
+        ],
+      },
+    });
+
+    const panelElement = await openMenu();
+    const buttonIds = [...panelElement.querySelectorAll('button')].map((b) => b.id);
+
+    expect(buttonIds).toEqual(expect.arrayContaining(['save', 'share']));
+  });
 });
 
 describe('Group definitions', () => {

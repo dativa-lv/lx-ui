@@ -2,8 +2,13 @@
 import { computed } from 'vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
+import {
+  flattenNestedActions,
+  limitPrimaryActions,
+  resolveActionGroups,
+} from '@/utils/actionDefinitionsUtils';
 import LxIllustration from '@/components/Illustration.vue';
-import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -11,6 +16,7 @@ const props = defineProps({
   icon: { type: String, default: null },
   title: { type: String, default: null },
   description: { type: String, default: null },
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
 });
@@ -72,6 +78,19 @@ const kindSanitized = computed(() => `${props.kind.charAt(0).toUpperCase()}${pro
 
 const emits = defineEmits(['actionClick']);
 
+const BUTTON_KINDS = ['primary', 'secondary', 'tertiary'];
+
+const actionDefinitionsResolved = computed(() =>
+  limitPrimaryActions(
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions),
+      { inheritKind: true }
+    )
+  ).map((action) =>
+    BUTTON_KINDS.includes(action?.kind) ? action : { ...action, kind: 'tertiary' }
+  )
+);
+
 function handleActionClick(actionName) {
   emits('actionClick', actionName);
 }
@@ -103,27 +122,13 @@ const titleDescription = computed(() => {
     </div>
     <div class="lx-button-set">
       <slot name="toolbar"></slot>
-      <div class="lx-error-action-definitions" v-if="actionDefinitions.length >= 1">
-        <LxButton
-          v-for="action in actionDefinitions"
+      <div class="lx-error-action-definitions" v-if="actionDefinitionsResolved.length >= 1">
+        <LxActionButton
+          v-for="action in actionDefinitionsResolved"
           :key="action.id"
+          :action="action"
           :id="`${id}-action-${action.id}`"
-          :label="action.name || action.label"
-          :title="action.title || action.tooltip"
-          :icon="action.icon"
-          :iconSet="action.iconSet"
-          :kind="action.kind"
-          :loading="action.loading"
-          :busy="action.busy"
-          :destructive="action.destructive"
-          :disabled="action.disabled"
-          :active="action.active"
-          :badge="action.badge"
-          :badgeType="action.badgeType"
-          :badgeIcon="action.badgeIcon"
-          :badgeTitle="action.badgeTitle"
           variant="default"
-          :href="action.href"
           @click="handleActionClick(action.id)"
         />
       </div>

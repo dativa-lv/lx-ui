@@ -65,6 +65,7 @@ const props = defineProps({
   labelId: { type: String, default: null },
   stickyToolbar: { type: Boolean, default: false, group: 'additional', sequence: 3 },
   actionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 4 },
+  actionGroupDefinitions: { type: Array, default: null },
   texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
@@ -1137,6 +1138,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
           ref="toolbarRef"
           :disabled="isDisabled"
           :actionDefinitions="toolbarActions"
+          :actionGroupDefinitions="actionGroupDefinitions"
           defaultArea="left"
           :sticky="stickyToolbar"
           :wrapperRef="markdownWrapper"

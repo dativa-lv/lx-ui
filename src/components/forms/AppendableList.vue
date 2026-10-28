@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, inject, nextTick, watch } fr
 
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxForm from '@/components/forms/Form.vue';
@@ -31,6 +32,8 @@ const props = defineProps({
   canAddItems: { type: Boolean, default: true },
   actionDefinitions: { type: Array, default: () => [] },
   toolbarActionDefinitions: { type: Array, default: () => [] },
+  actionGroupDefinitions: { type: Array, default: null },
+  toolbarActionGroupDefinitions: { type: Array, default: null },
   uppercase: { type: Boolean, default: true },
   hasSelecting: { type: Boolean, default: false },
   selectionKind: { type: String, default: 'single' }, // single, multiple
@@ -378,7 +381,7 @@ function clearModel() {
 }
 
 function changeActions(actionDefinitions, item) {
-  return actionDefinitions
+  return flattenNestedActions(actionDefinitions)
     .filter((x) => (x.visibleByAttribute ? item[x.visibleByAttribute] : true))
     .map((x) => {
       const updatedAction = { ...x };
@@ -417,10 +420,10 @@ const allActions = computed(() => {
         enableByAttribute: props.removeEnableByAttribute,
         visibleByAttribute: props.removeVisibleByAttribute,
       },
-      ...props.actionDefinitions,
+      ...resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions),
     ];
   }
-  return props.actionDefinitions;
+  return resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions);
 });
 
 function actionClick(val, item, itemKey) {
@@ -486,9 +489,12 @@ const toolbarActions = computed(() => {
   }
 
   const actionsBuiltIn = actionsDefault.map((a) => ({ ...a, builtIn: true }));
-  const actionsExtra = props.toolbarActionDefinitions.map((a) => ({ ...Object(a), extra: true }));
+  // With the built-in add action, it stays promoted and the other actions are shown as ghost
+  const actions = actionsBuiltIn.length
+    ? props.toolbarActionDefinitions.map((a) => ({ ...Object(a), extra: true }))
+    : props.toolbarActionDefinitions;
 
-  return [...actionsBuiltIn, ...actionsExtra];
+  return [...actionsBuiltIn, ...actions];
 });
 
 const rowId = inject('rowId', ref(null));
@@ -597,6 +603,7 @@ const dataState = computed(() =>
       class="lx-floating-toolbar"
       :id="`${props.id}-toolbar`"
       :actionDefinitions="toolbarActions"
+      :actionGroupDefinitions="toolbarActionGroupDefinitions"
       :texts="displayTexts"
       :sticky="stickyToolbar"
       :wrapperRef="wrapperRef"
@@ -653,6 +660,7 @@ const dataState = computed(() =>
             :icon="item[iconAttribute]"
             :expandable="true"
             :actionDefinitions="changeActions([...allActions], item)"
+            :actionGroupDefinitions="actionGroupDefinitions"
             :uppercase="uppercase"
             :hasSelecting="showSelecting"
             :selectable="isSelectable(item)"

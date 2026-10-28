@@ -46,6 +46,7 @@ const props = defineProps({
     sequence: 6,
   },
   actionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 6 },
+  actionGroupDefinitions: { type: Array, default: null },
   texts: { type: Object, default: () => ({}), group: 'additional', sequence: 100 },
   builderOptions: {
     type: Object,
@@ -505,6 +506,7 @@ if (props.builderOptions?.useRegistry) {
         class="lx-embedded-toolbar"
         :disabled="props.disabled"
         :actionDefinitions="toolbarActions"
+        :actionGroupDefinitions="actionGroupDefinitions"
         :sticky="stickyToolbar"
         :wrapperRef="wrapperRef"
         @actionClick="toolbarActionClick"

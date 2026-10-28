@@ -6,12 +6,13 @@ import { humanizeDate } from '@/utils/date/humanize';
 import { extractTimeFromDate } from '@/utils/date/intl';
 import { formatDateJSON, isDateValid, parseDate } from '@/utils/date/parse';
 import { sanitizeToPlainText } from '@/utils/sanitizeUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import useLx from '@/hooks/useLx';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 
@@ -33,6 +34,7 @@ const props = defineProps({
 });
 
 const messageActionDefinitionsGetter = inject('lxChatMessageActionDefinitions', null);
+const messageActionGroupDefinitionsGetter = inject('lxChatMessageActionGroupDefinitions', null);
 const messageActionClick = inject('lxChatMessageActionClick', null);
 const clarifyingQuestionsBuilderGetter = inject('lxChatClarifyingQuestionsBuilder', null);
 const submitClarifyingQuestions = inject('lxChatSubmitClarifyingQuestions', null);
@@ -120,7 +122,12 @@ const timeLabelText = computed(() => (isCollapsedHeader.value ? timeText.value :
 
 const chatDisabled = computed(() => props.busy || props.loading);
 
-const messageActions = computed(() => messageActionDefinitionsGetter?.() || []);
+const messageActionGroupDefinitions = computed(
+  () => messageActionGroupDefinitionsGetter?.() || null
+);
+const messageActions = computed(() =>
+  resolveActionGroups(messageActionDefinitionsGetter?.() || [], messageActionGroupDefinitions.value)
+);
 // Item value is the message enriched with isAi/isMe (so visibleByAttribute can gate on role too)
 // and notBusy (so an action opts into busy/loading gating with `enableByAttribute: 'notBusy'`).
 const listItemValue = computed(() => ({
@@ -131,7 +138,7 @@ const listItemValue = computed(() => ({
 }));
 
 const visibleMessageActions = computed(() => {
-  const actions = (messageActions.value || [])
+  const actions = (flattenNestedActions(messageActions.value) || [])
     .filter((action) =>
       action.visibleByAttribute ? listItemValue.value[action.visibleByAttribute] : true
     )
@@ -305,22 +312,9 @@ defineExpose({ focus });
         </div>
 
         <div v-if="messageActionSingle" class="lx-list-item-actions" @click.stop>
-          <LxButton
+          <LxActionButton
+            :action="messageActionSingle"
             :id="`${id}-item-action-${messageActionSingle.id}`"
-            :label="messageActionSingle.name || messageActionSingle.label"
-            :title="messageActionSingle.title || messageActionSingle.tooltip"
-            :icon="messageActionSingle.icon"
-            :iconSet="messageActionSingle.iconSet"
-            :loading="messageActionSingle.loading"
-            :busy="messageActionSingle.busy"
-            :destructive="messageActionSingle.destructive"
-            :disabled="messageActionSingle.disabled"
-            :active="messageActionSingle.active"
-            :badge="messageActionSingle.badge"
-            :badgeType="messageActionSingle.badgeType"
-            :badgeIcon="messageActionSingle.badgeIcon"
-            :badgeTitle="messageActionSingle.badgeTitle"
-            :href="messageActionSingle.href"
             kind="ghost"
             variant="icon-only"
             @click.prevent.stop="onActionClick(messageActionSingle.id)"
@@ -330,6 +324,7 @@ defineExpose({ focus });
         <div v-else-if="visibleMessageActions.length > 1" class="lx-list-item-actions" @click.stop>
           <LxDropDownMenu
             :actionDefinitions="visibleMessageActions"
+            :actionGroupDefinitions="messageActionGroupDefinitions"
             @actionClick="(actionId) => onActionClick(actionId)"
           />
         </div>

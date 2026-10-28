@@ -80,3 +80,23 @@ describe('Action definitions', () => {
     checkActionDefinitionsButtonsMultiple(buttonElements, { wrapper });
   });
 });
+
+describe('Nested actions', () => {
+  test('renders the only child of a nested trigger as a button', () => {
+    wrapper = mountComponent({
+      props: {
+        kind: 'button',
+        actionDefinitions: [
+          { id: 'share', name: 'Share', icon: 'share', nestedGroupId: 'share', disabled: true },
+          { id: 'shareLink', name: 'Copy link', icon: 'link', groupId: 'share' },
+        ],
+      },
+    });
+
+    expect(wrapper.find('#share').exists()).toBe(false);
+    const button = wrapper.find('#shareLink');
+    expect(button.exists()).toBe(true);
+    expect(button.attributes('disabled')).toBeDefined();
+    expect(wrapper.find('.lx-dropdown-toggler').exists()).toBe(false);
+  });
+});

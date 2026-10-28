@@ -33,6 +33,7 @@ import { foldToAscii, generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts, parsePaddingRem, remToPx, resolveRemToken } from '@/utils/generalUtils';
 
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -50,6 +51,7 @@ import LxToolbar from '@/components/Toolbar.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 
 const lvCollator = new Intl.Collator('lv');
 const numberFormatters = new Map();
@@ -155,6 +157,10 @@ const props = defineProps({
   selectionActionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 2 },
   toolbarActionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 1 },
   emptyStateActionDefinitions: { type: Array, default: null, group: 'additional', sequence: 8 },
+  actionGroupDefinitions: { type: Array, default: null },
+  toolbarActionGroupDefinitions: { type: Array, default: null },
+  selectionActionGroupDefinitions: { type: Array, default: null },
+  emptyStateActionGroupDefinitions: { type: Array, default: null },
   emptyStateIcon: { type: String, default: '', group: 'additional', sequence: 10 },
   clickableRole: {
     type: String,
@@ -1473,7 +1479,19 @@ const selectedLabel = computed(() => {
   return ret;
 });
 
-const hasActionButtons = computed(() => props.actionDefinitions?.length > 0);
+const rowActionDefinitions = computed(() =>
+  flattenNestedActions(resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions))
+);
+
+const selectionActionsResolved = computed(() =>
+  props.selectionActionGroupDefinitions
+    ? flattenNestedActions(
+        resolveActionGroups(props.selectionActionDefinitions, props.selectionActionGroupDefinitions)
+      )
+    : props.selectionActionDefinitions
+);
+
+const hasActionButtons = computed(() => rowActionDefinitions.value?.length > 0);
 
 const itemsCountSelector = computed(() => [10, 20, 30, 40, 50]);
 
@@ -1537,10 +1555,10 @@ function toolbarClick(action, value) {
   }
 }
 
-const actionDefinitionsGroup = computed(() => props.actionDefinitions?.slice(1));
+const actionDefinitionsGroup = computed(() => rowActionDefinitions.value?.slice(1));
 
 function getRowVisibleActions(row) {
-  return props.actionDefinitions?.filter((a) =>
+  return rowActionDefinitions.value?.filter((a) =>
     a.visibleByAttribute ? row[a.visibleByAttribute] : true
   );
 }
@@ -1620,7 +1638,7 @@ function updateGridTemplateColumns() {
     const { actionWidthRem, horizontalPaddingRem, gapRem } = getActionColumnVars();
 
     if (needsActionColumn) {
-      const rawCount = props.actionDefinitions?.length || 1;
+      const rawCount = rowActionDefinitions.value?.length || 1;
       const actionCount = Math.min(Math.max(0, rawCount), 2);
 
       if (actionCount > 0) {
@@ -2061,7 +2079,7 @@ const computedGridHeaderColumnCount = computed(() => {
 });
 
 const computedGridColumnCount = computed(() => {
-  const actionColumns = hasActionButtons.value ? Math.min(props.actionDefinitions.length, 2) : 0;
+  const actionColumns = hasActionButtons.value ? Math.min(rowActionDefinitions.value.length, 2) : 0;
   const selectingColumn = showSelecting.value ? 0 : 1;
   return colCount.value + actionColumns - selectingColumn;
 });
@@ -2141,6 +2159,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :class="[{ 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length }]"
         :id="`${id}-toolbar`"
         :actionDefinitions="toolbarActions"
+        :actionGroupDefinitions="toolbarActionGroupDefinitions"
         :disabled="busy"
         :loading="loading"
         :busy="busy"
@@ -2185,33 +2204,21 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         <template #rightArea v-else-if="hasSelecting && selectedRows.length > 0">
           <div class="selection-action-button-toolbar">
             <div class="selection-action-buttons">
-              <LxButton
-                v-for="selectAction in selectionActionDefinitions"
+              <LxActionButton
+                v-for="selectAction in selectionActionsResolved"
                 :key="selectAction.id"
+                :action="selectAction"
+                :omit="['href', 'variant']"
                 :id="selectAction.id"
-                :label="selectAction.name || selectAction.label"
-                :title="selectAction.title || selectAction.tooltip"
-                :icon="selectAction.icon"
-                :iconSet="selectAction.iconSet"
-                :loading="selectAction.loading"
-                :busy="selectAction.busy"
-                :destructive="selectAction.destructive"
                 :disabled="selectAction.disabled || busy || loading"
-                :active="selectAction.active"
-                :badge="selectAction.badge"
-                :badge-type="selectAction.badgeType"
-                :badgeIcon="selectAction.badgeIcon"
-                :badgeTitle="selectAction.badgeTitle"
                 kind="ghost"
                 @click="handleSelectionActionClick(selectAction.id, undefined, selectedRows)"
               />
             </div>
-            <div
-              class="selection-action-buttons-small"
-              v-if="selectionActionDefinitions?.length > 0"
-            >
+            <div class="selection-action-buttons-small" v-if="selectionActionsResolved?.length > 0">
               <LxDropDownMenu
-                :actionDefinitions="selectionActionDefinitions"
+                :actionDefinitions="selectionActionsResolved"
+                :actionGroupDefinitions="selectionActionGroupDefinitions"
                 :disabled="isDisabled"
                 @actionClick="
                   (id, actionValue) => handleSelectionActionClick(id, actionValue, selectedRows)
@@ -2767,28 +2774,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                           : null
                       "
                     />
-                    <LxButton
+                    <LxActionButton
                       v-if="
                         col?.options?.actionDefinitions?.[0] &&
                         (!col.options.actionDefinitions[0]?.visibleByAttribute ||
                           row[col.options.actionDefinitions[0]?.visibleByAttribute])
                       "
+                      :action="col.options.actionDefinitions[0]"
+                      :omit="['href']"
                       :id="`${id}-${row[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
                       variant="icon-only"
                       kind="ghost"
-                      :label="
-                        col.options.actionDefinitions[0]?.name ||
-                        col.options.actionDefinitions[0]?.label
-                      "
-                      :title="
-                        col.options.actionDefinitions[0]?.title ||
-                        col.options.actionDefinitions[0]?.tooltip
-                      "
-                      :icon="col.options.actionDefinitions[0]?.icon"
-                      :iconSet="col.options.actionDefinitions[0]?.iconSet"
-                      :loading="col.options.actionDefinitions[0]?.loading"
-                      :busy="col.options.actionDefinitions[0]?.busy"
-                      :destructive="col.options.actionDefinitions[0]?.destructive"
                       :disabled="
                         isDisabled ||
                         col.options.actionDefinitions[0]?.disabled ||
@@ -2796,11 +2792,6 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                           ? !row[col.options.actionDefinitions[0]?.enableByAttribute]
                           : false)
                       "
-                      :active="col.options.actionDefinitions[0]?.active"
-                      :badge="col.options.actionDefinitions[0]?.badge"
-                      :badgeType="col.options.actionDefinitions[0]?.badgeType"
-                      :badgeIcon="col.options.actionDefinitions[0]?.badgeIcon"
-                      :badgeTitle="col.options.actionDefinitions[0]?.badgeTitle"
                       :tabindex="
                         getTabIndex(
                           getGridRowIndex(rowIndex),
@@ -2934,29 +2925,18 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       )
                   "
                 >
-                  <LxButton
+                  <LxActionButton
                     v-for="(action, actionIndex) in getRowVisibleActions(row)"
                     :key="action.id"
+                    :action="action"
                     :id="`${id}-${row[idAttribute]}-action-${action.id}`"
-                    :label="action.name || action.label"
-                    :title="action.title || action.tooltip"
-                    :icon="action.icon"
-                    :iconSet="action.iconSet"
-                    :loading="action.loading"
-                    :busy="action.busy"
                     kind="ghost"
                     variant="icon-only"
-                    :destructive="action.destructive"
                     :disabled="
                       isDisabled ||
                       action.disabled ||
                       (action.enableByAttribute ? !row[action.enableByAttribute] : false)
                     "
-                    :active="action.active"
-                    :badge="action.badge"
-                    :badgeType="action.badgeType"
-                    :badgeIcon="action.badgeIcon"
-                    :badgeTitle="action.badgeTitle"
                     :tabindex="
                       getTabIndex(
                         getGridRowIndex(rowIndex),
@@ -2973,7 +2953,6 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                           actionIndex
                         )
                     "
-                    :href="action.href"
                     @click="
                       handleActionClick(action.id, row[idAttribute], actionAdditionalParameter)
                     "
@@ -2992,33 +2971,22 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     )
                   "
                 >
-                  <LxButton
+                  <LxActionButton
                     v-if="
-                      !actionDefinitions?.[0]?.visibleByAttribute ||
-                      row[actionDefinitions?.[0]?.visibleByAttribute]
+                      !rowActionDefinitions?.[0]?.visibleByAttribute ||
+                      row[rowActionDefinitions?.[0]?.visibleByAttribute]
                     "
-                    :id="`${id}-${row[idAttribute]}-action-${actionDefinitions?.[0]?.id}`"
-                    :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
-                    :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
-                    :icon="actionDefinitions?.[0]?.icon"
-                    :iconSet="actionDefinitions?.[0]?.iconSet"
-                    :loading="actionDefinitions?.[0]?.loading"
-                    :busy="actionDefinitions?.[0]?.busy"
-                    :destructive="actionDefinitions?.[0]?.destructive"
+                    :action="rowActionDefinitions?.[0]"
+                    :id="`${id}-${row[idAttribute]}-action-${rowActionDefinitions?.[0]?.id}`"
                     :disabled="
                       isDisabled ||
-                      actionDefinitions?.[0]?.disabled ||
-                      (actionDefinitions?.[0]?.enableByAttribute
-                        ? !row[actionDefinitions?.[0]?.enableByAttribute]
+                      rowActionDefinitions?.[0]?.disabled ||
+                      (rowActionDefinitions?.[0]?.enableByAttribute
+                        ? !row[rowActionDefinitions?.[0]?.enableByAttribute]
                         : false)
                     "
                     kind="ghost"
                     variant="icon-only"
-                    :active="actionDefinitions?.[0]?.active"
-                    :badge="actionDefinitions?.[0]?.badge"
-                    :badgeType="actionDefinitions?.[0]?.badgeType"
-                    :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
-                    :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
                     :tabindex="
                       getTabIndex(
                         getGridRowIndex(rowIndex),
@@ -3033,10 +3001,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                           showSelecting ? colCount + 1 : colCount
                         )
                     "
-                    :href="actionDefinitions?.[0]?.href"
                     @click="
                       handleActionClick(
-                        actionDefinitions?.[0]?.id,
+                        rowActionDefinitions?.[0]?.id,
                         row[idAttribute],
                         actionAdditionalParameter
                       )
@@ -3049,6 +3016,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     :disabled="isDisabled"
                     :tabindex="-1"
                     :actionDefinitions="getRowActionDefinitionsGroup(row)"
+                    :actionGroupDefinitions="actionGroupDefinitions"
                     @actionClick="
                       (id) => handleActionClick(id, row[idAttribute], actionAdditionalParameter)
                     "
@@ -3120,6 +3088,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :description="displayTexts.noItemsDescription"
         :icon="emptyStateIcon"
         :actionDefinitions="emptyStateActionDefinitions"
+        :actionGroupDefinitions="emptyStateActionGroupDefinitions"
         @actionClick="emptyStateActionClicked"
       />
 
@@ -3135,6 +3104,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :selectionKind="selectionKind"
         :selectableAttribute="selectableAttribute"
         :actionDefinitions="actionDefinitions"
+        :actionGroupDefinitions="actionGroupDefinitions"
         :uppercase="false"
         :columnCount="2"
         :defaultExpanded="false"
@@ -3309,28 +3279,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         : null
                     "
                   />
-                  <LxButton
+                  <LxActionButton
                     v-if="
                       col?.options?.actionDefinitions?.[0] &&
                       (!col.options.actionDefinitions[0]?.visibleByAttribute ||
                         item[col.options.actionDefinitions[0]?.visibleByAttribute])
                     "
+                    :action="col.options.actionDefinitions[0]"
+                    :omit="['href']"
                     :id="`${id}-${item[idAttribute]}-action-${col.options.actionDefinitions[0]?.id}`"
                     variant="icon-only"
                     kind="ghost"
-                    :label="
-                      col.options.actionDefinitions[0]?.name ||
-                      col.options.actionDefinitions[0]?.label
-                    "
-                    :title="
-                      col.options.actionDefinitions[0]?.title ||
-                      col.options.actionDefinitions[0]?.tooltip
-                    "
-                    :icon="col.options.actionDefinitions[0]?.icon"
-                    :iconSet="col.options.actionDefinitions[0]?.iconSet"
-                    :loading="col.options.actionDefinitions[0]?.loading"
-                    :busy="col.options.actionDefinitions[0]?.busy"
-                    :destructive="col.options.actionDefinitions[0]?.destructive"
                     :disabled="
                       isDisabled ||
                       col.options.actionDefinitions[0]?.disabled ||
@@ -3338,11 +3297,6 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         ? !item[col.options.actionDefinitions[0]?.enableByAttribute]
                         : false)
                     "
-                    :active="col.options.actionDefinitions[0]?.active"
-                    :badge="col.options.actionDefinitions[0]?.badge"
-                    :badgeType="col.options.actionDefinitions[0]?.badgeType"
-                    :badgeIcon="col.options.actionDefinitions[0]?.badgeIcon"
-                    :badgeTitle="col.options.actionDefinitions[0]?.badgeTitle"
                     @click.stop="
                       handleActionClick(
                         col?.options?.actionDefinitions[0]?.id,

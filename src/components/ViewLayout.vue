@@ -1,13 +1,19 @@
 <script setup>
-import { getCurrentInstance, onUnmounted } from 'vue';
-import LxButton from '@/components/Button.vue';
+import { computed, getCurrentInstance, onUnmounted } from 'vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import { generateUUID } from '@/utils/stringUtils';
+import {
+  flattenNestedActions,
+  limitPrimaryActions,
+  resolveActionGroups,
+} from '@/utils/actionDefinitionsUtils';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   kind: { type: String, default: 'default', group: 'main', options: ['default', 'form', 'list'] }, // default | form | list
   layout: { type: String, default: 'default' }, // default
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   customClass: { type: String, default: '' },
   builderOptions: {
@@ -21,6 +27,15 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['actionClick']);
+
+const actionDefinitionsResolved = computed(() =>
+  limitPrimaryActions(
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions),
+      { inheritKind: true }
+    )
+  )
+);
 
 if (props.builderOptions?.useRegistry) {
   const instance = getCurrentInstance();
@@ -41,27 +56,14 @@ if (props.builderOptions?.useRegistry) {
 </script>
 <template>
   <div class="lx-view-layout" :class="[{ customClass }]" :data-id="id">
-    <div class="header-container" v-if="actionDefinitions?.length > 0">
-      <LxButton
-        v-for="action in actionDefinitions"
+    <div class="header-container" v-if="actionDefinitionsResolved?.length > 0">
+      <LxActionButton
+        v-for="action in actionDefinitionsResolved"
         :key="action?.id"
+        :action="action"
         :id="action?.id"
-        :label="action?.name || action?.label"
-        :title="action?.title || action?.tooltip"
-        :icon="action?.icon"
-        :iconSet="action?.iconSet"
         :variant="action?.variant || 'icon-only'"
         :kind="action?.kind || 'ghost'"
-        :loading="action?.loading"
-        :busy="action?.busy"
-        :destructive="action?.destructive"
-        :disabled="action?.disabled"
-        :active="action?.active"
-        :badge="action?.badge"
-        :badge-type="action?.badgeType"
-        :badgeIcon="action?.badgeIcon"
-        :badgeTitle="action?.badgeTitle"
-        :href="action?.href"
         @click="emits('actionClick', action?.id)"
       />
     </div>

@@ -90,4 +90,24 @@ describe('LxWidget', () => {
       expect(props.coverImage).toBeTypeOf('string');
     });
   });
+
+  describe('Nested actions', () => {
+    const nestedActions = [
+      { id: 'share', name: 'Share', icon: 'share', nestedGroupId: 'share', disabled: true },
+      { id: 'shareLink', name: 'Copy link', icon: 'link', groupId: 'share' },
+    ];
+
+    test('renders the only child of a nested trigger as a button', () => {
+      wrapper = mount(LxWidget, {
+        props: { id: 'widget', actionDefinitions: nestedActions },
+        global: { stubs: ['router-link'] },
+      });
+
+      expect(wrapper.find('#widget-action-share').exists()).toBe(false);
+      const button = wrapper.find('#widget-action-shareLink');
+      expect(button.exists()).toBe(true);
+      expect(button.attributes('disabled')).toBeDefined();
+      expect(wrapper.find('.lx-dropdown-toggler').exists()).toBe(false);
+    });
+  });
 });

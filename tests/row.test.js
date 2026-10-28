@@ -604,3 +604,24 @@ test('LxRow required is overridden by required false on a value picker', () => {
   expect(groups[0].attributes('aria-required')).toBe('true');
   expect(groups[1].attributes('aria-required')).toBeUndefined();
 });
+
+test('LxRow renders the only child of a nested trigger as a button', () => {
+  wrapper = mount(LxForm, {
+    slots: {
+      default: h(LxRow, {
+        id: 'row',
+        label: 'Label',
+        actionDefinitions: [
+          { id: 'share', name: 'Share', icon: 'share', nestedGroupId: 'share', disabled: true },
+          { id: 'shareLink', name: 'Copy link', icon: 'link', groupId: 'share' },
+        ],
+      }),
+    },
+    global: { components: { LxRow } },
+  });
+
+  expect(wrapper.find('#row-action-share').exists()).toBe(false);
+  const button = wrapper.find('#row-action-shareLink');
+  expect(button.exists()).toBe(true);
+  expect(button.attributes('disabled')).toBeDefined();
+});

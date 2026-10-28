@@ -4,10 +4,11 @@ import { ref, computed, watch } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import useLx from '@/hooks/useLx';
 import LxLoader from '@/components/Loader.vue';
@@ -37,6 +38,7 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   searchString: { type: String, default: '' },
   tooltip: { type: String, default: '' },
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   actionsLayout: { type: String, default: 'default' }, // default, vertical
   texts: { type: Object, default: () => ({}) },
@@ -66,7 +68,11 @@ function getItemId(id, parentId) {
 }
 
 const visibleActionDefinitions = computed(() => {
-  const actions = (props.actionDefinitions || [])
+  const actions = (
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions)
+    ) || []
+  )
     .filter((action) => (action.visibleByAttribute ? props.value[action.visibleByAttribute] : true))
     .map((action) => ({
       ...action,
@@ -198,15 +204,9 @@ defineExpose({ focus });
             actionsLayout === 'vertical'
           "
         >
-          <LxButton
+          <LxActionButton
+            :action="visibleActionDefinitions[0]"
             :id="`${id}-action-${visibleActionDefinitions[0].id}`"
-            :label="visibleActionDefinitions[0].name || visibleActionDefinitions[0].label"
-            :title="visibleActionDefinitions[0].title || visibleActionDefinitions[0].tooltip"
-            :icon="visibleActionDefinitions[0].icon"
-            :iconSet="visibleActionDefinitions[0].iconSet"
-            :loading="visibleActionDefinitions[0].loading"
-            :busy="visibleActionDefinitions[0].busy"
-            :destructive="visibleActionDefinitions[0].destructive"
             :disabled="
               loading ||
               busy ||
@@ -214,15 +214,9 @@ defineExpose({ focus });
               (visibleActionDefinitions[0].disabled != null
                 ? visibleActionDefinitions[0].disabled
                 : visibleActionDefinitions[0].enableByAttribute
-                ? !value[visibleActionDefinitions[0].enableByAttribute]
-                : false)
+                  ? !value[visibleActionDefinitions[0].enableByAttribute]
+                  : false)
             "
-            :active="visibleActionDefinitions[0].active"
-            :badge="visibleActionDefinitions[0].badge"
-            :badgeType="visibleActionDefinitions[0].badgeType"
-            :badgeIcon="visibleActionDefinitions[0].badgeIcon"
-            :badgeTitle="visibleActionDefinitions[0].badgeTitle"
-            :href="visibleActionDefinitions[0].href"
             kind="ghost"
             variant="icon-only"
             @click.prevent.stop="handleActionClick(visibleActionDefinitions[0].id)"
@@ -237,6 +231,7 @@ defineExpose({ focus });
             v-if="visibleActionDefinitions.length > 1"
             :disabled="loading || busy || disabled"
             :actionDefinitions="visibleActionDefinitions"
+            :actionGroupDefinitions="actionGroupDefinitions"
             @actionClick="(id) => handleActionClick(id)"
           />
         </div>
@@ -317,15 +312,9 @@ defineExpose({ focus });
             actionsLayout === 'vertical'
           "
         >
-          <LxButton
+          <LxActionButton
+            :action="visibleActionDefinitions[0]"
             :id="`${id}-action-${visibleActionDefinitions[0].id}`"
-            :label="visibleActionDefinitions[0].name || visibleActionDefinitions[0].label"
-            :title="visibleActionDefinitions[0].title || visibleActionDefinitions[0].tooltip"
-            :icon="visibleActionDefinitions[0].icon"
-            :iconSet="visibleActionDefinitions[0].iconSet"
-            :loading="visibleActionDefinitions[0].loading"
-            :busy="visibleActionDefinitions[0].busy"
-            :destructive="visibleActionDefinitions[0].destructive"
             :disabled="
               loading ||
               busy ||
@@ -333,15 +322,9 @@ defineExpose({ focus });
               (visibleActionDefinitions[0].disabled != null
                 ? visibleActionDefinitions[0].disabled
                 : visibleActionDefinitions[0].enableByAttribute
-                ? !value[visibleActionDefinitions[0].enableByAttribute]
-                : false)
+                  ? !value[visibleActionDefinitions[0].enableByAttribute]
+                  : false)
             "
-            :active="visibleActionDefinitions[0].active"
-            :badge="visibleActionDefinitions[0].badge"
-            :badgeType="visibleActionDefinitions[0].badgeType"
-            :badgeIcon="visibleActionDefinitions[0].badgeIcon"
-            :badgeTitle="visibleActionDefinitions[0].badgeTitle"
-            :href="visibleActionDefinitions[0].href"
             kind="ghost"
             variant="icon-only"
             @click.prevent.stop="handleActionClick(visibleActionDefinitions[0].id)"
@@ -356,6 +339,7 @@ defineExpose({ focus });
             v-if="visibleActionDefinitions.length > 1"
             :disabled="loading || busy || disabled"
             :actionDefinitions="visibleActionDefinitions"
+            :actionGroupDefinitions="actionGroupDefinitions"
             @actionClick="(id) => handleActionClick(id)"
           />
         </div>
@@ -374,13 +358,9 @@ defineExpose({ focus });
         actionsLayout !== 'vertical'
       "
     >
-      <LxButton
+      <LxActionButton
+        :action="visibleActionDefinitions[0]"
         :id="`${id}-action-${visibleActionDefinitions[0].id}`"
-        :label="visibleActionDefinitions[0].name || visibleActionDefinitions[0].label"
-        :title="visibleActionDefinitions[0].title || visibleActionDefinitions[0].tooltip"
-        :loading="visibleActionDefinitions[0].loading"
-        :busy="visibleActionDefinitions[0].busy"
-        :destructive="visibleActionDefinitions[0].destructive"
         :disabled="
           loading ||
           busy ||
@@ -388,17 +368,9 @@ defineExpose({ focus });
           (visibleActionDefinitions[0].disabled != null
             ? visibleActionDefinitions[0].disabled
             : visibleActionDefinitions[0].enableByAttribute
-            ? !value[visibleActionDefinitions[0].enableByAttribute]
-            : false)
+              ? !value[visibleActionDefinitions[0].enableByAttribute]
+              : false)
         "
-        :icon="visibleActionDefinitions[0].icon"
-        :iconSet="visibleActionDefinitions[0].iconSet"
-        :active="visibleActionDefinitions[0].active"
-        :badge="visibleActionDefinitions[0].badge"
-        :badgeType="visibleActionDefinitions[0].badgeType"
-        :badgeIcon="visibleActionDefinitions[0].badgeIcon"
-        :badgeTitle="visibleActionDefinitions[0].badgeTitle"
-        :href="visibleActionDefinitions[0].href"
         kind="ghost"
         variant="icon-only"
         @click.prevent.stop="handleActionClick(visibleActionDefinitions[0].id)"
@@ -414,6 +386,7 @@ defineExpose({ focus });
         v-if="visibleActionDefinitions.length > 1"
         :disabled="loading || busy || disabled"
         :actionDefinitions="visibleActionDefinitions"
+        :actionGroupDefinitions="actionGroupDefinitions"
         @actionClick="(id) => handleActionClick(id)"
       />
     </div>

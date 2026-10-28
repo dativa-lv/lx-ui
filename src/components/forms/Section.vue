@@ -10,10 +10,12 @@ import {
   watch,
 } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import LxExpander from '@/components/Expander.vue';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { registerBuilderInstance } from '@/utils/builderUtils';
@@ -173,6 +175,7 @@ const props = defineProps({
    * @default []
    * @since 1.7.0-beta.8
    */
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: {
     type: Array,
     default: () => [],
@@ -243,8 +246,15 @@ const sectionUUID = computed(() => `${sectionPrefix}-${props.id}`);
 
 const sectionActions = inject('sectionActions', null);
 
+const actionDefinitionsResolved = computed(
+  () =>
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions)
+    ) || []
+);
+
 watch(
-  () => props.actionDefinitions,
+  actionDefinitionsResolved,
   (newVal, oldVal) => {
     if (newVal === oldVal) return;
     if (sectionActions && props.id) {
@@ -417,7 +427,8 @@ onBeforeUnmount(() => {
     :customClass="customClass"
     :render-mode="expanderRenderMode"
     :id="`${sectionUUID}-expander`"
-    :action-definitions="actionDefinitions"
+    :actionDefinitions="actionDefinitionsResolved"
+    :actionGroupDefinitions="actionGroupDefinitions"
     @actionClick="(id) => handleActionClick(id)"
     @update:modelValue="
       (val) => {
@@ -464,7 +475,7 @@ onBeforeUnmount(() => {
     :aria-describedby="description ? `${sectionUUID}-desc` : null"
     :data-id="sectionUUID"
   >
-    <header v-if="label || description || actionDefinitions?.length > 0">
+    <header v-if="label || description || actionDefinitionsResolved?.length > 0">
       <div>
         <!-- eslint-disable-next-line vuejs-accessibility/role-has-required-aria-props -->
         <div
@@ -480,31 +491,19 @@ onBeforeUnmount(() => {
           {{ description }}
         </div>
       </div>
-      <div v-if="actionDefinitions?.length > 0">
-        <LxButton
-          v-if="actionDefinitions?.length === 1"
-          :id="actionDefinitions?.[0]?.id"
-          :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
-          :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
-          :icon="actionDefinitions?.[0]?.icon"
-          :iconSet="actionDefinitions?.[0]?.iconSet"
-          :loading="actionDefinitions?.[0]?.loading"
-          :busy="actionDefinitions?.[0]?.busy"
-          :disabled="actionDefinitions?.[0]?.disabled"
-          :destructive="actionDefinitions?.[0]?.destructive"
-          :active="actionDefinitions?.[0]?.active"
-          :badge="actionDefinitions?.[0]?.badge"
-          :badgeType="actionDefinitions?.[0]?.badgeType"
-          :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
-          :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
-          :href="actionDefinitions?.[0]?.href"
+      <div v-if="actionDefinitionsResolved?.length > 0">
+        <LxActionButton
+          v-if="actionDefinitionsResolved?.length === 1"
+          :action="actionDefinitionsResolved?.[0]"
+          :id="actionDefinitionsResolved?.[0]?.id"
           variant="icon-only"
           kind="ghost"
-          @click="handleActionClick(actionDefinitions?.[0]?.id)"
+          @click="handleActionClick(actionDefinitionsResolved?.[0]?.id)"
         />
         <LxDropDownMenu
           v-else
-          :actionDefinitions="actionDefinitions"
+          :actionDefinitions="actionDefinitionsResolved"
+          :actionGroupDefinitions="actionGroupDefinitions"
           @actionClick="(id) => handleActionClick(id)"
         >
           <LxButton

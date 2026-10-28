@@ -4,6 +4,7 @@ import { onClickOutside, useWindowSize } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxToggle from '@/components/Toggle.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -19,6 +20,7 @@ import {
   getDisplayTexts,
 } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
+import { resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -31,6 +33,7 @@ const props = defineProps({
   datePickerType: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   groupDefinitions: { type: Array, default: null },
+  actionGroupDefinitions: { type: Array, default: null },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -170,8 +173,20 @@ function preventClose(event) {
   event.stopPropagation();
 }
 
+const actionsResolved = computed(
+  () => resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions) || []
+);
+
 const groupMap = computed(() =>
-  (props.groupDefinitions || []).reduce((acc, group) => {
+  [
+    ...(props.groupDefinitions || []),
+    ...(props.actionGroupDefinitions || []).map(({ id, name, label, kind }) => ({
+      id,
+      name,
+      label,
+      kind,
+    })),
+  ].reduce((acc, group) => {
     acc[group.id] = group;
     return acc;
   }, {})
@@ -181,9 +196,17 @@ function getGroupLabel(groupName) {
   return groupMap?.value[groupName]?.name || groupMap?.value[groupName]?.label || null;
 }
 
+const nestedGroupIdsWithChildren = computed(
+  () => new Set(actionsResolved.value.map((action) => action?.groupId).filter(Boolean))
+);
+
 const groupedItems = computed(() => {
-  const res = props.actionDefinitions.reduce((acc, action) => {
+  const res = actionsResolved.value.reduce((acc, action) => {
     if (action?.kind === 'main') return acc; // skip 'main' items
+    // Submenus are not supported: a trigger with children is skipped, its children render as their own group
+    if (action?.nestedGroupId && nestedGroupIdsWithChildren.value.has(action.nestedGroupId)) {
+      return acc;
+    }
     if (action?.groupId) {
       if (!acc[action?.groupId]) acc[action?.groupId] = [];
       acc[action?.groupId].push(action);
@@ -212,7 +235,7 @@ const groupedItems = computed(() => {
 });
 
 const mainButton = computed(() => {
-  const mainButtons = props.actionDefinitions?.filter((x) => x?.kind === 'main');
+  const mainButtons = actionsResolved.value?.filter((x) => x?.kind === 'main');
   if (mainButtons.length > 1) {
     logWarn(
       'LxDropDownMenu: More than one action with kind "main" defined. Only the first one will be used',
@@ -545,23 +568,12 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         @keydown.up.prevent
         @keyup="handleTogglerKeyup"
       >
-        <LxButton
+        <LxActionButton
           v-if="!$slots.default && mainButton"
+          :action="mainButton"
+          :omit="['href']"
           :id="mainButton?.id"
-          :label="mainButton?.name || mainButton?.label"
-          :title="mainButton?.title || mainButton?.tooltip"
-          :icon="mainButton?.icon"
-          :iconSet="mainButton?.iconSet"
           :disabled="disabled || mainButton?.disabled"
-          :loading="mainButton?.loading"
-          :busy="mainButton?.busy"
-          :destructive="mainButton?.destructive"
-          :badge="mainButton?.badge"
-          :badgeType="mainButton?.badgeType"
-          :active="mainButton?.active"
-          :badgeIcon="mainButton?.badgeIcon"
-          :badgeTitle="mainButton?.badgeTitle"
-          :customClass="mainButton?.customClass"
           kind="ghost"
           variant="icon-only"
           tabindex="-1"
@@ -712,24 +724,12 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   v-else-if="groupMap[groupName]?.kind !== 'tags'"
                   class="lx-dropdown-menu-button"
                 >
-                  <LxButton
+                  <LxActionButton
+                    :action="action"
+                    :omit="['variant']"
                     :id="action?.id"
-                    :label="action?.name || action?.label"
-                    :title="action?.title || action?.tooltip"
                     kind="menuitem"
-                    :icon="action?.icon"
-                    :iconSet="action?.iconSet"
-                    :disabled="action?.disabled"
-                    :loading="action?.loading"
-                    :busy="action?.busy"
-                    :destructive="action?.destructive"
-                    :badge="action?.badge"
-                    :badge-type="action?.badgeType"
-                    :active="action?.active"
-                    :badgeIcon="action?.badgeIcon"
-                    :badgeTitle="action?.badgeTitle"
                     :href="action?.href || action?.to"
-                    :customClass="action?.customClass"
                     @click="handleActionClick(action?.id)"
                   />
                   <LxIcon
@@ -836,25 +836,14 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   v-else-if="groupMap[groupName]?.kind !== 'tags'"
                   class="lx-dropdown-menu-button"
                 >
-                  <LxButton
+                  <LxActionButton
+                    :action="action"
+                    :omit="['variant']"
                     :id="action?.id"
-                    :label="action?.name || action?.label"
-                    :title="action?.title || action?.tooltip"
                     kind="menuitem"
-                    :icon="action?.icon"
-                    :iconSet="action?.iconSet"
-                    :disabled="action?.disabled"
-                    :loading="action?.loading"
-                    :busy="action?.busy"
-                    :destructive="action?.destructive"
-                    :badge="action?.badge"
-                    :badge-type="action?.badgeType"
-                    :active="action?.active"
-                    :badgeIcon="action?.badgeIcon"
-                    :badgeTitle="action?.badgeTitle"
                     :href="action?.href || action?.to"
                     :customClass="
-                      action?.customClass || (action?.iconColor ? 'has-custom-color' : null)
+                      !action?.customClass && action?.iconColor ? 'has-custom-color' : null
                     "
                     :style="{ '--dropdown-icon-fill': action?.iconColor }"
                     @click="handleActionClick(action?.id, { close: true, event: $event })"

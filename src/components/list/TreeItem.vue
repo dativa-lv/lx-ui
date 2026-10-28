@@ -29,6 +29,7 @@ const props = defineProps({
   areSomeExpandable: { type: Boolean, default: null },
   query: { type: String, default: '' },
   actionDefinitions: { type: Array, default: null },
+  actionGroupDefinitions: { type: Array, default: null },
   actionsLayout: { type: String, default: 'default' }, // default, vertical
   icon: { type: String, default: 'open' },
   iconSet: {
@@ -195,6 +196,7 @@ watch(
           :href="item[hrefAttribute]"
           :clickable="item[clickableAttribute]"
           :actionDefinitions="actionDefinitions"
+          :actionGroupDefinitions="actionGroupDefinitions"
           :actionsLayout="actionsLayout"
           :icon="item[iconAttribute] ? item[iconAttribute] : icon"
           :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
@@ -272,7 +274,8 @@ watch(
       :tooltipAttribute="tooltipAttribute"
       :categoryAttribute="categoryAttribute"
       :selectable-attribute="selectableAttribute"
-      :action-definitions="actionDefinitions"
+      :actionDefinitions="actionDefinitions"
+      :actionGroupDefinitions="actionGroupDefinitions"
       :actionsLayout="actionsLayout"
       :icon="icon"
       :iconSet="iconSet"

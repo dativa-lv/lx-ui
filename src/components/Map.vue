@@ -62,6 +62,7 @@ const props = defineProps({
   ignoreThemeChange: { type: Boolean, default: false },
   hasUserLocation: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: () => [] },
+  actionGroupDefinitions: { type: Array, default: null },
   stickyToolbar: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
 });
@@ -489,6 +490,7 @@ const wrapperRef = ref();
         :id="`${id}-toolbar`"
         class="lx-embedded-toolbar"
         :actionDefinitions="toolbarActions"
+        :actionGroupDefinitions="actionGroupDefinitions"
         defaultArea="right"
         :hasSearch="showSearch"
         searchSide="server"

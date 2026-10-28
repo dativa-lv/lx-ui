@@ -1,9 +1,11 @@
 <script setup>
 import { computed, inject, ref, provide, useSlots, getCurrentInstance, onUnmounted } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxToggle from '@/components/Toggle.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { lxDevUtils } from '@/utils';
@@ -131,6 +133,7 @@ const props = defineProps({
    * @default []
    * @since 1.5.0
    */
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   builderOptions: {
     type: Object,
@@ -197,9 +200,16 @@ const validatedColumnSpan = computed(() => {
   return res;
 });
 
+const actionDefinitionsResolved = computed(
+  () =>
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions)
+    ) || []
+);
+
 const actionDefinitionsDefaults = computed(() => {
-  if (!props.actionDefinitions || !props.actionDefinitions.length) return [];
-  return props.actionDefinitions.map((action) => ({
+  if (!actionDefinitionsResolved.value.length) return [];
+  return actionDefinitionsResolved.value.map((action) => ({
     // @ts-ignore
     ...action,
     value: action?.value || false,
@@ -274,46 +284,35 @@ if (props.builderOptions.useRegistry) {
       </label>
 
       <div v-if="!hideLabel">
-        <template v-if="actionDefinitions?.length === 1">
+        <template v-if="actionDefinitionsResolved?.length === 1">
           <LxToggle
-            v-if="actionDefinitions?.[0]?.kind === 'toggle'"
-            :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
+            v-if="actionDefinitionsResolved?.[0]?.kind === 'toggle'"
+            :id="`${id}-action-${actionDefinitionsResolved?.[0]?.id}`"
             size="s"
-            :modelValue="actionDefinitions?.[0]?.value || false"
-            :tooltip="actionDefinitions?.[0].name"
-            :disabled="actionDefinitions?.[0]?.disabled"
+            :modelValue="actionDefinitionsResolved?.[0]?.value || false"
+            :tooltip="actionDefinitionsResolved?.[0].name"
+            :disabled="actionDefinitionsResolved?.[0]?.disabled"
             @update:modelValue="
               (newValue) => {
-                handleActionClick(id, actionDefinitions?.[0].id, newValue);
+                handleActionClick(id, actionDefinitionsResolved?.[0].id, newValue);
               }
             "
           />
-          <LxButton
+          <LxActionButton
             v-else
-            :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
+            :action="actionDefinitionsResolved?.[0]"
+            :id="`${id}-action-${actionDefinitionsResolved?.[0]?.id}`"
             kind="ghost"
             variant="icon-only"
-            :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
-            :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
-            :icon="actionDefinitions?.[0]?.icon || 'default'"
-            :iconSet="actionDefinitions?.[0]?.iconSet"
-            :loading="actionDefinitions?.[0]?.loading"
-            :busy="actionDefinitions?.[0]?.busy"
-            :destructive="actionDefinitions?.[0]?.destructive"
-            :disabled="actionDefinitions?.[0]?.disabled"
-            :active="actionDefinitions?.[0]?.active"
-            :badge="actionDefinitions?.[0]?.badge"
-            :badgeType="actionDefinitions?.[0]?.badgeType"
-            :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
-            :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
-            :href="actionDefinitions?.[0]?.href"
-            @click="handleActionClick(id, actionDefinitions?.[0].id)"
+            :icon="actionDefinitionsResolved?.[0]?.icon || 'default'"
+            @click="handleActionClick(id, actionDefinitionsResolved?.[0].id)"
           />
         </template>
 
         <LxDropDownMenu
-          v-else-if="actionDefinitions?.length > 1"
+          v-else-if="actionDefinitionsResolved?.length > 1"
           :actionDefinitions="actionDefinitionsDefaults"
+          :actionGroupDefinitions="actionGroupDefinitions"
           @actionClick="(actionId, value) => handleActionClick(id, actionId, value)"
         >
           <LxButton
@@ -354,46 +353,35 @@ if (props.builderOptions.useRegistry) {
       </LxInfoWrapper>
 
       <div v-if="!hideLabel">
-        <template v-if="actionDefinitions?.length === 1">
+        <template v-if="actionDefinitionsResolved?.length === 1">
           <LxToggle
-            v-if="actionDefinitions?.[0]?.kind === 'toggle'"
-            :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
+            v-if="actionDefinitionsResolved?.[0]?.kind === 'toggle'"
+            :id="`${id}-action-${actionDefinitionsResolved?.[0]?.id}`"
             size="s"
-            :modelValue="actionDefinitions?.[0].value || false"
-            :tooltip="actionDefinitions?.[0].name"
-            :disabled="actionDefinitions?.[0]?.disabled"
+            :modelValue="actionDefinitionsResolved?.[0].value || false"
+            :tooltip="actionDefinitionsResolved?.[0].name"
+            :disabled="actionDefinitionsResolved?.[0]?.disabled"
             @update:modelValue="
               (newValue) => {
-                handleActionClick(id, actionDefinitions?.[0].id, newValue);
+                handleActionClick(id, actionDefinitionsResolved?.[0].id, newValue);
               }
             "
           />
-          <LxButton
+          <LxActionButton
             v-else
-            :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
+            :action="actionDefinitionsResolved?.[0]"
+            :id="`${id}-action-${actionDefinitionsResolved?.[0]?.id}`"
             kind="ghost"
             variant="icon-only"
-            :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
-            :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
-            :icon="actionDefinitions?.[0]?.icon || 'default'"
-            :iconSet="actionDefinitions?.[0]?.iconSet"
-            :disabled="actionDefinitions?.[0]?.disabled"
-            :loading="actionDefinitions?.[0]?.loading"
-            :busy="actionDefinitions?.[0]?.busy"
-            :destructive="actionDefinitions?.[0]?.destructive"
-            :active="actionDefinitions?.[0]?.active"
-            :badge="actionDefinitions?.[0]?.badge"
-            :badgeType="actionDefinitions?.[0]?.badgeType"
-            :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
-            :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
-            :href="actionDefinitions?.[0]?.href"
-            @click="handleActionClick(id, actionDefinitions?.[0].id)"
+            :icon="actionDefinitionsResolved?.[0]?.icon || 'default'"
+            @click="handleActionClick(id, actionDefinitionsResolved?.[0].id)"
           />
         </template>
 
         <LxDropDownMenu
-          v-else-if="actionDefinitions?.length > 1"
+          v-else-if="actionDefinitionsResolved?.length > 1"
           :actionDefinitions="actionDefinitionsDefaults"
+          :actionGroupDefinitions="actionGroupDefinitions"
           @actionClick="(actionId, value) => handleActionClick(id, actionId, value)"
         >
           <LxButton

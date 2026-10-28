@@ -42,6 +42,7 @@ const props = defineProps({
   preferencesId: { type: String, default: 'lx-camera-settings' },
   labelId: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 1 },
+  actionGroupDefinitions: { type: Array, default: null },
   stickyToolbar: { type: Boolean, default: false, group: 'main', sequence: 4 },
   helperText: { type: String, default: null, group: 'main', sequence: 5 },
   helperTextKind: {
@@ -482,6 +483,7 @@ const wrapperRef = ref();
         :id="`${id}-toolbar`"
         :disabled="loading"
         :actionDefinitions="toolbarActions"
+        :actionGroupDefinitions="actionGroupDefinitions"
         :sticky="stickyToolbar"
         :wrapperRef="wrapperRef"
         @actionClick="toolbarActionClick"

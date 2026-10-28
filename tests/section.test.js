@@ -313,3 +313,24 @@ test('LxSection requiredMode "optional"', () => {
   expect(rows[1].find('label').text()).toContain('(neobligāts)');
   expect(rows[2].find('label').text()).not.toContain('(neobligāts)');
 });
+
+test('LxSection renders the only child of a nested trigger as a button', () => {
+  wrapper = mount(LxForm, {
+    slots: {
+      sections: h(LxSection, {
+        id: 'section',
+        label: 'Section',
+        actionDefinitions: [
+          { id: 'share', name: 'Share', icon: 'share', nestedGroupId: 'share', disabled: true },
+          { id: 'shareLink', name: 'Copy link', icon: 'link', groupId: 'share' },
+        ],
+      }),
+    },
+    global: { components: { LxSection } },
+  });
+
+  expect(wrapper.find('#share').exists()).toBe(false);
+  const button = wrapper.find('#shareLink');
+  expect(button.exists()).toBe(true);
+  expect(button.attributes('disabled')).toBeDefined();
+});

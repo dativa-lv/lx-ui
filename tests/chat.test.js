@@ -7,6 +7,8 @@ import MessageComposer from '@/components/chat/MessageComposer.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxListItem from '@/components/list/ListItem.vue';
 import { formatFull } from '@/utils/date/format';
 
 // Minimal stand-in for the optional LxFormBuilder (from @dativa-lv/lx-builders).
@@ -869,6 +871,97 @@ describe('LxChat', () => {
 
       // Only the AI message exposes the action (visibleByAttribute: 'isAi').
       expect(wrapper.findAll('[id$="-action-reasoning"]')).toHaveLength(1);
+    });
+
+    test('renders the child of a nested message action with the trigger visibility', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [
+            { id: 'user-me', isMe: true },
+            { id: 'user-ai', isAi: true },
+          ],
+          messageActionDefinitions: [
+            { ...reasoningAction, nestedGroupId: 'reasoning' },
+            {
+              id: 'reasoningShow',
+              name: 'Show reasoning',
+              icon: 'reasoning',
+              groupId: 'reasoning',
+            },
+          ],
+          items: [
+            { id: 'm1', userId: 'user-ai', userName: 'AI', text: 'answer', createdAt: day },
+            { id: 'm2', userId: 'user-other', userName: 'Other', text: 'hi', createdAt: day },
+          ],
+        },
+        ...mountOptions,
+      });
+
+      expect(wrapper.findAll('[id$="-action-reasoning"]')).toHaveLength(0);
+      expect(wrapper.findAll('[id$="-action-reasoningShow"]')).toHaveLength(1);
+    });
+
+    test('passes message and typing action groups to their menus', () => {
+      const groups = [
+        { id: 'main', name: 'Main' },
+        { id: 'more', name: 'More' },
+      ];
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [
+            { id: 'user-me', isMe: true },
+            { id: 'user-ai', isAi: true, name: 'AI' },
+          ],
+          messageActionDefinitions: [
+            { id: 'copy', name: 'Copy', icon: 'copy', groupId: 'more' },
+            { id: 'retry', name: 'Retry', icon: 'refresh', groupId: 'main' },
+          ],
+          messageActionGroupDefinitions: groups,
+          typingActionDefinitions: [{ id: 'stop', name: 'Stop', icon: 'close', groupId: 'main' }],
+          typingActionGroupDefinitions: groups,
+          typing: true,
+          typingUsers: ['user-ai'],
+          items: [{ id: 'm1', userId: 'user-ai', userName: 'AI', text: 'answer', createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      const menu = wrapper
+        .findAllComponents(LxDropDownMenu)
+        .find((m) => m.props('actionDefinitions').some((a) => a.id === 'copy'));
+      expect(menu.props('actionGroupDefinitions')).toEqual(groups);
+      expect(
+        menu
+          .props('actionDefinitions')
+          .filter((a) => a.kind !== 'main')
+          .map((a) => a.id)
+      ).toEqual(['retry', 'copy']);
+
+      const typingItem = wrapper
+        .findAllComponents(LxListItem)
+        .find((item) => item.props('actionDefinitions')?.some((a) => a.id === 'stop'));
+      expect(typingItem.props('actionGroupDefinitions')).toEqual(groups);
+    });
+
+    test('passes the overflow menu text to the typing indicator', () => {
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [{ id: 'user-ai', isAi: true, name: 'AI' }],
+          typingActionDefinitions: [
+            { id: 'stop', name: 'Stop', icon: 'close' },
+            { id: 'retry', name: 'Retry', icon: 'refresh' },
+          ],
+          typing: true,
+          typingUsers: ['user-ai'],
+          texts: { overflowMenu: 'More options' },
+        },
+        ...mountOptions,
+      });
+
+      const typingItem = wrapper
+        .findAllComponents(LxListItem)
+        .find((item) => item.props('actionDefinitions')?.some((a) => a.id === 'stop'));
+      expect(typingItem.props('texts')).toEqual({ overflowMenu: 'More options' });
     });
 
     test('clicking a message action emits message-action-click with the action id and message id', async () => {

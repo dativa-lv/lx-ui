@@ -2,8 +2,10 @@
 import { computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 
 const props = defineProps({
   id: {
@@ -34,6 +36,7 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   kind: {
     type: String,
@@ -50,6 +53,10 @@ const textsDefault = { overflowMenu: 'Atvērt papildu iespējas' };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxWidget'));
 
 const emits = defineEmits(['actionClick']);
+
+const actionDefinitionsResolved = computed(() =>
+  flattenNestedActions(resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions))
+);
 
 const size = computed(() => `lx-widget-${props.width}-${props.height}`);
 
@@ -69,32 +76,20 @@ function handleActionClick(id) {
       <p>{{ label }}</p>
       <div
         class="lx-widget-toolbar-button"
-        v-if="actionDefinitions && actionDefinitions?.length === 1"
+        v-if="actionDefinitionsResolved && actionDefinitionsResolved?.length === 1"
       >
-        <LxButton
-          :id="`${id}-action-${actionDefinitions?.[0]?.id}`"
+        <LxActionButton
+          :action="actionDefinitionsResolved?.[0]"
+          :id="`${id}-action-${actionDefinitionsResolved?.[0]?.id}`"
           kind="ghost"
-          :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
-          :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
-          :icon="actionDefinitions?.[0]?.icon"
-          :iconSet="actionDefinitions?.[0]?.iconSet"
-          :loading="actionDefinitions?.[0]?.loading"
-          :busy="actionDefinitions?.[0]?.busy"
-          :destructive="actionDefinitions?.[0]?.destructive"
-          :disabled="actionDefinitions?.[0]?.disabled"
-          :active="actionDefinitions?.[0]?.active"
           variant="icon-only"
-          :badge="actionDefinitions?.[0]?.badge"
-          :badgeType="actionDefinitions?.[0]?.badgeType"
-          :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
-          :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
-          :href="actionDefinitions?.[0]?.href"
-          @click="handleActionClick(actionDefinitions?.[0]?.id)"
+          @click="handleActionClick(actionDefinitionsResolved?.[0]?.id)"
         />
       </div>
       <LxDropDownMenu
-        v-if="actionDefinitions && actionDefinitions?.length > 1"
-        :actionDefinitions="actionDefinitions"
+        v-if="actionDefinitionsResolved && actionDefinitionsResolved?.length > 1"
+        :actionDefinitions="actionDefinitionsResolved"
+        :actionGroupDefinitions="actionGroupDefinitions"
         @actionClick="(id) => handleActionClick(id)"
       >
         <div class="lx-widget-toolbar-button">

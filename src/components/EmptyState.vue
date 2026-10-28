@@ -2,8 +2,10 @@
 import { computed } from 'vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 
 const emits = defineEmits(['actionClick']);
@@ -13,10 +15,15 @@ const props = defineProps({
   label: { type: String, default: '' },
   description: { type: String, default: '' },
   icon: { type: String, default: '' },
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: null },
   texts: { type: Object, default: () => ({}) },
   announce: { type: Boolean, default: true },
 });
+
+const actionDefinitionsResolved = computed(() =>
+  flattenNestedActions(resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions))
+);
 
 const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
@@ -37,33 +44,22 @@ function handleActionClick(actionName) {
       <p v-if="description" class="lx-secondary">{{ description }}</p>
       <div
         class="lx-empty-state-buttons"
-        v-if="actionDefinitions?.length && actionDefinitions?.length <= 3"
+        v-if="actionDefinitionsResolved?.length && actionDefinitionsResolved?.length <= 3"
       >
-        <LxButton
-          v-for="action in actionDefinitions"
+        <LxActionButton
+          v-for="action in actionDefinitionsResolved"
           :key="action?.id"
+          :action="action"
+          :omit="['variant']"
           :id="action?.id"
-          :label="action?.name || action?.label"
-          :title="action?.title || action?.tooltip"
-          :icon="action?.icon"
-          :iconSet="action?.iconSet"
           kind="tertiary"
-          :loading="action?.loading"
-          :busy="action?.busy"
-          :destructive="action?.destructive"
-          :disabled="action?.disabled"
-          :active="action?.active"
-          :badge="action?.badge"
-          :badgeType="action?.badgeType"
-          :badgeIcon="action?.badgeIcon"
-          :badgeTitle="action?.badgeTitle"
-          :href="action?.href"
           @click="handleActionClick(action?.id)"
         />
       </div>
-      <div v-if="actionDefinitions?.length && actionDefinitions?.length > 3">
+      <div v-if="actionDefinitionsResolved?.length && actionDefinitionsResolved?.length > 3">
         <LxDropDownMenu
-          :actionDefinitions="actionDefinitions"
+          :actionDefinitions="actionDefinitionsResolved"
+          :actionGroupDefinitions="actionGroupDefinitions"
           @actionClick="(id) => handleActionClick(id)"
         >
           <LxButton

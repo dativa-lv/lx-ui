@@ -1,8 +1,10 @@
 <script setup>
 import { ref, computed, nextTick, provide, watch, onUnmounted } from 'vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxIllustration from '@/components/Illustration.vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import { logWarn } from '@/utils/devUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
@@ -14,6 +16,7 @@ const props = defineProps({
   description: { type: String, default: null },
   kind: { type: String, default: 'default' }, // default, question, info, warning, error, success, custom
   pictogram: { type: String, default: null },
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   escEnabled: { type: Boolean, default: true },
   disableClosing: { type: Boolean, default: false },
@@ -70,12 +73,22 @@ function handleActionClick(action) {
   emits('actionClick', action?.id);
 }
 
+const actionDefinitionsResolved = computed(
+  () =>
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions),
+      { inheritKind: true }
+    ) || []
+);
+
 const actionDefinitionsDisplay = computed(() => {
-  let primary = props.actionDefinitions?.filter((action) => action?.kind === 'primary') || [];
+  let primary =
+    actionDefinitionsResolved.value?.filter((action) => action?.kind === 'primary') || [];
   if (primary.length === 0) {
-    primary = props.actionDefinitions?.filter((action) => !action?.kind) || [];
+    primary = actionDefinitionsResolved.value?.filter((action) => !action?.kind) || [];
   }
-  const secondary = props.actionDefinitions?.filter((action) => action?.kind === 'secondary') || [];
+  const secondary =
+    actionDefinitionsResolved.value?.filter((action) => action?.kind === 'secondary') || [];
 
   const env = useLx().getGlobals()?.environment;
   if (primary.length > 1) {
@@ -193,23 +206,12 @@ defineExpose({ open, close });
             ]"
           >
             <template v-if="actionDefinitionsDisplay?.length > 0">
-              <LxButton
+              <LxActionButton
                 v-for="action in actionDefinitionsDisplay"
                 :key="action?.id"
+                :action="action"
+                :omit="['icon', 'iconSet', 'variant']"
                 :id="`${id}-action-${action?.id}`"
-                :label="action?.name || action?.label"
-                :title="action?.title || action?.tooltip"
-                :kind="action?.kind"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
-                :disabled="action?.disabled"
-                :active="action?.active"
-                :href="action?.href"
-                :badge="action?.badge"
-                :badgeType="action?.badgeType"
-                :badgeIcon="action?.badgeIcon"
-                :badgeTitle="action?.badgeTitle"
                 @click="handleActionClick(action)"
               />
             </template>

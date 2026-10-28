@@ -16,12 +16,14 @@ import {
 import { useDebounceFn, useElementSize, useElementBounding, useScroll } from '@vueuse/core';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxToggle from '@/components/Toggle.vue';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { logWarn } from '@/utils/devUtils';
+import { resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import { useToolbarResponsiveness } from '@/hooks/useToolbarResponsiveness';
 
 const LxAutoComplete = defineAsyncComponent(() => import('@/components/AutoComplete.vue'));
@@ -29,6 +31,7 @@ const LxAutoComplete = defineAsyncComponent(() => import('@/components/AutoCompl
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   actionDefinitions: { type: Array, default: () => [] },
+  actionGroupDefinitions: { type: Array, default: null },
   noBorders: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
@@ -52,6 +55,10 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
+const actionDefinitionsResolved = computed(() =>
+  resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions)
+);
 
 const emits = defineEmits([
   'actionClick',
@@ -134,7 +141,7 @@ function updateSlotContentFlags() {
 
 const isToolbarEmpty = computed(
   () =>
-    !props.actionDefinitions.length &&
+    !actionDefinitionsResolved.value.length &&
     !props.hasSearch &&
     !props.hasSelectAll &&
     !hasDefaultSlotContent.value &&
@@ -154,7 +161,7 @@ const defaultAreaComputed = computed(() => {
 });
 
 function getArea(action) {
-  const parentAction = props.actionDefinitions.find(
+  const parentAction = actionDefinitionsResolved.value.find(
     (a) => action.groupId && a.nestedGroupId && a.nestedGroupId === action.groupId
   );
 
@@ -259,11 +266,11 @@ function processGroup(group) {
 }
 
 const actionsProcessed = computed(() => {
-  if (!props.actionDefinitions.length) {
+  if (!actionDefinitionsResolved.value.length) {
     return [];
   }
 
-  const normalizedActions = props.actionDefinitions.map((a) => applyDefaults(a));
+  const normalizedActions = actionDefinitionsResolved.value.map((a) => applyDefaults(a));
   const regularActions = normalizedActions.filter((a) => !a.extra);
   const extraActions = normalizedActions.filter((a) => a.extra);
   const sortedExtraActions = defaultAreaComputed.value ? extraActions : [...extraActions].reverse();
@@ -650,25 +657,10 @@ const dataState = computed(() =>
         />
       </LxToolbarGroup>
       <LxToolbarGroup v-if="promotedAction?.area === 'left'" class="lx-toolbar-promoted-action">
-        <LxButton
+        <LxActionButton
+          :action="promotedAction"
           :id="getActionId(promotedAction.id)"
-          :label="promotedAction.name || promotedAction.label"
-          :title="promotedAction.title || promotedAction.tooltip"
-          :icon="promotedAction.icon"
-          :iconSet="promotedAction.iconSet"
-          :variant="promotedAction.variant"
-          :kind="promotedAction.kind"
-          :loading="promotedAction.loading"
-          :busy="promotedAction.busy"
-          :destructive="promotedAction.destructive"
           :disabled="promotedAction.disabled || props.disabled || props.loading"
-          :active="promotedAction.active"
-          :badge="promotedAction.badge"
-          :badgeType="promotedAction.badgeType"
-          :badgeIcon="promotedAction.badgeIcon"
-          :badgeTitle="promotedAction.badgeTitle"
-          :customClass="promotedAction.customClass"
-          :href="promotedAction.href"
           @click="handleActionClick(promotedAction.id)"
         />
       </LxToolbarGroup>
@@ -707,6 +699,7 @@ const dataState = computed(() =>
             <LxDropDownMenu
               :disabled="props.disabled || props.loading"
               :actionDefinitions="actionsOverflow"
+              :actionGroupDefinitions="actionGroupDefinitions"
               @actionClick="(id, value) => handleActionClick(id, { value })"
             >
               <LxButton
@@ -727,26 +720,13 @@ const dataState = computed(() =>
             class="action-definitions-group"
           >
             <template v-for="action in group.actions" :key="action?.id">
-              <LxButton
+              <LxActionButton
                 v-if="isActionButton(action)"
+                :action="action"
                 :id="getActionId(action?.id)"
-                :label="action?.name || action?.label"
-                :title="action?.title || action?.tooltip"
-                :icon="action?.icon"
-                :iconSet="action?.iconSet"
                 :kind="action?.kind || 'ghost'"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
                 :disabled="action?.disabled || props.disabled || props.loading"
-                :active="action?.active"
                 variant="icon-only"
-                :customClass="action?.customClass"
-                :badge="action?.badge"
-                :badgeType="action?.badgeType"
-                :badgeIcon="action?.badgeIcon"
-                :badgeTitle="action?.badgeTitle"
-                :href="action?.href"
                 @click="handleActionClick(action?.id)"
               />
               <LxToggle
@@ -768,25 +748,15 @@ const dataState = computed(() =>
                 :actionDefinitions="actionsByGroupId.get(action?.nestedGroupId) ?? []"
                 @actionClick="(id, value) => handleActionClick(id, { value })"
               >
-                <LxButton
+                <LxActionButton
                   v-if="isActionDropDown(action)"
+                  :action="action"
+                  :omit="['href']"
                   :id="getActionId(action?.id)"
-                  :label="action?.name || action?.label"
-                  :title="action?.title || action?.tooltip"
                   :icon="action?.icon || 'menu'"
-                  :iconSet="action?.iconSet"
                   :kind="action?.kind || 'ghost'"
                   :tabindex="-1"
-                  :loading="action?.loading"
-                  :busy="action?.busy"
-                  :destructive="action?.destructive"
                   :disabled="action?.disabled || props.disabled || props.loading"
-                  :active="action?.active"
-                  :badge="action?.badge"
-                  :badgeType="action?.badgeType"
-                  :badgeIcon="action?.badgeIcon"
-                  :badgeTitle="action?.badgeTitle"
-                  :customClass="action?.customClass"
                   variant="icon-only"
                 />
               </LxDropDownMenu>
@@ -838,26 +808,13 @@ const dataState = computed(() =>
             class="action-definitions-group"
           >
             <template v-for="action in group.actions" :key="action?.id">
-              <LxButton
+              <LxActionButton
                 v-if="isActionButton(action)"
+                :action="action"
                 :id="getActionId(action?.id)"
-                :label="action?.name || action?.label"
-                :title="action?.title || action?.tooltip"
-                :icon="action?.icon"
-                :iconSet="action?.iconSet"
                 :kind="action?.kind || 'ghost'"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
                 :disabled="action?.disabled || props.disabled || props.loading"
-                :active="action?.active"
                 variant="icon-only"
-                :customClass="action?.customClass"
-                :badge="action?.badge"
-                :badgeType="action?.badgeType"
-                :badgeIcon="action?.badgeIcon"
-                :badgeTitle="action?.badgeTitle"
-                :href="action?.href"
                 @click="handleActionClick(action?.id)"
               />
               <LxToggle
@@ -879,25 +836,15 @@ const dataState = computed(() =>
                 :actionDefinitions="actionsByGroupId.get(action?.nestedGroupId) ?? []"
                 @actionClick="(id, value) => handleActionClick(id, { value })"
               >
-                <LxButton
+                <LxActionButton
                   v-if="isActionDropDown(action)"
+                  :action="action"
+                  :omit="['href']"
                   :id="getActionId(action?.id)"
-                  :label="action?.name || action?.label"
-                  :title="action?.title || action?.tooltip"
                   :icon="action?.icon || 'menu'"
-                  :iconSet="action?.iconSet"
                   :kind="action?.kind || 'ghost'"
                   :tabindex="-1"
-                  :loading="action?.loading"
-                  :busy="action?.busy"
-                  :destructive="action?.destructive"
                   :disabled="action?.disabled || props.disabled || props.loading"
-                  :active="action?.active"
-                  :badge="action?.badge"
-                  :badgeType="action?.badgeType"
-                  :badgeIcon="action?.badgeIcon"
-                  :badgeTitle="action?.badgeTitle"
-                  :customClass="action?.customClass"
                   variant="icon-only"
                 />
               </LxDropDownMenu>
@@ -920,6 +867,7 @@ const dataState = computed(() =>
             <LxDropDownMenu
               :disabled="props.disabled || props.loading"
               :actionDefinitions="actionsOverflow"
+              :actionGroupDefinitions="actionGroupDefinitions"
               @actionClick="(id, value) => handleActionClick(id, { value })"
             >
               <LxButton
@@ -937,25 +885,10 @@ const dataState = computed(() =>
       </div>
 
       <LxToolbarGroup v-if="promotedAction?.area === 'right'" class="lx-toolbar-promoted-action">
-        <LxButton
+        <LxActionButton
+          :action="promotedAction"
           :id="getActionId(promotedAction.id)"
-          :label="promotedAction.name || promotedAction.label"
-          :title="promotedAction.title || promotedAction.tooltip"
-          :icon="promotedAction.icon"
-          :iconSet="promotedAction.iconSet"
-          :variant="promotedAction.variant"
-          :kind="promotedAction.kind"
-          :loading="promotedAction.loading"
-          :busy="promotedAction.busy"
-          :destructive="promotedAction.destructive"
           :disabled="promotedAction.disabled || props.disabled || props.loading"
-          :active="promotedAction.active"
-          :badge="promotedAction.badge"
-          :badgeType="promotedAction.badgeType"
-          :badgeIcon="promotedAction.badgeIcon"
-          :badgeTitle="promotedAction.badgeTitle"
-          :customClass="promotedAction.customClass"
-          :href="promotedAction.href"
           @click="handleActionClick(promotedAction.id)"
         />
       </LxToolbarGroup>

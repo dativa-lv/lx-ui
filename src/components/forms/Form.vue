@@ -18,6 +18,7 @@ import {
   useMutationObserver,
 } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxSection from '@/components/forms/Section.vue';
@@ -25,6 +26,7 @@ import LxTabControl from '@/components/TabControl.vue';
 import LxWizard from '@/components/Wizard.vue';
 import LxIcon from '@/components/Icon.vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import LxSkipLink from '@/components/SkipLink.vue';
 import {
   clampText,
@@ -216,6 +218,7 @@ const props = defineProps({
    * @default []
    * @since 0.1.63
    */
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: {
     type: Array,
     default: () => [], // { actionName: '', name: '', icon: '', kind: 'primary'/'secondary'/'tertiary'/'additional' }
@@ -531,8 +534,16 @@ function prevStep() {
   }
 }
 
+const actionDefinitionsResolved = computed(
+  () =>
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions),
+      { inheritKind: true }
+    ) || []
+);
+
 const hasNoKind = computed(() =>
-  props.actionDefinitions?.every(
+  actionDefinitionsResolved.value?.every(
     (action) =>
       action.kind !== 'primary' &&
       action.kind !== 'secondary' &&
@@ -547,11 +558,11 @@ const primaryButtons = computed(() => {
   }
 
   // If no actions have kind attribute, treat first action as primary
-  if (hasNoKind.value && props.actionDefinitions?.length > 0) {
-    return [props.actionDefinitions[0]];
+  if (hasNoKind.value && actionDefinitionsResolved.value?.length > 0) {
+    return [actionDefinitionsResolved.value[0]];
   }
 
-  const ret = props.actionDefinitions?.filter((x) => x.kind === 'primary');
+  const ret = actionDefinitionsResolved.value?.filter((x) => x.kind === 'primary');
   if (ret?.length > 2) {
     return ret.slice(0, 2);
   }
@@ -560,20 +571,25 @@ const primaryButtons = computed(() => {
 
 const secondaryButtons = computed(() => {
   if (indexTypeRef.value === 'wizard') {
-    return props.actionDefinitions
+    return actionDefinitionsResolved.value
       ?.map((x) => (x.kind === 'primary' ? { ...x, kind: 'secondary' } : x))
       .filter((x) => x.kind === 'secondary');
   }
-  return props.actionDefinitions?.filter((x) => x.kind === 'secondary');
+  return actionDefinitionsResolved.value?.filter((x) => x.kind === 'secondary');
 });
 
 const tertiaryButtons = computed(() =>
-  props.actionDefinitions?.filter((x) => x.kind === 'tertiary')
+  actionDefinitionsResolved.value?.filter((x) => x.kind === 'tertiary')
 );
 
 const additionalButtons = computed(() =>
-  props.actionDefinitions?.filter((x) => x.kind === 'additional')
+  actionDefinitionsResolved.value?.filter((x) => x.kind === 'additional')
 );
+
+function getActionGroupLabel(groupId) {
+  const group = props.actionGroupDefinitions?.find((g) => g?.id === groupId);
+  return group?.name || group?.label || null;
+}
 
 const additionalButtonsGrouped = computed(() =>
   additionalButtons.value.reduce((acc, action) => {
@@ -1130,26 +1146,13 @@ if (props.builderOptions.useRegistry) {
       </div>
 
       <div class="lx-group lx-single-header-button" v-if="additionalButtons?.length === 1">
-        <LxButton
+        <LxActionButton
           v-for="button in additionalButtons"
-          :id="`${id}-action-${button.id}`"
           :key="button.id"
-          :label="button.name || button.label"
-          :title="button.title || button.tooltip"
-          :icon="button.icon"
-          :iconSet="button.iconSet"
+          :action="button"
+          :id="`${id}-action-${button.id}`"
           kind="ghost"
-          :loading="button.loading"
-          :busy="button.busy"
-          :destructive="button.destructive"
-          :disabled="button.disabled"
-          :active="button.active"
-          :badge="button.badge"
-          :badgeType="button.badgeType"
-          :badgeTitle="button.badgeTitle"
-          :badgeIcon="button.badgeIcon"
           variant="icon-only"
-          :href="button.href"
           @click="clickHandler(button.id)"
         />
       </div>
@@ -1199,25 +1202,22 @@ if (props.builderOptions.useRegistry) {
               v-for="(group, groupName) in additionalButtonsGrouped"
               :key="groupName"
               class="lx-button-set lx-dropdown-menu-group lx-dropdown-menu-no-panel"
+              :role="getActionGroupLabel(groupName) ? 'group' : null"
+              :aria-labelledby="getActionGroupLabel(groupName) ? `${id}-${groupName}-group` : null"
             >
+              <div
+                v-if="getActionGroupLabel(groupName)"
+                :id="`${id}-${groupName}-group`"
+                class="lx-label"
+              >
+                {{ getActionGroupLabel(groupName) }}
+              </div>
               <template v-for="button in group" :key="button?.id">
-                <LxButton
+                <LxActionButton
+                  :action="button"
+                  :omit="['variant']"
                   :id="`${id}-action-${button.id}`"
-                  :label="button.name || button.label"
-                  :title="button.title || button.tooltip"
-                  :icon="button.icon"
-                  :iconSet="button.iconSet"
-                  :loading="button.loading"
-                  :busy="button.busy"
-                  :destructive="button.destructive"
-                  :disabled="button.disabled"
-                  :active="button.active"
-                  :badge="button.badge"
-                  :badgeType="button.badgeType"
-                  :badgeTitle="button.badgeTitle"
-                  :badgeIcon="button.badgeIcon"
                   kind="ghost"
-                  :href="button.href"
                   @click="clickHandler(button.id)"
                 />
               </template>
@@ -1402,25 +1402,13 @@ if (props.builderOptions.useRegistry) {
       ref="formFooter"
     >
       <div class="lx-group lx-buttons">
-        <LxButton
+        <LxActionButton
           v-for="button in primaryButtons"
-          :id="`${id}-action-${button.id}`"
           :key="button.id"
-          :label="button.name || button.label"
-          :title="button.title || button.tooltip"
-          :icon="button.icon"
-          :iconSet="button.iconSet"
-          :loading="button.loading"
-          :busy="button.busy"
-          :destructive="button.destructive"
-          :disabled="button.disabled"
-          :active="button.active"
-          :badge="button.badge"
-          :badgeType="button.badgeType"
-          :badgeTitle="button.badgeTitle"
-          :badgeIcon="button.badgeIcon"
+          :action="button"
+          :omit="['variant']"
+          :id="`${id}-action-${button.id}`"
           kind="primary"
-          :href="button.href"
           @click="clickHandler(button.id)"
         />
 
@@ -1428,6 +1416,7 @@ if (props.builderOptions.useRegistry) {
           custom-class="responsive-overflow"
           v-if="notPrimaryButtonCount > 1"
           :actionDefinitions="combinedFooterActions"
+          :actionGroupDefinitions="actionGroupDefinitions"
           @actionClick="(id) => clickHandler(id)"
         >
           <LxButton
@@ -1440,28 +1429,16 @@ if (props.builderOptions.useRegistry) {
           />
         </LxDropDownMenu>
 
-        <LxButton
+        <LxActionButton
           v-for="button in secondaryButtons"
-          :id="`${id}-action-${button.id}`"
           :key="button.id"
-          :label="button.name || button.label"
-          :title="button.title || button.tooltip"
-          :icon="button.icon"
-          :iconSet="button.iconSet"
-          :loading="button.loading"
-          :busy="button.busy"
-          :destructive="button.destructive"
-          :disabled="button.disabled"
-          :active="button.active"
-          :badge="button.badge"
-          :badgeType="button.badgeType"
-          :badgeTitle="button.badgeTitle"
-          :badgeIcon="button.badgeIcon"
+          :action="button"
+          :omit="['variant']"
+          :id="`${id}-action-${button.id}`"
           kind="secondary"
           :customClass="
             notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
           "
-          :href="button.href"
           @click="clickHandler(button.id)"
         />
       </div>
@@ -1471,28 +1448,16 @@ if (props.builderOptions.useRegistry) {
       </div>
 
       <div class="lx-group lx-responsive-l">
-        <LxButton
+        <LxActionButton
           v-for="button in tertiaryButtons"
-          :id="`${id}-action-${button.id}`"
           :key="button.id"
-          :label="button.name || button.label"
-          :title="button.title || button.tooltip"
-          :icon="button.icon"
-          :iconSet="button.iconSet"
-          :loading="button.loading"
-          :busy="button.busy"
-          :destructive="button.destructive"
-          :disabled="button.disabled"
+          :action="button"
+          :omit="['variant']"
+          :id="`${id}-action-${button.id}`"
           :customClass="
             notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
           "
-          :active="button.active"
-          :badge="button.badge"
-          :badgeType="button.badgeType"
-          :badgeTitle="button.badgeTitle"
-          :badgeIcon="button.badgeIcon"
           kind="tertiary"
-          :href="button.href"
           @click="clickHandler(button.id)"
         />
       </div>

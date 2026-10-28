@@ -1,6 +1,7 @@
 <script setup>
 import { computed, shallowRef, watch, provide, ref } from 'vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxLoader from '@/components/Loader.vue';
@@ -9,6 +10,7 @@ import LxCheckbox from '@/components/Checkbox.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
 import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
@@ -24,6 +26,7 @@ const props = defineProps({
   description: { type: String, default: null },
   uppercase: { type: Boolean, default: true },
   expandable: { type: Boolean, default: false },
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
@@ -111,7 +114,13 @@ watch(
     }
   }
 );
-const actionDefinitionsLength = computed(() => Object.keys(props.actionDefinitions).length);
+const actionDefinitionsResolved = computed(
+  () =>
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions)
+    ) || []
+);
+const actionDefinitionsLength = computed(() => actionDefinitionsResolved.value.length);
 
 const selected = computed({
   get() {
@@ -241,30 +250,19 @@ const expandIconTitle = computed(() => {
         </div>
       </header>
       <div class="additional-buttons" v-if="Number(actionDefinitionsLength) > 0">
-        <LxButton
-          v-if="actionDefinitions.length === 1"
-          :id="actionDefinitions[0].id"
-          :label="actionDefinitions[0].name || actionDefinitions[0].label"
-          :title="actionDefinitions[0].title || actionDefinitions[0].tooltip"
-          :icon="actionDefinitions[0].icon"
-          :iconSet="actionDefinitions[0].iconSet"
+        <LxActionButton
+          v-if="actionDefinitionsResolved.length === 1"
+          :action="actionDefinitionsResolved[0]"
+          :id="actionDefinitionsResolved[0].id"
           kind="ghost"
-          :loading="actionDefinitions[0].loading"
-          :busy="actionDefinitions[0].busy"
-          :destructive="actionDefinitions[0].destructive"
-          :disabled="isDisabled || actionDefinitions[0].disabled"
+          :disabled="isDisabled || actionDefinitionsResolved[0].disabled"
           variant="icon-only"
-          :active="actionDefinitions[0].active"
-          :badge="actionDefinitions[0].badge"
-          :badgeType="actionDefinitions[0].badgeType"
-          :badgeIcon="actionDefinitions[0].badgeIcon"
-          :badgeTitle="actionDefinitions[0].badgeTitle"
-          :href="actionDefinitions[0].href"
-          @click="handleActionClick(actionDefinitions[0].id, props.id)"
+          @click="handleActionClick(actionDefinitionsResolved[0].id, props.id)"
         />
         <LxDropDownMenu
           v-else
-          :actionDefinitions="actionDefinitions"
+          :actionDefinitions="actionDefinitionsResolved"
+          :actionGroupDefinitions="actionGroupDefinitions"
           :disabled="isDisabled"
           @actionClick="(id) => handleActionClick(id, props.id)"
         >

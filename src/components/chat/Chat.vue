@@ -27,6 +27,8 @@ const props = defineProps({
   typing: { type: Boolean, default: false }, // Global state: someone (from typingUsers) is currently typing/thinking. Independent of any message.
   typingUsers: { type: Array, default: () => [] }, // Ids of userDefinitions entries currently typing; resolved to names in the indicator.
   typingActionDefinitions: { type: Array, default: () => [] }, // Actions rendered alongside the typing indicator (e.g. a stop/cancel/reasoning action).
+  messageActionGroupDefinitions: { type: Array, default: null },
+  typingActionGroupDefinitions: { type: Array, default: null },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -146,6 +148,7 @@ onBeforeUnmount(() => {
 
 // Consumer-defined actions rendered per bubble; click hands back the action id + message id (consumer looks up the message itself).
 provide('lxChatMessageActionDefinitions', () => props.messageActionDefinitions);
+provide('lxChatMessageActionGroupDefinitions', () => props.messageActionGroupDefinitions);
 provide('lxChatMessageActionClick', (id, message) =>
   emits('message-action-click', { id, messageId: message.id })
 );
@@ -158,6 +161,7 @@ provide('lxChatSubmitClarifyingQuestions', (message, values, actionName) =>
 
 // Actions rendered alongside the (message-independent) typing indicator.
 provide('lxChatTypingActionDefinitions', () => props.typingActionDefinitions);
+provide('lxChatTypingActionGroupDefinitions', () => props.typingActionGroupDefinitions);
 provide('lxChatTypingActionClick', (id) => emits('typing-action-click', { id }));
 </script>
 

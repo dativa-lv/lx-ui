@@ -2021,3 +2021,37 @@ describe('Required LxRow', () => {
     expect(boxes.every((box) => box.attributes('aria-required') === undefined)).toBe(true);
   });
 });
+
+describe('Nested row actions', () => {
+  const props = {
+    id: 'grid',
+    idAttribute: 'id',
+    items: [
+      { id: 'one', name: 'Item one', canShare: true },
+      { id: 'two', name: 'Item two', canShare: false },
+    ],
+    columnDefinitions: [{ id: 'name', attributeName: 'name', name: 'Name' }],
+    actionDefinitions: [
+      {
+        id: 'share',
+        name: 'Share',
+        icon: 'share',
+        nestedGroupId: 'share',
+        enableByAttribute: 'canShare',
+      },
+      { id: 'shareLink', name: 'Copy link', icon: 'link', groupId: 'share' },
+    ],
+    hasVirtualization: false,
+  };
+
+  test('skips the trigger and renders its children with inherited state', async () => {
+    wrapper = mountComponent({ props, attachTo: document.body });
+
+    await flushVirtualizationSetup();
+
+    expect(wrapper.find('#grid-one-action-share').exists()).toBe(false);
+    expect(wrapper.find('#grid-one-action-shareLink').exists()).toBe(true);
+    expect(wrapper.find('#grid-one-action-shareLink').attributes('disabled')).toBeUndefined();
+    expect(wrapper.find('#grid-two-action-shareLink').attributes('disabled')).toBeDefined();
+  });
+});

@@ -12,6 +12,7 @@ import {
   onUnmounted,
 } from 'vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import LxExpander from '@/components/Expander.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -34,6 +35,7 @@ import useScrollVirtualizer, { resolveVirtualizerScrollParent } from '@/hooks/us
 import { useLoadingAnnouncer } from '@/hooks/useLoadingAnnouncer';
 import { useWindowSize } from '@vueuse/core';
 import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -106,6 +108,10 @@ const props = defineProps({
     options: ['single', 'multiple'],
   },
   selectionActionDefinitions: { type: Array, default: () => [], group: 'additional', sequence: 2 },
+  actionGroupDefinitions: { type: Array, default: null },
+  toolbarActionGroupDefinitions: { type: Array, default: null },
+  selectionActionGroupDefinitions: { type: Array, default: null },
+  emptyStateActionGroupDefinitions: { type: Array, default: null },
   includeUnspecifiedGroups: { type: Boolean, default: false, group: 'additional', sequence: 4 },
   itemsStates: { type: Object, default: null },
   mode: {
@@ -1457,6 +1463,14 @@ function handleToolbarActionClick(id, value) {
   emits('toolbarActionClick', id, value);
 }
 
+const selectionActionsResolved = computed(() =>
+  props.selectionActionGroupDefinitions
+    ? flattenNestedActions(
+        resolveActionGroups(props.selectionActionDefinitions, props.selectionActionGroupDefinitions)
+      )
+    : props.selectionActionDefinitions
+);
+
 const toolbarActions = computed(() => {
   if (selectedItems.value?.length > 0) {
     return [];
@@ -1511,7 +1525,7 @@ onMounted(async () => {
 
   observer = new ResizeObserver(([entry]) => {
     globalThis.requestAnimationFrame(() => {
-      const actionCount = props.selectionActionDefinitions.length;
+      const actionCount = selectionActionsResolved.value.length;
       const breakpoint = BASE_WIDTH + actionCount * WIDTH_PER_ACTION;
 
       isNarrow.value = entry.contentRect.width <= breakpoint;
@@ -1576,6 +1590,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         :customClass="hasSelecting && selectedItems?.length > 0 ? 'lx-selection-toolbar' : ''"
         :id="`${id}-toolbar`"
         :actionDefinitions="toolbarActions"
+        :actionGroupDefinitions="toolbarActionGroupDefinitions"
         :disabled="busy"
         :loading="loading"
         :busy="busy"
@@ -1608,36 +1623,23 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             class="selection-action-button-toolbar"
           >
             <div class="selection-action-buttons">
-              <LxButton
-                v-for="selectAction in selectionActionDefinitions"
+              <LxActionButton
+                v-for="selectAction in selectionActionsResolved"
                 :key="selectAction.id"
+                :action="selectAction"
+                :omit="['variant']"
                 :id="selectAction.id"
-                :label="selectAction.name || selectAction.label"
-                :title="selectAction.title || selectAction.tooltip"
-                :loading="selectAction.loading"
-                :busy="selectAction.busy"
-                :icon="selectAction.icon"
-                :iconSet="selectAction.iconSet"
-                :destructive="selectAction.destructive"
                 :disabled="selectAction.disabled || busy || loading"
                 kind="ghost"
-                :active="selectAction.active"
-                :badge="selectAction.badge"
-                :badgeType="selectAction.badgeType"
-                :badgeIcon="selectAction.badgeIcon"
-                :badgeTitle="selectAction.badgeTitle"
-                :href="selectAction.href"
                 @click="selectionActionClick(selectAction.id, undefined, selectedItems)"
               />
             </div>
 
-            <div
-              v-if="selectionActionDefinitions?.length > 0"
-              class="selection-action-buttons-small"
-            >
+            <div v-if="selectionActionsResolved?.length > 0" class="selection-action-buttons-small">
               <LxDropDownMenu
                 :disabled="loading || busy"
-                :actionDefinitions="selectionActionDefinitions"
+                :actionDefinitions="selectionActionsResolved"
+                :actionGroupDefinitions="selectionActionGroupDefinitions"
                 @actionClick="
                   (id, actionValue) => selectionActionClick(id, actionValue, selectedItems)
                 "
@@ -1671,36 +1673,26 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           <template v-if="selectedItems?.length > 0">
             <div v-if="hasSelecting && !insideForm" class="selection-action-button-toolbar">
               <div class="selection-action-buttons">
-                <LxButton
-                  v-for="selectAction in selectionActionDefinitions"
+                <LxActionButton
+                  v-for="selectAction in selectionActionsResolved"
                   :key="selectAction.id"
+                  :action="selectAction"
+                  :omit="['variant']"
                   :id="selectAction.id"
-                  :label="selectAction.name || selectAction.label"
-                  :title="selectAction.title || selectAction.tooltip"
-                  :loading="selectAction.loading"
-                  :busy="selectAction.busy"
-                  :icon="selectAction.icon"
-                  :iconSet="selectAction.iconSet"
-                  :destructive="selectAction.destructive"
                   :disabled="selectAction.disabled || busy || loading"
                   kind="ghost"
-                  :active="selectAction.active"
-                  :badge="selectAction.badge"
-                  :badgeType="selectAction.badgeType"
-                  :badgeIcon="selectAction.badgeIcon"
-                  :badgeTitle="selectAction.badgeTitle"
-                  :href="selectAction.href"
                   @click="selectionActionClick(selectAction.id, undefined, selectedItems)"
                 />
               </div>
 
               <div
-                v-if="selectionActionDefinitions?.length > 0"
+                v-if="selectionActionsResolved?.length > 0"
                 class="selection-action-buttons-small"
               >
                 <LxDropDownMenu
                   :disabled="loading || busy"
-                  :actionDefinitions="selectionActionDefinitions"
+                  :actionDefinitions="selectionActionsResolved"
+                  :actionGroupDefinitions="selectionActionGroupDefinitions"
                   @actionClick="
                     (id, actionValue) => selectionActionClick(id, actionValue, selectedItems)
                   "
@@ -1751,6 +1743,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               :value="item"
               :href="item[hrefAttribute]"
               :actionDefinitions="actionDefinitions"
+              :actionGroupDefinitions="actionGroupDefinitions"
               :actionsLayout="actionsLayout"
               :icon="item[iconAttribute] ? item[iconAttribute] : icon"
               :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
@@ -1869,6 +1862,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                         :value="element"
                         :href="element[hrefAttribute]"
                         :actionDefinitions="actionDefinitions"
+                        :actionGroupDefinitions="actionGroupDefinitions"
                         :actionsLayout="actionsLayout"
                         :icon="element[iconAttribute] ? element[iconAttribute] : icon"
                         :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
@@ -1915,7 +1909,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :badge-title="group?.badgeTitle"
             :label="group.name"
             :id="group.id"
-            :action-definitions="groupSelectActionDefinitions(group)"
+            :actionDefinitions="groupSelectActionDefinitions(group)"
             @action-click="() => selectSection(group)"
           >
             <template #customHeader v-if="$slots.customExpanderHeader">
@@ -1952,6 +1946,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                   :value="item"
                   :href="item[hrefAttribute]"
                   :actionDefinitions="actionDefinitions"
+                  :actionGroupDefinitions="actionGroupDefinitions"
                   :actionsLayout="actionsLayout"
                   :icon="item[iconAttribute] ? item[iconAttribute] : icon"
                   :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
@@ -2026,7 +2021,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           :tooltipAttribute="tooltipAttribute"
           :categoryAttribute="categoryAttribute"
           :selectable-attribute="selectableAttribute"
-          :action-definitions="actionDefinitions"
+          :actionDefinitions="actionDefinitions"
+          :actionGroupDefinitions="actionGroupDefinitions"
           :actionsLayout="actionsLayout"
           :groupDefinitions="groupDefinitions"
           :icon="icon"
@@ -2064,6 +2060,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 :value="item"
                 :href="item[hrefAttribute]"
                 :actionDefinitions="actionDefinitions"
+                :actionGroupDefinitions="actionGroupDefinitions"
                 :actionsLayout="actionsLayout"
                 :icon="item[iconAttribute] ? item[iconAttribute] : icon"
                 :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
@@ -2127,7 +2124,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :badge-title="group?.badgeTitle"
             :label="group.name"
             :id="group.id"
-            :action-definitions="groupSelectActionDefinitions(group)"
+            :actionDefinitions="groupSelectActionDefinitions(group)"
             @action-click="() => selectSection(group)"
           >
             <LxTreeList
@@ -2144,7 +2141,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               :tooltipAttribute="tooltipAttribute"
               :categoryAttribute="categoryAttribute"
               :selectable-attribute="selectableAttribute"
-              :action-definitions="actionDefinitions"
+              :actionDefinitions="actionDefinitions"
+              :actionGroupDefinitions="actionGroupDefinitions"
               :actionsLayout="actionsLayout"
               :groupDefinitions="groupDefinitions"
               :icon="icon"
@@ -2184,7 +2182,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :badge-title="group?.badgeTitle"
             :label="group.name"
             :id="group.id"
-            :action-definitions="groupSelectActionDefinitions(group)"
+            :actionDefinitions="groupSelectActionDefinitions(group)"
             @action-click="() => selectSection(group)"
           >
             <div class="tree-list-wrapper">
@@ -2203,6 +2201,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                     :value="item"
                     :href="item[hrefAttribute]"
                     :actionDefinitions="actionDefinitions"
+                    :actionGroupDefinitions="actionGroupDefinitions"
                     :actionsLayout="actionsLayout"
                     :icon="item[iconAttribute] ? item[iconAttribute] : icon"
                     :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
@@ -2285,6 +2284,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               :value="row.item"
               :href="row.item[hrefAttribute]"
               :actionDefinitions="actionDefinitions"
+              :actionGroupDefinitions="actionGroupDefinitions"
               :actionsLayout="actionsLayout"
               :icon="row.item[iconAttribute] ? row.item[iconAttribute] : icon"
               :iconSet="row.item[iconSetAttribute] ? row.item[iconSetAttribute] : iconSet"
@@ -2356,6 +2356,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               :value="item"
               :href="item[hrefAttribute]"
               :actionDefinitions="actionDefinitions"
+              :actionGroupDefinitions="actionGroupDefinitions"
               :actionsLayout="actionsLayout"
               :icon="item[iconAttribute] ? item[iconAttribute] : icon"
               :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
@@ -2473,6 +2474,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                         :value="element"
                         :href="element[hrefAttribute]"
                         :actionDefinitions="actionDefinitions"
+                        :actionGroupDefinitions="actionGroupDefinitions"
                         :actionsLayout="actionsLayout"
                         :icon="element[iconAttribute] ? element[iconAttribute] : icon"
                         :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
@@ -2598,6 +2600,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                           :value="element"
                           :href="element[hrefAttribute]"
                           :actionDefinitions="actionDefinitions"
+                          :actionGroupDefinitions="actionGroupDefinitions"
                           :actionsLayout="actionsLayout"
                           :icon="element[iconAttribute] ? element[iconAttribute] : icon"
                           :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
@@ -2650,7 +2653,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           :tooltipAttribute="tooltipAttribute"
           :categoryAttribute="categoryAttribute"
           :selectable-attribute="selectableAttribute"
-          :action-definitions="actionDefinitions"
+          :actionDefinitions="actionDefinitions"
+          :actionGroupDefinitions="actionGroupDefinitions"
           :actionsLayout="actionsLayout"
           :icon="icon"
           :iconSet="iconSet"
@@ -2694,6 +2698,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :value="element"
             :href="element[hrefAttribute]"
             :actionDefinitions="actionDefinitions"
+            :actionGroupDefinitions="actionGroupDefinitions"
             :actionsLayout="actionsLayout"
             :icon="element[iconAttribute] ? element[iconAttribute] : icon"
             :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
@@ -2748,6 +2753,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         :description="displayTexts?.noItemsDescription"
         :icon="emptyStateIcon"
         :actionDefinitions="emptyStateActionDefinitions"
+        :actionGroupDefinitions="emptyStateActionGroupDefinitions"
         @actionClick="handleEmptyStateActionClick"
       />
       <LxEmptyState

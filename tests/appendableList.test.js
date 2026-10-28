@@ -108,6 +108,40 @@ describe('Action definitions', () => {
       actionDefinitionsOverride: [defaultDeleteAction, ...actionDefinitionsCommon],
     });
   });
+
+  test('toolbar actions are shown as ghost next to the built-in add action', async () => {
+    wrapper = mountComponent({
+      props: {
+        ...props,
+        toolbarActionDefinitions: [{ id: 'save', name: 'Save', icon: 'save', kind: 'primary' }],
+      },
+    });
+    await nextTick();
+
+    const toolbarActions = wrapper.findComponent(LxToolbar).props('actionDefinitions');
+    expect(toolbarActions.find((a) => a.id === 'save').extra).toBe(true);
+    expect(wrapper.find('[id$="-action-add-item"]').classes()).toContain('lx-button-tertiary');
+    expect(wrapper.find('[id$="-action-save"]').exists()).toBe(false);
+  });
+
+  test('without the add action the first primary toolbar action is promoted like in LxList', async () => {
+    wrapper = mountComponent({
+      props: {
+        ...props,
+        canAddItems: false,
+        toolbarActionDefinitions: [
+          { id: 'edit', name: 'Edit', icon: 'edit' },
+          { id: 'save', name: 'Save', icon: 'save', kind: 'primary' },
+        ],
+      },
+    });
+    await nextTick();
+
+    const toolbarActions = wrapper.findComponent(LxToolbar).props('actionDefinitions');
+    expect(toolbarActions.some((a) => a.extra)).toBe(false);
+    expect(wrapper.find('[id$="-action-add-item"]').exists()).toBe(false);
+    expect(wrapper.find('[id$="-action-save"]').classes()).not.toContain('lx-button-ghost');
+  });
 });
 
 describe('Virtualization', () => {

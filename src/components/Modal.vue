@@ -1,9 +1,11 @@
 <script setup>
 import { ref, nextTick, provide, computed, watch, onUnmounted } from 'vue';
 import LxButton from '@/components/Button.vue';
+import LxActionButton from '@/components/ActionButton.vue';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
+import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { useElementSize, useScroll } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -16,6 +18,7 @@ const props = defineProps({
   kind: { type: String, default: 'default' }, // default, native
   escEnabled: { type: Boolean, default: true },
   buttonSecondaryIsCancel: { type: Boolean, default: true },
+  actionGroupDefinitions: { type: Array, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   texts: { type: Object, default: () => ({}) },
 });
@@ -110,12 +113,22 @@ function handleActionClick(action) {
   emits('actionClick', action?.id);
 }
 
+const actionDefinitionsResolved = computed(
+  () =>
+    flattenNestedActions(
+      resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions),
+      { inheritKind: true }
+    ) || []
+);
+
 const actionDefinitionsDisplay = computed(() => {
-  let primary = props.actionDefinitions?.filter((action) => action?.kind === 'primary') || [];
+  let primary =
+    actionDefinitionsResolved.value?.filter((action) => action?.kind === 'primary') || [];
   if (primary.length === 0) {
-    primary = props.actionDefinitions?.filter((action) => !action?.kind) || [];
+    primary = actionDefinitionsResolved.value?.filter((action) => !action?.kind) || [];
   }
-  const secondary = props.actionDefinitions?.filter((action) => action?.kind === 'secondary') || [];
+  const secondary =
+    actionDefinitionsResolved.value?.filter((action) => action?.kind === 'secondary') || [];
 
   const env = useLx().getGlobals()?.environment;
   if (primary.length > 1) {
@@ -262,23 +275,12 @@ defineExpose({ open, close });
               },
             ]"
           >
-            <LxButton
+            <LxActionButton
               v-for="action in actionDefinitionsDisplay"
               :key="action?.id"
+              :action="action"
+              :omit="['icon', 'iconSet', 'variant']"
               :id="`${id}-action-${action?.id}`"
-              :label="action?.name || action?.label"
-              :title="action?.title || action?.tooltip"
-              :kind="action?.kind"
-              :loading="action?.loading"
-              :busy="action?.busy"
-              :destructive="action?.destructive"
-              :active="action?.active"
-              :disabled="action?.disabled"
-              :href="action?.href"
-              :badge="action?.badge"
-              :badgeType="action?.badgeType"
-              :badgeIcon="action?.badgeIcon"
-              :badgeTitle="action?.badgeTitle"
               @click="handleActionClick(action)"
             />
           </footer>
@@ -336,23 +338,12 @@ defineExpose({ open, close });
               },
             ]"
           >
-            <LxButton
+            <LxActionButton
               v-for="action in actionDefinitionsDisplay"
               :key="action?.id"
+              :action="action"
+              :omit="['icon', 'iconSet', 'variant']"
               :id="`${id}-action-${action?.id}`"
-              :label="action?.name || action?.label"
-              :title="action?.title || action?.tooltip"
-              :kind="action?.kind"
-              :loading="action?.loading"
-              :busy="action?.busy"
-              :destructive="action?.destructive"
-              :active="action?.active"
-              :disabled="action?.disabled"
-              :href="action?.href"
-              :badge="action?.badge"
-              :badgeType="action?.badgeType"
-              :badgeIcon="action?.badgeIcon"
-              :badgeTitle="action?.badgeTitle"
               @click="handleActionClick(action)"
             />
           </footer>

@@ -1497,6 +1497,8 @@
 
 .lx-empty-state-buttons {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-0500);
 }
 
