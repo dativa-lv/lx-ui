@@ -213,8 +213,8 @@
 
   --color-notification-success-foreground: var(--color-success);
   --color-notification-success-background: var(--color-green-subtle);
-  --color-notification-warning-foreground: var(--color-warning);
-  --color-notification-warning-background: var(--color-orange-subtle);
+  --color-notification-warning-foreground: var(--color-yellow);
+  --color-notification-warning-background: var(--color-yellow-subtle);
   --color-notification-error-foreground: var(--color-error);
   --color-notification-error-background: var(--color-red-subtle);
 

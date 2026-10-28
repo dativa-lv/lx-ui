@@ -466,24 +466,24 @@
                  var(--popover-item-border-radius-outer);
 }
 
-.lx-dropdown-panel:has(.lx-button-set:empty) > .lx-alert-menu-list li:first-child .lx-info-box-button,
+.lx-dropdown-panel:has(.lx-button-set:empty) > .lx-alert-menu-list li:first-child .lx-info-box,
 .lx-dropdown-panel > .lx-mega-menu-container .primary-menu-tile:first-child > *,
 .lx-dropdown-default-content .lx-value-picker-item:only-child {
   border-top-left-radius: var(--popover-item-border-radius-outer);
 }
 
-.lx-dropdown-panel:has(.lx-button-set:empty) > .lx-alert-menu-list li:first-child .lx-info-box-button,
+.lx-dropdown-panel:has(.lx-button-set:empty) > .lx-alert-menu-list li:first-child .lx-info-box,
 .lx-dropdown-panel > .lx-mega-menu-container .primary-menu-tile:nth-of-type(3) > *,
 .lx-dropdown-default-content .lx-value-picker-item:only-child {
   border-top-right-radius: var(--popover-item-border-radius-outer);
 }
 
-.lx-alert-menu-list > li:last-child .lx-info-box-button,
+.lx-alert-menu-list > li:last-child .lx-info-box,
 .lx-dropdown-panel:not(:has(.lx-button-set)) > .lx-mega-menu-container .primary-menu-tile:nth-last-child(3):nth-child(3n + 1) > * {
   border-bottom-left-radius: var(--popover-item-border-radius-outer);
 }
 
-.lx-alert-menu-list > li:last-child .lx-info-box-button,
+.lx-alert-menu-list > li:last-child .lx-info-box,
 .lx-dropdown-panel:not(:has(.lx-button-set)) > .lx-mega-menu-container .primary-menu-tile:last-child:nth-child(3n) > * {
   border-bottom-right-radius: var(--popover-item-border-radius-outer);
 }

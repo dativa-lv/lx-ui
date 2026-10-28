@@ -1225,83 +1225,6 @@
   color: var(--color-nav-hover-foreground);
 }
 
-/* LxAlert */
-
-.lx-alert-button {
-  display: flex;
-  padding: var(--space-0500);
-  border: var(--border-width-1) solid var(--color-chrome);
-}
-
-.lx-alert-button.lx-alert-clickable:hover {
-  border-color: var(--color-interactive-hover-background);
-}
-
-.lx-alert-button.lx-alert-success {
-  border-color: var(--color-notification-success-foreground);
-  background-color: var(--color-notification-success-background);
-}
-
-.lx-alert-button.lx-alert-warning {
-  border-color: var(--color-notification-warning-foreground);
-  background-color: var(--color-notification-warning-background);
-}
-
-.lx-alert-button.lx-alert-error {
-  border-color: var(--color-notification-error-foreground);
-  background-color: var(--color-notification-error-background);
-}
-
-.lx-alert-button.lx-alert-success > .lx-icon > svg {
-  fill: var(--color-notification-success-foreground);
-}
-
-.lx-alert-button.lx-alert-warning > .lx-icon > svg {
-  fill: var(--color-notification-warning-foreground);
-}
-
-.lx-alert-button.lx-alert-error > .lx-icon > svg {
-  fill: var(--color-notification-error-foreground);
-}
-
-.lx-alert-button.lx-alert-clickable {
-  cursor: pointer;
-}
-
-.lx-alert-button .lx-alert-data {
-  width: 90%;
-}
-
-.lx-alert-button .lx-alert-header {
-  font-weight: var(--font-weight-bold);
-  color: var(--color-data);
-  margin-bottom: var(--space-0250);
-  overflow: hidden;
-}
-
-.lx-alert-button.lx-alert-success .lx-alert-header p {
-  color: var(--color-notification-success-foreground);
-}
-
-.lx-alert-button.lx-alert-error .lx-alert-header p {
-  color: var(--color-notification-error-foreground);
-}
-
-.lx-alert-button .lx-alert-description {
-  color: var(--color-data);
-  font-size: var(--font-size-small);
-  margin-bottom: var(--space-0250);
-  overflow: hidden;
-  line-height: 1.1em;
-}
-
-.lx-alert-button > .lx-icon {
-  margin-top: var(--space-0250);
-  margin-right: var(--space-0500);
-  min-width: var(--icon-size-m);
-  min-height: var(--icon-size-m);
-}
-
 .lx-alert-menu .lx-button > .lx-button-content-wrapper .lx-badge {
   --badge-padding-s: var(--space-0);
   --badge-padding-icon-only-s: var(--space-0);
@@ -1349,15 +1272,6 @@
 .lx .lx-layout.lx-layout-cover-digives-lite .lx-header > .lx-group > .lx-spotlight-button::before,
 .lx .lx-layout.lx-layout-cover-digives-lite .lx-header > .lx-group > .lx-shell-custom-button::before {
   display: none;
-}
-
-.lx-layout.lx-layout-cover .lx-alert-data .lx-alert-description .lx-description,
-.lx-layout.lx-layout-cover-digives-lite .lx-alert-data .lx-alert-description .lx-description {
-  margin: var(--space-0);
-  font-size: var(--font-size-small);
-  line-height: 1.1em;
-  color: var(--color-data);
-  font-weight: var(--font-weight);
 }
 
 .lx-alert-menu .lx-context-container .lx-dropdown-panel .lx-button-set {
@@ -1736,10 +1650,6 @@
 .lx .lx-cover-alert-right-group .lx-button svg {
   --color-button-ghost-icon: var(--color-data);
   --color-button-ghost-icon-focus: var(--color-data);
-}
-
-.lx-alert-button.lx-alert-clickable:focus {
-  outline: 2px solid var(--color-focus-background);
 }
 
 .lx .lx-nav-group .lx-language-picker > .lx-language-menu > .lx-context-container > .popper-wrapper,

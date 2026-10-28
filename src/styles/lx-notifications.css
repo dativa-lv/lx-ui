@@ -72,7 +72,7 @@
   --color-notification-text-primary: var(--color-notification-error-foreground);
 }
 
-.lx-notification .lx-text-wrapper {
+.lx-notification .lx-notification-content-wrapper {
   row-gap: var(--notification-row-gap);
   padding: var(--notification-content-padding);
   flex-direction: column;
@@ -81,20 +81,20 @@
   overflow: hidden;
 }
 
-.lx-notification .lx-title,
-.lx-notification .lx-subtitle {
+.lx-notification .lx-primary,
+.lx-notification .lx-secondary {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.lx-notification .lx-title {
+.lx-notification .lx-primary {
   font-weight: var(--notification-text-primary-font-weight);
   color: var(--color-notification-text-primary);
   font-size: var(--notification-text-primary-font-size);
   line-height: var(--notification-text-primary-line-height);
 }
 
-.lx-notification .lx-subtitle {
+.lx-notification .lx-secondary {
   font-weight: var(--notification-text-secondary-font-weight);
   color: var(--color-notification-text-secondary);
   font-size: var(--notification-text-secondary-font-size);

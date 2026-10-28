@@ -73,6 +73,8 @@ watch(
         :key="notification.uid"
         class="lx-notification-wrapper"
         @click="deleteNotification(notification.uid)"
+        @keydown.enter="deleteNotification(notification.uid)"
+        @keydown.space="deleteNotification(notification.uid)"
       >
         <div
           class="lx-notification"
@@ -86,9 +88,9 @@ watch(
           <div class="lx-notification-icon">
             <LxIcon :value="getIcon(notification.type)" />
           </div>
-          <div class="lx-text-wrapper">
-            <div class="lx-title">{{ notification.title }}</div>
-            <div class="lx-subtitle" v-if="notification.subtitle">{{ notification.subtitle }}</div>
+          <div class="lx-notification-content-wrapper">
+            <div class="lx-primary">{{ notification.title }}</div>
+            <div class="lx-secondary" v-if="notification.subtitle">{{ notification.subtitle }}</div>
           </div>
           <LxIcon class="lx-close-icon" value="close" />
         </div>

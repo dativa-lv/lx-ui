@@ -52,20 +52,20 @@ const containerClasses = computed(() => {
   let baseClasses = '';
   switch (props.variant) {
     case 'error':
-      baseClasses = 'lx-info-box-button lx-alert-error';
+      baseClasses = 'lx-alert-error';
       break;
     case 'warning':
-      baseClasses = 'lx-info-box-button lx-alert-warning';
+      baseClasses = 'lx-alert-warning';
       break;
     case 'info':
-      baseClasses = 'lx-info-box-button lx-alert-info';
+      baseClasses = 'lx-alert-info';
       break;
     case 'success':
-      baseClasses = 'lx-info-box-button lx-alert-success';
+      baseClasses = 'lx-alert-success';
       break;
     case 'default':
     default:
-      baseClasses = 'lx-info-box-button lx-alert-info';
+      baseClasses = 'lx-alert-info';
       break;
   }
 
@@ -89,6 +89,7 @@ function handleClick(event) {
 <template>
   <div
     :id="id"
+    class="lx-info-box"
     :class="containerClasses"
     :role="kind === 'clickable' ? 'button' : undefined"
     :tabindex="kind === 'clickable' ? '0' : '-1'"
@@ -100,16 +101,12 @@ function handleClick(event) {
     <div class="lx-info-box-icon">
       <LxIcon :value="iconName" />
     </div>
-    <div class="lx-alert-data">
-      <div class="lx-alert-header">
-        <p class="lx-data">
-          {{ label }}
-        </p>
+    <div class="lx-info-box-content-wrapper">
+      <div class="lx-primary">
+        {{ label }}
       </div>
-      <div class="lx-alert-description" v-if="description">
-        <p class="lx-description">
-          {{ description }}
-        </p>
+      <div class="lx-secondary" v-if="description">
+        {{ description }}
       </div>
     </div>
     <div
