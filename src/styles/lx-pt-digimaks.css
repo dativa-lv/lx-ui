@@ -171,6 +171,10 @@
   --popover-border-radius: var(--border-radius-1000);
 
   --color-nav-tile-background-hover: var(--color-nav-tile-background);
+
+  --color-info-box-button-icon-focus: var(--color-info-box-button-icon);
+  --color-info-box-button-icon-hover: var(--color-info-box-button-icon);
+  --color-info-box-button-icon-active: var(--color-info-box-button-icon);
 }
 
 .lx.lx-theme-dark {
@@ -301,4 +305,8 @@
   --color-list-text-secondary-hover: var(--color-list-text-secondary);
 
   --color-nav-tile-background-hover: var(--color-nav-tile-background);
+
+  --color-info-box-button-icon-focus: var(--color-info-box-button-icon);
+  --color-info-box-button-icon-hover: var(--color-info-box-button-icon);
+  --color-info-box-button-icon-active: var(--color-info-box-button-icon);
 }

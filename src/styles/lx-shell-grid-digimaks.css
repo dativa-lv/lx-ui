@@ -442,16 +442,11 @@
   --color-button-ghost-background-hover: var(--color-background);
   --color-button-ghost-background-focus: var(--color-background);
   --color-button-ghost-background-active: var(--color-background);
-  margin-right: var(--space-1000);
-  /* TODO: add other styles */
-}
-
-.lx-layout-digimaks > header > .lx-header .lx-button.lx-nav-back svg {
   --color-button-ghost-icon: var(--color-data);
   --color-button-ghost-icon-focus: var(--color-data);
   --color-button-ghost-icon-hover: var(--color-data);
   --color-button-ghost-icon-active: var(--color-data);
-  /* TODO: add other styles */
+  margin-right: var(--space-1000);
 }
 
 /* header actions */

@@ -121,7 +121,11 @@ const {
         @nav-toggle="navToggle"
         @context-person-change="contextPersonChange"
         @alternative-profile-change="alternativeProfileChange"
-      />
+      >
+        <template #settingsExtra v-if="$slots.settingsExtra">
+          <slot name="settingsExtra" />
+        </template>
+      </LxMainHeaderDigimaksLite>
     </header>
     <div ref="modals" id="modals"></div>
     <div ref="poppers" id="poppers"></div>

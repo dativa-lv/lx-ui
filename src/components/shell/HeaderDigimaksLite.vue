@@ -739,6 +739,7 @@ provide('insideHeader', insideHeader);
                   }"
                 />
               </LxRow>
+              <slot name="settingsExtra" />
             </LxForm>
             <div
               v-if="hasCustomButton"

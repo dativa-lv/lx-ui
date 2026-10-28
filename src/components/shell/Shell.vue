@@ -1481,6 +1481,9 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
       <template #customButtonSafePanel>
         <slot name="customButtonSafePanel" />
       </template>
+      <template #settingsExtra v-if="$slots.settingsExtra">
+        <slot name="settingsExtra" />
+      </template>
       <template #backdrop>
         <slot name="backdrop" />
       </template>
