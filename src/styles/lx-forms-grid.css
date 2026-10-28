@@ -1176,7 +1176,7 @@ p .lx-person-display-wrapper {
   display: none;
 }
 
-.lx-filter > .lx-body > .lx-form-region > .lx-form-grid > .lx-compact-sections > .lx-form-section {
+.lx-filter > .lx-body > .lx-filter-form > .lx-form-grid > .lx-compact-sections > .lx-form-section {
   padding-left: var(--space-0125);
   padding-right: var(--space-0125);
 }
@@ -1344,13 +1344,25 @@ p .lx-person-display-wrapper {
   fill: var(--color-toolbar-button-ghost-icon-active);
 }
 
-.lx-filter .lx-form.lx-form-region:has(> .lx-form-grid) {
-  padding: var(--space-0500) var(--space-1500) var(--space-2000) var(--space-1500);
+.lx-filter .lx-filter-form {
+  display: flex;
+  flex-direction: column;
   gap: var(--space-0500);
+  margin-bottom: var(--space-3000);
+  padding: var(--space-0500) var(--space-1500) var(--space-2000) var(--space-1500);
+  background: var(--color-region);
+  border: var(--region-border);
 }
 
-.lx-filter .lx-body .lx-form.lx-form-region:has(> .lx-form-grid) .lx-button-set {
-  margin-top: var(--space-0);
+.lx-filter .lx-filter-form > .lx-button-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-0500);
+  margin-top: var(--space-2000);
+}
+
+.lx-filter .lx-filter-form > .lx-button-set .lx-button {
+  min-width: 12rem;
 }
 
 .lx-filter-wrapper .shortlist-wrapper .lx-form-grid {

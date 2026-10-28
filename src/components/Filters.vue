@@ -242,7 +242,7 @@ if (props.builderOptions?.useRegistry) {
       :texts="expanderTexts"
       @resetFilters="filterReset"
     >
-      <div ref="filterBody" class="lx-form lx-form-region">
+      <div ref="filterBody" class="lx-filter-form">
         <LxForm
           :id="`${id}-form`"
           :columnCount="columnCount"
