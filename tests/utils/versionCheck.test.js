@@ -1,10 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import axios from 'axios';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resetNavigationTracking, trackNavigationState } from '@/utils/navigationState';
-import { restoreRouteAndNotify } from '@/utils/versionCheckUtils';
+import { isAppVersionChanged, restoreRouteAndNotify } from '@/utils/versionCheckUtils';
 
 vi.mock('@/hooks/useLx', () => ({
   default: () => ({ getGlobals: () => ({ environment: 'test' }) }),
 }));
+
+vi.mock('axios', () => ({ default: { get: vi.fn() } }));
 
 function mockRouter(currentName = 'home', hasRoute = true) {
   return {
@@ -168,5 +171,75 @@ describe('restoreRouteAndNotify', () => {
     expect(notify.pushWarning).toHaveBeenCalled();
     expect(sessionStorage.getItem('version_reload_pending')).toBeNull();
     expect(router.isReady).not.toHaveBeenCalled();
+  });
+});
+
+describe('isAppVersionChanged', () => {
+  const { origin } = globalThis.location;
+
+  // Skip the 1s throttle so every call reaches the request
+  const check = (basePath) => isAppVersionChanged(undefined, undefined, false, 0, basePath, 0);
+  const requestedPath = () => new URL(axios.get.mock.calls.at(-1)[0]).pathname;
+
+  beforeEach(() => {
+    sessionStorage.clear();
+    axios.get.mockResolvedValue({ data: { version: '1.0.0' } });
+  });
+
+  afterEach(() => {
+    delete globalThis.config;
+    vi.clearAllMocks();
+  });
+
+  it('requests version.json under the publicUrl path', async () => {
+    globalThis.config = { version: '1.0.0', publicUrl: `${origin}/demo/` };
+
+    await check();
+
+    expect(requestedPath()).toBe('/demo/version.json');
+  });
+
+  it('accepts a relative publicUrl', async () => {
+    globalThis.config = { version: '1.0.0', publicUrl: '/demo/' };
+
+    await check();
+
+    expect(requestedPath()).toBe('/demo/version.json');
+  });
+
+  it('stays on the current origin when publicUrl points elsewhere', async () => {
+    globalThis.config = { version: '1.0.0', publicUrl: 'https://other.example/demo/' };
+
+    await check();
+
+    expect(axios.get.mock.calls.at(-1)[0]).toMatch(new RegExp(`^${origin}/demo/version.json`));
+  });
+
+  it.each([
+    ['a root publicUrl', `${origin}/`],
+    ['an empty publicUrl', ''],
+    ['no publicUrl', undefined],
+  ])('falls back to the host root for %s', async (_, publicUrl) => {
+    globalThis.config = { version: '1.0.0', publicUrl };
+
+    await check();
+
+    expect(requestedPath()).toBe('/version.json');
+  });
+
+  it('keeps an explicit basePath over publicUrl', async () => {
+    globalThis.config = { version: '1.0.0', publicUrl: `${origin}/demo/` };
+
+    await check('/other/');
+
+    expect(requestedPath()).toBe('/other/version.json');
+  });
+
+  it('does not reload when the deployed version matches', async () => {
+    globalThis.config = { version: '1.0.0', publicUrl: `${origin}/demo/` };
+    sessionStorage.setItem('is_navigating', 'true');
+
+    expect(await check()).toBe(false);
+    expect(sessionStorage.getItem('version_reload_pending')).toBeNull();
   });
 });

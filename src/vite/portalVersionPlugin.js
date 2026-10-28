@@ -140,7 +140,10 @@ export function lxVitePortalVersionPlugin(options = {}) {
         }
 
         // Handle version.json requests during development
-        if (req.url.startsWith('/version.json')) {
+        if (
+          req.url.startsWith('/version.json') ||
+          req.url.startsWith(`${config.base}version.json`)
+        ) {
           try {
             // If version data isn't initialized yet, generate it
             if (!versionData) {

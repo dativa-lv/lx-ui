@@ -17,14 +17,24 @@ function resolveText(notifyText, fallback) {
   return text || fallback;
 }
 
+function publicBasePath() {
+  const publicUrl = globalThis.config?.publicUrl;
+  if (!publicUrl) return '/';
+  try {
+    return new URL(publicUrl, globalThis.location.origin).pathname;
+  } catch {
+    return '/';
+  }
+}
+
 /**
  * Compare the running version against the deployed one and act on a mismatch.
  * @returns {Promise<boolean>} `true` when a hard reload was triggered
  */
-async function checkVersion(notify, notifyText = undefined, basePath = '/') {
+async function checkVersion(notify, notifyText = undefined, basePath = undefined) {
   try {
     // Remove trailing slashes if happens
-    const normalizedBasePath = basePath.replace(/\/$/, '');
+    const normalizedBasePath = (basePath ?? publicBasePath()).replace(/\/$/, '');
 
     const resp = await axios.get(
       `${globalThis.location.origin}${normalizedBasePath}/version.json?anti-cache=${Date.now()}`
@@ -60,6 +70,9 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
   }
 }
 
+let lastVersionCheckTime = 0;
+let versionCheckIntervalId = null;
+
 /**
  * Monitor version changes and handle navigation.
  * @important it works only if `lxVitePortalVersionPlugin` is defined in plugins inside `vite.config.mjs` !
@@ -68,6 +81,11 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
  * @param {any} notify - Pinia LxNotifyStore instance
  * @param {string | (() => string)} [notifyText] - text, or a getter for it when the
  * app can switch locale without reloading
+ * @param {boolean} [useInterval=false] - also keep checking every `intervalTime` ms
+ * @param {number} [intervalTime=1800000] - interval between checks in ms (30 minutes)
+ * @param {string} [basePath] - path that serves `version.json`; defaults to the path of
+ * `publicUrl` from the app config (`window.config` / `globalThis.config`), or `/` when it is not set
+ * @param {number} [throttleTime=1000] - minimum ms between non-interval checks
  * @returns {Promise<boolean>} `true` when a hard reload was triggered - router guards
  * should abort the current navigation in that case
  *
@@ -75,21 +93,17 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
  * ```js
  * // In MainLayout.vue
  * // Start monitoring for version changes every 10 seconds
- * // Uses the default notification text and checks `version.json` in the base path `/`
+ * // Uses the default notification text and checks `version.json` under the config `publicUrl`
  * lxVersionCheckUtils.isAppVersionChanged(notify, undefined, true, 10000);
- *
+ * ```
  */
-
-let lastVersionCheckTime = 0;
-let versionCheckIntervalId = null;
-
 export async function isAppVersionChanged(
   notify,
   notifyText = undefined,
   useInterval = false,
-  intervalTime = 1800000, // 30 minutes
-  basePath = '/',
-  throttleTime = 1000 // 1 seconds
+  intervalTime = 1800000,
+  basePath = undefined,
+  throttleTime = 1000
 ) {
   const currentEnv = globalThis.config?.environment;
 
