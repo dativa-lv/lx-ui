@@ -9,6 +9,7 @@ import { builderRegistry } from '@/stores';
  * @param {string} [options.schemaPath] - The schema path (optional).
  * @param {string} [options.builderName] - The builder name (optional).
  * @param {Array} [options.componentStack] - The component stack for nested components (optional).
+ * @param {string} [options.customItemPath] - The custom item path (optional).
  * @param {string} [options.id] - The registry entry id override (optional).
  */
 export function registerBuilderInstance({
@@ -18,6 +19,7 @@ export function registerBuilderInstance({
   schemaPath = '',
   builderName = null,
   componentStack = [],
+  customItemPath = null,
   id = null,
 }) {
   if (!instance) return;
@@ -29,6 +31,7 @@ export function registerBuilderInstance({
     schemaPath,
     builderName,
     componentStack,
+    customItemPath,
   };
   builderRegistry.register(res);
 }

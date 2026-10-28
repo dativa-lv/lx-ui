@@ -1,3 +1,4 @@
+export * as lxBuilderUtils from '@/utils/builderUtils';
 export * as lxDateUtils from '@/utils/date';
 export * as lxStringUtils from '@/utils/stringUtils';
 export * as lxFormatUtils from '@/utils/format';

@@ -1,5 +1,5 @@
 import axios, { AxiosError, HttpStatusCode } from 'axios';
-import { lxDevUtils } from '@/utils';
+import * as lxDevUtils from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 
 function unauthorizedResp() {

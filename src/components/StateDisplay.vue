@@ -1,15 +1,26 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, getCurrentInstance, onUnmounted } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   value: { type: [Object, String, Number], default: null },
-  dictionary: { type: Array, default: () => [{}] },
+  dictionary: { type: Array, default: () => [{}], group: 'main', sequence: 1 },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      innerComponent: false,
+      schemaPath: null,
+      componentStack: null,
+      useRegistry: false,
+      customItemPath: null,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -113,6 +124,24 @@ const stateIcon = computed(() => {
   if (displayShape === 'custom') return getCustomStatusIcon(options, displayType);
   return getShapeIcon(displayShape, displayType);
 });
+
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxStateDisplay',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxStateDisplay' },
+    ]),
+    customItemPath: props.builderOptions?.customItemPath,
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
+  });
+}
 </script>
 <template>
   <!--
@@ -125,6 +154,7 @@ const stateIcon = computed(() => {
 
   <div
     v-if="definition"
+    :data-id="id"
     class="lx-state"
     :class="[
       `lx-state-${definition?.displayType} ${
@@ -144,5 +174,5 @@ const stateIcon = computed(() => {
     />
     <div v-if="!isIconOnly" class="lx-state-text">{{ definition?.displayName }}</div>
   </div>
-  <LxEmptyValue v-else :texts="{ emptyValue: displayTexts.emptyValue }" />
+  <LxEmptyValue v-else :id="id" :texts="{ emptyValue: displayTexts.emptyValue }" />
 </template>

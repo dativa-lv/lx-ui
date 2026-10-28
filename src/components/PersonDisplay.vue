@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, getCurrentInstance, onUnmounted, ref } from 'vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxAvatar from '@/components/Avatar.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -8,19 +8,38 @@ import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
+import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   value: { type: [String, Object], default: null },
-  kind: { type: String, default: null }, // 'default', 'initials'
+  kind: {
+    type: String,
+    default: null,
+    options: ['default', 'initials'],
+    group: 'main',
+    sequence: 1,
+  }, // 'default', 'initials'
   name: { type: String, default: null },
-  size: { type: String, default: 'm' }, // 's', 'm', 'l' */
-  variant: { type: String, default: 'full' }, // 'full', 'icon-only'
+  size: { type: String, default: 'm', options: ['s', 'm', 'l'], group: 'main', sequence: 2 }, // 's', 'm', 'l' */
+  variant: {
+    type: String,
+    default: 'full',
+    options: ['full', 'icon-only'],
+    group: 'main',
+    sequence: 3,
+  }, // 'full', 'icon-only'
   description: { type: String, default: null },
   role: { type: String, default: null },
   institution: { type: String, default: null },
-  icon: { type: String, default: null },
-  iconSet: { type: String, default: null },
+  icon: { type: String, default: null, group: 'main', sequence: 4 },
+  iconSet: {
+    type: String,
+    default: null,
+    options: ['cds', 'material', 'brand', 'phosphor'],
+    group: 'main',
+    sequence: 5,
+  },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   firstNameAttribute: { type: String, default: 'firstName' },
@@ -30,11 +49,20 @@ const props = defineProps({
   institutionAttribute: { type: String, default: 'institution' },
   iconAttribute: { type: String, default: 'icon' },
   iconSetAttribute: { type: String, default: 'iconSet' },
-  maxLength: { type: Number, default: 3 },
+  maxLength: { type: Number, default: 3, group: 'main', sequence: 6 },
   customAttributes: { type: Array, default: () => [] },
   customRole: { type: String, default: null },
   focusable: { type: Boolean, default: true },
   texts: { type: Object, default: () => ({}) },
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      useRegistry: false,
+      schemaPath: null,
+      componentStack: null,
+      customItemPath: null,
+    }),
+  },
 });
 
 const textsDefault = {
@@ -274,10 +302,28 @@ function scrollIntoView({ behavior, block, container, inline }) {
   });
 }
 
+if (props.builderOptions?.useRegistry) {
+  const instance = getCurrentInstance();
+  registerBuilderInstance({
+    name: 'LxPersonDisplay',
+    instance,
+    props,
+    builderName: props.builderOptions?.schemaPath,
+    componentStack: props.builderOptions?.componentStack?.concat([
+      { id: props?.id, name: 'LxPersonDisplay' },
+    ]),
+    customItemPath: props.builderOptions?.customItemPath,
+  });
+
+  onUnmounted(() => {
+    unregisterBuilderInstance(props?.id);
+  });
+}
+
 defineExpose({ focus, scrollIntoView });
 </script>
 <template>
-  <div class="lx-person-display-wrapper">
+  <div class="lx-person-display-wrapper" :data-id="id">
     <div v-if="isEmpty" class="lx-person-display">
       <LxEmptyValue
         class="lx-empty-person-value"
