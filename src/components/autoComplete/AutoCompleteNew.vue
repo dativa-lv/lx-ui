@@ -659,6 +659,18 @@ function handleShiftArrow(inputElement, direction) {
   else inputElement.setSelectionRange(0, textLength);
 }
 
+function isEditingKey(key) {
+  const isPrintableChar = key.length === 1 && /\S/.test(key);
+  return isPrintableChar || ['Backspace', 'Delete'].includes(key);
+}
+
+function handleTypingInInput() {
+  if (!menuOpen.value) openMenu();
+  // kind 'search' keeps its value until the typed text is committed
+  if (hasValue.value && !isMultiple.value && !isSearchKind.value) clear();
+  highlightedKey.value = null;
+}
+
 function handleKeydown(e) {
   const inputElement = document.activeElement;
 
@@ -673,16 +685,7 @@ function handleKeydown(e) {
     return;
   }
 
-  const isPrintableChar = e.key.length === 1 && /\S/.test(e.key);
-  if (
-    inputElement?.id === props.id &&
-    (isPrintableChar || ['Backspace', 'Delete'].includes(e.key))
-  ) {
-    if (!menuOpen.value) openMenu();
-    // kind 'search' keeps its value until the typed text is committed
-    if (hasValue.value && !isMultiple.value && !isSearchKind.value) clear();
-    highlightedKey.value = null;
-  }
+  if (inputElement?.id === props.id && isEditingKey(e.key)) handleTypingInInput();
 }
 
 function returnToInput() {

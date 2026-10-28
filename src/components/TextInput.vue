@@ -266,7 +266,7 @@ const inputMask = computed(() => {
       };
     case 'email':
       return {
-        mask: /^\S*@?\S*$/,
+        mask: /^\S*$/,
       };
     case 'numeric':
       return {

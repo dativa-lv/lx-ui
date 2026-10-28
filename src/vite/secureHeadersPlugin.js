@@ -1,5 +1,11 @@
 import { createHash } from 'crypto';
 
+// SQ backtracking regex fix
+function stripSelfClosingSlash(attributes) {
+  const trimmed = attributes.trimEnd();
+  return trimmed.endsWith('/') ? trimmed.slice(0, -1).trimEnd() : attributes;
+}
+
 /**
  * @typedef {Object} Options
  * @property {boolean} [reportOnly=false] - Whether to use Content-Security-Policy-Report-Only header instead of Content-Security-Policy header. For development purposes.
@@ -175,7 +181,7 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
         .replace(/<script/g, `<script nonce="${nonce}"`)
         .replace(/<style/g, `<style nonce="${nonce}"`)
         .replace(linkRegex, (match, attributes) => {
-          let newAttributes = attributes.replace(/\s*\/\s*$/, '');
+          let newAttributes = stripSelfClosingSlash(attributes);
           if (!newAttributes.includes('nonce=')) {
             newAttributes += ` nonce="${nonce}"`;
           }
@@ -206,7 +212,7 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
                 .replace(/<style/g, `<style nonce="${nonce}"`)
                 // @ts-ignore
                 .replace(linkRegex, (match, attributes) => {
-                  let newAttributes = attributes.replace(/\s*\/\s*$/, '');
+                  let newAttributes = stripSelfClosingSlash(attributes);
                   if (!newAttributes.includes('nonce=')) {
                     newAttributes += ` nonce="${nonce}"`;
                   }
