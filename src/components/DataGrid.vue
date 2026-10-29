@@ -911,6 +911,45 @@ function isValidString(value) {
   return value && value.trim() !== '';
 }
 
+function isNonEmptyString(value) {
+  return typeof value === 'string' && isValidString(value);
+}
+
+function getIconInfoText(value) {
+  if (!isObject(value)) return null;
+  return [value.title, value.label].find(isNonEmptyString) || null;
+}
+
+// Icon cell value is an icon name or { icon, iconSet, label, title, category }
+function getIconBadge(col, row) {
+  const value = row?.[col?.attributeName];
+  if (isValueEmpty(value)) return null;
+  if (!isObject(value)) {
+    return {
+      icon: String(value),
+      value: null,
+      iconSet: undefined,
+      tooltip: col?.name,
+      category: null,
+    };
+  }
+
+  const icon = isNonEmptyString(value.icon) ? value.icon : null;
+  const label = isNonEmptyString(value.label) ? value.label : null;
+  if (!icon && !label) return null;
+
+  // xs columns show only the icon; the label is still available in the tooltip
+  const showLabel = !(col?.size === 'xs' && icon);
+
+  return {
+    icon,
+    value: showLabel ? label : null,
+    iconSet: value.iconSet || undefined,
+    tooltip: getIconInfoText(value) || col?.name,
+    category: isNonEmptyString(value.category) ? value.category : null,
+  };
+}
+
 function compareExistence(aExists, bExists, ascending) {
   if (aExists && !bExists) {
     return ascending ? -1 : 1;
@@ -1124,8 +1163,8 @@ function compareIcons(a, b, colCode, ascending) {
   const iconExistanceComparison = compareExistence(isIconAEmpty, isIconBEmpty, ascending);
   if (iconExistanceComparison !== 0) return iconExistanceComparison;
 
-  const valueA = (typeof iconA === 'object' ? iconA.icon : iconA) || '';
-  const valueB = (typeof iconB === 'object' ? iconB.icon : iconB) || '';
+  const valueA = iconNameA || '';
+  const valueB = iconNameB || '';
   return lvCollator.compare(valueA, valueB);
 }
 
@@ -1592,14 +1631,15 @@ function emptyStateActionClicked(actionName) {
   emits('emptyStateActionClick', actionName);
 }
 
-const shouldShowIconRow = computed(() => {
-  const iconColumns = columnsComputed.value?.filter((col) => col.type === 'icon');
-  const extraIconColumns = iconColumns?.filter((col) => col.kind === 'extra');
-  return (
-    iconColumns.length > 0 &&
-    (props.showAllColumns || extraIconColumns.length !== iconColumns.length)
-  );
-});
+// Icon columns shown in the responsive icons row
+const visibleIconColumns = computed(
+  () => columnsComputed.value?.filter((col) => col.type === 'icon' && col.kind !== 'extra') || []
+);
+
+// The responsive icons row is shown only if the item has at least one icon to display
+function hasVisibleIcons(item) {
+  return visibleIconColumns.value.some((col) => getIconBadge(col, item));
+}
 
 const gridColumnWidths = {
   xs: 'minmax(4rem, 1fr)',
@@ -2590,20 +2630,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       !isValueEmpty(row?.[col?.attributeName])
                     "
                   >
-                    <div
-                      class="lx-grid-icon-wrapper"
-                      :class="{
-                        'lx-icon-has-tooltip':
-                          row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label,
-                        'only-icon': !isValidString(row?.[col?.attributeName]?.label),
-                      }"
-                    >
-                      <template
-                        v-if="
-                          isValidString(row?.[col?.attributeName]?.icon) ||
-                          isValidString(row?.[col?.attributeName]?.label)
-                        "
-                      >
+                    <div class="lx-grid-icon-wrapper">
+                      <template v-if="getIconBadge(col, row)">
                         <LxInfoWrapper
                           :focusable="
                             isCellDelegated(
@@ -2631,39 +2659,22 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                                   )
                               : null
                           "
-                          :disabled="
-                            !isValidString(row?.[col?.attributeName]?.title) &&
-                            !isValidString(row?.[col?.attributeName]?.label)
-                          "
+                          :disabled="!getIconInfoText(row?.[col?.attributeName])"
                         >
-                          <div
-                            class="lx-grid-icon-content-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-4"
-                          >
-                            <LxIcon
-                              :value="
-                                isValidString(row?.[col?.attributeName]?.icon)
-                                  ? row?.[col?.attributeName]?.icon
-                                  : 'default'
-                              "
-                              :icon-set="row?.[col?.attributeName]?.iconSet"
-                              :customClass="`lx-grid-column-icon ${
-                                row?.[col?.attributeName]?.category
-                              }`"
+                          <div class="lx-grid-icon-content-wrapper">
+                            <LxBadge
+                              :id="`${id}-${row[idAttribute]}-${col.id}-badge`"
+                              :icon="getIconBadge(col, row).icon"
+                              :iconSet="getIconBadge(col, row).iconSet"
+                              :value="getIconBadge(col, row).value"
+                              :tooltip="getIconBadge(col, row).tooltip"
+                              :tooltipDisabled="!!getIconInfoText(row?.[col?.attributeName])"
+                              :class="['lx-grid-column-icon', getIconBadge(col, row).category]"
                             />
-                            <p
-                              v-if="
-                                col.size !== 'xs' && isValidString(row?.[col?.attributeName]?.label)
-                              "
-                              class="lx-grid-icon-text"
-                            >
-                              {{ row?.[col?.attributeName].label }}
-                            </p>
                           </div>
                           <template #panel>
                             <p class="lx-data">
-                              {{
-                                row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label
-                              }}
+                              {{ getIconInfoText(row?.[col?.attributeName]) }}
                             </p>
                           </template>
                         </LxInfoWrapper>
@@ -2683,9 +2694,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     "
                   >
                     <div class="lx-grid-icon-wrapper">
-                      <LxIcon
-                        :value="row?.[col?.attributeName]"
-                        customClass="lx-grid-column-icon"
+                      <LxBadge
+                        :id="`${id}-${row[idAttribute]}-${col.id}-badge`"
+                        :icon="getIconBadge(col, row).icon"
+                        :tooltip="getIconBadge(col, row).tooltip"
+                        :class="['lx-grid-column-icon', getIconBadge(col, row).category]"
                       />
                     </div>
                   </template>
@@ -3310,13 +3323,13 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             </LxRow>
 
             <LxRow
-              v-if="shouldShowIconRow"
+              v-if="hasVisibleIcons(item)"
               class="lx-responsive-grid-icons-row"
               columnSpan="2"
               :label="displayTexts.iconsResponsiveRowLabel"
             >
               <div
-                v-for="col in columnsComputed?.filter((col) => col.type === 'icon')"
+                v-for="col in visibleIconColumns"
                 :key="col.id"
                 :class="[
                   {
@@ -3337,43 +3350,23 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   },
                 ]"
               >
-                <template
-                  v-if="
-                    isObject(item?.[col?.attributeName]) &&
-                    !isValueEmpty(item?.[col?.attributeName])
-                  "
-                >
-                  <div
-                    class="lx-grid-icon-wrapper"
-                    :class="{
-                      'lx-icon-has-tooltip':
-                        item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label,
-                      'only-icon': !isValidString(item?.[col?.attributeName]?.label),
-                    }"
-                  >
-                    <LxInfoWrapper
-                      :disabled="
-                        !isValidString(item?.[col?.attributeName]?.title) &&
-                        !isValidString(item?.[col?.attributeName]?.label)
-                      "
-                    >
-                      <div class="lx-grid-icon-content-wrapper lx-aligned-row">
-                        <LxIcon
-                          :value="item?.[col?.attributeName]?.icon"
-                          :icon-set="item?.[col?.attributeName]?.iconSet"
-                          :customClass="`lx-grid-column-icon ${
-                            item?.[col?.attributeName]?.category
-                          }`"
+                <template v-if="isObject(item?.[col?.attributeName]) && getIconBadge(col, item)">
+                  <div class="lx-grid-icon-wrapper">
+                    <LxInfoWrapper :disabled="!getIconInfoText(item?.[col?.attributeName])">
+                      <div class="lx-grid-icon-content-wrapper">
+                        <LxBadge
+                          :id="`${id}-${item[idAttribute]}-${col.id}-badge-responsive`"
+                          :icon="getIconBadge(col, item).icon"
+                          :iconSet="getIconBadge(col, item).iconSet"
+                          :value="getIconBadge(col, item).value"
+                          :tooltip="getIconBadge(col, item).tooltip"
+                          :tooltipDisabled="!!getIconInfoText(item?.[col?.attributeName])"
+                          :class="['lx-grid-column-icon', getIconBadge(col, item).category]"
                         />
-                        <p v-if="col.size !== 'xs'" class="lx-grid-icon-text">
-                          {{ item?.[col?.attributeName].label }}
-                        </p>
                       </div>
                       <template #panel>
                         <p class="lx-data">
-                          {{
-                            item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label
-                          }}
+                          {{ getIconInfoText(item?.[col?.attributeName]) }}
                         </p>
                       </template>
                     </LxInfoWrapper>
@@ -3386,7 +3379,12 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   "
                 >
                   <div class="lx-grid-icon-wrapper">
-                    <LxIcon :value="item?.[col?.attributeName]" customClass="lx-grid-column-icon" />
+                    <LxBadge
+                      :id="`${id}-${item[idAttribute]}-${col.id}-badge-responsive`"
+                      :icon="getIconBadge(col, item).icon"
+                      :tooltip="getIconBadge(col, item).tooltip"
+                      :class="['lx-grid-column-icon', getIconBadge(col, item).category]"
+                    />
                   </div>
                 </template>
                 <LxEmptyValue

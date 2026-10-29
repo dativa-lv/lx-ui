@@ -171,6 +171,23 @@ The `--text-decoration-link` (previous value: `underline`) token has been split 
 - Inline links use `--link-inline-text-decoration` and `--link-inline-text-decoration-hover`. They appear within or between text elements, such as in LxMarkdownTextArea or LxRichTextDisplay.
 - Standalone links use `--link-standalone-text-decoration` and `--link-standalone-text-decoration-hover`. They appear independently, where their placement and styling make them recognizable as links, such as in breadcrumbs or a site map.
 
+#### LxDataGrid
+
+Columns with `type: 'icon'` now render LxBadge instead of LxIcon. The data format does not
+change: a string renders a badge with only an icon, and `{ icon, iconSet, label, title, category }`
+renders a badge with an icon, text, or both.
+
+**Class changes**
+
+If you override the icon column styles or target it in tests, update the selectors.
+
+| Removed                                     | Use instead                                    |
+|---------------------------------------------|------------------------------------------------|
+| `svg.lx-grid-column-icon`                   | `.lx-grid-column-icon .lx-badge-icon`          |
+| `.lx-grid-icon-text`                        | `.lx-grid-column-icon .lx-badge-text`          |
+| `.lx-grid-icon-wrapper.only-icon`           | `.lx-grid-icon-wrapper .lx-badge-icon-only`    |
+| `.lx-grid-icon-wrapper.lx-icon-has-tooltip` | none (the tooltip is handled by LxInfoWrapper) |
+
 ## 2.3.8 → 2.3.9
 
 ### Breaking changes

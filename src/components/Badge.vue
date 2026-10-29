@@ -25,6 +25,7 @@ const props = defineProps({
       return true;
     },
   },
+  tooltipDisabled: { type: Boolean, default: false }, // Skips the hover tooltip but keeps it as the accessible name – for when a wrapping component already shows it
   type: { type: String, default: 'auto' }, // auto, number, text
 });
 
@@ -50,7 +51,7 @@ const isEmpty = computed(
       'lx-badge-text-only': isTextOnly,
       'lx-badge-empty': isEmpty,
     }"
-    v-tooltip="tooltip"
+    v-tooltip="{ value: tooltip, disabled: tooltipDisabled }"
     :id="id"
     :aria-label="tooltip"
     data-component="lx-badge"
@@ -60,7 +61,7 @@ const isEmpty = computed(
       class="lx-badge-icon"
       :value="icon"
       :iconSet="iconSet"
-      :title="tooltip"
+      :title="tooltipDisabled ? '' : tooltip"
       :aria-hidden="true"
     />
     <template v-if="icon || value">

@@ -39,6 +39,30 @@
 
   --notification-text-primary-font-weight: var(--font-weight-data);
 }
+
+/* Data grid icon column badge looks like a plain icon */
+.lx .lx-data-grid-wrapper .lx-badge.lx-grid-column-icon {
+  --badge-min-width-s: var(--space-0);
+  --badge-min-height-s: var(--space-0);
+  --badge-padding-s: var(--space-0);
+  --badge-padding-icon-only-s: var(--space-0);
+  --badge-gap-s: var(--space-0500);
+  --badge-border-s: var(--border-width-0) solid transparent;
+  --badge-icon-size-s: var(--icon-size-m);
+  --badge-text-font-weight: var(--data-grid-text-default-font-weight);
+  --color-badge-text: currentColor;
+  --color-badge-background: transparent;
+  --color-badge-icon: var(--color-data-grid-foreground-secondary);
+}
+
+.lx .lx-data-grid-wrapper .lx-grid-row:hover .lx-badge.lx-grid-column-icon {
+  --color-badge-icon: var(--color-data-grid-foreground-hover);
+}
+
+.lx .lx-data-grid-wrapper .lx-grid-column-icon .lx-badge-text {
+  margin-top: var(--space-0250);
+}
+
 .lx.lx-theme-dark {
   --color-brand: #cb728c;
   --color-interactive-background: #cb728c;

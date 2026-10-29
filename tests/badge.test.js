@@ -32,6 +32,15 @@ test('LxBadge with icon', () => {
   expect(wrapper.find('.lx-badge').classes()).not.toContain('lx-badge-icon-only');
 });
 
+test('LxBadge tooltipDisabled keeps the accessible name but drops the hover tooltip', () => {
+  wrapper = mount(LxBadge, {
+    props: { value: 'test', icon: 'flash', tooltip: 'Tip', tooltipDisabled: true },
+  });
+  expect(wrapper.find('.lx-badge').attributes('aria-label')).toBe('Tip');
+  expect(wrapper.find('.lx-badge').attributes('data-lx-tooltip')).toBeUndefined();
+  expect(wrapper.find('.lx-badge-icon').attributes('data-lx-tooltip')).toBeUndefined();
+});
+
 test('LxBadge icon-only', () => {
   wrapper = mount(LxBadge, { props: { value: '', icon: 'flash' } });
   expect(wrapper.find('.lx-badge svg').exists()).toBe(true);

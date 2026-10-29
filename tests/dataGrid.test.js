@@ -1005,6 +1005,83 @@ describe('Badge definitions', () => {
   });
 });
 
+describe('Icon column', () => {
+  const columnDefinitions = [
+    { id: 'name', name: 'Name', attributeName: 'name' },
+    { id: 'icon', name: 'Icon', attributeName: 'icon', type: 'icon' },
+  ];
+
+  function mountIcons(icon, row = {}) {
+    wrapper = mountComponent({
+      props: {
+        id: 'grid',
+        columnDefinitions,
+        items: [{ id: 1, name: 'One', icon, ...row }],
+        hasVirtualization: false,
+      },
+    });
+    return wrapper.find('[id="grid-1-icon-badge"]');
+  }
+
+  test('renders an icon name as an icon-only badge', () => {
+    const badge = mountIcons('flash');
+
+    expect(badge.classes()).toContain('lx-grid-column-icon');
+    expect(badge.classes()).toContain('lx-badge-icon-only');
+    expect(badge.find('.lx-badge-icon').exists()).toBe(true);
+    expect(badge.attributes('aria-label')).toBe('Icon');
+  });
+
+  test('keeps icon, iconSet, label and title of an icon object', () => {
+    const badge = mountIcons({
+      icon: 'flash',
+      iconSet: 'cds',
+      label: 'Label',
+      title: 'Title',
+    });
+
+    expect(badge.find('.lx-badge-icon').exists()).toBe(true);
+    expect(badge.find('.lx-badge-text').text()).toBe('Label');
+    expect(badge.attributes('aria-label')).toBe('Title');
+    // The info wrapper already shows the title, so the badge does not add its own tooltip
+    expect(badge.attributes('data-lx-tooltip')).toBeUndefined();
+  });
+
+  test('adds the category of an icon object as a badge class', () => {
+    const badge = mountIcons({ icon: 'flash', category: 'red' });
+
+    expect(badge.classes()).toContain('lx-grid-column-icon');
+    expect(badge.classes()).toContain('red');
+  });
+
+  test('does not add the row category as a badge class', () => {
+    expect(mountIcons('flash', { category: 'blue' }).classes()).not.toContain('blue');
+    expect(mountIcons({ icon: 'flash' }, { category: 'blue' }).classes()).not.toContain('blue');
+  });
+
+  test('uses the category of an icon object, not the row category', () => {
+    const badge = mountIcons({ icon: 'flash', category: 'red' }, { category: 'blue' });
+
+    expect(badge.classes()).toContain('red');
+    expect(badge.classes()).not.toContain('blue');
+  });
+
+  test('shows the label of a label-only object as badge text', () => {
+    const badge = mountIcons({ label: 'Label' });
+
+    expect(badge.classes()).toContain('lx-badge-text-only');
+    expect(badge.find('.lx-badge-text').text()).toBe('Label');
+    expect(badge.find('.lx-badge-icon').exists()).toBe(false);
+  });
+
+  test('renders an empty value for an object without icon or label', () => {
+    const badge = mountIcons({ title: 'Title' });
+
+    expect(badge.exists()).toBe(false);
+    expect(wrapper.find('.lx-data-grid .empty-icon-value').exists()).toBe(true);
+  });
+});
+
 describe('Virtualization', () => {
   function createVirtualizerRef({
     rows,

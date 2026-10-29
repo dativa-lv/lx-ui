@@ -246,7 +246,7 @@
   outline-offset: -2px;
 }
 
-.lx-data-grid-wrapper .lx-cell svg {
+.lx-data-grid-wrapper .lx-cell svg:not(.lx-state-icon, .lx-badge-icon) {
   fill: var(--color-data-grid-foreground-default);
 }
 
@@ -347,7 +347,6 @@
 
 .lx-data-grid .lx-cell,
 .lx-data-grid .lx-cell .lx-person-display-name,
-.lx-data-grid .lx-cell .lx-grid-icon-text,
 .lx-data-grid .lx-cell .flag-column span {
   color: var(--color-data-grid-foreground-default);
   font-weight: var(--data-grid-text-default-font-weight);
@@ -355,11 +354,9 @@
 
 .lx-data-grid .lx-cell-secondary,
 .lx-data-grid .lx-cell-secondary .lx-person-display-name,
-.lx-data-grid .lx-cell-secondary .lx-grid-icon-text,
 .lx-data-grid .lx-cell-secondary .flag-column span,
 .lx-data-grid .lx-cell-extra,
 .lx-data-grid .lx-cell-extra .lx-person-display-name,
-.lx-data-grid .lx-cell-extra .lx-grid-icon-text,
 .lx-data-grid .lx-cell-extra .flag-column span {
   color: var(--color-data-grid-foreground-secondary);
   font-weight: var(--data-grid-text-secondary-font-weight);
@@ -371,18 +368,17 @@
 
 .lx-data-grid .lx-cell-primary,
 .lx-data-grid .lx-cell-primary .lx-person-display-name,
-.lx-data-grid .lx-cell-primary .lx-grid-icon-text,
 .lx-data-grid .lx-cell-primary .flag-column span {
   color: var(--color-data-grid-foreground-primary);
   font-weight: var(--data-grid-text-primary-font-weight);
 }
 
-.lx-data-grid-wrapper .lx-cell-secondary svg,
-.lx-data-grid-wrapper .lx-cell-extra svg {
+.lx-data-grid-wrapper .lx-cell-secondary svg:not(.lx-state-icon, .lx-badge-icon),
+.lx-data-grid-wrapper .lx-cell-extra svg:not(.lx-state-icon, .lx-badge-icon) {
   fill: var(--color-data-grid-foreground-secondary);
 }
 
-.lx-data-grid-wrapper .lx-cell-primary svg {
+.lx-data-grid-wrapper .lx-cell-primary svg:not(.lx-state-icon, .lx-badge-icon) {
   fill: var(--color-data-grid-foreground-primary);
 }
 
@@ -395,7 +391,6 @@
 .lx-grid-row.lx-selected .lx-cell,
 .lx-grid-row.lx-selected .lx-cell > span,
 .lx-grid-row.lx-selected .lx-cell .lx-person-display-name,
-.lx-grid-row.lx-selected .lx-cell .lx-grid-icon-text,
 .lx-grid-row.lx-selected .lx-cell .flag-column span,
 .lx-theme-contrast .lx-grid-row.lx-selected .lx-cell-clickable > span,
 .lx-theme-contrast .lx-grid-row.lx-selected .lx-cell-clickable .flag-column span,
@@ -410,7 +405,7 @@
   opacity: 0.25;
 }
 
-.lx-grid-row.lx-selected svg:not(.lx-state-icon) {
+.lx-grid-row.lx-selected svg:not(.lx-state-icon, .lx-badge-icon) {
   fill: var(--color-selected);
   opacity: 1;
 }
@@ -450,7 +445,6 @@
 .lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell-clickable .lx-empty-person-value,
 .lx-theme-contrast .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell-clickable > span,
 .lx-data-grid-wrapper .lx-grid-row:hover .lx-person-display-name,
-.lx-data-grid-wrapper .lx-grid-row:hover .lx-grid-icon-text,
 .lx-data-grid-wrapper .lx-grid-row:hover .flag-column span,
 .lx-data-grid-wrapper .lx-grid-row:hover .lx-cell {
   color: var(--color-data-grid-foreground-hover);
@@ -460,11 +454,6 @@
 .lx-grid-row:hover .lx-cell .lx-user-icon-display > svg,
 .lx-grid-row:hover .lx-cell .lx-ratings svg {
   fill: var(--color-data-grid-foreground-hover);
-}
-
-/* Sets the fallback slot the category color rules below don't consume, so category colors survive hover. */
-.lx-grid-row:hover .lx-cell .lx-grid-column-icon {
-  --lx-grid-column-icon-category-fill: var(--color-data-grid-foreground-hover);
 }
 
 .lx-data-grid .lx-grid-row:hover .lx-indicator {
@@ -598,133 +587,97 @@
 
 /*** State icon colors ***/
 
-/* Category rules below set fill directly and win the tie by appearing later in the source. */
-.lx-data-grid-wrapper .lx-cell svg.lx-grid-column-icon {
-  fill: var(--lx-grid-column-icon-category-fill, var(--color-data-grid-foreground-secondary));
+/* Category color wins over the badge icon color, so it survives hover and selection. */
+.lx-data-grid-wrapper .lx-grid-column-icon .lx-badge-icon {
+  fill: var(--lx-grid-column-icon-category-fill, var(--color-badge-icon));
 }
 
-.lx-data-grid svg.lx-grid-column-icon.new,
-.lx-vertical svg.lx-grid-column-icon.new {
-  fill: var(--color-new);
+.lx-data-grid-wrapper .lx-grid-column-icon.new {
+  --lx-grid-column-icon-category-fill: var(--color-new);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.edited,
-.lx-vertical svg.lx-grid-column-icon.edited {
-  fill: var(--color-edited);
+.lx-data-grid-wrapper .lx-grid-column-icon.edited {
+  --lx-grid-column-icon-category-fill: var(--color-edited);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.disabling,
-.lx-data-grid svg.lx-grid-column-icon.inactive,
-.lx-vertical svg.lx-grid-column-icon.inactive {
-  fill: var(--color-inactive);
+.lx-data-grid-wrapper .lx-grid-column-icon.disabling,
+.lx-data-grid-wrapper .lx-grid-column-icon.inactive {
+  --lx-grid-column-icon-category-fill: var(--color-inactive);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.finishing,
-.lx-data-grid svg.lx-grid-column-icon.finished,
-.lx-vertical svg.lx-grid-column-icon.finished {
-  fill: var(--color-finished);
+.lx-data-grid-wrapper .lx-grid-column-icon.finishing,
+.lx-data-grid-wrapper .lx-grid-column-icon.finished {
+  --lx-grid-column-icon-category-fill: var(--color-finished);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.deleting,
-.lx-vertical svg.lx-grid-column-icon.deleted {
-  fill: var(--color-deleted);
+.lx-data-grid-wrapper .lx-grid-column-icon.deleting {
+  --lx-grid-column-icon-category-fill: var(--color-deleted);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.red,
-.lx-vertical svg.lx-grid-column-icon.red {
-  fill: var(--color-red);
+.lx-data-grid-wrapper .lx-grid-column-icon.deleted {
+  --lx-grid-column-icon-category-fill: var(--color-deleted-background);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.green,
-.lx-vertical svg.lx-grid-column-icon.green {
-  fill: var(--color-green);
+.lx-data-grid-wrapper .lx-grid-column-icon.red {
+  --lx-grid-column-icon-category-fill: var(--color-red);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.blue,
-.lx-vertical svg.lx-grid-column-icon.blue {
-  fill: var(--color-blue);
+.lx-data-grid-wrapper .lx-grid-column-icon.green {
+  --lx-grid-column-icon-category-fill: var(--color-green);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.black,
-.lx-vertical svg.lx-grid-column-icon.black {
-  fill: var(--color-data);
+.lx-data-grid-wrapper .lx-grid-column-icon.blue {
+  --lx-grid-column-icon-category-fill: var(--color-blue);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.purple,
-.lx-vertical svg.lx-grid-column-icon.purple {
-  fill: var(--color-purple);
+.lx-data-grid-wrapper .lx-grid-column-icon.black {
+  --lx-grid-column-icon-category-fill: var(--color-data);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.orange,
-.lx-vertical svg.lx-grid-column-icon.orange {
-  fill: var(--color-orange);
+.lx-data-grid-wrapper .lx-grid-column-icon.purple {
+  --lx-grid-column-icon-category-fill: var(--color-purple);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.yellow,
-.lx-vertical svg.lx-grid-column-icon.yellow {
-  fill: var(--color-yellow);
+.lx-data-grid-wrapper .lx-grid-column-icon.orange {
+  --lx-grid-column-icon-category-fill: var(--color-orange);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.draft,
-.lx-vertical svg.lx-grid-column-icon.draft {
-  fill: var(--color-draft-background);
+.lx-data-grid-wrapper .lx-grid-column-icon.yellow {
+  --lx-grid-column-icon-category-fill: var(--color-yellow);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.error,
-.lx-vertical svg.lx-grid-column-icon.error {
-  fill: var(--color-error-background);
+.lx-data-grid-wrapper .lx-grid-column-icon.draft {
+  --lx-grid-column-icon-category-fill: var(--color-draft-background);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.incomplete,
-.lx-vertical svg.lx-grid-column-icon.incomplete {
-  fill: var(--color-incomplete-background);
+.lx-data-grid-wrapper .lx-grid-column-icon.error {
+  --lx-grid-column-icon-category-fill: var(--color-error-background);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.deleted,
-.lx-vertical svg.lx-grid-column-icon.deleted {
-  fill: var(--color-deleted-background);
+.lx-data-grid-wrapper .lx-grid-column-icon.incomplete {
+  --lx-grid-column-icon-category-fill: var(--color-incomplete-background);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.ongoing,
-.lx-vertical svg.lx-grid-column-icon.ongoing {
-  fill: var(--color-ongoing-background);
+.lx-data-grid-wrapper .lx-grid-column-icon.ongoing {
+  --lx-grid-column-icon-category-fill: var(--color-ongoing-background);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.signed,
-.lx-vertical svg.lx-grid-column-icon.signed {
-  fill: var(--color-signed-background);
+.lx-data-grid-wrapper .lx-grid-column-icon.signed {
+  --lx-grid-column-icon-category-fill: var(--color-signed-background);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.waiting,
-.lx-vertical svg.lx-grid-column-icon.waiting {
-  fill: var(--color-waiting-background);
+.lx-data-grid-wrapper .lx-grid-column-icon.waiting {
+  --lx-grid-column-icon-category-fill: var(--color-waiting-background);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.teal,
-.lx-vertical svg.lx-grid-column-icon.teal {
-  fill: var(--color-teal-background);
+.lx-data-grid-wrapper .lx-grid-column-icon.teal {
+  --lx-grid-column-icon-category-fill: var(--color-teal-background);
 }
 
 .lx-data-grid-wrapper .lx-data-grid .lx-cell svg.lx-grid-column-icon,
 .lx-data-grid-wrapper .lx-appendable-list-item .lx-data-block-content .lx-row svg.lx-grid-column-icon {
   height: var(--icon-size-m);
   width: var(--icon-size-m);
-}
-
-.lx-grid-icon-wrapper {
-  display: grid;
-  gap: 0 0.75ch;
-  align-items: center;
-}
-
-.lx-grid-icon-wrapper .lx-grid-column-icon {
-  align-self: flex-start;
-}
-
-.lx-data-grid .lx-grid-icon-text,
-.lx-responsive-grid-icons-row .lx-info-wrapper-content .lx-grid-icon-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .lx-data-grid .lx-person-display-wrapper {
@@ -737,16 +690,8 @@
   margin-bottom: calc(var(--space-0125) * -1);
 }
 
-.lx-data-grid-wrapper .lx-grid-icon-wrapper.lx-icon-has-tooltip {
-  cursor: help;
-}
-
-.lx-grid-icon-wrapper.lx-icon-has-tooltip.only-icon .popper-wrapper {
+.lx-data-grid .lx-grid-icon-wrapper .popper-wrapper {
   width: fit-content;
-}
-
-.lx-grid-icon-wrapper.lx-icon-has-tooltip.only-icon .lx-info-wrapper-content {
-  grid-template-columns: 1fr;
 }
 
 .lx-data-grid .flag-column:not(:has(.lx-flag)) p.lx-data,
@@ -774,34 +719,7 @@
 
 .lx-responsive-grid-icons-row .lx-vertical {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1000);
-}
-
-.lx-responsive-grid-icons-row .lx-vertical > * {
-  flex: 0 1 auto;
-  min-width: 3rem;
-  max-width: 100%;
-}
-
-.lx-responsive-grid-icons-row .lx-grid-icon-wrapper {
-  display: flex;
-  gap: var(--space-0500);
-}
-
-.lx-responsive-grid-icons-row .lx-grid-icon-wrapper > p {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.lx-responsive-grid-icons-row .lx-grid-icon-wrapper > svg {
-  flex-shrink: 0;
-}
-
-.lx-responsive-grid-icons-row svg {
-  height: var(--icon-size-m);
-  width: var(--icon-size-m);
+  gap: var(--space-0125);
 }
 
 /*** Indicator & badge styles ***/
@@ -834,10 +752,11 @@
   flex-wrap: wrap;
 }
 
-.lx-data-grid-wrapper .lx-grid-badge-wrapper .lx-badge,
-.lx-region .lx-data-grid-wrapper .lx-grid-badge-wrapper .lx-badge,
-.lx-region-component .lx-data-grid-wrapper .lx-grid-badge-wrapper .lx-badge {
-  background: var(--color-region-2);
+.lx-data-grid-wrapper .lx-badge,
+.lx-region .lx-data-grid-wrapper .lx-badge,
+.lx-region-component .lx-data-grid-wrapper .lx-badge,
+.lx-region .lx-data-grid-wrapper .lx-region-component .lx-badge {
+  --color-badge-background: var(--color-region-2);
 }
 
 .lx-data-grid-wrapper .lx-grid-badge-wrapper > .lx-badge > .lx-badge-text {
@@ -1286,14 +1205,6 @@
 .lx-data-grid-wrapper:has(.lx-data-grid-full) .lx-cell-extra,
 .lx-data-grid.lx-data-grid-full .lx-cell-extra {
   display: block;
-}
-
-.lx-data-grid-wrapper .lx-appendable-list.lx-data-grid-full .lx-appendable-list-item .lx-row.lx-responsive-grid-icons-row .lx-cell-extra {
-  display: block;
-}
-
-.lx-row.lx-responsive-grid-icons-row .lx-cell-extra {
-  display: none;
 }
 
 .lx-data-grid-wrapper .lx-data-grid .lx-cell-secondary p.lx-person-display-name,
