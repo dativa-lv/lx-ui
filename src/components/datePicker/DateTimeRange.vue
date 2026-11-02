@@ -1,15 +1,5 @@
 <script setup>
-import {
-  computed,
-  onBeforeMount,
-  ref,
-  inject,
-  getCurrentInstance,
-  onUnmounted,
-  onMounted,
-  nextTick,
-  watch,
-} from 'vue';
+import { computed, onBeforeMount, ref, inject, onMounted, nextTick, watch } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import useLx from '@/hooks/useLx';
 import { formatDate } from '@/utils/date/format';
@@ -33,7 +23,7 @@ import LxEmptyValue from '@/components/EmptyValue.vue';
 import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { lxDevUtils } from '@/utils';
 import { DATE_VALIDATION_RESULT } from '@/constants';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -533,24 +523,7 @@ onBeforeMount(() => {
   }
 });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxDateTimeRange',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxDateTimeRange' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxDateTimeRange', props, { texts: textsDefault });
 </script>
 
 <template>

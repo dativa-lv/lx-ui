@@ -1,5 +1,5 @@
 <script setup>
-import { computed, getCurrentInstance, onUnmounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxAvatar from '@/components/Avatar.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -8,7 +8,7 @@ import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -302,23 +302,7 @@ function scrollIntoView({ behavior, block, container, inline }) {
   });
 }
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  registerBuilderInstance({
-    name: 'LxPersonDisplay',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxPersonDisplay' },
-    ]),
-    customItemPath: props.builderOptions?.customItemPath,
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxPersonDisplay', props);
 
 defineExpose({ focus, scrollIntoView });
 </script>

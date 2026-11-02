@@ -1,5 +1,5 @@
 <script setup>
-import { computed, getCurrentInstance, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import LxActionButton from '@/components/ActionButton.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import {
@@ -7,7 +7,7 @@ import {
   limitPrimaryActions,
   resolveActionGroups,
 } from '@/utils/actionDefinitionsUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -37,22 +37,7 @@ const actionDefinitionsResolved = computed(() =>
   )
 );
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  registerBuilderInstance({
-    name: 'LxViewLayout',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxViewLayout' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxViewLayout', props);
 </script>
 <template>
   <div class="lx-view-layout" :class="[{ customClass }]" :data-id="id">

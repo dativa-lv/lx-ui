@@ -1,14 +1,5 @@
 <script setup>
-import {
-  ref,
-  onMounted,
-  watch,
-  computed,
-  onUnmounted,
-  inject,
-  getCurrentInstance,
-  nextTick,
-} from 'vue';
+import { ref, onMounted, watch, computed, onUnmounted, inject, nextTick } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
@@ -19,7 +10,7 @@ import { lxDevUtils } from '@/utils';
 import { generateUUID } from '@/utils/stringUtils';
 import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -436,24 +427,7 @@ onUnmounted(() => {
   stopStream();
 });
 
-if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxCamera',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxCamera' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxCamera', props, { texts: textsDefault, skipInnerComponent: true });
 const wrapperRef = ref();
 </script>
 

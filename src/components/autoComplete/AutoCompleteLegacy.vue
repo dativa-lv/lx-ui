@@ -1,15 +1,6 @@
 <script setup>
 /* eslint-disable no-use-before-define, no-shadow, no-unused-vars, no-useless-return -- original AutoComplete.vue, kept unchanged until legacy is removed */
-import {
-  ref,
-  computed,
-  onMounted,
-  nextTick,
-  watch,
-  inject,
-  getCurrentInstance,
-  onUnmounted,
-} from 'vue';
+import { ref, computed, onMounted, nextTick, watch, inject } from 'vue';
 import { onClickOutside, useDebounceFn, useWindowSize } from '@vueuse/core';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
 import { clampText, getDisplayTexts, isBoolean, isDefined, isNil } from '@/utils/generalUtils';
@@ -27,7 +18,7 @@ import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -1210,24 +1201,7 @@ function clearFilteredItems() {
   }
 }
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxAutoComplete',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxAutoComplete' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxAutoComplete', props, { texts: textsDefault });
 
 const dataState = computed(() =>
   JSON.stringify({

@@ -1,9 +1,9 @@
 <script setup>
-import { ref, computed, inject, getCurrentInstance, onUnmounted } from 'vue';
+import { ref, computed, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { isNil } from '@/utils/generalUtils';
 import LxIcon from '@/components/Icon.vue';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -71,22 +71,7 @@ function scrollIntoView({
 
 defineExpose({ focus, scrollIntoView });
 
-if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  registerBuilderInstance({
-    name: 'LxCheckbox',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxCheckbox' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxCheckbox', props, { skipInnerComponent: true });
 </script>
 
 <template>

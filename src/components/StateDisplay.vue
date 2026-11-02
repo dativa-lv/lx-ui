@@ -1,10 +1,10 @@
 <script setup>
-import { computed, getCurrentInstance, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -125,23 +125,7 @@ const stateIcon = computed(() => {
   return getShapeIcon(displayShape, displayType);
 });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  registerBuilderInstance({
-    name: 'LxStateDisplay',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxStateDisplay' },
-    ]),
-    customItemPath: props.builderOptions?.customItemPath,
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxStateDisplay', props);
 </script>
 <template>
   <!--

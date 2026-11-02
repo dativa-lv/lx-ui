@@ -1,16 +1,5 @@
 <script setup>
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  nextTick,
-  inject,
-  provide,
-  onBeforeUnmount,
-  getCurrentInstance,
-  onUnmounted,
-} from 'vue';
+import { ref, computed, watch, onMounted, nextTick, inject, provide, onBeforeUnmount } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxActionButton from '@/components/ActionButton.vue';
 import LxExpander from '@/components/Expander.vue';
@@ -34,7 +23,7 @@ import { loadLibrary } from '@/utils/libLoader';
 import useScrollVirtualizer, { resolveVirtualizerScrollParent } from '@/hooks/useScrollVirtualizer';
 import { useLoadingAnnouncer } from '@/hooks/useLoadingAnnouncer';
 import { useWindowSize } from '@vueuse/core';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 
 const props = defineProps({
@@ -1497,24 +1486,7 @@ const listColsClass = computed(() => {
   return null;
 });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxList',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxList' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxList', props, { texts: textsDefault });
 
 onMounted(async () => {
   // @ts-ignore

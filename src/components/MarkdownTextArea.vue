@@ -1,15 +1,5 @@
 <script setup>
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-  nextTick,
-  inject,
-  getCurrentInstance,
-  onUnmounted,
-} from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, inject } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import PlaceholderData from '@/components/markdownExtensions/PlaceholderData';
 import ImageComponent from '@/components/markdownExtensions/Image';
@@ -32,7 +22,7 @@ import { checkArrayObjectProperty } from '@/utils/arrayUtils';
 import { getDisplayTexts, clampText, isNil } from '@/utils/generalUtils';
 import { formatUrl } from '@/utils/format/string';
 import { loadLibrary } from '@/utils/libLoader';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -1085,24 +1075,7 @@ function getPlainText() {
   return editor.value?.getText() || '';
 }
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxMarkdownTextArea',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxMarkdownTextArea' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxMarkdownTextArea', props, { texts: textsDefault });
 
 const dataState = computed(() =>
   JSON.stringify({

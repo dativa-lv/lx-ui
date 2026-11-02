@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, getCurrentInstance, onUnmounted } from 'vue';
+import { computed, ref } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import LxExpander from '@/components/Expander.vue';
 import LxButton from '@/components/Button.vue';
@@ -8,7 +8,7 @@ import LxForm from '@/components/forms/Form.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
 const emits = defineEmits([
@@ -203,22 +203,7 @@ const fastFilterDisplay = computed(() => {
 
 defineExpose({ toggleExpander, focus });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = defaultTexts;
-  registerBuilderInstance({
-    name: 'LxFilters',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack,
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxFilters', props, { texts: defaultTexts, addToStack: false });
 </script>
 <template>
   <div class="lx-filter-wrapper" :data-id="id">

@@ -4,15 +4,23 @@ import useLx from '@/hooks/useLx';
 import LxIcon from '@/components/Icon.vue';
 import { lxDevUtils } from '@/utils';
 import { generateUUID } from '@/utils/stringUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  icon: { type: String, default: null },
-  iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet },
+  icon: { type: String, default: null, group: 'main', sequence: 1 },
+  iconSet: {
+    type: String,
+    default: () => useLx().getGlobals()?.iconSet,
+    group: 'main',
+    sequence: 2,
+  },
   value: { type: String, default: null },
   tooltip: {
     type: String,
     default: null,
+    group: 'main',
+    sequence: 3,
     validator: (v, p) => {
       // If icon or value is non-empty, tooltip must be non-empty
       if ((p.icon || p.value) && !v) {
@@ -26,7 +34,22 @@ const props = defineProps({
     },
   },
   tooltipDisabled: { type: Boolean, default: false }, // Skips the hover tooltip but keeps it as the accessible name – for when a wrapping component already shows it
-  type: { type: String, default: 'auto' }, // auto, number, text
+  type: {
+    type: String,
+    default: 'auto',
+    options: ['auto', 'number', 'text'],
+    group: 'main',
+    sequence: 4,
+  }, // auto, number, text
+  builderOptions: {
+    type: Object,
+    default: () => ({
+      useRegistry: false,
+      schemaPath: null,
+      componentStack: null,
+      customItemPath: null,
+    }),
+  },
 });
 
 const isValueNumber = computed(() => {
@@ -41,6 +64,8 @@ const isTextOnly = computed(() => !!props.value && !props.icon);
 const isEmpty = computed(
   () => props.value != null && String(props.value).trim() === '' && !props.icon
 );
+
+useBuilderRegistration('LxBadge', props);
 </script>
 <template>
   <div
@@ -53,6 +78,7 @@ const isEmpty = computed(
     }"
     v-tooltip="{ value: tooltip, disabled: tooltipDisabled }"
     :id="id"
+    :data-id="id"
     :aria-label="tooltip"
     data-component="lx-badge"
   >

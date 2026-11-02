@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, ref, provide, useSlots, getCurrentInstance, onUnmounted } from 'vue';
+import { computed, inject, ref, provide, useSlots } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -10,7 +10,7 @@ import LxToggle from '@/components/Toggle.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 /**
  * Represents a row component used in forms.
@@ -134,7 +134,7 @@ const props = defineProps({
    * @since 1.5.0
    */
   actionGroupDefinitions: { type: Array, default: null },
-  actionDefinitions: { type: Array, default: () => [] },
+  actionDefinitions: { type: Array, default: () => [], group: 'main', sequence: 4 },
   builderOptions: {
     type: Object,
     default: () => ({
@@ -230,20 +230,7 @@ provide('rowId', idComputed);
 const rowRequired = computed(() => (props.required ? true : null));
 provide('rowRequired', rowRequired);
 
-if (props.builderOptions.useRegistry) {
-  const instance = getCurrentInstance();
-  registerBuilderInstance({
-    name: 'LxRow',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack,
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxRow', props, { addToStack: false });
 </script>
 <template>
   <div

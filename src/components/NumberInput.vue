@@ -1,20 +1,12 @@
 <script setup>
-import {
-  ref,
-  computed,
-  watch,
-  inject,
-  onBeforeUnmount,
-  getCurrentInstance,
-  onUnmounted,
-} from 'vue';
+import { ref, computed, watch, inject, onBeforeUnmount } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { clampText, getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 import { makeIntegerValidator } from '@/utils/numberInputUtils';
 import { generateUUID } from '@/utils/stringUtils';
 import { ARIA_LIVE_ANNOUNCEMENT_CONSTANTS } from '@/constants';
@@ -230,24 +222,7 @@ onBeforeUnmount(() => {
   clearTimeout(announcementTimeout);
 });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxNumberInput',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxNumberInput' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxNumberInput', props, { texts: textsDefault });
 </script>
 <template>
   <div

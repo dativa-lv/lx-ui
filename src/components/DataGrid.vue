@@ -9,8 +9,6 @@ import {
   watch,
   nextTick,
   useSlots,
-  getCurrentInstance,
-  onUnmounted,
 } from 'vue';
 import {
   useWindowSize,
@@ -50,7 +48,7 @@ import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 
 const lvCollator = new Intl.Collator('lv');
@@ -2134,24 +2132,7 @@ const stickyToolbarAdditionalHeight = computed(() => {
   )}px - var(--row-size));`;
 });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxDataGrid',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxDataGrid' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxDataGrid', props, { texts: textsDefault });
 
 defineExpose({ cancelSelection, selectRows, sortBy });
 </script>

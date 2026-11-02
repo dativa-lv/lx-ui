@@ -1,11 +1,11 @@
 <script setup>
-import { computed, ref, onMounted, inject, getCurrentInstance, onUnmounted } from 'vue';
+import { computed, ref, onMounted, inject } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import useLx from '@/hooks/useLx';
 import { useWindowSize } from '@vueuse/core';
 import { lxDevUtils, lxStringUtils } from '@/utils';
 import LxBadge from '@/components/Badge.vue';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => lxStringUtils.generateUUID() },
@@ -121,22 +121,7 @@ function checkIfHighlighted(id) {
   return -1;
 }
 
-if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  registerBuilderInstance({
-    name: 'LxContentSwitcher',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxContentSwitcher' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxContentSwitcher', props, { skipInnerComponent: true });
 
 const dataState = computed(() =>
   JSON.stringify({

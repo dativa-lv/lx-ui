@@ -1,16 +1,6 @@
 <!-- eslint-disable no-param-reassign -->
 <script setup>
-import {
-  computed,
-  useSlots,
-  ref,
-  watch,
-  onMounted,
-  nextTick,
-  provide,
-  onUnmounted,
-  getCurrentInstance,
-} from 'vue';
+import { computed, useSlots, ref, watch, onMounted, nextTick, provide, onUnmounted } from 'vue';
 import {
   useElementBounding,
   useElementSize,
@@ -34,7 +24,7 @@ import {
   getDisplayTexts,
   remToPx,
 } from '@/utils/generalUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const slots = useSlots();
 const emits = defineEmits(['actionClick', 'update:index']);
@@ -970,22 +960,7 @@ onMounted(() => {
 
 defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
 
-if (props.builderOptions.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxForm',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack,
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxForm', props, { texts: textsDefault, addToStack: false });
 </script>
 <template>
   <article

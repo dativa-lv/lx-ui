@@ -8,8 +8,6 @@ import {
   defineAsyncComponent,
   nextTick,
   inject,
-  getCurrentInstance,
-  onUnmounted,
 } from 'vue';
 import { generateUUID, kebabToCamel } from '@/utils/stringUtils';
 import LxFlag from '@/components/Flag.vue';
@@ -25,7 +23,7 @@ import useLx from '@/hooks/useLx';
 import { useElementSize } from '@vueuse/core';
 import { getTexts } from '@/utils/visualPickerUtils';
 import { clampText, getDisplayTexts, findFocusableElements, isDefined } from '@/utils/generalUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -422,24 +420,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 
 defineExpose({ addTitles });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxVisualPicker',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxVisualPicker' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxVisualPicker', props, { texts: textsDefault });
 </script>
 <template>
   <div

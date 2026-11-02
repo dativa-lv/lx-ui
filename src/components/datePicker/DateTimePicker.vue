@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, ref, getCurrentInstance, onUnmounted } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { lxDateUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 import { getKindConfig } from '@/components/datePicker/kindConfig';
@@ -9,7 +9,7 @@ import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import LxDayMonthPicker from '@/components/datePicker/DayMonthPicker.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -243,24 +243,7 @@ const isComposite = computed(() => cfg.value.panel === 'composite');
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxDateTimePicker',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxDateTimePicker' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxDateTimePicker', props, { texts: textsDefault });
 </script>
 
 <template>

@@ -1,14 +1,5 @@
 <script setup>
-import {
-  computed,
-  ref,
-  watch,
-  inject,
-  getCurrentInstance,
-  onUnmounted,
-  reactive,
-  nextTick,
-} from 'vue';
+import { computed, ref, watch, inject, reactive, nextTick } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import { IMaskDirective as vImask } from 'vue-imask';
 import LxTextInput from '@/components/TextInput.vue';
@@ -18,7 +9,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import { getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 import { logWarn } from '@/utils/devUtils';
 import { pluralize } from '@/utils/format/plural';
 import { hasOverflow } from '@/utils/overflowUtils';
@@ -449,24 +440,7 @@ const ariaRequired = computed(() => {
   return value ? true : null;
 });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxDurationInput',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxDurationInput' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxDurationInput', props, { texts: textsDefault });
 
 const INPUT_MASK = {
   mask: Number,
@@ -541,10 +515,12 @@ const segmentedInputs = computed(() => ({
 const segmentedFields = computed(() => SEGMENTED_FIELDS_BY_VARIANT[props.variant] ?? []);
 
 function calculateSegmentedResult() {
-  const monthCount = segmentedFields.value.includes('months') ? segmentedValues.months ?? 0 : 0;
-  const dayCount = segmentedFields.value.includes('days') ? segmentedValues.days ?? 0 : 0;
-  const hourCount = segmentedFields.value.includes('hours') ? segmentedValues.hours ?? 0 : 0;
-  const minuteCount = segmentedFields.value.includes('minutes') ? segmentedValues.minutes ?? 0 : 0;
+  const monthCount = segmentedFields.value.includes('months') ? (segmentedValues.months ?? 0) : 0;
+  const dayCount = segmentedFields.value.includes('days') ? (segmentedValues.days ?? 0) : 0;
+  const hourCount = segmentedFields.value.includes('hours') ? (segmentedValues.hours ?? 0) : 0;
+  const minuteCount = segmentedFields.value.includes('minutes')
+    ? (segmentedValues.minutes ?? 0)
+    : 0;
 
   let totalMinutes =
     monthCount *

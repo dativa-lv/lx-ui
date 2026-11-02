@@ -1,17 +1,10 @@
 <script setup>
-import {
-  shallowRef,
-  computed,
-  watch,
-  defineAsyncComponent,
-  getCurrentInstance,
-  onUnmounted,
-} from 'vue';
+import { shallowRef, computed, watch, defineAsyncComponent } from 'vue';
 import IconDefault from '@/components/icons/Default.vue';
 import useLx from '@/hooks/useLx';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -124,23 +117,7 @@ const gradientComputed = computed(() => {
   return null;
 });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  registerBuilderInstance({
-    name: 'LxIcon',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxIcon' },
-    ]),
-    customItemPath: props.builderOptions?.customItemPath,
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxIcon', props);
 </script>
 
 <template>

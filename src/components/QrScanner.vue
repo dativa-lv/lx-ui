@@ -1,14 +1,5 @@
 <script setup>
-import {
-  ref,
-  onMounted,
-  nextTick,
-  computed,
-  watch,
-  inject,
-  getCurrentInstance,
-  onUnmounted,
-} from 'vue';
+import { ref, onMounted, nextTick, computed, watch, inject } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
@@ -18,7 +9,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { clampText, getDisplayTexts, isDefined } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -335,24 +326,7 @@ onMounted(async () => {
   switchCamera(camerasList.value?.[0]);
 });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxQrScanner',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxQrScanner' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxQrScanner', props, { texts: textsDefault });
 const wrapperRef = ref();
 </script>
 

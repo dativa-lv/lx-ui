@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, inject, getCurrentInstance, onUnmounted, watch } from 'vue';
+import { computed, onMounted, ref, inject, watch } from 'vue';
 import { generateUUID, stringifyItemsByIdAttribute } from '@/utils/stringUtils';
 import { getDisplayTexts, isNil } from '@/utils/generalUtils';
 
@@ -9,7 +9,7 @@ import LxValuePickerTileTag from '@/components/valuePickers/TileTag.vue';
 import LxValuePickerRotator from '@/components/valuePickers/Rotator.vue';
 import LxValuePickerIndicator from '@/components/valuePickers/Indicator.vue';
 import LxValuePickerHorizontal from '@/components/valuePickers/Horizontal.vue';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -214,24 +214,7 @@ onMounted(() => {
   }
 });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxValuePicker',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxValuePicker' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxValuePicker', props, { texts: textsDefault });
 </script>
 
 <template>

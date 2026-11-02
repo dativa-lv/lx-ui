@@ -1,9 +1,9 @@
 <script setup>
-import { ref, watch, getCurrentInstance, onUnmounted } from 'vue';
+import { ref, watch } from 'vue';
 import CountryFlag from 'vue-country-flag-next';
 import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: {
@@ -68,23 +68,7 @@ watch(
   { immediate: true }
 );
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  registerBuilderInstance({
-    name: 'LxFlag',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxFlag' },
-    ]),
-    customItemPath: props.builderOptions?.customItemPath,
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxFlag', props);
 </script>
 <template>
   <div

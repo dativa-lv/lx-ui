@@ -1,22 +1,12 @@
 <script setup>
-import {
-  computed,
-  ref,
-  watch,
-  onMounted,
-  useSlots,
-  inject,
-  nextTick,
-  getCurrentInstance,
-  onUnmounted,
-} from 'vue';
+import { computed, ref, watch, onMounted, useSlots, inject, nextTick } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { formatValueBool } from '@/utils/format/value';
 import { clampText, getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -164,24 +154,7 @@ onMounted(() => {
   checkModelState();
 });
 
-if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxToggle',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxToggle' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxToggle', props, { texts: textsDefault, skipInnerComponent: true });
 
 const dataState = computed(() =>
   JSON.stringify({

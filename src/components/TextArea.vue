@@ -1,11 +1,11 @@
 <script setup>
-import { ref, computed, watch, nextTick, inject, getCurrentInstance, onUnmounted } from 'vue';
+import { ref, computed, watch, nextTick, inject } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { getDisplayTexts, clampText, isNil } from '@/utils/generalUtils';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
@@ -138,24 +138,7 @@ useResizeObserver(wrapperRef, (entries) => {
 
 defineExpose({ focus });
 
-if (props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxTextArea',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxTextArea' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxTextArea', props, { texts: textsDefault });
 
 const dataState = computed(() =>
   JSON.stringify({

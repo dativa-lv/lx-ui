@@ -1,15 +1,5 @@
 <script setup>
-import {
-  computed,
-  onMounted,
-  onUnmounted,
-  watch,
-  ref,
-  inject,
-  nextTick,
-  getCurrentInstance,
-  defineAsyncComponent,
-} from 'vue';
+import { computed, onMounted, watch, ref, inject, nextTick, defineAsyncComponent } from 'vue';
 import { IMask, IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
 import { computedAsync } from '@vueuse/core';
@@ -26,7 +16,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-import { registerBuilderInstance, unregisterBuilderInstance } from '@/utils/builderUtils';
+import { useBuilderRegistration } from '@/utils/builderUtils';
 
 const LxFlag = defineAsyncComponent(() => import('@/components/Flag.vue'));
 const LxAutoCompleteNew = defineAsyncComponent(
@@ -649,24 +639,7 @@ onMounted(() => {
   }
 });
 
-if (!props.builderOptions?.innerComponent && props.builderOptions?.useRegistry) {
-  const instance = getCurrentInstance();
-  // Adds default texts to ensure they are available in the builder instance
-  instance.type.props.texts.options = textsDefault;
-  registerBuilderInstance({
-    name: 'LxTextInput',
-    instance,
-    props,
-    builderName: props.builderOptions?.schemaPath,
-    componentStack: props.builderOptions?.componentStack?.concat([
-      { id: props?.id, name: 'LxTextInput' },
-    ]),
-  });
-
-  onUnmounted(() => {
-    unregisterBuilderInstance(props?.id);
-  });
-}
+useBuilderRegistration('LxTextInput', props, { texts: textsDefault, skipInnerComponent: true });
 
 const searchInputMask = computed(() =>
   props.mask && !['default', 'currency'].includes(props.mask) ? inputMask.value : null
