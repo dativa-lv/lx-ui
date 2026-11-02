@@ -193,7 +193,7 @@ defineExpose({ open, close });
               @click="close()"
             />
           </header>
-          <article class="lx-main" ref="modalContent">
+          <article class="lx-main" ref="modalContent" tabindex="-1">
             <div v-if="description" :id="`${id}-description`">{{ description }}</div>
           </article>
           <footer

@@ -231,7 +231,7 @@ defineExpose({ open, close });
           role="dialog"
           :aria-labelledby="`${id}-label`"
         >
-          <div class="lx-main" ref="modalContent">
+          <div class="lx-main" ref="modalContent" tabindex="-1">
             <LxForm
               :id="`${id}-form`"
               :showFooter="false"

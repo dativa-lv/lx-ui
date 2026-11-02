@@ -262,7 +262,7 @@ defineExpose({ open, close });
             />
           </header>
 
-          <article class="lx-main" ref="modalContent">
+          <article class="lx-main" ref="modalContent" tabindex="-1">
             <slot />
           </article>
 
@@ -325,7 +325,7 @@ defineExpose({ open, close });
             />
           </header>
 
-          <article class="lx-main" ref="modalContent">
+          <article class="lx-main" ref="modalContent" tabindex="-1">
             <slot />
           </article>
 
