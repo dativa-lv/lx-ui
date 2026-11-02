@@ -107,9 +107,9 @@
   transform: translateX(
     calc((
       var(--toggle-width-m)
-       - var(--toggle-thumb-width-off-m) 
-       - (var(--toggle-padding-left-m) * 2) 
-       - (2 * var(--toggle-border-width-m))
+      - var(--toggle-thumb-width-off-m)
+      - (var(--toggle-padding-left-m) * 2)
+      - (2 * var(--toggle-border-width-m))
     ) / 2)
   );
 }
@@ -118,10 +118,10 @@
 .lx-toggle-wrapper.lx-checked .lx-toggle-appearance .lx-toggle-thumb {
   transform: translateX(
     calc(
-      var(--toggle-width-m) 
-      - var(--toggle-thumb-width-on-m) 
-      - var(--toggle-padding-left-m) 
-      - var(--toggle-padding-right-m) 
+      var(--toggle-width-m)
+      - var(--toggle-thumb-width-on-m)
+      - var(--toggle-padding-left-m)
+      - var(--toggle-padding-right-m)
       - (2 * var(--toggle-border-width-m))
     )
   );

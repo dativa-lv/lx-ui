@@ -397,7 +397,7 @@ function selectAll() {
 function getTabIndex(id) {
   const isFirstItem =
     itemsDisplay.value.length > 0 && itemsDisplay.value[0][props.idAttribute] === id;
-  const isValidModel = itemsDisplay.value.find((item) => item[props.idAttribute] === model.value);
+  const isValidModel = itemsDisplay.value.some((item) => item[props.idAttribute] === model.value);
   if (model.value === id || (isFirstItem && !isValidModel)) {
     return '0';
   }

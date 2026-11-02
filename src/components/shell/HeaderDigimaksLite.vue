@@ -2,7 +2,6 @@
 import { computed, ref, watch, provide, defineAsyncComponent } from 'vue';
 
 import LxButton from '@/components/Button.vue';
-import LxIcon from '@/components/Icon.vue';
 import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -17,7 +16,6 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 
 const LxMegaMenu = defineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
-const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
 const LxAvatar = defineAsyncComponent(() => import('@/components/Avatar.vue'));
 
 const props = defineProps({

@@ -90,7 +90,7 @@ const showFullPerson = computed(
 const isCollapsedHeader = computed(() => props.showPersonHeader && !showFullPerson.value);
 
 // Badge from user definition; AI users fall back to the default AI badge when none is specified.
-const badgeTypes = ['info', 'success', 'warning', 'error'];
+const badgeTypes = new Set(['info', 'success', 'warning', 'error']);
 const personBadge = computed(() => {
   const { badge, badgeIcon, badgeType, badgeTitle } = props.message;
   if (badge || badgeIcon) {
@@ -98,7 +98,7 @@ const personBadge = computed(() => {
       icon: badgeIcon ?? null,
       value: badge ?? null,
       tooltip: badgeTitle ?? null,
-      class: badgeTypes.includes(badgeType) ? `lx-badge-${badgeType}` : null,
+      class: badgeTypes.has(badgeType) ? `lx-badge-${badgeType}` : null,
     };
   }
   if (props.isAi) {

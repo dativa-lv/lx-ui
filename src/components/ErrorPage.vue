@@ -78,7 +78,7 @@ const kindSanitized = computed(() => `${props.kind.charAt(0).toUpperCase()}${pro
 
 const emits = defineEmits(['actionClick']);
 
-const BUTTON_KINDS = ['primary', 'secondary', 'tertiary'];
+const BUTTON_KINDS = new Set(['primary', 'secondary', 'tertiary']);
 
 const actionDefinitionsResolved = computed(() =>
   limitPrimaryActions(
@@ -86,9 +86,7 @@ const actionDefinitionsResolved = computed(() =>
       resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions),
       { inheritKind: true }
     )
-  ).map((action) =>
-    BUTTON_KINDS.includes(action?.kind) ? action : { ...action, kind: 'tertiary' }
-  )
+  ).map((action) => (BUTTON_KINDS.has(action?.kind) ? action : { ...action, kind: 'tertiary' }))
 );
 
 function handleActionClick(actionName) {

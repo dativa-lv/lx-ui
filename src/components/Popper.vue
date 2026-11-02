@@ -13,7 +13,7 @@ const props = defineProps({
   arrowPointer: { type: Boolean, default: false },
   panelClass: { type: String, default: '' },
   arrowPadding: { type: String, default: '5' },
-  content: { default: null },
+  content: { type: String, default: null },
   show: { type: Boolean, default: null },
   locked: { type: Boolean, default: false },
   clientPosition: { type: Object, default: null },
@@ -285,18 +285,18 @@ function emitCurtainTouched() {
             left: plc.startsWith('right')
               ? '-5px'
               : plc.startsWith('left')
-              ? 'auto'
-              : middlewareData.arrow?.x != null
-              ? `${middlewareData.arrow.x - Number(props.offsetSkid)}px`
-              : '',
+                ? 'auto'
+                : middlewareData.arrow?.x != null
+                  ? `${middlewareData.arrow.x - Number(props.offsetSkid)}px`
+                  : '',
             right: plc.startsWith('left') ? '-5px' : '',
             top: plc.startsWith('top')
               ? 'auto'
               : plc.startsWith('bottom')
-              ? '-5px'
-              : middlewareData.arrow?.y != null
-              ? `${middlewareData.arrow.y}px`
-              : '',
+                ? '-5px'
+                : middlewareData.arrow?.y != null
+                  ? `${middlewareData.arrow.y}px`
+                  : '',
             bottom: plc.startsWith('top') ? '-5px' : '',
           }"
         />

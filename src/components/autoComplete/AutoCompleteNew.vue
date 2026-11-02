@@ -180,7 +180,7 @@ let typedCommitTimeout = null;
 
 function commitEntries(entries) {
   clearTimeout(typedCommitTimeout);
-  const value = isMultiple.value ? entries.map((entry) => entry.raw) : entries[0]?.raw ?? null;
+  const value = isMultiple.value ? entries.map((entry) => entry.raw) : (entries[0]?.raw ?? null);
   emit('update:modelValue', value);
 }
 
@@ -772,8 +772,8 @@ function handleListSelectionChange(selectedIds) {
   clearTimeout(selectionTimeout);
   selectionTimeout = setTimeout(() => {
     if (!selectedIds) return;
-    const ids = selectedIds.map(String);
-    const kept = modelEntries.value.filter((entry) => ids.includes(entry.key));
+    const ids = new Set(selectedIds.map(String));
+    const kept = modelEntries.value.filter((entry) => ids.has(entry.key));
     if (kept.length !== modelEntries.value.length) commitEntries(kept);
   }, 150);
 }

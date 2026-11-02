@@ -26,7 +26,7 @@ const props = defineProps({
   arrow: { type: Boolean, default: true },
   arrowPadding: { type: String, default: '0' },
   disabled: { type: Boolean, default: false },
-  content: { default: null },
+  content: { type: String, default: null },
   locked: { type: Boolean, default: false },
   focusable: { type: Boolean, default: true },
   label: { type: String, default: null },

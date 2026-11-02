@@ -76,6 +76,7 @@
   display: flex;
   min-height: var(--row-size);
   flex-shrink: 0;
+  background-color: var(--color-region);
 }
 
 .lx-modal .lx-tab-wizard .lx-tab-wizard-container {
@@ -116,10 +117,6 @@
   text-overflow: ellipsis;
 }
 
-.lx-tab-wizard .lx-tab-wizard-toolbar .lx-group {
-  background-color: var(--color-region);
-}
-
 .lx-tab:focus {
   outline: 2px solid var(--color-focus-background);
   outline-offset: -2px;
@@ -147,6 +144,7 @@
   margin-top: var(--space-0250);
   margin-bottom: var(--space-0250);
   margin-left: var(--space-0500);
+  margin-right: var(--space-0500);
 }
 
 .lx-tab.lx-selected {
@@ -158,10 +156,6 @@
 
 .lx-tab.lx-selected .lx-tab-icon {
   fill: var(--color-data);
-}
-
-.lx-tab .lx-icon {
-  margin-right: var(--space-0500);
 }
 
 .lx-tab .lx-tab-icon {

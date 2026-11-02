@@ -113,8 +113,12 @@ const newOnlyProps = [
 
 const innerProps = computed(() => {
   // onSearch is passed on as a listener below
-  const excluded = ['mode', 'onSearch', ...(props.mode === 'new' ? legacyOnlyProps : newOnlyProps)];
-  return Object.fromEntries(Object.entries(props).filter(([key]) => !excluded.includes(key)));
+  const excluded = new Set([
+    'mode',
+    'onSearch',
+    ...(props.mode === 'new' ? legacyOnlyProps : newOnlyProps),
+  ]);
+  return Object.fromEntries(Object.entries(props).filter(([key]) => !excluded.has(key)));
 });
 
 const innerListeners = computed(() => {
