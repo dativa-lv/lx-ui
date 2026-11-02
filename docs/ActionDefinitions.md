@@ -73,6 +73,9 @@ The prop `selectionActionDefinitions` is available for following components:
 | `priority` | **A** | Number | Order in responsive visibility queue. Lower numbers stay visible longer. Overrides the automatic type-based priority (dropdowns > toggles > regular actions). Supported only in toolbars. Allowed values: any positive integer. |
 | `href` | All | Object | Route for navigation when the action is clicked. Converts the action into a link. Example: `{ name: 'info' }`. |
 | `value` | All | Boolean | Initial state value for toggle actions (kind: `toggle`). When `true`, the toggle is initially active. |
+| `requiresConfirmation` | All | Boolean | Asks for confirmation in a dialog before the action click is emitted, the same as `LxConfirmButton`. See [Confirmation](#confirmation). |
+| `dialogKind` | All | String | Kind of the confirmation dialog. Allowed values: `default`, `question`, `info`, `warning`, `error`, `success`. Defaults to `warning`. |
+| `texts` | All | Object | Texts of the confirmation dialog, the same as `texts` of `LxConfirmButton`: `dialogLabel`, `dialogDescription`, `dialogPrimaryLabel`, `dialogSecondaryLabel`, `dialogClose`. |
 
 Groups:
 
@@ -151,6 +154,27 @@ const actionDefinitions = [
 ### Primary actions
 
 Components show at most one action as primary: `LxToolbar` (and components with a toolbar) promotes the first primary action, `LxErrorPage` and `LxViewLayout` show further primary actions as secondary, and `LxModal`, `LxModalForm` and `LxDialog` show only the first one. `LxForm` is the exception and shows up to two primary actions.
+
+### Confirmation
+
+An action with `requiresConfirmation: true` is shown as `LxConfirmButton`: the click opens a confirmation dialog and the action click is emitted only after it is confirmed. The dialog uses the action `name`, `destructive`, `dialogKind` and `texts`. The opening click does not reach parent click handlers, for example a `LxDataGrid` row or a `LxExpander` header.
+
+In dropdown menus the menu is closed and the dialog is opened by the menu itself, so the action click is emitted the same as without confirmation.
+
+`requiresConfirmation` is ignored for actions with `href` and in `LxDialog`, `LxModal` and `LxModalForm`.
+
+```js
+const actionDefinitions = [
+  { id: 'delete', name: 'Dzēst', icon: 'delete', destructive: true, requiresConfirmation: true },
+  {
+    id: 'archive',
+    name: 'Arhivēt',
+    requiresConfirmation: true,
+    dialogKind: 'question',
+    texts: { dialogDescription: 'Arhivētos ierakstus varēs atjaunot.' },
+  },
+];
+```
 
 ### Nested actions
 

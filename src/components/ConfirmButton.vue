@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, ref } from 'vue';
 import LxButton from '@/components/Button.vue';
-import LxDialog from '@/components/Dialog.vue';
+import LxConfirmDialog from '@/components/ConfirmDialog.vue';
 import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -45,11 +45,6 @@ const props = defineProps({
 });
 
 const textsDefault = {
-  dialogLabel: 'Vai tiešām gribat {0}?', // {0} - button label (props.label)
-  dialogDescription: null,
-  dialogPrimaryLabel: 'Jā, {0}', // {0} - button label (props.label)
-  dialogSecondaryLabel: 'Nē',
-  dialogClose: 'Aizvērt',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
@@ -66,36 +61,6 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, '
 const buttonRef = ref(null);
 const dialogRef = ref(null);
 const pendingClickArgs = ref(null);
-
-// "Dzēst" -> "dzēst", but keep acronyms like "PDF" intact
-const labelInSentence = computed(() => {
-  const label = props.label?.trim() || '';
-  if (
-    label.length > 1 &&
-    label[1] === label[1].toUpperCase() &&
-    label[1] !== label[1].toLowerCase()
-  )
-    return label;
-  return label.charAt(0).toLowerCase() + label.slice(1);
-});
-
-const dialogLabelDisplay = computed(() =>
-  displayTexts.value.dialogLabel?.replace('{0}', labelInSentence.value)
-);
-
-const actionDefinitions = computed(() => [
-  {
-    id: 'primary',
-    kind: 'primary',
-    name: displayTexts.value.dialogPrimaryLabel?.replace('{0}', labelInSentence.value),
-    destructive: props.destructive,
-  },
-  {
-    id: 'secondary',
-    kind: 'secondary',
-    name: displayTexts.value.dialogSecondaryLabel,
-  },
-]);
 
 function open() {
   dialogRef.value?.open();
@@ -191,8 +156,7 @@ function buttonClick(...args) {
   open();
 }
 
-function dialogActionClick(actionId) {
-  if (actionId !== 'primary') return;
+function dialogConfirm() {
   const args = pendingClickArgs.value || [];
   pendingClickArgs.value = null;
   close();
@@ -255,16 +219,14 @@ defineExpose({
     @blur="holdEnd"
     @contextmenu="contextMenu"
   />
-  <LxDialog
+  <LxConfirmDialog
     ref="dialogRef"
     :id="`${id}-dialog`"
     :kind="dialogKind"
-    :label="dialogLabelDisplay"
-    :description="displayTexts.dialogDescription"
-    :actionDefinitions="actionDefinitions"
-    :buttonSecondaryIsCancel="true"
-    :texts="{ close: displayTexts.dialogClose }"
-    @actionClick="dialogActionClick"
+    :label="label"
+    :destructive="destructive"
+    :texts="texts"
+    @confirm="dialogConfirm"
     @close="dialogClose"
   />
 </template>

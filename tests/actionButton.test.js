@@ -1,20 +1,30 @@
-import { describe, test, expect, afterEach } from 'vitest';
+import { h, nextTick } from 'vue';
+import { describe, test, expect, afterEach, beforeEach } from 'vitest';
 import { mount, RouterLinkStub } from '@vue/test-utils';
 import LxActionButton from '@/components/ActionButton.vue';
 import LxButton from '@/components/Button.vue';
+import LxConfirmButton from '@/components/ConfirmButton.vue';
 
 let wrapper;
+
+beforeEach(() => {
+  const el = document.createElement('div');
+  el.id = 'modals';
+  document.body.appendChild(el);
+});
 
 afterEach(() => {
   if (wrapper) {
     wrapper.unmount();
   }
+  document.body.innerHTML = '';
 });
 
 function mountComponent(props, attrs = {}) {
   return mount(LxActionButton, {
     props,
     attrs,
+    attachTo: document.body,
     global: { stubs: { RouterLink: RouterLinkStub } },
   });
 }
@@ -103,5 +113,90 @@ describe('LxActionButton', () => {
 
     expect(clicked).toBe(1);
     expect(wrapper.vm.getElement()).toBe(wrapper.find('button').element);
+  });
+
+  describe('requiresConfirmation', () => {
+    test('renders LxConfirmButton with action confirmation fields', () => {
+      wrapper = mountComponent({
+        action: {
+          id: 'delete',
+          name: 'Dzēst',
+          destructive: true,
+          requiresConfirmation: true,
+          dialogKind: 'error',
+          texts: { dialogLabel: 'Vai {0} ierakstu?' },
+        },
+      });
+
+      expect(wrapper.findComponent(LxConfirmButton).props()).toMatchObject({
+        label: 'Dzēst',
+        destructive: true,
+        dialogKind: 'error',
+        texts: { dialogLabel: 'Vai {0} ierakstu?' },
+      });
+    });
+
+    test('forwards click with its arguments only after confirmation', async () => {
+      const calls = [];
+      wrapper = mountComponent(
+        { action: { id: 'delete', name: 'Dzēst', requiresConfirmation: true } },
+        { id: 'del', onClick: (...args) => calls.push(args) }
+      );
+
+      await wrapper.find('#del').trigger('click');
+      expect(calls).toHaveLength(0);
+      expect(document.querySelector('#del-dialog-label').textContent).toBe(
+        'Vai tiešām gribat dzēst?'
+      );
+
+      document.querySelector('#del-dialog-action-primary').click();
+      await nextTick();
+
+      expect(calls).toHaveLength(1);
+      expect(calls[0][0]).toBeInstanceOf(Event);
+    });
+
+    test('does not let the opening click reach parent handlers', async () => {
+      let parentClicks = 0;
+      wrapper = mount(
+        {
+          render: () =>
+            h(
+              'div',
+              {
+                onClick: () => {
+                  parentClicks += 1;
+                },
+              },
+              [
+                h(LxActionButton, {
+                  id: 'del',
+                  action: { id: 'delete', name: 'Dzēst', requiresConfirmation: true },
+                }),
+              ]
+            ),
+        },
+        { attachTo: document.body }
+      );
+
+      await nextTick();
+      await wrapper.find('#del').trigger('click');
+
+      expect(parentClicks).toBe(0);
+    });
+
+    test('is ignored when not confirmable or with href', () => {
+      wrapper = mountComponent({
+        action: { id: 'a', name: 'A', requiresConfirmation: true },
+        confirmable: false,
+      });
+      expect(wrapper.findComponent(LxConfirmButton).exists()).toBe(false);
+      wrapper.unmount();
+
+      wrapper = mountComponent({
+        action: { id: 'a', name: 'A', requiresConfirmation: true, href: { name: 'home' } },
+      });
+      expect(wrapper.findComponent(LxConfirmButton).exists()).toBe(false);
+    });
   });
 });

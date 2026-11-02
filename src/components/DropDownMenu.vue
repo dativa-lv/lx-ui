@@ -1,10 +1,11 @@
 <script setup>
-import { ref, computed, nextTick, inject, watch, onUnmounted } from 'vue';
+import { ref, computed, nextTick, inject, provide, watch, onUnmounted } from 'vue';
 import { onClickOutside, useWindowSize } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxActionButton from '@/components/ActionButton.vue';
+import LxConfirmDialog from '@/components/ConfirmDialog.vue';
 import LxToggle from '@/components/Toggle.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -171,6 +172,34 @@ function closeMenu({ source = 'default' } = {}) {
 
 function preventClose(event) {
   event.stopPropagation();
+}
+
+const confirmDialogRef = ref(null);
+const pendingConfirmation = ref(null);
+
+// The panel unmounts on close, so actions with `requiresConfirmation` open the dialog of the outermost menu
+const parentConfirmationHost = inject('lxActionConfirmation', null);
+
+provide(
+  'lxActionConfirmation',
+  parentConfirmationHost || {
+    request(confirmation, onConfirm) {
+      pendingConfirmation.value = { ...confirmation, onConfirm };
+      closeMenu();
+      nextTick(() => confirmDialogRef.value?.open());
+    },
+  }
+);
+
+function confirmationConfirm() {
+  const onConfirm = pendingConfirmation.value?.onConfirm;
+  confirmDialogRef.value?.close();
+  onConfirm?.();
+}
+
+function confirmationClose() {
+  pendingConfirmation.value = null;
+  focusToggler();
 }
 
 const actionsResolved = computed(
@@ -571,6 +600,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         <LxActionButton
           v-if="!$slots.default && mainButton"
           :action="mainButton"
+          :confirmable="false"
           :omit="['href']"
           :id="mainButton?.id"
           :disabled="disabled || mainButton?.disabled"
@@ -862,5 +892,16 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         </div>
       </template>
     </LxPopper>
+    <LxConfirmDialog
+      v-if="!parentConfirmationHost"
+      ref="confirmDialogRef"
+      :id="`${id}-confirm-dialog`"
+      :label="pendingConfirmation?.label"
+      :destructive="pendingConfirmation?.destructive"
+      :kind="pendingConfirmation?.dialogKind"
+      :texts="pendingConfirmation?.texts"
+      @confirm="confirmationConfirm"
+      @close="confirmationClose"
+    />
   </div>
 </template>

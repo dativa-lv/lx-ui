@@ -210,6 +210,7 @@ defineExpose({ open, close });
                 v-for="action in actionDefinitionsDisplay"
                 :key="action?.id"
                 :action="action"
+                :confirmable="false"
                 :omit="['icon', 'iconSet', 'variant']"
                 :id="`${id}-action-${action?.id}`"
                 @click="handleActionClick(action)"

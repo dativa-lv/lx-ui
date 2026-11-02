@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { h } from 'vue';
+import { h, nextTick } from 'vue';
 import { describe, test, expect, afterEach, beforeEach } from 'vitest';
 import { mount, RouterLinkStub } from '@vue/test-utils';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -396,5 +396,62 @@ describe('Slots', () => {
 
       expect(panelElement.querySelector(`#${mainButton.id}`)).toBeNull();
     });
+  });
+});
+
+describe('requiresConfirmation', () => {
+  beforeEach(() => {
+    const el = document.createElement('div');
+    el.id = 'modals';
+    document.body.appendChild(el);
+  });
+
+  test('closes the menu and emits actionClick only after confirmation', async () => {
+    wrapper = mountComponent({
+      props: {
+        id: 'menu',
+        actionDefinitions: [
+          { id: 'delete', name: 'Dzēst', destructive: true, requiresConfirmation: true },
+        ],
+      },
+    });
+    wrapper.vm.openMenu();
+    await nextTick();
+
+    document.querySelector('#delete').click();
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.emitted('actionClick')).toBeUndefined();
+    expect(document.querySelector('.lx-dropdown-panel-wrapper')).toBeNull();
+    expect(document.querySelector('#menu-confirm-dialog-label').textContent).toBe(
+      'Vai tiešām gribat dzēst?'
+    );
+
+    document.querySelector('#menu-confirm-dialog-action-primary').click();
+    await nextTick();
+
+    expect(wrapper.emitted('actionClick')).toEqual([['delete', undefined]]);
+    expect(document.querySelector('#menu-confirm-dialog')).toBeNull();
+  });
+
+  test('does not emit actionClick when declined', async () => {
+    wrapper = mountComponent({
+      props: {
+        id: 'menu',
+        actionDefinitions: [{ id: 'delete', name: 'Dzēst', requiresConfirmation: true }],
+      },
+    });
+    wrapper.vm.openMenu();
+    await nextTick();
+
+    document.querySelector('#delete').click();
+    await nextTick();
+    await nextTick();
+    document.querySelector('#menu-confirm-dialog-action-secondary').click();
+    await nextTick();
+
+    expect(wrapper.emitted('actionClick')).toBeUndefined();
+    expect(document.querySelector('#menu-confirm-dialog')).toBeNull();
   });
 });
