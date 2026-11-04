@@ -1595,3 +1595,498 @@ test('LxValuePicker required prop without a row still omits it for multi-select'
     wrapper.find('.lx-value-picker-default-wrapper').attributes('aria-required')
   ).toBeUndefined();
 });
+
+/* dropdown states */
+const dropDownItems = [
+  { id: 'one', name: 'One' },
+  { id: 'two', name: 'Two' },
+];
+
+function getListbox(id) {
+  return document.body.querySelector(`[id="${id}-listbox"]`);
+}
+
+test('LxValuePicker dropdown single opens, selects and closes', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'dd',
+      variant: 'dropdown',
+      items: dropDownItems,
+      modelValue: 'one',
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+  });
+
+  const combobox = wrapper.find('[role="combobox"]');
+  expect(combobox.attributes('aria-expanded')).toBe('false');
+  expect(wrapper.find('.lx-placeholder').exists()).toBe(false);
+
+  await combobox.trigger('click');
+  expect(combobox.attributes('aria-expanded')).toBe('true');
+
+  const listbox = getListbox('dd');
+  expect(listbox.querySelectorAll('[role="option"]').length).toBe(2);
+
+  const selectedItem = listbox.querySelector('[id="dd-item-one"]');
+  const otherItem = listbox.querySelector('[id="dd-item-two"]');
+  expect(selectedItem.getAttribute('aria-selected')).toBe('true');
+  expect(selectedItem.querySelector('.lx-popover-item-checkmark')).toBeTruthy();
+  expect(otherItem.getAttribute('aria-selected')).toBe('false');
+  expect(otherItem.querySelector('.lx-popover-item-checkmark')).toBeNull();
+
+  otherItem.dispatchEvent(new Event('click', { bubbles: true }));
+  await flushPromises();
+
+  expect(wrapper.props('modelValue')).toBe('two');
+  expect(combobox.attributes('aria-expanded')).toBe('false');
+  expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('Two');
+
+  await combobox.trigger('click');
+  expect(getListbox('dd').querySelector('[id="dd-item-two"]').getAttribute('aria-selected')).toBe(
+    'true'
+  );
+});
+
+test('LxValuePicker dropdown single nullable shows placeholder and not selected item', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'dd',
+      variant: 'dropdown',
+      nullable: true,
+      placeholder: 'Pick one',
+      items: dropDownItems,
+      modelValue: null,
+    },
+  });
+
+  expect(wrapper.find('.lx-placeholder').text()).toBe('Pick one');
+
+  await wrapper.find('[role="combobox"]').trigger('click');
+
+  const listbox = getListbox('dd');
+  expect(listbox.querySelectorAll('[role="option"]').length).toBe(3);
+  expect(listbox.querySelector('[id="dd-item-notSelected"]')).toBeTruthy();
+});
+
+test('LxValuePicker dropdown single nullable with empty items shows only not selected item', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'dd',
+      variant: 'dropdown',
+      nullable: true,
+      items: [],
+      modelValue: null,
+    },
+  });
+
+  await wrapper.find('[role="combobox"]').trigger('click');
+
+  const listbox = getListbox('dd');
+  expect(listbox.querySelectorAll('[role="option"]').length).toBe(1);
+  expect(listbox.querySelector('[id="dd-item-notSelected"]')).toBeTruthy();
+  expect(listbox.querySelector('.lx-empty')).toBeNull();
+});
+
+test('LxValuePicker dropdown single invalid', () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'dropdown',
+      invalid: true,
+      invalidationMessage: 'Invalid input',
+      items: dropDownItems,
+      modelValue: 'one',
+    },
+  });
+
+  expect(wrapper.find('[role="combobox"]').attributes('aria-invalid')).toBe('true');
+  expect(wrapper.find('.lx-invalidation-icon-wrapper').exists()).toBe(true);
+});
+
+test('LxValuePicker dropdown single disabled does not open', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'dd',
+      variant: 'dropdown',
+      disabled: true,
+      items: dropDownItems,
+      modelValue: 'one',
+    },
+  });
+
+  const combobox = wrapper.find('[role="combobox"]');
+  expect(combobox.attributes('aria-disabled')).toBe('true');
+  expect(wrapper.find('.lx-dropdown-default-panel').classes()).toContain('lx-disabled');
+
+  await combobox.trigger('click');
+  expect(combobox.attributes('aria-expanded')).toBe('false');
+  expect(getListbox('dd')).toBeNull();
+});
+
+test('LxValuePicker dropdown multiple selects, counts and clears', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'ddm',
+      variant: 'dropdown',
+      selectionKind: 'multiple',
+      placeholder: 'Pick some',
+      items: dropDownItems,
+      modelValue: [],
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+    // A detached root treats panel clicks as outside clicks and closes the panel
+    attachTo: document.body,
+  });
+
+  expect(wrapper.find('.lx-value-picker-placeholder.emptyModel').text()).toBe('Pick some');
+  expect(wrapper.find('.lx-tag-label').exists()).toBe(false);
+
+  const combobox = wrapper.find('[role="combobox"]');
+  await combobox.trigger('click');
+
+  const firstItem = getListbox('ddm').querySelector('[id="ddm-item-one"]');
+  expect(firstItem.getAttribute('aria-selected')).toBe('false');
+  expect(firstItem.querySelector('input[type="checkbox"]').checked).toBe(false);
+
+  firstItem.dispatchEvent(new Event('click', { bubbles: true }));
+  await flushPromises();
+
+  // Panel stays open for multiple selection
+  expect(combobox.attributes('aria-expanded')).toBe('true');
+  expect(wrapper.props('modelValue')).toStrictEqual(['one']);
+  expect(firstItem.getAttribute('aria-selected')).toBe('true');
+  expect(firstItem.querySelector('input[type="checkbox"]').checked).toBe(true);
+  expect(wrapper.find('.lx-tag-label').text()).toBe('1');
+  expect(wrapper.find('.lx-value-picker-placeholder').text()).toBe('One');
+
+  getListbox('ddm')
+    .querySelector('[id="ddm-item-two"]')
+    .dispatchEvent(new Event('click', { bubbles: true }));
+  await flushPromises();
+
+  expect(wrapper.props('modelValue')).toStrictEqual(['one', 'two']);
+  expect(wrapper.find('.lx-tag-label').text()).toBe('2');
+  expect(wrapper.find('.lx-value-picker-placeholder').text()).toBe('One, Two');
+
+  await wrapper.find('[id="ddm-clear-button"]').trigger('click');
+
+  expect(wrapper.find('.lx-tag-label').exists()).toBe(false);
+  expect(wrapper.find('.lx-value-picker-placeholder.emptyModel').text()).toBe('Pick some');
+});
+
+test('LxValuePicker dropdown multiple select all without search', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'ddm',
+      variant: 'dropdown',
+      selectionKind: 'multiple',
+      hasSelectAll: true,
+      items: dropDownItems,
+      modelValue: [],
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+    attachTo: document.body,
+  });
+
+  await wrapper.find('[role="combobox"]').trigger('click');
+
+  document.body
+    .querySelector('[id="ddm-select-all"]')
+    .dispatchEvent(new Event('click', { bubbles: true }));
+  await flushPromises();
+
+  expect(wrapper.props('modelValue')).toStrictEqual(['one', 'two']);
+  expect(getListbox('ddm').querySelectorAll('[aria-selected="true"]').length).toBe(2);
+  expect(wrapper.find('.lx-tag-label').text()).toBe('2');
+});
+
+test('LxValuePicker dropdown multiple invalid', () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'dropdown',
+      selectionKind: 'multiple',
+      invalid: true,
+      invalidationMessage: 'Invalid input',
+      items: dropDownItems,
+      modelValue: [],
+    },
+  });
+
+  expect(wrapper.find('[role="combobox"]').attributes('aria-invalid')).toBe('true');
+  expect(wrapper.find('.lx-dropdown-default-panel').classes()).toContain('lx-invalid');
+  expect(wrapper.find('.lx-invalidation-icon-wrapper').exists()).toBe(true);
+  expect(wrapper.find('.lx-invalidation-message').text()).toBe('Invalid input');
+});
+
+/* rotator */
+function getCurrentRotatorItem() {
+  return wrapper.findAll('.lx-rotator-tag')[1];
+}
+
+function getRotatorMenu() {
+  return document.body.querySelector('.lx-dropdown-panel-wrapper');
+}
+
+test('LxValuePicker rotator rotates and wraps around', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'rot',
+      variant: 'rotator',
+      items: dropDownItems,
+      modelValue: 'one',
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+  });
+
+  const field = wrapper.find('.lx-rotator-dropdown-wrapper');
+  expect(field.attributes('tabindex')).toBe('0');
+  expect(field.attributes('aria-disabled')).toBe('false');
+  // Previous, current and next items are rendered
+  expect(wrapper.findAll('.lx-rotator-tag').length).toBe(3);
+  expect(getCurrentRotatorItem().attributes('id')).toBe('rot-item-one');
+
+  await field.trigger('click');
+  expect(wrapper.props('modelValue')).toBe('two');
+  expect(getCurrentRotatorItem().attributes('id')).toBe('rot-item-two');
+
+  await field.trigger('click');
+  expect(wrapper.props('modelValue')).toBe('one');
+  expect(getCurrentRotatorItem().attributes('id')).toBe('rot-item-one');
+
+  await field.trigger('keyup.space');
+  expect(wrapper.props('modelValue')).toBe('two');
+
+  await field.trigger('keyup.enter');
+  expect(wrapper.props('modelValue')).toBe('one');
+});
+
+test('LxValuePicker rotator menu opens, selects and closes', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'rot',
+      variant: 'rotator',
+      items: dropDownItems,
+      modelValue: 'one',
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+  });
+
+  const toggler = wrapper.find('.lx-dropdown-toggler');
+  expect(toggler.attributes('aria-expanded')).toBe('false');
+
+  await wrapper.find('.lx-rotator-dropdown-wrapper').trigger('contextmenu');
+  await flushPromises();
+  expect(toggler.attributes('aria-expanded')).toBe('true');
+
+  const menu = getRotatorMenu();
+  expect(menu.querySelectorAll('[data-component="lx-button"]').length).toBe(2);
+
+  const selectedButton = menu.querySelector('[id="one-item-button"]');
+  const otherButton = menu.querySelector('[id="two-item-button"]');
+  expect(selectedButton.classList).toContain('lx-active');
+  expect(otherButton.classList).not.toContain('lx-active');
+
+  otherButton.dispatchEvent(new Event('click', { bubbles: true }));
+  await flushPromises();
+
+  // Selecting an item closes the menu
+  expect(toggler.attributes('aria-expanded')).toBe('false');
+  expect(wrapper.props('modelValue')).toBe('two');
+  expect(getCurrentRotatorItem().attributes('id')).toBe('rot-item-two');
+
+  await wrapper.find('.lx-rotator-dropdown-wrapper').trigger('contextmenu');
+  await flushPromises();
+  expect(getRotatorMenu().querySelector('[id="two-item-button"]').classList).toContain('lx-active');
+});
+
+test('LxValuePicker rotator menu opens with arrow keys', async () => {
+  async function expectMenuOpensOn(key) {
+    const localWrapper = mount(LxValuePicker, {
+      props: {
+        variant: 'rotator',
+        items: dropDownItems,
+        modelValue: 'one',
+      },
+    });
+
+    await localWrapper.find('.lx-rotator-dropdown-wrapper').trigger(`keyup.${key}`);
+    await flushPromises();
+    expect(localWrapper.find('.lx-dropdown-toggler').attributes('aria-expanded'), key).toBe('true');
+    localWrapper.unmount();
+  }
+
+  await expectMenuOpensOn('down');
+  await expectMenuOpensOn('up');
+});
+
+test('LxValuePicker rotator nullable without value shows not selected item', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'rot',
+      variant: 'rotator',
+      nullable: true,
+      items: dropDownItems,
+      modelValue: null,
+    },
+  });
+
+  expect(getCurrentRotatorItem().attributes('id')).toBe('rot-item-notSelected');
+
+  await wrapper.find('.lx-rotator-dropdown-wrapper').trigger('contextmenu');
+  await flushPromises();
+
+  const menu = getRotatorMenu();
+  expect(menu.querySelectorAll('[data-component="lx-button"]').length).toBe(3);
+  expect(menu.querySelector('[id="notSelected-item-button"]')).toBeTruthy();
+});
+
+test('LxValuePicker rotator nullable with empty items shows only not selected item', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'rot',
+      variant: 'rotator',
+      nullable: true,
+      items: [],
+      modelValue: null,
+    },
+  });
+
+  expect(getCurrentRotatorItem().attributes('id')).toBe('rot-item-notSelected');
+
+  await wrapper.find('.lx-rotator-dropdown-wrapper').trigger('contextmenu');
+  await flushPromises();
+
+  const menu = getRotatorMenu();
+  expect(menu.querySelectorAll('[data-component="lx-button"]').length).toBe(1);
+  expect(menu.querySelector('[id="notSelected-item-button"]')).toBeTruthy();
+});
+
+test('LxValuePicker rotator invalid', () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'rotator',
+      invalid: true,
+      invalidationMessage: 'Invalid input',
+      items: dropDownItems,
+      modelValue: 'one',
+    },
+  });
+
+  const field = wrapper.find('.lx-rotator-dropdown-wrapper');
+  expect(wrapper.find('.lx-rotator').classes()).toContain('lx-invalid');
+  expect(field.classes()).toContain('lx-invalid');
+  expect(field.attributes('aria-invalid')).toBe('true');
+  expect(wrapper.find('.lx-invalidation-message').text()).toBe('Invalid input');
+});
+
+test('LxValuePicker rotator disabled does not rotate or open', async () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      id: 'rot',
+      variant: 'rotator',
+      disabled: true,
+      items: dropDownItems,
+      modelValue: 'one',
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+  });
+
+  const field = wrapper.find('.lx-rotator-dropdown-wrapper');
+  expect(field.classes()).toContain('lx-disabled');
+  expect(field.attributes('aria-disabled')).toBe('true');
+  expect(field.attributes('tabindex')).toBe('-1');
+
+  await field.trigger('click');
+  expect(wrapper.props('modelValue')).toBe('one');
+  expect(getCurrentRotatorItem().attributes('id')).toBe('rot-item-one');
+
+  await field.trigger('contextmenu');
+  await flushPromises();
+  expect(getRotatorMenu()).toBeNull();
+});
+
+/* shared elements */
+const allVariants = [
+  'default',
+  'default-custom',
+  'dropdown',
+  'dropdown-custom',
+  'tiles',
+  'tiles-custom',
+  'tags',
+  'tags-custom',
+  'indicator',
+  'horizontal',
+  'horizontal-custom',
+  'rotator',
+  'rotator-custom',
+];
+
+test('LxValuePicker invalidation message is rendered for every variant', () => {
+  allVariants.forEach((variant) => {
+    const localWrapper = mount(LxValuePicker, {
+      props: {
+        variant,
+        invalid: true,
+        invalidationMessage: 'Invalid input',
+        items: dropDownItems,
+        modelValue: 'one',
+      },
+    });
+
+    expect(localWrapper.find('.lx-invalidation-message').text(), variant).toBe('Invalid input');
+    localWrapper.unmount();
+  });
+
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'default',
+      items: dropDownItems,
+      modelValue: 'one',
+    },
+  });
+
+  expect(wrapper.find('.lx-invalidation-message').exists()).toBe(false);
+});
+
+test('LxValuePicker helperTextKind label and icon for every variant', () => {
+  allVariants.forEach((variant) => {
+    const labelWrapper = mount(LxValuePicker, {
+      props: {
+        variant,
+        helperText: 'Helper',
+        helperTextKind: 'label',
+        items: dropDownItems,
+        modelValue: 'one',
+      },
+    });
+
+    expect(labelWrapper.find('.lx-helper-text').text(), variant).toBe('Helper');
+    expect(labelWrapper.find('.lx-helper-icon').exists(), variant).toBe(false);
+    labelWrapper.unmount();
+
+    const iconWrapper = mount(LxValuePicker, {
+      props: {
+        variant,
+        helperText: 'Helper',
+        helperTextKind: 'icon',
+        items: dropDownItems,
+        modelValue: 'one',
+      },
+    });
+
+    expect(iconWrapper.find('.lx-helper-icon').exists(), variant).toBe(true);
+    expect(iconWrapper.find('.lx-helper-text').exists(), variant).toBe(false);
+    iconWrapper.unmount();
+  });
+});
+
+test('LxValuePicker default item description', () => {
+  wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'default',
+      items: [{ id: 'one', name: 'One', description: 'OneDescription' }],
+    },
+  });
+
+  expect(wrapper.find('.lx-value-picker-default-item-description').text()).toBe('OneDescription');
+});

@@ -108,6 +108,8 @@ const dataState = computed(() =>
   JSON.stringify({
     variant: props.variant,
     selectionKind: props.selectionKind,
+    hasSearch: props.hasSearch,
+    readOnly: props.readOnly,
     readOnlyRenderType: props.readOnlyRenderType,
   })
 );

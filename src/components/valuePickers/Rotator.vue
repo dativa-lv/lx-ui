@@ -429,7 +429,7 @@ function onUp() {
           :aria-labelledby="labelId"
           :aria-disabled="disabled"
           @click="!disabled && selectSingle(null)"
-          @contextmenu.prevent="disabled"
+          @contextmenu.prevent
           @keyup.space.stop="selectSingle(null)"
           @keyup.enter.stop="selectSingle(null)"
           @keyup.down.prevent="onDown"
