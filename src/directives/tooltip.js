@@ -185,6 +185,7 @@ function bindGlobals() {
   document.addEventListener('contextmenu', hide);
   document.addEventListener('visibilitychange', hide);
   document.addEventListener('keydown', onKeydown);
+  document.addEventListener('focusout', onTriggerFocusOut, true);
   globalThis.addEventListener?.('resize', hide);
   state.globalsBound = true;
 }
@@ -195,6 +196,7 @@ function unbindGlobals() {
   document.removeEventListener('contextmenu', hide);
   document.removeEventListener('visibilitychange', hide);
   document.removeEventListener('keydown', onKeydown);
+  document.removeEventListener('focusout', onTriggerFocusOut, true);
   globalThis.removeEventListener?.('resize', hide);
   state.globalsBound = false;
 }
@@ -227,7 +229,6 @@ function show(el, cursorX, cursorY) {
   state.currentEl = el;
   state.isOpen = true;
   state.savedCursorPos = { x: cursorX, y: cursorY };
-  el.addEventListener('blur', onTriggerBlur);
 
   // Must run after insertion – the clamp needs the panel's measured size
   positionPanel(cursorX, cursorY + CURSOR_HEIGHT);
@@ -245,7 +246,6 @@ function hide() {
     el.removeAttribute('aria-describedby');
     entry.ownsAria = false;
   }
-  el?.removeEventListener('blur', onTriggerBlur);
 
   const { nodes } = state;
   if (nodes) {
@@ -350,8 +350,9 @@ function onTriggerLeave(event) {
   handleLeave(event);
 }
 
-function onTriggerBlur() {
-  hide();
+// Listening on the trigger itself would make SVG elements focusable in Chromium
+function onTriggerFocusOut(event) {
+  if (event.target === state.currentEl) hide();
 }
 
 function runHitTest(clientX, clientY) {

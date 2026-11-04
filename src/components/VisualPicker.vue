@@ -8,6 +8,7 @@ import {
   defineAsyncComponent,
   nextTick,
   inject,
+  onUnmounted,
 } from 'vue';
 import { generateUUID, kebabToCamel } from '@/utils/stringUtils';
 import LxFlag from '@/components/Flag.vue';
@@ -24,6 +25,7 @@ import { useElementSize } from '@vueuse/core';
 import { getTexts } from '@/utils/visualPickerUtils';
 import { clampText, getDisplayTexts, findFocusableElements, isDefined } from '@/utils/generalUtils';
 import { useBuilderRegistration } from '@/utils/builderUtils';
+import { vTooltip } from '@/directives/tooltip';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -161,45 +163,37 @@ const items = computed(() => {
 
 const listRef = ref();
 
-function addTitles() {
-  if (props.kind === 'spine') {
-    items.value.forEach((bone) => {
-      const elem = document.getElementById(props.id);
-      const pathElementSide = elem.querySelector(`#lx-${bone?.id}-side`);
-      const pathElementFront = elem.querySelector(`#lx-${bone?.id}-front`);
-      if (pathElementSide && pathElementFront) {
-        const titleElementSide = pathElementSide.querySelector('title');
-        const titleElementFront = pathElementFront.querySelector('title');
-        if (titleElementSide && titleElementFront) {
-          titleElementSide.textContent = bone?.name;
-          titleElementFront.textContent = bone?.name;
-        } else {
-          const newTitleElement = document.createElement('title');
-          const newTitleElementSecond = document.createElement('title');
-          newTitleElement.textContent = bone?.name;
-          newTitleElementSecond.textContent = bone?.name;
-          pathElementSide.appendChild(newTitleElementSecond);
-          pathElementFront.appendChild(newTitleElement);
-        }
-      }
-    });
-  } else {
-    items.value.forEach((bone) => {
-      const elem = document.getElementById(props.id);
-      const pathElement = elem.querySelector(`#lx-${bone?.id}`);
-      if (pathElement) {
-        const titleElement = pathElement.querySelector('title');
-        if (titleElement) {
-          titleElement.textContent = bone?.name;
-        } else {
-          const newTitleElement = document.createElement('title');
-          newTitleElement.textContent = bone?.name;
-          pathElement.appendChild(newTitleElement);
-        }
-      }
-    });
-  }
+// The picture markup belongs to an async child, so v-tooltip is bound to its regions by hand
+let tooltipElements = [];
+
+function removeTooltips() {
+  tooltipElements.forEach((el) => vTooltip.unmounted(el));
+  tooltipElements = [];
 }
+
+function addTooltips() {
+  const elem = document.getElementById(props.id);
+  if (!elem) return;
+
+  const bound = [];
+  items.value.forEach((item) => {
+    const selectors =
+      props.kind === 'spine'
+        ? [`#lx-${item?.id}-side`, `#lx-${item?.id}-front`]
+        : [`#lx-${item?.id}`];
+    selectors.forEach((selector) => {
+      const el = elem.querySelector(selector);
+      if (!el) return;
+      // Mounts on first call, otherwise only swaps the text
+      vTooltip.updated(el, { value: item?.name });
+      bound.push(el);
+    });
+  });
+  tooltipElements.filter((el) => !bound.includes(el)).forEach((el) => vTooltip.unmounted(el));
+  tooltipElements = bound;
+}
+
+watch(items, addTooltips, { flush: 'post' });
 
 watch(
   () => model.value,
@@ -404,7 +398,6 @@ const onMountedModel = ref();
 
 onMounted(() => {
   model.value = onMountedModel.value;
-  addTitles();
 });
 
 onBeforeMount(() => {
@@ -418,7 +411,9 @@ const isImageVisible = computed(() => imageSize?.width.value > 500);
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
-defineExpose({ addTitles });
+defineExpose({ addTitles: addTooltips });
+
+onUnmounted(removeTooltips);
 
 useBuilderRegistration('LxVisualPicker', props, { texts: textsDefault });
 </script>
@@ -449,7 +444,11 @@ useBuilderRegistration('LxVisualPicker', props, { texts: textsDefault });
       <LxEmptyState :label="displayTexts.errorLabel" icon="invalid" v-if="errorState" />
       <div class="visual-select" :class="[{ 'europe-map': kind === 'europe' }]">
         <div class="visual-select-picture">
-          <imagePath @click="imageClick($event)" />
+          <imagePath
+            @click="imageClick($event)"
+            @vue:mounted="addTooltips"
+            @vue:updated="addTooltips"
+          />
         </div>
 
         <div

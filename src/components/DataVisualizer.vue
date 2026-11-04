@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, nextTick, defineAsyncComponent } from 'vue';
+import { ref, computed, watch, nextTick, defineAsyncComponent, onUnmounted } from 'vue';
 import { useElementSize, useResizeObserver } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
 import { getTexts } from '@/utils/visualPickerUtils';
@@ -14,6 +14,7 @@ import LxListItem from '@/components/list/ListItem.vue';
 import LxBadge from '@/components/Badge.vue';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
+import { vTooltip } from '@/directives/tooltip';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -189,30 +190,55 @@ function getBackTextColor(item) {
   return `--bar-text-color: var(--color-${color}-foreground)`;
 }
 
+function getValueTooltip(name, value) {
+  const label = name ?? '';
+  if (props.showValues === 'never' || value == null) return label;
+  return `${label} \n${formatDecimal(value)}`;
+}
+
+// The map markup belongs to an async child, so v-tooltip is bound to its regions by hand
+let tooltipElements = [];
+const latviaMapEl = ref();
+
+function removeTooltips() {
+  tooltipElements.forEach((el) => vTooltip.unmounted(el));
+  tooltipElements = [];
+}
+
 function colorSvg() {
-  const rootElement = document.getElementById('LV_Region');
+  // Scoped to this instance, since every map on the page reuses the same region ids
+  const rootElement = latviaMapEl.value?.querySelector('#LV_Region');
+  const tooltips = new Map();
   Object.entries(latviaTexts.value)?.forEach(([key, value]) => {
     const element = rootElement?.querySelector(`#lx-${key}`);
     if (element) {
       element.style.fill = 'inherit';
-      const res = element?.querySelector('title');
-      if (res) res.textContent = value;
+      tooltips.set(element, value);
     }
   });
   props.items.forEach((item) => {
     if (Array.isArray(item?.[props.valueAttribute])) return;
 
-    const country = document.getElementById(`lx-${item[props.idAttribute]}`);
+    const country = rootElement?.querySelector(`#lx-${item[props.idAttribute]}`);
     const color = getBarColor(item);
     if (country) {
       if (color) country.style.fill = color;
       if (props.showValues !== 'never') {
-        const res = country?.querySelector('title');
-        if (res) res.textContent = `${item[props.nameAttribute]} \n${item[props.valueAttribute]}`;
+        tooltips.set(
+          country,
+          getValueTooltip(item[props.nameAttribute], item[props.valueAttribute])
+        );
       }
     }
   });
+
+  // Mounts on first call, otherwise only swaps the text
+  tooltips.forEach((value, el) => vTooltip.updated(el, { value }));
+  tooltipElements.filter((el) => !tooltips.has(el)).forEach((el) => vTooltip.unmounted(el));
+  tooltipElements = [...tooltips.keys()];
 }
+
+onUnmounted(removeTooltips);
 
 function polarPoint(cx, cy, radius, degrees) {
   const radians = (degrees * Math.PI) / 180;
@@ -356,12 +382,6 @@ const gaugeProgressRatio = computed(() => {
 });
 
 const gaugePercentText = computed(() => `${formatDecimal(gaugeProgressRatio.value * 100, 0)}%`);
-
-function getValueTooltip(name, value) {
-  const label = name ?? '';
-  if (props.showValues === 'never' || value == null) return label;
-  return `${label} \n${formatDecimal(value)}`;
-}
 
 function getGaugeColor(item, defaultVar) {
   if (!item) return `--bar-color: var(${defaultVar})`;
@@ -1096,8 +1116,8 @@ watch(
             Array.isArray(item?.[valueAttribute])
               ? null
               : showValues === 'never'
-              ? `${item?.[nameAttribute]}`
-              : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute] ?? 0)}`
+                ? `${item?.[nameAttribute]}`
+                : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute] ?? 0)}`
           "
           :aria-labelledby="`${id}-${item[idAttribute]}`"
           @click="
@@ -1228,8 +1248,8 @@ watch(
               Array.isArray(item?.[valueAttribute])
                 ? null
                 : showValues === 'never'
-                ? `${item?.[nameAttribute]}`
-                : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute] ?? 0)}`
+                  ? `${item?.[nameAttribute]}`
+                  : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute] ?? 0)}`
             "
             :aria-labelledby="`${id}-${item[idAttribute]}`"
             @click="
@@ -1376,6 +1396,7 @@ watch(
     <div
       v-else-if="(kind === 'latvia' || kind === 'latvia2024') && contentModel === 'default'"
       class="lx-latvia-visualizer"
+      ref="latviaMapEl"
       :class="[{ 'show-legend': showLegend }]"
     >
       <imagePath @click="imageClick($event)" v-show="!loading" />

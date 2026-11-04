@@ -279,7 +279,7 @@ describe('v-tooltip dismissing', () => {
     ['contextmenu', () => document.dispatchEvent(new MouseEvent('contextmenu'))],
     ['scroll', () => document.dispatchEvent(new Event('scroll'))],
     ['Escape', () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))],
-    ['blur', () => trigger().dispatchEvent(new FocusEvent('blur'))],
+    ['blur', () => trigger().dispatchEvent(new FocusEvent('focusout', { bubbles: true }))],
   ])('%s closes it', (name, fire) => {
     wrapper = mountHost('Tooltip text');
     open(trigger());
@@ -287,6 +287,16 @@ describe('v-tooltip dismissing', () => {
 
     fire();
     expect(popper()).toBeNull();
+  });
+
+  test('adds no focus listeners to the trigger, which would make SVG elements focusable', () => {
+    wrapper = mountHost('Tooltip text');
+    const spy = vi.spyOn(trigger(), 'addEventListener');
+    open(trigger());
+
+    const types = spy.mock.calls.map(([type]) => type);
+    expect(types).not.toContain('blur');
+    expect(types).not.toContain('focusout');
   });
 });
 
