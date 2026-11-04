@@ -296,10 +296,8 @@ function drawImage(providedScale) {
     fetch(props.modelValue)
       .then((response) => response.text())
       .then((svgText) => {
-        const svgBlob = new Blob([svgText], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(svgBlob);
         const svgImg = new Image();
-        svgImg.src = url;
+        svgImg.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgText)}`;
 
         svgImg.onload = () => {
           // Ensure the SVG has width and height attributes
@@ -319,7 +317,6 @@ function drawImage(providedScale) {
           imgCanvas.height = newHeight;
           ctx.clearRect(0, 0, imgCanvas.width, imgCanvas.height);
           ctx.drawImage(svgImg, 0, 0, newWidth, newHeight);
-          URL.revokeObjectURL(url); // Clean up the object URL
         };
       })
       .catch((error) => {
