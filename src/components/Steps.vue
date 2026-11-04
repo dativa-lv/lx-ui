@@ -30,6 +30,7 @@ const model = computed({
 });
 
 const myElement = computed(
+  // TODO: Replace 'code' with props.idAttribute with breaking changes version
   () => props.items?.findIndex((element) => element.code === model.value) + 1
 );
 
@@ -76,10 +77,10 @@ const color = ref('--color-brand');
               item[stateAttribute] === 'invalid'
                 ? 'var(--color-bad)'
                 : isDisabledLoadingBusy
-                ? 'var(--color-disabled-background)'
-                : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
-                ? 'var(--color-brand)'
-                : null,
+                  ? 'var(--color-disabled-background)'
+                  : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
+                    ? 'var(--color-brand)'
+                    : null,
           }"
           :value="
             (() => {
@@ -133,10 +134,10 @@ const color = ref('--color-brand');
                   item[stateAttribute] === 'invalid'
                     ? 'var(--color-bad)'
                     : isDisabledLoadingBusy
-                    ? 'var(--color-disabled-background)'
-                    : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
-                    ? 'var(--color-brand)'
-                    : null,
+                      ? 'var(--color-disabled-background)'
+                      : item[stateAttribute] === 'current' || item[stateAttribute] === 'complete'
+                        ? 'var(--color-brand)'
+                        : null,
               }"
               :value="
                 (() => {

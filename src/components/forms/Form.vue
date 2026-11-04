@@ -41,8 +41,8 @@ const emits = defineEmits(['actionClick', 'update:index']);
  * @property {Boolean} showPreHeaderInfo - Determines whether to show the preHeader information slot. Defaults to true.
  * @property {Boolean} showPostHeaderInfo - Determines whether to show the postHeader information slot. Defaults to true.
  * @property {Array} index - The array of sections in the form. Defaults to an empty array.
- * @property {String} indexType - The type of index for the form. Can be 'default', 'tabs', or 'expanders'. Defaults to 'default'.
- * @property {Array} actionDefinitions - The array of buttons for the form. Defaults to an empty array.
+ * @property {String} indexType - The type of index for the form. Can be 'default', 'tabs', 'expanders', 'wizard' or 'none'. Defaults to 'default'.
+ * @property {Array} actionDefinitions - The array of buttons for the form. Defaults to an empty array. With indexType 'wizard', actions with id '_lx_prev_step' / '_lx_next_step' override properties (e.g. disabled, busy, name) of the built-in wizard buttons.
  * @property {String} requiredMode - The required mode for the form. Can be 'required', 'required-asterisk', or 'optional'. Defaults to 'optional'.
  * @property {String} kind - The kind of form. Can be 'default', 'compact', or 'stripped'. Defaults to 'default'.
  * @property {Object} texts - The object containing text translations for the form.
@@ -52,6 +52,8 @@ const emits = defineEmits(['actionClick', 'update:index']);
  *
  * @function highlightRow - Highlights a row in the form.
  * @function clearHighlights - Clears all highlights in the form.
+ * @function setSelectedIndex - Selects index item (wizard step, tab or section) by id.
+ * @function getSelectedIndex - Returns id of the current wizard step or selected tab.
  *
  * @example
  * <Form
@@ -469,68 +471,81 @@ provide('sectionActions', sectionActions);
 
 const wizardModel = ref(null);
 const tabModel = ref(null);
-const itemsCopy = ref([...props.index]);
+
+const itemsCopy = ref(props.index);
 
 const currentStepIndex = computed(() => itemsCopy.value.findIndex((item) => item.isCurrentStep));
-const currentStepId = computed(() => props.index?.[currentStepIndex.value]?.id || null);
+const currentStepId = computed(() => itemsCopy.value[currentStepIndex.value]?.id || null);
 
-const actionDefinitionsWizardSteps = computed(() => [
-  {
-    id: '_lx_prev_step',
-    icon: 'back',
-    name: displayTexts.value.previous,
-    kind: 'primary',
-    disabled: currentStepIndex.value === 0,
-  },
-  {
-    id: '_lx_next_step',
-    icon: 'next',
-    name: displayTexts.value.next,
-    kind: 'primary',
-    disabled: currentStepIndex.value === props.index.length - 1,
-  },
-]);
+const WIZARD_ACTION_IDS = new Set(['_lx_prev_step', '_lx_next_step']);
 
-function nextStep() {
-  const currentIndex = currentStepIndex.value;
-  if (currentIndex < props.index.length - 1) {
-    if (itemsCopy.value[currentIndex].state !== 'invalid') {
-      itemsCopy.value[currentIndex].state = 'complete';
-    }
-    itemsCopy.value[currentIndex].isCurrentStep = false;
-
-    itemsCopy.value[currentIndex + 1].isCurrentStep = true;
-
-    if (itemsCopy.value[currentIndex + 1].state !== 'invalid') {
-      itemsCopy.value[currentIndex + 1].state = 'current';
-    }
-  }
-}
-
-function prevStep() {
-  const currentIndex = currentStepIndex.value;
-  if (currentIndex > 0) {
-    itemsCopy.value[currentIndex].isCurrentStep = false;
-
-    if (itemsCopy.value[currentIndex].state === 'current') {
-      itemsCopy.value[currentIndex].state = undefined;
-    }
-
-    itemsCopy.value[currentIndex - 1].isCurrentStep = true;
-
-    if (itemsCopy.value[currentIndex - 1].state === 'complete') {
-      itemsCopy.value[currentIndex - 1].state = 'current';
-    }
-  }
-}
-
-const actionDefinitionsResolved = computed(
+const actionDefinitionsFlat = computed(
   () =>
     flattenNestedActions(
       resolveActionGroups(props.actionDefinitions, props.actionGroupDefinitions),
       { inheritKind: true }
     ) || []
 );
+
+function getWizardActionOverride(id) {
+  return actionDefinitionsFlat.value.find((action) => action?.id === id) || {};
+}
+
+const actionDefinitionsWizardSteps = computed(() => {
+  const prevOverride = getWizardActionOverride('_lx_prev_step');
+  const nextOverride = getWizardActionOverride('_lx_next_step');
+  return [
+    {
+      icon: 'back',
+      name: displayTexts.value.previous,
+      ...prevOverride,
+      id: '_lx_prev_step',
+      kind: 'primary',
+      disabled: currentStepIndex.value === 0 || !!prevOverride.disabled,
+    },
+    {
+      icon: 'next',
+      name: displayTexts.value.next,
+      ...nextOverride,
+      id: '_lx_next_step',
+      kind: 'primary',
+      disabled: currentStepIndex.value === itemsCopy.value.length - 1 || !!nextOverride.disabled,
+    },
+  ];
+});
+
+function applyWizardStep(stepId) {
+  const selectedIndex = itemsCopy.value.findIndex((item) => item?.id === stepId);
+  if (selectedIndex === -1) return;
+
+  itemsCopy.value.forEach((item, index) => {
+    // eslint-disable-next-line no-param-reassign
+    item.isCurrentStep = index === selectedIndex;
+    if (item.state === 'invalid') return;
+
+    // eslint-disable-next-line no-param-reassign
+    if (index === selectedIndex) item.state = 'current';
+    // eslint-disable-next-line no-param-reassign
+    else if (index < selectedIndex) item.state = 'complete';
+    // eslint-disable-next-line no-param-reassign
+    else item.state = undefined;
+  });
+}
+
+function nextStep() {
+  const target = itemsCopy.value[currentStepIndex.value + 1];
+  if (target) applyWizardStep(target.id);
+}
+
+function prevStep() {
+  const target = itemsCopy.value[currentStepIndex.value - 1];
+  if (target) applyWizardStep(target.id);
+}
+
+const actionDefinitionsResolved = computed(() => {
+  if (indexTypeRef.value !== 'wizard') return actionDefinitionsFlat.value;
+  return actionDefinitionsFlat.value.filter((action) => !WIZARD_ACTION_IDS.has(action?.id));
+});
 
 const hasNoKind = computed(() =>
   actionDefinitionsResolved.value?.every(
@@ -793,7 +808,12 @@ watch(
         visibilities.value[sectionId] = isElementVisible(el);
       });
     });
+    const previousStepId = currentStepId.value;
     itemsCopy.value = value;
+    if (props.indexType === 'wizard') {
+      const markedStep = itemsCopy.value?.find((item) => item?.isCurrentStep)?.id;
+      applyWizardStep(markedStep || previousStepId || itemsCopy.value[0]?.id);
+    }
   }
 );
 
@@ -842,6 +862,12 @@ watch(
   }
 );
 
+function getSelectedIndex() {
+  if (props.indexType === 'wizard') return currentStepId.value;
+  if (props.indexType === 'tabs') return selectedTabValue.value ?? null;
+  return null;
+}
+
 /**
  * Sets the selected index for the forms based on the provided index ID.
  * @param {string} indexId - The identifier(id) of the index to select.
@@ -855,27 +881,7 @@ function setSelectedIndex(indexId) {
     hideAll();
   } else if (props.indexType === 'wizard') {
     wizardModel.value = indexId;
-    const selectedItem = itemsCopy.value.find((o) => o?.id === indexId);
-    const selectedIndex = itemsCopy.value.indexOf(selectedItem);
-
-    itemsCopy.value = itemsCopy.value.map((item, index) => {
-      const newItem = item;
-      if (item === selectedItem) {
-        newItem.isCurrentStep = true;
-        if (item.state !== 'invalid') {
-          newItem.state = 'current';
-        }
-      } else {
-        if (item.state !== 'invalid' && index > selectedIndex) {
-          newItem.state = undefined;
-        } else if (item.state !== 'invalid' && index < selectedIndex) {
-          newItem.state = 'complete';
-        }
-        newItem.isCurrentStep = false;
-      }
-      return newItem;
-    });
-
+    applyWizardStep(indexId);
     hideAll();
   } else if (props.indexType === 'default') {
     scrollTo(`${props.id}-${indexId}`);
@@ -958,7 +964,7 @@ onMounted(() => {
   if (props.indexType === 'tabs' || props.indexType === 'wizard') hideAll();
 });
 
-defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
+defineExpose({ highlightRow, clearHighlights, setSelectedIndex, getSelectedIndex });
 
 useBuilderRegistration('LxForm', props, { texts: textsDefault, addToStack: false });
 </script>
@@ -1318,7 +1324,7 @@ useBuilderRegistration('LxForm', props, { texts: textsDefault, addToStack: false
       ref="wizard"
       :id="`${id}-wizard`"
       v-model="wizardModel"
-      :items="props.index"
+      :items="itemsCopy"
       @update:modelValue="hideAll"
       v-else-if="props.indexType === 'wizard' && index?.length > 0"
     >

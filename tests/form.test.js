@@ -1,9 +1,12 @@
 import { test, expect, afterEach } from 'vitest';
+import { reactive, defineComponent } from 'vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxSection from '@/components/forms/Section.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
+import LxWizard from '@/components/Wizard.vue';
+import LxSteps from '@/components/Steps.vue';
 
 let wrapper;
 
@@ -433,4 +436,177 @@ test('LxForm places children of a nested trigger where the trigger would be', ()
 
   const labels = wrapper.findAll('.lx-button').map((b) => b.text());
   expect(labels).toEqual(['Save draft', 'Save final']);
+});
+
+/* Wizard tests */
+const wizardIndex = () => [
+  { id: 'one', name: 'One' },
+  { id: 'two', name: 'Two' },
+  { id: 'three', name: 'Three' },
+];
+
+function mountWizard(props = {}) {
+  return mount(LxForm, {
+    attachTo: document.body,
+    props: {
+      id: 'wizardForm',
+      indexType: 'wizard',
+      index: wizardIndex(),
+      ...props,
+    },
+    slots: {
+      sections: '<LxSection id="one"/><LxSection id="two"/><LxSection id="three"/>',
+    },
+    global: {
+      components: { LxSection },
+      stubs: ['router-link'],
+    },
+  });
+}
+
+const wizardButton = (name) => wrapper.find(`#wizardForm-action-_lx_${name}_step`);
+const wizardItems = () => wrapper.findComponent(LxWizard).props('items');
+
+test('LxForm wizard Next changes step and writes step states into index objects', async () => {
+  const index = wizardIndex();
+  wrapper = mountWizard({ index });
+  await flushPromises();
+
+  await wizardButton('next').trigger('click');
+  await flushPromises();
+
+  expect(wrapper.vm.getSelectedIndex()).toBe('two');
+  expect(wrapper.emitted('actionClick').at(-1)).toEqual(['_lx_next_step']);
+  expect(wizardItems().map((item) => item.state)).toEqual(['complete', 'current', undefined]);
+  // Backward compatible: current step and states are visible in the passed index objects
+  expect(index.map((item) => item.state)).toEqual(['complete', 'current', undefined]);
+  expect(index[1].isCurrentStep).toBe(true);
+});
+
+test('LxForm wizard step indicator updates for a plain (non-reactive) index array', async () => {
+  // Parent passes a plain array, like `const steps = [...]` in a page
+  const Parent = defineComponent({
+    components: { LxForm, LxSection },
+    setup() {
+      return { steps: wizardIndex() };
+    },
+    template: `
+      <LxForm id="wizardForm" indexType="wizard" :index="steps">
+        <template #sections>
+          <LxSection id="one"/><LxSection id="two"/><LxSection id="three"/>
+        </template>
+      </LxForm>`,
+  });
+  wrapper = mount(Parent, { attachTo: document.body, global: { stubs: ['router-link'] } });
+  await flushPromises();
+  const stepStates = () =>
+    wrapper
+      .findComponent(LxSteps)
+      .props('items')
+      .map((item) => item.state);
+  expect(stepStates()).toEqual(['current', undefined, undefined]);
+
+  await wizardButton('next').trigger('click');
+  await flushPromises();
+
+  expect(stepStates()).toEqual(['complete', 'current', undefined]);
+});
+
+test('LxForm wizard reflects in-place changes of index items', async () => {
+  const index = reactive(wizardIndex());
+  wrapper = mountWizard({ index });
+  await flushPromises();
+
+  index[2].state = 'invalid';
+  await flushPromises();
+  expect(wizardItems().map((item) => item.state)).toEqual(['current', undefined, 'invalid']);
+});
+
+test('LxForm tabs reflect in-place changes of index items', async () => {
+  const index = reactive([
+    { id: 'one', name: 'One' },
+    { id: 'two', name: 'Two' },
+  ]);
+  wrapper = mount(LxForm, {
+    attachTo: document.body,
+    props: { id: 'tabsForm', indexType: 'tabs', index },
+    slots: { sections: '<LxSection id="one"/><LxSection id="two"/>' },
+    global: { components: { LxSection }, stubs: ['router-link'] },
+  });
+  await flushPromises();
+
+  index[1].name = 'Renamed';
+  await flushPromises();
+  expect(wrapper.html()).toContain('Renamed');
+});
+
+test('LxForm wizard setSelectedIndex and getSelectedIndex', async () => {
+  wrapper = mountWizard();
+  await flushPromises();
+  expect(wrapper.vm.getSelectedIndex()).toBe('one');
+
+  wrapper.vm.setSelectedIndex('three');
+  await flushPromises();
+  expect(wrapper.vm.getSelectedIndex()).toBe('three');
+  expect(wizardItems().map((item) => item.state)).toEqual(['complete', 'complete', 'current']);
+
+  wrapper.vm.setSelectedIndex('one');
+  await flushPromises();
+  expect(wizardItems().map((item) => item.state)).toEqual(['current', undefined, undefined]);
+});
+
+test('LxForm wizard starts on step marked isCurrentStep and keeps invalid state', async () => {
+  wrapper = mountWizard({
+    index: [{ id: 'one' }, { id: 'two', state: 'invalid' }, { id: 'three', isCurrentStep: true }],
+  });
+  await flushPromises();
+  expect(wrapper.vm.getSelectedIndex()).toBe('three');
+  expect(wizardItems().map((item) => item.state)).toEqual(['complete', 'invalid', 'current']);
+});
+
+test('LxForm wizard keeps current step when index is replaced', async () => {
+  wrapper = mountWizard();
+  await flushPromises();
+  wrapper.vm.setSelectedIndex('two');
+  await flushPromises();
+
+  await wrapper.setProps({
+    index: [{ id: 'one' }, { id: 'two' }, { id: 'three', state: 'invalid' }],
+  });
+  await flushPromises();
+  expect(wrapper.vm.getSelectedIndex()).toBe('two');
+  expect(wizardItems().map((item) => item.state)).toEqual(['complete', 'current', 'invalid']);
+});
+
+test('LxForm wizard buttons can be overridden via actionDefinitions', async () => {
+  wrapper = mountWizard({
+    actionDefinitions: [
+      { id: '_lx_prev_step', disabled: true },
+      { id: '_lx_next_step', disabled: true, name: 'Sign' },
+    ],
+  });
+  await flushPromises();
+  wrapper.vm.setSelectedIndex('two');
+  await flushPromises();
+
+  expect(wizardButton('next').attributes('disabled')).toBeDefined();
+  expect(wizardButton('prev').attributes('disabled')).toBeDefined();
+  expect(wizardButton('next').text()).toContain('Sign');
+  // Overrides are not rendered again as separate buttons
+  expect(wrapper.findAll('[id="wizardForm-action-_lx_next_step"]')).toHaveLength(1);
+});
+
+test('LxForm wizard button overrides with any kind are not rendered as separate actions', async () => {
+  wrapper = mountWizard({
+    actionDefinitions: [
+      { id: '_lx_prev_step', kind: 'tertiary', disabled: true },
+      { id: '_lx_next_step', kind: 'additional', disabled: true },
+      { id: 'save', name: 'Save', kind: 'secondary' },
+    ],
+  });
+  await flushPromises();
+
+  expect(wrapper.findAll('[id="wizardForm-action-_lx_prev_step"]')).toHaveLength(1);
+  expect(wrapper.findAll('[id="wizardForm-action-_lx_next_step"]')).toHaveLength(1);
+  expect(wrapper.find('#wizardForm-action-save').exists()).toBe(true);
 });
