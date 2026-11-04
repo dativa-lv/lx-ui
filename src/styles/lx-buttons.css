@@ -1312,19 +1312,19 @@ a.lx-sitemap-link {
 
 /*** Confirm button hold styles ***/
 
-@property --lx-confirm-hold-progress {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: 0%;
+@keyframes lx-confirm-hold-ring {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
-@keyframes lx-confirm-hold {
+@keyframes lx-confirm-hold-bar {
   from {
-    --lx-confirm-hold-progress: 0%;
+    transform: scaleX(0);
   }
 
   to {
-    --lx-confirm-hold-progress: 100%;
+    transform: scaleX(1);
   }
 }
 
@@ -1388,32 +1388,15 @@ a.lx-sitemap-link {
   display: none;
 }
 
-.lx-button.lx-confirm-button-holding:not(.lx-button-text-only) .lx-button-content-wrapper::after {
-  content: '';
-  grid-area: icon;
-  justify-self: center;
-  width: var(--button-primary-icon-size);
-  height: var(--button-primary-icon-size);
-  border-radius: 50%;
-  background: conic-gradient(transparent var(--lx-confirm-hold-progress), currentColor 0);
-  mask: radial-gradient(farthest-side, transparent 62%, #000 64%);
-  scale: 0.875; /* match icon glyph size, icons have 2/32 padding */
-  animation: lx-confirm-hold var(--lx-confirm-hold-duration) linear forwards;
+.lx-button .lx-button-hold-loader .lx-loader-track {
+  stroke: currentColor;
+  stroke-opacity: 0.25;
 }
 
-.lx-button.lx-button-secondary.lx-confirm-button-holding .lx-button-content-wrapper::after {
-  width: var(--button-secondary-icon-size);
-  height: var(--button-secondary-icon-size);
-}
-
-.lx-button.lx-button-tertiary.lx-confirm-button-holding .lx-button-content-wrapper::after {
-  width: var(--button-tertiary-icon-size);
-  height: var(--button-tertiary-icon-size);
-}
-
-.lx-button.lx-button-ghost.lx-confirm-button-holding .lx-button-content-wrapper::after {
-  width: var(--button-ghost-icon-size);
-  height: var(--button-ghost-icon-size);
+.lx-button .lx-button-hold-loader .lx-loader-active {
+  stroke: currentColor;
+  transition: none;
+  animation: lx-confirm-hold-ring var(--lx-confirm-hold-duration) linear forwards;
 }
 
 .lx-button.lx-confirm-button-holding.lx-button-text-only::after {
@@ -1422,7 +1405,8 @@ a.lx-sitemap-link {
   left: var(--space-0);
   bottom: var(--space-0);
   height: var(--border-width-3);
-  width: calc(100% - var(--lx-confirm-hold-progress));
+  width: 100%;
   background: currentColor;
-  animation: lx-confirm-hold var(--lx-confirm-hold-duration) linear forwards;
+  transform-origin: left;
+  animation: lx-confirm-hold-bar var(--lx-confirm-hold-duration) linear forwards;
 }

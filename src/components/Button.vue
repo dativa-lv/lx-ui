@@ -71,6 +71,8 @@ const buttonRef = ref(null);
 
 const slots = useSlots();
 
+const holdProgress = ref(false);
+
 const click = (e) => {
   if (props.openInNewTab) emits('click', e, true);
   else emits('click', e);
@@ -197,7 +199,7 @@ onMounted(() => {
 
 defineOptions({ inheritAttrs: false });
 
-defineExpose({ focus, scrollIntoView, getElement });
+defineExpose({ focus, scrollIntoView, getElement, holdProgress });
 </script>
 <template>
   <button
@@ -247,6 +249,9 @@ defineExpose({ focus, scrollIntoView, getElement });
         />
         <div class="lx-loader-container" v-if="busy">
           <LxLoader :loading="true" size="s" />
+        </div>
+        <div class="lx-loader-container lx-button-hold-loader" v-else-if="holdProgress">
+          <LxLoader kind="progress" size="s" :ariaHidden="true" />
         </div>
       </template>
       <div v-if="!showIcon && !busy"></div>

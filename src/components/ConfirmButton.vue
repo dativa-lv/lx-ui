@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxConfirmDialog from '@/components/ConfirmDialog.vue';
 import useLx from '@/hooks/useLx';
@@ -73,18 +73,27 @@ function close() {
 const HOLD_START_DELAY = 300;
 const HOLD_DURATION = 1500;
 const HOLD_DONE_DURATION = 1000;
+const HOLD_REWIND_SPEED = 4;
 
-const holdState = ref('idle'); // idle, pressed, holding, done
+const holdState = ref('idle'); // idle, pressed, holding, rewinding, done
 let holdTimers = [];
 let suppressClick = false;
 
 const isHoldDisabled = computed(() => props.disabled || props.loading || props.busy);
 
+const HOLD_PROGRESS_STATES = new Set(['holding', 'rewinding']);
+
+const isHoldProgress = computed(() => HOLD_PROGRESS_STATES.has(holdState.value));
+
+watch(isHoldProgress, (value) => {
+  if (buttonRef.value) buttonRef.value.holdProgress = value;
+});
+
 const holdClass = computed(() =>
   [
     props.customClass,
     'lx-confirm-button-hold',
-    holdState.value === 'holding' && 'lx-confirm-button-holding',
+    isHoldProgress.value && 'lx-confirm-button-holding',
     holdState.value === 'done' && 'lx-confirm-button-hold-done',
   ]
     .filter(Boolean)
@@ -98,8 +107,29 @@ function clearHoldTimers() {
   holdTimers = [];
 }
 
+function rewindHold() {
+  const animations =
+    buttonRef.value
+      ?.getElement()
+      ?.getAnimations?.({ subtree: true })
+      .filter((a) => a.animationName?.startsWith('lx-confirm-hold')) ?? [];
+  if (!animations.length) {
+    holdState.value = 'idle';
+    return;
+  }
+  holdState.value = 'rewinding';
+  animations.forEach((a) => a.updatePlaybackRate(-HOLD_REWIND_SPEED));
+  Promise.all(animations.map((a) => a.finished))
+    .then(() => {
+      if (holdState.value === 'rewinding') holdState.value = 'idle';
+    })
+    .catch(() => {});
+}
+
 function holdStart(e) {
-  if (isHoldDisabled.value || holdState.value !== 'idle') return;
+  if (isHoldDisabled.value) return;
+  if (holdState.value === 'rewinding') holdState.value = 'idle';
+  if (holdState.value !== 'idle') return;
   suppressClick = false;
   holdState.value = 'pressed';
   holdTimers.push(
@@ -121,10 +151,13 @@ function holdStart(e) {
 }
 
 function holdEnd() {
-  if (holdState.value === 'holding') suppressClick = true;
-  if (holdState.value === 'pressed' || holdState.value === 'holding') {
+  if (holdState.value === 'pressed') {
     clearHoldTimers();
     holdState.value = 'idle';
+  } else if (holdState.value === 'holding') {
+    suppressClick = true;
+    clearHoldTimers();
+    rewindHold();
   }
 }
 

@@ -1,6 +1,6 @@
 import { nextTick } from 'vue';
 import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
-import { mount, RouterLinkStub } from '@vue/test-utils';
+import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils';
 import LxConfirmButton from '@/components/ConfirmButton.vue';
 
 let wrapper;
@@ -125,10 +125,12 @@ describe('LxConfirmButton hold shortcut', () => {
     vi.advanceTimersByTime(500);
     await nextTick();
     expect(btn.classes()).toContain('lx-confirm-button-holding');
+    expect(btn.find('.lx-button-hold-loader .lx-loader-progress').exists()).toBe(true);
 
     vi.advanceTimersByTime(1000);
     await nextTick();
     expect(btn.classes()).toContain('lx-confirm-button-hold-done');
+    expect(btn.find('.lx-button-hold-loader').exists()).toBe(false);
     expect(wrapper.emitted('click')).toHaveLength(1);
 
     await btn.trigger('pointerup');
@@ -148,6 +150,37 @@ describe('LxConfirmButton hold shortcut', () => {
 
     expect(wrapper.emitted('click')).toBeUndefined();
     expect(document.querySelector('#cb-dialog')).toBeNull();
+  });
+
+  test('releasing early rewinds the progress before resetting', async () => {
+    let finish;
+    const animation = {
+      animationName: 'lx-confirm-hold-ring',
+      updatePlaybackRate: vi.fn(),
+      finished: new Promise((resolve) => {
+        finish = resolve;
+      }),
+    };
+    const getAnimations = vi.fn(() => [animation]);
+    Element.prototype.getAnimations = getAnimations;
+
+    wrapper = mountButton({ icon: 'delete' });
+    const btn = wrapper.find('#cb');
+    await btn.trigger('pointerdown', { button: 0 });
+    vi.advanceTimersByTime(1000);
+    await nextTick();
+    await btn.trigger('pointerup');
+    await nextTick();
+
+    expect(animation.updatePlaybackRate).toHaveBeenCalledWith(-4);
+    expect(btn.classes()).toContain('lx-confirm-button-holding');
+
+    finish();
+    await flushPromises();
+    expect(btn.classes()).not.toContain('lx-confirm-button-holding');
+    expect(wrapper.emitted('click')).toBeUndefined();
+
+    delete Element.prototype.getAnimations;
   });
 
   test('short press still opens dialog', async () => {
