@@ -2333,6 +2333,10 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-style: dashed;
 }
 
+.lx-file-upload-wrapper .lx-button.lx-button-tertiary.lx-draggable-upload-button:focus:hover {
+  border-style: solid;
+}
+
 /* Firefox does not dispatch drag events on a disabled button, so let them reach the drop zone */
 .lx-file-upload-wrapper .lx-draggable-drop-zone:has(> .lx-draggable-upload-button.lx-disabled) {
   cursor: not-allowed;

@@ -1158,7 +1158,6 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader, ge
           :id="`${id}-link-modal`"
           :label="displayTexts.modalLabel"
           size="s"
-          kind="native"
           :button-secondary-is-cancel="false"
           :action-definitions="modalActionDefinitions"
           @close="handleEditUrlModalClose"
