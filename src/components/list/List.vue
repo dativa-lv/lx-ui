@@ -435,43 +435,6 @@ function handleDefaultListResize() {
   measureDefaultList();
 }
 
-// A focused toolbar control makes the browser scroll it back into view, fighting
-// the scroll. Blur it on user scroll (wheel/touch) so scrolling stays clean, then
-// restore focus once scrolling settles (preventScroll, so it doesn't drag again).
-let pendingRefocusElement = null;
-let scrollSettleTimer = null;
-
-function armScrollSettleRestore() {
-  if (!pendingRefocusElement) return;
-  if (scrollSettleTimer) clearTimeout(scrollSettleTimer);
-  scrollSettleTimer = setTimeout(() => {
-    scrollSettleTimer = null;
-    const el = pendingRefocusElement;
-    pendingRefocusElement = null;
-    const doc = globalThis.document;
-    if (!el?.isConnected || typeof el.focus !== 'function') return;
-    // Don't steal focus if the user focused something else while scrolling.
-    if (doc.activeElement && doc.activeElement !== doc.body) return;
-    el.focus({ preventScroll: true });
-  }, 200);
-}
-
-function blurFocusedListControlOnScroll() {
-  if (!shouldVirtualizeDefaultList.value) return;
-  const doc = globalThis.document;
-  const active = doc?.activeElement;
-  if (
-    active &&
-    active !== doc.body &&
-    listWrapper.value?.contains(active) &&
-    typeof active.blur === 'function'
-  ) {
-    pendingRefocusElement = active;
-    active.blur();
-  }
-  armScrollSettleRestore();
-}
-
 function findObjectById(array) {
   const res = [];
   const queue = [...array];
@@ -1509,9 +1472,6 @@ onMounted(async () => {
   // Seed width so the first (keyboard) resize is skipped, not re-measured.
   lastDefaultListResizeWidth = globalThis.innerWidth;
   globalThis.addEventListener('resize', handleDefaultListResize);
-  globalThis.addEventListener('wheel', blurFocusedListControlOnScroll, { passive: true });
-  globalThis.addEventListener('touchmove', blurFocusedListControlOnScroll, { passive: true });
-  globalThis.addEventListener('scroll', armScrollSettleRestore, { passive: true, capture: true });
 
   if (wantsDefaultListVirtualization.value) {
     await syncDefaultListVirtualizationContext({ reloadOnScrollParentChange: true });
@@ -1524,10 +1484,6 @@ onBeforeUnmount(() => {
   cleanupDefaultListVirtualization();
   observer?.disconnect();
   globalThis.removeEventListener('resize', handleDefaultListResize);
-  globalThis.removeEventListener('wheel', blurFocusedListControlOnScroll);
-  globalThis.removeEventListener('touchmove', blurFocusedListControlOnScroll);
-  globalThis.removeEventListener('scroll', armScrollSettleRestore, { capture: true });
-  if (scrollSettleTimer) clearTimeout(scrollSettleTimer);
 });
 
 defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
