@@ -88,7 +88,8 @@ pointer), and leaving the browser window (`relatedTarget === null`) closes it.
   the trigger registers, not on hover, and is dropped again when the value goes inert or the
   element unmounts. A real `title` on the trigger is never overwritten.
 - Elements nested inside an `LxTooltip` trigger are skipped, so the component's tooltip wins and
-  the two never fire together.
+  the two never fire together. The same goes for an `LxInfoWrapper` trigger that has a panel to
+  show on hover — otherwise the tooltip would land on top of the open panel.
 - A descendant that carries its own non-empty `title` owns the hover: the directive stands down
   and lets the browser draw that tooltip, mirroring how a nested trigger wins over an outer one.
   So inner content can use either `v-tooltip` or a plain `title`, and only one tooltip appears.

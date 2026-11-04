@@ -20,6 +20,8 @@ const PANEL_ID = 'lx-tooltip-panel';
 const MARKER_ATTR = 'data-lx-tooltip';
 const HIGH_Z_INDEX = '9000';
 const NESTED_TOOLTIP_SELECTOR = '.lx-info-wrapper-content.lx-tooltip-kind';
+const NESTED_INFO_WRAPPER_SELECTOR =
+  '.lx-info-wrapper-content.lx-rich-kind:not(.lx-disabled):not(.lx-responsive-view)';
 
 const registry = new WeakMap();
 // Events already claimed by a nested trigger; weak so dispatched events stay collectable
@@ -73,12 +75,18 @@ function isTouchOnly() {
   return hoverNoneQuery?.matches === true;
 }
 
+function isNested(el) {
+  const parent = el.parentElement;
+  return Boolean(
+    parent?.closest(NESTED_TOOLTIP_SELECTOR) || parent?.closest(NESTED_INFO_WRAPPER_SELECTOR)
+  );
+}
+
 function isInert(el, entry) {
   if (!entry?.text || entry.suppressed) return true;
   // Touch devices never get a hover tooltip
   if (isTouchOnly()) return true;
-  // Already inside an LxTooltip – let the component own the hover
-  if (el.parentElement?.closest(NESTED_TOOLTIP_SELECTOR)) return true;
+  if (isNested(el)) return true;
   return false;
 }
 
@@ -521,8 +529,7 @@ function unmounted(el) {
  */
 export function openTooltip(el) {
   const entry = registry.get(el);
-  if (!entry?.text || entry.suppressed || el.parentElement?.closest(NESTED_TOOLTIP_SELECTOR))
-    return;
+  if (!entry?.text || entry.suppressed || isNested(el)) return;
   if (state.currentEl === el && state.isOpen) return;
 
   hide();

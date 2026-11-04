@@ -453,6 +453,36 @@ describe('v-tooltip inert states', () => {
     open(trigger());
     expect(popper()).toBeNull();
   });
+
+  test('does not open when nested inside an LxInfoWrapper trigger with a panel', () => {
+    wrapper = mount(
+      {
+        template: `<div class="lx-info-wrapper-content lx-rich-kind">
+            <button class="trigger" v-tooltip="'Tooltip text'">Trigger</button>
+          </div>`,
+        directives: { tooltip: vTooltip },
+      },
+      { attachTo: document.body }
+    );
+
+    open(trigger());
+    expect(popper()).toBeNull();
+  });
+
+  test('opens inside an LxInfoWrapper trigger that has no panel', () => {
+    wrapper = mount(
+      {
+        template: `<div class="lx-info-wrapper-content lx-rich-kind lx-disabled">
+            <button class="trigger" v-tooltip="'Tooltip text'">Trigger</button>
+          </div>`,
+        directives: { tooltip: vTooltip },
+      },
+      { attachTo: document.body }
+    );
+
+    open(trigger());
+    expect(tooltipText()).toBe('Tooltip text');
+  });
 });
 
 describe('v-tooltip updates', () => {
