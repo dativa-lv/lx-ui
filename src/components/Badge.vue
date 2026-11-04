@@ -12,6 +12,7 @@ const props = defineProps({
   iconSet: {
     type: String,
     default: () => useLx().getGlobals()?.iconSet,
+    options: ['cds', 'material', 'brand', 'phosphor'],
     group: 'main',
     sequence: 2,
   },
@@ -40,7 +41,7 @@ const props = defineProps({
     options: ['auto', 'number', 'text'],
     group: 'main',
     sequence: 4,
-  }, // auto, number, text
+  },
   builderOptions: {
     type: Object,
     default: () => ({

@@ -625,3 +625,26 @@ test('LxRow renders the only child of a nested trigger as a button', () => {
   expect(button.exists()).toBe(true);
   expect(button.attributes('disabled')).toBeDefined();
 });
+
+test('LxRow header follows the info slot appearing and disappearing at runtime', async () => {
+  const Parent = {
+    components: { LxRow },
+    data: () => ({ showInfo: false }),
+    template: `
+      <LxRow label="Label">
+        <template #info v-if="showInfo">Info text</template>
+      </LxRow>`,
+  };
+  wrapper = mount(Parent);
+  const infoIcon = () => wrapper.find('.lx-row-header .lx-info-slot-wrapper');
+
+  expect(wrapper.findAll('.lx-row-header').length).toBe(1);
+  expect(infoIcon().exists()).toBe(false);
+
+  await wrapper.setData({ showInfo: true });
+  expect(wrapper.findAll('.lx-row-header').length).toBe(1);
+  expect(infoIcon().exists()).toBe(true);
+
+  await wrapper.setData({ showInfo: false });
+  expect(infoIcon().exists()).toBe(false);
+});

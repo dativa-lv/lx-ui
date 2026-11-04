@@ -119,7 +119,7 @@ const titleDescription = computed(() => {
       </div>
     </div>
     <div class="lx-button-set">
-      <slot name="toolbar"></slot>
+      <slot name="toolbar" />
       <div class="lx-error-action-definitions" v-if="actionDefinitionsResolved.length >= 1">
         <LxActionButton
           v-for="action in actionDefinitionsResolved"

@@ -198,7 +198,7 @@ const dataState = computed(() =>
         :aria-hidden="isFlipped || null"
         :tabindex="kind === 'button' ? -1 : null"
       >
-        <slot></slot>
+        <slot />
         <LxButton
           v-if="kind === 'button'"
           ref="flipButtonFrontRef"
@@ -218,7 +218,7 @@ const dataState = computed(() =>
         :aria-hidden="!isFlipped || null"
         :tabindex="kind === 'button' ? -1 : null"
       >
-        <slot name="reverse"></slot>
+        <slot name="reverse" />
         <LxButton
           v-if="kind === 'button'"
           ref="flipButtonBackRef"

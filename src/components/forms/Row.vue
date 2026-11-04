@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, ref, provide, useSlots } from 'vue';
+import { computed, inject, ref, provide, useSlots, onBeforeUpdate } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -216,12 +216,17 @@ const actionDefinitionsDefaults = computed(() => {
   }));
 });
 
+const hasInfoSlot = ref(!!slots.info);
+onBeforeUpdate(() => {
+  hasInfoSlot.value = !!slots.info;
+});
+
 const showHeaderWithInfo = computed(
-  () => slots.info && (rowOrientation.value === 'horizontal' || !props.hideLabel)
+  () => hasInfoSlot.value && (rowOrientation.value === 'horizontal' || !props.hideLabel)
 );
 
 const showHeaderWithoutInfo = computed(
-  () => !slots.info && (rowOrientation.value === 'horizontal' || !props.hideLabel)
+  () => !hasInfoSlot.value && (rowOrientation.value === 'horizontal' || !props.hideLabel)
 );
 
 const idComputed = computed(() => props.id);
