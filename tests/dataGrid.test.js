@@ -607,6 +607,55 @@ describe('Action column header', () => {
   });
 });
 
+describe('Grid template columns', () => {
+  const props = {
+    id: 'grid',
+    idAttribute: 'id',
+    items: [{ id: 'one', name: 'Item one', surname: 'Surname one' }],
+    columnDefinitions: [
+      { id: 'name', attributeName: 'name', name: 'Name' },
+      { id: 'surname', attributeName: 'surname', name: 'Surname' },
+    ],
+    hasSelecting: true,
+    hasVirtualization: false,
+  };
+
+  function mountWithActionVars(actionDefinitions) {
+    const lx = document.createElement('div');
+    lx.className = 'lx';
+    lx.style.setProperty('--data-grid-action-width', '2rem');
+    lx.style.setProperty('--data-grid-action-set-padding', '0 0.5rem');
+    lx.style.setProperty('--data-grid-action-gap', '0.5rem');
+    document.body.appendChild(lx);
+
+    return mountComponent({ props: { ...props, actionDefinitions }, attachTo: lx });
+  }
+
+  // Selecting and a single action share the same width, which used to drop the selecting column.
+  test.each([
+    ['one action', [{ id: 'open', name: 'Open', icon: 'open' }]],
+    [
+      'two actions',
+      [
+        { id: 'open', name: 'Open', icon: 'open' },
+        { id: 'edit', name: 'Edit', icon: 'edit' },
+      ],
+    ],
+  ])('has an entry for the selecting and action columns with %s', async (_, actionDefinitions) => {
+    wrapper = mountWithActionVars(actionDefinitions);
+
+    await flushVirtualizationSetup();
+
+    const headerRow = wrapper.find('.lx-grid-header-wrapper .lx-grid-row');
+    const template = headerRow.element.style.gridTemplateColumns.match(/minmax\([^)]*\)|\S+/g);
+
+    expect(template).toHaveLength(headerRow.element.children.length);
+    expect(template).toHaveLength(4);
+    expect(template[0]).toMatch(/px$/);
+    expect(template[3]).toMatch(/px$/);
+  });
+});
+
 describe('Row action menu', () => {
   const props = {
     id: 'grid',

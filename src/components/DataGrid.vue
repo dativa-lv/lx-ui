@@ -1648,19 +1648,6 @@ const gridColumnWidths = {
   '*': 'minmax(auto, 20fr)',
 };
 
-function modifyColumn(templateColumns, condition, columnValue, prepend) {
-  const index = templateColumns.indexOf(columnValue);
-  if (condition && index === -1) {
-    if (prepend) {
-      templateColumns.unshift(columnValue);
-    } else {
-      templateColumns.push(columnValue);
-    }
-  } else if (!condition && index !== -1) {
-    templateColumns.splice(index, 1);
-  }
-}
-
 function updateGridTemplateColumns() {
   const templateColumns = columnsComputed.value
     .filter((col) => props.showAllColumns || col.kind !== 'extra')
@@ -1692,10 +1679,11 @@ function updateGridTemplateColumns() {
     }
   }
 
-  modifyColumn(templateColumns, needsActionColumn, actionColumnWidth, false);
-  modifyColumn(templateColumns, needsSelectingColumn, selectingColumnWidth, true);
-
-  gridTemplateColumns.value = templateColumns.join(' ');
+  gridTemplateColumns.value = [
+    ...(needsSelectingColumn ? [selectingColumnWidth] : []),
+    ...templateColumns,
+    ...(needsActionColumn ? [actionColumnWidth] : []),
+  ].join(' ');
 }
 
 // Row heights only change when column widths do.
