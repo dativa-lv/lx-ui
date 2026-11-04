@@ -814,4 +814,27 @@ describe('LxAutoComplete mode="new" while loading', () => {
     expect(lastModelValue()).toEqual({ id: 'cry', name: 'cry' });
     expect(wrapper.find('input').element.value).toBe('cry');
   });
+
+  test('kind="search": a re-render does not drop a pending dead key', async () => {
+    vi.useFakeTimers();
+    mountNew({
+      kind: 'search',
+      searchTrigger: 'input',
+      items: [],
+      'onUpdate:modelValue': (value) => wrapper.setProps({ modelValue: value }),
+    });
+    const input = wrapper.find('input');
+    await input.setValue('p');
+    input.element.dispatchEvent(new CompositionEvent('compositionstart'));
+    input.element.value = "p'";
+    input.element.dispatchEvent(new InputEvent('input', { isComposing: true }));
+    await vi.advanceTimersByTimeAsync(300);
+    expect(input.element.value).toBe("p'");
+
+    input.element.value = 'pā';
+    input.element.dispatchEvent(new CompositionEvent('compositionend', { data: 'ā' }));
+    await vi.advanceTimersByTimeAsync(300);
+    expect(input.element.value).toBe('pā');
+    expect(wrapper.emitted('update:searchString').at(-1)).toEqual(['pā']);
+  });
 });

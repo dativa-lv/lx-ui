@@ -369,9 +369,20 @@ watch(
   { immediate: true }
 );
 
+const composingText = ref(null);
+
+function onCompositionStart(e) {
+  composingText.value = e.target.value;
+}
+
 // No v-model: with inputMask the text comes from imask's accept event
 function onQueryInput(e) {
-  if (props.inputMask || e.isComposing) return;
+  if (e.isComposing) {
+    composingText.value = e.target.value;
+    return;
+  }
+  composingText.value = null;
+  if (props.inputMask) return;
   query.value = e.target.value;
 }
 
@@ -994,7 +1005,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, focus });
                       :placeholder="inputPlaceholder"
                       :id="id"
                       v-imask="inputMask"
-                      :value="query"
+                      :value="composingText ?? query"
                       class="lx-text-input lx-value-picker-placeholder lx-input-area"
                       autocomplete="off"
                       :class="{
@@ -1024,6 +1035,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, focus });
                       :tabindex="disabled ? '-1' : tabindex"
                       :disabled="disabled"
                       @input="onQueryInput"
+                      @compositionstart="onCompositionStart"
                       @compositionend="onQueryInput"
                       @accept="onMaskAccept"
                       @focus="isInputFocused = true"
