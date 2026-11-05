@@ -41,16 +41,16 @@
   },
   "scripts": {
     "dev": "vite --host",
-    "build:lib": "bun vite build --mode lib",
-    "build:css": "bun vite build --mode css",
-    "build:bundles": "bun scripts/build-bundles.mjs",
-    "build:fonts": "bun vite build --mode fonts",
+    "build:lib": "bun --bun vite build --mode lib",
+    "build:css": "bun --bun vite build --mode css",
+    "build:bundles": "bun --bun scripts/build-bundles.mjs",
+    "build:fonts": "bun --bun vite build --mode fonts",
     "build:assets": "bun run build:css && bun run build:bundles && bun run build:fonts",
-    "build:vite": "vite build --mode vite",
+    "build:vite": "bun --bun vite build --mode vite",
     "build": "bun run build:lib && bun run build:assets && bun run build:vite",
-    "preview": "bun vite preview --mode lib",
+    "preview": "bun --bun vite preview --mode lib",
     "lint": "eslint .",
-    "test": "bun vitest --mode lib"
+    "test": "bun --bun vitest --mode lib"
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.0.0",
