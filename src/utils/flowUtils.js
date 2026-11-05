@@ -156,6 +156,17 @@ function redirectTo(routeName, to) {
   };
 }
 
+// vue-router skips afterEach when a navigation throws, so the store is kept to stop it there
+let navigatingAppStore = null;
+
+/**
+ * Stops the navigation started in `beforeEach`; call it from `router.onError`.
+ */
+export function onError() {
+  navigatingAppStore?.stopNavigating();
+  navigatingAppStore = null;
+}
+
 /**
  * @param { import('vue-router').RouteLocationNormalized } to
  * @param { import('vue-router').RouteLocationNormalized } from
@@ -166,6 +177,7 @@ function redirectTo(routeName, to) {
 export async function beforeEach(to, from, appStore, authStore, successCallbackFn = null) {
   appStore.$reset();
   appStore.startNavigating();
+  navigatingAppStore = appStore;
 
   // Track navigation state for version checking
   trackNavigationState(to);
@@ -213,6 +225,7 @@ export async function beforeEach(to, from, appStore, authStore, successCallbackF
 export async function afterEach(to, from, appStore, viewStore) {
   if (viewStore) viewStore.$reset();
   appStore.stopNavigating();
+  navigatingAppStore = null;
 
   // Reset navigation tracking after route change
   resetNavigationTracking();

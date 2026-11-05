@@ -4,6 +4,7 @@ import { logWarn } from '@/utils/devUtils';
 import { setGlobalProperties, setComponentTexts } from '@/utils/global';
 import { shellModeLoaders } from '@/components/shell/shellModeLoaders';
 import { vTooltip } from '@/directives/tooltip';
+import { setupImportRecovery } from '@/utils/dynamicImportUtils';
 
 /**
  * Install function for Vue plugin (called by Vue.use() or app.use())
@@ -39,8 +40,10 @@ import { vTooltip } from '@/directives/tooltip';
  * @property {string[]} [preload.components] - Array of actual components to preload (e.g. [LxModal, LxDataGrid])
  * @property {string[]} [preload.shellModes] - Array of shell mode names to preload (e.g. ['default', 'digimaks'])
  * @property {Record<string, Object>} [texts] - Global component texts overrides, keyed by component name
- *   (e.g. { LxDataGrid: { search: 'Search' } }). Applied on top of each component's hardcoded default
- *   texts, without needing a per-instance `texts` prop. For runtime updates call setLxComponentTexts(...).
+ *   (e.g. { LxDataGrid: { search: 'Search' } }). `LxDynamicImport: { offline, loadFailed }` sets the
+ *   messages shown when a page or component can't be loaded. Applied on top of each component's
+ *   hardcoded default texts, without needing a per-instance `texts` prop. For runtime updates call
+ *   setLxComponentTexts(...).
  */
 function install(Vue, options) {
   // Don't install more than once
@@ -58,6 +61,16 @@ function install(Vue, options) {
 
   const preloadConfig = options.preload ?? {};
   const globalEnvironment = useLx().getGlobals()?.environment;
+
+  const router = Vue.config.globalProperties.$router;
+  if (router) {
+    setupImportRecovery(router);
+  } else {
+    logWarn(
+      'createLx was installed before the router, so failed page loads (e.g. offline) are not recovered',
+      globalEnvironment
+    );
+  }
 
   const loaders = [];
 

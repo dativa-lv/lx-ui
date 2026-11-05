@@ -1,5 +1,6 @@
 <script setup>
-import { computed, onMounted, watch, ref, inject, nextTick, defineAsyncComponent } from 'vue';
+import { computed, onMounted, watch, ref, inject, nextTick } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import { IMask, IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
 import { computedAsync } from '@vueuse/core';
@@ -18,8 +19,8 @@ import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { useBuilderRegistration } from '@/utils/builderUtils';
 
-const LxFlag = defineAsyncComponent(() => import('@/components/Flag.vue'));
-const LxAutoCompleteNew = defineAsyncComponent(
+const LxFlag = lxDefineAsyncComponent(() => import('@/components/Flag.vue'));
+const LxAutoCompleteNew = lxDefineAsyncComponent(
   () => import('@/components/autoComplete/AutoCompleteNew.vue')
 );
 

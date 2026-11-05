@@ -1,5 +1,6 @@
 <script setup>
-import { computed, watch, ref, provide, inject, defineAsyncComponent } from 'vue';
+import { computed, watch, ref, provide, inject } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { useWindowSize } from '@vueuse/core';
@@ -17,8 +18,8 @@ import {
   secondsToMinutesAndSeconds,
 } from '@/utils/generalUtils';
 
-const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
-const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
+const LxInfoBox = lxDefineAsyncComponent(() => import('@/components/InfoBox.vue'));
+const LxEmptyState = lxDefineAsyncComponent(() => import('@/components/EmptyState.vue'));
 
 const props = defineProps({
   systemNameShort: { type: String, default: null },

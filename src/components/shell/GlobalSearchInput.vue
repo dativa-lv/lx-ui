@@ -1,11 +1,12 @@
 <script setup>
-import { computed, defineAsyncComponent, getCurrentInstance, inject, ref, watch } from 'vue';
+import { computed, getCurrentInstance, inject, ref, watch } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import { useEventListener } from '@vueuse/core';
 
 import LxIcon from '@/components/Icon.vue';
 import { shellContextKey } from '@/components/shell/shellContext';
 
-const LxAutoComplete = defineAsyncComponent(() => import('@/components/AutoComplete.vue'));
+const LxAutoComplete = lxDefineAsyncComponent(() => import('@/components/AutoComplete.vue'));
 
 const componentProps = defineProps({
   id: { type: String, required: true },

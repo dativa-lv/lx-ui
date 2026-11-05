@@ -158,6 +158,48 @@ is missing from `items` is now shown as the id instead of an empty field.
 - Don't add new usages of `preloadedItems` or function `items`.
 - Update `customItem` templates to the `{ item, context }` slot props when switching to `mode="new"`.
 
+## 2.3.11 → 2.3.12
+
+### Other changes
+
+#### Recovery after lost network
+
+Before, if a page or lazy component failed to load (for example, while offline), the app kept failing
+to load it even after the connection came back, until the page was reloaded. LX/UI now recovers from
+this:
+
+- While offline, the navigation is cancelled and the user stays on the current page with an error
+  notification. After the connection returns, the next click works again.
+- If loading failed on an unstable network, the user also stays on the current page with an error
+  notification. The next navigation then opens the target page with a full browser page load
+  instead of in-app routing, since the browser keeps failed modules cached until a new page load.
+  As with any page load, state kept only in memory (e.g. stores) is lost.
+
+**What to do**
+
+Install `createLx` **after** the router, so it can find it:
+
+```js
+myApp.use(router);
+myApp.use(createLx, { ... });
+```
+
+If `createLx` is installed first, it logs a warning and the recovery is not active.
+
+Errors are shown as LxShell notifications, alongside the ones in your notify store. Latvian texts are
+built in; for other languages, pass them through `texts` (or `setLxComponentTexts` on locale change):
+
+```js
+texts: {
+  LxDynamicImport: {
+    offline: 'No internet connection. Check your connection and try again.',
+    loadFailed: 'Failed to load page content. Please try again.',
+  },
+},
+```
+
+Routes added later with `router.addRoute` are not covered.
+
 ## 2.3.9 → 2.3.10
 
 ### Breaking changes

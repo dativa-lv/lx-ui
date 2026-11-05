@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed, watch, nextTick, defineAsyncComponent, onUnmounted } from 'vue';
+import { ref, computed, watch, nextTick, onUnmounted } from 'vue';
+import { lxDefineAsyncComponent, importWithRetry } from '@/utils/dynamicImportUtils';
 import { useElementSize, useResizeObserver } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
 import { getTexts } from '@/utils/visualPickerUtils';
@@ -855,20 +856,13 @@ function loadImage() {
     latvia: () => import('@/components/visualPickerPictures/Latvia.vue'),
     latvia2024: () => import('@/components/visualPickerPictures/Latvia2024.vue'),
   };
-
-  return new Promise((resolve, reject) => {
-    imagePath.value = defineAsyncComponent({
-      loader: () =>
-        images[props.kind]?.()
-          .then(async (component) => {
-            resolve(component);
-            return component;
-          })
-          .catch((error) => {
-            reject(error);
-          }),
-    });
-  });
+  const load = images[props.kind] && importWithRetry(images[props.kind]);
+  if (!load) {
+    imagePath.value = null;
+    return Promise.reject(new Error(`No image for kind '${props.kind}'`));
+  }
+  imagePath.value = lxDefineAsyncComponent(load);
+  return load();
 }
 
 watch(

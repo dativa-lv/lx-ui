@@ -5,11 +5,11 @@ import {
   watch,
   onMounted,
   onBeforeMount,
-  defineAsyncComponent,
   nextTick,
   inject,
   onUnmounted,
 } from 'vue';
+import { lxDefineAsyncComponent, importWithRetry } from '@/utils/dynamicImportUtils';
 import { generateUUID, kebabToCamel } from '@/utils/stringUtils';
 import LxFlag from '@/components/Flag.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
@@ -128,23 +128,14 @@ const loading = ref(false);
 const errorState = ref(false);
 
 function loadImage() {
-  return new Promise((resolve, reject) => {
-    if (props.kind) {
-      imagePath.value = defineAsyncComponent({
-        loader: () =>
-          import(`@/components/visualPickerPictures/${kindValue.value}.vue`)
-            .then((component) => {
-              resolve(component);
-              return component;
-            })
-            .catch((error) => {
-              reject(error);
-            }),
-      });
-    } else {
-      reject(new Error('Kind prop is not defined'));
-    }
-  });
+  if (!props.kind) return Promise.reject(new Error('Kind prop is not defined'));
+  const name = kindValue.value;
+  const load = importWithRetry(
+    () => import(`@/components/visualPickerPictures/${name}.vue`),
+    `visualPickerPictures/${name}`
+  );
+  imagePath.value = lxDefineAsyncComponent(load);
+  return load();
 }
 
 const { environment } = useLx().getGlobals();

@@ -6,8 +6,8 @@ import {
   onMounted,
   onBeforeUnmount,
   inject,
-  defineAsyncComponent,
 } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -22,11 +22,11 @@ import {
 import { useWindowSize, useElementSize } from '@vueuse/core';
 import { useGlobalSearchPlacement } from '@/components/shell/shellContext';
 
-const LxMegaMenu = defineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
-const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
-const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
-const LxAvatar = defineAsyncComponent(() => import('@/components/Avatar.vue'));
-const LxGlobalSearch = defineAsyncComponent(() => import('@/components/shell/GlobalSearch.vue'));
+const LxMegaMenu = lxDefineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
+const LxEmptyState = lxDefineAsyncComponent(() => import('@/components/EmptyState.vue'));
+const LxInfoBox = lxDefineAsyncComponent(() => import('@/components/InfoBox.vue'));
+const LxAvatar = lxDefineAsyncComponent(() => import('@/components/Avatar.vue'));
+const LxGlobalSearch = lxDefineAsyncComponent(() => import('@/components/shell/GlobalSearch.vue'));
 
 const props = defineProps({
   mode: { type: String, default: 'default' },

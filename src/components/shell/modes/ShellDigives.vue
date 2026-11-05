@@ -1,5 +1,5 @@
 <script setup>
-import { defineAsyncComponent } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
@@ -7,8 +7,10 @@ import LxPageHeader from '@/components/shell/PageHeader.vue';
 import LxMainHeaderDigives from '@/components/shell/HeaderDigives.vue';
 import { useShellContext } from '@/components/shell/shellContext';
 
-const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
-const LxNavBarDigives = defineAsyncComponent(() => import('@/components/shell/NavBarDigives.vue'));
+const LxInfoBox = lxDefineAsyncComponent(() => import('@/components/InfoBox.vue'));
+const LxNavBarDigives = lxDefineAsyncComponent(
+  () => import('@/components/shell/NavBarDigives.vue')
+);
 
 const {
   props,
@@ -117,8 +119,8 @@ const {
           navBarSwitchModel === null
             ? displayTexts.openNavbar
             : navBarSwitchModel
-            ? displayTexts.openNavbar
-            : displayTexts.close
+              ? displayTexts.openNavbar
+              : displayTexts.close
         "
         @click="navToggleButton()"
       />

@@ -1,5 +1,5 @@
 <script setup>
-import { defineAsyncComponent } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
@@ -7,7 +7,7 @@ import LxPageHeader from '@/components/shell/PageHeader.vue';
 import LxMainHeader from '@/components/shell/Header.vue';
 import { useShellContext } from '@/components/shell/shellContext';
 
-const LxNavBar = defineAsyncComponent(() => import('@/components/shell/NavBar.vue'));
+const LxNavBar = lxDefineAsyncComponent(() => import('@/components/shell/NavBar.vue'));
 
 const {
   props,

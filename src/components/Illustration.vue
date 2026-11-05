@@ -1,5 +1,6 @@
 <script setup>
-import { shallowRef, computed, watch, defineAsyncComponent } from 'vue';
+import { shallowRef, computed, watch } from 'vue';
+import { lxDefineAsyncComponent, importWithRetry } from '@/utils/dynamicImportUtils';
 import IconDefault from '@/components/icons/Default.vue';
 
 const props = defineProps({
@@ -24,9 +25,13 @@ const icon = computed(() => {
 });
 
 function loadIcon() {
-  if (icon.value) {
-    iconPath.value = defineAsyncComponent({
-      loader: () => import(`@/components/pictograms/${icon.value}.vue`),
+  const name = icon.value;
+  if (name) {
+    iconPath.value = lxDefineAsyncComponent({
+      loader: importWithRetry(
+        () => import(`@/components/pictograms/${name}.vue`),
+        `pictograms/${name}`
+      ),
       errorComponent: IconDefault,
     });
   }

@@ -1,5 +1,5 @@
 <script setup>
-import { defineAsyncComponent } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import { formatDate } from '@/utils/date/format';
 import LxFlag from '@/components/Flag.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -11,9 +11,9 @@ import LxPageHeader from '@/components/shell/PageHeader.vue';
 import LxMainHeaderDigivesLite from '@/components/shell/HeaderDigivesLite.vue';
 import { useShellContext } from '@/components/shell/shellContext';
 
-const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
-const LxNavBarDigivesLite = defineAsyncComponent(() =>
-  import('@/components/shell/NavBarDigivesLite.vue')
+const LxInfoBox = lxDefineAsyncComponent(() => import('@/components/InfoBox.vue'));
+const LxNavBarDigivesLite = lxDefineAsyncComponent(
+  () => import('@/components/shell/NavBarDigivesLite.vue')
 );
 
 const {

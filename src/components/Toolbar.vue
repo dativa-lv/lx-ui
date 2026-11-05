@@ -11,8 +11,8 @@ import {
   Comment,
   Fragment,
   Text,
-  defineAsyncComponent,
 } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import { useDebounceFn, useElementSize, useElementBounding, useScroll } from '@vueuse/core';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
@@ -26,7 +26,7 @@ import { logWarn } from '@/utils/devUtils';
 import { resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import { useToolbarResponsiveness } from '@/hooks/useToolbarResponsiveness';
 
-const LxAutoComplete = defineAsyncComponent(() => import('@/components/AutoComplete.vue'));
+const LxAutoComplete = lxDefineAsyncComponent(() => import('@/components/AutoComplete.vue'));
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },

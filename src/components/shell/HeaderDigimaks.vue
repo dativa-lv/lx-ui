@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref, watch, provide, inject, defineAsyncComponent } from 'vue';
+import { computed, ref, watch, provide, inject } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxModal from '@/components/Modal.vue';
@@ -9,10 +10,10 @@ import { shortenUserName } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 
-const LxMegaMenu = defineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
-const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
-const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
-const LxAvatar = defineAsyncComponent(() => import('@/components/Avatar.vue'));
+const LxMegaMenu = lxDefineAsyncComponent(() => import('@/components/shell/MegaMenu.vue'));
+const LxEmptyState = lxDefineAsyncComponent(() => import('@/components/EmptyState.vue'));
+const LxInfoBox = lxDefineAsyncComponent(() => import('@/components/InfoBox.vue'));
+const LxAvatar = lxDefineAsyncComponent(() => import('@/components/Avatar.vue'));
 
 const props = defineProps({
   mode: { type: String, default: 'default' },

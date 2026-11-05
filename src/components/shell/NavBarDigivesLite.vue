@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref, watch, provide, defineAsyncComponent } from 'vue';
+import { computed, ref, watch, provide } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import { useWindowSize, onClickOutside } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -12,8 +13,8 @@ import {
 } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
-const LxEmptyState = defineAsyncComponent(() => import('@/components/EmptyState.vue'));
-const LxInfoBox = defineAsyncComponent(() => import('@/components/InfoBox.vue'));
+const LxEmptyState = lxDefineAsyncComponent(() => import('@/components/EmptyState.vue'));
+const LxInfoBox = lxDefineAsyncComponent(() => import('@/components/InfoBox.vue'));
 
 // This component renders two conditional root <div>s (the standard nav panel and
 // the responsive one), which makes it a multi-root "fragment" component. Fragment

@@ -1,5 +1,6 @@
 <script setup>
-import { shallowRef, computed, watch, defineAsyncComponent } from 'vue';
+import { shallowRef, computed, watch } from 'vue';
+import { lxDefineAsyncComponent, getIconLoader } from '@/utils/dynamicImportUtils';
 import IconDefault from '@/components/icons/Default.vue';
 import useLx from '@/hooks/useLx';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -78,13 +79,8 @@ const icon = computed(() => {
 
 function loadIcon() {
   if (icon.value && iconSetComputed.value) {
-    iconPath.value = defineAsyncComponent({
-      loader: () =>
-        import(
-          `@/components/icons/${iconSetComputed.value ? iconSetComputed.value : 'cds'}/${
-            icon.value
-          }.vue`
-        ),
+    iconPath.value = lxDefineAsyncComponent({
+      loader: getIconLoader(iconSetComputed.value, icon.value),
       errorComponent: IconDefault,
     });
   }

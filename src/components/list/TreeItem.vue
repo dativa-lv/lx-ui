@@ -1,5 +1,6 @@
 <script setup>
-import { computed, defineAsyncComponent, watch } from 'vue';
+import { computed, watch } from 'vue';
+import { lxDefineAsyncComponent } from '@/utils/dynamicImportUtils';
 import { generateUUID } from '@/utils/stringUtils';
 import LxButton from '@/components/Button.vue';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -8,7 +9,7 @@ import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxIcon from '@/components/Icon.vue';
 // eslint-disable-next-line import/no-self-import
-const LxTreeItem = defineAsyncComponent(() => import('@/components/list/TreeItem.vue'));
+const LxTreeItem = lxDefineAsyncComponent(() => import('@/components/list/TreeItem.vue'));
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
