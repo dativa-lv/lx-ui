@@ -104,6 +104,7 @@ Most convenient way of using the components is by using them inside LxShell:
 ## Extend
 
  - [lx/builders](https://www.npmjs.com/package/@dativa-lv/lx-builders) - a companion library containing declarative design tools for views, forms, etc.
+ - [lx/testkit](https://www.npmjs.com/package/@dativa-lv/lx-testkit) - a testing toolkit providing reusable *Playwright* utilities, stable component locators, and accessibility testing tools.
 
 ## Develop
 
