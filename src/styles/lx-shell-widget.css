@@ -3,6 +3,10 @@ header.lx.lx-header-wrapper * {
   font-family: 'IBM Plex', sans-serif;
 }
 
+.lx {
+  line-height: 1.5;
+}
+
 .lx.lx-layout-public {
   --nav-row-size: 5rem;
   --public-nav-header-size: calc(var(--nav-row-size) + var(--row-size));
@@ -30,7 +34,6 @@ header.lx.lx-layout-public {
   align-items: center;
   z-index: 250;
   border-bottom: var(--border-width-2) solid var(--color-chrome);
-  display: grid;
   grid-template-columns: 1fr var(--body-column-size) 1fr;
   transition: height 0.2s ease-in-out;
 }
@@ -38,11 +41,8 @@ header.lx.lx-layout-public {
 header.lx.lx-layout-public > .lx-header {
   grid-column: 2/3;
   display: grid;
-  grid-template-columns: auto 1fr auto;
   width: 100%;
   padding: var(--space-0);
-  padding-left: var(--space-1000);
-  padding-right: var(--space-1000);
   height: var(--nav-row-size);
   align-items: center;
 }
@@ -79,12 +79,37 @@ header.lx.lx-layout-public > .lx-header .lx-main-button:hover svg {
   color: var(--color-data);
 }
 
+.lx .lx-aligned-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  column-gap: var(--space-0500);
+}
+
+.lx-invisible {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  padding: var(--space-0);
+  margin: calc(var(--space-0125) * -1);
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: var(--border-width-0);
+}
+
 /** General header styles **/
 
 header.lx.lx-header-wrapper {
   display: flex;
 }
 
+header.lx.lx-header-wrapper.lx-layout-public {
+  display: grid;
+}
 div > header.lx-layout-default.lx-header-wrapper {
   background: linear-gradient(to right, color-mix(in srgb, var(--color-brand) 25%, transparent) 0%, transparent 50%), var(--color-nav-background);
   color: var(--color-nav-foreground);
@@ -101,6 +126,10 @@ header.lx.lx-header-wrapper .lx-header {
   grid-template-columns: 1fr var(--body-column-size) 1fr;
   width: 100%;
   border-bottom: var(--region-border);
+}
+
+header.lx.lx-layout-public > .lx-header {
+  grid-template-columns: auto 1fr auto;
 }
 
 header.lx.lx-layout-public > .lx-header > .lx-group {
@@ -132,8 +161,8 @@ header.lx.lx-header-wrapper .lx-header > .lx-group:last-of-type {
 header.lx.lx-layout-default .lx-header .lx-main-button::after,
 header.lx.lx-layout-default .lx-header #nav-toggle .lx-button-content-wrapper::after {
   content: ' ';
-  height: 2rem;
-  border-right: var(--border-width-1) solid var(--color-nav-foreground);
+  height: var(--nav-header-divider-height);
+  border-right: var(--nav-header-divider-border);
   opacity: 0.2;
   transition: opacity 0.1s ease-out;
 }
@@ -143,19 +172,56 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button::after {
   left: var(--aside-size);
 }
 
+/*** Global search ***/
+
+.lx-global-search-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.lx-header .lx-global-search-opened .lx-button.lx-header-button:not(:hover) {
+  background: var(--color-selected-background);
+}
+
+.lx-header .lx-global-search-opened .lx-button.lx-header-button:not(:hover) svg {
+  fill: var(--color-data);
+}
+
+.lx-global-search-input {
+  --input-height: var(--row-size);
+  --input-button-width: var(--row-size);
+  --input-button-height: var(--row-size);
+  --input-button-indent-right: var(--row-size);
+  --input-icon-wrapper-width: var(--row-size);
+  --input-icon-wrapper-height: var(--row-size);
+  --input-icon-indent-right: var(--row-size);
+}
+
+.lx-nav-panel > .lx-nav-global-search + ul.lx-nav-group {
+  margin-bottom: auto;
+}
+
+/***/
+
 .lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-alert-menu::before,
 .lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-help-button::before,
-.lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-spotlight-button::before,
-.lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-mega-menu::before {
+.lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-mega-menu::before,
+.lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-global-search-button::before {
   position: absolute;
-  z-index: 10;
   content: ' ';
-  height: 2rem;
-  margin-top: var(--space-0500);
+  height: var(--nav-header-divider-height);
   margin-left: var(--space-3000);
-  border-right: var(--border-width-1) solid var(--color-nav-foreground);
+  border-right: var(--nav-header-divider-border);
   opacity: 0.2;
   transition: opacity 0.1s ease-out;
+}
+
+.lx.lx-header-wrapper .lx-header > .lx-group > .lx-global-search-button,
+.lx.lx-header-wrapper .lx-header > .lx-group > .lx-alert-menu,
+.lx.lx-header-wrapper .lx-header > .lx-group > .lx-help-button,
+.lx.lx-header-wrapper .lx-header > .lx-group > .lx-mega-menu {
+  display: flex;
+  align-items: center;
 }
 
 .lx.lx-header-wrapper .lx-header .lx-alert-menu .lx-dropdown-toggler > .lx-button,
@@ -287,7 +353,8 @@ header.lx.lx-layout-public > .lx-header .lx-main-button > div {
 }
 
 .lx-header .lx-button:focus,
-.lx-curtain .lx-button:focus {
+.lx-curtain .lx-button:focus,
+.lx-global-search-input .lx-button:focus {
   background-color: var(--color-button-primary-background-focus);
   border-color: var(--color-button-primary-border-focus);
   outline: 2px solid var(--color-focus-background);
@@ -1110,8 +1177,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 
 @media (max-width: 1840px) {
   header.lx.lx-layout-default div.lx-header .lx-main-button {
-    min-width: var(--aside-size);
-    width: var(--aside-size);
+    width: min(var(--aside-size), 100%);
   }
 }
 
@@ -1640,13 +1706,13 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   }
 }
 
-/*** Popover stlyes ***/
+/*** Popover styles ***/
 
 .lx .popper-wrapper {
   position: relative;
 }
 
-.lx.lx-header-wrapper .popper {
+.lx.lx-header-wrapper .popper:not(.lx-global-search-input .popper) {
   display: none;
   position: absolute;
   top: var(--nav-row-size);
@@ -1668,6 +1734,516 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   left: 50%;
   transform: translate(-50%);
   right: auto;
+}
+
+.lx-global-search-panel {
+  position: fixed;
+  z-index: 8200;
+  background: var(--color-popover-background);
+  border-radius: var(--input-border-radius);
+}
+
+.lx-curtain.lx-global-search-backdrop {
+  height: auto;
+  z-index: 8199;
+}
+
+.lx-global-search-result-with-icon:not(:has(> svg)) {
+  padding-left: calc(var(--popover-item-icon-size-s) + var(--popover-item-gap));
+}
+
+/* Background lives on the wrapper (not the panel) so no empty gap shows when the scrollable panel is dragged/overscrolled aside. */
+.lx .popper .lx-dropdown-default-content,
+.lx .popper .lx-dropdown-panel-wrapper {
+  background: var(--color-popover-background);
+  border-radius: var(--popover-border-radius);
+}
+
+.lx .popper .lx-dropdown-panel {
+  position: static;
+  width: var(--aside-size);
+  box-shadow: var(--shadow-dropdown);
+  border-width: var(--popover-border-width);
+  border-style: var(--popover-border-style);
+  border-color: var(--color-popover-border);
+  border-radius: var(--popover-border-radius);
+  padding: var(--popover-padding);
+  height: auto;
+  max-height: 75vh;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* Nav-bar poppers: cap to the height Popper.vue reports (fallback 75vh) so they scroll instead of overflowing. */
+.lx .popper.inside-nav-bar .lx-dropdown-panel {
+  max-height: min(75vh, var(--lx-popper-available-height, 75vh));
+}
+
+.lx .lx-dropdown-default-content .lx-dropdown-panel {
+  display: grid;
+  row-gap: var(--popover-item-set-gap);
+  max-height: 35vh;
+  width: 100%;
+}
+
+.lx-context-container {
+  position: static !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  outline: 2px solid transparent;
+}
+
+.lx .lx-dropdown-panel .lx-button-set {
+  flex-direction: column;
+  gap: var(--popover-item-set-gap);
+}
+
+.lx .lx-dropdown-panel .lx-button .lx-badge {
+  border-color: var(--color-region);
+}
+
+.lx .lx-dropdown-panel .lx-dropdown-menu-toggle-wrapper,
+.lx .lx-dropdown-panel .user-menu-panel .lx-button,
+.lx .lx-dropdown-panel .lx-button-set .lx-button,
+.lx-dropdown-default-content .lx-value-picker-item,
+.lx .lx-dropdown-panel > div > .lx-button,
+.lx .lx-dropdown-panel > .lx-button {
+  padding: var(--popover-item-padding-s);
+  margin: var(--space-0);
+  text-decoration: var(--popover-item-text-decoration);
+  height: var(--popover-item-height);
+  width: 100%;
+  font-size: var(--popover-item-text-font-size);
+  font-weight: var(--popover-item-text-font-weight);
+  border-width: var(--popover-item-border-width);
+  border-style: var(--popover-item-border-style);
+  border-color: var(--color-popover-item-border);
+  border-radius: var(--popover-item-border-radius-inner);
+  background: var(--color-popover-item-background);
+  color: var(--color-popover-item-text);
+  outline: 2px solid transparent;
+  outline-offset: var(--popover-item-outline-offset);
+  --button-primary-badge-inset: var(--button-ghost-badge-inset);
+  --button-primary-badge-empty-inset: var(--button-ghost-badge-empty-inset);
+}
+
+.lx .lx-dropdown-panel .lx-dropdown-menu-toggle-wrapper,
+.lx-dropdown-default-content .lx-value-picker-item {
+  display: grid;
+}
+
+.lx-dropdown-default-content .lx-value-picker-item {
+  grid-template-areas: var(--popover-item-grid-areas);
+  grid-template-columns: var(--popover-item-grid-template-columns);
+  grid-template-rows: var(--popover-item-grid-template-rows);
+  height: auto;
+  min-height: var(--popover-item-height);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.lx-dropdown-default-content .lx-value-picker-item .lx-checkbox-wrapper,
+.lx-dropdown-default-content .lx-value-picker-item .lx-radio-button-wrapper {
+  width: 100%;
+  overflow: hidden;
+  align-items: flex-start;
+}
+
+.lx-dropdown-default-content .lx-value-picker-item > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx-value-picker-item label {
+  cursor: pointer;
+}
+
+.lx .lx-value-picker-item:focus,
+.lx .lx-value-picker-item:focus-visible {
+  outline-color: var(--color-focus-background);
+}
+
+.lx-dropdown-panel .lx-button .lx-loader-container {
+  grid-area: icon-toggle;
+}
+
+.lx-dropdown-panel .lx-dropdown-menu-button {
+  position: relative;
+}
+
+.lx-dropdown-panel .lx-popover-item-checkmark {
+  position: absolute;
+  inset: var(--popover-checkmark-inset-s);
+  display: var(--popover-checkmark-display);
+  height: var(--popover-checkmark-size);
+  width: var(--popover-checkmark-size);
+  fill: var(--color-popover-checkmark);
+}
+
+.lx-dropdown-default-content .lx-value-picker-item,
+.lx .lx-dropdown-panel .user-menu-panel .lx-button-content-wrapper,
+.lx .lx-dropdown-panel .lx-button-set .lx-button-content-wrapper,
+.lx .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper {
+  gap: var(--popover-item-gap);
+}
+
+.lx .lx-dropdown-panel .user-menu-panel .lx-button-content-wrapper,
+.lx .lx-dropdown-panel .lx-button-set .lx-button-content-wrapper,
+.lx .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper {
+  grid-template-areas: var(--popover-item-button-grid-areas);
+  grid-template-columns: var(--popover-item-button-grid-template-columns);
+  grid-template-rows: var(--popover-item-button-grid-template-rows);
+}
+
+.lx-dropdown-panel .lx-popover-item-text-only {
+  --popover-item-grid-areas: 'content';
+  --popover-item-grid-template-columns: 1fr;
+  --popover-item-gap: var(--space-0);
+}
+
+.lx-dropdown-panel .lx-popover-item-selecting {
+  --popover-item-grid-areas: '. content';
+  --popover-item-grid-template-columns: auto 1fr;
+  --popover-item-gap: inherit;
+}
+
+.lx .lx-dropdown-panel .lx-button.lx-button-icon-only,
+.lx .lx-dropdown-panel .lx-button.lx-button-text-only {
+  --popover-item-grid-template-columns: 1fr;
+  --popover-item-grid-template-rows: 1fr;
+  --popover-item-gap: var(--space-0);
+}
+
+.lx .lx-dropdown-panel .lx-button.lx-button-icon-only {
+  --popover-item-grid-areas: 'icon';
+}
+
+.lx .lx-dropdown-panel .lx-button.lx-button-text-only {
+  --popover-item-grid-areas: 'content';
+}
+
+.lx-dropdown-default-content .lx-value-picker-item,
+.lx .lx-dropdown-panel .user-menu-panel .lx-button-content,
+.lx .lx-dropdown-panel .lx-button-set .lx-button-content,
+.lx .lx-dropdown-panel > div > .lx-button .lx-button-content,
+.lx .lx-dropdown-panel > .lx-button .lx-button-content {
+  text-align: var(--popover-item-text-alignment);
+}
+
+.lx-dropdown-default-content .lx-value-picker-item:hover,
+.lx .lx-dropdown-panel .user-menu-panel .lx-button:hover,
+.lx .lx-dropdown-panel .lx-button-set .lx-button:hover,
+.lx .lx-dropdown-panel > div > .lx-button:hover,
+.lx .lx-dropdown-panel > .lx-button:hover,
+.lx .lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover,
+.lx .lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover {
+  background: var(--color-popover-item-background-hover);
+  border-color: var(--color-popover-item-border-hover);
+  color: var(--color-popover-item-text-hover);
+}
+
+.lx-dropdown-default-content .lx-value-picker-item:active,
+.lx .lx-dropdown-panel .user-menu-panel .lx-button:active,
+.lx .lx-dropdown-panel .lx-button-set .lx-button:active,
+.lx .lx-dropdown-panel > div > .lx-button:active,
+.lx .lx-dropdown-panel > .lx-button:active {
+  background: var(--color-popover-item-background-active);
+  border-color: var(--color-popover-item-border-active);
+  color: var(--color-popover-item-text-active);
+}
+
+.lx-dropdown-default-content .lx-value-picker-item:focus,
+.lx .lx-dropdown-panel .user-menu-panel .lx-button:focus,
+.lx .lx-dropdown-panel .lx-button-set .lx-button:focus,
+.lx .popper .lx-dropdown-panel > div > .lx-button:focus,
+.lx .popper .lx-dropdown-panel > .lx-button:focus,
+.lx .lx-dropdown-panel .user-menu-panel .lx-button:focus-visible,
+.lx .lx-dropdown-panel .lx-button-set .lx-button:focus-visible,
+.lx .popper .lx-dropdown-panel > div > .lx-button:focus-visible,
+.lx .popper .lx-dropdown-panel > .lx-button:focus-visible,
+.lx-dropdown-default-content .lx-value-picker-item.lx-highlighted-item {
+  background: var(--color-popover-item-background-focus);
+  border-color: var(--color-popover-item-border-focus);
+  color: var(--color-popover-item-text-focus);
+  outline-color: var(--color-focus-background);
+}
+
+.lx .lx-dropdown-panel .user-menu-panel .lx-button.lx-disabled,
+.lx .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
+.lx .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
+.lx .popper .lx-dropdown-panel > .lx-button.lx-disabled {
+  background: var(--color-popover-item-background-disabled);
+  color: var(--color-popover-item-text-disabled);
+  border-color: var(--color-popover-item-border-disabled);
+}
+
+/*** Popover icon styles ***/
+
+.lx-dropdown-panel .user-menu-panel .lx-button .lx-button-icon,
+.lx-dropdown-panel .lx-button-set .lx-button .lx-button-icon,
+.lx-dropdown-panel > div > .lx-button .lx-button-icon,
+.lx-dropdown-panel > .lx-button .lx-button-icon {
+  height: var(--popover-item-icon-size-s);
+  width: var(--popover-item-icon-size-s);
+  fill: var(--color-popover-item-icon);
+  grid-area: icon-toggle;
+}
+
+.lx-dropdown-panel .user-menu-panel .lx-button:hover .lx-button-icon,
+.lx-dropdown-panel .lx-button-set .lx-button:hover .lx-button-icon,
+.lx-dropdown-panel > div > .lx-button:hover .lx-button-icon,
+.lx-dropdown-panel > .lx-button:hover .lx-button-icon,
+.lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover .lx-button-icon,
+.lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover .lx-button-icon {
+  fill: var(--color-popover-item-icon-hover);
+}
+
+.lx-dropdown-panel .user-menu-panel .lx-button:active .lx-button-icon,
+.lx-dropdown-panel .lx-button-set .lx-button:active .lx-button-icon,
+.lx-dropdown-panel > div > .lx-button:active .lx-button-icon,
+.lx-dropdown-panel > .lx-button:active .lx-button-icon {
+  fill: var(--color-popover-item-icon-active);
+}
+
+.lx-dropdown-panel .user-menu-panel .lx-button:focus .lx-button-icon,
+.lx-dropdown-panel .lx-button-set .lx-button:focus .lx-button-icon,
+.lx-dropdown-panel > div > .lx-button:focus .lx-button-icon,
+.lx-dropdown-panel > .lx-button:focus .lx-button-icon {
+  fill: var(--color-popover-item-icon-focus);
+}
+
+.lx-dropdown-panel .user-menu-panel .lx-button.lx-disabled .lx-button-icon,
+.lx-dropdown-panel .lx-button-set .lx-button.lx-disabled .lx-button-icon,
+.lx-dropdown-panel > div > .lx-button.lx-disabled .lx-button-icon,
+.lx-dropdown-panel > .lx-button.lx-disabled .lx-button-icon {
+  fill: var(--color-popover-item-icon-disabled);
+}
+
+/*** LxDropDownMenu action definitions ***/
+
+.lx-dropdown-panel-wrapper:focus-visible {
+  outline: none;
+}
+
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group {
+  position: relative;
+}
+
+.lx .lx-dropdown-default-content .lx-value-picker-item.lx-selected {
+  color: var(--color-popover-item-text-selected);
+  background-color: var(--color-popover-item-background-selected);
+  border-color: var(--color-popover-item-border-selected);
+  border-radius: var(--popover-item-border-radius-selected);
+}
+
+.lx-value-picker-dropdown-wrapper .lx-dropdown-default .lx-value-picker-item.select-all,
+.lx-dropdown-default-content .lx-dropdown-panel .lx-value-picker-item.select-all {
+  position: relative;
+  color: var(--color-brand);
+  margin-bottom: var(--popover-item-set-gap);
+  /* prettier-ignore */
+  border-radius: var(--popover-item-border-radius-outer)
+                 var(--popover-item-border-radius-outer)
+                 var(--popover-item-border-radius-inner)
+                 var(--popover-item-border-radius-inner);
+}
+
+.lx-dropdown-panel .lx-value-picker-item.select-all > svg,
+.lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all > svg {
+  fill: var(--color-brand);
+  width: var(--icon-size-m);
+  height: var(--icon-size-m);
+}
+
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel:has(.lx-button-set) .lx-mega-menu-container,
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-button-set:not(:last-child),
+.lx-dropdown-panel-wrapper .user-menu-panel .lx-button-set:not(:last-child),
+.lx-dropdown-default-content > .lx-dropdown-panel > .select-all-wrapper {
+  position: relative;
+  padding-bottom: var(--popover-item-set-gap);
+}
+
+.lx-dropdown-panel .user-menu-panel:has(> .lx-button) > .lx-button-set {
+  margin-top: var(--space-0);
+}
+
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel:has(.lx-mega-menu-container) .lx-button-set:first-of-type,
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-button-set + .lx-button-set,
+.lx-dropdown-panel .user-menu-panel > .lx-logout-button-wrapper.lx-button-set,
+.lx-dropdown-panel .user-menu-panel > .lx-button:first-of-type,
+.lx-dropdown-panel .user-menu-panel > .lx-button-set {
+  margin-top: var(--popover-item-set-gap);
+}
+
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-button-set:not(:last-child)::after,
+.lx-dropdown-panel-wrapper .user-menu-panel > .lx-button-set:not(:last-child)::after,
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel .lx-mega-menu-container::after,
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel .user-menu-context::after,
+.lx-dropdown-default-content .select-all-wrapper::after {
+  display: block;
+  content: '';
+  position: absolute;
+  background: var(--color-popover-divider);
+  width: stretch;
+  width: -webkit-fill-available;
+  margin: var(--popover-divider-margin);
+  height: var(--popover-divider-height);
+  bottom: var(--space-0);
+}
+
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group:has(+ .lx-mega-menu-container) {
+  padding-bottom: var(--space-0);
+}
+
+.lx-dropdown-panel-wrapper .user-menu-panel:not(:has(> .lx-button)):not(:has(> .lx-button-set)) .user-menu-context::after,
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group:has(+ .lx-mega-menu-container)::after,
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel:not(:has(.lx-button-set)) .lx-mega-menu-container::after,
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-button-set:empty::after,
+.lx-dropdown-panel-wrapper .user-menu-panel > .lx-button-set:empty::after {
+  display: none;
+}
+
+.lx-dropdown-panel > .lx-button-set:first-child > .lx-button:first-child,
+.lx-dropdown-panel > .lx-dropdown-menu-group:first-of-type:not(:has(.lx-label)) > .lx-dropdown-menu-button:first-child .lx-button,
+.lx-dropdown-panel > .lx-dropdown-menu-group:first-of-type:not(:has(.lx-label)) > .lx-button:first-child,
+.lx-dropdown-default-content .lx-value-picker-item:first-of-type {
+  /* prettier-ignore */
+  border-radius: var(--popover-item-border-radius-outer)
+                 var(--popover-item-border-radius-outer)
+                 var(--popover-item-border-radius-inner)
+                 var(--popover-item-border-radius-inner);
+}
+
+.lx-dropdown-default-content .lx-value-picker-item:last-of-type,
+.lx-dropdown-panel > .lx-button-set:last-child > .lx-button:last-child,
+.lx-dropdown-panel > .user-menu-panel .lx-button-set:last-child .lx-button:last-child,
+.lx-dropdown-panel > .user-menu-panel:not(:has(.lx-button-set)) > .lx-button:last-of-type,
+.lx-dropdown-panel > .lx-dropdown-menu-group:has(+ .lx-mega-menu-container) > .lx-dropdown-menu-button:last-child > .lx-button,
+.lx-dropdown-panel > .lx-dropdown-menu-group:last-of-type > .lx-dropdown-menu-button:last-child .lx-button {
+  /* prettier-ignore */
+  border-radius: var(--popover-item-border-radius-inner)
+                 var(--popover-item-border-radius-inner)
+                 var(--popover-item-border-radius-outer)
+                 var(--popover-item-border-radius-outer);
+}
+
+.lx-dropdown-panel:has(.lx-button-set:empty) > .lx-alert-menu-list li:first-child .lx-info-box,
+.lx-dropdown-panel > .lx-mega-menu-container .primary-menu-tile:first-child > *,
+.lx-dropdown-default-content .lx-value-picker-item:only-child {
+  border-top-left-radius: var(--popover-item-border-radius-outer);
+}
+
+.lx-dropdown-panel:has(.lx-button-set:empty) > .lx-alert-menu-list li:first-child .lx-info-box,
+.lx-dropdown-panel > .lx-mega-menu-container .primary-menu-tile:nth-of-type(3) > *,
+.lx-dropdown-default-content .lx-value-picker-item:only-child {
+  border-top-right-radius: var(--popover-item-border-radius-outer);
+}
+
+.lx-alert-menu-list > li:last-child .lx-info-box,
+.lx-dropdown-panel:not(:has(.lx-button-set)) > .lx-mega-menu-container .primary-menu-tile:nth-last-child(3):nth-child(3n + 1) > * {
+  border-bottom-left-radius: var(--popover-item-border-radius-outer);
+}
+
+.lx-alert-menu-list > li:last-child .lx-info-box,
+.lx-dropdown-panel:not(:has(.lx-button-set)) > .lx-mega-menu-container .primary-menu-tile:last-child:nth-child(3n) > * {
+  border-bottom-right-radius: var(--popover-item-border-radius-outer);
+}
+
+.lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group > .lx-label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--popover-label-padding);
+  color: var(--color-popover-label);
+  font-size: var(--popover-label-font-size);
+  margin-bottom: var(--space-0);
+}
+
+/* LxAutoComplete item content (list items and the selected value) */
+.lx-autocomplete-item-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--popover-item-gap);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.lx-autocomplete-item-content > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx-autocomplete-item-content > svg {
+  flex-shrink: 0;
+  width: var(--popover-item-icon-size-s);
+  height: var(--popover-item-icon-size-s);
+  /* TODO: workaround to center the icon on the first line, fix with the popover icon height update */
+  margin-top: max(0px, calc((1lh - var(--popover-item-icon-size-s)) / 2));
+  fill: var(--color-popover-item-icon);
+}
+
+.lx-dropdown-panel .lx-popover-item-text-only:has(> div > .lx-autocomplete-item-content) {
+  --popover-item-gap: inherit;
+}
+
+.lx-dropdown-panel .lx-value-picker-item:hover .lx-autocomplete-item-content > svg {
+  fill: var(--color-popover-item-icon-hover);
+}
+
+.lx-dropdown-panel .lx-value-picker-item:active .lx-autocomplete-item-content > svg {
+  fill: var(--color-popover-item-icon-active);
+}
+
+.lx-dropdown-panel .lx-value-picker-item:focus .lx-autocomplete-item-content > svg,
+.lx-dropdown-panel .lx-value-picker-item.lx-highlighted-item .lx-autocomplete-item-content > svg {
+  fill: var(--color-popover-item-icon-focus);
+}
+
+.lx-dropdown-panel .lx-value-picker-item.lx-selected .lx-autocomplete-item-content > svg {
+  fill: var(--color-popover-item-icon-selected);
+}
+
+.lx-dropdown-default-content .lx-value-picker-item > .lx-autocomplete-custom-item {
+  display: flex;
+  align-items: center;
+}
+
+.lx-dropdown-default-content .lx-value-picker-item > .lx-autocomplete-custom-item > * {
+  min-width: 0;
+}
+
+/* The "Search for" row is an action, coloured like "Select all" */
+.lx-dropdown-default-content .lx-dropdown-panel .lx-value-picker-item.lx-autocomplete-search-for {
+  color: var(--color-brand);
+}
+
+.lx-dropdown-panel .lx-value-picker-item.lx-autocomplete-search-for .lx-autocomplete-item-content > svg {
+  fill: var(--color-brand);
+}
+
+/* Divider above the "Search for" row, like the one below "Select all" */
+.lx-dropdown-default-content > .lx-dropdown-panel > .lx-autocomplete-search-for-wrapper.lx-separated {
+  position: relative;
+  padding-top: var(--popover-item-set-gap);
+}
+
+.lx-dropdown-default-content .lx-autocomplete-search-for-wrapper.lx-separated::before {
+  display: block;
+  content: '';
+  position: absolute;
+  background: var(--color-popover-divider);
+  width: stretch;
+  width: -webkit-fill-available;
+  margin: var(--popover-divider-margin);
+  height: var(--popover-divider-height);
+  top: var(--space-0);
+}
+
+.lx-dropdown-default-content .lx-autocomplete-search-for-wrapper.lx-separated > .lx-value-picker-item {
+  margin-top: var(--popover-item-set-gap);
 }
 
 /* Mega menu styles */
@@ -1811,50 +2387,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   border-radius: var(--popover-border-radius);
 }
 
-.lx .popper .lx-dropdown-panel {
-  position: static;
-  width: var(--aside-size);
-  box-shadow: var(--shadow-dropdown);
-  border-width: var(--popover-border-width);
-  border-style: var(--popover-border-style);
-  border-color: var(--color-popover-border);
-  border-radius: var(--popover-border-radius);
-  padding: var(--popover-padding);
-  height: auto;
-  max-height: 75vh;
-  overflow-y: auto;
-  z-index: 1000;
-}
-
-/* Nav-bar poppers: cap to the height Popper.vue reports (fallback 75vh) so they scroll instead of overflowing. */
-.lx .popper.inside-nav-bar .lx-dropdown-panel {
-  max-height: min(75vh, var(--lx-popper-available-height, 75vh));
-}
-
-.lx .lx-dropdown-default-content .lx-dropdown-panel {
-  display: grid;
-  row-gap: var(--popover-item-set-gap);
-  max-height: 35vh;
-  width: 100%;
-}
-
-.lx-context-container {
-  position: static !important;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  outline: 2px solid transparent;
-}
-
-.lx .lx-dropdown-panel .lx-button-set {
-  flex-direction: column;
-  gap: var(--popover-item-set-gap);
-}
-
-.lx .lx-dropdown-panel .lx-button .lx-badge {
-  border-color: var(--color-region);
-}
-
 .lx .lx-dropdown-panel .user-menu-panel .lx-button,
 .lx .lx-dropdown-panel .lx-button-set .lx-button,
 .lx .lx-dropdown-panel > div > .lx-button,
@@ -1901,21 +2433,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   --popover-item-gap: var(--space-0);
 }
 
-.lx .lx-dropdown-panel .lx-button.lx-button-icon-only,
-.lx .lx-dropdown-panel .lx-button.lx-button-text-only {
-  --popover-item-grid-template-columns: 1fr;
-  --popover-item-grid-template-rows: 1fr;
-  --popover-item-gap: var(--space-0);
-}
-
-.lx .lx-dropdown-panel .lx-button.lx-button-icon-only {
-  --popover-item-grid-areas: 'icon';
-}
-
-.lx .lx-dropdown-panel .lx-button.lx-button-text-only {
-  --popover-item-grid-areas: 'content';
-}
-
 .lx-dropdown-panel .user-menu-panel .lx-button-content,
 .lx-dropdown-panel .lx-button-set .lx-button-content,
 .lx-dropdown-panel > div > .lx-button .lx-button-content,
@@ -1953,15 +2470,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   border-color: var(--color-popover-item-border-focus);
   color: var(--color-popover-item-text-focus);
   outline-color: var(--color-focus-background);
-}
-
-.lx .lx-dropdown-panel .user-menu-panel .lx-button.lx-disabled,
-.lx .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
-.lx .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
-.lx .popper .lx-dropdown-panel > .lx-button.lx-disabled {
-  background: var(--color-popover-item-background-disabled);
-  color: var(--color-popover-item-text-disabled);
-  border-color: var(--color-popover-item-border-disabled);
 }
 
 /*** Popover icon styles ***/
@@ -2118,4 +2626,784 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   color: var(--color-popover-label);
   font-size: var(--popover-label-font-size);
   margin-bottom: var(--space-0);
+}
+
+/*** Input styles ***/
+
+.lx .lx-input-wrapper {
+  display: grid;
+  grid-template-areas: var(--input-grid-areas);
+  grid-template-columns: var(--input-grid-template-columns);
+  align-items: center;
+  height: var(--input-height);
+  width: var(--input-width-m);
+  border-radius: var(--input-border-radius);
+  background: var(--color-input-background);
+  color: var(--color-input-text);
+  font-size: var(--input-text-font-size);
+  font-weight: var(--input-text-font-weight);
+  line-height: var(--input-text-line-height);
+  overflow: hidden;
+}
+
+/******/
+
+.lx-autocomplete-default .lx-input-wrapper:not(.lx-disabled):has(input:focus),
+.lx-field-wrapper > .lx-text-input-wrapper.lx-input-wrapper:not(.lx-disabled) {
+  cursor: text;
+}
+
+.lx .lx-input-wrapper input {
+  padding: var(--space-0);
+  height: 100%;
+  width: 100%;
+  outline: none;
+  grid-area: input;
+}
+
+.lx-dropdown-default:focus-within:not(:has(.lx-input-helper-wrapper:focus-within)) .lx-input-wrapper:not(.lx-disabled),
+.lx-dropdown-default:focus .lx-input-wrapper:not(.lx-disabled),
+.lx-input-wrapper:not(.lx-disabled):has(.lx-autocomplete:focus),
+.lx-dropdown-default:focus-within:not(:has(.lx-input-helper-wrapper:focus-within)) .lx-input-wrapper:not(.lx-disabled) .lx-input-area,
+.lx.lx-header-wrapper .lx-dropdown-default:focus .lx-input-wrapper:not(.lx-disabled) .lx-input-area,
+.lx.lx-header-wrapper .lx-input-wrapper:not(.lx-disabled) .lx-input-area:has(.ProseMirror-focused),
+.lx.lx-header-wrapper .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus,
+.lx.lx-header-wrapper .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus-visible {
+  outline-color: var(--color-focus-background);
+  border-color: transparent;
+}
+
+.lx.lx-header-wrapper .lx-input-wrapper.lx-disabled .lx-input-area:focus,
+.lx.lx-header-wrapper .lx-input-wrapper.lx-disabled .lx-input-area:active,
+.lx.lx-header-wrapper .lx-input-wrapper.lx-disabled .lx-input-area:focus-visible {
+  outline: none;
+}
+
+.lx-dropdown-default:focus-visible {
+  outline-color: transparent;
+}
+
+.lx-autocomplete-default.lx-navigating .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus,
+.lx-autocomplete-default.lx-navigating .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus-visible {
+  outline-color: transparent;
+}
+
+.lx-input-wrapper > .lx-text-input:active:not(.lx-disabled) {
+  outline-color: var(--color-focus-background) !important;
+  border-color: transparent;
+}
+
+/* Todo: add tokens */
+.lx-input-wrapper .lx-tag {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-small);
+  letter-spacing: var(--letter-spacing-1);
+  line-height: 1.2em;
+  height: var(--input-tag-height);
+  width: var(--input-tag-width);
+  margin: var(--input-tag-margin);
+  background: var(--color-interactive-secondary-background);
+  color: var(--color-interactive-secondary-foreground);
+  border-radius: var(--border-radius-0750);
+  grid-area: tag;
+}
+
+.lx-empty {
+  padding: var(--popover-item-padding-s);
+  min-height: var(--row-size-dynamic);
+  display: flex;
+  align-items: center;
+  color: var(--color-label);
+}
+
+.lx-dropdown-panel .lx-empty {
+  column-gap: var(--popover-item-gap);
+}
+
+.lx-empty svg {
+  height: var(--popover-item-icon-size-s);
+  width: var(--popover-item-icon-size-s);
+  display: inline-block;
+  fill: var(--color-label);
+  flex-shrink: 0;
+  margin: var(--space-0125) var(--space-0);
+}
+
+/*** Input padding ***/
+
+.lx.lx-header-wrapper div.lx-input-wrapper:not(:has(.lx-input-icon-wrapper)):not(:has(.lx-autocomplete-loader)) .lx-input-area {
+  --input-icon-indent-left: 0rem;
+  --input-icon-indent-right: 0rem;
+}
+
+.lx.lx-header-wrapper div.lx-input-wrapper:not(:has(.lx-invalidation-icon-wrapper)):not(:has(.lx-input-helper-wrapper)) .lx-input-area {
+  --input-icon-invalid-indent-left: 0rem;
+  --input-icon-invalid-indent-right: 0rem;
+}
+
+.lx.lx-header-wrapper div.lx-input-wrapper:not(:has(> .lx-button)) .lx-input-area {
+  --input-button-indent-left: 0rem;
+  --input-button-indent-right: 0rem;
+}
+
+/* TODO: assumes both buttons are on the right; fix with "Inputs: button indent" task */
+.lx.lx-header-wrapper div.lx-input-wrapper:has(> .lx-button ~ .lx-button.lx-autocomplete-details-button) .lx-input-area {
+  --input-button-indent-right: calc(var(--input-button-width) * 2);
+}
+
+/* Multiple, valid */
+
+/* prettier-ignore */
+.lx.lx-header-wrapper div.lx-input-wrapper:has(.lx-tag) .lx-input-area {
+  padding-left: max(var(--input-padding-left), 
+                calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-padding-right),
+                 calc(var(--input-tag-indent-right) + var(--input-icon-invalid-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
+}
+
+.lx-autocomplete .lx-input-wrapper .lx-tag,
+.lx-dropdown-multiple .lx-input-wrapper .lx-tag {
+  width: auto;
+}
+
+.lx.lx-header-wrapper div.lx-input-wrapper:has(.lx-tag.chars-1) .lx-input-area {
+  padding-left: max(var(--input-padding-left), calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+}
+
+.lx.lx-header-wrapper div.lx-input-wrapper:has(.lx-tag.chars-2) .lx-input-area {
+  padding-left: max(var(--input-padding-left), calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 1ch));
+}
+
+.lx.lx-header-wrapper div.lx-input-wrapper:has(.lx-tag.chars-3) .lx-input-area {
+  padding-left: max(var(--input-padding-left), calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 2ch));
+}
+
+.lx.lx-header-wrapper div.lx-input-wrapper:has(.lx-tag.chars-4) .lx-input-area {
+  padding-left: max(var(--input-padding-left), calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 3ch));
+}
+
+.lx.lx-header-wrapper div.lx-input-wrapper:has(.lx-tag.chars-5) .lx-input-area {
+  padding-left: max(var(--input-padding-left), calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left) + 4ch));
+}
+
+/* Multiple, invalid */
+
+/* prettier-ignore */
+.lx.lx-header-wrapper div.lx-input-wrapper.lx-invalid:has(.lx-tag) .lx-input-area {
+  padding-left: max(var(--input-padding-left), 
+                calc(var(--input-tag-indent-left) + var(--input-icon-invalid-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-padding-right), 
+                 calc(var(--input-tag-indent-right) + var(--input-icon-invalid-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
+}
+
+/* Single, valid */
+
+/* prettier-ignore */
+.lx.lx-header-wrapper div.lx-input-wrapper:not(:has(.lx-tag)) .lx-input-area {
+  padding-left: max(var(--input-padding-left), 
+                calc(var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-padding-right), 
+                 calc(var(--input-icon-invalid-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
+}
+
+/* Single, invalid */
+
+.lx.lx-header-wrapper div.lx-input-wrapper.lx-invalid:not(:has(.lx-tag)) .lx-input-area {
+  padding-left: max(var(--input-padding-left), calc(var(--input-icon-invalid-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-padding-right), calc(var(--input-icon-invalid-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
+}
+
+/*** Text styles ***/
+
+.lx .lx-input-wrapper,
+.lx .lx-input-wrapper .lx-text-input::placeholder {
+  line-height: 1.5rem;
+  font-family: var(--font-family);
+  font-size: var(--input-text-font-size);
+  letter-spacing: 0;
+}
+
+.lx .lx-placeholder,
+.lx-dropdown-default-data,
+.lx-value-picker-placeholder,
+.lx-input-wrapper .lx-input-text,
+.lx-dropdown-default .lx-placeholder,
+.lx-autocomplete-default-panel .lx-value,
+.lx-text-input.lx-search-input::placeholder,
+.lx-dropdown-default-data.dropdown-multiple,
+.lx-autocomplete-default-panel .lx-placeholder,
+.lx-autocomplete-default-panel .lx-value .lx-item-display > p,
+.lx-autocomplete-default-panel .lx-value .lx-state > .lx-state-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--input-text-font-size);
+  z-index: 1;
+}
+
+.lx .lx-input-wrapper .lx-dropdown,
+.lx .lx-input-wrapper input {
+  letter-spacing: var(--letter-spacing-1);
+  color: var(--color-input-text);
+}
+
+.lx-text-input.lx-uppercase,
+.lx-data.lx-uppercase,
+.lx-uppercase .lx-text-input,
+.lx-uppercase .lx-data {
+  text-transform: uppercase;
+}
+
+.lx-input-wrapper.lx-disabled .lx-input-text,
+.lx-input-wrapper.lx-disabled .lx-input-area {
+  color: var(--color-input-text-disabled) !important;
+}
+
+.lx.lx-header-wrapper .lx-dropdown-default-content .lx-empty > p {
+  color: var(--color-label);
+}
+
+.lx-dropdown-default-data.dropdown-multiple,
+.lx .lx-dropdown-default .lx-placeholder,
+.lx-autocomplete-default .lx-value,
+.lx-input-wrapper ~ .lx-placeholder,
+.lx-input-wrapper .lx-placeholder {
+  display: flex;
+  grid-area: input;
+  align-items: center;
+  height: var(--input-height);
+  width: 100%;
+}
+
+.lx .lx-input-wrapper .lx-placeholder,
+.lx-input-wrapper .lx-placeholder > p,
+.lx-value-picker-placeholder.emptyModel {
+  color: var(--color-placeholder);
+}
+
+/*** Container background + disabled styles ***/
+
+.lx.lx-header-wrapper .lx-input-wrapper input:disabled {
+  background: transparent;
+  color: var(--color-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.lx.lx-header-wrapper div.lx-input-wrapper.lx-disabled {
+  color: var(--color-input-text-disabled);
+  background: var(--color-input-background-disabled);
+  cursor: not-allowed;
+}
+
+.lx.lx-header-wrapper div.lx-input-wrapper.lx-disabled .lx-input-area {
+  border-color: var(--color-input-border-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/*** Icon styles ***/
+
+.lx-modifier-icon {
+  height: var(--input-icon-size);
+  width: var(--input-icon-size);
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  fill: var(--color-input-icon);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.lx-dropdown-wrapper .lx-modifier-icon,
+.lx-dropdown-default .lx-modifier-icon,
+.lx-autocomplete-default .lx-modifier-icon {
+  fill: var(--color-input-icon-interactive);
+}
+
+.lx .lx-input-wrapper.lx-disabled .lx-modifier-icon,
+.lx .lx-input-wrapper.lx-disabled svg.thumb {
+  fill: var(--color-input-icon-disabled);
+}
+
+.lx-input-wrapper .lx-input-icon-wrapper {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: var(--input-icon-wrapper-width);
+  height: var(--input-icon-wrapper-height);
+}
+
+.lx-input-icon-wrapper {
+  grid-area: icon;
+}
+
+.lx-input-wrapper .lx-input-helper-wrapper {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: var(--input-icon-wrapper-width);
+  height: var(--input-button-height);
+  align-self: start;
+  grid-area: invalid-icon;
+  pointer-events: auto;
+  cursor: help;
+  z-index: 1;
+}
+
+.lx-input-helper-wrapper .popper-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.lx-input-helper-wrapper .lx-helper-icon {
+  height: var(--input-icon-size);
+  width: var(--input-icon-size);
+  fill: var(--color-input-icon);
+}
+
+/*** LxValuePicker styles ***/
+
+.lx-value-picker-dropdown-wrapper .lx-tag-label,
+.lx-autocomplete-input-icon-container .lx-tag-label {
+  margin-left: var(--space-0500);
+}
+
+.lx-value-picker-dropdown-wrapper .lx-tag-button,
+.lx-autocomplete-input-icon-container .lx-tag-button {
+  margin-left: var(--space-0250);
+}
+
+.lx-value-picker-dropdown-wrapper .lx-tag-button .lx-button,
+.lx-autocomplete-input-icon-container .lx-tag-button .lx-button {
+  min-width: unset;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-color: transparent;
+  border-radius: var(--border-radius-full);
+}
+
+.lx-value-picker-dropdown-wrapper .lx-tag-button .lx-button svg,
+.lx-autocomplete-input-icon-container .lx-tag-button .lx-button svg {
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+  fill: var(--color-interactive-secondary-foreground);
+}
+
+.lx-value-picker-dropdown-wrapper:not([data-disabled]) .lx-dropdown-default .lx-input-wrapper:not(.lx-disabled) .lx-tag-button .lx-button:hover,
+.lx-autocomplete-default:not(.lx-disabled) .lx-autocomplete-input-icon-container .lx-autocomplete .lx-autocomplete-default-panel .lx-tag .lx-tag-button .lx-button:hover {
+  background-color: var(--color-interactive-secondary-hover-background);
+}
+
+.lx-value-picker-dropdown-wrapper .lx-dropdown-default-panel .lx-tag .lx-button.lx-button-secondary.lx-button-icon-only:focus {
+  outline: 2px solid var(--color-focus-background);
+}
+
+.lx-dropdown-default-data > .lx-button {
+  padding: auto;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  position: absolute;
+  right: var(--space-0);
+  margin-right: var(--space-3000);
+}
+
+.lx-value-picker-dropdown-wrapper .lx-dropdown-default-data .lx-text-input.lx-search-input::placeholder {
+  padding-left: var(--space-0);
+}
+
+.lx-value-picker-dropdown-wrapper .lx-dropdown-default-data > .lx-field-wrapper {
+  width: 100%;
+}
+
+.lx .lx-column-read-only-data {
+  list-style-type: none;
+  padding: var(--space-0);
+  margin: var(--space-0);
+}
+
+/*** Misc input state + placeholder styles ***/
+
+::-webkit-input-placeholder {
+  color: var(--color-placeholder);
+  opacity: 1;
+  font-size: 1rem;
+  font-weight: var(--font-weight);
+  letter-spacing: var(--letter-spacing-1);
+}
+
+::-moz-placeholder {
+  color: var(--color-placeholder);
+  opacity: 1;
+  font-size: 1rem;
+  font-weight: var(--font-weight);
+  letter-spacing: var(--letter-spacing-1);
+}
+
+:-ms-input-placeholder {
+  color: var(--color-placeholder);
+  opacity: 1;
+  font-size: 1rem;
+  font-weight: var(--font-weight);
+  letter-spacing: var(--letter-spacing-1);
+}
+
+::-ms-input-placeholder {
+  color: var(--color-placeholder);
+  opacity: 1;
+  font-size: 1rem;
+  font-weight: var(--font-weight);
+  letter-spacing: var(--letter-spacing-1);
+}
+
+::placeholder {
+  color: var(--color-placeholder);
+  opacity: 1;
+  font-size: 1rem;
+  font-weight: var(--font-weight);
+  letter-spacing: var(--letter-spacing-1);
+}
+
+:disabled::-webkit-input-placeholder {
+  color: var(--color-placeholder-disabled);
+}
+
+:disabled::-moz-placeholder {
+  color: var(--color-placeholder-disabled);
+}
+
+:disabled:-ms-input-placeholder {
+  color: var(--color-placeholder-disabled);
+}
+
+:disabled::-ms-input-placeholder {
+  color: var(--color-placeholder-disabled);
+}
+
+:disabled::placeholder {
+  color: var(--color-placeholder-disabled);
+}
+
+/*** Misc dropdown, LxAutoComplete, LxValuePicker styles ***/
+
+.lx-dropdown {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.lx-dropdown-default {
+  position: static;
+  cursor: pointer;
+  outline: none;
+}
+
+.lx-dropdown-default > .popper-wrapper,
+.lx-autocomplete-default > .popper-wrapper {
+  display: inline-block;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.lx-value-picker-item label:not(:has(.lx-state)),
+.lx-value-picker-item .lx-state > .lx-state-text,
+.lx-value-picker-item .lx-item-display > .lx-data,
+.lx-value-picker-item label > p,
+.lx-value-picker-item label > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx-dropdown-default[disabled='true'] {
+  opacity: 1;
+}
+
+.lx-autocomplete-default:not(.lx-opened):not(.lx-autocomplete-search):not(:has(.lx-placeholder)) .lx-text-input {
+  caret-color: transparent;
+}
+
+.lx-autocomplete .lx-autocomplete-default-panel .lx-text-input-wrapper .lx-text-input {
+  margin: var(--space-0);
+}
+
+.lx.lx-header-wrapper div.lx-autocomplete-default {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+/*** LxLoader styles ***/
+
+.lx-autocomplete-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--input-icon-wrapper-width);
+  height: var(--input-icon-wrapper-height);
+  grid-area: icon;
+}
+
+.lx-loader-small .lx-loader {
+  width: var(--loader-width-s);
+  height: var(--loader-height-s);
+}
+
+.lx-loader-small .lx-loader circle {
+  stroke-width: var(--loader-active-width-s);
+}
+
+.lx-loader-default.lx-loader-small {
+  flex-direction: row;
+  column-gap: var(--loader-column-gap);
+}
+
+.lx-loader-indeterminate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: var(--loader-row-gap);
+}
+
+.lx-loader-indeterminate svg circle {
+  stroke-dasharray: 276.4608 276.4608;
+  stroke-dashoffset: 52.52755;
+}
+
+.lx-loader-wrapper svg {
+  fill: transparent;
+}
+
+/* Active styles */
+
+.lx-loader-active {
+  stroke: var(--color-loader-active); /* For default loader */
+  stroke-linecap: var(--loader-active-cap);
+}
+
+.lx-loader-indeterminate .lx-loader-active {
+  stroke-dashoffset: 52.52755;
+}
+
+.lx-loader-indeterminate.lx-loader-small .lx-loader-active {
+  stroke-dashoffset: 143.75962;
+}
+
+/* State styles*/
+
+.lx-loader-small .lx-loader-state {
+  width: var(--loader-state-indicator-size-s);
+  height: var(--loader-state-indicator-size-s);
+  margin: var(--loader-state-indicator-margin-s);
+}
+
+/***/
+
+.lx.lx-header-wrapper .lx-autocomplete-default.lx-disabled {
+  color: var(--color-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.lx .lx-input-wrapper > .lx-button.lx-autocomplete-details-button {
+  grid-area: button-details;
+}
+
+/* Safari shows a native tooltip over truncated text, so hover goes to the input below */
+/* TODO: drop .lx-autocomplete-new scoping (here and in AutoCompleteNew.vue) once AutoCompleteLegacy is removed */
+.lx-autocomplete-new .lx-input-wrapper > .lx-value,
+.lx-autocomplete-new .lx-input-wrapper > .lx-placeholder {
+  pointer-events: none;
+}
+
+.lx .lx-autocomplete-search .lx-text-input.lx-autocomplete-text-hidden {
+  color: transparent;
+}
+
+.lx .lx-autocomplete-search .lx-modifier-icon {
+  fill: var(--color-input-icon);
+}
+
+.lx-autocomplete-default .lx-autocomplete .lx-value .lx-item-display {
+  overflow: hidden;
+}
+
+.lx .lx-input-wrapper .lx-value .lx-autocomplete-item-content > svg {
+  fill: var(--color-data);
+}
+
+.lx .lx-input-wrapper.lx-disabled .lx-value .lx-autocomplete-item-content > svg {
+  fill: var(--color-input-icon-disabled);
+}
+
+.lx-autocomplete-read-only-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-0250) var(--space-0500);
+}
+
+.lx-empty.additional-text {
+  border-bottom: var(--border-width-1) solid var(--color-chrome);
+  align-items: start;
+}
+
+.lx-empty.additional-text > p {
+  align-self: center;
+}
+
+.lx-empty.additional-text > svg {
+  margin-left: var(--space-0250);
+}
+
+.lx-autocomplete .lx-autocomplete-default-panel .lx-text-input-wrapper > .lx-value.lx-input-area > div,
+.lx-autocomplete .lx-autocomplete-default-panel .lx-text-input-wrapper > .lx-placeholder.lx-input-area > div {
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--input-text-font-size);
+}
+
+.lx-dropdown-default .lx-dropdown-input-wrapper > .lx-dropdown-default-panel > .lx-placeholder > span,
+.lx-dropdown-default .lx-dropdown-input-wrapper > .lx-dropdown-default-panel > .lx-dropdown-default-data .lx-state > .lx-state-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*** Input area + pseudo input styles ***/
+
+.lx.lx-header-wrapper .lx-input-wrapper .lx-input-area {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  grid-area: input;
+  grid-column: 1 / -1;
+  width: 100%;
+  height: var(--input-height);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  border-width: var(--input-border-width);
+  border-style: var(--input-border-style);
+  border-color: var(--color-input-border);
+  border-radius: var(--input-border-radius);
+  font-size: var(--input-text-font-size);
+}
+
+.pseudo-input,
+.lx-dropdown-input-wrapper,
+.lx-autocomplete-default-data,
+.lx-value-picker-dropdown-wrapper > .lx-dropdown-default {
+  height: var(--input-height);
+}
+
+.lx.lx-header-wrapper .lx-input-wrapper .lx-input-area::placeholder {
+  font-size: var(--input-text-font-size);
+}
+
+.pseudo-input {
+  width: 100%;
+  grid-area: input;
+}
+
+.lx.lx-header-wrapper .lx-input-wrapper input.lx-input-area {
+  z-index: 1;
+}
+
+.lx.lx-header-wrapper div.lx-dropdown-wrapper.lx-input-wrapper select > option {
+  background-color: var(--color-background);
+}
+
+.lx.lx-header-wrapper div.lx-dropdown-wrapper.lx-input-wrapper select.lx-input-area {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx.lx-header-wrapper div.lx-dropdown-wrapper.lx-input-wrapper:not(.lx-disabled):hover select > option,
+.lx.lx-header-wrapper div.lx-dropdown-wrapper.lx-input-wrapper:has(.lx-dropdown):not(.lx-disabled):hover {
+  background-color: var(--color-region-hover);
+}
+
+.lx-text-input-wrapper > .lx-input-wrapper {
+  display: flex;
+}
+
+/*** Input button styles ***/
+
+.lx .lx-input-wrapper > .lx-button {
+  height: var(--input-button-height);
+  min-width: var(--input-button-width);
+  width: var(--input-button-width);
+  border: var(--input-button-border);
+  border-radius: var(--input-button-border-radius);
+  background: var(--color-input-button-background);
+  outline-offset: var(--input-button-outline-offset);
+  grid-area: button;
+  z-index: 1;
+}
+
+.lx .lx-input-wrapper > .lx-button svg {
+  height: var(--input-button-icon-size);
+  width: var(--input-button-icon-size);
+  fill: var(--color-input-button-icon);
+}
+
+/* Hover */
+
+.lx .lx-input-wrapper > .lx-button:hover {
+  background: var(--color-input-button-background-hover);
+  border-color: var(--color-input-button-border-hover);
+}
+
+.lx .lx-input-wrapper > .lx-button:hover svg {
+  fill: var(--color-input-button-icon-hover);
+}
+
+/* Focus */
+
+.lx .lx-input-wrapper > .lx-button:focus {
+  background: var(--color-input-button-background-focus);
+  outline: 2px solid var(--color-focus-background);
+}
+
+.lx .lx-input-wrapper > .lx-button:focus svg {
+  fill: var(--color-input-button-icon-focus);
+}
+
+/* Focus-hover */
+
+.lx-input-wrapper > .lx-button:focus:hover {
+  background: var(--color-input-button-background-hover);
+  border-color: var(--color-input-button-border-hover);
+}
+
+.lx-input-wrapper > .lx-button:focus:hover svg {
+  fill: var(--color-input-button-icon-hover);
+}
+
+/* Active */
+
+.lx .lx-input-wrapper > .lx-button:active {
+  background: var(--color-input-button-background-active);
+  border-color: var(--color-input-button-border-active);
+}
+
+.lx .lx-input-wrapper > .lx-button:active svg {
+  fill: var(--color-input-button-icon-active);
+}
+
+/* Disabled */
+
+.lx .lx-input-wrapper > .lx-button.lx-disabled {
+  background: var(--color-input-button-background-disabled);
+  border-color: var(--color-input-button-border-disabled);
+}
+
+.lx .lx-input-wrapper > .lx-button.lx-disabled svg {
+  fill: var(--color-input-button-icon-disabled);
 }
