@@ -112,7 +112,7 @@
 .lx .lx-form .lx-row .lx-data:not(.lx-badge-text) {
   padding-top: var(--space-0250);
   overflow-wrap: break-word;
-  word-break: break-word;
+  overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
 

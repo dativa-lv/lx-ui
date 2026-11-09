@@ -229,28 +229,21 @@ const nestedGroupIdsWithChildren = computed(
   () => new Set(actionsResolved.value.map((action) => action?.groupId).filter(Boolean))
 );
 
-const groupedItems = computed(() => {
-  const res = actionsResolved.value.reduce((acc, action) => {
+const groupedItems = computed(() =>
+  actionsResolved.value.reduce((acc, action) => {
     if (action?.kind === 'main') return acc; // skip 'main' items
     // Submenus are not supported: a trigger with children is skipped, its children render as their own group
     if (action?.nestedGroupId && nestedGroupIdsWithChildren.value.has(action.nestedGroupId)) {
       return acc;
     }
-    if (action?.groupId) {
-      if (!acc[action?.groupId]) acc[action?.groupId] = [];
-      acc[action?.groupId].push(action);
 
-      if (groupMap?.value[action?.groupId]?.kind === 'tags') {
-        const selectedItem = acc[action?.groupId]?.find((a) => a.selected);
-        if (selectedItem) {
-          acc[action?.groupId][0].value = selectedItem.id;
-        }
-      }
-    } else {
-      if (!acc.lx_group) {
-        acc.lx_group = [];
-      }
-      acc.lx_group.push(action);
+    const groupId = action?.groupId || 'lx_group';
+    if (!acc[groupId]) acc[groupId] = [];
+    acc[groupId].push(action);
+
+    if (action?.groupId && groupMap?.value[groupId]?.kind === 'tags') {
+      const selectedItem = acc[groupId].find((a) => a.selected);
+      if (selectedItem) acc[groupId][0].value = selectedItem.id;
     }
 
     if (action?.kind === 'toggle' && action?.value === undefined) {
@@ -259,9 +252,8 @@ const groupedItems = computed(() => {
     }
 
     return acc;
-  }, {});
-  return res;
-});
+  }, {})
+);
 
 const mainButton = computed(() => {
   const mainButtons = actionsResolved.value?.filter((x) => x?.kind === 'main');

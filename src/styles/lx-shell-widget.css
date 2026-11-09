@@ -23,30 +23,6 @@ header.lx.lx-header-wrapper * {
   padding-top: var(--space-0);
 }
 
-header.lx.lx-layout-public {
-  grid-area: header;
-  background-color: var(--color-region);
-  color: var(--color-nav-foreground);
-  height: var(--nav-row-size);
-  position: fixed;
-  top: var(--space-0);
-  width: 100%;
-  align-items: center;
-  z-index: 250;
-  border-bottom: var(--border-width-2) solid var(--color-chrome);
-  grid-template-columns: 1fr var(--body-column-size) 1fr;
-  transition: height 0.2s ease-in-out;
-}
-
-header.lx.lx-layout-public > .lx-header {
-  grid-column: 2/3;
-  display: grid;
-  width: 100%;
-  padding: var(--space-0);
-  height: var(--nav-row-size);
-  align-items: center;
-}
-
 header.lx.lx-layout-public > .lx-header .lx-main-button {
   display: grid;
   gap: var(--space-0500);
@@ -107,9 +83,6 @@ header.lx.lx-header-wrapper {
   display: flex;
 }
 
-header.lx.lx-header-wrapper.lx-layout-public {
-  display: grid;
-}
 div > header.lx-layout-default.lx-header-wrapper {
   background: linear-gradient(to right, color-mix(in srgb, var(--color-brand) 25%, transparent) 0%, transparent 50%), var(--color-nav-background);
   color: var(--color-nav-foreground);
@@ -128,7 +101,29 @@ header.lx.lx-header-wrapper .lx-header {
   border-bottom: var(--region-border);
 }
 
+header.lx.lx-layout-public {
+  display: grid;
+  grid-area: header;
+  background-color: var(--color-region);
+  color: var(--color-nav-foreground);
+  height: var(--nav-row-size);
+  position: fixed;
+  top: var(--space-0);
+  width: 100%;
+  align-items: center;
+  z-index: 250;
+  border-bottom: var(--border-width-2) solid var(--color-chrome);
+  grid-template-columns: 1fr var(--body-column-size) 1fr;
+  transition: height 0.2s ease-in-out;
+}
+
 header.lx.lx-layout-public > .lx-header {
+  grid-column: 2/3;
+  display: grid;
+  width: 100%;
+  padding: var(--space-0);
+  height: var(--nav-row-size);
+  align-items: center;
   grid-template-columns: auto 1fr auto;
 }
 
@@ -2139,16 +2134,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx-dropdown-panel > .lx-mega-menu-container .primary-menu-tile:nth-of-type(3) > *,
 .lx-dropdown-default-content .lx-value-picker-item:only-child {
   border-top-right-radius: var(--popover-item-border-radius-outer);
-}
-
-.lx-alert-menu-list > li:last-child .lx-info-box,
-.lx-dropdown-panel:not(:has(.lx-button-set)) > .lx-mega-menu-container .primary-menu-tile:nth-last-child(3):nth-child(3n + 1) > * {
-  border-bottom-left-radius: var(--popover-item-border-radius-outer);
-}
-
-.lx-alert-menu-list > li:last-child .lx-info-box,
-.lx-dropdown-panel:not(:has(.lx-button-set)) > .lx-mega-menu-container .primary-menu-tile:last-child:nth-child(3n) > * {
-  border-bottom-right-radius: var(--popover-item-border-radius-outer);
 }
 
 .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group > .lx-label {

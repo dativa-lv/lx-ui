@@ -475,7 +475,7 @@
 .lx-invalidation-message,
 .lx-helper-text {
   overflow-wrap: break-word;
-  word-break: break-word;
+  overflow-wrap: anywhere;
   max-width: 90ch;
 }
 
@@ -522,14 +522,14 @@
 .lx-markdown-text-area code,
 .lx-rich-text-wrapper code {
   white-space: break-spaces;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .lx-rich-text-wrapper > p,
 .lx-rich-text-wrapper > div,
 .lx-rich-text-wrapper > ul li,
 .lx-rich-text-wrapper > ol li {
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 /*** LxDTP + LxDTR + LxDurationInput styles ***/

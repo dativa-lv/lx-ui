@@ -484,7 +484,7 @@ svg .lx-shade {
 .lx-form-grid .lx-row a,
 .lx-form-grid .lx-row .lx-link {
   --link-text-font-weight: var(--font-weight-data);
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-field-wrapper > .lx-date-time-picker-wrapper p.lx-data,
@@ -631,7 +631,7 @@ svg .lx-shade {
 .lx-form-grid > .lx-main .lx-row .lx-vertical .lx-data:not(.lx-badge-text) {
   word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .lx-modal > .lx-main .lx-appendable-list .lx-form-section {

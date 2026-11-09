@@ -39,7 +39,7 @@
   min-width: var(--info-wrapper-min-width);
   display: grid;
   overflow-wrap: break-word;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .lx-info-wrapper.lx-responsive-view .lx-info-wrapper-panel {

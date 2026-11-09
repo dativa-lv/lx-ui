@@ -14,7 +14,7 @@ const emits = defineEmits(['click']);
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  label: { type: String, default: '', required: true },
+  label: { type: String, required: true },
   title: { type: String, default: '' },
   busyTooltip: { type: String, default: '' },
   icon: { type: String, default: '' },
@@ -257,7 +257,7 @@ defineExpose({ focus, scrollIntoView, getElement, holdProgress });
       <div v-if="!showIcon && !busy"></div>
       <div
         class="lx-button-content"
-        v-if="variant !== 'icon-only' && (label?.trim() !== '' || $slots.default)"
+        v-if="variant !== 'icon-only' && (label?.trim() || $slots.default)"
       >
         <span v-if="label" ref="labelEl" class="lx-button-label">{{ label }}</span>
       </div>
@@ -321,7 +321,7 @@ defineExpose({ focus, scrollIntoView, getElement, holdProgress });
       </template>
       <div
         class="lx-button-content"
-        v-if="variant !== 'icon-only' && (label?.trim() !== '' || $slots.default)"
+        v-if="variant !== 'icon-only' && (label?.trim() || $slots.default)"
       >
         <span v-if="label" ref="labelEl" class="lx-button-label">{{ label }}</span>
       </div>

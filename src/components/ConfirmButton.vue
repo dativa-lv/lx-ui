@@ -8,7 +8,7 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  label: { type: String, default: '', required: true },
+  label: { type: String, required: true },
   title: { type: String, default: '' },
   busyTooltip: { type: String, default: '' },
   icon: { type: String, default: '' },
