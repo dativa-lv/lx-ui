@@ -18,6 +18,7 @@ import {
 } from '@vueuse/core';
 
 import { logError } from '@/utils/devUtils';
+import { getCategoryClass } from '@/utils/decorationUtils';
 import useLx from '@/hooks/useLx';
 import useScrollVirtualizer, {
   extractVirtualRangeWithPinned,
@@ -101,7 +102,8 @@ const props = defineProps({
     group: 'main',
     sequence: 2,
   },
-  idAttribute: { type: String, default: 'id', group: 'additional', sequence: 98 },
+  idAttribute: { type: String, default: 'id', group: 'additional', sequence: 97 },
+  categoryAttribute: { type: String, default: 'category', group: 'additional', sequence: 98 },
   actionDefinitions: { type: Array, default: () => [], group: 'main', sequence: 3 },
   actionAdditionalParameter: { type: String, default: null, group: 'additional', sequence: 11 },
   defaultActionName: { type: String, default: 'open', group: 'additional', sequence: 7 },
@@ -251,6 +253,8 @@ const textsDefault = {
   close: 'Aizvērt',
   skipHeader: 'Pāriet uz tabulas datiem',
   overflowMenu: 'Atvērt papildu iespējas',
+  expand: 'Atvērt',
+  collapse: 'Aizvērt',
   loadingStart: 'Notiek ielāde',
   loadingEnd: 'Ielāde ir pabeigta',
   defaultSortingTooltips: {
@@ -310,6 +314,11 @@ let scrollCompensationRaf = null;
 const { width, height } = useWindowSize();
 
 const isResponsiveLayout = computed(() => width.value <= 800);
+
+function getRowCategoryClass(row) {
+  const category = row?.[props.categoryAttribute];
+  return getCategoryClass(category);
+}
 
 const bounding = useElementBounding(container, {
   windowScroll: false,
@@ -2426,7 +2435,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             <div
               v-for="{ row, rowIndex, rowKey, style } in displayedRows"
               class="lx-grid-row"
-              :class="[{ 'lx-selected': selectedRowsRaw[row[idAttribute]] && hasSelecting }]"
+              :class="[
+                { 'lx-selected': selectedRowsRaw[row[idAttribute]] && hasSelecting },
+                getRowCategoryClass(row),
+              ]"
               :id="`row-${row[idAttribute]}`"
               :style="style"
               :ref="shouldVirtualizeDataGrid ? measureDataGridVirtualElement : null"
@@ -2436,6 +2448,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               :data-index="shouldVirtualizeDataGrid ? rowIndex : null"
               @dblclick="defaultActionClicked(row[idAttribute], row)"
             >
+              <div class="lx-category-displayer" aria-hidden="true" />
               <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
               <div
                 v-if="showSelecting"
@@ -3365,8 +3378,62 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             </LxRow>
           </template>
         </template>
-        <template #customHeader="{ item, expanded }" v-if="$slots.customResponsiveHeader">
-          <slot name="customResponsiveHeader" v-bind="{ item, expanded }" />
+        <template #customHeader="{ item, expanded }">
+          <slot
+            v-if="$slots.customResponsiveHeader"
+            name="customResponsiveHeader"
+            v-bind="{ item, expanded }"
+          />
+          <template v-else>
+            <div v-if="showSelecting && isSelectable(item)" class="lx-icons" @click.stop>
+              <LxCheckbox
+                v-if="selectionKind === 'multiple'"
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedRowsRaw[item[idAttribute]]"
+                :value="item[idAttribute]?.toString()"
+                :disabled="isDisabled"
+                @keyup.space.stop
+              />
+              <LxRadioButton
+                v-else-if="selectionKind === 'single'"
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedRowsRaw[item[idAttribute]]"
+                :value="item[idAttribute]?.toString()"
+                :disabled="isDisabled"
+                @click="selectRow(item[idAttribute])"
+                @keyup.space.stop="selectRow(item[idAttribute])"
+              />
+            </div>
+            <div
+              v-else-if="showSelecting && !isSelectable(item)"
+              class="lx-icons"
+              aria-hidden="true"
+            >
+              <span />
+            </div>
+            <div v-else class="lx-icons" />
+            <div class="lx-content lx-custom-content">
+              <div class="lx-primary lx-title" v-tooltip="item[primaryColumnDisplayAttribute()]">
+                {{ item[primaryColumnDisplayAttribute()] }}
+              </div>
+              <div v-if="getRowCategoryClass(item)" class="lx-indications">
+                <LxBadge
+                  :id="`${id}-${item[idAttribute]}-category-badge`"
+                  class="lx-data-grid-category-badge"
+                  :class="getRowCategoryClass(item)"
+                  value=" "
+                  :tooltip="item[primaryColumnDisplayAttribute()]"
+                />
+              </div>
+            </div>
+            <div class="lx-indications">
+              <LxIcon
+                :value="item.invalid ? 'invalid' : expanded ? 'chevron-up' : 'chevron-down'"
+                :title="item.invalid ? '' : expanded ? displayTexts.collapse : displayTexts.expand"
+                :meaningful="!!item.invalid"
+              />
+            </div>
+          </template>
         </template>
       </LxAppendableList>
 

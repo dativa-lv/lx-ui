@@ -117,6 +117,34 @@ export const SHAPE_COLORS = [
   '192251',
 ];
 
+export const CATEGORY_VALUES = new Set([
+  'red',
+  'blue',
+  'teal',
+  'green',
+  'purple',
+  'orange',
+  'yellow',
+  'bad',
+  'new',
+  'good',
+  'draft',
+  'error',
+  'edited',
+  'signed',
+  'ongoing',
+  'waiting',
+  'deleted',
+  'disabled',
+  'inactive',
+  'finished',
+  'incomplete',
+]);
+
+export function getCategoryClass(category) {
+  return CATEGORY_VALUES.has(category) ? `lx-category-${category}` : null;
+}
+
 /*
     via 'avvvatars' https://github.com/nusu/avvvatars
 

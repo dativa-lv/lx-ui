@@ -124,6 +124,9 @@
   --data-grid-selecting-block-width: var(--row-size);
   --data-grid-selecting-block-height: var(--row-size);
   --data-grid-toolbar-gap-bottom: var(--space-0);
+  --data-grid-category-width: 0.25rem;
+  --data-grid-category-margin: var(--space-0250);
+  --data-grid-category-border-radius: var(--border-radius-0);
 
   --selecting-block-margin: var(--space-0500) var(--space-0);
   --selecting-block-text-padding: var(--space-0125) var(--space-0);

@@ -177,6 +177,8 @@
   --data-grid-cell-padding: var(--space-1000);
   --data-grid-footer-grid-template-columns: 1fr auto auto auto;
   --data-grid-footer-grid-areas: '. count-selector count-display paging-buttons';
+  --data-grid-category-margin: var(--space-0500) var(--space-0250);
+  --data-grid-category-border-radius: var(--border-radius-full);
 
   --color-data-grid-border: var(--color-chrome);
   --color-data-grid-column-header-background: var(--color-region);

@@ -154,7 +154,7 @@
 
   --color-loader-track: var(--contrast-background);
 
-  --badge-border-s: var(--badge-border-width-s) solid var(--contrast-foreground);
+  --badge-border-s: var(--badge-border-width-s) solid transparent;
 
   --color-sheet-handle-icon: var(--contrast-background);
   --color-sheet-button-icon: var(--contrast-background);

@@ -5,6 +5,7 @@ import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import { loadLibrary } from '@/utils/libLoader';
 import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
+import { getCategoryClass } from '@/utils/decorationUtils';
 
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -142,6 +143,7 @@ defineExpose({ focus });
       @keydown.space.prevent
       v-tooltip="clickable ? tooltip : ''"
       :class="[
+        getCategoryClass(category),
         { 'lx-list-item-interactive': href || clickable },
         { 'lx-list-item-has-description': description },
         { 'lx-list-item-disabled': disabled || busy || loading },
@@ -149,27 +151,6 @@ defineExpose({ focus });
         { 'lx-inactive': kind === 'inactive' },
         { 'lx-list-item-tile': kind === 'tile' },
         { 'lx-list-item-active': active },
-        { 'lx-category-red': category === 'red' },
-        { 'lx-category-blue': category === 'blue' },
-        { 'lx-category-teal': category === 'teal' },
-        { 'lx-category-green': category === 'green' },
-        { 'lx-category-purple': category === 'purple' },
-        { 'lx-category-orange': category === 'orange' },
-        { 'lx-category-yellow': category === 'yellow' },
-        { 'lx-category-bad': category === 'bad' },
-        { 'lx-category-new': category === 'new' },
-        { 'lx-category-good': category === 'good' },
-        { 'lx-category-draft': category === 'draft' },
-        { 'lx-category-error': category === 'error' },
-        { 'lx-category-edited': category === 'edited' },
-        { 'lx-category-signed': category === 'signed' },
-        { 'lx-category-ongoing': category === 'ongoing' },
-        { 'lx-category-waiting': category === 'waiting' },
-        { 'lx-category-deleted': category === 'deleted' },
-        { 'lx-category-disabled': category === 'disabled' },
-        { 'lx-category-inactive': category === 'inactive' },
-        { 'lx-category-finished': category === 'finished' },
-        { 'lx-category-incomplete': category === 'incomplete' },
         { 'lx-invalid': invalid },
         {
           'lx-list-item-compact-actions':
@@ -256,27 +237,7 @@ defineExpose({ focus });
         { 'lx-inactive': kind === 'inactive' },
         { 'lx-list-item-tile': kind === 'tile' },
         { 'lx-list-item-active': active },
-        { 'lx-category-red': category === 'red' },
-        { 'lx-category-blue': category === 'blue' },
-        { 'lx-category-teal': category === 'teal' },
-        { 'lx-category-green': category === 'green' },
-        { 'lx-category-purple': category === 'purple' },
-        { 'lx-category-orange': category === 'orange' },
-        { 'lx-category-yellow': category === 'yellow' },
-        { 'lx-category-bad': category === 'bad' },
-        { 'lx-category-new': category === 'new' },
-        { 'lx-category-good': category === 'good' },
-        { 'lx-category-draft': category === 'draft' },
-        { 'lx-category-error': category === 'error' },
-        { 'lx-category-edited': category === 'edited' },
-        { 'lx-category-signed': category === 'signed' },
-        { 'lx-category-ongoing': category === 'ongoing' },
-        { 'lx-category-waiting': category === 'waiting' },
-        { 'lx-category-deleted': category === 'deleted' },
-        { 'lx-category-disabled': category === 'disabled' },
-        { 'lx-category-inactive': category === 'inactive' },
-        { 'lx-category-finished': category === 'finished' },
-        { 'lx-category-incomplete': category === 'incomplete' },
+        getCategoryClass(category),
         { 'lx-invalid': invalid },
         {
           'lx-list-item-compact-actions':

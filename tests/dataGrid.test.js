@@ -70,6 +70,65 @@ test('LxDataGrid component mounts successfully', () => {
   expect(wrapper.exists()).toBe(true);
 });
 
+test('renders row categories with category classes and displayer', async () => {
+  wrapper = mountComponent({
+    props: {
+      hasVirtualization: false,
+      idAttribute: 'id',
+      categoryAttribute: 'status',
+      items: [
+        { id: 'categorized-row', name: 'Categorized row', status: 'blue' },
+        { id: 'uncategorized-row', name: 'Uncategorized row' },
+      ],
+    },
+  });
+
+  await nextTick();
+
+  const [categorizedRow, uncategorizedRow] = wrapper.findAll('.lx-grid-content .lx-grid-row');
+
+  expect(categorizedRow.classes()).toContain('lx-category-blue');
+  expect(categorizedRow.find('.lx-category-displayer').exists()).toBe(true);
+  expect(uncategorizedRow.classes()).not.toContain('lx-category-blue');
+});
+
+test('renders row categories in the responsive layout', async () => {
+  const originalWidth = window.innerWidth;
+  window.innerWidth = 800;
+  window.dispatchEvent(new Event('resize'));
+
+  try {
+    wrapper = mountComponent({
+      props: {
+        hasVirtualization: false,
+        idAttribute: 'id',
+        categoryAttribute: 'status',
+        columnDefinitions: [{ attributeName: 'name', kind: 'primary' }],
+        items: [{ id: 'responsive-row', name: 'Responsive row', status: 'green' }],
+      },
+    });
+
+    await nextTick();
+
+    const row = wrapper.find('.lx-appendable-list .lx-data-block-wrapper');
+
+    expect(row.classes()).toContain('lx-data-block-custom-header');
+    expect(row.find('.lx-primary.lx-title').text()).toBe('Responsive row');
+
+    const indications = row.find('.lx-indications');
+    const badge = indications.find('.lx-data-grid-category-badge');
+
+    expect(badge.classes()).toContain('lx-badge-empty');
+    expect(badge.find('.lx-badge-text').text().trim()).toBe('');
+    expect(indications.element.firstElementChild).toBe(badge.element);
+    expect(row.find('.lx-indications svg').exists()).toBe(true);
+    expect(row.find('.lx-category-displayer').exists()).toBe(false);
+  } finally {
+    window.innerWidth = originalWidth;
+    window.dispatchEvent(new Event('resize'));
+  }
+});
+
 describe('Scrollable performance', () => {
   const props = {
     idAttribute: 'id',

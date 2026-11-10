@@ -12,6 +12,9 @@
 | `--data-grid-border-width`                      | `--border-width-0`                            |
 | `--data-grid-border-style`                      | solid                                         |
 | `--data-grid-border-radius`                     | `--border-radius-0`                           |
+| `--data-grid-category-width`                    | 0.25rem                                       |
+| `--data-grid-category-margin`                   | `--space-0250`                                |
+| `--data-grid-category-border-radius`            | `--border-radius-0`                           |
 | `--data-grid-cell-padding`                      | `--space-0750` `--space-1000`                 |
 | `--data-grid-cell-min-height`                   | 3rem                                          |
 | `--data-grid-divider-border`                    | `--border-width-1` solid `--color-chrome`     |
