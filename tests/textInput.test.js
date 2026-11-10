@@ -292,6 +292,19 @@ describe('LxTextInput', () => {
         await wrapper.vm.$nextTick();
         expect(props.modelValue).toBe('123');
       });
+
+      test('leaves room for thousands separators in integer and decimal masks', () => {
+        wrapper = mount(LxTextInput, { props: { mask: 'integer', maxlength: 4 } });
+        expect(wrapper.find('.lx-text-input').attributes('maxlength')).toBe('4');
+        wrapper.unmount();
+
+        wrapper = mount(LxTextInput, { props: { mask: 'decimal', maxlength: 10 } });
+        expect(wrapper.find('.lx-text-input').attributes('maxlength')).toBe('13');
+        wrapper.unmount();
+
+        wrapper = mount(LxTextInput, { props: { maxlength: 10 } });
+        expect(wrapper.find('.lx-text-input').attributes('maxlength')).toBe('10');
+      });
     });
 
     describe('tooltip', () => {
@@ -379,6 +392,147 @@ describe('LxTextInput', () => {
 
         const inputElement = wrapper.find('.lx-text-input').element;
         expect(inputElement.value).toBe('12,34 €');
+      });
+
+      test('currency - groups thousands with spaces', () => {
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'currency', modelValue: 100000000 },
+        });
+
+        expect(wrapper.find('.lx-text-input').element.value).toBe('100 000 000,00 €');
+      });
+
+      test('currency - does not group four integer digits', () => {
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'currency', modelValue: 9876 },
+        });
+
+        expect(wrapper.find('.lx-text-input').element.value).toBe('9876,00 €');
+      });
+
+      test('currency - groups from five integer digits', () => {
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'currency', modelValue: 10123 },
+        });
+
+        expect(wrapper.find('.lx-text-input').element.value).toBe('10 123,00 €');
+      });
+
+      test('currency - readOnly does not group four integer digits', () => {
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'currency', readOnly: true, modelValue: '9876' },
+        });
+
+        expect(wrapper.find('.lx-data').text()).toBe('9876,00 €');
+      });
+
+      test('integer - groups from five digits', async () => {
+        wrapper = mount(LxTextInput, {
+          props: {
+            mask: 'integer',
+            modelValue: null,
+            'onUpdate:modelValue': (value) => wrapper.setProps({ modelValue: value }),
+          },
+        });
+
+        const input = wrapper.find('.lx-text-input');
+        await input.setValue('9876');
+        expect(input.element.value).toBe('9876');
+
+        await input.setValue('1234567');
+        expect(input.element.value).toBe('1 234 567');
+        const emitted = wrapper.emitted()['update:modelValue'];
+        expect(emitted[emitted.length - 1]).toEqual(['1234567']);
+      });
+
+      test('decimal - groups integer part from five digits', async () => {
+        wrapper = mount(LxTextInput, {
+          props: {
+            mask: 'decimal',
+            modelValue: null,
+            'onUpdate:modelValue': (value) => wrapper.setProps({ modelValue: value }),
+          },
+        });
+
+        const input = wrapper.find('.lx-text-input');
+        await input.setValue('9876,5');
+        expect(input.element.value).toBe('9876,5');
+
+        await input.setValue('12345,67');
+        expect(input.element.value).toBe('12 345,67');
+        const emitted = wrapper.emitted()['update:modelValue'];
+        expect(emitted[emitted.length - 1]).toEqual(['12345.67']);
+      });
+
+      test('integer and decimal - readOnly groups from five digits', () => {
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'integer', readOnly: true, modelValue: '-1234567' },
+        });
+        expect(wrapper.find('.lx-data').text()).toBe('-1 234 567');
+        wrapper.unmount();
+
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'decimal', readOnly: true, modelValue: '9876.5' },
+        });
+        expect(wrapper.find('.lx-data').text()).toBe('9876,5');
+        wrapper.unmount();
+
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'decimal', readOnly: true, modelValue: '12345.67' },
+        });
+        expect(wrapper.find('.lx-data').text()).toBe('12 345,67');
+      });
+
+      test('currency - custom currency code', () => {
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'currency', options: { currency: 'USD' }, modelValue: 1234.5 },
+        });
+
+        expect(wrapper.find('.lx-text-input').element.value).toBe('1234,50 $');
+      });
+
+      test('currency - readOnly groups thousands and uses custom currency', () => {
+        wrapper = mount(LxTextInput, {
+          props: {
+            mask: 'currency',
+            options: { currency: 'GBP' },
+            readOnly: true,
+            modelValue: '-1234567.891',
+          },
+        });
+
+        expect(wrapper.find('.lx-data').text()).toBe('-1 234 567,89 £');
+      });
+
+      test('currency - readOnly defaults to euro', () => {
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'currency', readOnly: true, modelValue: 12.3 },
+        });
+
+        expect(wrapper.find('.lx-data').text()).toBe('12,30 €');
+      });
+
+      test('currency - grouped value emits unformatted number', async () => {
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'currency', modelValue: 0 },
+        });
+
+        await wrapper.find('.lx-text-input').setValue('1 234 567,89 €');
+
+        const emitted = wrapper.emitted()['update:modelValue'];
+        expect(emitted[emitted.length - 1]).toEqual(['1234567.89']);
+      });
+
+      test('currency - maxlength limits typed value', async () => {
+        wrapper = mount(LxTextInput, {
+          props: { mask: 'currency', modelValue: 0, maxlength: 3 },
+        });
+
+        const input = wrapper.find('.lx-text-input');
+        await input.setValue('12,00 €');
+        await input.setValue('1 234,00 €');
+
+        expect(input.element.value).toBe('12,00 €');
       });
 
       test('default > time', async () => {

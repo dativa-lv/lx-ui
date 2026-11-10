@@ -19,6 +19,28 @@ import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { useBuilderRegistration } from '@/utils/builderUtils';
 
+const THOUSANDS_SEPARATOR = ' ';
+const MIN_GROUPED_DIGITS = 5;
+const GROUPED_MASKS = new Set(['integer', 'decimal']);
+
+function groupThousands(integerPart, separator = THOUSANDS_SEPARATOR) {
+  if (integerPart.replace('-', '').length < MIN_GROUPED_DIGITS) return integerPart;
+  return integerPart.replace(/\B(?=(\d{3})+$)/g, separator);
+}
+
+class GroupedNumber extends IMask.MaskedNumber {
+  // imask drops `mask` equal to the class, then sees a changed mask on every update and resets the value
+  constructor(opts) {
+    super({ ...opts, mask: GroupedNumber });
+  }
+
+  // eslint-disable-next-line no-underscore-dangle
+  _insertThousandsSeparators(value) {
+    const [integerPart, ...rest] = value.split(this.radix);
+    return [groupThousands(integerPart, this.thousandsSeparator), ...rest].join(this.radix);
+  }
+}
+
 const LxFlag = lxDefineAsyncComponent(() => import('@/components/Flag.vue'));
 const LxAutoCompleteNew = lxDefineAsyncComponent(
   () => import('@/components/autoComplete/AutoCompleteNew.vue')
@@ -105,7 +127,7 @@ const props = defineProps({
   autocomplete: { type: String, default: 'off', group: 'additional', sequence: 5 },
   options: {
     type: Object,
-    default: () => ({ phone: 'lv', locale: null }),
+    default: () => ({ phone: 'lv', locale: null, currency: null }),
     // TODO: add group as well
   },
 
@@ -190,6 +212,14 @@ const maxLengthValue = computed(() => {
   return null;
 });
 
+const inputMaxLength = computed(() => {
+  if (!isDefined(maxLengthValue.value) || !GROUPED_MASKS.has(props.mask)) {
+    return maxLengthValue.value;
+  }
+  const max = Number(maxLengthValue.value);
+  return max >= MIN_GROUPED_DIGITS ? max + Math.floor((max - 1) / 3) : max;
+});
+
 const inputMask = computed(() => {
   if (props.kind === 'phone')
     return {
@@ -199,7 +229,8 @@ const inputMask = computed(() => {
   switch (props.mask) {
     case 'integer':
       return {
-        mask: Number,
+        mask: GroupedNumber,
+        thousandsSeparator: THOUSANDS_SEPARATOR,
         scale: 0,
         lazy: false,
         min: props.signed ? 0 - minValueComp.value : 0,
@@ -208,7 +239,8 @@ const inputMask = computed(() => {
       };
     case 'decimal':
       return {
-        mask: Number,
+        mask: GroupedNumber,
+        thousandsSeparator: THOUSANDS_SEPARATOR,
         scale: props.scale,
         min: props.signed ? 0 - minValueComp.value : 0,
         radix: ',',
@@ -341,12 +373,39 @@ function maskUpdate() {
   }
 }
 
-const maxLengthComp = computed(() => 10 ** Number(props.maxlength) - 1);
+const maxLengthComp = computed(() =>
+  isDefined(props.maxlength) ? 10 ** Number(props.maxlength) - 1 : null
+);
+
+const { environment, currency: globalCurrency } = useLx().getGlobals() ?? {};
+
+const currencySymbol = computed(() => {
+  const currencyCode = props.options?.currency || globalCurrency || 'EUR';
+
+  try {
+    return new Intl.NumberFormat('lv-LV', {
+      style: 'currency',
+      currency: currencyCode,
+      currencyDisplay: 'narrowSymbol',
+    })
+      .formatToParts(0)
+      .find((part) => part.type === 'currency').value;
+  } catch {
+    logWarn(
+      `LxTextInput [${props.id}]: currency "${currencyCode}" is not a valid ISO 4217 code`,
+      environment
+    );
+    return currencyCode;
+  }
+});
 
 const config = computed(() => ({
   prefix: '',
-  suffix: ' €',
-  thousands: '',
+  suffix: ` ${currencySymbol.value}`,
+  thousands:
+    Math.trunc(Math.abs(Number(model.value) || 0)).toString().length >= MIN_GROUPED_DIGITS
+      ? THOUSANDS_SEPARATOR
+      : '',
   decimal: ',',
   precision: 2,
   disableNegative: !props.signed,
@@ -359,6 +418,31 @@ const config = computed(() => ({
   shouldRound: true,
   focusOnRight: false,
 }));
+
+const currencyInput = ref();
+
+// v-money3 binds its options only on mount, so the input is re-keyed by separator; restore focus and cursor
+watch(
+  () => config.value.thousands,
+  async () => {
+    const el = currencyInput.value?.$el;
+    if (!el || el !== document.activeElement) return;
+    const fromEnd = el.value.length - el.selectionEnd;
+    await nextTick();
+    const newEl = currencyInput.value?.$el;
+    if (!newEl) return;
+    newEl.focus();
+    const pos = Math.max(0, newEl.value.length - fromEnd);
+    newEl.setSelectionRange(pos, pos);
+  }
+);
+
+function formatCurrencyReadOnly(value) {
+  const number = Number(value);
+  if (Number.isNaN(number)) return value + config.value.suffix;
+  const [integerPart, fractionPart] = number.toFixed(config.value.precision).split('.');
+  return `${groupThousands(integerPart)}${config.value.decimal}${fractionPart}${config.value.suffix}`;
+}
 
 // Workaround to show readonly values masked
 const forcedMaskedValue = computed(() => {
@@ -374,10 +458,16 @@ const forcedMaskedValue = computed(() => {
     case 'newbornId':
     case 'newborn-id':
       return value[11] === '/' ? value : `${value.substring(0, 11)}/${value.substring(11)}`;
-    case 'decimal':
-      return value.replace('.', ',');
+    case 'integer':
+      return groupThousands(value);
+    case 'decimal': {
+      const [integerPart, fractionPart] = value.split('.');
+      return isNil(fractionPart)
+        ? groupThousands(integerPart)
+        : `${groupThousands(integerPart)},${fractionPart}`;
+    }
     case 'currency':
-      return value.replace('.', ',') + config.value.suffix;
+      return formatCurrencyReadOnly(value);
     case 'gpslat':
       return value.replace('.', ',');
     case 'gpslon':
@@ -548,7 +638,7 @@ function formatTimeValue(newValue) {
 }
 
 function formatCurrencyValue(newValue) {
-  const res = `${newValue} €`;
+  const res = `${newValue}${config.value.suffix}`;
   return res?.replace('.', ',') === valueRaw.value ? valueRaw.value : model.value?.toString();
 }
 
@@ -646,15 +736,13 @@ const searchInputMask = computed(() =>
   props.mask && !['default', 'currency'].includes(props.mask) ? inputMask.value : null
 );
 
-const globalEnvironment = useLx().getGlobals()?.environment;
-
 watch(
   () => props.kind === 'search' && props.mask === 'currency',
   (isUnsupported) => {
     if (!isUnsupported) return;
     logWarn(
       `LxTextInput [${props.id}]: mask "currency" is not supported with kind "search" and is ignored`,
-      globalEnvironment
+      environment
     );
   },
   { immediate: true }
@@ -815,7 +903,7 @@ defineExpose({ focus });
           :aria-invalid="invalid"
           :aria-label="placeholder"
           :disabled="disabled"
-          :maxlength="maxLengthValue"
+          :maxlength="inputMaxLength"
           v-tooltip="tooltip"
           :aria-labelledby="labelledBy"
           :aria-required="ariaRequired"
@@ -848,6 +936,8 @@ defineExpose({ focus });
 
         <Money3Component
           v-if="mask === 'currency'"
+          ref="currencyInput"
+          :key="config.thousands"
           v-model="model"
           v-bind="config"
           :disabled="disabled"
