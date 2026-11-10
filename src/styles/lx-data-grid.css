@@ -1031,12 +1031,12 @@
   padding-top: var(--space-0);
   padding-bottom: var(--space-0);
   vertical-align: top;
-  right: calc(var(--space-0125) * -1);
+  right: var(--space-0);
 }
 
 .lx-data-grid-wrapper.lx-scrollable .lx-cell-header.lx-cell-action {
   position: sticky;
-  right: calc(var(--space-0125) * -1);
+  right: var(--space-0);
   background: var(--color-data-grid-column-header-background);
   z-index: 1;
 }
