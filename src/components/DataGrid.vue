@@ -1829,12 +1829,7 @@ watch(showSelecting, (isSelecting) => {
 });
 
 watch(
-  [
-    columnsComputed,
-    () => hasActionButtons.value,
-    () => props.showAllColumns,
-    () => props.hasSelecting,
-  ],
+  [columnsComputed, () => hasActionButtons.value, () => props.showAllColumns, showSelecting],
   () => {
     updateGridTemplateColumns();
     nextTick(() => {
