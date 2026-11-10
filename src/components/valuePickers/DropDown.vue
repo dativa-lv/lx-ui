@@ -728,7 +728,6 @@ function countDigits(number) {
       :helperText="helperText"
       :helperTextKind="helperTextKind"
       :texts="displayTexts"
-      kind="default"
       :placeholder="placeholder"
       :labelId="labelId"
     >

@@ -456,7 +456,6 @@
   margin-top: var(--space-0);
 }
 
-.lx .lx-input-wrapper .lx-dropdown,
 .lx .lx-input-wrapper input,
 .lx .lx-input-wrapper textarea {
   letter-spacing: var(--letter-spacing-1);
@@ -908,7 +907,6 @@
 }
 
 .lx-rotator .lx-modifier-icon,
-.lx-dropdown-wrapper .lx-modifier-icon,
 .lx-dropdown-default .lx-modifier-icon,
 .lx-autocomplete-default .lx-modifier-icon,
 .lx-date-time-picker-wrapper .lx-modifier-icon {
@@ -1774,13 +1772,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 /*** Misc dropdown, LxAutoComplete, LxRotator, LxValuePicker styles ***/
 
-.lx-dropdown {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
-
 .lx-dropdown-default {
   position: static;
   cursor: pointer;
@@ -1974,20 +1965,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-markdown-text-area-wrapper .pseudo-input,
 .lx-text-area-wrapper .pseudo-input {
   height: 100%;
-}
-
-.lx .lx-layout div.lx-dropdown-wrapper.lx-input-wrapper select > option {
-  background-color: var(--color-background);
-}
-
-.lx .lx-layout div.lx-dropdown-wrapper.lx-input-wrapper select.lx-input-area {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.lx .lx-layout div.lx-dropdown-wrapper.lx-input-wrapper:not(.lx-disabled):hover select > option,
-.lx .lx-layout div.lx-dropdown-wrapper.lx-input-wrapper:has(.lx-dropdown):not(.lx-disabled):hover {
-  background-color: var(--color-region-hover);
 }
 
 .lx-text-input-wrapper > .lx-input-wrapper {

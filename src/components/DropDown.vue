@@ -22,7 +22,6 @@ const props = defineProps({
   items: { type: Array, required: true },
   idAttribute: { type: String, default: 'id' },
   idAttributeArray: { type: [Array, String], default: 'id' },
-  kind: { type: String, default: 'default' }, // default or native
   placeholder: { type: String, default: null },
   nameAttribute: { type: String, default: 'name' },
   tooltip: { type: String, default: null },
@@ -42,7 +41,7 @@ const props = defineProps({
   texts: { type: Object, default: () => ({}) },
 });
 
-const emits = defineEmits(['update:modelValue', 'change']);
+const emits = defineEmits(['update:modelValue']);
 
 const container = ref();
 const menuOpen = ref(false);
@@ -196,15 +195,6 @@ function openDropDownDefault() {
   } else if (menuOpen.value) {
     closeDropDownDefault();
   }
-}
-
-const isDisabled = computed(() => props.disabled);
-
-function change(event) {
-  if (isDisabled.value) {
-    return;
-  }
-  emits('change', event);
 }
 
 const name = computed(() => {
@@ -392,24 +382,22 @@ function isPlaceholderVisible() {
 watch(
   () => [selectedIdValue.value, allItems.value],
   (watchVals) => {
-    if (props.kind === 'default') {
-      const selectedId = watchVals[0];
-      if (selectedId) {
-        let selected = null;
-        if (Array.isArray(props.idAttribute)) {
-          selected = allItems?.value?.find(
-            (item) => JSON.stringify(selectedId) === getIdAttributeString(item)
-          );
-        } else {
-          selected = allItems?.value?.find((item) => selectedId === getIdAttributeString(item));
-        }
-        if (selected) {
-          selectedItemStored.value = selected;
-          selectedItem.value = selected;
-        }
+    const selectedId = watchVals[0];
+    if (selectedId) {
+      let selected = null;
+      if (Array.isArray(props.idAttribute)) {
+        selected = allItems?.value?.find(
+          (item) => JSON.stringify(selectedId) === getIdAttributeString(item)
+        );
       } else {
-        selectedItem.value = null;
+        selected = allItems?.value?.find((item) => selectedId === getIdAttributeString(item));
       }
+      if (selected) {
+        selectedItemStored.value = selected;
+        selectedItem.value = selected;
+      }
+    } else {
+      selectedItem.value = null;
     }
   }
 );
@@ -450,78 +438,7 @@ const getSelectedItem = computed(
       <LxEmptyValue v-else :texts="{ emptyValue: displayTexts.emptyValue }" />
     </p>
 
-    <template v-if="props.kind === 'native' && !readOnly">
-      <div
-        class="lx-dropdown-wrapper lx-input-wrapper"
-        :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
-        :data-invalid="invalid ? '' : null"
-        :data-disabled="isDisabled ? '' : null"
-      >
-        <div class="pseudo-input" />
-        <select
-          v-model="model"
-          :id="id"
-          :aria-invalid="invalid"
-          :aria-errormessage="showInvalidationMessage ? `${id}-invalidation-message` : null"
-          :aria-describedby="describedBy"
-          class="lx-dropdown lx-input-area"
-          :class="[
-            { 'lx-invalid': invalid },
-            {
-              'lx-placeholder':
-                modelValue === '' || modelValue === undefined || modelValue === null,
-            },
-          ]"
-          v-tooltip="tooltip"
-          :disabled="isDisabled"
-          :aria-labelledby="labelledBy"
-          :aria-required="ariaRequired"
-          @change="change($event)"
-        >
-          <option disabled value="" v-show="false" class="placeholder-select">
-            {{ placeholder }}
-          </option>
-          <option disabled :value="null" v-show="false" class="placeholder-select">
-            {{ placeholder }}
-          </option>
-          <option disabled :value="undefined" v-show="false" class="placeholder-select">
-            {{ placeholder }}
-          </option>
-          <option v-for="item in items" :key="item[idAttribute]" :value="item[idAttribute]">
-            {{ item[nameAttribute] }}
-          </option>
-        </select>
-        <div v-if="invalid" class="lx-invalidation-icon-wrapper">
-          <LxIcon customClass="lx-invalidation-icon" value="invalid" />
-        </div>
-        <div v-if="showInfoHelper" class="lx-input-helper-wrapper">
-          <LxInfoWrapper placement="top" :disabled="disabled" :label="displayTexts.helperTextLabel">
-            <LxIcon customClass="lx-helper-icon" value="info" />
-            <template #panel>
-              <p class="lx-data">{{ helperTextClamped }}</p>
-            </template>
-          </LxInfoWrapper>
-        </div>
-        <div class="lx-input-icon-wrapper">
-          <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
-        </div>
-      </div>
-      <div
-        v-if="showInvalidationMessage"
-        class="lx-invalidation-message"
-        :id="`${id}-invalidation-message`"
-      >
-        {{ invalidationMessageClamped }}
-      </div>
-      <div class="lx-helper-text" v-if="showInlineHelper" :id="`${id}-helper`">
-        {{ helperTextClamped }}
-      </div>
-      <div class="lx-invisible" v-else-if="showInfoHelper" :id="`${id}-helper`">
-        {{ helperTextClamped }}
-      </div>
-    </template>
-
-    <template v-if="props.kind === 'default' && !readOnly">
+    <template v-if="!readOnly">
       <div
         :id="id"
         class="lx-dropdown-default"

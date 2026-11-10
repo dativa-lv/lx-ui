@@ -2829,7 +2829,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   z-index: 1;
 }
 
-.lx .lx-input-wrapper .lx-dropdown,
 .lx .lx-input-wrapper input {
   letter-spacing: var(--letter-spacing-1);
   color: var(--color-input-text);
@@ -2903,7 +2902,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   z-index: 1;
 }
 
-.lx-dropdown-wrapper .lx-modifier-icon,
 .lx-dropdown-default .lx-modifier-icon,
 .lx-autocomplete-default .lx-modifier-icon {
   fill: var(--color-input-icon-interactive);
@@ -3078,13 +3076,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 }
 
 /*** Misc dropdown, LxAutoComplete, LxValuePicker styles ***/
-
-.lx-dropdown {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
 
 .lx-dropdown-default {
   position: static;
@@ -3298,20 +3289,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 
 .lx.lx-header-wrapper .lx-input-wrapper input.lx-input-area {
   z-index: 1;
-}
-
-.lx.lx-header-wrapper div.lx-dropdown-wrapper.lx-input-wrapper select > option {
-  background-color: var(--color-background);
-}
-
-.lx.lx-header-wrapper div.lx-dropdown-wrapper.lx-input-wrapper select.lx-input-area {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.lx.lx-header-wrapper div.lx-dropdown-wrapper.lx-input-wrapper:not(.lx-disabled):hover select > option,
-.lx.lx-header-wrapper div.lx-dropdown-wrapper.lx-input-wrapper:has(.lx-dropdown):not(.lx-disabled):hover {
-  background-color: var(--color-region-hover);
 }
 
 .lx-text-input-wrapper > .lx-input-wrapper {
