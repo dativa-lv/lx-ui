@@ -623,6 +623,27 @@
   left: var(--space-1000);
 }
 
+.lx-widget-toolbar-button .lx-button {
+  --color-button-ghost-background: var(--color-toolbar-button-ghost-background);
+  --color-button-ghost-background-hover: var(--color-toolbar-button-ghost-background-hover);
+  --color-button-ghost-background-focus: var(--color-toolbar-button-ghost-background-focus);
+  --color-button-ghost-background-active: var(--color-toolbar-button-ghost-background-active);
+  --color-button-ghost-background-disabled: var(--color-toolbar-button-ghost-background-disabled);
+  --color-button-ghost-border-hover: var(--color-toolbar-button-ghost-border-hover);
+  --color-button-ghost-border-focus: var(--color-toolbar-button-ghost-border-focus);
+  --color-button-ghost-border-active: var(--color-toolbar-button-ghost-border-active);
+  --color-button-ghost-border-disabled: var(--color-toolbar-button-ghost-border-disabled);
+  --color-button-ghost-text: var(--color-toolbar-button-ghost-text);
+  --color-button-ghost-text-hover: var(--color-toolbar-button-ghost-text-hover);
+  --color-button-ghost-text-active: var(--color-toolbar-button-ghost-text-active);
+  --color-button-ghost-text-disabled: var(--color-toolbar-button-ghost-text-disabled);
+  --color-button-ghost-icon: var(--color-toolbar-button-ghost-icon);
+  --color-button-ghost-icon-hover: var(--color-toolbar-button-ghost-icon-hover);
+  --color-button-ghost-icon-focus: var(--color-toolbar-button-ghost-icon-focus);
+  --color-button-ghost-icon-active: var(--color-toolbar-button-ghost-icon-active);
+  --color-button-ghost-icon-disabled: var(--color-toolbar-button-ghost-icon-disabled);
+}
+
 .lx-dashboard .lx-widget-s-s {
   grid-column: span 1;
   grid-row: span 4;
