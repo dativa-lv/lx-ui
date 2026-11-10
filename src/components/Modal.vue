@@ -45,16 +45,21 @@ const footerSize = useElementSize(modalFooter, undefined, { box: 'border-box' })
 
 const { y: scrollYPos } = useScroll(modalContent);
 
+let returnFocusElement = null;
+
 const { activate, deactivate, pause, unpause } = useFocusTrap(modalRef, {
   allowOutsideClick: true,
   initialFocus: false,
   escapeDeactivates: false, // handled manually
+  setReturnFocus: (nodeFocusedBeforeActivation) =>
+    returnFocusElement?.isConnected ? returnFocusElement : nodeFocusedBeforeActivation,
 });
 
 function open() {
-  if (isOpen.value) {
+  if (isOpen.value || isOpenModal.value) {
     return;
   }
+  returnFocusElement = document.activeElement;
   if (props.kind === 'default') {
     isOpen.value = true;
 
