@@ -343,6 +343,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx-dialog > header .lx-illustration {
   height: var(--modal-illustration-size);
   width: var(--modal-illustration-size);
+  margin-top: var(--space-0500);
 }
 
 .lx-dialog > header .lx-illustration > svg {
