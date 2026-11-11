@@ -16,6 +16,7 @@ import LxButton from '@/components/Button.vue';
 import { useWindowSize } from '@vueuse/core';
 import LxPopper from '@/components/Popper.vue';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
+import { useScrollShadows } from '@/hooks/useScrollShadows';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -73,13 +74,15 @@ const currentY = ref(0);
 const dragThreshold = 50;
 const maxHeightReached = ref(false);
 
-const scrollState = ref({
-  scrollTop: 0,
-  scrollBottom: 0,
-});
 const windowSize = useWindowSize();
 
 const responsiveView = computed(() => windowSize.width.value <= 500);
+
+const {
+  top: topShadowOpacity,
+  bottom: bottomShadowOpacity,
+  update: panelAreaScrolled,
+} = useScrollShadows(panelAreaRef, { enabled: responsiveView });
 
 const ariaLabel = computed(() => {
   if (props.label && props.description) {
@@ -108,16 +111,6 @@ const isDescriptionRendered = computed(
 const describedBy = computed(() =>
   isDescriptionRendered.value ? `${props.id}-description` : null
 );
-
-const panelAreaScrolled = () => {
-  if (!responsiveView.value) return;
-  const panelArea = panelAreaRef.value;
-  if (panelArea) {
-    scrollState.value.scrollTop = panelArea.scrollTop;
-    scrollState.value.scrollBottom =
-      panelArea.scrollHeight - panelArea.scrollTop - panelArea.clientHeight;
-  }
-};
 
 const handleOpen = () => {
   if (!isPanelAvailable.value || props.disabled) return;
@@ -357,20 +350,6 @@ function curtainTouched() {
   }
 }
 
-const topOutOfBounds = computed(() => {
-  const keyOpacity = '--info-wrapper-top-shadow-opacity';
-  const { scrollTop } = scrollState.value;
-  const opacity = scrollTop > 0 ? Math.min(1, scrollTop / 100) : 0;
-  return `${keyOpacity}: ${opacity};`;
-});
-
-const bottomOutOfBounds = computed(() => {
-  const keyOpacity = '--info-wrapper-bottom-shadow-opacity';
-  const { scrollBottom } = scrollState.value;
-  const opacity = scrollBottom > 0 ? Math.min(1, scrollBottom / 100) : 0;
-  return `${keyOpacity}: ${opacity};`;
-});
-
 watch(
   () => responsiveView.value,
   () => {
@@ -582,9 +561,13 @@ defineExpose({ handleOpen, handleClose, showPopper, focus, scrollIntoView });
           <div
             ref="wrapperPanelRef"
             class="lx-info-wrapper-panel-area"
-            :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
+            :class="{ 'lx-shadow-top lx-shadow-bottom lx-shadow-inset': responsiveView }"
+            :style="{
+              '--lx-shadow-top-opacity': topShadowOpacity,
+              '--lx-shadow-bottom-opacity': bottomShadowOpacity,
+            }"
           >
-            <div ref="panelAreaRef" class="scrollable-container" @scroll="panelAreaScrolled">
+            <div ref="panelAreaRef" class="scrollable-container">
               <slot name="panel" />
               <p v-if="!$slots.panel && props.content" class="lx-data">{{ props.content }}</p>
             </div>

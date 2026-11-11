@@ -168,9 +168,9 @@ provide('lxChatTypingActionClick', (id) => emits('typing-action-click', { id }))
 <template>
   <div
     ref="wrapperRef"
-    class="lx-chat-wrapper"
+    class="lx-chat-wrapper lx-shadow-top lx-shadow-inset"
     :class="[sizeClass, kindClass, modeClass]"
-    :style="{ '--lx-chat-top-shadow-opacity': topShadowOpacity }"
+    :style="{ '--lx-shadow-top-opacity': topShadowOpacity }"
     :id="id"
     data-component="lx-chat"
     :data-id="id"
@@ -208,8 +208,8 @@ provide('lxChatTypingActionClick', (id) => emits('typing-action-click', { id }))
 
     <div
       ref="footerRef"
-      class="lx-chat-footer"
-      :style="{ '--lx-chat-footer-shadow-opacity': scrollShadowOpacity }"
+      class="lx-chat-footer lx-shadow-top"
+      :style="{ '--lx-shadow-top-opacity': scrollShadowOpacity }"
     >
       <MessageComposer
         :id="id"

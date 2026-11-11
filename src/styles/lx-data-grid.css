@@ -385,18 +385,9 @@
   z-index: 1;
 }
 
-.lx:not(.lx-theme-contrast) .lx-data-grid-wrapper .lx-grid-header-wrapper::after {
-  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: 3rem;
-  position: absolute;
-  top: var(--data-grid-header-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: 0;
-  opacity: var(--grid-top-shadow-opacity);
-  pointer-events: none;
-  display: var(--native-sticky-shadow-display);
+.lx-data-grid-wrapper .lx-grid-header-wrapper {
+  --lx-shadow-bottom-opacity: var(--grid-top-shadow-opacity, 0);
+  --lx-shadow-bottom-offset: var(--data-grid-header-size);
 }
 
 /*** Basic cell styles ***/

@@ -5,6 +5,7 @@ import { formatDateJSON, isDateValid, parseDate } from '@/utils/date/parse';
 import MessageBubble from '@/components/chat/MessageBubble.vue';
 import TypingIndicator from '@/components/chat/TypingIndicator.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
+import { useScrollShadows } from '@/hooks/useScrollShadows';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -31,9 +32,9 @@ const messageBubbleRefs = ref([]);
 const NEAR_BOTTOM_THRESHOLD = 64;
 const isNearBottom = ref(true);
 
-const SHADOW_FADE_DISTANCE = 100;
-const scrollShadowOpacity = ref(0);
-const topShadowOpacity = ref(0);
+const { top: topShadowOpacity, bottom: scrollShadowOpacity } = useScrollShadows(listRef, {
+  content: contentRef,
+});
 
 function resolveDate(value) {
   const parsed = parseDate(value);
@@ -147,23 +148,6 @@ function computeNearBottom() {
   return el.scrollHeight - el.scrollTop - el.clientHeight < NEAR_BOTTOM_THRESHOLD;
 }
 
-function computeShadowOpacity() {
-  const el = listRef.value;
-  if (!el) {
-    return 0;
-  }
-  const distanceFromBottom = Math.max(0, el.scrollHeight - el.scrollTop - el.clientHeight);
-  return Math.min(1, distanceFromBottom / SHADOW_FADE_DISTANCE);
-}
-
-function computeTopShadowOpacity() {
-  const el = listRef.value;
-  if (!el) {
-    return 0;
-  }
-  return Math.min(1, Math.max(0, el.scrollTop) / SHADOW_FADE_DISTANCE);
-}
-
 function scrollToBottom() {
   const el = listRef.value;
   if (!el) return;
@@ -188,8 +172,6 @@ function scrollToLatest() {
 
 function onScroll() {
   isNearBottom.value = computeNearBottom();
-  scrollShadowOpacity.value = computeShadowOpacity();
-  topShadowOpacity.value = computeTopShadowOpacity();
 }
 
 // Keep new/streaming content in view, but only if the user was already at the bottom.
@@ -203,9 +185,6 @@ onMounted(() => {
       if (isNearBottom.value) {
         scrollToLatest();
       }
-      // Streaming/new content can shift the scroll-from-bottom distance without a scroll event.
-      scrollShadowOpacity.value = computeShadowOpacity();
-      topShadowOpacity.value = computeTopShadowOpacity();
     });
     if (contentRef.value) {
       contentObserver.observe(contentRef.value);

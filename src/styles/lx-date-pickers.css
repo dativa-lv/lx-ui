@@ -1030,27 +1030,9 @@
   z-index: 20;
 }
 
-.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .popper.fullscreen-popper .lx-calendar-layouts-wrapper.special-dates-layout::after {
-  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: 3rem;
-  position: absolute;
-  top: calc(var(--button-ghost-height) * 2); /* 2 buttons heights */
-  width: 100%;
-  align-self: center;
-  opacity: var(--date-picker-wrapper-top-shadow-opacity);
-  pointer-events: none;
-}
-
-.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .popper.fullscreen-popper .lx-calendar-layouts-wrapper.special-dates-layout::before {
-  background: linear-gradient(180deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: 3rem;
-  position: absolute;
-  width: 100%;
-  bottom: var(--space-0);
-  opacity: var(--date-picker-wrapper-bottom-shadow-opacity);
-  pointer-events: none;
+.lx-calendar-layouts-wrapper.special-dates-layout {
+  --lx-shadow-top-offset: calc(var(--button-ghost-height) * 2); /* 2 buttons heights */
+  --lx-shadow-display: var(--lx-shadow-theme-display, block);
 }
 
 .popper.fullscreen-popper .lx-calendar-layouts-wrapper.special-dates-layout {

@@ -25,6 +25,7 @@ import useLx from '@/hooks/useLx';
 import { logWarn } from '@/utils/devUtils';
 import { resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import { useToolbarResponsiveness } from '@/hooks/useToolbarResponsiveness';
+import { shadowOpacity } from '@/utils/shadowUtils';
 
 const LxAutoComplete = lxDefineAsyncComponent(() => import('@/components/AutoComplete.vue'));
 
@@ -590,17 +591,11 @@ const scrollProgress = computed(() => {
 const isScrolled = computed(() => props.sticky && scrollProgress.value > 0);
 
 const topOutOfBounds = computed(() => {
-  const keyOpacity = '--toolbar-top-shadow-opacity';
+  const keyOpacity = '--lx-shadow-bottom-opacity';
   const keySize = '--toolbar-header-size';
 
-  const limit = 100;
   const toolbarHeight = toolbarSize.height.value || 0;
-
-  let opacity = Math.min(1, scrollProgress.value / limit);
-
-  if (!props.sticky) {
-    opacity = 0;
-  }
+  const opacity = props.sticky ? shadowOpacity(scrollProgress.value) : 0;
 
   return `${keyOpacity}: ${opacity}; ${keySize}: ${toolbarHeight}px;`;
 });
@@ -630,7 +625,7 @@ const dataState = computed(() =>
       { 'lx-toolbar-default-area-left': defaultAreaComputed === 'left' },
       { 'lx-toolbar-empty': isToolbarEmpty },
       { 'lx-disabled': disabled || loading },
-      { 'lx-toolbar-sticky': sticky },
+      { 'lx-toolbar-sticky lx-shadow-bottom': sticky },
       { 'lx-scrolled': isScrolled },
     ]"
     :style="`${topOutOfBounds}`"

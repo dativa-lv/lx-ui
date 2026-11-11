@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import LxSteps from '@/components/Steps.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
+import { getStickyTopOffset, shadowOpacity } from '@/utils/shadowUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -26,26 +27,11 @@ const wizard = ref();
 const bounding = useElementBounding(wizard);
 const headerSize = useElementSize(wizardHeader);
 
-function getStickyTopOffset(el) {
-  return Number.parseFloat(getComputedStyle(el).top) || 0;
-}
-
 const topOutOfBounds = computed(() => {
-  const keyOpacity = '--wizard-shadow-opacity';
-  const keySize = '--wizard-header-size';
-  const limit = 100;
-  const size = headerSize.height?.value;
-
-  if (!wizard.value || !wizardHeader.value) return `${keyOpacity}: 0; ${keySize}: var(--row-size);`;
-
+  if (!wizard.value || !wizardHeader.value)
+    return `--wizard-shadow-opacity: 0; --wizard-header-size: var(--row-size);`;
   const v = bounding.top ? bounding.top.value - getStickyTopOffset(wizardHeader.value) : 0;
-  if (v < 0 - limit) {
-    return `${keyOpacity}: 1; ${keySize}: ${size}px;`;
-  }
-  if (v < 0) {
-    return `${keyOpacity}: ${(0 - v) / limit}; ${keySize}: ${size}px;`;
-  }
-  return `${keyOpacity}: 0; ${keySize}: ${size}px;`;
+  return `--wizard-shadow-opacity: ${shadowOpacity(-v)}; --wizard-header-size: ${headerSize.height?.value}px;`;
 });
 
 const modifiedItems = computed(() =>
@@ -57,7 +43,7 @@ const modifiedItems = computed(() =>
 </script>
 <template>
   <div :id="id" class="lx-wizard lx-tab-wizard" :style="`${topOutOfBounds}`" ref="wizard">
-    <header ref="wizardHeader" class="lx-tab-wizard-toolbar">
+    <header ref="wizardHeader" class="lx-tab-wizard-toolbar lx-shadow-bottom">
       <div class="lx-wizard-container lx-tab-wizard-container">
         <LxSteps :id="`${id}-steps`" v-model="model" :items="modifiedItems" kind="compact" />
       </div>

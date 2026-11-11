@@ -1260,44 +1260,24 @@ p .lx-person-display-wrapper {
   display: none;
 }
 
-.lx-form-grid .lx-form-grid-header-sticky::after,
-.lx-form-with-tabs-steps .lx-tab-wizard-toolbar::after {
-  display: var(--native-sticky-shadow-display);
-  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: 3rem;
-  position: absolute;
-  top: var(--row-size);
-  top: var(--form-header-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: 0;
-  opacity: var(--form-top-shadow-opacity);
-  pointer-events: none;
+.lx-form-grid .lx-form-grid-header-sticky {
+  --lx-shadow-bottom-opacity: var(--form-top-shadow-opacity, 0);
+  --lx-shadow-bottom-offset: var(--form-header-size);
 }
 
-.lx-form-with-tabs-steps .lx-form-grid-header-sticky::after,
-.lx-theme-contrast .lx-form-grid .lx-form-grid-header-sticky::after,
-.lx-theme-contrast .lx-form-with-tabs-steps .lx-tab-wizard-toolbar::after {
+.lx-form-with-tabs-steps .lx-tab-wizard-toolbar {
+  --lx-shadow-display: initial;
+  --lx-shadow-bottom-opacity: var(--form-top-shadow-opacity, 0);
+  --lx-shadow-bottom-offset: var(--form-header-size);
+  --lx-shadow-bottom-size: 3rem;
+}
+
+.lx-form-with-tabs-steps .lx-form-grid-header-sticky::after {
   display: none;
 }
 
-.lx-form-grid .lx-form-grid-footer-sticky::before {
-  display: var(--native-sticky-shadow-display);
-  background: linear-gradient(180deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: 3rem;
-  position: absolute;
-  top: calc(var(--row-size) * -1);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: 0;
-  opacity: var(--form-bottom-shadow-opacity);
-  pointer-events: none;
-}
-
-.lx-theme-contrast .lx-form-grid .lx-form-grid-footer-sticky::before {
-  display: none;
+.lx-form-grid .lx-form-grid-footer-sticky {
+  --lx-shadow-top-opacity: var(--form-bottom-shadow-opacity, 0);
 }
 
 .lx-form-grid .lx-row > .lx-row-header {
@@ -1433,13 +1413,9 @@ p .lx-person-display-wrapper {
   overflow-x: hidden;
 }
 
-.lx-wizard .lx-dropdown-container::after {
-  opacity: var(--wizard-shadow-opacity);
-}
-
-.lx-wizard .lx-tab-wizard-toolbar::after {
-  top: var(--wizard-header-size);
-  opacity: var(--wizard-shadow-opacity);
+.lx-wizard .lx-tab-wizard-toolbar {
+  --lx-shadow-bottom-opacity: var(--wizard-shadow-opacity, 0);
+  --lx-shadow-bottom-offset: var(--wizard-header-size);
 }
 
 .lx-modal .lx-wizard .lx-wizard-container {

@@ -3,6 +3,7 @@ import { ref, computed, watch, onUnmounted, nextTick } from 'vue';
 import { subYears, addYears, subMonths, addMonths, addDays } from 'date-fns';
 import { useWindowSize, onClickOutside, useMediaQuery, useDebounceFn } from '@vueuse/core';
 import { useGridKeyboardNavigation } from '@/hooks/useGridKeyboardNavigation';
+import { useScrollShadows } from '@/hooks/useScrollShadows';
 import { formatLocalizedDate } from '@/utils/date/intl';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts, isDefined, isNil, findFocusableElements } from '@/utils/generalUtils';
@@ -772,20 +773,11 @@ function openMobileTimeSelect() {
 
 const calendarLayoutsRef = ref(null);
 
-const scrollState = ref({
-  scrollTop: 0,
-  scrollBottom: 0,
-});
-
-const panelAreaScrolled = () => {
-  if (!responsiveView.value) return;
-  const panelArea = calendarLayoutsRef.value;
-  if (panelArea) {
-    scrollState.value.scrollTop = panelArea.scrollTop;
-    scrollState.value.scrollBottom =
-      panelArea.scrollHeight - panelArea.scrollTop - panelArea.clientHeight;
-  }
-};
+const {
+  top: topShadowOpacity,
+  bottom: bottomShadowOpacity,
+  update: panelAreaScrolled,
+} = useScrollShadows(calendarLayoutsRef, { fadeDistance: 60, enabled: responsiveView });
 
 function openSpecialDates() {
   specialDatesLayout.value = !specialDatesLayout.value;
@@ -3865,20 +3857,6 @@ const hasSpecialDatesInSelectedMonth = computed(() => {
   return specialDatesForMonth;
 });
 
-const topOutOfBounds = computed(() => {
-  const keyOpacity = '--date-picker-wrapper-top-shadow-opacity';
-  const { scrollTop } = scrollState.value;
-  const opacity = scrollTop > 0 ? Math.min(1, scrollTop / 60) : 0;
-  return `${keyOpacity}: ${opacity};`;
-});
-
-const bottomOutOfBounds = computed(() => {
-  const keyOpacity = '--date-picker-wrapper-bottom-shadow-opacity';
-  const { scrollBottom } = scrollState.value;
-  const opacity = scrollBottom > 0 ? Math.min(1, scrollBottom / 60) : 0;
-  return `${keyOpacity}: ${opacity};`;
-});
-
 onClickOutside(
   containerRef,
   () => {
@@ -4661,9 +4639,14 @@ if (typeof globalThis !== 'undefined') {
               (mode === 'year' || mode === 'month-year') && !isMobileScreen,
             'range-month-year': pickerType === 'range' && mode === 'month-year' && !isMobileScreen,
             'special-dates-layout': specialDatesLayout,
+            'lx-shadow-top lx-shadow-bottom lx-shadow-inset':
+              specialDatesLayout && variant === 'default' && responsiveView,
           },
         ]"
-        :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
+        :style="{
+          '--lx-shadow-top-opacity': topShadowOpacity,
+          '--lx-shadow-bottom-opacity': bottomShadowOpacity,
+        }"
       >
         <LxButton
           v-if="mode !== 'month' && (!isMobileScreen || !mobileTimeLayout)"
@@ -4697,7 +4680,6 @@ if (typeof globalThis !== 'undefined') {
               'range-year': pickerType === 'range' && mode === 'year' && !isMobileScreen,
             },
           ]"
-          @scroll="panelAreaScrolled"
           role="grid"
           @keydown="handleCalendarKeydown"
         >

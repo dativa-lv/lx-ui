@@ -51,6 +51,7 @@ import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxBadge from '@/components/Badge.vue';
 import { useBuilderRegistration } from '@/utils/builderUtils';
 import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
+import { shadowOpacity } from '@/utils/shadowUtils';
 
 const lvCollator = new Intl.Collator('lv');
 const numberFormatters = new Map();
@@ -1752,24 +1753,12 @@ function getInlineDisplayValue(styleText = '') {
 }
 
 const topOutOfBounds = computed(() => {
-  const keyOpacity = '--grid-top-shadow-opacity';
-  const keySize = '--data-grid-header-size';
-  const limit = 100;
   const headerHeight = headerSize.height?.value || 0;
-
   if (!container.value || !header.value) {
-    return `${keyOpacity}: 0; ${keySize}: ${headerHeight}px;`;
+    return `--grid-top-shadow-opacity: 0; --data-grid-header-size: ${headerHeight}px;`;
   }
-
   const v = bounding.top ? bounding.top.value - calculateOffset(container.value) : 0;
-
-  if (v < 0 - limit) {
-    return `${keyOpacity}: 1; ${keySize}: ${headerHeight}px;`;
-  }
-  if (v < 0) {
-    return `${keyOpacity}: ${(0 - v) / limit}; ${keySize}: ${headerHeight}px;`;
-  }
-  return `${keyOpacity}: 0; ${keySize}: ${headerHeight}px;`;
+  return `--grid-top-shadow-opacity: ${shadowOpacity(-v)}; --data-grid-header-size: ${headerHeight}px;`;
 });
 
 const fullBleedMargin = computed(() => {
@@ -2256,7 +2245,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       <div
         v-if="stickyHeader"
         ref="headerWrapperRef"
-        class="lx-grid-header-wrapper"
+        class="lx-grid-header-wrapper lx-shadow-bottom"
         aria-hidden="true"
         tabindex="-1"
         @focusin="handleStickyHeaderFocusIn"

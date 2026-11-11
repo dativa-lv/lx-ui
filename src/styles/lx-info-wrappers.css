@@ -232,28 +232,9 @@
 
 /* Scroll shadows */
 
-.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .popper.fullscreen-popper .lx-info-wrapper-panel-area::after {
-  background: linear-gradient(0deg, transparent 0%, var(--color-sheet-scroll-shadow) 100%);
-  content: '';
-  height: var(--space-3000);
-  position: absolute;
-  top: var(--row-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: var(--info-wrapper-top-shadow-opacity);
-  pointer-events: none;
-}
-
-.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .popper.fullscreen-popper .lx-info-wrapper-panel-area::before {
-  background: linear-gradient(180deg, transparent 0%, var(--color-sheet-scroll-shadow) 100%);
-  content: '';
-  height: var(--space-3000);
-  position: absolute;
-  bottom: var(--space-0);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: var(--info-wrapper-bottom-shadow-opacity);
-  pointer-events: none;
+.lx-info-wrapper-panel-area {
+  --lx-shadow-color: var(--color-sheet-scroll-shadow);
+  --lx-shadow-display: var(--lx-shadow-theme-display, block);
 }
 
 /* LxTooltip */

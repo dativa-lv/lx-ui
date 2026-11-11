@@ -46,18 +46,10 @@
   z-index: 10;
 }
 
-.lx-tab-wizard .lx-dropdown-container::after {
-  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: 3rem;
-  position: absolute;
-  top: var(--row-size);
-  top: var(--tab-control-header-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: 0;
-  opacity: var(--tab-control-shadow-opacity);
-  pointer-events: none;
+.lx-tab-wizard .lx-dropdown-container {
+  --lx-shadow-display: block;
+  --lx-shadow-bottom-opacity: var(--tab-control-shadow-opacity, 0);
+  --lx-shadow-bottom-offset: var(--tab-control-header-size);
 }
 
 .lx-tab-control .lx-dropdown-container .lx-dropdown-default-data {
@@ -122,18 +114,11 @@
   outline-offset: -2px;
 }
 
-.lx-tab-wizard-toolbar::after {
-  position: absolute;
-  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: var(--row-size);
-  top: var(--row-size);
-  top: var(--tab-control-header-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: 0;
-  opacity: var(--tab-control-shadow-opacity);
-  pointer-events: none;
+.lx-tab-wizard-toolbar {
+  --lx-shadow-display: block;
+  --lx-shadow-bottom-opacity: var(--tab-control-shadow-opacity, 0);
+  --lx-shadow-bottom-offset: var(--tab-control-header-size);
+  --lx-shadow-bottom-size: var(--row-size);
 }
 
 .lx-tab .lx-icon {

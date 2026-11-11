@@ -97,37 +97,19 @@ dialog {
 
 /*** Shadow styles ***/
 
-#modals .lx-modal > header::after {
-  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: var(--modal-header-size);
-  position: absolute;
-  top: var(--modal-header-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: 0;
-  opacity: var(--modal-top-shadow-opacity);
-  pointer-events: none;
-  display: var(--native-sticky-shadow-display);
+/* Static so the shadow anchors to the modal and escapes the header's overflow clip */
+#modals .lx-modal > header {
+  position: static;
+  --lx-shadow-bottom-opacity: var(--modal-top-shadow-opacity, 0);
+  --lx-shadow-bottom-size: var(--modal-header-size);
+  --lx-shadow-bottom-offset: var(--modal-header-size);
 }
 
-#modals .lx-modal > footer::before {
-  background: linear-gradient(180deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: var(--modal-footer-size);
-  position: absolute;
-  left: var(--space-0);
-  right: var(--space-0);
-  bottom: var(--modal-footer-size);
-  opacity: 0;
-  opacity: var(--modal-bottom-shadow-opacity);
-  pointer-events: none;
-  display: var(--native-sticky-shadow-display);
-}
-
-.lx-theme-contrast #modals .lx-modal > header::after,
-.lx-theme-contrast #modals .lx-modal > footer::before {
-  display: none;
+#modals .lx-modal > footer {
+  position: static;
+  --lx-shadow-top-opacity: var(--modal-bottom-shadow-opacity, 0);
+  --lx-shadow-top-size: var(--modal-footer-size);
+  --lx-shadow-top-offset: var(--modal-footer-size);
 }
 
 /*** Header button styles ***/

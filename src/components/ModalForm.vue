@@ -8,7 +8,8 @@ import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
 import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinitionsUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
-import { useElementSize, useScroll } from '@vueuse/core';
+import { useElementSize } from '@vueuse/core';
+import { useScrollShadows } from '@/hooks/useScrollShadows';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
@@ -52,7 +53,7 @@ const modalFooter = ref();
 
 const footerSize = useElementSize(modalFooter, undefined, { box: 'border-box' });
 
-const { y: scrollYPos } = useScroll(modalContent);
+const { bottom: bottomShadowOpacity } = useScrollShadows(modalContent);
 
 const { activate, deactivate, pause, unpause } = useFocusTrap(modalRef, {
   allowOutsideClick: true,
@@ -150,25 +151,9 @@ const additionalButtons = computed(() =>
 );
 
 const bottomOutOfBounds = computed(() => {
-  const keyOpacity = '--modal-bottom-shadow-opacity';
-  const keySize = '--modal-footer-size';
-  const limit = 100;
-  const size = footerSize.height?.value;
-
   if (!modalContent.value || !modalFooter.value)
-    return `${keyOpacity}: 0; ${keySize}: var(--row-size);`;
-
-  const maxScrollDistance = modalContent.value.scrollHeight - modalContent.value.clientHeight;
-  const scrollTop = scrollYPos.value || 0;
-  const v = maxScrollDistance - scrollTop;
-
-  if (v > limit) {
-    return `${keyOpacity}: 1; ${keySize}: ${size}px;`;
-  }
-  if (v > 0) {
-    return `${keyOpacity}: ${v / limit}; ${keySize}: ${size}px;`;
-  }
-  return `${keyOpacity}: 0; ${keySize}: ${size}px;`;
+    return '--modal-bottom-shadow-opacity: 0; --modal-footer-size: var(--row-size);';
+  return `--modal-bottom-shadow-opacity: ${bottomShadowOpacity.value}; --modal-footer-size: ${footerSize.height?.value}px;`;
 });
 
 function ifModalsExist() {
@@ -180,7 +165,7 @@ watch(isOpen, (newIsOpen) => {
   if (newIsOpen) {
     nextTick(() => {
       if (modalContent.value) {
-        scrollYPos.value = 0;
+        modalContent.value.scrollTop = 0;
       }
     });
     document.body.classList.add('no-scroll-modal');
@@ -290,7 +275,7 @@ defineExpose({ open, close });
           </div>
           <footer
             ref="modalFooter"
-            class="lx-button-set"
+            class="lx-button-set lx-shadow-top"
             :class="[
               {
                 'lx-two-buttons': actionDefinitionsDisplay?.length === 2,

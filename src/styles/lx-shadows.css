@@ -1,0 +1,103 @@
+.lx-theme-contrast,
+.lx-no-transparency {
+  --lx-shadow-theme-display: none;
+}
+
+/* Fade to the surface the shadow sits on */
+.lx-region,
+.lx-region-component {
+  --lx-shadow-color: var(--color-region);
+}
+
+:is(.lx-region, .lx-region-component) .lx-region-component {
+  --lx-shadow-color: var(--color-region-2);
+}
+
+/* Knobs don't inherit into nested hosts */
+:where(.lx-shadow-top, .lx-shadow-bottom, .lx-shadow-left, .lx-shadow-right) {
+  position: relative;
+  --lx-shadow-display: initial;
+  --lx-shadow-top-opacity: 1;
+  --lx-shadow-bottom-opacity: 1;
+  --lx-shadow-left-opacity: 1;
+  --lx-shadow-right-opacity: 1;
+  --lx-shadow-top-size: initial;
+  --lx-shadow-bottom-size: initial;
+  --lx-shadow-left-size: initial;
+  --lx-shadow-right-size: initial;
+  --lx-shadow-top-offset: initial;
+  --lx-shadow-bottom-offset: initial;
+  --lx-shadow-left-offset: initial;
+  --lx-shadow-right-offset: initial;
+}
+
+.lx-shadow-top::before,
+.lx-shadow-left::before,
+.lx-shadow-bottom::after,
+.lx-shadow-right::after {
+  --lx-shadow-fill: var(--lx-shadow-color, var(--color-background));
+  display: var(--lx-shadow-display, var(--lx-shadow-theme-display, var(--native-sticky-shadow-display, block)));
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.lx-shadow-top::before {
+  left: var(--space-0);
+  right: var(--space-0);
+  bottom: var(--lx-shadow-top-offset, 100%);
+  height: var(--lx-shadow-top-size, 3rem);
+  opacity: var(--lx-shadow-top-opacity);
+  background: linear-gradient(to top, var(--lx-shadow-fill), transparent);
+}
+
+.lx-shadow-bottom::after {
+  left: var(--space-0);
+  right: var(--space-0);
+  top: var(--lx-shadow-bottom-offset, 100%);
+  height: var(--lx-shadow-bottom-size, 3rem);
+  opacity: var(--lx-shadow-bottom-opacity);
+  background: linear-gradient(to bottom, var(--lx-shadow-fill), transparent);
+}
+
+.lx-shadow-left::before {
+  top: var(--space-0);
+  bottom: var(--space-0);
+  right: var(--lx-shadow-left-offset, 100%);
+  width: var(--lx-shadow-left-size, 3rem);
+  opacity: var(--lx-shadow-left-opacity);
+  background: linear-gradient(to left, var(--lx-shadow-fill), transparent);
+}
+
+.lx-shadow-right::after {
+  top: var(--space-0);
+  bottom: var(--space-0);
+  left: var(--lx-shadow-right-offset, 100%);
+  width: var(--lx-shadow-right-size, 3rem);
+  opacity: var(--lx-shadow-right-opacity);
+  background: linear-gradient(to right, var(--lx-shadow-fill), transparent);
+}
+
+.lx-shadow-inset.lx-shadow-top::before {
+  top: var(--lx-shadow-top-offset, var(--space-0));
+  bottom: auto;
+  background: linear-gradient(to bottom, var(--lx-shadow-fill), transparent);
+}
+
+.lx-shadow-inset.lx-shadow-bottom::after {
+  top: auto;
+  bottom: var(--lx-shadow-bottom-offset, var(--space-0));
+  background: linear-gradient(to top, var(--lx-shadow-fill), transparent);
+}
+
+.lx-shadow-inset.lx-shadow-left::before {
+  left: var(--lx-shadow-left-offset, var(--space-0));
+  right: auto;
+  background: linear-gradient(to right, var(--lx-shadow-fill), transparent);
+}
+
+.lx-shadow-inset.lx-shadow-right::after {
+  left: auto;
+  right: var(--lx-shadow-right-offset, var(--space-0));
+  background: linear-gradient(to left, var(--lx-shadow-fill), transparent);
+}

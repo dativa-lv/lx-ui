@@ -1444,25 +1444,11 @@
   pointer-events: auto;
 }
 
-.lx:not(.lx-theme-contrast):not(.lx-no-transparency) .lx-component-toolbar.lx-toolbar-sticky::after {
-  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
-  content: '';
-  height: 3rem;
-  position: absolute;
-  top: var(--row-size);
-  left: var(--space-0);
-  right: var(--space-0);
-  opacity: 0;
-  opacity: var(--toolbar-top-shadow-opacity);
-  pointer-events: none;
-  display: var(--native-sticky-shadow-display);
+.lx-component-toolbar.lx-toolbar-sticky {
+  --lx-shadow-bottom-offset: var(--row-size);
 }
 
-.lx.lx-no-transparency:not(.lx-theme-contrast) .lx-component-toolbar.lx-toolbar-sticky::after {
-  background: transparent;
-}
-
-.lx:not(.lx-theme-contrast) .lx-data-grid-wrapper.lx-grid-sticky-toolbar .lx-component-toolbar.lx-toolbar-sticky::after {
+.lx-data-grid-wrapper.lx-grid-sticky-toolbar .lx-component-toolbar.lx-toolbar-sticky::after {
   display: none;
 }
 
@@ -1499,8 +1485,8 @@
   top: calc(var(--nav-row-size) + var(--row-size) + var(--toolbar-gap-top, 0rem));
 }
 
-.lx:not(.lx-theme-contrast) .lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky::after {
-  top: var(--toolbar-header-size);
+.lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+  --lx-shadow-bottom-offset: var(--toolbar-header-size);
 }
 
 /* Sticky for map will ruin full-screen map view */

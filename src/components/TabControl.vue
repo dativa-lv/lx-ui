@@ -8,6 +8,7 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
 import { clampText, getDisplayTexts } from '@/utils/generalUtils';
 import { generateUUID } from '@/utils/stringUtils';
+import { getStickyTopOffset, shadowOpacity } from '@/utils/shadowUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -104,27 +105,11 @@ function focusNextTab() {
   document.getElementById(`${props.id}-tab-${highlightedTabId.value}`).focus();
 }
 
-function getStickyTopOffset(el) {
-  return Number.parseFloat(getComputedStyle(el).top) || 0;
-}
-
 const topOutOfBounds = computed(() => {
-  const keyOpacity = '--tab-control-shadow-opacity';
-  const keySize = '--tab-control-header-size';
-  const limit = 100;
-  const size = headerSize.height?.value;
-
   if (!tabControl.value || !tabHeader.value)
-    return `${keyOpacity}: 0; ${keySize}: var(--row-size);`;
-
+    return `--tab-control-shadow-opacity: 0; --tab-control-header-size: var(--row-size);`;
   const v = bounding.top ? bounding.top.value - getStickyTopOffset(tabHeader.value) : 0;
-  if (v < 0 - limit) {
-    return `${keyOpacity}: 1; ${keySize}: ${size}px;`;
-  }
-  if (v < 0) {
-    return `${keyOpacity}: ${(0 - v) / limit}; ${keySize}: ${size}px;`;
-  }
-  return `${keyOpacity}: 0; ${keySize}: ${size}px;`;
+  return `--tab-control-shadow-opacity: ${shadowOpacity(-v)}; --tab-control-header-size: ${headerSize.height?.value}px;`;
 });
 
 watch(
@@ -148,7 +133,7 @@ onMounted(() => {
   <div :id="id" class="lx-tab-control lx-tab-wizard" :style="`${topOutOfBounds}`" ref="tabControl">
     <header
       ref="tabHeader"
-      class="lx-tab-wizard-toolbar"
+      class="lx-tab-wizard-toolbar lx-shadow-bottom"
       :class="[{ 'lx-tab-control-default': kind === 'default' }]"
     >
       <div class="lx-tab-container lx-tab-wizard-container">
@@ -238,7 +223,7 @@ onMounted(() => {
         />
       </div>
 
-      <div class="lx-dropdown-container">
+      <div class="lx-dropdown-container lx-shadow-bottom">
         <LxValuePicker
           :id="`${id}-dropdown`"
           variant="dropdown"

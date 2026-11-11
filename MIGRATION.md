@@ -158,6 +158,54 @@ is missing from `items` is now shown as the id instead of an empty field.
 - Don't add new usages of `preloadedItems` or function `items`.
 - Update `customItem` templates to the `{ item, context }` slot props when switching to `mode="new"`.
 
+## 2.3.12 → 2.3.13
+
+### Breaking changes
+
+#### Scroll shadows
+
+Scroll shadows (the fade under sticky headers, toolbars and footers, and at the edges of scrollable
+areas) now come from one shared file, `lx-shadows.css`. If you import style files one by one instead
+of a bundle, import it right after the theme files:
+
+```js
+import '@dativa-lv/lx-ui/dist/styles/lx-shadows.css';
+```
+
+To add a shadow to your own element, give it `lx-shadow-top`, `lx-shadow-bottom`, `lx-shadow-left` or
+`lx-shadow-right` (the edge it is drawn beyond), plus `lx-shadow-inset` to draw it inside that edge.
+Top and left shadows use `::before`, bottom and right use `::after`. Optional per-host tokens:
+
+| Token                        | Default | Purpose                              |
+|------------------------------|---------|--------------------------------------|
+| `--lx-shadow-{edge}-opacity` | `1`     | Fade in/out, e.g. by scroll distance |
+| `--lx-shadow-{edge}-size`    | `3rem`  | Shadow height (or width)             |
+| `--lx-shadow-{edge}-offset`  | edge    | Moves the shadow away from the edge  |
+
+The fade color follows the surface the shadow sits on: `--color-background` outside regions,
+`--color-region` inside `.lx-region` and `.lx-region-component`, and
+`--color-region-2` in a region component nested in a region. Set `--lx-shadow-color` on an element to
+override it for everything inside.
+
+**Visual changes**
+
+Shadows inside regions now fade to the region color instead of the page background, so they no longer
+show as a grey band on a white surface:
+
+- LxModal and LxModalForm header and footer shadows.
+- LxForm, LxDataGrid, LxToolbar, LxTabControl, LxWizard and LxChat shadows when the component is inside
+  a region, LxCard or modal.
+- LxDatePicker mobile sheet shadows (the sheet is a region component).
+
+Shadows outside regions are unchanged.
+
+**Token removals**
+
+These internal tokens were replaced by `--lx-shadow-{edge}-opacity`: `--toolbar-top-shadow-opacity`,
+`--lx-chat-top-shadow-opacity`, `--lx-chat-footer-shadow-opacity`, `--info-wrapper-top-shadow-opacity`,
+`--info-wrapper-bottom-shadow-opacity`, `--date-picker-wrapper-top-shadow-opacity`,
+`--date-picker-wrapper-bottom-shadow-opacity`.
+
 ## 2.3.11 → 2.3.12
 
 ### Other changes

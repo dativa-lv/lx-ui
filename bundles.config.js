@@ -16,6 +16,7 @@ export const commonStyles = [
   'lx-ut-carbon-light',
   'lx-ut-carbon-dark',
   'lx-ut-carbon-contrast',
+  'lx-shadows',
   'lx-buttons',
   'lx-data-grid',
   'lx-inputs',
