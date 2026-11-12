@@ -139,7 +139,7 @@
 | `--button-ghost-height`                    | `--button-height`                                                                  |
 | `--button-ghost-icon-size`                 | `--button-icon-size`                                                               |
 | `--button-ghost-min-width`                 | `--button-min-width`                                                               |
-| `--button-ghost-outline-offset`            | -2px                                                                               |
+| `--button-ghost-outline-offset`            | `--button-outline-offset`                                                          |
 | `--button-ghost-padding`                   | `--button-padding`                                                                 |
 | `--button-ghost-width`                     | `--button-width`                                                                   |
 | `--button-ghost-icon-only-height`          | `--button-icon-only-height`                                                        |

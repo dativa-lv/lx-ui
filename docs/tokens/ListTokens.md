@@ -57,6 +57,7 @@
 | `--list-draggable-handle-width`                   | `--row-size`                                                  |
 | `--list-treelist-expander-height`                 | `--row-size`                                                  |
 | `--list-treelist-expander-width`                  | `--row-size`                                                  |
+| `--list-treelist-expander-outline-offset`         | `--list-button-outline-offset`                                |
 | `--list-treelist-grid-areas`                      | 'expander treelist-content'                                   |
 | `--list-treelist-grid-template-columns`           | auto 1fr                                                      |
 | `--list-treelist-indent-left`                     | `--row-size`                                                  |

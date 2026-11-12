@@ -99,11 +99,16 @@
   grid-area: expander;
   height: var(--list-treelist-expander-height);
   width: var(--list-treelist-expander-width);
+  outline-offset: var(--list-treelist-expander-outline-offset);
+}
+
+.lx-list-wrapper .tree-list-small .tree-item-small > .lx-button {
+  outline-offset: var(--list-treelist-expander-outline-offset);
 }
 
 .tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) .lx-list-icon,
-.tree-list .tree-item-small-parent:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-list-item-actions .lx-dropdown-toggler .lx-button svg,
-.tree-list .tree-item-small-parent:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-list-item-actions > .lx-button svg {
+.tree-list .tree-item-small-parent:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-list-item-actions .lx-dropdown-toggler:not(:active) .lx-button:not(:hover):not(:active) svg,
+.tree-list .tree-item-small-parent:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-list-item-actions > .lx-button:not(:hover):not(:active) svg {
   fill: var(--color-selected);
 }
 
@@ -121,6 +126,11 @@
 .lx .lx-region .tree-list .tree-item-small-parent:not(:has(.lx-list-item-container)) .lx-list-item-wrapper,
 .lx .lx-region .tree-list .tree-item-small-parent .lx-list-item-container {
   background-color: var(--color-selected-background);
+}
+
+.lx-theme-contrast .tree-list .tree-item-small-parent .lx-list-item-container {
+  --color-checkbox-border-off: var(--contrast-background);
+  --color-radio-button-border-off: var(--contrast-background);
 }
 
 .lx .tree-item-small-parent .lx-list-item.lx-list-item-interactive:not(.lx-list-item-disabled):hover {
@@ -141,6 +151,13 @@
   fill: var(--color-interactive-hover-foreground);
 }
 
+.tree-list .tree-item .tree-item-invalid > .lx-button:active:not(.lx-disabled) svg,
+.tree-list-small > .tree-item-invalid > .lx-button:active:not(.lx-disabled) svg,
+.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent) > .lx-button:active:not(.lx-disabled) > .lx-button-content-wrapper svg,
+.lx-list-wrapper .tree-list .tree-item .tree-item-body > .lx-button:active:not(.lx-disabled) > .lx-button-content-wrapper svg {
+  fill: var(--color-button-ghost-icon-active);
+}
+
 .tree-list-search {
   display: flex;
   flex-direction: column;
@@ -157,6 +174,10 @@
 
 .lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children > .lx-button:hover:not(.lx-disabled) {
   background-color: var(--color-interactive-hover-background);
+}
+
+.lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children > .lx-button:active:not(.lx-disabled) {
+  background-color: var(--color-button-ghost-background-active);
 }
 
 .lx-list-wrapper .tree-list .tree-item:first-child {

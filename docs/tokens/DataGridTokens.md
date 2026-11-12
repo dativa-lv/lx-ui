@@ -25,7 +25,7 @@
 | `--data-grid-action-border-radius`              | `--button-border-radius`                      |
 | `--data-grid-action-height`                     | 3rem                                          |
 | `--data-grid-action-width`                      | 3rem                                          |
-| `--data-grid-action-outline-offset`             | `--button-ghost-outline-offset`               |
+| `--data-grid-action-outline-offset`             | -2px                                          |
 | `--data-grid-footer-divider-border`             | `--border-width-1` solid `--color-chrome`     |
 | `--data-grid-footer-divider-height`             | stretch                                       |
 | `--data-grid-footer-button-icon-size`           | `--button-icon-size`                          |
@@ -36,7 +36,7 @@
 | `--data-grid-footer-button-min-width`           | 5.5rem                                        |
 | `--data-grid-footer-button-icon-only-width`     | `--button-icon-only-width`                    |
 | `--data-grid-footer-button-icon-only-min-width` | `--button-icon-only-min-width`                |
-| `--data-grid-footer-button-outline-offset`      | `--button-ghost-outline-offset`               |
+| `--data-grid-footer-button-outline-offset`      | -2px                                          |
 | `--data-grid-footer-grid-template-columns`      | auto 1fr auto                                 |
 | `--data-grid-footer-grid-areas`                 | 'count-selector count-display paging-buttons' |
 | `--data-grid-column-header-icon-size`           | `--icon-size-s`                               |

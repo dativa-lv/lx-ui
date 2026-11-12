@@ -758,6 +758,7 @@
 .lx-data-block .additional-buttons > .lx-button:focus,
 .lx-data-block .additional-buttons .lx-dropdown-toggler:focus > .lx-button {
   background: var(--color-data-block-button-background-focus);
+  outline-offset: var(--data-block-button-outline-offset);
 }
 
 .lx-data-block .additional-buttons > .lx-button:focus svg,

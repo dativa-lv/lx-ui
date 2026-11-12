@@ -710,7 +710,6 @@
   background: var(--color-toolbar-button-ghost-background-focus);
   border-color: var(--color-toolbar-button-ghost-border-focus);
   color: var(--color-toolbar-button-ghost-text-focus);
-  outline-offset: var(--toolbar-button-primary-outline-offset);
 }
 
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:focus:hover,
@@ -749,6 +748,11 @@
   outline-offset: var(--toolbar-embedded-button-ghost-outline-offset);
 }
 
+.lx-layout .lx-component-toolbar .lx-input-wrapper > .lx-button.lx-button-ghost,
+.lx-layout .lx-embedded-toolbar .lx-input-wrapper > .lx-button.lx-button-ghost {
+  outline-offset: var(--input-button-outline-offset);
+}
+
 .lx-embedded-toolbar .lx-group > .lx-button.lx-button-ghost > .lx-button-content-wrapper,
 .lx-embedded-toolbar .lx-dropdown-toggler > .lx-button.lx-button-ghost > .lx-button-content-wrapper {
   grid-template-areas: var(--toolbar-embedded-button-ghost-grid-areas);
@@ -773,7 +777,6 @@
   background: var(--color-toolbar-embedded-button-ghost-background-focus);
   border-color: var(--color-toolbar-embedded-button-ghost-border-focus);
   color: var(--color-toolbar-embedded-button-ghost-text-focus);
-  outline-offset: var(--toolbar-embedded-button-primary-outline-offset);
 }
 
 .lx-layout .lx-embedded-toolbar .lx-button.lx-button-ghost:focus:hover,

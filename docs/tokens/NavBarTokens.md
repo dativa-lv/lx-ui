@@ -42,6 +42,7 @@
 | `--nav-public-item-width`                 | auto                                                  |
 | `--nav-header-divider-border`             | `--border-width-1` solid `--color-nav-foreground`     |
 | `--nav-header-divider-height`             | 2rem                                                  |
+| `--nav-header-button-outline-offset`      | -2px                                                  |
 
 ## Color
 

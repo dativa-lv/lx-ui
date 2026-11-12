@@ -62,7 +62,7 @@ markup. That is why the sheet has its own `--sheet-*` namespace, with defaults p
 | `--sheet-button-min-width`              | `--space-3000`                                              |
 | `--sheet-button-border`                 | `--button-ghost-border`                                     |
 | `--sheet-button-border-radius`          | `--button-ghost-border-radius`                              |
-| `--sheet-button-outline-offset`         | `--button-ghost-outline-offset`                             |
+| `--sheet-button-outline-offset`         | -2px                                                        |
 | `--sheet-button-icon-size`              | `--button-ghost-icon-size`                                  |
 
 ### Color

@@ -28,7 +28,7 @@
 | `--info-box-button-width`               | `--button-ghost-icon-only-width`                          |
 | `--info-box-button-border`              | `--button-ghost-border`                                   |
 | `--info-box-button-border-radius`       | `--border-radius-0`                                       |
-| `--info-box-button-outline-offset`      | `--button-ghost-outline-offset`                           |
+| `--info-box-button-outline-offset`      | -2px                                                      |
 | `--info-box-button-icon-size`           | `--button-ghost-icon-size`                                |
 
 ## Color

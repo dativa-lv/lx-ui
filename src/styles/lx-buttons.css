@@ -724,12 +724,21 @@ a.lx-button.lx-button-ghost svg {
   background: var(--color-button-ghost-background-focus);
   border-color: var(--color-button-ghost-border-focus);
   color: var(--color-button-ghost-text);
-  outline-offset: var(--button-outline-offset);
+  outline-offset: var(--button-ghost-outline-offset);
 }
 
 .lx-header:not(.lx-page-header) .lx-button.lx-button-ghost:focus,
-.lx-header:not(.lx-page-header) .lx-dropdown-toggler:focus .lx-button.lx-button-ghost {
-  outline-offset: var(--button-ghost-outline-offset);
+.lx-header:not(.lx-page-header) .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
+.lx-header-digives .lx-button.lx-button-ghost:focus,
+.lx-header-digives .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
+.lx-header-digives-lite .lx-button.lx-button-ghost:focus,
+.lx-header-digives-lite .lx-dropdown-toggler:focus .lx-button.lx-button-ghost {
+  outline-offset: var(--nav-header-button-outline-offset);
+}
+
+.lx-nav-panel .lx-button.lx-button-ghost:focus,
+.lx-nav-panel .lx-dropdown-toggler:focus .lx-button.lx-button-ghost {
+  outline-offset: var(--nav-item-outline-offset);
 }
 
 /* Focus-hover styles */
@@ -785,6 +794,26 @@ a.lx-button.lx-button-ghost svg {
   border-color: var(--color-button-primary-border-focus);
 }
 
+/* Inset outline covers the border, so draw the focus-hover ring inside it */
+.lx-list-item-actions .lx-button:focus:hover,
+.lx-list-item-actions .lx-dropdown-toggler:focus:hover .lx-button,
+.lx-data-block .additional-buttons > .lx-button:focus:hover,
+.lx-data-block .additional-buttons .lx-dropdown-toggler:focus:hover > .lx-button,
+.lx-info-box .lx-info-box-action-icon .lx-button:focus:hover,
+.lx-info-box .lx-info-box-action-icon .lx-dropdown-toggler:focus:hover .lx-button,
+.lx-input-wrapper > .lx-button:focus:hover,
+.lx-info-wrapper-responsive-toolbar .lx-button.lx-button-ghost:focus:hover,
+.lx-data-grid .lx-cell-action .lx-button:focus:hover,
+.lx-data-grid .grid-actions-menu:focus:hover .lx-button,
+.lx-statusbar .lx-button:focus:hover,
+.lx-statusbar .lx-dropdown-toggler:focus:hover .lx-button,
+.lx-widget > header .lx-widget-toolbar-button .lx-button:focus:hover,
+.lx-widget > header .lx-dropdown-toggler:focus:hover .lx-widget-toolbar-button .lx-button,
+.tree-list .tree-item .tree-item-body > .lx-button:focus:hover,
+.tree-list-small .tree-item-small > .lx-button:focus:hover {
+  box-shadow: inset 0 0 0 var(--button-border-width) var(--color-button-primary-border-focus);
+}
+
 /* Active styles */
 .lx .lx-button:active,
 .lx-dropdown-toggler:active .lx-button,
@@ -836,6 +865,20 @@ a.lx-button.lx-button-ghost svg {
   background: var(--color-button-destructive-background);
   border-color: var(--color-button-destructive-border);
   color: var(--color-button-destructive);
+}
+
+.lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):focus:hover,
+.lx .lx-layout .lx-component-toolbar .lx-button.lx-destructive:not(.lx-disabled):focus:hover,
+.lx .lx-layout .lx-dropdown-toggler:focus:hover .lx-button.lx-destructive:not(.lx-disabled),
+.lx-layout.lx-override button.lx-destructive:not(.lx-disabled):focus:hover,
+.lx-layout.lx-override button.lx-destructive:not([disabled]):focus:hover,
+.lx .lx-layout.lx-override input[type='button'].lx-destructive:not(.lx-disabled):focus:hover,
+.lx .lx-layout.lx-override input[type='button'].lx-destructive:not([disabled]):focus:hover {
+  border-color: var(--color-button-primary-border-focus);
+}
+
+.lx .lx-layout .lx-dropdown-panel .lx-button.lx-destructive:not(.lx-disabled):focus:hover {
+  border-color: var(--color-button-destructive-border);
 }
 
 /*** Disabled styles ***/

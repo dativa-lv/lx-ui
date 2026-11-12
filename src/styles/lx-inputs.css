@@ -2006,6 +2006,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-input-wrapper > .lx-button:focus {
   background: var(--color-input-button-background-focus);
+  outline-offset: var(--input-button-outline-offset);
 }
 
 .lx .lx-input-wrapper > .lx-button:focus svg {

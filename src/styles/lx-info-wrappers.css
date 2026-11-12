@@ -202,6 +202,7 @@
 .lx-info-wrapper-responsive-toolbar .lx-button.lx-button-ghost:focus {
   background: var(--color-sheet-button-background-focus);
   border-color: var(--color-sheet-button-border-focus);
+  outline-offset: var(--sheet-button-outline-offset);
 }
 
 .lx-info-wrapper-responsive-toolbar .lx-button.lx-button-ghost:focus svg {

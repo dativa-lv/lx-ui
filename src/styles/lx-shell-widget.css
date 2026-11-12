@@ -301,7 +301,7 @@ header.lx.lx-layout-public > .lx-header .lx-main-button > div {
   border-radius: var(--button-ghost-border-radius);
   background-color: var(--color-button-ghost-background);
   color: var(--color-button-ghost-text);
-  outline-offset: var(--button-ghost-outline-offset);
+  outline-offset: var(--nav-header-button-outline-offset);
   grid-template-columns: var(--button-ghost-grid-template-columns);
   grid-template-rows: var(--button-ghost-grid-template-rows);
   grid-template-areas: var(--button-ghost-grid-areas);

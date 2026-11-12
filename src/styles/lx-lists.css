@@ -590,27 +590,34 @@
   fill: var(--color-list-button-icon-hover);
 }
 
-.lx .lx-list-item-actions .lx-button:focus {
+.lx .lx-list-item-actions .lx-button:focus,
+.lx .lx-list-item-actions .lx-dropdown-toggler:focus .lx-button {
   background: var(--color-list-button-background-focus);
+  outline-offset: var(--list-button-outline-offset);
 }
 
-.lx .lx-list-item-actions .lx-button:focus svg {
+.lx .lx-list-item-actions .lx-button:focus svg,
+.lx .lx-list-item-actions .lx-dropdown-toggler:focus .lx-button svg {
   fill: var(--color-list-button-icon-focus);
 }
 
-.lx .lx-list-item-actions .lx-button:focus:hover {
+.lx .lx-list-item-actions .lx-button:focus:hover,
+.lx .lx-list-item-actions .lx-dropdown-toggler:focus:hover .lx-button {
   background: var(--color-list-button-background-hover);
 }
 
-.lx .lx-list-item-actions .lx-button:focus:hover svg {
+.lx .lx-list-item-actions .lx-button:focus:hover svg,
+.lx .lx-list-item-actions .lx-dropdown-toggler:focus:hover .lx-button svg {
   fill: var(--color-list-button-icon-hover);
 }
 
-.lx .lx-list-item-actions .lx-button.lx-button-ghost:active {
+.lx .lx-list-item-actions .lx-button.lx-button-ghost:active,
+.lx .lx-list-item-actions .lx-dropdown-toggler:active .lx-button.lx-button-ghost {
   background: var(--color-list-button-background-active);
 }
 
-.lx .lx-list-item-actions .lx-button.lx-button-ghost:active svg {
+.lx .lx-list-item-actions .lx-button.lx-button-ghost:active svg,
+.lx .lx-list-item-actions .lx-dropdown-toggler:active .lx-button.lx-button-ghost svg {
   fill: var(--color-list-button-icon-active);
 }
 
@@ -769,6 +776,12 @@
 .lx-list-item-wrapper:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled)) .lx-list-item-actions .lx-dropdown-toggler .lx-button:hover svg,
 .lx-list-item-wrapper:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled)) .lx-list-item-actions > .lx-button:hover svg {
   fill: var(--color-focus-foreground);
+}
+
+.lx-list-item-wrapper:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled)) .lx-list-item-actions .lx-dropdown-toggler:active .lx-button svg,
+.lx-list-item-wrapper:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled)) .lx-list-item-actions .lx-dropdown-toggler .lx-button:active svg,
+.lx-list-item-wrapper:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled)) .lx-list-item-actions > .lx-button:active svg {
+  fill: var(--color-list-button-icon-active);
 }
 
 .lx.lx-theme-contrast .lx-list-item.lx-invalid.lx-selected .lx-invalidation-icon,

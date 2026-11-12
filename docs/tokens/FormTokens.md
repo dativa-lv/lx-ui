@@ -21,3 +21,4 @@
 | `--form-section-divider-margin`        | `--space-0`                               |
 | `--form-header-footer-divider-display` | block                                     |
 | `--form-section-padding`               | `--space-2000`                            |
+| `--form-index-item-outline-offset`     | -2px                                      |

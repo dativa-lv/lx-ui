@@ -594,7 +594,7 @@ svg .lx-shade {
 
 .lx-form-grid > .lx-index > ul li:focus-within {
   outline: 2px solid var(--color-focus-background);
-  outline-offset: var(--button-ghost-outline-offset);
+  outline-offset: var(--form-index-item-outline-offset);
 }
 
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-button,

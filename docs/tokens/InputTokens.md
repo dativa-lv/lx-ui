@@ -46,7 +46,7 @@ LxMarkdownTextArea, LxQrScanner, LxDrawPad and LxCamera are considered complex i
 | `--input-text-font-weight`          | `--font-weight`                                                             |
 | `--input-text-line-height`          | 1.5                                                                         |
 | `--input-button-border`             | `--button-ghost-border`                                                     |
-| `--input-button-outline-offset`     | `--button-ghost-outline-offset`                                             |
+| `--input-button-outline-offset`     | -2px                                                                        |
 | `--input-button-border-radius`      | `--border-radius-0`                                                         |
 | `--input-button-height`             | 2.5rem                                                                      |
 | `--input-button-indent-left`        | `--space-0`                                                                 |
