@@ -994,8 +994,13 @@ const selectedItems = computed(() => {
       }
     }
   });
-  emits('selectionChange', ret);
   return ret;
+});
+
+watch(selectedItems, (newValue, oldValue) => {
+  if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
+    emits('selectionChange', newValue);
+  }
 });
 
 function selectRow(id) {

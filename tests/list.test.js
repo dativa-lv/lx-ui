@@ -1073,3 +1073,29 @@ describe('Loading announcement', () => {
     { props: { hasVirtualization: false } }
   );
 });
+
+describe('selectionChange', () => {
+  const items = [
+    { id: '1', name: 'One' },
+    { id: '2', name: 'Two' },
+  ];
+
+  test('emits only when the selected items change', async () => {
+    wrapper = mountComponent({ props: { items, hasSelecting: true, selectionKind: 'multiple' } });
+    await flushVirtualizationSetup();
+    expect(wrapper.emitted('selectionChange')).toBeUndefined();
+
+    wrapper.vm.selectRows([items[0]]);
+    await nextTick();
+    expect(wrapper.emitted('selectionChange')).toEqual([[['1']]]);
+
+    // items change, selection stays the same
+    await wrapper.setProps({ items: [...items, { id: '3', name: 'Three' }] });
+    await flushVirtualizationSetup();
+    expect(wrapper.emitted('selectionChange')).toHaveLength(1);
+
+    wrapper.vm.cancelSelection();
+    await nextTick();
+    expect(wrapper.emitted('selectionChange').at(-1)).toEqual([[]]);
+  });
+});
