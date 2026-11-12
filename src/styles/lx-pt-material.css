@@ -6,6 +6,8 @@
   --font-weight-extra-bold: 600;
 
   --native-sticky-shadow-display: none;
+  --sticky-row-size: 3.5rem;
+  --sticky-nav-row-size: 3.5rem;
 
   /* LxModal */
   --modal-border-radius: var(--border-radius-1500);
@@ -430,12 +432,12 @@
   --color-toolbar-embedded-background: transparent;
 }
 
-.lx .lx-embedded-toolbar.lx-toolbar-sticky {
+.lx .lx-embedded-toolbar.lx-component-toolbar-sticky {
   --color-toolbar-embedded-background: var(--color-background);
 }
 
-.lx .lx-region .lx-embedded-toolbar.lx-toolbar-sticky,
-.lx .lx-region-component .lx-embedded-toolbar.lx-toolbar-sticky {
+.lx .lx-region .lx-embedded-toolbar.lx-component-toolbar-sticky,
+.lx .lx-region-component .lx-embedded-toolbar.lx-component-toolbar-sticky {
   --color-toolbar-embedded-background: var(--color-region);
 }
 
@@ -445,13 +447,13 @@
   background: transparent;
 }
 
-.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar-sticky {
   background: var(--color-background);
   border-radius: var(--border-radius-0);
 }
 
-.lx .lx-region .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky,
-.lx .lx-region-component .lx-data-grid-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+.lx .lx-region .lx-data-grid-wrapper .lx-component-toolbar-sticky,
+.lx .lx-region-component .lx-data-grid-wrapper .lx-component-toolbar-sticky {
   background: var(--color-data-grid-background);
 }
 

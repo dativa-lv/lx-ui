@@ -1,7 +1,7 @@
 .lx-notification-list {
   position: fixed;
   right: var(--space-0);
-  top: var(--nav-row-size);
+  top: var(--sticky-nav-row-size);
   z-index: 9000;
   list-style: none;
   display: flex;

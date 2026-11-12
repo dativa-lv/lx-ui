@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick, provide, computed, watch, onUnmounted } from 'vue';
+import { ref, nextTick, provide, computed, watch, onMounted, onUnmounted } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxActionButton from '@/components/ActionButton.vue';
 import { logWarn } from '@/utils/devUtils';
@@ -9,7 +9,7 @@ import { flattenNestedActions, resolveActionGroups } from '@/utils/actionDefinit
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { useElementSize } from '@vueuse/core';
 import { useScrollShadows } from '@/hooks/useScrollShadows';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, parsePaddingRem, remToPx } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -40,6 +40,8 @@ const insideModal = ref(true);
 const modalHeader = ref();
 const modalContent = ref();
 const modalFooter = ref();
+const contentPaddingTop = ref('0px');
+const lxElement = document.querySelector('.lx');
 
 const headerSize = useElementSize(modalHeader, undefined, { box: 'border-box' });
 const footerSize = useElementSize(modalFooter, undefined, { box: 'border-box' });
@@ -164,6 +166,20 @@ const bottomOutOfBounds = computed(() => {
   return `--modal-bottom-shadow-opacity: ${bottomShadowOpacity.value}; --modal-footer-size: ${footerSize.height?.value}px;`;
 });
 
+const paddingTopToken = computed(() => `--lx-modal-top-padding: ${contentPaddingTop.value};`);
+
+onMounted(() => {
+  if (!lxElement) return;
+
+  const computedStyle = getComputedStyle(lxElement);
+  const paddingTopRem = parsePaddingRem(
+    computedStyle.getPropertyValue('--modal-content-padding'),
+    lxElement,
+    'top'
+  );
+  contentPaddingTop.value = `${remToPx(paddingTopRem)}px`;
+});
+
 function ifModalsExist() {
   const modalsContainer = document.getElementById('modals');
   return modalsContainer && modalsContainer.children.length > 0;
@@ -221,7 +237,7 @@ defineExpose({ open, close });
             { 'lx-modal-l': size === 'l' },
             { 'lx-modal-xl': size === 'xl' },
           ]"
-          :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
+          :style="`${topOutOfBounds}; ${bottomOutOfBounds}; ${paddingTopToken}`"
           role="dialog"
           :aria-labelledby="`${id}-label`"
         >
@@ -284,7 +300,7 @@ defineExpose({ open, close });
             { 'lx-modal-xl': size === 'xl' },
           ]"
           tabindex="-1"
-          :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
+          :style="`${topOutOfBounds}; ${bottomOutOfBounds}; ${paddingTopToken}`"
           :aria-labelledby="`${id}-label`"
           @close="close"
           @keydown="handleKeyDown"

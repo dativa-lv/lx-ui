@@ -2167,7 +2167,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: 100%;
 }
 
-.lx-qr-scanner-wrapper > .lx-component-toolbar:not(.lx-toolbar-sticky) {
+.lx-qr-scanner-wrapper > .lx-component-toolbar:not(.lx-component-toolbar-sticky) {
   position: relative;
   z-index: 1;
 }
@@ -2727,16 +2727,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 /*** LxFileViewer styles ***/
 
-.lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
-  position: sticky;
-  top: var(--nav-row-size);
-  z-index: 4;
-}
-
-.lx-modal .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
-  top: var(--space-0);
-}
-
 .lx-file-viewer .lx-empty-state-wrapper {
   max-height: 6rem;
 }
@@ -2845,7 +2835,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-color: var(--color-focus-background);
 }
 
-.lx-file-viewer.lx-file-viewer-fullscreen .lx-file-viewer-toolbar {
+.lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar {
   grid-row: 1 / 2;
   position: absolute;
   top: var(--space-0);
@@ -2855,6 +2845,10 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-region);
   background-color: var(--color-background-overlay);
   backdrop-filter: blur(5rem);
+}
+
+#modals .lx-file-viewer.lx-file-viewer-fullscreen .lx-component-toolbar.lx-embedded-toolbar {
+  top: var(--space-0);
 }
 
 @media (max-width: 800px) {
@@ -3410,10 +3404,4 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-value-picker-wrapper .lx-dropdown-default .lx-dropdown-default-data .lx-stack {
   line-height: 1.1em;
   overflow-y: hidden;
-}
-
-@media (max-height: 499px) {
-  .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
-    position: static;
-  }
 }

@@ -314,7 +314,7 @@
   position: absolute !important;
   /* override .lx .lx-button:focus, .lx-override button:focus { z-index: 1 } */
   z-index: 3 !important;
-  right: 0;
+  right: var(--space-0);
   bottom: calc(var(--lx-chat-footer-height, 0px) + var(--space-0250));
   background-color: var(--lx-chat-fade-color);
 }

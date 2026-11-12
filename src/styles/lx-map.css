@@ -387,10 +387,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-  font:
-    bold 18px 'Lucida Console',
-    Monaco,
-    monospace;
+  font: bold 18px 'Lucida Console', Monaco, monospace;
   text-indent: 1px;
 }
 
@@ -591,10 +588,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   text-align: center;
   width: 24px;
   height: 24px;
-  font:
-    16px/24px Tahoma,
-    Verdana,
-    sans-serif;
+  font: 16px/24px Tahoma, Verdana, sans-serif;
   color: #757575;
   text-decoration: none;
   background: transparent;
@@ -824,6 +818,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
   background-color: var(--color-region);
   background-color: var(--color-background-overlay);
   backdrop-filter: blur(5rem);
+}
+
+#modals .lx-map.lx-map-fullscreen .lx-component-toolbar.lx-embedded-toolbar {
+  top: var(--space-0);
 }
 
 .leaflet-popup-content-wrapper {

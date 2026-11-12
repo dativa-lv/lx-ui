@@ -1661,7 +1661,7 @@ onUnmounted(() => {
     <LxToolbar
       v-if="supportedFileType"
       :id="`${id}-toolbar`"
-      class="lx-file-viewer-toolbar lx-embedded-toolbar"
+      class="lx-embedded-toolbar"
       :loading="renderingInProgress"
       :actionDefinitions="toolbarActions"
       :actionGroupDefinitions="actionGroupDefinitions"

@@ -30,9 +30,28 @@
 
 .lx-tab-wizard-toolbar {
   height: auto;
-  position: sticky;
-  top: var(--nav-row-size);
   z-index: 3;
+}
+
+.lx-form-grid-header-sticky + .lx-tab-wizard .lx-tab-wizard-toolbar {
+  position: sticky;
+  top: calc(var(--sticky-nav-row-size) + var(--sticky-row-size));
+}
+
+.lx-layout-public-shell .lx-form-grid-header-sticky + .lx-tab-wizard .lx-tab-wizard-toolbar {
+  top: calc(var(--public-nav-header-size) + var(--sticky-row-size));
+}
+
+.lx-layout-digives .lx-form-grid-header-sticky + .lx-tab-wizard .lx-tab-wizard-toolbar {
+  top: calc(var(--digives-nav-header-size) + var(--sticky-row-size));
+}
+
+.lx-layout-digives-lite .lx-form-grid-header-sticky + .lx-tab-wizard .lx-tab-wizard-toolbar {
+  top: calc(var(--nav-row-size) + var(--sticky-row-size));
+}
+
+#modals .lx-form-grid-header-sticky + .lx-tab-wizard .lx-tab-wizard-toolbar {
+  top: calc(var(--sticky-row-size) - var(--lx-modal-top-padding, 0rem));
 }
 
 .lx-modal .lx-form-grid > .lx-tab-control > .lx-tab-control-default .lx-dropdown-default-panel .lx-input-text {
@@ -42,7 +61,6 @@
 .lx-tab-control .lx-dropdown-container {
   display: none;
   position: sticky;
-  top: calc(var(--nav-row-size) + var(--row-size));
   z-index: 10;
 }
 
@@ -69,10 +87,6 @@
   min-height: var(--row-size);
   flex-shrink: 0;
   background-color: var(--color-region);
-}
-
-.lx-modal .lx-tab-wizard .lx-tab-wizard-container {
-  top: calc(var(--space-2000) * -1);
 }
 
 .lx-tab-wizard .lx-tab-wizard-body {

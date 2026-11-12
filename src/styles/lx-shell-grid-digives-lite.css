@@ -1,14 +1,19 @@
-.lx-notification-list {
-  top: calc(var(--space-3000) * 3 + var(--space-0500)) !important;
+.lx:has(.lx-layout-digives-lite) {
+  --nav-row-size: 4.5rem;
 }
+
+.lx-layout-digives-lite + .lx-notification-list {
+  top: calc(var(--nav-row-size) + var(--space-0500));
+}
+
 .lx-button .lx-loader.lx-small,
 .patient-data .lx-loader.lx-small {
   width: 1.25rem;
   height: 1.25rem;
 }
 
-.lx .lx-layout-digives-lite {
-  --nav-row-size: 4.5rem;
+.lx-layout-digives-lite .lx-component-toolbar-sticky {
+  top: var(--nav-row-size);
 }
 
 .lx-header-digives-lite {
@@ -379,22 +384,7 @@
 
 .lx-layout.lx-layout-digives-lite > nav {
   z-index: 999;
-}
-
-.lx-layout-digives-lite .lx-form-grid > .lx-tab-wizard > .lx-tab-wizard-toolbar {
-  top: calc(var(--nav-row-size) + var(--row-size));
-}
-
-.lx-layout-digives-lite .lx-form-grid .lx-form-grid-header-sticky {
   top: var(--nav-row-size);
-}
-
-.lx-layout-digives-lite .lx-form-grid > .lx-index > ul {
-  top: calc(var(--nav-row-size) + var(--row-size));
-}
-
-.lx-layout-digives-lite .lx-form-grid:not(:has(> .lx-form-grid-header)) > .lx-tab-wizard > .lx-tab-wizard-toolbar {
-  top: calc(var(--nav-row-size));
 }
 
 .nav-menu-button {
@@ -676,10 +666,6 @@
   background-color: var(--color-notification-error-background);
 }
 
-.lx .lx-layout-digives-lite + ul.lx-notification-list {
-  top: calc(var(--row-size) + var(--space-2500)) !important;
-}
-
 .lx-layout.lx-layout-digives-lite .lx-nav-panel ul li.lx-mega-menu-item .lx-button-content-wrapper:not(.lx-dropdown-panel .lx-button-content-wrapper) {
   --button-primary-grid-areas: 'content icon';
 }
@@ -917,15 +903,6 @@
 
   .lx-layout.lx-layout-default.lx-layout-digives-lite > nav .lx-nav-panel.lx-responsive {
     display: flex;
-  }
-
-  .lx-layout-digives-lite .lx-form-grid .lx-form-grid-header-sticky {
-    top: var(--nav-row-size);
-  }
-
-  .lx-layout-digives-lite .lx-form-grid > .lx-index > ul,
-  .lx-layout-digives-lite .lx-form-grid > .lx-tab-wizard > .lx-tab-wizard-toolbar {
-    top: calc(var(--nav-row-size) + var(--row-size));
   }
 
   .lx .digives-footer .col.extra p.footer-right-text.large {

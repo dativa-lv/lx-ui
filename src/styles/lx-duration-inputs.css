@@ -41,7 +41,7 @@
 .lx-duration-input-wrapper .lx-duration-fields .lx-duration-unit {
   position: absolute;
   right: var(--input-icon-wrapper-width);
-  top: 0;
+  top: var(--space-0);
   height: var(--input-icon-wrapper-height);
   align-content: center;
   margin-left: var(--space-0500);

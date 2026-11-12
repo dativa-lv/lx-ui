@@ -58,7 +58,7 @@ const {
 
 <template>
   <div
-    class="lx-layout lx-layout-latvijalv"
+    class="lx-layout lx-layout-latvijalv lx-layout-public-shell"
     :class="[
       { 'lx-collapsed': navBarSwitchModel },
       { 'lx-hide-nav-bar': props.hideNavBar },

@@ -72,8 +72,10 @@
   --gap-form-small: var(--space-2000) var(--gap-form-small-side) var(--space-1000) var(--gap-form-small-side);
 
   --row-size: 3rem;
+  --sticky-row-size: 3rem;
   --row-dynamic: var(--row-size);
   --nav-row-size: 3rem;
+  --sticky-nav-row-size: 3rem;
   --public-nav-header-size: calc(var(--nav-row-size) + var(--row-size));
   --body-column-size: 1300px;
   --form-column-size: 30rem;

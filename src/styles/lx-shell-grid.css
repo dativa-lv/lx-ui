@@ -24,8 +24,8 @@
 
 .lx-invisible {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: var(--space-0);
+  left: var(--space-0);
   width: 2px;
   height: 2px;
   padding: var(--space-0);
@@ -61,7 +61,7 @@
   grid-area: header;
   background: linear-gradient(to right, color-mix(in srgb, var(--color-brand) 25%, transparent) 0%, transparent 50%), var(--color-nav-background);
   color: var(--color-nav-foreground);
-  height: var(--nav-row-size);
+  height: var(--sticky-nav-row-size);
   position: fixed;
   top: var(--space-0);
   width: 100%;
@@ -69,7 +69,7 @@
   z-index: 8100;
 }
 
-.lx.lx-theme-contrast .lx-layout.lx-layout-default > header {
+.lx-theme-contrast .lx-layout.lx-layout-default > header {
   background: var(--color-nav-background);
 }
 
@@ -86,8 +86,7 @@
 }
 
 .lx-layout.lx-layout-default > header .lx-header > .lx-group:last-of-type,
-.lx-layout.lx-layout-public > header .lx-header > .lx-group:last-of-type,
-.lx-layout.lx-layout-latvijalv > header .lx-header > .lx-group:last-of-type {
+.lx-layout.lx-layout-public-shell > header .lx-header > .lx-group:last-of-type {
   justify-content: flex-end;
 }
 
@@ -306,9 +305,9 @@
   width: var(--aside-size);
   min-height: var(--row-size);
   position: fixed;
-  top: var(--nav-row-size);
-  height: calc(100vh - var(--nav-row-size));
-  height: calc(100dvh - var(--nav-row-size));
+  top: var(--sticky-nav-row-size);
+  height: calc(100vh - var(--sticky-nav-row-size));
+  height: calc(100dvh - var(--sticky-nav-row-size));
 }
 
 .lx-layout.lx-layout-default > nav .lx-nav-panel {
@@ -455,8 +454,7 @@
   --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
-.lx-layout-public #nav-toggle.lx-button .lx-button-content-wrapper svg,
-.lx-layout-latvijalv #nav-toggle.lx-button .lx-button-content-wrapper svg {
+.lx-layout-public-shell #nav-toggle.lx-button .lx-button-content-wrapper svg {
   --color-button-ghost-icon: var(--color-data);
   --color-button-ghost-icon-focus: var(--color-data);
   --color-button-ghost-icon-active: var(--color-header-hover-foreground);
@@ -810,8 +808,8 @@
   background-image: var(--lx-cover-image-dark);
 }
 
-.lx.lx-theme-contrast .lx-layout.lx-layout-cover .lx-main .lx-cover,
-.lx.lx-theme-contrast .lx-layout.lx-layout-cover-digives-lite .lx-main .lx-cover {
+.lx-theme-contrast .lx-layout.lx-layout-cover .lx-main .lx-cover,
+.lx-theme-contrast .lx-layout.lx-layout-cover-digives-lite .lx-main .lx-cover {
   background-image: var(--lx-cover-image-contrast);
 }
 
@@ -1129,10 +1127,8 @@
 }
 
 @media (max-width: 900px) {
-  .lx-layout-public .popper:has(#lx-shell-global-search-input-listbox),
-  .lx-layout-public .popper:has(#lx-shell-nav-global-search-input-listbox),
-  .lx-layout-latvijalv .popper:has(#lx-shell-global-search-input-listbox),
-  .lx-layout-latvijalv .popper:has(#lx-shell-nav-global-search-input-listbox) {
+  .lx-layout-public-shell .popper:has(#lx-shell-global-search-input-listbox),
+  .lx-layout-public-shell .popper:has(#lx-shell-nav-global-search-input-listbox) {
     translate: -16px 0;
   }
 }
@@ -1529,8 +1525,7 @@
   border-color: var(--color-nav-foreground);
 }
 
-.lx-layout.lx-layout-public .lx-user-button > .lx-avatar-display,
-.lx-layout.lx-layout-latvijalv .lx-user-button > .lx-avatar-display {
+.lx-layout.lx-layout-public-shell .lx-user-button > .lx-avatar-display {
   border-color: var(--color-chrome);
 }
 
@@ -2055,6 +2050,8 @@
 
 .lx-layout-latvijalv .lx-spotlight .lx-spotlight-footer > .lx-button {
   height: 2.5rem;
+  --button-primary-border-radius: var(--border-radius-full);
+  --button-secondary-border-radius: var(--border-radius-full);
 }
 
 .lx-layout-latvijalv .lx-spotlight .lx-spotlight-footer {
@@ -2511,53 +2508,7 @@
   }
 }
 
-.lx-layout-public:not(.lx-hide-nav-bar) .lx-form-with-tabs-steps .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky {
-  top: calc(var(--public-nav-header-size) + var(--row-size) * 2 + var(--border-width-1));
-}
-
 .lx-layout.lx-layout-public .lx-form-with-tabs-steps .lx-tab-wizard-toolbar {
-  top: calc(var(--nav-row-size) + var(--row-size) * 2);
   z-index: 5;
   position: sticky;
-}
-
-.lx-layout-public.lx-hide-nav-bar .lx-form-with-tabs-steps:has(> .lx-form-grid-header-sticky) .lx-tab-wizard-toolbar {
-  top: calc(var(--nav-row-size) + var(--row-size));
-}
-
-@media (max-height: 640px) {
-  .lx-layout-public .lx-form-with-tabs-steps .lx-tab-wizard-toolbar,
-  .lx-layout-latvijalv .lx-form-with-tabs-steps .lx-tab-wizard-toolbar,
-  .lx-layout-public .lx-form-grid:not(:has(> .lx-form-grid-header)) .lx-tab-wizard-toolbar,
-  .lx-layout-latvijalv .lx-form-grid:not(:has(> .lx-form-grid-header)) .lx-tab-wizard-toolbar {
-    top: var(--row-size);
-  }
-
-  .lx-layout-public .lx-form-with-tabs-steps .lx-tab-wizard-toolbar,
-  .lx-layout-latvijalv .lx-form-with-tabs-steps .lx-tab-wizard-toolbar,
-  .lx-layout-public:not(.lx-hide-nav-bar) .lx-form-with-tabs-steps .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky,
-  .lx-layout-public:not(.lx-hide-nav-bar) .lx-form-grid > .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky,
-  .lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-with-tabs-steps .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky,
-  .lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-grid > .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky {
-    top: calc(var(--row-size) * 2);
-  }
-
-  .lx-layout-public:not(.lx-hide-nav-bar) .lx-form-with-tabs-steps .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky,
-  .lx-layout-latvijalv:not(.lx-hide-nav-bar) .lx-form-with-tabs-steps .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky {
-    top: calc(var(--row-size) * 3);
-  }
-
-  .lx-layout-public.lx-hide-nav-bar .lx-form-with-tabs-steps .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky,
-  .lx-layout-public.lx-hide-nav-bar .lx-form-grid > .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky,
-  .lx-layout-latvijalv.lx-hide-nav-bar .lx-form-with-tabs-steps .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky,
-  .lx-layout-latvijalv.lx-hide-nav-bar .lx-form-grid > .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky,
-  .lx-layout-public.lx-hide-nav-bar .lx-form-with-tabs-steps .lx-tab-wizard-toolbar,
-  .lx-layout-latvijalv.lx-hide-nav-bar .lx-form-with-tabs-steps .lx-tab-wizard-toolbar {
-    top: var(--row-size);
-  }
-
-  .lx-layout-public.lx-hide-nav-bar .lx-form-with-tabs-steps .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky,
-  .lx-layout-latvijalv.lx-hide-nav-bar .lx-form-with-tabs-steps .lx-tab-wizard .lx-toolbar.lx-toolbar-sticky {
-    top: calc(var(--row-size) * 2);
-  }
 }

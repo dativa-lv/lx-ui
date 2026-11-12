@@ -631,7 +631,7 @@
 
 .lx-data-visualizer .lx-line-y-label {
   position: absolute;
-  right: 0;
+  right: var(--space-0);
   transform: translateY(50%);
   line-height: 1;
   font-size: var(--font-size-small);
@@ -645,8 +645,8 @@
 
 .lx-data-visualizer .lx-line-svg {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: var(--space-0);
+  left: var(--space-0);
   overflow: visible;
 }
 

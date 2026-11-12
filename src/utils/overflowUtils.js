@@ -35,6 +35,11 @@ export function getClosestExceededParent(target, { direction = 'horizontal' } = 
   }
 
   const targetRect = element.getBoundingClientRect();
+  const targetStyle = getComputedStyle(element);
+  const bleedX = -(
+    Math.min(0, Number.parseFloat(targetStyle.marginLeft) || 0) +
+    Math.min(0, Number.parseFloat(targetStyle.marginRight) || 0)
+  );
 
   let parent = element.parentElement;
 
@@ -44,7 +49,8 @@ export function getClosestExceededParent(target, { direction = 'horizontal' } = 
     const parentContentWidth =
       parentRect.width -
       (Number.parseFloat(parentStyle.paddingLeft) || 0) -
-      (Number.parseFloat(parentStyle.paddingRight) || 0);
+      (Number.parseFloat(parentStyle.paddingRight) || 0) +
+      bleedX;
     const parentContentHeight =
       parentRect.height -
       (Number.parseFloat(parentStyle.paddingTop) || 0) -

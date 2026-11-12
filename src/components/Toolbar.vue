@@ -625,7 +625,7 @@ const dataState = computed(() =>
       { 'lx-toolbar-default-area-left': defaultAreaComputed === 'left' },
       { 'lx-toolbar-empty': isToolbarEmpty },
       { 'lx-disabled': disabled || loading },
-      { 'lx-toolbar-sticky lx-shadow-bottom': sticky },
+      { 'lx-component-toolbar-sticky lx-shadow-bottom': sticky },
       { 'lx-scrolled': isScrolled },
     ]"
     :style="`${topOutOfBounds}`"

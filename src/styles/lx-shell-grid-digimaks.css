@@ -211,7 +211,7 @@
   margin-top: var(--space-0);
   overflow: hidden;
   left: 100vw;
-  top: var(--nav-row-size);
+  top: var(--sticky-nav-row-size);
 }
 
 .lx:not(.lx-no-animations) .lx-layout-digimaks .lx-user-menu {
@@ -220,7 +220,7 @@
 
 .lx-layout-digimaks .lx-user-menu.lx-user-menu-expanded {
   left: var(--space-0);
-  top: var(--nav-row-size);
+  top: var(--sticky-nav-row-size);
   height: calc(100% - var(--nav-row-size));
 }
 

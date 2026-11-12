@@ -1638,7 +1638,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 
 .lx-modal > footer.lx-button-set > .lx-button .lx-badge {
   position: static;
-  margin-left: 0.5rem;
+  margin-left: var(--space-0500);
 }
 
 .lx-modal > footer.lx-button-set > .lx-button .lx-badge .lx-badge-text {
