@@ -37,7 +37,7 @@ function handleActionClick(actionName) {
 </script>
 
 <template>
-  <div :id="id" class="lx-empty-state-wrapper">
+  <div :id="id" class="lx-empty-state-wrapper" data-component="lx-empty-state">
     <div class="lx-empty-state-data">
       <LxIcon v-if="icon" :value="icon" />
       <p class="lx-primary">{{ label }}</p>

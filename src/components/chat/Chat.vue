@@ -111,6 +111,14 @@ onBeforeUnmount(() => {
   observer?.disconnect();
 });
 
+const dataState = computed(() =>
+  JSON.stringify({
+    kind: props.kind,
+    mode: props.mode,
+    size: size.value,
+  })
+);
+
 const sizeClass = computed(() => `lx-chat-${size.value}`);
 const kindClass = computed(() => `lx-chat-${props.kind}`);
 const modeClass = computed(() => `lx-chat-mode-${props.mode}`);
@@ -174,9 +182,11 @@ provide('lxChatTypingActionClick', (id) => emits('typing-action-click', { id }))
     :id="id"
     data-component="lx-chat"
     :data-id="id"
+    :data-state="dataState"
   >
     <LxButton
       v-if="showScrollDown"
+      :id="`${id}-scroll-down`"
       class="lx-chat-scroll-down"
       kind="ghost"
       variant="icon-only"

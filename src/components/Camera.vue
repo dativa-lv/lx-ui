@@ -427,6 +427,15 @@ onUnmounted(() => {
   stopStream();
 });
 
+const dataState = computed(() =>
+  JSON.stringify({
+    cameraSwitcherMode: props.cameraSwitcherMode,
+    hasFlashlightToggle: props.hasFlashlightToggle,
+    imageSize: props.imageSize,
+    helperTextKind: props.helperTextKind,
+  })
+);
+
 useBuilderRegistration('LxCamera', props, { texts: textsDefault, skipInnerComponent: true });
 const wrapperRef = ref();
 </script>
@@ -438,6 +447,8 @@ const wrapperRef = ref();
     :aria-labelledby="labelledBy"
     :aria-describedby="showInlineHelper || showInfoHelper ? `${id}-helper` : null"
     :data-id="id"
+    data-component="lx-camera"
+    :data-state="dataState"
   >
     <div class="lx-camera lx-complex-input">
       <div
@@ -486,12 +497,14 @@ const wrapperRef = ref();
     <div class="lx-camera-buttons" v-if="!error && !loading">
       <LxButton
         v-if="!modelValue"
+        :id="`${id}-take-photo`"
         icon="camera"
         :label="displayTexts.takePhoto"
         @click="captureImage"
       />
       <LxButton
         v-else
+        :id="`${id}-delete-photo`"
         icon="cancel"
         :label="displayTexts.deletePhoto"
         kind="tertiary"

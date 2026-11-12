@@ -1449,6 +1449,22 @@ const listColsClass = computed(() => {
   return null;
 });
 
+const dataState = computed(() =>
+  JSON.stringify({
+    kind: props.kind,
+    listType: normalizedListType.value,
+    mode: props.mode,
+    hasGroups: Boolean(props.groupDefinitions),
+    hasSelecting: props.hasSelecting,
+    selectionKind: props.selectionKind,
+    hasSearch: props.hasSearch,
+    searchSide: props.searchSide,
+    searchMode: autoSearchMode.value,
+    actionsLayout: props.actionsLayout,
+    virtualized: wantsDefaultListVirtualization.value,
+  })
+);
+
 useBuilderRegistration('LxList', props, { texts: textsDefault });
 
 onMounted(async () => {
@@ -1498,6 +1514,8 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
       'is-narrow': isNarrow,
       'list-inside-form': insideForm,
     }"
+    data-component="lx-list"
+    :data-state="dataState"
   >
     <p class="lx-invisible" role="status" aria-live="polite" aria-atomic="true">
       <template v-if="shouldAnnounceLoading">{{ displayTexts.loadingStart }}</template>
@@ -1662,6 +1680,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
             :key="item[idAttribute]"
             class="lx-list-item-container lx-region-component"
+            data-container="list-item"
           >
             <LxListItem
               :id="item[idAttribute]"
@@ -1753,7 +1772,10 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               >
                 <div class="lx-transition-layer" :key="element[idAttribute]">
                   <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                    <div class="lx-list-item-container lx-region-component">
+                    <div
+                      class="lx-list-item-container lx-region-component"
+                      data-container="list-item"
+                    >
                       <LxDropDownMenu
                         triggerClick="right"
                         :disabled="loading || busy || draggableIsDisabledByQuery"
@@ -1865,6 +1887,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 v-for="item in filteredGroupedItems[prepareCode(group.id)]"
                 :key="item[idAttribute]"
                 class="lx-list-item-container lx-region-component"
+                data-container="list-item"
               >
                 <LxListItem
                   :id="item[idAttribute]"
@@ -1979,6 +2002,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               :key="item[idAttribute]"
               class="tree-list-search-item lx-list-item-container lx-region-component"
               role="listitem"
+              data-container="list-item"
             >
               <LxListItem
                 :id="item[idAttribute]"
@@ -2120,6 +2144,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                   :key="item[idAttribute]"
                   class="tree-list-search-item lx-list-item-container lx-region-component"
                   role="listitem"
+                  data-container="list-item"
                 >
                   <LxListItem
                     :id="item[idAttribute]"
@@ -2195,6 +2220,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             :key="row.virtualKey"
             :data-index="row.virtualRow.index"
             class="lx-list-item-container lx-region-component"
+            data-container="list-item"
             :ref="measureDefaultListRow"
             :style="{
               position: 'absolute',
@@ -2275,6 +2301,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             v-for="item in filteredItems"
             :key="item[idAttribute]"
             class="lx-list-item-container lx-region-component"
+            data-container="list-item"
           >
             <LxListItem
               :id="item[idAttribute]"
@@ -2365,7 +2392,10 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               >
                 <div class="lx-transition-layer" :key="element[idAttribute]">
                   <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                    <div class="lx-list-item-container lx-region-component">
+                    <div
+                      class="lx-list-item-container lx-region-component"
+                      data-container="list-item"
+                    >
                       <LxDropDownMenu
                         triggerClick="right"
                         :disabled="loading || busy || draggableIsDisabledByQuery"
@@ -2448,6 +2478,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           :badge-type="group?.badgeType"
           :badge-title="group?.badgeTitle"
           :label="group.name"
+          :id="`${id}-${prepareCode(group.id)}-group`"
         >
           <template #customHeader v-if="$slots.customExpanderHeader">
             <slot
@@ -2491,7 +2522,10 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 >
                   <div class="lx-transition-layer" :key="element[idAttribute]">
                     <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                      <div class="lx-list-item-container lx-region-component">
+                      <div
+                        class="lx-list-item-container lx-region-component"
+                        data-container="list-item"
+                      >
                         <LxDropDownMenu
                           triggerClick="right"
                           :disabled="loading || busy || draggableIsDisabledByQuery"
@@ -2617,6 +2651,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           :key="element?.[idAttribute]"
           class="tree-list-search-item lx-list-item-container"
           role="listitem"
+          data-container="list-item"
         >
           <LxListItem
             :id="element[idAttribute]"

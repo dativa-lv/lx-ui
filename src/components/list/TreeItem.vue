@@ -189,7 +189,7 @@ watch(
         :disabled="disabled || states?.[item[idAttribute]]?.disabled"
         @click="collapse(item?.[idAttribute], item)"
       />
-      <div class="lx-list-item-container lx-region-component">
+      <div class="lx-list-item-container lx-region-component" data-container="list-item">
         <LxListItem
           :id="item[idAttribute]"
           :label="item[nameAttribute]"

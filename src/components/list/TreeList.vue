@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, provide } from 'vue';
+import { useMediaQuery } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -190,10 +191,14 @@ const isSelectable = (item) => {
 };
 
 const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
+
+// Render only the layout that is shown, so every item id is in the DOM once. Matches the
+// `@media (max-width: 800px)` breakpoint in lx-treelist.css.
+const isNarrow = useMediaQuery('(max-width: 800px)');
 </script>
 <template>
   <div class="tree-list-wrapper">
-    <div class="tree-list" role="list">
+    <div v-if="!isNarrow" class="tree-list" role="list">
       <LxTreeItem
         :items="items"
         :idAttribute="idAttribute"
@@ -231,7 +236,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         </template>
       </LxTreeItem>
     </div>
-    <div class="tree-list tree-list-small" role="list">
+    <div v-else class="tree-list tree-list-small" role="list">
       <div
         v-if="parentArray?.length > 0"
         class="tree-item-small tree-item-small-parent"
@@ -247,7 +252,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           :disabled="disabled || states?.[parent[idAttribute]]?.disabled"
           @click="goBack()"
         />
-        <div class="lx-list-item-container lx-region-component">
+        <div class="lx-list-item-container lx-region-component" data-container="list-item">
           <LxListItem
             :id="parent[idAttribute]"
             :label="parent[nameAttribute]"
@@ -339,7 +344,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           :disabled="disabled || states?.[item[idAttribute]]?.disabled"
           @click="goTo(item[idAttribute], item)"
         />
-        <div class="lx-list-item-container lx-region-component">
+        <div class="lx-list-item-container lx-region-component" data-container="list-item">
           <LxListItem
             :id="item[idAttribute]"
             :label="item[nameAttribute]"

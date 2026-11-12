@@ -288,6 +288,7 @@ defineExpose({ focus });
                 :value="plainMessageText"
               />
               <LxForm
+                :id="`${id}-form`"
                 :column-count="1"
                 kind="compact"
                 :showHeader="false"

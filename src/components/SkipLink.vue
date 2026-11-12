@@ -16,7 +16,7 @@ const props = defineProps({
 });
 </script>
 <template>
-  <div class="lx-skip-link-wrapper">
+  <div class="lx-skip-link-wrapper" data-component="lx-skip-link" :data-id="id">
     <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
     <LxButton
       :id="props.id"
