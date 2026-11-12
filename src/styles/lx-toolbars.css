@@ -1477,11 +1477,11 @@
   pointer-events: auto;
 }
 
-.lx-component-toolbar.lx-toolbar-sticky {
+.lx-component-toolbar-sticky {
   --lx-shadow-bottom-offset: var(--row-size);
 }
 
-.lx-data-grid-wrapper.lx-grid-has-sticky-toolbar .lx-component-toolbar.lx-toolbar-sticky::after {
+.lx-data-grid-wrapper.lx-grid-has-sticky-toolbar .lx-component-toolbar-sticky::after {
   display: none;
 }
 
@@ -1489,7 +1489,7 @@
   border-radius: var(--border-radius-0);
 }
 
-.lx-list-wrapper .lx-component-toolbar.lx-toolbar-sticky {
+.lx-list-wrapper .lx-component-toolbar-sticky {
   --lx-shadow-bottom-offset: var(--toolbar-header-size);
 }
 

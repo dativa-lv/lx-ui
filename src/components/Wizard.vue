@@ -27,11 +27,22 @@ const wizard = ref();
 const bounding = useElementBounding(wizard);
 const headerSize = useElementSize(wizardHeader);
 
+const wizardHeaderSize = computed(() => {
+  const header = wizardHeader.value;
+  const measuredHeight = headerSize.height.value ?? 0;
+  if (!header) return measuredHeight;
+
+  const dividerWidth = getComputedStyle(header, '::before').borderBottomWidth;
+  return measuredHeight + Number.parseFloat(dividerWidth || '0');
+});
+
 const topOutOfBounds = computed(() => {
   if (!wizard.value || !wizardHeader.value)
     return `--wizard-shadow-opacity: 0; --wizard-header-size: var(--row-size);`;
   const v = bounding.top ? bounding.top.value - getStickyTopOffset(wizardHeader.value) : 0;
-  return `--wizard-shadow-opacity: ${shadowOpacity(-v)}; --wizard-header-size: ${headerSize.height?.value}px;`;
+  return `--wizard-shadow-opacity: ${shadowOpacity(-v)}; --wizard-header-size: ${
+    wizardHeaderSize.value
+  }px;`;
 });
 
 const modifiedItems = computed(() =>

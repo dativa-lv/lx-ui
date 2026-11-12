@@ -162,6 +162,19 @@ is missing from `items` is now shown as the id instead of an empty field.
 
 ### Breaking changes
 
+#### LxToolbar, LxDataGrid, LxFileViewer
+
+**Class renames**
+
+Update custom CSS selectors that use the renamed classes:
+
+- `lx-grid-sticky` → `lx-grid-has-sticky-header`
+- `lx-grid-sticky-toolbar` → `lx-grid-has-sticky-toolbar`
+- `lx-toolbar-sticky` → `lx-component-toolbar-sticky`
+
+The `lx-sticky-toolbar-list-wrapper` and `lx-file-viewer-toolbar` classes have been removed.
+Remove or replace selectors that depend on them.
+
 #### Scroll shadows
 
 Scroll shadows (the fade under sticky headers, toolbars and footers, and at the edges of scrollable

@@ -391,6 +391,18 @@ function scrollTo(id) {
   });
 }
 
+const formHeaderSize = computed(() => {
+  const header = formHeader.value;
+  const measuredHeight = headerSize.height.value ?? 0;
+
+  if (!header) return measuredHeight;
+
+  const before = getComputedStyle(header, '::before');
+  if (before.display === 'none') return measuredHeight;
+
+  return measuredHeight + Number.parseFloat(before.borderBottomWidth || '0');
+});
+
 /**
  * Computed property that calculates the CSS properties for the top out of bounds effect.
  * @returns {string} The CSS properties for the top out of bounds effect.
@@ -400,7 +412,9 @@ const topOutOfBounds = computed(() => {
   if (!form.value || !formHeader.value)
     return '--form-top-shadow-opacity: 0; --form-header-size: var(--row-size);';
   const v = bounding.top ? bounding.top.value - calculateOffset(form.value, false) : 0;
-  return `--form-top-shadow-opacity: ${shadowOpacity(-v)}; --form-header-size: ${headerSize.height?.value}px;`;
+  return `--form-top-shadow-opacity: ${shadowOpacity(-v)}; --form-header-size: ${
+    formHeaderSize.value
+  }px;`;
 });
 /**
  * Computes the CSS properties for the bottom shadow and footer size of the form component.
@@ -412,7 +426,9 @@ const bottomOutOfBounds = computed(() => {
     return '--form-bottom-shadow-opacity: 0; --form-footer-size: var(--row-size);';
   const v =
     bounding.bottom && windowSize.height ? bounding.bottom.value - windowSize.height.value : 0;
-  return `--form-bottom-shadow-opacity: ${shadowOpacity(v)}; --form-footer-size: ${footerSize.height?.value}px;`;
+  return `--form-bottom-shadow-opacity: ${shadowOpacity(v)}; --form-footer-size: ${
+    footerSize.height?.value
+  }px;`;
 });
 
 const indexTypeRef = computed(() => props.indexType);
