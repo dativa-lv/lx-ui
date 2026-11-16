@@ -1503,6 +1503,11 @@
   gap: var(--space-0500);
 }
 
+.lx-empty-state-data p.lx-primary,
+.lx-empty-state-data p.lx-secondary {
+  text-align: center;
+}
+
 .lx-empty-state-data p.lx-primary {
   font-weight: var(--font-weight-bold);
   line-height: 1.2em;
