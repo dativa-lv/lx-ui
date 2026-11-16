@@ -42,9 +42,13 @@
   position: absolute;
   right: var(--input-icon-wrapper-width);
   top: var(--space-0);
-  height: var(--input-icon-wrapper-height);
   align-content: center;
+  /* Keeps the input value and unit aligned, even if the input's top and bottom border widths differ. */
+  margin: var(--input-border-width);
+  margin-right: var(--space-0);
   margin-left: var(--space-0500);
+  height: stretch;
+  height: -webkit-fill-available;
 }
 
 .lx-duration-input-wrapper .lx-duration-fields {
