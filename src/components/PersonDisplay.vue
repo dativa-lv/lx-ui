@@ -307,7 +307,7 @@ useBuilderRegistration('LxPersonDisplay', props);
 defineExpose({ focus, scrollIntoView });
 </script>
 <template>
-  <div class="lx-person-display-wrapper" :data-id="id">
+  <div class="lx-person-display-wrapper" :data-id="id" data-component="lx-person-display">
     <div v-if="isEmpty" class="lx-person-display">
       <LxEmptyValue
         class="lx-empty-person-value"

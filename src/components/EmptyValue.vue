@@ -16,7 +16,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 </script>
 
 <template>
-  <span :data-id="id">
+  <span :data-id="id" data-component="lx-empty-value">
     <span aria-hidden="true" v-tooltip="displayTexts.emptyValue">—</span>
     <span class="lx-invisible">{{ displayTexts.emptyValue }}</span>
   </span>
