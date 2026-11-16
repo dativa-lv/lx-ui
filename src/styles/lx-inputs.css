@@ -1351,7 +1351,12 @@ h2.lx-section-header + p.lx-invalidation-message,
   appearance: none;
 }
 
-.lx-number-slider::-webkit-slider-runnable-track,
+.lx-number-slider::-webkit-slider-runnable-track {
+  height: var(--input-slider-thumb-height);
+  background: transparent;
+  border: var(--border-width-0);
+}
+
 .lx-number-slider::-moz-range-track {
   height: var(--input-slider-thumb-height);
   background: transparent;
@@ -1475,8 +1480,13 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-number-slider.lx-disabled::-webkit-slider-thumb,
+.lx-layout input[type='range']:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+  border-color: var(--color-input-slider-thumb-border-disabled);
+  background: var(--color-input-slider-thumb-disabled);
+}
+
 .lx-number-slider.lx-disabled::-moz-range-thumb,
-.lx-layout input[type='range']:disabled::-webkit-slider-thumb,
 .lx-layout input[type='range']:disabled::-moz-range-thumb {
   cursor: not-allowed;
   border-color: var(--color-input-slider-thumb-border-disabled);
@@ -2823,7 +2833,9 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: 100%;
   border: var(--border-width-2) solid transparent;
   outline: none;
-  transition: border-color 0.1s ease-in, background-color 0.1s ease-in;
+  transition:
+    border-color 0.1s ease-in,
+    background-color 0.1s ease-in;
   cursor: pointer;
   white-space: nowrap;
 }

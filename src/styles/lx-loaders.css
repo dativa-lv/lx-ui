@@ -57,6 +57,7 @@
 
 .lx-loader-wrapper svg {
   fill: transparent;
+  overflow: visible;
 }
 
 .lx-loader-progress .lx-loader > svg {

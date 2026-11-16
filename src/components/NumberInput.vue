@@ -329,6 +329,7 @@ useBuilderRegistration('LxNumberInput', props, { texts: textsDefault });
           type="range"
           class="lx-number-slider lx-number-input"
           :class="{ 'lx-disabled': disabled }"
+          :tabindex="disabled ? -1 : 0"
           :id="id"
           :min="minValue"
           :max="maxValue"
