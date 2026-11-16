@@ -1484,7 +1484,7 @@
 
   .lx-data-grid-wrapper:not(:has(.lx-data-grid.lx-loading)) .lx-grid-header-wrapper,
   .lx-data-grid-wrapper:not(:has(.lx-data-grid.lx-loading)) .lx-data-grid,
-  .lx-data-grid-wrapper .lx-component-toolbar .selection-action-buttons {
+  .lx-data-grid-wrapper .lx-component-toolbar .selection-action-button-toolbar:not(.single-action) .selection-action-buttons {
     display: none;
   }
 

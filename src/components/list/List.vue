@@ -1428,6 +1428,11 @@ const selectionActionsResolved = computed(() =>
     : props.selectionActionDefinitions
 );
 
+// A single selection action with an icon stays a button on narrow screens, shown icon-only
+const hasSingleSelectionAction = computed(
+  () => selectionActionsResolved.value?.length === 1 && !!selectionActionsResolved.value[0]?.icon
+);
+
 const toolbarActions = computed(() => {
   if (selectedItems.value?.length > 0) {
     return [];
@@ -1572,6 +1577,7 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           <div
             v-if="hasSelecting && insideForm && selectedItems?.length > 0"
             class="selection-action-button-toolbar"
+            :class="{ 'single-action': hasSingleSelectionAction }"
           >
             <div class="selection-action-buttons">
               <LxActionButton
@@ -1582,11 +1588,15 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                 :id="selectAction.id"
                 :disabled="selectAction.disabled || busy || loading"
                 kind="ghost"
+                :variant="isNarrow && hasSingleSelectionAction ? 'icon-only' : undefined"
                 @click="selectionActionClick(selectAction.id, undefined, selectedItems)"
               />
             </div>
 
-            <div v-if="selectionActionsResolved?.length > 0" class="selection-action-buttons-small">
+            <div
+              v-if="selectionActionsResolved?.length > 0 && !hasSingleSelectionAction"
+              class="selection-action-buttons-small"
+            >
               <LxDropDownMenu
                 :disabled="loading || busy"
                 :actionDefinitions="selectionActionsResolved"
@@ -1622,7 +1632,11 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
           />
 
           <template v-if="selectedItems?.length > 0">
-            <div v-if="hasSelecting && !insideForm" class="selection-action-button-toolbar">
+            <div
+              v-if="hasSelecting && !insideForm"
+              class="selection-action-button-toolbar"
+              :class="{ 'single-action': hasSingleSelectionAction }"
+            >
               <div class="selection-action-buttons">
                 <LxActionButton
                   v-for="selectAction in selectionActionsResolved"
@@ -1632,12 +1646,13 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                   :id="selectAction.id"
                   :disabled="selectAction.disabled || busy || loading"
                   kind="ghost"
+                  :variant="isNarrow && hasSingleSelectionAction ? 'icon-only' : undefined"
                   @click="selectionActionClick(selectAction.id, undefined, selectedItems)"
                 />
               </div>
 
               <div
-                v-if="selectionActionsResolved?.length > 0"
+                v-if="selectionActionsResolved?.length > 0 && !hasSingleSelectionAction"
                 class="selection-action-buttons-small"
               >
                 <LxDropDownMenu

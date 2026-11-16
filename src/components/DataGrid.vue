@@ -1538,6 +1538,11 @@ const selectionActionsResolved = computed(() =>
     : props.selectionActionDefinitions
 );
 
+// A single selection action with an icon stays a button on narrow screens, shown icon-only
+const hasSingleSelectionAction = computed(
+  () => selectionActionsResolved.value?.length === 1 && !!selectionActionsResolved.value[0]?.icon
+);
+
 const hasActionButtons = computed(() => rowActionDefinitions.value?.length > 0);
 
 const itemsCountSelector = computed(() => [10, 20, 30, 40, 50]);
@@ -2202,7 +2207,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       </template>
 
       <template #rightArea v-else-if="hasSelecting && selectedRows.length > 0">
-        <div class="selection-action-button-toolbar">
+        <div
+          class="selection-action-button-toolbar"
+          :class="{ 'single-action': hasSingleSelectionAction }"
+        >
           <div class="selection-action-buttons">
             <LxActionButton
               v-for="selectAction in selectionActionsResolved"
@@ -2212,10 +2220,14 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               :id="selectAction.id"
               :disabled="selectAction.disabled || busy || loading"
               kind="ghost"
+              :variant="isResponsiveLayout && hasSingleSelectionAction ? 'icon-only' : undefined"
               @click="handleSelectionActionClick(selectAction.id, undefined, selectedRows)"
             />
           </div>
-          <div class="selection-action-buttons-small" v-if="selectionActionsResolved?.length > 0">
+          <div
+            class="selection-action-buttons-small"
+            v-if="selectionActionsResolved?.length > 0 && !hasSingleSelectionAction"
+          >
             <LxDropDownMenu
               :actionDefinitions="selectionActionDefinitions"
               :actionGroupDefinitions="selectionActionGroupDefinitions"
