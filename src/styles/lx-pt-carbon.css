@@ -292,7 +292,8 @@
   --nav-tile-text-secondary-padding: var(--space-0);
   --nav-tile-text-secondary-margin: var(--space-1250) var(--space-0) var(--space-0) var(--space-0);
 
-  --tile-height: 12rem;
+  --tile-height: 100%;
+  --tile-min-height: 12rem;
   --tile-width: 20rem;
   --tile-border-radius: var(--space-0);
   --tile-set-gap: var(--space-0250);

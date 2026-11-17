@@ -91,7 +91,6 @@ onMounted(() => {
   if (!model.value && props.selectionKind === 'multiple') {
     model.value = [];
   }
-  nextTick(() => updateDescriptionTabIndexes(props.items));
 });
 
 const highlightedItemId = ref(null);
@@ -415,30 +414,6 @@ function selectAll() {
   }
 }
 
-function getDescriptionElement(itemId) {
-  const parent = document.getElementById(getItemId(itemId));
-  if (!parent) return null;
-  return parent.querySelector('.lx-value-picker-description');
-}
-
-function shouldFocusDescription(itemId) {
-  const description = getDescriptionElement(itemId);
-  if (!description) return false;
-
-  // For browser pixel differences (Firefox)
-  const pixelTolerance = 1;
-
-  return description.scrollHeight - description.clientHeight > pixelTolerance;
-}
-
-function updateDescriptionTabIndexes(items) {
-  items.forEach((item) => {
-    const description = getDescriptionElement(item[props.idAttribute]);
-    if (description) {
-      description.tabIndex = shouldFocusDescription(item[props.idAttribute]) ? 0 : -1;
-    }
-  });
-}
 const wrapperRef = ref();
 </script>
 
@@ -546,10 +521,7 @@ const wrapperRef = ref();
                   inert
                 />
               </div>
-              <div
-                class="lx-value-picker-description"
-                :tabindex="shouldFocusDescription(item[idAttribute]) ? '0' : '-1'"
-              >
+              <div class="lx-value-picker-description">
                 <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
               </div>
             </template>
@@ -601,10 +573,7 @@ const wrapperRef = ref();
                   inert
                 />
               </div>
-              <div
-                class="lx-value-picker-description"
-                :tabindex="shouldFocusDescription(item[idAttribute]) ? '0' : '-1'"
-              >
+              <div class="lx-value-picker-description">
                 <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
               </div>
             </template>

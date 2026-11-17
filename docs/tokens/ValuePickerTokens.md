@@ -109,7 +109,8 @@ Here you may find tokens for LxCheckbox and LxRadioButton as well as LxValuePick
 
 | Variable name                       | Default value        |
 |-------------------------------------|----------------------|
-| `--tile-height`                     | 12rem                |
+| `--tile-min-height`                 | 12rem                |
+| `--tile-height`                     | 100%                 |
 | `--tile-width`                      | 20rem                |
 | `--tile-border-radius`              | `--space-0`          |
 | `--tile-set-gap`                    | `--space-0500`       |
