@@ -80,7 +80,7 @@ const getError = (error) => {
   if (code === 'ECONNABORTED') {
     return { status: 499, data: null };
   }
-  if (typeof response === 'undefined') {
+  if (response === undefined) {
     logError(`${error.message}`, useLx().getGlobals()?.environment);
     return { status: 500, data: null };
   }

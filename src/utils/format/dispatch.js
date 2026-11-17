@@ -1,4 +1,5 @@
 import { formatValueDefault, formatValueArray, formatValueBool } from '@/utils/format/value';
+import { DEFAULT_BOOL_TEXTS } from '@/utils/format/constants';
 import { formatUrl } from '@/utils/format/string';
 import { formatValueDate, formatValueDateTime } from '@/utils/format/date';
 
@@ -6,7 +7,7 @@ import { formatValueDate, formatValueDateTime } from '@/utils/format/date';
 // It lives apart from `value.js` so that components wanting only `formatValueBool` are not
 // dragged into date-fns.
 
-export function formatValue(value, type = 'default', texts = { yes: 'Jā', no: 'Nē' }) {
+export function formatValue(value, type = 'default', texts = DEFAULT_BOOL_TEXTS) {
   switch (type) {
     case 'date':
       return formatValueDate(value);

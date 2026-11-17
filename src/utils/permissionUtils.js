@@ -1,13 +1,11 @@
 export function hasScope(scope, name) {
-  return (
-    (Array.isArray(scope) ? scope : [scope]).findIndex(
-      (s) => s === name || s?.startsWith(`${name}:`)
-    ) >= 0
+  return (Array.isArray(scope) ? scope : [scope]).some(
+    (s) => s === name || s?.startsWith(`${name}:`)
   );
 }
 
 export function hasAnyScopeWithNamespace(scope, namespace) {
-  return scope.findIndex((s) => s === namespace || s.startsWith(`${namespace}/`)) >= 0;
+  return scope.some((s) => s === namespace || s.startsWith(`${namespace}/`));
 }
 
 export function hasAnyScope(scope, ...names) {

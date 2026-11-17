@@ -1,6 +1,6 @@
 import { getGlobalProperties, getComponentTexts } from '@/utils/global';
 
-export default () => {
+export default function useLx() {
   /**
    * @typedef {Object} GlobalProperties
    * @property {string} [environment] - The current environment
@@ -27,4 +27,4 @@ export default () => {
     getGlobals,
     getComponentTexts,
   };
-};
+}

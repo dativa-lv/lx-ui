@@ -836,9 +836,9 @@ watch(
       const allElements = document
         .getElementById(props.id)
         .getElementsByClassName('lx-form-section');
-      for (let i = 0; i < allElements.length; i += 1) {
-        allElements[i].style.display = 'grid';
-      }
+      Array.from(allElements).forEach((element) => {
+        element.style.display = 'grid';
+      });
       nextTick(() => {
         const elementForm = document.getElementById(props.id);
         props.index?.forEach((o) => {

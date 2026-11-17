@@ -208,8 +208,8 @@ export default (
         const resp = await service.roles();
         rolesState.value.roles = resp.data;
         rolesState.value.initialized = true;
-      } catch (err) {
-        return;
+      } catch {
+        // roles stay uninitialized so the next call retries
       } finally {
         rolesState.value.loading = false;
       }

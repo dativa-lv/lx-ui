@@ -196,7 +196,6 @@ const dataState = computed(() =>
             :id="`${props.id}-shadow`"
             readonly
             aria-hidden="true"
-            role="presentation"
             :tabindex="-1"
           />
 

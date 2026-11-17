@@ -1339,6 +1339,30 @@ function prepareImgPage(printRoot) {
   printRoot.appendChild(pageEl);
 }
 
+async function preparePdfPage(printRoot, pageNum, effectiveDpi, mobile) {
+  const page = await pdf.value.getPage(pageNum);
+  const printScale = effectiveDpi / 96;
+  const viewport = page.getViewport({ scale: printScale });
+  const cssViewport = page.getViewport({ scale: 1 });
+
+  const cnv = globalThis.document.createElement('canvas');
+  cnv.width = Math.floor(viewport.width);
+  cnv.height = Math.floor(viewport.height);
+  cnv.style.width = `${Math.floor(cssViewport.width)}px`;
+  cnv.style.height = `${Math.floor(cssViewport.height)}px`;
+
+  await page.render({
+    canvasContext: cnv.getContext('2d'),
+    viewport,
+    intent: 'print',
+  }).promise;
+
+  const pageEl = globalThis.document.createElement('div');
+  pageEl.className = `lx-print-page lx-print-page--bitmap ${mobile ? 'lx-print-page--mobile' : ''}`;
+  pageEl.appendChild(cnv);
+  printRoot.appendChild(pageEl);
+}
+
 async function preparePdfPages(printRoot, allPages, effectiveDpi, mobile) {
   if (!pdf.value) throw new Error(`LxFileViewer [${props.id}]: PDF is not loaded`);
 
@@ -1347,32 +1371,10 @@ async function preparePdfPages(printRoot, allPages, effectiveDpi, mobile) {
       ? [currentPage.value]
       : Array.from({ length: pdf.value.numPages }, (_, i) => i + 1);
 
-  for (let i = 0; i < pageNums.length; i += 1) {
-    const pageNum = pageNums[i];
-    const page = await pdf.value.getPage(pageNum);
-    const printScale = effectiveDpi / 96;
-    const viewport = page.getViewport({ scale: printScale });
-    const cssViewport = page.getViewport({ scale: 1 });
-
-    const cnv = globalThis.document.createElement('canvas');
-    cnv.width = Math.floor(viewport.width);
-    cnv.height = Math.floor(viewport.height);
-    cnv.style.width = `${Math.floor(cssViewport.width)}px`;
-    cnv.style.height = `${Math.floor(cssViewport.height)}px`;
-
-    await page.render({
-      canvasContext: cnv.getContext('2d'),
-      viewport,
-      intent: 'print',
-    }).promise;
-
-    const pageEl = globalThis.document.createElement('div');
-    pageEl.className = `lx-print-page lx-print-page--bitmap ${
-      mobile ? 'lx-print-page--mobile' : ''
-    }`;
-    pageEl.appendChild(cnv);
-    printRoot.appendChild(pageEl);
-  }
+  await pageNums.reduce(
+    (prev, pageNum) => prev.then(() => preparePdfPage(printRoot, pageNum, effectiveDpi, mobile)),
+    Promise.resolve()
+  );
 }
 
 function restoreTitle(originalTitle) {

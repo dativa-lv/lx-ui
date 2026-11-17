@@ -558,7 +558,8 @@ function convertItemsArray() {
         return item;
       }
 
-      const { [props.orderAttribute]: order, ...itemWithoutOrder } = item;
+      const itemWithoutOrder = { ...item };
+      delete itemWithoutOrder[props.orderAttribute];
       return itemWithoutOrder;
     });
 
@@ -737,7 +738,8 @@ function prepareUnGroupedItemsArray() {
     );
 
     if (originalItem && !(props.orderAttribute in originalItem)) {
-      const { [props.orderAttribute]: order, ...itemWithoutOrder } = item;
+      const itemWithoutOrder = { ...item };
+      delete itemWithoutOrder[props.orderAttribute];
       return itemWithoutOrder;
     }
 

@@ -36,7 +36,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const idAttribute = computed(() => {
   if (Array.isArray(props.idAttribute)) {
-    throw new Error('LxFlagItemDisplay: "idAttributeName" cannot be an array');
+    throw new TypeError('LxFlagItemDisplay: "idAttributeName" cannot be an array');
   }
   return props.idAttribute;
 });

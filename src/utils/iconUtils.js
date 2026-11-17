@@ -23,7 +23,7 @@ export function getAvailableIcons(iconSet = 'cds') {
  * Concatenate all arrays into a single array and map each key to an object with boolean values indicating which original array it was found in
  */
 function getDistinctKeysWithBooleans(arrays) {
-  const allValues = arrays.reduce((acc, arr) => acc.concat(arr), []);
+  const allValues = arrays.flat();
   const distinctKeys = allValues.filter((value, index, array) => array.indexOf(value) === index);
   const keyBooleans = distinctKeys.reduce((acc, key) => {
     acc[key] = { icon: key };

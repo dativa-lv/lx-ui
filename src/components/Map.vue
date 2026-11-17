@@ -415,8 +415,7 @@ onUnmounted(() => {
 provide('insideFullscreenOverlay', insideFullscreenOverlay);
 
 function handleOptionClick(id, value) {
-  const base = props.baseLayerDefinitions.find((layer) => layer.id === value);
-  if (base) {
+  if (props.baseLayerDefinitions.some((layer) => layer.id === value)) {
     selectBaseLayer(value);
     return;
   }
