@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { describe, test, expect, afterEach, beforeEach } from 'vitest';
+import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
 import { mount, RouterLinkStub, flushPromises } from '@vue/test-utils';
 import LxToolbar from '@/components/Toolbar.vue';
 import {
@@ -321,5 +321,97 @@ describe('Action definitions', () => {
       expect(elements[1].find(`#${slotInnerId}`).text()).toBe(slotInnerText);
       expect(elements[2].attributes('id')).toContain(actions[2].id);
     });
+  });
+});
+
+describe('Layout state classes', () => {
+  let rafSpy;
+  let cafSpy;
+
+  beforeEach(() => {
+    rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((callback) => {
+      callback(0);
+      return 1;
+    });
+    cafSpy = vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    rafSpy.mockRestore();
+    cafSpy.mockRestore();
+  });
+
+  test('adds lx-toolbar-has-default-area when default slot has content', async () => {
+    wrapper = await mountComponent({
+      slots: { default: '<button id="default-slot-button">Default</button>' },
+    });
+    await flushPromises();
+
+    expect(wrapper.classes()).toContain('lx-toolbar-has-default-area');
+  });
+
+  test('does not add lx-toolbar-has-default-area without default slot content', async () => {
+    wrapper = await mountComponent({ props: { actionDefinitions: actionDefinitionsCommon } });
+    await flushPromises();
+
+    expect(wrapper.classes()).not.toContain('lx-toolbar-has-default-area');
+  });
+
+  test('keeps lx-toolbar-has-default-area when root classes re-render', async () => {
+    wrapper = await mountComponent({
+      slots: { default: '<button id="default-slot-button">Default</button>' },
+    });
+    await flushPromises();
+
+    expect(wrapper.classes()).toContain('lx-toolbar-has-default-area');
+
+    // Changing a class binding makes Vue rewrite the root className (as happens with
+    // lx-scrolled when a sticky toolbar starts scrolling)
+    await wrapper.setProps({ noBorders: true });
+
+    expect(wrapper.classes()).toContain('lx-toolbar-no-borders');
+    expect(wrapper.classes()).toContain('lx-toolbar-has-default-area');
+
+    await wrapper.setProps({ sticky: true });
+
+    expect(wrapper.classes()).toContain('lx-component-toolbar-sticky');
+    expect(wrapper.classes()).toContain('lx-toolbar-has-default-area');
+  });
+
+  test('keeps lx-toolbar-hidden-under-header when root classes re-render', async () => {
+    const form = document.createElement('div');
+    form.className = 'lx-form-grid';
+    const header = document.createElement('div');
+    header.className = 'lx-form-grid-header-sticky';
+    const host = document.createElement('div');
+    form.append(header, host);
+    document.body.appendChild(form);
+
+    const rectSpy = vi
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function getRect() {
+        const isHeader = this === header;
+        const top = isHeader ? 0 : 50;
+        const bottom = isHeader ? 100 : 90;
+        return { top, bottom, left: 0, right: 0, x: 0, y: top, width: 0, height: 0 };
+      });
+
+    try {
+      wrapper = mount(LxToolbar, {
+        props: { sticky: true, actionDefinitions: actionDefinitionsCommon },
+        attachTo: host,
+        global: { stubs: { RouterLink: RouterLinkStub } },
+      });
+      await flushPromises();
+
+      expect(wrapper.classes()).toContain('lx-toolbar-hidden-under-header');
+
+      await wrapper.setProps({ noBorders: true });
+
+      expect(wrapper.classes()).toContain('lx-toolbar-no-borders');
+      expect(wrapper.classes()).toContain('lx-toolbar-hidden-under-header');
+    } finally {
+      rectSpy.mockRestore();
+    }
   });
 });

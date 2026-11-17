@@ -108,6 +108,13 @@ export function useToolbarResponsiveness({
   const actionsOverflow = ref([]);
   const promotedActionVariant = ref('default');
   const forceCompactSearchByWidth = ref(false);
+  // Root-level layout state is kept reactive (not set via classList/style) so that Vue
+  // re-renders of the toolbar's :class / :style bindings (e.g. on sticky scroll) don't wipe it
+  const hasDefaultArea = ref(false);
+  const isCombined = ref(false);
+  const freeGap = ref(null);
+  const isHiddenUnderHeader = ref(false);
+  const isHiddenUnderFooter = ref(false);
 
   let resizeObserver = null;
   let frame = null;
@@ -543,7 +550,7 @@ export function useToolbarResponsiveness({
       toolbar.querySelector('.right-area .lx-group:not(.lx-toolbar-overflow-hidden)') !== null;
     const isDefaultAreaVisible = defaultArea.children.length > 0;
 
-    toolbar.classList.toggle('lx-toolbar-has-default-area', isDefaultAreaVisible);
+    hasDefaultArea.value = isDefaultAreaVisible;
 
     let areBothAreasVisible = false;
 
@@ -554,8 +561,8 @@ export function useToolbarResponsiveness({
     }
 
     if (!areBothAreasVisible) {
-      toolbar.classList.remove('lx-toolbar-combined');
-      toolbar.style.removeProperty('--lx-toolbar-free-gap');
+      isCombined.value = false;
+      freeGap.value = null;
       return;
     }
 
@@ -594,13 +601,8 @@ export function useToolbarResponsiveness({
 
     const shouldCombine = actualGap < minGap;
 
-    toolbar.classList.toggle('lx-toolbar-combined', shouldCombine);
-
-    if (shouldCombine) {
-      toolbar.style.setProperty('--lx-toolbar-free-gap', `${actualGap}px`);
-    } else {
-      toolbar.style.removeProperty('--lx-toolbar-free-gap');
-    }
+    isCombined.value = shouldCombine;
+    freeGap.value = shouldCombine ? actualGap : null;
   }
 
   function resetLayout() {
@@ -617,7 +619,8 @@ export function useToolbarResponsiveness({
 
     const form = toolbar.closest('.lx-form-grid');
     if (!(form instanceof HTMLElement)) {
-      toolbar.classList.remove('lx-toolbar-hidden-under-header', 'lx-toolbar-hidden-under-footer');
+      isHiddenUnderHeader.value = false;
+      isHiddenUnderFooter.value = false;
       return;
     }
 
@@ -636,9 +639,9 @@ export function useToolbarResponsiveness({
 
       const topOverlap = topBoundaryBottom - toolbarTop;
       const threshold = 3;
-      toolbar.classList.toggle('lx-toolbar-hidden-under-header', topOverlap > threshold);
+      isHiddenUnderHeader.value = topOverlap > threshold;
     } else {
-      toolbar.classList.remove('lx-toolbar-hidden-under-header');
+      isHiddenUnderHeader.value = false;
     }
 
     if (stickyBottomElements.length > 0) {
@@ -649,9 +652,9 @@ export function useToolbarResponsiveness({
 
       const bottomOverlap = toolbarBottom - bottomBoundaryTop;
       const threshold = 3;
-      toolbar.classList.toggle('lx-toolbar-hidden-under-footer', bottomOverlap > threshold);
+      isHiddenUnderFooter.value = bottomOverlap > threshold;
     } else {
-      toolbar.classList.remove('lx-toolbar-hidden-under-footer');
+      isHiddenUnderFooter.value = false;
     }
   }
 
@@ -774,5 +777,10 @@ export function useToolbarResponsiveness({
     actionsOverflow,
     promotedAction,
     autoSearchMode,
+    hasDefaultArea,
+    isCombined,
+    freeGap,
+    isHiddenUnderHeader,
+    isHiddenUnderFooter,
   };
 }

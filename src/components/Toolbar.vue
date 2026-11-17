@@ -344,6 +344,11 @@ const {
   actionsOverflow,
   promotedAction,
   autoSearchMode,
+  hasDefaultArea,
+  isCombined,
+  freeGap,
+  isHiddenUnderHeader,
+  isHiddenUnderFooter,
 } = useToolbarResponsiveness({
   toolbarRef,
   leftAreaRef,
@@ -596,8 +601,9 @@ const topOutOfBounds = computed(() => {
 
   const toolbarHeight = toolbarSize.height.value || 0;
   const opacity = props.sticky ? shadowOpacity(scrollProgress.value) : 0;
+  const freeGapStyle = freeGap.value === null ? '' : ` --lx-toolbar-free-gap: ${freeGap.value}px;`;
 
-  return `${keyOpacity}: ${opacity}; ${keySize}: ${toolbarHeight}px;`;
+  return `${keyOpacity}: ${opacity}; ${keySize}: ${toolbarHeight}px;${freeGapStyle}`;
 });
 
 onUpdated(() => {
@@ -627,6 +633,10 @@ const dataState = computed(() =>
       { 'lx-disabled': disabled || loading },
       { 'lx-component-toolbar-sticky lx-shadow-bottom': sticky },
       { 'lx-scrolled': isScrolled },
+      { 'lx-toolbar-has-default-area': hasDefaultArea },
+      { 'lx-toolbar-combined': isCombined },
+      { 'lx-toolbar-hidden-under-header': isHiddenUnderHeader },
+      { 'lx-toolbar-hidden-under-footer': isHiddenUnderFooter },
     ]"
     :style="`${topOutOfBounds}`"
     role="toolbar"
