@@ -7,10 +7,11 @@ import { computedAsync } from '@vueuse/core';
 
 import { generateUUID, isEmail } from '@/utils/stringUtils';
 import { flagMap } from '@/utils/flagUtils';
-import { getDisplayTexts, isDefined, isNil, clampText } from '@/utils/generalUtils';
+import { getDisplayTexts, isDefined, isEmpty, isNil, clampText } from '@/utils/generalUtils';
 import { PHONE_MAX_LENGTH_BY_PREFIX } from '@/constants';
 import { loadLibrary } from '@/utils/libLoader';
 import { logWarn } from '@/utils/devUtils';
+import { formatCurrency, formatDecimal, formatInteger } from '@/utils/format/number';
 import useLx from '@/hooks/useLx';
 
 import LxIcon from '@/components/Icon.vue';
@@ -19,13 +20,15 @@ import LxEmptyValue from '@/components/EmptyValue.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { useBuilderRegistration } from '@/utils/builderUtils';
 
-const THOUSANDS_SEPARATOR = ' ';
-const MIN_GROUPED_DIGITS = 5;
 const GROUPED_MASKS = new Set(['integer', 'decimal']);
+// any number with grouped digits and a fraction, to read the locale's separators
+const SEPARATOR_SAMPLE = 1234567.8;
 
-function groupThousands(integerPart, separator = THOUSANDS_SEPARATOR) {
-  if (integerPart.replace('-', '').length < MIN_GROUPED_DIGITS) return integerPart;
-  return integerPart.replace(/\B(?=(\d{3})+$)/g, separator);
+function groupInteger(integerPart, format) {
+  const match = /^([+-]?)(0*)(\d+)$/.exec(integerPart);
+  if (!match) return integerPart;
+  const [, sign, zeros, digits] = match;
+  return `${sign}${zeros}${format.format(Number(digits))}`;
 }
 
 class GroupedNumber extends IMask.MaskedNumber {
@@ -36,8 +39,10 @@ class GroupedNumber extends IMask.MaskedNumber {
 
   // eslint-disable-next-line no-underscore-dangle
   _insertThousandsSeparators(value) {
+    // called while imask is still assigning options
+    if (!this.integerFormat) return value;
     const [integerPart, ...rest] = value.split(this.radix);
-    return [groupThousands(integerPart, this.thousandsSeparator), ...rest].join(this.radix);
+    return [groupInteger(integerPart, this.integerFormat), ...rest].join(this.radix);
   }
 }
 
@@ -155,6 +160,16 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, '
 
 const emits = defineEmits(['update:modelValue']);
 
+const { environment, currency: globalCurrency, locale: globalLocale } = useLx().getGlobals() ?? {};
+const locale = globalLocale?.locale || 'lv-LV';
+const integerFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+const numberParts = new Intl.NumberFormat(locale).formatToParts(SEPARATOR_SAMPLE);
+const groupSeparator = numberParts.find((part) => part.type === 'group')?.value ?? '';
+const decimalSeparator = numberParts.find((part) => part.type === 'decimal').value;
+const radixAliases = [...new Set([decimalSeparator, ',', '.'])].filter(
+  (char) => char !== groupSeparator
+);
+
 // Russia (+7) and Kazakhstan (+7) share the same country code
 // The United States (+1) shares its code with Canada and many Caribbean nations.
 
@@ -216,8 +231,7 @@ const inputMaxLength = computed(() => {
   if (!isDefined(maxLengthValue.value) || !GROUPED_MASKS.has(props.mask)) {
     return maxLengthValue.value;
   }
-  const max = Number(maxLengthValue.value);
-  return max >= MIN_GROUPED_DIGITS ? max + Math.floor((max - 1) / 3) : max;
+  return integerFormat.format(10n ** BigInt(maxLengthValue.value) - 1n).length;
 });
 
 const inputMask = computed(() => {
@@ -230,8 +244,10 @@ const inputMask = computed(() => {
     case 'integer':
       return {
         mask: GroupedNumber,
-        thousandsSeparator: THOUSANDS_SEPARATOR,
+        thousandsSeparator: groupSeparator,
+        integerFormat,
         scale: 0,
+        radix: decimalSeparator,
         lazy: false,
         min: props.signed ? 0 - minValueComp.value : 0,
         max: Number.MAX_SAFE_INTEGER,
@@ -240,11 +256,12 @@ const inputMask = computed(() => {
     case 'decimal':
       return {
         mask: GroupedNumber,
-        thousandsSeparator: THOUSANDS_SEPARATOR,
+        thousandsSeparator: groupSeparator,
+        integerFormat,
         scale: props.scale,
         min: props.signed ? 0 - minValueComp.value : 0,
-        radix: ',',
-        mapToRadix: [',', '.'],
+        radix: decimalSeparator,
+        mapToRadix: radixAliases,
         format: () => '',
       };
     case 'personCodeLv':
@@ -266,8 +283,8 @@ const inputMask = computed(() => {
         lazy: false,
         max: 90,
         min: -90,
-        radix: ',',
-        mapToRadix: [',', '.'],
+        radix: decimalSeparator,
+        mapToRadix: radixAliases,
         format: () => '',
       };
     case 'gpslon':
@@ -277,8 +294,8 @@ const inputMask = computed(() => {
         lazy: false,
         max: 180,
         min: -180,
-        radix: ',',
-        mapToRadix: [',', '.'],
+        radix: decimalSeparator,
+        mapToRadix: radixAliases,
         format: () => '',
       };
     case 'time':
@@ -354,7 +371,7 @@ function onAccept(e) {
   v = convertValue(v);
 
   valueRaw.value = maskRef.value;
-  if (isDecimalLikeMask.value || maskRef.value.slice(-1) !== ',') {
+  if (isDecimalLikeMask.value || maskRef.value.slice(-1) !== decimalSeparator) {
     model.value = v;
   }
 }
@@ -377,37 +394,40 @@ const maxLengthComp = computed(() =>
   isDefined(props.maxlength) ? 10 ** Number(props.maxlength) - 1 : null
 );
 
-const { environment, currency: globalCurrency } = useLx().getGlobals() ?? {};
+const currencyCode = computed(() => props.options?.currency || globalCurrency || 'EUR');
 
-const currencySymbol = computed(() => {
-  const currencyCode = props.options?.currency || globalCurrency || 'EUR';
-
+const currencyFormat = computed(() => {
   try {
-    return new Intl.NumberFormat('lv-LV', {
+    const format = new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: currencyCode,
-      currencyDisplay: 'narrowSymbol',
-    })
-      .formatToParts(0)
-      .find((part) => part.type === 'currency').value;
+      currency: currencyCode.value,
+    });
+    const [, prefix, suffix] = /^(\D*).*?(\D*)$/.exec(format.format(1));
+    return {
+      prefix,
+      suffix,
+      precision: format.resolvedOptions().maximumFractionDigits,
+      valid: true,
+    };
   } catch {
     logWarn(
-      `LxTextInput [${props.id}]: currency "${currencyCode}" is not a valid ISO 4217 code`,
+      `LxTextInput [${props.id}]: currency "${currencyCode.value}" is not a valid ISO 4217 code`,
       environment
     );
-    return currencyCode;
+    return { prefix: '', suffix: ` ${currencyCode.value}`, precision: 2, valid: false };
   }
 });
 
+const isGrouped = (value) =>
+  !!groupSeparator &&
+  integerFormat.format(Math.trunc(Math.abs(Number(value) || 0))).includes(groupSeparator);
+
 const config = computed(() => ({
-  prefix: '',
-  suffix: ` ${currencySymbol.value}`,
-  thousands:
-    Math.trunc(Math.abs(Number(model.value) || 0)).toString().length >= MIN_GROUPED_DIGITS
-      ? THOUSANDS_SEPARATOR
-      : '',
-  decimal: ',',
-  precision: 2,
+  prefix: currencyFormat.value.prefix,
+  suffix: currencyFormat.value.suffix,
+  thousands: isGrouped(model.value) ? groupSeparator : '',
+  decimal: decimalSeparator,
+  precision: currencyFormat.value.precision,
   disableNegative: !props.signed,
   disabled: false,
   min: null,
@@ -438,17 +458,12 @@ watch(
 );
 
 function formatCurrencyReadOnly(value) {
-  const number = Number(value);
-  if (Number.isNaN(number)) return value + config.value.suffix;
-  const [integerPart, fractionPart] = number.toFixed(config.value.precision).split('.');
-  return `${groupThousands(integerPart)}${config.value.decimal}${fractionPart}${config.value.suffix}`;
+  if (currencyFormat.value.valid) return formatCurrency(value, currencyCode.value);
+  return `${value}${currencyFormat.value.suffix}`;
 }
 
-// Workaround to show readonly values masked
 const forcedMaskedValue = computed(() => {
-  if (model.value === null || model.value === '') {
-    return '';
-  }
+  if (isEmpty(model.value)) return '';
 
   const value = String(model.value);
   switch (props.mask) {
@@ -459,19 +474,20 @@ const forcedMaskedValue = computed(() => {
     case 'newborn-id':
       return value[11] === '/' ? value : `${value.substring(0, 11)}/${value.substring(11)}`;
     case 'integer':
-      return groupThousands(value);
+      return formatInteger(value);
     case 'decimal': {
-      const [integerPart, fractionPart] = value.split('.');
-      return isNil(fractionPart)
-        ? groupThousands(integerPart)
-        : `${groupThousands(integerPart)},${fractionPart}`;
+      const number = Number(value);
+      if (Number.isNaN(number)) return value;
+      return Number.isInteger(number)
+        ? formatInteger(value)
+        : formatDecimal(number, Number(props.scale));
     }
     case 'currency':
       return formatCurrencyReadOnly(value);
     case 'gpslat':
-      return value.replace('.', ',');
+      return value.replace('.', decimalSeparator);
     case 'gpslon':
-      return value.replace('.', ',');
+      return value.replace('.', decimalSeparator);
     case 'time':
       return value.length > 2 ? `${value.substring(0, 2)}:${value.substring(2)}` : value;
     default:
@@ -620,7 +636,7 @@ function isInvalidSignedLength(newValue) {
 
 function revertToOldValue(oldValue) {
   model.value = oldValue;
-  valueRaw.value = oldValue?.toString().replace('.', ',');
+  valueRaw.value = oldValue?.toString().replace('.', decimalSeparator);
 }
 
 function isExceedingMaxLength(newValue) {
@@ -638,8 +654,16 @@ function formatTimeValue(newValue) {
 }
 
 function formatCurrencyValue(newValue) {
-  const res = `${newValue}${config.value.suffix}`;
-  return res?.replace('.', ',') === valueRaw.value ? valueRaw.value : model.value?.toString();
+  const { prefix, suffix, decimal } = config.value;
+  const res = `${prefix}${String(newValue).replace('.', decimal)}${suffix}`;
+  return res === valueRaw.value ? valueRaw.value : model.value?.toString();
+}
+
+function formatGroupedValue(newValue) {
+  const text = newValue?.toString();
+  return input.value?.maskRef?.unmaskedValue === text
+    ? valueRaw.value
+    : text?.replace('.', decimalSeparator);
 }
 
 function formatPhoneValue(newValue) {
@@ -652,8 +676,10 @@ function updateValueRaw(newValue) {
     valueRaw.value = '';
     return;
   }
-  if (isDecimalLikeMask.value) {
-    valueRaw.value = model.value?.toString().replace('.', ',');
+  if (GROUPED_MASKS.has(props.mask)) {
+    valueRaw.value = formatGroupedValue(newValue);
+  } else if (isDecimalLikeMask.value) {
+    valueRaw.value = model.value?.toString().replace('.', decimalSeparator);
   } else if (props.mask === 'time') {
     valueRaw.value = formatTimeValue(newValue);
   } else if (props.mask === 'currency') {
@@ -678,9 +704,8 @@ watch(
       return;
     }
 
-    if (convertValue(newValue) === convertValue(oldValue)) {
-      valueRaw.value =
-        props.mask === 'decimal' ? newValue?.toString()?.replace('.', ',') : newValue?.toString();
+    if (convertValue(newValue) === convertValue(oldValue) && !GROUPED_MASKS.has(props.mask)) {
+      valueRaw.value = newValue?.toString();
     } else {
       updateValueRaw(newValue);
     }
@@ -716,7 +741,7 @@ watch(
 onMounted(() => {
   maskUpdate();
   if (isDecimalLikeMask.value) {
-    valueRaw.value = props.modelValue?.toString()?.replace('.', ',');
+    valueRaw.value = props.modelValue?.toString()?.replace('.', decimalSeparator);
   } else {
     valueRaw.value = props.modelValue?.toString();
   }

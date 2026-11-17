@@ -1,6 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { formatAddress } from '@/utils/format/address';
 import { pluralize } from '@/utils/format/plural';
+import { formatInteger } from '@/utils/format/number';
+import { setGlobalProperties } from '@/utils/global';
 
 test('Format address city', async () => {
   const address = {
@@ -238,5 +240,36 @@ describe('pluralize', () => {
 
     expect(pluralize(/** @type {any} */ (value), forms)).toBe(forms.other);
     expect(() => pluralize(/** @type {any} */ (Symbol('value')), forms)).not.toThrow();
+  });
+});
+
+describe('formatInteger', () => {
+  const nbsp = (text) => text.replaceAll(' ', '\u00a0');
+
+  test('groups with the default lv-LV locale from five digits', () => {
+    expect(formatInteger(9876)).toBe('9876');
+    expect(formatInteger(10123)).toBe(nbsp('10 123'));
+    expect(formatInteger('-1234567')).toBe(nbsp('-1 234 567'));
+  });
+
+  test('uses the global locale', () => {
+    try {
+      setGlobalProperties({ locale: { locale: 'en-US' } });
+      expect(formatInteger(1234)).toBe('1,234');
+      setGlobalProperties({ locale: { locale: 'de-DE' } });
+      expect(formatInteger(1234567)).toBe('1.234.567');
+    } finally {
+      setGlobalProperties({});
+    }
+  });
+
+  test('rounds fractional values', () => {
+    expect(formatInteger(1234.6)).toBe('1235');
+  });
+
+  test('returns the empty placeholder for empty or invalid values', () => {
+    [null, undefined, '', 'abc'].forEach((value) => {
+      expect(formatInteger(value)).toBe('—');
+    });
   });
 });

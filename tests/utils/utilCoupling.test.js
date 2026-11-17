@@ -53,6 +53,7 @@ describe('format module split', () => {
     'shortenValue',
     'formatAddress',
     'formatDecimal',
+    'formatInteger',
     'formatCountryCode',
     'formatCurrency',
     'pluralize',

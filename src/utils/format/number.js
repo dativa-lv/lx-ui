@@ -13,6 +13,16 @@ export function formatDecimal(value, precision = 2) {
       }).format(value);
 }
 
+export function formatInteger(value) {
+  if (isEmpty(value) || Number.isNaN(Number(value))) {
+    return EMPTY_VALUE;
+  }
+
+  const locale = useLx().getGlobals()?.locale?.locale || 'lv-LV';
+
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(Number(value));
+}
+
 export function formatCurrency(value, currency = null, language = null) {
   if (isEmpty(value) || Number.isNaN(Number(value))) {
     return EMPTY_VALUE;
