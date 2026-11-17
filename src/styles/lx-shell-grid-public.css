@@ -491,11 +491,6 @@
   .lx-layout.lx-layout-public.lx-collapsed > nav {
     top: var(--space-0);
   }
-
-  .lx-layout.lx-layout-public.lx-hide-nav-bar,
-  .lx-layout.lx-layout-public.no-nav-items {
-    --nav-row-size: var(--space-0);
-  }
 }
 
 @media (max-width: 1400px) {
@@ -566,7 +561,9 @@
     top: var(--nav-row-size);
     position: fixed;
     right: var(--space-0);
-    transition: width 0.1s ease-out, margin-right 0.1s ease-out;
+    transition:
+      width 0.1s ease-out,
+      margin-right 0.1s ease-out;
   }
 
   .lx .lx-layout.lx-layout-public > header > .lx-header .lx-group.lx-right-group #nav-toggle {
@@ -622,10 +619,23 @@
   }
 }
 
-@media (max-height: calc(8rem * 5)) and (max-width: 900px) {
-  .lx:has(.lx-layout-public) {
+@media (max-height: calc(8rem * 5)) {
+  @media (min-width: 901px) {
+    .lx:has(.lx-layout-public) {
+      --nav-row-size: 3rem;
+      --public-nav-header-size: var(--nav-row-size);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .lx:has(.lx-layout-public) {
+      --nav-row-size: var(--space-0);
+    }
+  }
+
+  .lx:has(.lx-layout-public.no-nav-items),
+  .lx:has(.lx-layout-public.lx-hide-nav-bar) {
     --nav-row-size: var(--space-0);
-    --public-nav-header-size: var(--nav-row-size);
   }
 }
 

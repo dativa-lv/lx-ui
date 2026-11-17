@@ -559,6 +559,19 @@ svg .lx-shade {
   padding: var(--space-0);
   padding-left: var(--space-1000);
   list-style: none;
+  top: calc(var(--sticky-nav-row-size) + var(--sticky-row-size));
+}
+
+.lx-layout-public-shell .lx-form-grid > .lx-index > ul {
+  top: calc(var(--public-nav-header-size) + var(--sticky-row-size));
+}
+
+.lx-layout-digives .lx-form-grid > .lx-index > ul {
+  top: calc(var(--digives-nav-header-size) + var(--sticky-row-size));
+}
+
+.lx-layout-digives-lite .lx-form-grid > .lx-index > ul {
+  top: calc(var(--nav-row-size) + var(--sticky-row-size));
 }
 
 .lx-form-grid > .lx-index > ul li {

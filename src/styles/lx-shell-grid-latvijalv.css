@@ -566,11 +566,6 @@
   .lx-layout.lx-layout-latvijalv.lx-collapsed > nav {
     top: var(--space-0);
   }
-
-  .lx-layout.lx-layout-latvijalv.lx-hide-nav-bar,
-  .lx-layout.lx-layout-latvijalv.no-nav-items {
-    --nav-row-size: var(--space-0);
-  }
 }
 
 @media (max-width: 1400px) {
@@ -661,7 +656,9 @@
     top: var(--nav-row-size);
     position: fixed;
     right: var(--space-0);
-    transition: width 0.1s ease-out, margin-right 0.1s ease-out;
+    transition:
+      width 0.1s ease-out,
+      margin-right 0.1s ease-out;
   }
 
   .lx .lx-layout.lx-layout-latvijalv.lx-collapsed > nav {
@@ -703,10 +700,23 @@
   }
 }
 
-@media (max-height: calc(8rem * 5)) and (max-width: 900px) {
-  .lx:has(.lx-layout-latvijalv) {
+@media (max-height: calc(8rem * 5)) {
+  @media (min-width: 901px) {
+    .lx:has(.lx-layout-latvijalv) {
+      --nav-row-size: 3rem;
+      --public-nav-header-size: var(--nav-row-size);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .lx:has(.lx-layout-latvijalv) {
+      --nav-row-size: var(--space-0);
+    }
+  }
+
+  .lx:has(.lx-layout-latvijalv.no-nav-items),
+  .lx:has(.lx-layout-latvijalv.lx-hide-nav-bar) {
     --nav-row-size: var(--space-0);
-    --public-nav-header-size: var(--nav-row-size);
   }
 }
 
