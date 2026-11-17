@@ -6,8 +6,8 @@
   --font-weight-extra-bold: 600;
 
   --native-sticky-shadow-display: none;
-  --sticky-row-size: 3.5rem;
-  --sticky-nav-row-size: 3.5rem;
+  --sticky-row-size: 3rem;
+  --sticky-nav-row-size: 3rem;
 
   /* LxModal */
   --modal-border-radius: var(--border-radius-1500);
