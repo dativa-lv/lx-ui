@@ -964,7 +964,7 @@ async function moveGroupedItem(element, direction) {
 
 const dragOptions = computed(() => ({
   animation: 200,
-  group: 'list',
+  group: `list-${props.id}`,
   disabled: false,
   ghostClass: 'ghost',
 }));
@@ -1784,7 +1784,6 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             drag-class="drag"
             v-bind="dragOptions"
             :item-key="idAttribute"
-            group="list"
             tag="ul"
             :disabled="loading || busy || draggableIsDisabledByQuery"
             :aria-labelledby="labelledBy"
@@ -2406,7 +2405,6 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             drag-class="drag"
             v-bind="dragOptions"
             :item-key="idAttribute"
-            group="list"
             :disabled="loading || busy || draggableIsDisabledByQuery"
             :aria-labelledby="labelledBy"
             @start="changeDragging"
@@ -2536,7 +2534,6 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
               drag-class="drag"
               v-bind="dragOptions"
               :item-key="idAttribute"
-              group="list"
               tag="ul"
               :disabled="loading || busy || draggableIsDisabledByQuery"
               :aria-labelledby="labelledBy"
