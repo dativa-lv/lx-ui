@@ -2,6 +2,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { RouterLinkStub, flushPromises, mount } from '@vue/test-utils';
 import { nextTick, ref } from 'vue';
+import draggable from 'vuedraggable/src/vuedraggable';
 import LxList from '@/components/list/List.vue';
 import * as libLoader from '@/utils/libLoader';
 import { lxDevUtils } from '@/utils';
@@ -1097,5 +1098,32 @@ describe('selectionChange', () => {
     wrapper.vm.cancelSelection();
     await nextTick();
     expect(wrapper.emitted('selectionChange').at(-1)).toEqual([[]]);
+  });
+});
+
+describe('Draggable', () => {
+  test('pins the native drag image to the grab point', async () => {
+    const loadLibrarySpy = vi.spyOn(libLoader, 'loadLibrary').mockResolvedValue(draggable);
+    wrapper = mountComponent({
+      props: {
+        kind: 'draggable',
+        items: [
+          { id: '1', name: 'One' },
+          { id: '2', name: 'Two' },
+        ],
+      },
+      attachTo: document.body,
+    });
+    await flushPromises();
+
+    const item = wrapper.find('.list-draggable-area > [data-draggable]').element;
+    vi.spyOn(item, 'getBoundingClientRect').mockReturnValue({ left: 100, top: 300 });
+    const dataTransfer = { setData: vi.fn(), setDragImage: vi.fn() };
+    const event = new MouseEvent('dragstart', { bubbles: true, clientX: 112, clientY: 309 });
+    Object.defineProperty(event, 'dataTransfer', { value: dataTransfer });
+    item.dispatchEvent(event);
+
+    expect(dataTransfer.setDragImage).toHaveBeenCalledWith(item, 12, 9);
+    loadLibrarySpy.mockRestore();
   });
 });
