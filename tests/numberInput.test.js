@@ -1116,6 +1116,84 @@ describe('LxNumberInput', () => {
     });
   });
 
+  describe('Behaviour - typing with min and max', () => {
+    const RANGE = { min: 1900, max: 2100 };
+
+    test.each([
+      ['stepper', { kind: 'stepper' }, ID],
+      ['slider', {}, `${ID}-text`],
+    ])('should let the %s input be retyped digit by digit', async (_, props, inputId) => {
+      wrapper = mountWithModel({ ...props, ...RANGE, hasInput: true, modelValue: 1900 });
+      const input = wrapper.find(`input#${inputId}`);
+
+      await input.setValue('');
+      await input.setValue('2');
+      await input.setValue('20');
+      await input.setValue('200');
+      await input.setValue('2000');
+
+      expect(input.element.value).toBe('2000');
+      expect(wrapper.props().modelValue).toBe(2000);
+      expect(emittedValues(wrapper)).toEqual([null, 2000]);
+    });
+
+    test('should keep out-of-range text in the input and not emit it while typing', async () => {
+      wrapper = mountWithModel({ kind: 'stepper', hasInput: true, ...RANGE, modelValue: 1900 });
+      const input = wrapper.find(`input#${ID}`);
+
+      await input.setValue('20');
+
+      expect(input.element.value).toBe('20');
+      expect(wrapper.props().modelValue).toBe(1900);
+      expect(emittedValues(wrapper)).toEqual([]);
+    });
+
+    test.each([
+      ['below min', '20', 1900],
+      ['above max', '5000', 2100],
+    ])('should clamp text %s on blur', async (_, text, expected) => {
+      wrapper = mountWithModel({ kind: 'stepper', hasInput: true, ...RANGE, modelValue: 2000 });
+      const input = wrapper.find(`input#${ID}`);
+
+      await input.setValue(text);
+      await input.trigger('focusout');
+
+      expect(wrapper.props().modelValue).toBe(expected);
+      expect(input.element.value).toBe(String(expected));
+    });
+
+    test('should restore the current value on blur when the clamped text matches it', async () => {
+      wrapper = mountWithModel({ kind: 'stepper', hasInput: true, ...RANGE, modelValue: 1900 });
+      const input = wrapper.find(`input#${ID}`);
+
+      await input.setValue('19');
+      await input.trigger('focusout');
+
+      expect(emittedValues(wrapper)).toEqual([]);
+      expect(input.element.value).toBe('1900');
+    });
+
+    test('should step from the typed text with the arrow keys', async () => {
+      wrapper = mountWithModel({ kind: 'stepper', hasInput: true, ...RANGE, modelValue: 1900 });
+      const input = wrapper.find(`input#${ID}`);
+
+      await input.setValue('2050');
+      await input.trigger('keydown', { key: 'ArrowUp' });
+
+      expect(wrapper.props().modelValue).toBe(2051);
+    });
+
+    test('should drop the typed text when the model changes from outside', async () => {
+      wrapper = mountWithModel({ kind: 'stepper', hasInput: true, ...RANGE, modelValue: 1900 });
+      const input = wrapper.find(`input#${ID}`);
+
+      await input.setValue('20');
+      await wrapper.setProps({ modelValue: 2050 });
+
+      expect(input.element.value).toBe('2050');
+    });
+  });
+
   describe('Behaviour - unspecified value', () => {
     test('should not overwrite a null model with 0 on mount', () => {
       wrapper = mount(LxNumberInput, {

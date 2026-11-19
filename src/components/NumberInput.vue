@@ -143,6 +143,37 @@ watch(
   { immediate: true }
 );
 
+const typedValue = ref(undefined);
+
+const inputModel = computed({
+  get() {
+    return typedValue.value === undefined ? model.value : typedValue.value;
+  },
+  set(value) {
+    const typed = toWholeNumberOrNull(value);
+    typedValue.value = typed;
+    if (isNil(typed) || typed === clampToRange(typed)) model.value = typed;
+  },
+});
+
+function commitTypedValue() {
+  if (typedValue.value === undefined) return;
+  const typed = typedValue.value;
+  typedValue.value = undefined;
+  if (isNil(typed)) return;
+  const clamped = clampToRange(typed);
+  if (clamped !== model.value) model.value = clamped;
+}
+
+watch(
+  () => model.value,
+  (newValue) => {
+    if (typedValue.value !== undefined && newValue !== typedValue.value) {
+      typedValue.value = undefined;
+    }
+  }
+);
+
 const tooltip = computed(() =>
   hasValue.value ? model.value.toString() : displayTexts.value.emptyValue
 );
@@ -151,8 +182,10 @@ let announcementTimeout;
 
 // An unspecified value can only be stepped up - going down would read as picking zero
 const stepBy = (delta) => {
-  if (isNil(model.value) && delta < 0) return;
-  model.value = (model.value ?? 0) + delta;
+  const base = inputModel.value;
+  typedValue.value = undefined;
+  if (isNil(base) && delta < 0) return;
+  model.value = (base ?? 0) + delta;
 };
 
 const onIncreaseMultiplier = () => stepBy(stepMultiplierValue.value);
@@ -244,7 +277,7 @@ useBuilderRegistration('LxNumberInput', props, { texts: textsDefault });
           <LxTextInput
             v-if="hasInput"
             :id="id"
-            v-model="model"
+            v-model="inputModel"
             mask="integer"
             class="lx-number-stepper-text-input"
             :labelId="labelledBy"
@@ -257,6 +290,7 @@ useBuilderRegistration('LxNumberInput', props, { texts: textsDefault });
             @keydown.shift.down.exact.prevent="!props.disableArrowKeys && onDecreaseMultiplier()"
             @keydown.page-up.prevent="onIncreasePage"
             @keydown.page-down.prevent="onDecreasePage"
+            @focusout="commitTypedValue"
           />
           <div
             v-else
@@ -373,12 +407,13 @@ useBuilderRegistration('LxNumberInput', props, { texts: textsDefault });
         <LxTextInput
           :id="`${id}-text`"
           type="text"
-          v-model="model"
+          v-model="inputModel"
           mask="integer"
           :labelId="labelledBy"
           :disabled
           :required="required"
           :builderOptions="{ innerComponent: true }"
+          @focusout="commitTypedValue"
         />
       </div>
       <div v-if="showInfoHelper" class="lx-number-input-helper-wrapper">
