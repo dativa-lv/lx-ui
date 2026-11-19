@@ -2519,8 +2519,9 @@ h2.lx-section-header + p.lx-invalidation-message,
   justify-content: flex-end;
 }
 
-.lx .lx-file-info-button > .lx-button {
+.lx .lx-file-info-button > .lx-button.lx-button-ghost {
   width: 100%;
+  outline-offset: -2px;
 }
 
 .lx .lx-icon-only-button.lx-icon-only-button > .lx-button {

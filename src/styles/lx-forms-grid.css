@@ -86,6 +86,10 @@ svg .lx-shade {
   top: var(--space-0);
 }
 
+.lx-modal-form .lx-form-grid .lx-form-grid-header > .lx-group .lx-button {
+  outline-offset: -2px;
+}
+
 .lx-form-grid .lx-form-grid-header > .lx-group {
   display: flex;
   height: var(--row-size);

@@ -99,8 +99,9 @@
   transform: rotateY(180deg);
 }
 
-.lx-card-wrapper .lx-card-face > .lx-button {
+.lx-card-wrapper .lx-card .lx-card-face > .lx-button {
   position: absolute;
   top: var(--space-0);
   right: var(--space-0);
+  outline-offset: -2px;
 }

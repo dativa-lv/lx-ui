@@ -125,6 +125,7 @@ dialog {
   border-radius: var(--modal-button-header-border-radius);
   align-self: start;
   padding: var(--space-0);
+  outline-offset: -2px;
 }
 
 .lx dialog.lx-modal > header > .lx-button svg,
