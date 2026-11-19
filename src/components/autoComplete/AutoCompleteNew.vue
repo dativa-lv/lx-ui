@@ -1198,7 +1198,7 @@ defineExpose({ autoCompleteState, autoCompleteQuery, focus });
                     >
                       <LxIcon value="info" />
                       <div class="lx-invisible" aria-hidden="true"></div>
-                      <p>{{ displayTexts.additionalText }}</p>
+                      <div>{{ displayTexts.additionalText }}</div>
                     </div>
 
                     <div v-if="showSelectAll" class="select-all-wrapper">
@@ -1336,18 +1336,18 @@ defineExpose({ autoCompleteState, autoCompleteQuery, focus });
                     <div v-if="showEmptyMessage" class="lx-empty lx-aligned-row">
                       <LxIcon value="info" />
                       <div class="lx-invisible" aria-hidden="true"></div>
-                      <p>
+                      <div>
                         {{ displayTexts.empty }} "<span class="lx-highlighted-item">{{
                           query.toLowerCase()
                         }}</span
                         >"
-                      </p>
+                      </div>
                     </div>
 
                     <div v-if="showMinLengthMessage" class="lx-empty lx-aligned-row">
                       <LxIcon value="info" />
                       <div class="lx-invisible" aria-hidden="true"></div>
-                      <p>{{ minLengthText }}</p>
+                      <div>{{ minLengthText }}</div>
                     </div>
                   </div>
                 </transition>

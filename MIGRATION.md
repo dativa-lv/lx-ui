@@ -158,6 +158,14 @@ is missing from `items` is now shown as the id instead of an empty field.
 - Don't add new usages of `preloadedItems` or function `items`.
 - Update `customItem` templates to the `{ item, context }` slot props when switching to `mode="new"`.
 
+## 2.3.13 → 2.3.14
+
+### Breaking changes
+
+#### Popovers
+
+The `--popover-item-icon-size-s` token has been renamed to `--popover-item-icon-size`, which is now used in both touch and non-touch modes. The `--popover-item-icon-size-l` (`--icon-size-m`) token is no longer used.
+
 ## 2.3.12 → 2.3.13
 
 ### Breaking changes

@@ -13,6 +13,7 @@
 | `--popover-item-border-radius-selected`       | `--border-radius-default`               |
 | `--popover-item-text-font-size`               | `--font-size`                           |
 | `--popover-item-text-font-weight`             | `--font-weight`                         |
+| `--popover-item-text-line-height`             | 1.25                                    |
 | `--popover-item-text-alignment`               | left                                    |
 | `--popover-item-text-decoration`              | none                                    |
 | `--popover-item-gap`                          | `--space-0500`                          |
@@ -27,11 +28,10 @@
 | `--popover-item-toggle-grid-template-columns` | `--popover-item-grid-template-columns`  |
 | `--popover-item-toggle-grid-template-rows`    | `--popover-item-grid-template-rows`     |
 | `--popover-item-height`                       | `--row-size-dynamic`                    |
-| `--popover-item-icon-size-s`                  | `--icon-size-s`                         |
-| `--popover-item-icon-size-l`                  | `--icon-size-m`                         |
+| `--popover-item-icon-size`                    | `--icon-size-s`                         |
 | `--popover-item-outline-offset`               | 0                                       |
-| `--popover-item-padding-s`                    | `--space-0250` `--space-0750`           |
-| `--popover-item-padding-l`                    | `--space-0750`                          |
+| `--popover-item-padding-s`                    | `--space-0375` `--space-0750`           |
+| `--popover-item-padding-l`                    | `--space-0875` `--space-0750`           |
 | `--popover-item-set-gap`                      | `--space-0125`                          |
 | `--popover-padding`                           | `--space-0250`                          |
 | `--popover-border-width`                      | `--border-width-1`                      |
@@ -60,6 +60,8 @@
 | `--popover-item-tag-border-radius`            | `--border-radius-0`                     |
 | `--popover-item-tag-border-width`             | `--border-width-2`                      |
 | `--popover-item-tag-border-style`             | solid                                   |
+| `--popover-selecting-block-height`            | 1.25rem                                 |
+| `--popover-selecting-block-width`             | 1.25rem                                 |
 
 ## Color
 

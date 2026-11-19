@@ -1112,11 +1112,7 @@
 }
 
 .lx-global-search-result-with-icon:not(:has(> svg)) {
-  padding-left: calc(var(--popover-item-icon-size-s) + var(--popover-item-gap));
-}
-
-.lx-touch-mode .lx-global-search-result-with-icon:not(:has(> svg)) {
-  padding-left: calc(var(--popover-item-icon-size-l) + var(--popover-item-gap));
+  padding-left: calc(var(--popover-item-icon-size) + var(--popover-item-gap));
 }
 
 @media (max-width: 800px) {

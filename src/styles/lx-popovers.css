@@ -62,6 +62,7 @@
   width: 100%;
   font-size: var(--popover-item-text-font-size);
   font-weight: var(--popover-item-text-font-weight);
+  line-height: var(--popover-item-text-line-height);
   border-width: var(--popover-item-border-width);
   border-style: var(--popover-item-border-style);
   border-color: var(--color-popover-item-border);
@@ -97,18 +98,24 @@
   position: relative;
   cursor: pointer;
   overflow: hidden;
+  --selecting-block-width: var(--popover-selecting-block-width);
+  --selecting-block-height: var(--popover-selecting-block-height);
+  --selecting-block-text-padding: var(--space-0);
+  --selecting-block-text-primary-font-size: var(--popover-item-text-font-size);
+  --selecting-block-text-primary-font-weight: var(--popover-item-text-font-weight);
+  --selecting-block-text-primary-line-height: var(--popover-item-text-line-height);
+  --selecting-block-gap: var(--popover-item-gap);
+  --color-selecting-block-text-primary: var(--color-popover-item-text);
 }
 
-.lx-dropdown-default-content .lx-value-picker-item .lx-checkbox-wrapper,
-.lx-dropdown-default-content .lx-value-picker-item .lx-radio-button-wrapper {
+.lx-dropdown-default-content .lx-value-picker-item .lx-checkbox-wrapper {
   width: 100%;
   overflow: hidden;
   align-items: flex-start;
 }
 
 .lx-dropdown-default-content .lx-value-picker-item > div,
-.lx-dropdown-default-content .lx-value-picker-item .lx-checkbox-text-wrapper,
-.lx-dropdown-default-content .lx-value-picker-item .lx-radio-button-text-wrapper {
+.lx-dropdown-default-content .lx-value-picker-item .lx-checkbox-text-wrapper {
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -162,7 +169,6 @@
 
 .lx-touch-mode .lx-dropdown-panel .lx-popover-item-checkmark {
   inset: var(--popover-checkmark-inset-l);
-  margin: var(--space-0125) var(--space-0);
 }
 
 .lx-dropdown-default-content .lx-value-picker-item,
@@ -296,18 +302,10 @@
 .lx-dropdown-panel .lx-button-set .lx-button .lx-button-icon,
 .lx-dropdown-panel > div > .lx-button .lx-button-icon,
 .lx-dropdown-panel > .lx-button .lx-button-icon {
-  height: var(--popover-item-icon-size-s);
-  width: var(--popover-item-icon-size-s);
+  height: var(--popover-item-icon-size);
+  width: var(--popover-item-icon-size);
   fill: var(--color-popover-item-icon);
   grid-area: icon-toggle;
-}
-
-.lx-touch-mode .lx-dropdown-panel .user-menu-panel .lx-button .lx-button-icon,
-.lx-touch-mode .lx-dropdown-panel .lx-button-set .lx-button .lx-button-icon,
-.lx-touch-mode .lx-layout .lx-dropdown-panel > div > .lx-button .lx-button-icon,
-.lx-touch-mode .lx-layout .lx-dropdown-panel > .lx-button .lx-button-icon {
-  height: var(--popover-item-icon-size-l);
-  width: var(--popover-item-icon-size-l);
 }
 
 .lx-dropdown-panel .user-menu-panel .lx-button:hover .lx-button-icon,
@@ -612,6 +610,10 @@
   max-width: 100%;
 }
 
+.lx-input-area .lx-autocomplete-item-content {
+  align-items: center;
+}
+
 .lx-autocomplete-item-content > span {
   min-width: 0;
   overflow: hidden;
@@ -620,17 +622,9 @@
 
 .lx-autocomplete-item-content > svg {
   flex-shrink: 0;
-  width: var(--popover-item-icon-size-s);
-  height: var(--popover-item-icon-size-s);
-  /* TODO: workaround to center the icon on the first line, fix with the popover icon height update */
-  margin-top: max(0px, calc((1lh - var(--popover-item-icon-size-s)) / 2));
+  width: var(--input-icon-size);
+  height: var(--input-icon-size);
   fill: var(--color-popover-item-icon);
-}
-
-.lx-touch-mode .lx-autocomplete-item-content > svg {
-  width: var(--popover-item-icon-size-l);
-  height: var(--popover-item-icon-size-l);
-  margin-top: max(0px, calc((1lh - var(--popover-item-icon-size-l)) / 2));
 }
 
 .lx-dropdown-panel .lx-popover-item-text-only:has(> div > .lx-autocomplete-item-content) {

@@ -1523,9 +1523,9 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       <div class="lx-empty additional-text lx-aligned-row">
                         <LxIcon value="info" />
                         <div class="lx-invisible" aria-hidden="true"></div>
-                        <p>
+                        <div>
                           {{ displayTexts.additionalText }}
-                        </p>
+                        </div>
                       </div>
                     </template>
 
@@ -1663,12 +1663,12 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       <div class="lx-empty lx-aligned-row">
                         <LxIcon value="info" />
                         <div class="lx-invisible" aria-hidden="true"></div>
-                        <p>
+                        <div>
                           {{ displayTexts.empty }} "<span class="lx-highlighted-item">{{
                             query.toLowerCase()
                           }}</span
                           >"
-                        </p>
+                        </div>
                       </div>
                     </template>
 
@@ -1683,13 +1683,13 @@ defineExpose({ autoCompleteState, autoCompleteQuery, clearFilteredItems });
                       <div class="lx-empty lx-aligned-row">
                         <LxIcon value="info" />
                         <div class="lx-invisible" aria-hidden="true"></div>
-                        <p>
+                        <div>
                           {{
                             queryMinLength % 10 === 1 && queryMinLength !== 11
                               ? displayTexts.tryEndingWith1?.replace('{0}', queryMinLength)
                               : displayTexts.try?.replace('{0}', queryMinLength)
                           }}
-                        </p>
+                        </div>
                       </div>
                     </template>
                   </div>

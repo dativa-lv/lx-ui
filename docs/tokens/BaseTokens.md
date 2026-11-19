@@ -47,6 +47,7 @@
 | `--space-0375` | 0.375rem      |
 | `--space-0500` | 0.5rem        |
 | `--space-0750` | 0.75rem       |
+| `--space-0875` | 0.875rem      |
 | `--space-1000` | 1rem          |
 | `--space-1250` | 1.25rem       |
 | `--space-1500` | 1.5rem        |

@@ -123,7 +123,7 @@
   --popover-item-border-radius-outer: var(--border-radius-0750);
   --popover-item-border-radius-inner: var(--border-radius-0250);
   --popover-item-border-radius-selected: var(--border-radius-0750);
-  --popover-item-padding-s: var(--space-0250) var(--space-0750);
+  --popover-item-padding-s: var(--space-0375) var(--space-0750);
   --popover-item-padding-l: var(--space-0750);
   --popover-label-padding: var(--space-0500) var(--space-0750);
   --popover-item-checkmark-display: block;

@@ -580,7 +580,7 @@ const getSelectedItem = computed(
                     <div class="lx-empty lx-aligned-row">
                       <LxIcon value="info" />
                       <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
-                      <p>{{ noItemsMessage }}</p>
+                      <div>{{ noItemsMessage }}</div>
                     </div>
                   </template>
 

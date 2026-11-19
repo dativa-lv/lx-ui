@@ -193,6 +193,7 @@
 .lx-empty {
   padding: var(--popover-item-padding-s);
   min-height: var(--row-size-dynamic);
+  line-height: var(--popover-item-text-line-height);
   display: flex;
   align-items: center;
   color: var(--color-label);
@@ -207,18 +208,11 @@
 }
 
 .lx-empty svg {
-  height: var(--popover-item-icon-size-s);
-  width: var(--popover-item-icon-size-s);
+  height: var(--popover-item-icon-size);
+  width: var(--popover-item-icon-size);
   display: inline-block;
   fill: var(--color-label);
   flex-shrink: 0;
-  margin: var(--space-0125) var(--space-0);
-}
-
-.lx-touch-mode .lx-empty svg {
-  height: var(--popover-item-icon-size-l);
-  width: var(--popover-item-icon-size-l);
-  margin: var(--space-0);
 }
 
 /*** Input padding ***/
@@ -314,7 +308,7 @@
 .lx .lx-input-wrapper .lx-date-time-picker::placeholder,
 .lx .lx-input-wrapper .lx-text-area::placeholder,
 .lx .lx-input-wrapper .lx-markdown-text-area::placeholder {
-  line-height: 1.5rem;
+  line-height: var(--input-text-line-height);
   font-family: var(--font-family);
   font-size: var(--input-text-font-size);
   letter-spacing: 0;
@@ -335,6 +329,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: var(--input-text-line-height);
   font-size: var(--input-text-font-size);
   z-index: 1;
 }
@@ -490,14 +485,6 @@
 .lx-input-wrapper.lx-disabled .lx-input-text,
 .lx-input-wrapper.lx-disabled .lx-input-area {
   color: var(--color-input-text-disabled) !important;
-}
-
-.lx .lx-layout .lx-dropdown-default-content .lx-empty > p {
-  color: var(--color-label);
-}
-
-.lx.lx-touch-mode .lx-dropdown-default-content .lx-empty > p {
-  line-height: unset;
 }
 
 .lx-dropdown-default-data.dropdown-multiple,
@@ -1892,10 +1879,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   align-items: start;
 }
 
-.lx-empty.additional-text > p {
-  align-self: center;
-}
-
 .lx-empty.additional-text > svg {
   margin-left: var(--space-0250);
 }
@@ -1931,6 +1914,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-color: var(--color-input-border);
   border-radius: var(--input-border-radius);
   font-size: var(--input-text-font-size);
+  line-height: var(--input-text-line-height);
 }
 
 .lx-input-wrapper.lx-number-stepper-no-input > .lx-number-stepper-value.lx-input-area {

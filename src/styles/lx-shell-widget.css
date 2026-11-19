@@ -1151,11 +1151,17 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
 
 .lx:not(.lx-no-animations) .lx-button,
 .lx:not(.lx-no-animations) .lx-alert-menu .lx-button > .lx-badge {
-  transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
+  transition:
+    background-color 0.1s ease-in,
+    color 0.1s ease-in,
+    border-color 0.1s ease-in;
 }
 
 .lx:not(.lx-no-animations) .primary-menu-tile {
-  transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
+  transition:
+    background-color 0.1s ease-in,
+    color 0.1s ease-in,
+    border-color 0.1s ease-in;
 }
 
 @media (max-height: calc(8rem * 5)) {
@@ -1744,7 +1750,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 }
 
 .lx-global-search-result-with-icon:not(:has(> svg)) {
-  padding-left: calc(var(--popover-item-icon-size-s) + var(--popover-item-gap));
+  padding-left: calc(var(--popover-item-icon-size) + var(--popover-item-gap));
 }
 
 /* Background lives on the wrapper (not the panel) so no empty gap shows when the scrollable panel is dragged/overscrolled aside. */
@@ -1811,6 +1817,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   width: 100%;
   font-size: var(--popover-item-text-font-size);
   font-weight: var(--popover-item-text-font-weight);
+  line-height: var(--popover-item-text-line-height);
   border-width: var(--popover-item-border-width);
   border-style: var(--popover-item-border-style);
   border-color: var(--color-popover-item-border);
@@ -1837,13 +1844,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   position: relative;
   cursor: pointer;
   overflow: hidden;
-}
-
-.lx-dropdown-default-content .lx-value-picker-item .lx-checkbox-wrapper,
-.lx-dropdown-default-content .lx-value-picker-item .lx-radio-button-wrapper {
-  width: 100%;
-  overflow: hidden;
-  align-items: flex-start;
 }
 
 .lx-dropdown-default-content .lx-value-picker-item > div {
@@ -1980,8 +1980,8 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx-dropdown-panel .lx-button-set .lx-button .lx-button-icon,
 .lx-dropdown-panel > div > .lx-button .lx-button-icon,
 .lx-dropdown-panel > .lx-button .lx-button-icon {
-  height: var(--popover-item-icon-size-s);
-  width: var(--popover-item-icon-size-s);
+  height: var(--popover-item-icon-size);
+  width: var(--popover-item-icon-size);
   fill: var(--color-popover-item-icon);
   grid-area: icon-toggle;
 }
@@ -2155,6 +2155,10 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   max-width: 100%;
 }
 
+.lx-input-area .lx-autocomplete-item-content {
+  align-items: center;
+}
+
 .lx-autocomplete-item-content > span {
   min-width: 0;
   overflow: hidden;
@@ -2163,10 +2167,8 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 
 .lx-autocomplete-item-content > svg {
   flex-shrink: 0;
-  width: var(--popover-item-icon-size-s);
-  height: var(--popover-item-icon-size-s);
-  /* TODO: workaround to center the icon on the first line, fix with the popover icon height update */
-  margin-top: max(0px, calc((1lh - var(--popover-item-icon-size-s)) / 2));
+  width: var(--input-icon-size);
+  height: var(--input-icon-size);
   fill: var(--color-popover-item-icon);
 }
 
@@ -2463,8 +2465,8 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx .lx-dropdown-panel .lx-button-set .lx-button svg,
 .lx .lx-dropdown-panel > div > .lx-button svg,
 .lx .lx-dropdown-panel > .lx-button svg {
-  height: var(--popover-item-icon-size-s);
-  width: var(--popover-item-icon-size-s);
+  height: var(--popover-item-icon-size);
+  width: var(--popover-item-icon-size);
   fill: var(--color-popover-item-icon);
   grid-area: icon-toggle;
 }
@@ -2699,6 +2701,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx-empty {
   padding: var(--popover-item-padding-s);
   min-height: var(--row-size-dynamic);
+  line-height: var(--popover-item-text-line-height);
   display: flex;
   align-items: center;
   color: var(--color-label);
@@ -2709,12 +2712,11 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 }
 
 .lx-empty svg {
-  height: var(--popover-item-icon-size-s);
-  width: var(--popover-item-icon-size-s);
+  height: var(--popover-item-icon-size);
+  width: var(--popover-item-icon-size);
   display: inline-block;
   fill: var(--color-label);
   flex-shrink: 0;
-  margin: var(--space-0125) var(--space-0);
 }
 
 /*** Input padding ***/
@@ -2805,7 +2807,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 
 .lx .lx-input-wrapper,
 .lx .lx-input-wrapper .lx-text-input::placeholder {
-  line-height: 1.5rem;
+  line-height: var(--input-text-line-height);
   font-family: var(--font-family);
   font-size: var(--input-text-font-size);
   letter-spacing: 0;
@@ -2826,6 +2828,7 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: var(--input-text-font-size);
+  line-height: var(--input-text-line-height);
   z-index: 1;
 }
 
@@ -2844,10 +2847,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx-input-wrapper.lx-disabled .lx-input-text,
 .lx-input-wrapper.lx-disabled .lx-input-area {
   color: var(--color-input-text-disabled) !important;
-}
-
-.lx.lx-header-wrapper .lx-dropdown-default-content .lx-empty > p {
-  color: var(--color-label);
 }
 
 .lx-dropdown-default-data.dropdown-multiple,
@@ -3228,10 +3227,6 @@ dialog.lx-modal > header > .lx-button:focus:hover svg,
 .lx-empty.additional-text {
   border-bottom: var(--border-width-1) solid var(--color-chrome);
   align-items: start;
-}
-
-.lx-empty.additional-text > p {
-  align-self: center;
 }
 
 .lx-empty.additional-text > svg {
