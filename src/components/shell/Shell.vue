@@ -517,6 +517,8 @@ watch(
 const animationsStorageKey = ref(`${getSystemId()}-reduced-animations`);
 
 const defaultReducedAnimations = ref(false);
+const isAnimationsAuto = ref(true);
+const preferredReducedMotion = usePreferredReducedMotion();
 
 const animationsModel = computed({
   get() {
@@ -529,11 +531,28 @@ const animationsModel = computed({
     if (props.hasThemePicker) {
       emits('update:hasReducedAnimations', value);
     }
+    isAnimationsAuto.value = false;
     defaultReducedAnimations.value = value;
   },
 });
 
 provide('hasReducedAnimations', animationsModel);
+
+const animationsPreferenceModel = computed({
+  get() {
+    if (isAnimationsAuto.value) {
+      return 'auto';
+    }
+    return animationsModel.value;
+  },
+  set(value) {
+    animationsModel.value =
+      value === 'auto' ? preferredReducedMotion.value !== 'no-preference' : value;
+    isAnimationsAuto.value = value === 'auto';
+  },
+});
+
+provide('reducedAnimationsPreference', animationsPreferenceModel);
 
 function animationModeChange(newValue, providedStorageKey) {
   const element = document.querySelector('.lx');
@@ -548,7 +567,7 @@ function animationModeChange(newValue, providedStorageKey) {
     element.classList.remove('lx-no-animations');
   }
 
-  localStorage.setItem(storageKey, JSON.stringify(newValue));
+  localStorage.setItem(storageKey, JSON.stringify(animationsPreferenceModel.value));
   defaultReducedAnimations.value = newValue;
 }
 
@@ -559,9 +578,27 @@ watch(
   }
 );
 
+watch(
+  () => isAnimationsAuto.value,
+  () => {
+    animationModeChange(animationsModel.value);
+  }
+);
+
+watch(
+  () => preferredReducedMotion.value,
+  () => {
+    if (isAnimationsAuto.value) {
+      animationsPreferenceModel.value = 'auto';
+    }
+  }
+);
+
 const transparencyStorageKey = ref(`${getSystemId()}-reduced-transparency`);
 
 const transparencyToggle = ref(false);
+const isTransparencyAuto = ref(true);
+const preferredReducedTransparency = usePreferredReducedTransparency();
 
 const transparencyModel = computed({
   get() {
@@ -574,12 +611,28 @@ const transparencyModel = computed({
     if (props.hasThemePicker) {
       emits('update:hasReducedTransparency', value);
     }
-    localStorage.setItem(transparencyStorageKey.value, JSON.stringify(value));
+    isTransparencyAuto.value = false;
     transparencyToggle.value = value;
   },
 });
 
 provide('hasReducedTransparency', transparencyModel);
+
+const transparencyPreferenceModel = computed({
+  get() {
+    if (isTransparencyAuto.value) {
+      return 'auto';
+    }
+    return transparencyModel.value;
+  },
+  set(value) {
+    transparencyModel.value =
+      value === 'auto' ? preferredReducedTransparency.value !== 'no-preference' : value;
+    isTransparencyAuto.value = value === 'auto';
+  },
+});
+
+provide('reducedTransparencyPreference', transparencyPreferenceModel);
 
 function transparencyModeChange(newValue, providedStorageKey) {
   const element = document.querySelector('.lx');
@@ -594,7 +647,7 @@ function transparencyModeChange(newValue, providedStorageKey) {
     element.classList.remove('lx-no-transparency');
   }
 
-  localStorage.setItem(storageKey, JSON.stringify(newValue));
+  localStorage.setItem(storageKey, JSON.stringify(transparencyPreferenceModel.value));
 }
 
 watch(
@@ -604,8 +657,25 @@ watch(
   }
 );
 
+watch(
+  () => isTransparencyAuto.value,
+  () => {
+    transparencyModeChange(transparencyModel.value);
+  }
+);
+
+watch(
+  () => preferredReducedTransparency.value,
+  () => {
+    if (isTransparencyAuto.value) {
+      transparencyPreferenceModel.value = 'auto';
+    }
+  }
+);
+
 const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
 const touchModeToggle = ref(false);
+const isTouchModeAuto = ref(true);
 
 const touchModeStorageKey = ref(`${getSystemId()}-touch-mode`);
 
@@ -620,11 +690,27 @@ const touchModeModel = computed({
     if (props.hasThemePicker) {
       emits('update:isTouchSensitive', value);
     }
+    isTouchModeAuto.value = false;
     touchModeToggle.value = value;
   },
 });
 
 provide('isTouchMode', touchModeToggle);
+
+const touchModePreferenceModel = computed({
+  get() {
+    if (isTouchModeAuto.value) {
+      return 'auto';
+    }
+    return touchModeToggle.value;
+  },
+  set(value) {
+    touchModeModel.value = value === 'auto' ? isTouchMode.value : value;
+    isTouchModeAuto.value = value === 'auto';
+  },
+});
+
+provide('touchModePreference', touchModePreferenceModel);
 
 function touchModeChange(value) {
   if (lxElement) {
@@ -635,7 +721,7 @@ function touchModeChange(value) {
     lxElement.classList.toggle('lx-touch-mode', value);
   }
 
-  localStorage.setItem(touchModeStorageKey.value, JSON.stringify(value));
+  localStorage.setItem(touchModeStorageKey.value, JSON.stringify(touchModePreferenceModel.value));
   touchModeToggle.value = value;
 }
 
@@ -656,9 +742,18 @@ watch(
 );
 
 watch(
+  () => isTouchModeAuto.value,
+  () => {
+    touchModeChange(touchModeToggle.value);
+  }
+);
+
+watch(
   () => isTouchMode.value,
   (value) => {
-    touchModeChange(value);
+    if (isTouchModeAuto.value) {
+      touchModeChange(value);
+    }
   }
 );
 
@@ -977,8 +1072,11 @@ function initializeAnimations() {
   const storageKey = `${getSystemId()}-reduced-animations`;
 
   const storedAnimations = JSON.parse(localStorage.getItem(storageKey));
-  if (storedAnimations === null) {
-    defaultReducedAnimations.value = usePreferredReducedMotion().value !== 'no-preference';
+  isAnimationsAuto.value =
+    props.hasReducedAnimations === null &&
+    (storedAnimations === null || storedAnimations === 'auto');
+  if (isAnimationsAuto.value) {
+    defaultReducedAnimations.value = preferredReducedMotion.value !== 'no-preference';
   } else if (props.hasReducedAnimations === null) {
     animationsModel.value = storedAnimations;
   }
@@ -989,8 +1087,11 @@ function initializeTransparency() {
   const transparencyKey = `${getSystemId()}-reduced-transparency`;
 
   const storedTransparency = JSON.parse(localStorage.getItem(transparencyKey));
-  if (storedTransparency === null) {
-    transparencyToggle.value = usePreferredReducedTransparency().value !== 'no-preference';
+  isTransparencyAuto.value =
+    props.hasReducedTransparency === null &&
+    (storedTransparency === null || storedTransparency === 'auto');
+  if (isTransparencyAuto.value) {
+    transparencyToggle.value = preferredReducedTransparency.value !== 'no-preference';
   } else if (props.hasReducedTransparency === null) {
     transparencyModel.value = storedTransparency;
   }
@@ -1004,9 +1105,11 @@ function initializeDeviceFonts() {
 }
 
 function initializeTouchMode() {
+  const stored = JSON.parse(localStorage.getItem(touchModeStorageKey.value));
+  isTouchModeAuto.value = props.isTouchSensitive === null && (stored === null || stored === 'auto');
+
   if (props.isTouchSensitive === null) {
-    const stored = localStorage.getItem(touchModeStorageKey.value);
-    touchModeToggle.value = stored === null ? isTouchMode.value : JSON.parse(stored);
+    touchModeToggle.value = isTouchModeAuto.value ? isTouchMode.value : stored;
   } else {
     touchModeToggle.value = props.isTouchSensitive;
   }

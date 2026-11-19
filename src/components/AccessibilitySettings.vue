@@ -5,7 +5,6 @@ import LxIcon from '@/components/Icon.vue';
 import LxDataBlock from '@/components/DataBlock.vue';
 import LxButton from '@/components/Button.vue';
 import LxStack from '@/components/Stack.vue';
-import LxToggle from '@/components/Toggle.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxLink from '@/components/Link.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -126,6 +125,12 @@ const shellModels = {
   touchMode: inject('isTouchMode'),
 };
 
+const preferenceModels = {
+  animations: inject('reducedAnimationsPreference', null),
+  transparency: inject('reducedTransparencyPreference', null),
+  touchMode: inject('touchModePreference', null),
+};
+
 const blockExpanderModels = ref(Object.fromEntries(blocks.map((item) => [item.id, false])));
 const shellKeys = Object.keys(shellModels);
 const isInverted = (id) => id === 'animations' || id === 'transparency';
@@ -141,8 +146,13 @@ const sections = computed(() => {
 
 const availableThemes = inject('availableThemes', ref([]));
 
+const themeOrder = new Set(['auto', 'light', 'dark', 'contrast']);
+
 const themeDisplayItems = computed(() =>
-  availableThemes.value.map((id) => {
+  [
+    ...[...themeOrder].filter((id) => availableThemes.value.includes(id)),
+    ...availableThemes.value.filter((id) => !themeOrder.has(id)),
+  ].map((id) => {
     const capitalizedId = capitalizeFirstLetter(id);
 
     return {
@@ -154,40 +164,94 @@ const themeDisplayItems = computed(() =>
   })
 );
 
-const blockToggleModels = ref(
-  Object.fromEntries(
-    shellKeys.map((id) => [id, isInverted(id) ? !shellModels[id].value : shellModels[id].value])
-  )
-);
+function getShellModel(id) {
+  return preferenceModels[id] ?? shellModels[id];
+}
 
-watch(
-  blockToggleModels,
-  (newVals) => {
-    shellKeys.forEach((id) => {
-      shellModels[id].value = isInverted(id) ? !newVals[id] : newVals[id];
-    });
-  },
-  { deep: true }
+function getIndicatorValue(id) {
+  const { value } = getShellModel(id);
+  if (id === 'theme' || value === 'auto') {
+    return value;
+  }
+  const isOn = isInverted(id) ? !value : value;
+  return isOn ? 'on' : 'off';
+}
+
+function setShellValue(id, value) {
+  if (id === 'theme' || value === 'auto') {
+    getShellModel(id).value = value;
+    return;
+  }
+  const isOn = value === 'on';
+  getShellModel(id).value = isInverted(id) ? !isOn : isOn;
+}
+
+const blockToggleModels = ref(
+  Object.fromEntries(shellKeys.map((id) => [id, getIndicatorValue(id)]))
 );
 
 shellKeys.forEach((id) => {
   watch(
-    shellModels[id],
-    (val) => {
-      blockToggleModels.value[id] = isInverted(id) ? !val : val;
+    () => blockToggleModels.value[id],
+    (value) => {
+      if (value !== getIndicatorValue(id)) {
+        setShellValue(id, value);
+      }
+    }
+  );
+
+  watch(
+    () => getShellModel(id).value,
+    () => {
+      blockToggleModels.value[id] = getIndicatorValue(id);
     },
     { immediate: true }
   );
 });
 
+function getOptionItems(id) {
+  if (id === 'theme') {
+    return themeDisplayItems.value.map(({ id: themeId, icon, name }) => ({
+      id: themeId,
+      icon,
+      name,
+    }));
+  }
+
+  const items = [
+    { id: 'on', icon: 'accept', name: displayTexts.value[toggleTextMap[id].yes] },
+    { id: 'off', icon: 'deny', name: displayTexts.value[toggleTextMap[id].no] },
+  ];
+
+  if (preferenceModels[id]) {
+    items.unshift({
+      id: 'auto',
+      icon: 'theme-auto',
+      name: displayTexts.value.themeAuto,
+    });
+  }
+
+  return items;
+}
+
+function getResetValue(id, initial) {
+  switch (id) {
+    case 'theme':
+      return initial.theme;
+    case 'fonts':
+      return initial.fonts ? 'on' : 'off';
+    default:
+      if (preferenceModels[id]) return 'auto';
+      return initial[id] ? 'on' : 'off';
+  }
+}
+
 function resetAccessibilitySettings() {
   const initial = getInitialProps();
 
-  blockToggleModels.value.animations = initial.animations;
-  blockToggleModels.value.transparency = initial.transparency;
-  blockToggleModels.value.fonts = initial.fonts;
-  blockToggleModels.value.touchMode = initial.touchMode;
-  blockToggleModels.value.theme = initial.theme;
+  shellKeys.forEach((id) => {
+    blockToggleModels.value[id] = getResetValue(id, initial);
+  });
 }
 
 const headingTag = computed(() => {
@@ -261,37 +325,21 @@ const headingAttrs = computed(() => {
                       </div>
                     </LxStack>
                   </LxStack>
-                  <LxToggle
-                    v-if="block.id !== 'theme'"
-                    :id="`${id}-${block.id}-toggle`"
-                    v-model="blockToggleModels[block.id]"
-                    :tooltip="displayTexts[block.label]"
-                    :labelId="`${id}-${block.id}-label`"
-                    :texts="{
-                      valueYes: displayTexts[toggleTextMap[block.id].yes],
-                      valueNo: displayTexts[toggleTextMap[block.id].no],
-                    }"
-                    @click.stop
-                    @keyup.space.stop
-                  />
                   <LxValuePicker
-                    variant="dropdown-custom"
-                    v-else-if="block.id === 'theme' && !blockExpanderModels[block.id]"
-                    :id="`${id}-${block.id}-dropdown`"
+                    variant="indicator"
+                    v-if="
+                      windowWidth >= 500 && (block.id !== 'theme' || !blockExpanderModels[block.id])
+                    "
+                    :id="`${id}-${block.id}-indicator`"
                     v-model="blockToggleModels[block.id]"
-                    :items="themeDisplayItems"
+                    :items="getOptionItems(block.id)"
+                    selectionKind="single"
                     :labelId="`${id}-${block.id}-label`"
                     @click.stop
-                  >
-                    <template #customItem="{ icon, name }">
-                      <div class="lx-accessibility-settings-dropdown-content">
-                        <LxIcon :value="icon" />
-                        <span class="lx-data">
-                          {{ name }}
-                        </span>
-                      </div>
-                    </template>
-                  </LxValuePicker>
+                    @keydown.space.stop
+                    @keyup.space.stop
+                    @keyup.enter.stop
+                  />
                 </LxStack>
                 <div class="lx-indications">
                   <LxIcon :value="blockExpanderModels[block.id] ? 'chevron-up' : 'chevron-down'" />
@@ -300,6 +348,15 @@ const headingAttrs = computed(() => {
             </template>
             <template v-if="block.id !== 'theme'">
               <div class="lx-accessibility-settings-block-content">
+                <LxValuePicker
+                  v-if="windowWidth < 500"
+                  variant="indicator"
+                  :id="`${id}-${block.id}-indicator`"
+                  v-model="blockToggleModels[block.id]"
+                  :items="getOptionItems(block.id)"
+                  selectionKind="single"
+                  :labelId="`${id}-${block.id}-label`"
+                />
                 <div class="lx-data">
                   {{ displayTexts[block.description] }}
                 </div>

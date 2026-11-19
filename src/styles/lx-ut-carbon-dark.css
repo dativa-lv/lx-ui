@@ -860,7 +860,7 @@
   --color-checkbox-border-hover-on: transparent;
   --color-checkbox-tick-hover: var(--color-interactive-hover-foreground);
 
-  --color-indicator-border: var(--color-data);
+  --color-indicator-border: var(--color-chrome);
   --color-indicator-background: var(--color-region);
   --color-indicator-icon: var(--color-data);
   --color-indicator-background-hover: var(--color-region-hover-background);

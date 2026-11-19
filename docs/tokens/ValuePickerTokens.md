@@ -93,7 +93,7 @@ Here you may find tokens for LxCheckbox and LxRadioButton as well as LxValuePick
 
 | Variable name                           | Default value                     |
 |-----------------------------------------|-----------------------------------|
-| `--color-indicator-border`              | `--color-data`                    |
+| `--color-indicator-border`              | `--color-chrome`                  |
 | `--color-indicator-background`          | `--color-region`                  |
 | `--color-indicator-icon`                | `--color-data`                    |
 | `--color-indicator-background-hover`    | `--color-region-hover-background` |
