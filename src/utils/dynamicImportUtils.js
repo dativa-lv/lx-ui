@@ -43,7 +43,10 @@ function isOffline() {
 }
 
 function getFailedModuleUrl(error) {
-  return error.message.match(/(\S+:\/\/\S+)$/)?.[1] ?? null;
+  // Chrome and Firefox end the message with the module URL; Safari omits it.
+  // Plain string checks, since the equivalent regex backtracks badly on long words.
+  const lastWord = error.message.split(/\s/).pop();
+  return lastWord.slice(1, -1).includes('://') ? lastWord : null;
 }
 
 // Browsers cache a failed module fetch for the page lifetime, so the same URL can't be retried

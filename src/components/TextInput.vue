@@ -25,7 +25,7 @@ const GROUPED_MASKS = new Set(['integer', 'decimal']);
 const SEPARATOR_SAMPLE = 1234567.8;
 
 function groupInteger(integerPart, format) {
-  const match = /^([+-]?)(0*)(\d+)$/.exec(integerPart);
+  const match = /^([+-]?)(0*)([1-9]\d*|0)$/.exec(integerPart);
   if (!match) return integerPart;
   const [, sign, zeros, digits] = match;
   return `${sign}${zeros}${format.format(Number(digits))}`;
@@ -402,7 +402,7 @@ const currencyFormat = computed(() => {
       style: 'currency',
       currency: currencyCode.value,
     });
-    const [, prefix, suffix] = /^(\D*).*?(\D*)$/.exec(format.format(1));
+    const [, prefix, suffix] = /^(\D*)(?:.*\d)?(\D*)$/.exec(format.format(1));
     return {
       prefix,
       suffix,

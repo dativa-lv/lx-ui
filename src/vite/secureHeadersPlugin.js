@@ -175,7 +175,8 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
         </script>
       `;
 
-      const linkRegex = /<link\s+([^>]*)>/g;
+      // A single `\s`, as `\s+` would overlap `[^>]*` and backtrack; extra spaces are trimmed below
+      const linkRegex = /<link\s([^>]*)>/g;
 
       return html
         .replace(/<script/g, `<script nonce="${nonce}"`)
@@ -197,7 +198,8 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
     // @ts-ignore
     generateBundle(buildOptions, bundle) {
       const nonce = sharedNonce;
-      const linkRegex = /<link\s+([^>]*?)(\/?\s*>)/g;
+      // A single `\s`, as `\s+` would overlap `[^>]*` and backtrack
+      const linkRegex = /<link\s([^>]*)>/g;
 
       return Object.keys(bundle).reduce((acc, fileName) => {
         const chunk = bundle[fileName];
@@ -211,7 +213,10 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
                 .replace(/<script/g, `<script nonce="${nonce}"`)
                 .replace(/<style/g, `<style nonce="${nonce}"`)
                 // @ts-ignore
-                .replace(linkRegex, (match, attributes) => {
+                .replace(linkRegex, (match, rawAttributes) => {
+                  // Without surrounding whitespace and one trailing slash
+                  const trimmed = rawAttributes.trim();
+                  const attributes = trimmed.endsWith('/') ? trimmed.slice(0, -1) : trimmed;
                   let newAttributes = stripSelfClosingSlash(attributes);
                   if (!newAttributes.includes('nonce=')) {
                     newAttributes += ` nonce="${nonce}"`;
