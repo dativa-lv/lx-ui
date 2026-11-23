@@ -449,7 +449,11 @@ async function handlePdfFiles(arrayBuffer, texts) {
   const pdfjs = await loadLibrary('pdfjs');
   const uint8Array = new Uint8Array(arrayBuffer);
 
-  const loadingTask = pdfjs.getDocument({ data: uint8Array });
+  const loadingTask = pdfjs.getDocument({
+    data: uint8Array,
+    // Only errors: pdf.js warns about unsupported PDF features (e.g. knockout groups) it still renders
+    verbosity: pdfjs.VerbosityLevel.ERRORS,
+  });
   const pdf = await loadingTask.promise;
 
   // Extract metadata

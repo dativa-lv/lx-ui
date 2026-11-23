@@ -27,6 +27,8 @@ const props = defineProps({
   primaryDownloadButton: { type: Boolean, default: false },
   stickyToolbar: { type: Boolean, default: true },
   zoomLevel: { type: Number, default: null }, //  50, 75, 100, 125, 150, 175, 200, 250, 300
+  /** @description PDF page to show; applied when a file is loaded and whenever it changes; clamped to the document's page range */
+  page: { type: Number, default: 1 },
   downloadType: { type: String, default: 'default' }, // "default" - component will start download, "emit" - component will emit download event
   actionDefinitions: { type: Array, default: () => [] },
   actionGroupDefinitions: { type: Array, default: null },
@@ -62,6 +64,8 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, '
 const imgCanvasRef = ref(null);
 let observer = null;
 let resizeObserver = null;
+// Called in scrollable mode once a page canvas has its final size, before its content is drawn
+let onScrollablePageSized = null;
 const scale = ref(1.25);
 const imgScale = ref(1);
 const fontSizeScale = ref(1);
@@ -385,9 +389,16 @@ async function renderPage(pageNum) {
   totalPages.value = 0;
   canvasArray.value = [];
 
+  // Rendering is abandoned when the file is removed or replaced while a page is loading or drawing
+  const doc = pdf.value;
+  const isDocReplaced = () => pdf.value !== doc;
+
   try {
-    const page = await pdf.value.getPage(pageNum);
-    totalPages.value = pdf.value.numPages;
+    if (!doc) return;
+
+    const page = await doc.getPage(pageNum);
+    if (isDocReplaced()) return;
+    totalPages.value = doc.numPages;
 
     // Calculate and set scale only for the first render
     if (initializeFitScale.value) {
@@ -419,6 +430,8 @@ async function renderPage(pageNum) {
       canvasElement = canvas.value;
     }
 
+    if (isDocReplaced()) return;
+
     const context = canvasElement?.getContext('2d');
 
     const scaledWidth = adjustedViewport.width;
@@ -430,6 +443,10 @@ async function renderPage(pageNum) {
     canvasElement.style.width = `${scaledWidth / upscaleFactor}px`;
     canvasElement.style.height = `${scaledHeight / upscaleFactor}px`;
 
+    if (props.scrollable) {
+      onScrollablePageSized?.(pageNum);
+    }
+
     const renderContext = {
       canvasContext: context,
       viewport: adjustedViewport,
@@ -437,7 +454,7 @@ async function renderPage(pageNum) {
 
     await page.render(renderContext).promise;
 
-    if (pageNum === pdf.value.numPages) {
+    if (!isDocReplaced() && pageNum === doc.numPages) {
       allPagesRendered.value = true;
     }
   } catch (error) {
@@ -539,20 +556,22 @@ function getHeaderOffset() {
   return (headerDigivesHeight || headerHeight) + navigationHeight + toolbarHeight;
 }
 
-function scrollToWindow(canvasElement) {
+/** @param {ScrollBehavior} [behavior] */
+function scrollToWindow(canvasElement, behavior = 'smooth') {
   const totalOffsetHeight = getHeaderOffset();
   const { top: canvasTop } = canvasElement.getBoundingClientRect();
 
   globalThis.scrollTo({
     top: globalThis.scrollY + canvasTop - totalOffsetHeight,
-    behavior: 'smooth',
+    behavior,
   });
 }
 
-function scrollToContainer(canvasElement) {
+/** @param {ScrollBehavior} [behavior] */
+function scrollToContainer(canvasElement, behavior = 'smooth') {
   const container = pdfWrapper.value;
   if (!container || container.scrollHeight <= container.clientHeight) {
-    scrollToWindow(canvasElement);
+    scrollToWindow(canvasElement, behavior);
     return;
   }
 
@@ -561,8 +580,14 @@ function scrollToContainer(canvasElement) {
 
   container.scrollTo({
     top: canvasTop - containerTop + container.scrollTop,
-    behavior: 'smooth',
+    behavior,
   });
+}
+
+function getRequestedPage(numPages) {
+  const page = Math.trunc(Number(props.page));
+  if (!Number.isFinite(page) || page < 1) return 1;
+  return Math.min(page, numPages);
 }
 
 function scrollWrapperToTop() {
@@ -575,8 +600,8 @@ function scrollWrapperToTop() {
 async function goToPage() {
   showInput.value = false;
 
-  // Ensure input page is within valid range
-  inputPage.value = Math.min(Math.max(inputPage.value, 1), totalPages.value);
+  // Ensure input page is within valid range; totalPages is briefly 0 while a page is rendering
+  inputPage.value = Math.min(Math.max(inputPage.value, 1), pdf.value?.numPages || totalPages.value);
 
   // Update current page if necessary
   if (inputPage.value !== currentPage.value) {
@@ -820,18 +845,75 @@ function disconnectResizeObserver() {
   }
 }
 
+let scrollToPagePassId = 0;
+
+function renderAllPagesAndScrollTo(pageNum) {
+  scrollToPagePassId += 1;
+  const passId = scrollToPagePassId;
+  onScrollablePageSized = null;
+  // A replaced pass never finishes its scroll, so it would leave observer updates blocked
+  isNavigating.value = false;
+
+  if (pageNum === 1) {
+    renderAllPages(pdf.value.numPages, pdf.value.numPages);
+    setupIntersectionObserver();
+    return;
+  }
+  // Block observer updates until the page has been scrolled into view,
+  // otherwise the observer would reset the current page back to the first one.
+  isNavigating.value = true;
+
+  let scrolled = false;
+  const scrollToTargetPage = () => {
+    scrolled = true;
+    // A newer pass (e.g. another file was loaded) has taken over
+    if (passId !== scrollToPagePassId) return;
+    onScrollablePageSized = null;
+    const canvasElement = canvasArray.value[pageNum - 1];
+    if (canvasElement) {
+      scrollToContainer(canvasElement, 'instant');
+    }
+    debouncedSetupObserver();
+  };
+
+  // The target page position only depends on the pages above it, so scroll as soon as those
+  // are sized instead of waiting until every page has been drawn
+  const sizedPages = new Set();
+  onScrollablePageSized = (sizedPageNum) => {
+    sizedPages.add(sizedPageNum);
+    for (let i = 1; i <= pageNum; i += 1) {
+      if (!sizedPages.has(i)) return;
+    }
+    scrollToTargetPage();
+  };
+
+  renderAllPages(pdf.value.numPages, pdf.value.numPages).then(async () => {
+    if (scrolled) return;
+    // Fallback in case some page failed to render
+    await nextTick();
+    scrollToTargetPage();
+  });
+}
+
 async function loadPdfFromFile(pdfData) {
   await loadPdfLib();
-  const loadingTask = pdfjsLib.value.getDocument({ data: atob(pdfData) });
+  const loadingTask = pdfjsLib.value.getDocument({
+    data: atob(pdfData),
+    // Only errors: pdf.js warns about unsupported PDF features (e.g. knockout groups) it still renders
+    verbosity: pdfjsLib.value.VerbosityLevel.ERRORS,
+  });
   pdf.value = await loadingTask.promise;
 
   setupResizeObserver();
 
+  const startPage = getRequestedPage(pdf.value.numPages);
+  currentPage.value = startPage;
+  inputPage.value = startPage;
+
   if (props.scrollable) {
-    renderAllPages(pdf.value.numPages, pdf.value.numPages);
-    setupIntersectionObserver();
+    renderAllPagesAndScrollTo(startPage);
   } else {
-    renderPage(1);
+    renderPage(startPage);
   }
 }
 
@@ -1531,20 +1613,38 @@ watch(
   () => props.scrollable,
   () => {
     if (pdf.value) {
+      // Keep the page the user is on when switching between modes
+      inputPage.value = currentPage.value;
       if (props.scrollable) {
-        currentPage.value = 1;
-        inputPage.value = 1;
-        renderAllPages(pdf.value.numPages, pdf.value.numPages);
-        setupIntersectionObserver();
+        renderAllPagesAndScrollTo(currentPage.value);
         setupResizeObserver();
       } else {
         disconnectObserver();
         setupResizeObserver();
-        currentPage.value = 1;
-        inputPage.value = 1;
-        renderPage(1);
+        renderPage(currentPage.value).then(scrollWrapperToTop);
       }
     }
+  }
+);
+
+watch(
+  () => props.page,
+  () => {
+    // Before a document is loaded, the requested page is applied by loadPdfFromFile
+    if (!pdf.value) return;
+
+    const targetPage = getRequestedPage(pdf.value.numPages);
+    if (targetPage === currentPage.value) return;
+
+    // Cancel a pending scroll to the page requested on load, so it does not override this one
+    scrollToPagePassId += 1;
+    onScrollablePageSized = null;
+
+    isNavigating.value = true;
+    disconnectObserver();
+    inputPage.value = targetPage;
+    goToPage();
+    debouncedSetupObserver();
   }
 );
 
@@ -1568,7 +1668,7 @@ useMutationObserver(
         renderAllPages(pdf.value?.numPages, pdf.value?.numPages);
         setupIntersectionObserver();
       } else {
-        renderPage(1);
+        renderPage(currentPage.value);
       }
     }
   },
