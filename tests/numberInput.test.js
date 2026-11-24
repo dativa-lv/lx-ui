@@ -1183,6 +1183,48 @@ describe('LxNumberInput', () => {
       expect(wrapper.props().modelValue).toBe(2051);
     });
 
+    test.each([
+      ['stepper', { kind: 'stepper' }, ID],
+      ['slider', {}, `${ID}-text`],
+    ])(
+      'should not let the arrow keys push the %s input past the bounds',
+      async (_, props, inputId) => {
+        wrapper = mountWithModel({ ...props, ...RANGE, hasInput: true, modelValue: 2100 });
+        const input = wrapper.find(`input#${inputId}`);
+
+        await input.trigger('keydown', { key: 'ArrowUp' });
+        await input.trigger('keydown', { key: 'ArrowUp', shiftKey: true });
+        await input.trigger('keydown', { key: 'PageUp' });
+
+        expect(input.element.value).toBe('2100');
+        expect(emittedValues(wrapper)).toEqual([]);
+
+        await wrapper.setProps({ modelValue: 1900 });
+        await input.trigger('keydown', { key: 'ArrowDown' });
+        await input.trigger('keydown', { key: 'PageDown' });
+
+        expect(input.element.value).toBe('1900');
+        expect(wrapper.props().modelValue).toBe(1900);
+      }
+    );
+
+    test.each([
+      ['above max', '5000', 'ArrowUp', 2100],
+      ['below min', '20', 'ArrowDown', 1900],
+    ])(
+      'should clamp typed text %s when stepping with the arrow keys',
+      async (_, text, key, expected) => {
+        wrapper = mountWithModel({ kind: 'stepper', hasInput: true, ...RANGE, modelValue: 2000 });
+        const input = wrapper.find(`input#${ID}`);
+
+        await input.setValue(text);
+        await input.trigger('keydown', { key });
+
+        expect(emittedValues(wrapper)).toEqual([expected]);
+        expect(input.element.value).toBe(String(expected));
+      }
+    );
+
     test('should drop the typed text when the model changes from outside', async () => {
       wrapper = mountWithModel({ kind: 'stepper', hasInput: true, ...RANGE, modelValue: 1900 });
       const input = wrapper.find(`input#${ID}`);
@@ -1465,12 +1507,12 @@ describe('LxNumberInput', () => {
       expect(emittedValues(wrapper)).toEqual([10]);
     });
 
-    test('should emit the clamped value once when a step overshoots a bound', async () => {
+    test('should emit only the clamped value when a step overshoots a bound', async () => {
       wrapper = mountWithModel({ kind: 'stepper', modelValue: 8, min: 0, max: 10, step: 25 });
 
       await wrapper.find(`button#${ID}-increase`).trigger('click');
 
-      expect(emittedValues(wrapper)).toEqual([33, 10]);
+      expect(emittedValues(wrapper)).toEqual([10]);
       expect(wrapper.props().modelValue).toBe(10);
     });
   });

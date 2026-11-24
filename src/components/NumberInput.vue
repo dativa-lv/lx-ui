@@ -185,7 +185,8 @@ const stepBy = (delta) => {
   const base = inputModel.value;
   typedValue.value = undefined;
   if (isNil(base) && delta < 0) return;
-  model.value = (base ?? 0) + delta;
+  const next = clampToRange((base ?? 0) + delta);
+  if (next !== model.value) model.value = next;
 };
 
 const onIncreaseMultiplier = () => stepBy(stepMultiplierValue.value);
