@@ -129,6 +129,9 @@ export const createLx = plugin;
 // Mirrors the `texts` option of createLx; reactive – mounted components update automatically.
 export { setComponentTexts as setLxComponentTexts } from '@/utils/global';
 
+// URL driven language switching (/:lang prefix + localStorage + vue-i18n), see docs/LanguageSwitcher.md
+export { createLanguageSwitcher as createLxLanguageSwitcher } from '@/utils/languageUtils';
+
 // Async search state for LxAutoComplete mode="new"
 export { default as useLxAutoCompleteSearch } from '@/hooks/useAutoCompleteSearch';
 

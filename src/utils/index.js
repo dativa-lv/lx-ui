@@ -18,4 +18,5 @@ export * as lxFileUploaderUtils from '@/utils/fileUploaderUtils';
 export * as lxGeneralUtils from '@/utils/generalUtils';
 export * as lxLibLoader from '@/utils/libLoader';
 export * as lxFlagUtils from '@/utils/flagUtils';
+export * as lxLanguageUtils from '@/utils/languageUtils';
 // Other utils you plan to export go here
