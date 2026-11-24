@@ -324,13 +324,17 @@
 .lx-dropdown-default-data.dropdown-multiple,
 .lx-autocomplete-default-panel .lx-placeholder,
 .lx-rotator .lx-rotator-set .lx-rotator-tag > p,
-.lx-autocomplete-default-panel .lx-value .lx-item-display > p,
-.lx-autocomplete-default-panel .lx-value .lx-state > .lx-state-text {
+.lx-autocomplete-default-panel .lx-value .lx-item-display > p {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: var(--input-text-line-height);
   font-size: var(--input-text-font-size);
+  z-index: 1;
+}
+
+.lx-autocomplete-default-panel .lx-value .lx-state > .lx-state-text {
+  white-space: nowrap;
   z-index: 1;
 }
 
