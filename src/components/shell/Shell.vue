@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, watch, ref, nextTick, provide } from 'vue';
+import { computed, onMounted, onBeforeUnmount, watch, ref, nextTick, provide } from 'vue';
 import {
   lxDefineAsyncComponent,
   importWithRetry,
@@ -1062,11 +1062,46 @@ const main = ref(null);
 const nav = ref(null);
 const footer = ref(null);
 
+const isThemingEnabled = computed(() => props.hasThemePicker || props.mode === 'digimaks-lite');
+
 function initializeTheme() {
-  if (!props.hasThemePicker && props.mode !== 'digimaks-lite') {
+  if (!isThemingEnabled.value) {
     themeModel.value = 'none';
   }
 }
+
+let colorSchemeMeta = null;
+let initialColorSchemeContent;
+
+function applyColorSchemeMeta(enabled) {
+  colorSchemeMeta?.setAttribute('content', enabled ? 'light dark' : 'light');
+}
+
+function setupColorSchemeMeta() {
+  const existing = document.head.querySelector('meta[name="color-scheme"]');
+  initialColorSchemeContent = existing?.content;
+  colorSchemeMeta =
+    existing ??
+    document.head.appendChild(
+      Object.assign(document.createElement('meta'), { name: 'color-scheme' })
+    );
+  applyColorSchemeMeta(isThemingEnabled.value);
+}
+
+function restoreColorSchemeMeta() {
+  if (initialColorSchemeContent === undefined) colorSchemeMeta?.remove();
+  else colorSchemeMeta.content = initialColorSchemeContent;
+}
+
+let themeBeforeDisable;
+
+watch(isThemingEnabled, (enabled) => {
+  if (!enabled) themeBeforeDisable = themeModel.value;
+  themeModel.value = enabled ? (themeBeforeDisable ?? 'auto') : 'none';
+  applyColorSchemeMeta(enabled);
+});
+
+onBeforeUnmount(restoreColorSchemeMeta);
 
 function initializeAnimations() {
   const storageKey = `${getSystemId()}-reduced-animations`;
@@ -1203,6 +1238,7 @@ watch(navBarSwitchModel, (isCollapsed, wasCollapsed) => {
 
 onMounted(() => {
   initializeTheme();
+  setupColorSchemeMeta();
   initializeAnimations();
   initializeTransparency();
   initializeDeviceFonts();
