@@ -701,22 +701,15 @@
 }
 
 @media (max-height: calc(8rem * 5)) {
-  @media (min-width: 901px) {
-    .lx:has(.lx-layout-latvijalv) {
-      --nav-row-size: 3rem;
-      --public-nav-header-size: var(--nav-row-size);
-    }
-  }
-
   @media (max-width: 900px) {
     .lx:has(.lx-layout-latvijalv) {
-      --nav-row-size: var(--space-0);
+      --public-nav-header-size: var(--space-0);
     }
   }
 
   .lx:has(.lx-layout-latvijalv.no-nav-items),
   .lx:has(.lx-layout-latvijalv.lx-hide-nav-bar) {
-    --nav-row-size: var(--space-0);
+    --public-nav-header-size: var(--space-0);
   }
 }
 

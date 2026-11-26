@@ -882,11 +882,9 @@
   .lx-layout.lx-layout-default.lx-layout-digives-lite > nav {
     display: flex;
     justify-content: space-between;
-    height: 100%;
+    height: calc(100% - var(--nav-row-size));
     width: 100%;
-    padding-top: var(--space-5000);
     position: fixed;
-    top: var(--space-0);
     left: var(--space-0);
     right: var(--space-0);
     bottom: var(--space-0);
