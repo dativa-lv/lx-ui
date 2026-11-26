@@ -518,7 +518,9 @@ export async function getMeta(file, texts) {
         resolve(meta);
       } catch (error) {
         if (error.message === 'Encrypted zip are not supported') {
-          reject(new Error('password-protected'));
+          meta.passwordProtected = true;
+          meta.additionalInfo = texts?.metaAdditionalInfoProtectedArchive;
+          resolve(meta);
         } else {
           reject(error instanceof Error ? error : new Error(error));
         }

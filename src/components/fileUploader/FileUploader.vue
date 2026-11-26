@@ -155,7 +155,7 @@ const textsDefault = {
   metaAdditionalInfoFileCountTitle: 'Datņu skaits',
   metaAdditionalInfoFileCountLabelSingle: 'datne',
   metaAdditionalInfoFileCountLabelMulti: 'datnes',
-  metaAdditionalInfoProtectedArchive: 'Arhīvs aizargāts ar paroli',
+  metaAdditionalInfoProtectedArchive: 'Arhīvs aizsargāts ar paroli',
   metaAdditionalInfoPageCountTitle: 'Lappušu skaits',
   metaAdditionalInfoSlideCountTitle: 'Slaidu skaits',
   metaAdditionalInfoPageCountLabelSingle: 'lappuse',
@@ -545,13 +545,6 @@ async function processFileContent(file, fileId) {
 }
 
 function handleFileProcessingError(file, fileId, error) {
-  if (error.message === 'password-protected') {
-    const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
-    if (tempFileDataMeta) {
-      tempFileDataMeta.meta.passwordProtected = true;
-      tempFileDataMeta.meta.additionalInfo = displayTexts.value.metaAdditionalInfoProtectedArchive;
-    }
-  }
   onError(file.id ? file.id : fileId, error.message);
 }
 
