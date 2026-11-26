@@ -488,7 +488,8 @@ svg .lx-shade {
 .lx-form-grid .lx-tab-wizard > .lx-tab-wizard-body > .lx-main .lx-row > div.lx-horizontal > .lx-field-wrapper p.lx-data,
 .lx-form-grid .lx-tab-wizard > .lx-tab-wizard-body > .lx-main .lx-row > div.lx-vertical > .lx-field-wrapper p.lx-data,
 .lx-form-grid .lx-tab-wizard > .lx-tab-wizard-body > .lx-main .lx-row > div.lx-horizontal > .lx-stack .lx-field-wrapper p.lx-data,
-.lx-form-grid .lx-tab-wizard > .lx-tab-wizard-body > .lx-main .lx-row > div.lx-vertical > .lx-stack .lx-field-wrapper p.lx-data {
+.lx-form-grid .lx-tab-wizard > .lx-tab-wizard-body > .lx-main .lx-row > div.lx-vertical > .lx-stack .lx-field-wrapper p.lx-data,
+.lx-form-grid .lx-row .lx-field-wrapper > div.lx-data {
   padding-top: var(--space-0250);
   padding-bottom: var(--space-0250);
   font-weight: var(--font-weight-data);
