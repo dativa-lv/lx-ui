@@ -439,6 +439,7 @@ onBeforeUnmount(() => {
     <section
       :id="sectionUUID"
       :data-id="sectionUUID"
+      data-component="lx-section"
       class="lx-form-section"
       :class="[
         { 'lx-form-section-1': columnCountComputed === 1 },
@@ -474,6 +475,7 @@ onBeforeUnmount(() => {
     :aria-labelledby="label ? `${sectionUUID}-label` : null"
     :aria-describedby="description ? `${sectionUUID}-desc` : null"
     :data-id="sectionUUID"
+    data-component="lx-section"
   >
     <header v-if="label || description || actionDefinitionsResolved?.length > 0">
       <div>

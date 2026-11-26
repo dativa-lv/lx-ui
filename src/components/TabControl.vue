@@ -130,7 +130,13 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div :id="id" class="lx-tab-control lx-tab-wizard" :style="`${topOutOfBounds}`" ref="tabControl">
+  <div
+    :id="id"
+    class="lx-tab-control lx-tab-wizard"
+    :style="`${topOutOfBounds}`"
+    ref="tabControl"
+    data-component="lx-tab-control"
+  >
     <header
       ref="tabHeader"
       class="lx-tab-wizard-toolbar lx-shadow-bottom"

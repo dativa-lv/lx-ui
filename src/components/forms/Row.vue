@@ -241,6 +241,8 @@ useBuilderRegistration('LxRow', props, { addToStack: false });
   <div
     class="lx-row"
     :id="`${id}-wrapper`"
+    :data-id="id"
+    data-component="lx-row"
     :class="[
       { 'lx-row-column-2': validatedColumnSpan === 2 },
       { 'lx-row-column-3': validatedColumnSpan === 3 },

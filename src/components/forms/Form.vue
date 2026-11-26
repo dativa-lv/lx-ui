@@ -965,6 +965,7 @@ useBuilderRegistration('LxForm', props, { texts: textsDefault, addToStack: false
   <article
     :id="props.id"
     :data-id="id"
+    data-component="lx-form"
     class="lx-form-grid"
     :role="role"
     :class="[
@@ -996,6 +997,7 @@ useBuilderRegistration('LxForm', props, { texts: textsDefault, addToStack: false
         <li
           v-for="i in modifiedIndexRef"
           :key="i.id"
+          :data-id="i.id"
           ref="indexItems"
           :class="[{ 'lx-selected': findIfSectionSelected(i.id) }]"
         >
@@ -1026,6 +1028,7 @@ useBuilderRegistration('LxForm', props, { texts: textsDefault, addToStack: false
         <li
           v-for="(i, index) in modifiedIndexRef"
           :key="i.id"
+          :data-id="i.id"
           ref="indexItems"
           :class="[{ 'lx-selected': findIfSectionSelected(i.id) }]"
         >
@@ -1062,7 +1065,11 @@ useBuilderRegistration('LxForm', props, { texts: textsDefault, addToStack: false
       v-if="showHeader && kind !== 'stripped'"
     >
       <div class="lx-group pre-header-group">
-        <LxInfoWrapper v-if="hasPreHeaderInfoSlot" placement="bottom-start">
+        <LxInfoWrapper
+          v-if="hasPreHeaderInfoSlot"
+          :id="`${id}-pre-header-info`"
+          placement="bottom-start"
+        >
           <div class="lx-toolbar-chip">
             <slot name="preHeader" />
           </div>
@@ -1083,7 +1090,11 @@ useBuilderRegistration('LxForm', props, { texts: textsDefault, addToStack: false
       </div>
 
       <div class="lx-group post-header-group">
-        <LxInfoWrapper v-if="hasPostHeaderInfoSlot" placement="bottom-end">
+        <LxInfoWrapper
+          v-if="hasPostHeaderInfoSlot"
+          :id="`${id}-post-header-info`"
+          placement="bottom-end"
+        >
           <div class="lx-toolbar-chip">
             <slot name="postHeader" />
           </div>
