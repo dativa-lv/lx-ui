@@ -12,7 +12,7 @@ const textsDefault = {
   emptyValue: 'Nav norādīts',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault, 'LxEmptyValue'));
 </script>
 
 <template>
