@@ -9,7 +9,15 @@ const props = defineProps({
   value: { type: String, default: '' },
   loading: { type: Boolean, default: false },
   id: { type: String, default: () => generateUUID() },
+  // escapeHtml shows raw HTML in the markdown as text instead of rendering it.
+  escapeHtml: { type: Boolean, default: false },
 });
+
+const htmlEntities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+function escapeHtmlText(text) {
+  return String(text ?? '').replace(/[&<>"']/g, (c) => htmlEntities[c]);
+}
 
 const markdownLoading = ref(false);
 const markdown = ref('');
@@ -67,8 +75,8 @@ function transformMarkdownHtml(html, transforms = []) {
 }
 
 watch(
-  () => props.value,
-  async (newMarkdown) => {
+  () => [props.value, props.escapeHtml],
+  async ([newMarkdown]) => {
     // marked() throws on null/undefined, and an explicit null from the parent skips the prop default
     if (!newMarkdown) {
       markdown.value = '';
@@ -82,16 +90,30 @@ watch(
     headingCounter = 0;
     const renderer = new marked.Renderer();
 
-    renderer.heading = ({ text, depth }) => {
+    // Render inline tokens so heading emphasis/code works and inline HTML goes through renderer.html.
+    renderer.heading = function heading({ tokens, depth }) {
       headingCounter += 1;
-      return `<h${depth} id="markdown-section-${props.id}-${headingCounter}">${text}</h${depth}>`;
+      const content = this.parser.parseInline(tokens);
+      return `<h${depth} id="markdown-section-${props.id}-${headingCounter}">${content}</h${depth}>`;
     };
 
-    const parsedMarkdown = await marked(newMarkdown, { renderer });
+    if (props.escapeHtml) {
+      renderer.html = ({ text, block }) => {
+        const escaped = escapeHtmlText(text);
+        // Block HTML has no paragraph of its own, so wrap it and keep its line breaks.
+        return block ? `<p>${escaped.trimEnd().replace(/\n/g, '<br>')}</p>\n` : escaped;
+      };
+    }
 
-    markdown.value = transformMarkdownHtml(parsedMarkdown, [wrapTables]);
-
-    markdownLoading.value = false;
+    try {
+      const parsedMarkdown = await marked(String(newMarkdown), { renderer });
+      markdown.value = transformMarkdownHtml(parsedMarkdown, [wrapTables]);
+    } catch {
+      // Show the source as text rather than leaving the loader or an empty block.
+      markdown.value = escapeHtmlText(newMarkdown);
+    } finally {
+      markdownLoading.value = false;
+    }
   },
   { immediate: true }
 );

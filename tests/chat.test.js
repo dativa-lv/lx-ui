@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { mount, shallowMount, RouterLinkStub } from '@vue/test-utils';
-import { describe, test, expect, afterEach } from 'vitest';
+import { describe, test, expect, afterEach, vi } from 'vitest';
 import { defineComponent, h, markRaw, nextTick } from 'vue';
 import LxChat from '@/components/chat/Chat.vue';
 import MessageComposer from '@/components/chat/MessageComposer.vue';
@@ -239,6 +239,17 @@ describe('LxChat', () => {
 
       expect(wrapper.emitted().send).toBeTruthy();
       expect(wrapper.emitted().send[0][0]).toEqual({ text: 'hello' });
+    });
+
+    test('sends tags and ampersands as typed', async () => {
+      wrapper = mount(MessageComposer, { props: { id: 'c' }, ...mountOptions });
+
+      const text = 'Use `<LxSection id="a">` & <b>this</b>\n\n```vue\n<template #sections />\n```';
+      const textarea = wrapper.find('textarea');
+      await textarea.setValue(text);
+      await textarea.trigger('keydown', { key: 'Enter' });
+
+      expect(wrapper.emitted().send[0][0]).toEqual({ text });
     });
 
     test('does not send on Shift+Enter', async () => {
@@ -1058,6 +1069,93 @@ describe('LxChat', () => {
       });
 
       expect(wrapper.findComponent(LxRichTextDisplay).exists()).toBe(true);
+    });
+
+    test('keeps tags in code and shows raw HTML as text', async () => {
+      const text = [
+        'Use `<LxSection>` here:',
+        '',
+        '```vue',
+        '<template #sections>',
+        '  <LxSection id="type">x</LxSection>',
+        '</template>',
+        '```',
+        '',
+        'Raw <b>bold</b> and <img src="x" onerror="alert(1)"> stay text.',
+      ].join('\n');
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [{ id: 'user-me', isMe: true }],
+          items: [{ id: 'm1', userId: 'other', userName: 'Other', text, createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      const display = wrapper.findComponent(LxRichTextDisplay);
+      expect(display.props('escapeHtml')).toBe(true);
+      await vi.waitFor(() => expect(display.find('pre').exists()).toBe(true));
+      expect(display.find('code').text()).toBe('<LxSection>');
+      expect(display.find('pre').text()).toContain('<template #sections>');
+      expect(display.find('pre').text()).toContain('<LxSection id="type">x</LxSection>');
+      expect(display.find('b').exists()).toBe(false);
+      expect(display.find('img').exists()).toBe(false);
+      expect(display.text()).toContain(
+        'Raw <b>bold</b> and <img src="x" onerror="alert(1)"> stay text.'
+      );
+    });
+
+    test('escapes raw HTML in headings and renders inline markdown there', async () => {
+      // Intro first: DOMPurify under happy-dom drops a leading block element's tag.
+      const text = 'Intro\n\n# Use **bold** and `<LxSection>` <b>x</b> <img src="x">';
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [{ id: 'user-me', isMe: true }],
+          items: [{ id: 'm1', userId: 'other', userName: 'Other', text, createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      const display = wrapper.findComponent(LxRichTextDisplay);
+      await vi.waitFor(() => expect(display.find('h1').exists()).toBe(true));
+      const heading = display.find('h1');
+      expect(heading.find('strong').text()).toBe('bold');
+      expect(heading.find('code').text()).toBe('<LxSection>');
+      expect(heading.find('b').exists()).toBe(false);
+      expect(heading.find('img').exists()).toBe(false);
+      expect(heading.text()).toContain('<b>x</b> <img src="x">');
+    });
+
+    test('keeps line breaks of escaped block HTML', async () => {
+      const text = 'Intro\n\n<div>\nline one\nline two\n</div>';
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [{ id: 'user-me', isMe: true }],
+          items: [{ id: 'm1', userId: 'other', userName: 'Other', text, createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      const display = wrapper.findComponent(LxRichTextDisplay);
+      const findBlock = () => display.findAll('p').find((p) => p.text().includes('<div>'));
+      await vi.waitFor(() => expect(findBlock()).toBeTruthy());
+      const block = findBlock();
+      expect(block.findAll('br').length).toBe(3);
+      expect(block.find('div').exists()).toBe(false);
+      expect(block.text()).toContain('<div>');
+    });
+
+    test('renders a non-string message text instead of a stuck loader', async () => {
+      wrapper = mount(LxChat, {
+        props: {
+          userDefinitions: [{ id: 'user-me', isMe: true }],
+          items: [{ id: 'm1', userId: 'other', userName: 'Other', text: 42, createdAt: day }],
+        },
+        ...mountOptions,
+      });
+
+      const display = wrapper.findComponent(LxRichTextDisplay);
+      await vi.waitFor(() => expect(display.text()).toBe('42'));
+      expect(display.find('.lx-rich-text-loader').exists()).toBe(false);
     });
 
     test('renders a schema message with the provided builder and emits on submit', async () => {
